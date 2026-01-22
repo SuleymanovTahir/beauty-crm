@@ -16,10 +16,15 @@ from utils.utils import require_auth, get_total_unread
 from utils.logger import log_error,log_info,log_warning
 from services.conversation_context import ConversationContext
 from core.config import BASE_URL
+import time
 
 router = APIRouter(tags=["Chat"])
 
 _processing_suggestions = set()
+
+# Simple cache for unread count
+_unread_cache = {}
+_unread_cache_ttl = 5  # seconds
 
 def get_messenger_chat_history(client_id: str, messenger_type: str = 'instagram', limit: int = 50):
     """Получить историю чата по типу мессенджера"""
@@ -377,7 +382,20 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    return {"count": get_total_unread()}
+    # Check cache
+    cache_key = "global_unread"
+    if cache_key in _unread_cache:
+        cached_count, cached_time = _unread_cache[cache_key]
+        if time.time() - cached_time < _unread_cache_ttl:
+            return {"count": cached_count}
+    
+    # Get fresh count
+    count = get_total_unread()
+    
+    # Cache it
+    _unread_cache[cache_key] = (count, time.time())
+    
+    return {"count": count}
 
 @router.get("/chat/unread/{client_id}")
 async def get_client_unread_count(

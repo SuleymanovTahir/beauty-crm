@@ -1172,7 +1172,7 @@ export default function BotSettings() {
                     onChange={(e) => setSettings({ ...settings, return_client_delay: parseInt(e.target.value) || 45 })}
                     className="bot-settings-small-input"
                   />
-                  <p className="bot-settings-helper-text">{t('retention_hint')}</p>
+                  <p className="bot-settings-helper-text">{t('retention_hint', { count: settings.return_client_delay || 45 })}</p>
                 </div>
                 <div>
                   <label className="bot-settings-small-label">{t('message_template')}</label>

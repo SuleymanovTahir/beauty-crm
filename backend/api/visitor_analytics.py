@@ -15,6 +15,10 @@ import time
 
 router = APIRouter(tags=["Analytics"])
 
+# Simple in-memory cache for dashboard data
+_dashboard_cache = {}
+_cache_ttl = 30  # seconds
+
 @router.get("/cookies/check")
 async def check_cookies(request: Request):
     """Проверить статус куки для IP"""
@@ -59,8 +63,10 @@ async def track_visitor_api(request: Request, data: dict):
         # Фронтенд должен прислать полный URL через тело запроса
         page_url = data.get('url', str(request.url))
         
+        referrer = data.get('referrer', request.headers.get('referer', ''))
+        
         # Трекаем в фоне
-        asyncio.create_task(asyncio.to_thread(track_visitor, ip, user_agent, page_url))
+        asyncio.create_task(asyncio.to_thread(track_visitor, ip, user_agent, page_url, referrer))
         
         return {"success": True}
     except Exception as e:
@@ -405,12 +411,25 @@ async def get_visitor_dashboard(
     """
     Консолидированный endpoint для получения всех данных аналитики посетителей одним запросом.
     Поддерживает стандартные периоды и произвольные даты.
+    Кэширование: 30 секунд.
     """
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     start_time = time.time()
+    
+    # Generate cache key
+    cache_key = f"{period}_{date_from}_{date_to}_{max_distance}"
+    
+    # Check cache
+    if cache_key in _dashboard_cache:
+        cached_data, cached_time = _dashboard_cache[cache_key]
+        if time.time() - cached_time < _cache_ttl:
+            duration = time.time() - start_time
+            log_info(f"⚡ Dashboard cache HIT ({duration:.4f}s) for {period}", "api")
+            return cached_data
+    
     try:
         # Calculate date range
         end_date = datetime.now()
@@ -437,16 +456,27 @@ async def get_visitor_dashboard(
         data = get_all_visitor_analytics(start_date, end_date, max_distance)
 
         duration = time.time() - start_time
-        log_info(f"⏱️ get_visitor_dashboard took {duration:.4f}s for {period}", "api")
+        log_info(f"⏱️ Dashboard computed in {duration:.4f}s for {period}", "api")
 
-        return {
+        response = {
             "success": True,
             "period": period,
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat(),
             "data": data
         }
+        
+        # Cache the response
+        _dashboard_cache[cache_key] = (response, time.time())
+        
+        # Clean old cache entries (simple cleanup)
+        if len(_dashboard_cache) > 50:
+            oldest_key = min(_dashboard_cache.keys(), key=lambda k: _dashboard_cache[k][1])
+            del _dashboard_cache[oldest_key]
+
+        return response
 
     except Exception as e:
         log_error(f"Error getting visitor dashboard: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+

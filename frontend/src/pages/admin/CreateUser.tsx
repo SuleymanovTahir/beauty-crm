@@ -67,7 +67,7 @@ export default function CreateUser() {
     }
 
     if (formData.username.length < 3) {
-      toast.error(t('username_min_length'));
+      toast.error(t('username_min_length', { count: 3 }));
       return;
     }
 
@@ -77,7 +77,7 @@ export default function CreateUser() {
     }
 
     if (formData.password.length < 6) {
-      toast.error(t('password_min_length'));
+      toast.error(t('password_min_length', { count: 6 }));
       return;
     }
 
@@ -172,7 +172,7 @@ export default function CreateUser() {
                 placeholder={t('username_placeholder')}
               />
               <p className="text-sm text-gray-500 mt-1">
-                {t('username_hint')}
+                {t('username_hint', { count: 3 })}
               </p>
             </div>
 
@@ -204,7 +204,7 @@ export default function CreateUser() {
                 placeholder={t('password_placeholder')}
               />
               <p className="text-sm text-gray-500 mt-1">
-                {t('password_hint')}
+                {t('password_hint', { count: 6 })}
               </p>
             </div>
 

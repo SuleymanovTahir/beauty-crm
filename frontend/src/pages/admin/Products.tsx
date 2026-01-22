@@ -733,7 +733,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                                     <p className="text-xl font-black text-pink-600">{stats.total_revenue} {currency}</p>
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.last30Days')}</p>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.last30Days', { count: 30 })}</p>
                                     <p className="text-xl font-black text-gray-900">{stats.last_30_days.quantity} {t('unit_pcs')}</p>
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">

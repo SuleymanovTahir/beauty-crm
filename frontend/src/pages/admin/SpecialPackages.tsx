@@ -752,7 +752,7 @@ export default function SpecialPackages() {
                     {campaign.target_type === 'specific_users' && t('target_specific_users')}
                     {campaign.target_type === 'by_master' && t('target_by_master')}
                     {campaign.target_type === 'by_service' && t('target_by_service')}
-                    {campaign.target_type === 'by_inactivity' && t('target_inactive_days', { days: campaign.target_criteria?.days_inactive || 30 })}
+                    {campaign.target_type === 'by_inactivity' && t('target_inactive_days', { count: campaign.target_criteria?.days_inactive || 30 })}
                   </Badge>
                 </div>
 

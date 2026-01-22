@@ -4,6 +4,10 @@
   "analytics": {
     "avgPrice": "Ср. цена",
     "last30Days": "За {{count}} дней",
+    "last30Days_one": "",
+    "last30Days_few": "",
+    "last30Days_many": "",
+    "last30Days_other": "",
     "revenue": "Выручка",
     "totalSold": "Продано всего"
   },

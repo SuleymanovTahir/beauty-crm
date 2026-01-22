@@ -264,13 +264,28 @@ async def get_salon_info(
         if row:
             columns = [desc[0] for desc in cursor.description]
             row_dict = dict(zip(columns, row))
+
+            # Get hours with proper language fallback
+            hours = row_dict["hours"]
+            hours_weekdays = row_dict["hours_weekdays"] or "10:30 - 21:00"
+
+            # If hours contains "Daily" and language is not English, translate it
+            if hours and language == 'ru':
+                if hours.startswith('Daily'):
+                    hours = hours.replace('Daily', 'Ежедневно')
+                elif not hours.startswith('Ежедневно') and hours_weekdays:
+                    hours = f"Ежедневно {hours_weekdays}"
+            elif hours and language == 'ar':
+                if hours.startswith('Daily'):
+                    hours = hours.replace('Daily', 'يوميًا')
+
             return {
                 "name": row_dict["name"],
                 "address": row_dict["address"],
                 "main_location": row_dict["main_location"],
                 "google_maps_embed_url": row_dict["google_maps"],  # Map to frontend expected key
                 "google_maps": row_dict["google_maps"],
-                "hours": row_dict["hours"],
+                "hours": hours,
                 "hours_weekdays": row_dict["hours_weekdays"],
                 "hours_weekends": row_dict["hours_weekends"],
                 "phone": row_dict["phone"],

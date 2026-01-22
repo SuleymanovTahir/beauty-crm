@@ -405,9 +405,9 @@ export default function Users() {
                   backgroundSize: '16px'
                 }}
               >
-                <option value="last7days">{t('filter_last7days')}</option>
-                <option value="last30days">{t('filter_last30days')}</option>
-                <option value="last90days">{t('filter_last90days')}</option>
+                <option value="last7days">{t('filter_last7days', { count: 7 })}</option>
+                <option value="last30days">{t('filter_last30days', { count: 30 })}</option>
+                <option value="last90days">{t('filter_last90days', { count: 90 })}</option>
                 <option value="allTime">{t('filter_all_time')}</option>
               </select>
             </div>
