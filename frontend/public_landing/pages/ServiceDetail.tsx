@@ -2,11 +2,65 @@
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button";
 import { useCurrency } from '../../src/hooks/useSalonSettings';
 import { getApiUrl } from "../utils/apiUtils";
+
+type SeoMetadata = {
+    salon_name?: string;
+    city?: string;
+    base_url?: string;
+    logo_url?: string;
+    seo_title?: string;
+    seo_description?: string;
+    schema?: any;
+};
+
+function upsertMeta(selector: string, attr: string, value: string) {
+    if (!value) return;
+    let el = document.querySelector(selector) as HTMLMetaElement | null;
+    if (!el) {
+        el = document.createElement('meta');
+        // Support selectors like meta[name="description"] or meta[property="og:title"]
+        const nameMatch = selector.match(/meta\[name="([^"]+)"\]/);
+        const propMatch = selector.match(/meta\[property="([^"]+)"\]/);
+        if (nameMatch) el.setAttribute('name', nameMatch[1]);
+        if (propMatch) el.setAttribute('property', propMatch[1]);
+        document.head.appendChild(el);
+    }
+    el.setAttribute(attr, value);
+}
+
+function upsertLink(rel: string, href: string) {
+    if (!href) return;
+    let el = document.querySelector(`link[rel="${rel}"]`) as HTMLLinkElement | null;
+    if (!el) {
+        el = document.createElement('link');
+        el.setAttribute('rel', rel);
+        document.head.appendChild(el);
+    }
+    el.setAttribute('href', href);
+}
+
+function upsertJsonLd(id: string, data: any) {
+    const scriptId = `jsonld-${id}`;
+    let el = document.getElementById(scriptId) as HTMLScriptElement | null;
+    if (!el) {
+        el = document.createElement('script');
+        el.type = 'application/ld+json';
+        el.id = scriptId;
+        document.head.appendChild(el);
+    }
+    el.text = JSON.stringify(data);
+}
+
+function slugifyAscii(text: string) {
+    const t = (text || '').toLowerCase();
+    const cleaned = t.replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    return cleaned;
+}
 
 export function ServiceDetail() {
     const { t, i18n } = useTranslation(['public_landing/services', 'public_landing', 'common']);
@@ -17,9 +71,25 @@ export function ServiceDetail() {
     const [masters, setMasters] = useState<any[]>([]);
 
     const [services, setServices] = useState<any[]>([]);
+    const [seo, setSeo] = useState<SeoMetadata | null>(null);
 
     useEffect(() => {
         const API_URL = getApiUrl();
+
+        // Try to load cached SEO metadata (fast) + refresh from API (best-effort)
+        try {
+            const cached = localStorage.getItem('seo_metadata');
+            if (cached) setSeo(JSON.parse(cached));
+        } catch { }
+        fetch(`${API_URL}/api/public/seo-metadata`)
+            .then(res => res.json())
+            .then((data) => {
+                if (data && typeof data === 'object') {
+                    setSeo(data);
+                    try { localStorage.setItem('seo_metadata', JSON.stringify({ ...data, _timestamp: Date.now() })); } catch { }
+                }
+            })
+            .catch(() => { });
 
         // Load masters
         fetch(`${API_URL}/api/public/employees?language=${language}`)
@@ -92,6 +162,84 @@ export function ServiceDetail() {
 
     const categoryInfo = getCategoryInfo();
 
+    // SEO for category page: title/description/canonical/open graph/schema.
+    useEffect(() => {
+        const baseUrl = (seo?.base_url || window.location.origin).replace(/\/$/, '');
+        const slug = encodeURIComponent(String(category || '').toLowerCase());
+        const canonicalUrl = slug ? `${baseUrl}/service/${slug}` : `${baseUrl}/`;
+
+        // Build a unique-ish title & description for this category page.
+        const salonName = seo?.salon_name || 'Beauty Salon';
+        const city = seo?.city || '';
+        const serviceNames = categoryServices
+            .slice(0, 6)
+            .map((s) => (s[`name_${language}`] || s.name_en || s.name_ru || s.name || '').trim())
+            .filter(Boolean);
+
+        const title = categoryInfo?.title
+            ? `${categoryInfo.title}${city ? ` — ${city}` : ''} | ${salonName}`
+            : `${salonName}`;
+
+        const descriptionParts = [
+            categoryInfo?.description || '',
+            serviceNames.length ? `${t('ourServices', { ns: 'public_landing', defaultValue: 'Услуги' })}: ${serviceNames.join(', ')}` : '',
+        ].filter(Boolean);
+        const description = descriptionParts.join(' ').slice(0, 300);
+
+        document.title = title;
+        upsertMeta('meta[name="description"]', 'content', description || (seo?.seo_description || ''));
+        upsertLink('canonical', canonicalUrl);
+
+        // Basic OG/Twitter for sharing & consistency
+        upsertMeta('meta[property="og:title"]', 'content', title);
+        upsertMeta('meta[property="og:description"]', 'content', description || (seo?.seo_description || ''));
+        upsertMeta('meta[property="og:url"]', 'content', canonicalUrl);
+        if (seo?.logo_url) upsertMeta('meta[property="og:image"]', 'content', seo.logo_url);
+        upsertMeta('meta[name="twitter:title"]', 'content', title);
+        upsertMeta('meta[name="twitter:description"]', 'content', description || (seo?.seo_description || ''));
+        if (seo?.logo_url) upsertMeta('meta[name="twitter:image"]', 'content', seo.logo_url);
+
+        // Schema.org: Service + Breadcrumbs (minimal, safe)
+        const serviceSchema = {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": categoryInfo?.title || String(category || 'Service'),
+            "description": description || undefined,
+            "serviceType": categoryInfo?.title || undefined,
+            "provider": {
+                "@type": "BeautySalon",
+                "name": salonName,
+                "url": baseUrl,
+                "image": seo?.logo_url,
+            }
+        };
+        const breadcrumbSchema = {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": `${baseUrl}/`
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": categoryInfo?.title || String(category || 'Service'),
+                    "item": canonicalUrl
+                }
+            ]
+        };
+        upsertJsonLd('service', serviceSchema);
+        upsertJsonLd('breadcrumbs', breadcrumbSchema);
+
+        return () => {
+            // Leave tags in place; next route will overwrite.
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [category, language, seo, categoryInfo.title, categoryInfo.description, categoryServices.length]);
+
     const scrollToBooking = () => {
         navigate('/#booking');
     };
@@ -139,7 +287,12 @@ export function ServiceDetail() {
                                     >
                                         <div className="flex-1 mb-2 sm:mb-0">
                                             <h4 className="font-medium text-lg mb-1">
-                                                {service[`name_${language}`] || service.name_ru || service.name}
+                                                <Link
+                                                    to={`/service/${encodeURIComponent(String(category || 'other').toLowerCase())}/${service.id}-${encodeURIComponent(slugifyAscii(service.name_en || service.name || service.name_ru || 'service'))}`}
+                                                    className="hover:underline"
+                                                >
+                                                    {service[`name_${language}`] || service.name_ru || service.name}
+                                                </Link>
                                             </h4>
                                             {service.duration && (
                                                 <p className="text-sm text-muted-foreground">
