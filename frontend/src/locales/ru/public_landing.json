@@ -189,5 +189,14 @@
   "transfer": "Передача",
   "validity": "Действительность",
   "valuables": "Ценности",
-  "workingHours": "Часы работы"
+  "workingHours": "Часы работы",
+  "notFoundTitle": "Страница не найдена",
+  "notFoundDescription": "Извините, страница, которую вы ищете, не существует или была перемещена.",
+  "goToHomepage": "На главную",
+  "goBack": "Назад",
+  "popularPages": "Популярные страницы:",
+  "home": "Главная",
+  "services": "Услуги",
+  "myAccount": "Мой аккаунт",
+  "bookNow": "Записаться"
 }

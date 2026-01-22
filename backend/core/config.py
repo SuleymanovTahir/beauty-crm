@@ -349,9 +349,23 @@ def has_permission(user_role: str, permission: str) -> bool:
     return permission in permissions
 
 def can_manage_role(manager_role: str, target_role: str) -> bool:
-    """Может ли менеджер управлять целевой ролью"""
+    """
+    Может ли менеджер управлять целевой ролью
+    
+    Правила:
+    - Директор может управлять всеми ролями (включая других директоров)
+    - Админ может управлять только ролями из своего списка (НЕ director)
+    - Другие роли не могут управлять никем
+    """
+    # Директор может управлять всеми (включая других директоров)
+    if manager_role == 'director':
+        return True
+    
+    # Получаем список ролей, которыми может управлять manager
     manager_data = ROLES.get(manager_role, {})
-    return target_role in manager_data.get('can_manage_roles', [])
+    can_manage_list = manager_data.get('can_manage_roles', [])
+    
+    return target_role in can_manage_list
 
 # ===== КОНСТАНТЫ САЛОНА (ДЕФОЛТНЫЕ ЗНАЧЕНИЯ) =====
 # Единый источник истины для всех дефолтных значений настроек салона

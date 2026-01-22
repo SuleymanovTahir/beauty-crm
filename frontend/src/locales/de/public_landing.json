@@ -189,5 +189,14 @@
   "transfer": "Übertragung",
   "validity": "Gültigkeit",
   "valuables": "Werte",
-  "workingHours": "Öffnungszeiten"
+  "workingHours": "Öffnungszeiten",
+  "notFoundTitle": "Seite nicht gefunden",
+  "notFoundDescription": "Entschuldigung, die Seite, die Sie suchen, existiert nicht oder wurde verschoben.",
+  "goToHomepage": "Zur Startseite",
+  "goBack": "Zurück",
+  "popularPages": "Beliebte Seiten:",
+  "home": "Startseite",
+  "services": "Dienstleistungen",
+  "myAccount": "Mein Konto",
+  "bookNow": "Jetzt buchen"
 }

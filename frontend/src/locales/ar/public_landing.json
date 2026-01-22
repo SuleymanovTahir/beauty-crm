@@ -189,5 +189,14 @@
   "transfer": "النقل",
   "validity": "الصلاحية",
   "valuables": "القيم",
-  "workingHours": "ساعات العمل"
+  "workingHours": "ساعات العمل",
+  "notFoundTitle": "الصفحة غير موجودة",
+  "notFoundDescription": "عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+  "goToHomepage": "الانتقال إلى الصفحة الرئيسية",
+  "goBack": "رجوع",
+  "popularPages": "صفحات شائعة:",
+  "home": "الرئيسية",
+  "services": "الخدمات",
+  "myAccount": "حسابي",
+  "bookNow": "احجز الآن"
 }

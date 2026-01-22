@@ -5,8 +5,22 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button";
-import { useCurrency } from '../../src/hooks/useSalonSettings';
+import { useCurrency } from "../../src/hooks/useSalonSettings";
 import { getApiUrl } from "../utils/apiUtils";
+import { BookingSection } from "../components/BookingSection";
+import { safeFetch } from "../utils/errorHandler";
+import {
+  getLocalizedServiceName,
+  getSafeString,
+  getSalonName,
+  getSalonCity,
+  getBaseUrl,
+  getMasterName,
+  getMasterSpecialization,
+  getMasterImageUrl,
+  getInitialLetter,
+  slugifyAscii,
+} from "../utils/dataHelpers";
 
 type SeoMetadata = {
     salon_name?: string;
@@ -56,11 +70,6 @@ function upsertJsonLd(id: string, data: any) {
     el.text = JSON.stringify(data);
 }
 
-function slugifyAscii(text: string) {
-    const t = (text || '').toLowerCase();
-    const cleaned = t.replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-    return cleaned;
-}
 
 export function ServiceDetail() {
     const { t, i18n } = useTranslation(['public_landing/services', 'public_landing', 'common']);
@@ -69,9 +78,10 @@ export function ServiceDetail() {
     const navigate = useNavigate();
     const { formatCurrency } = useCurrency();
     const [masters, setMasters] = useState<any[]>([]);
-
     const [services, setServices] = useState<any[]>([]);
     const [seo, setSeo] = useState<SeoMetadata | null>(null);
+    const [portfolioImages, setPortfolioImages] = useState<any[]>([]);
+    const [categoryImage, setCategoryImage] = useState<string>("");
 
     useEffect(() => {
         const API_URL = getApiUrl();
@@ -119,129 +129,217 @@ export function ServiceDetail() {
                 setServices(loadedServices);
             })
             .catch(err => console.error('Error loading services:', err));
-    }, [language]);
+
+        // Load portfolio images for this category
+        const routeCategory = getSafeString(category);
+        safeFetch(`${API_URL}/api/public/gallery?category=portfolio&language=${language}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.images && Array.isArray(data.images)) {
+                    // Filter by category if possible, or use all portfolio images
+                    const filtered = data.images.filter((img: any) => {
+                        const imgCategory = (img.category || "").toLowerCase();
+                        const catLower = routeCategory.toLowerCase();
+                        return imgCategory === catLower || imgCategory.includes(catLower) || catLower.includes(imgCategory);
+                    });
+                    setPortfolioImages(filtered.length > 0 ? filtered : data.images.slice(0, 8));
+                    // Set first image as category hero image
+                    if (filtered.length > 0 && filtered[0].image_path) {
+                        setCategoryImage(filtered[0].image_path);
+                    } else if (data.images.length > 0 && data.images[0].image_path) {
+                        setCategoryImage(data.images[0].image_path);
+                    }
+                }
+            })
+            .catch(err => console.error('Error loading portfolio:', err));
+    }, [language, category]);
 
     // Filter services by category
-    const categoryServices = services.filter(s => {
-        // Universal match: check if service category matches param
-        const serviceCat = String(s.category || '').toLowerCase();
-        const paramCat = String(category || '').toLowerCase();
+    const categoryServices = services.filter((s) => {
+        if (!s || typeof s !== "object") {
+            return false;
+        }
+        const serviceCategory = getSafeString(s.category).toLowerCase();
+        const routeCategory = getSafeString(category).toLowerCase();
 
-        // Exact match or includes (for looser matching like 'nails' vs 'nail')
-        return serviceCat === paramCat || serviceCat.includes(paramCat) || paramCat.includes(serviceCat);
+        if (serviceCategory.length === 0 || routeCategory.length === 0) {
+            return false;
+        }
+
+        if (serviceCategory === routeCategory) {
+            return true;
+        }
+        if (serviceCategory.indexOf(routeCategory) >= 0) {
+            return true;
+        }
+        if (routeCategory.indexOf(serviceCategory) >= 0) {
+            return true;
+        }
+        return false;
     });
 
     const getCategoryInfo = () => {
-        switch (category) {
-            case 'nails':
-                return {
-                    title: t('manicurePedicure', { defaultValue: 'Manicure & Pedicure' }),
-                    description: t('service1Desc', { defaultValue: 'Professional nail care services.' }),
-                    image: "https://images.unsplash.com/photo-1727199433272-70fdb94c8430?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080"
-                };
-            case 'hair':
-                return {
-                    title: t('haircutsStyling', { defaultValue: 'Haircuts & Styling' }),
-                    description: t('service2Desc', { defaultValue: 'Expert hair styling and treatments.' }),
-                    image: "https://images.unsplash.com/photo-1659036354224-48dd0a9a6b86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080"
-                };
-            case 'makeup':
-                return {
-                    title: t('service3Title', { defaultValue: 'Makeup & Brows' }),
-                    description: t('service3Desc', { defaultValue: 'Professional makeup and brow styling.' }),
-                    image: "https://images.unsplash.com/photo-1617035305886-59c560e07ce4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080"
-                };
-            default:
-                return {
-                    title: category || 'Service',
-                    description: '',
-                    image: ''
-                };
+        const routeCategory = getSafeString(category);
+        let title = routeCategory;
+        let description = "";
+        
+        if (routeCategory === "nails") {
+            title = t("manicurePedicure", { ns: "public_landing/services" });
+            description = t("service1Desc", { ns: "public_landing/services" });
+        } else if (routeCategory === "hair") {
+            title = t("haircutsStyling", { ns: "public_landing/services" });
+            description = t("service2Desc", { ns: "public_landing/services" });
+        } else if (routeCategory === "makeup") {
+            title = t("service3Title", { ns: "public_landing/services" });
+            description = t("service3Desc", { ns: "public_landing/services" });
         }
+        
+        return {
+            title,
+            description,
+            image: categoryImage || "",
+        };
     };
 
     const categoryInfo = getCategoryInfo();
 
     // SEO for category page: title/description/canonical/open graph/schema.
     useEffect(() => {
-        const baseUrl = (seo?.base_url || window.location.origin).replace(/\/$/, '');
-        const slug = encodeURIComponent(String(category || '').toLowerCase());
-        const canonicalUrl = slug ? `${baseUrl}/service/${slug}` : `${baseUrl}/`;
+        if (!seo) {
+            return;
+        }
 
-        // Build a unique-ish title & description for this category page.
-        const salonName = seo?.salon_name || 'Beauty Salon';
-        const city = seo?.city || '';
-        const serviceNames = categoryServices
-            .slice(0, 6)
-            .map((s) => (s[`name_${language}`] || s.name_en || s.name_ru || s.name || '').trim())
-            .filter(Boolean);
+        const baseUrl = getBaseUrl(seo);
+        const routeCategory = getSafeString(category);
+        const slug = encodeURIComponent(routeCategory.toLowerCase());
+        const canonicalUrl =
+            slug.length > 0 ? `${baseUrl}/service/${slug}` : `${baseUrl}/`;
 
-        const title = categoryInfo?.title
-            ? `${categoryInfo.title}${city ? ` — ${city}` : ''} | ${salonName}`
-            : `${salonName}`;
+        const salonName = getSalonName(seo);
+        const city = getSalonCity(seo);
 
-        const descriptionParts = [
-            categoryInfo?.description || '',
-            serviceNames.length ? `${t('ourServices', { ns: 'public_landing', defaultValue: 'Услуги' })}: ${serviceNames.join(', ')}` : '',
-        ].filter(Boolean);
-        const description = descriptionParts.join(' ').slice(0, 300);
+        const limitedServices = categoryServices.slice(0, 6);
+        const serviceNames: string[] = [];
+        limitedServices.forEach((s) => {
+            const localized = getLocalizedServiceName(s, language);
+            if (localized.length > 0) {
+                serviceNames.push(localized);
+            }
+        });
 
-        document.title = title;
-        upsertMeta('meta[name="description"]', 'content', description || (seo?.seo_description || ''));
-        upsertLink('canonical', canonicalUrl);
+        let title = "";
+        if (categoryInfo.title && categoryInfo.title.length > 0) {
+            if (city.length > 0 && salonName.length > 0) {
+                title = `${categoryInfo.title} — ${city} | ${salonName}`;
+            } else if (salonName.length > 0) {
+                title = `${categoryInfo.title} | ${salonName}`;
+            } else {
+                title = categoryInfo.title;
+            }
+        } else if (salonName.length > 0) {
+            title = salonName;
+        }
+
+        const descriptionParts: string[] = [];
+        if (categoryInfo.description && categoryInfo.description.length > 0) {
+            descriptionParts.push(categoryInfo.description);
+        }
+        if (serviceNames.length > 0) {
+            const servicesLabel = t("ourServices", { ns: "public_landing" });
+            descriptionParts.push(`${servicesLabel}: ${serviceNames.join(", ")}`);
+        }
+
+        let description = "";
+        if (descriptionParts.length > 0) {
+            description = descriptionParts.join(" ").slice(0, 300);
+        } else if (seo.seo_description && typeof seo.seo_description === "string") {
+            const trimmed = seo.seo_description.trim();
+            if (trimmed.length > 0) {
+                description = trimmed.slice(0, 300);
+            }
+        }
+
+        if (title.length > 0) {
+            document.title = title;
+        }
+        if (description.length > 0) {
+            upsertMeta('meta[name="description"]', "content", description);
+        }
+        upsertLink("canonical", canonicalUrl);
 
         // Basic OG/Twitter for sharing & consistency
-        upsertMeta('meta[property="og:title"]', 'content', title);
-        upsertMeta('meta[property="og:description"]', 'content', description || (seo?.seo_description || ''));
-        upsertMeta('meta[property="og:url"]', 'content', canonicalUrl);
-        if (seo?.logo_url) upsertMeta('meta[property="og:image"]', 'content', seo.logo_url);
-        upsertMeta('meta[name="twitter:title"]', 'content', title);
-        upsertMeta('meta[name="twitter:description"]', 'content', description || (seo?.seo_description || ''));
-        if (seo?.logo_url) upsertMeta('meta[name="twitter:image"]', 'content', seo.logo_url);
+        if (title.length > 0) {
+            upsertMeta('meta[property="og:title"]', "content", title);
+            upsertMeta('meta[name="twitter:title"]', "content", title);
+        }
+        if (description.length > 0) {
+            upsertMeta('meta[property="og:description"]', "content", description);
+            upsertMeta('meta[name="twitter:description"]', "content", description);
+        }
+        upsertMeta('meta[property="og:url"]', "content", canonicalUrl);
+        if (seo.logo_url && typeof seo.logo_url === "string" && seo.logo_url.trim().length > 0) {
+            upsertMeta('meta[property="og:image"]', "content", seo.logo_url);
+            upsertMeta('meta[name="twitter:image"]', "content", seo.logo_url);
+        }
 
         // Schema.org: Service + Breadcrumbs (minimal, safe)
-        const serviceSchema = {
+        const schemaName = categoryInfo.title && categoryInfo.title.length > 0
+            ? categoryInfo.title
+            : routeCategory;
+        const serviceSchema: any = {
             "@context": "https://schema.org",
             "@type": "Service",
-            "name": categoryInfo?.title || String(category || 'Service'),
-            "description": description || undefined,
-            "serviceType": categoryInfo?.title || undefined,
-            "provider": {
+            name: schemaName,
+            description: description.length > 0 ? description : undefined,
+            serviceType: categoryInfo.title && categoryInfo.title.length > 0 ? categoryInfo.title : undefined,
+            provider: {
                 "@type": "BeautySalon",
-                "name": salonName,
-                "url": baseUrl,
-                "image": seo?.logo_url,
-            }
+                name: salonName,
+                url: baseUrl,
+                image: seo.logo_url && typeof seo.logo_url === "string" ? seo.logo_url : undefined,
+            },
         };
         const breadcrumbSchema = {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
-            "itemListElement": [
+            itemListElement: [
                 {
                     "@type": "ListItem",
-                    "position": 1,
-                    "name": "Home",
-                    "item": `${baseUrl}/`
+                    position: 1,
+                    name: t("homeTag", { ns: "public_landing" }),
+                    item: `${baseUrl}/`,
                 },
                 {
                     "@type": "ListItem",
-                    "position": 2,
-                    "name": categoryInfo?.title || String(category || 'Service'),
-                    "item": canonicalUrl
-                }
-            ]
+                    position: 2,
+                    name: schemaName,
+                    item: canonicalUrl,
+                },
+            ],
         };
-        upsertJsonLd('service', serviceSchema);
-        upsertJsonLd('breadcrumbs', breadcrumbSchema);
-
-        return () => {
-            // Leave tags in place; next route will overwrite.
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [category, language, seo, categoryInfo.title, categoryInfo.description, categoryServices.length]);
+        upsertJsonLd("service", serviceSchema);
+        upsertJsonLd("breadcrumbs", breadcrumbSchema);
+    }, [category, language, seo, categoryInfo.title, categoryInfo.description, categoryServices, t]);
 
     const scrollToBooking = () => {
-        navigate('/#booking');
+        const bookingSection = document.getElementById('booking-section');
+        if (bookingSection) {
+            // Set hash with category for pre-selection
+            const routeCategory = getSafeString(category);
+            if (routeCategory.length > 0) {
+                window.location.hash = `booking?category=${encodeURIComponent(routeCategory)}`;
+            } else {
+                window.location.hash = 'booking';
+            }
+            bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            const routeCategory = getSafeString(category);
+            if (routeCategory.length > 0) {
+                navigate(`/#booking?category=${encodeURIComponent(routeCategory)}`);
+            } else {
+                navigate('/#booking');
+            }
+        }
     };
 
     return (
@@ -263,22 +361,33 @@ export function ServiceDetail() {
                                 onClick={scrollToBooking}
                                 className="px-8 py-6 rounded-full text-lg"
                             >
-                                {t('bookNow', { ns: 'public_landing', defaultValue: 'Записаться' })}
+                                {t("bookNow", { ns: "public_landing" })}
                             </Button>
                         </div>
-                        <div className="order-1 lg:order-2 relative h-[400px] sm:h-[500px] rounded-3xl overflow-hidden shadow-xl">
-                            <img
-                                src={categoryInfo.image}
-                                alt={categoryInfo.title}
-                                className="w-full h-full object-cover"
-                            />
+                        <div className="order-1 lg:order-2 relative h-[400px] sm:h-[500px] rounded-3xl overflow-hidden shadow-xl bg-muted">
+                            {categoryInfo.image ? (
+                                <img
+                                    src={categoryInfo.image}
+                                    alt={categoryInfo.title}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).style.display = 'none';
+                                    }}
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                    {categoryInfo.title}
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     {/* Services & Pricing */}
                     {categoryServices.length > 0 && (
                         <div className="bg-card rounded-3xl p-8 lg:p-12 mb-12 shadow-sm border border-border">
-                            <h2 className="text-3xl font-bold mb-8">{t('ourServices', { ns: 'public_landing', defaultValue: 'Наши услуги' })}</h2>
+                            <h2 className="text-3xl font-bold mb-8">
+                                {t("ourServices", { ns: "public_landing" })}
+                            </h2>
                             <div className="space-y-6">
                                 {categoryServices.map((service, index) => (
                                     <div
@@ -287,18 +396,35 @@ export function ServiceDetail() {
                                     >
                                         <div className="flex-1 mb-2 sm:mb-0">
                                             <h4 className="font-medium text-lg mb-1">
-                                                <Link
-                                                    to={`/service/${encodeURIComponent(String(category || 'other').toLowerCase())}/${service.id}-${encodeURIComponent(slugifyAscii(service.name_en || service.name || service.name_ru || 'service'))}`}
-                                                    className="hover:underline"
-                                                >
-                                                    {service[`name_${language}`] || service.name_ru || service.name}
-                                                </Link>
+                                                {(() => {
+                                                    const localizedName = getLocalizedServiceName(service, language);
+                                                    const routeCategory = getSafeString(category).toLowerCase();
+                                                    const slugSource = getLocalizedServiceName(service, "en");
+                                                    const serviceSlug = slugifyAscii(slugSource);
+                                                    const serviceId = service && typeof service.id === "number" ? service.id : null;
+                                                    const servicePath =
+                                                        serviceId && routeCategory.length > 0
+                                                            ? `/service/${encodeURIComponent(routeCategory)}/${serviceId}-${encodeURIComponent(serviceSlug.length > 0 ? serviceSlug : `service-${serviceId}`)}`
+                                                            : "";
+
+                                                    if (servicePath.length > 0) {
+                                                        return (
+                                                            <Link to={servicePath} className="hover:underline">
+                                                                {localizedName}
+                                                            </Link>
+                                                        );
+                                                    }
+                                                    return localizedName;
+                                                })()}
                                             </h4>
-                                            {service.duration && (
-                                                <p className="text-sm text-muted-foreground">
-                                                    {service.duration} {t('minutes', { defaultValue: 'мин' })}
-                                                </p>
-                                            )}
+                                            {service &&
+                                                service.duration &&
+                                                typeof service.duration === "number" && (
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {service.duration}{" "}
+                                                        {t("minutes", { ns: "public_landing" })}
+                                                    </p>
+                                                )}
                                         </div>
                                         <div className="flex items-center gap-4">
                                             <span className="text-xl font-semibold text-primary">
@@ -317,50 +443,83 @@ export function ServiceDetail() {
                     {/* Our Masters Section */}
                     {masters.length > 0 && (
                         <div className="bg-card rounded-3xl p-8 lg:p-12 mb-12 shadow-sm border border-border">
-                            <h2 className="text-3xl font-bold mb-4">{t('ourMasters', { defaultValue: 'Наши мастера' })}</h2>
+                            <h2 className="text-3xl font-bold mb-4">
+                                {t("ourMasters", { ns: "public_landing" })}
+                            </h2>
                             <p className="text-muted-foreground mb-8 max-w-2xl">
-                                {t('mastersDescription', { defaultValue: 'Наши профессиональные мастера с многолетним опытом работы готовы предоставить вам услуги высочайшего качества' })}
+                                {t("mastersDescription", { ns: "public_landing" })}
                             </p>
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                {masters.slice(0, 8).map((master, index) => (
-                                    <div key={index} className="text-center group">
-                                        <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4 rounded-full overflow-hidden bg-muted border-2 border-transparent group-hover:border-primary transition-all">
-                                            {master.image ? (
-                                                <img
-                                                    src={master.image.startsWith('http') ? master.image :
-                                                        master.image.startsWith('/') ? `${import.meta.env.VITE_API_URL || window.location.origin}${master.image}` :
-                                                            `${import.meta.env.VITE_API_URL || window.location.origin}/uploads/${master.image}`}
-                                                    alt={master.name}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-3xl text-muted-foreground">
-                                                    {master.name?.charAt(0) || 'M'}
-                                                </div>
-                                            )}
+                                {masters.slice(0, 8).map((master, index) => {
+                                    const masterName = getMasterName(master);
+                                    const specialization = getMasterSpecialization(master);
+                                    const apiBase = import.meta.env.VITE_API_URL
+                                        ? String(import.meta.env.VITE_API_URL).trim()
+                                        : window.location.origin;
+                                    const imageUrl = getMasterImageUrl(master, apiBase);
+                                    const initial = getInitialLetter(masterName);
+
+                                    return (
+                                        <div key={index} className="text-center group">
+                                            <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4 rounded-full overflow-hidden bg-muted border-2 border-transparent group-hover:border-primary transition-all">
+                                                {imageUrl.length > 0 ? (
+                                                    <img
+                                                        src={imageUrl}
+                                                        alt={masterName}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-3xl text-muted-foreground">
+                                                        {initial}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <h4 className="font-medium mb-1">{masterName}</h4>
+                                            <p className="text-sm text-muted-foreground">
+                                                {specialization.length > 0
+                                                    ? specialization
+                                                    : t("master", { ns: "public_landing" })}
+                                            </p>
                                         </div>
-                                        <h4 className="font-medium mb-1">{master.name}</h4>
-                                        <p className="text-sm text-muted-foreground">{master.specialization || master.job_title || t('master', { defaultValue: 'Мастер' })}</p>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
 
                     {/* Portfolio Gallery */}
-                    <div>
-                        <h2 className="text-3xl font-bold mb-8">{t('portfolioTitle', { defaultValue: 'Портфолио' })}</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="relative aspect-[3/4] rounded-2xl overflow-hidden group">
-                                    <img
-                                        src={`${categoryInfo.image}&sig=${i}`}
-                                        alt={`Portfolio ${i}`}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                    />
-                                </div>
-                            ))}
+                    {portfolioImages.length > 0 && (
+                        <div className="mb-12">
+                            <h2 className="text-3xl font-bold mb-8">
+                                {t("portfolioTitlePart1", { ns: "public_landing" })}{" "}
+                                {t("portfolioTitlePart2", { ns: "public_landing" })}
+                            </h2>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                {portfolioImages.slice(0, 8).map((img: any) => {
+                                    const apiBase = getApiUrl();
+                                    const imageUrl = img.image_path?.startsWith('http') 
+                                        ? img.image_path 
+                                        : `${apiBase}${img.image_path?.startsWith('/') ? '' : '/'}${img.image_path || ''}`;
+                                    return (
+                                        <div key={img.id} className="relative aspect-[3/4] rounded-2xl overflow-hidden group">
+                                            <img
+                                                src={imageUrl}
+                                                alt={img.title || `Portfolio ${img.id}`}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).style.display = 'none';
+                                                }}
+                                            />
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
+                    )}
+
+                    {/* Booking Form Section */}
+                    <div id="booking-section">
+                        <BookingSection />
                     </div>
                 </div>
             </main>
