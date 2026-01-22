@@ -87,8 +87,35 @@ async def api_login(request: Request, username: str = Form(...), password: str =
                     "message": "registration_pending"
                 }, status_code=403)
         
-        session_token = create_session(user["id"])
-        log_info(f"Session created for {username}", "auth")
+        
+        # CRITICAL: Check for existing valid sessions to prevent duplicates on mobile
+        conn = get_db_connection()
+        c = conn.cursor()
+        
+        # Delete expired sessions first
+        from datetime import datetime
+        now = datetime.now().isoformat()
+        c.execute("DELETE FROM sessions WHERE expires_at < %s", (now,))
+        
+        # Check for existing valid session
+        c.execute("""
+            SELECT session_token FROM sessions 
+            WHERE user_id = %s AND expires_at > %s 
+            ORDER BY created_at DESC LIMIT 1
+        """, (user["id"], now))
+        
+        existing_session = c.fetchone()
+        
+        if existing_session:
+            # Reuse existing session
+            session_token = existing_session[0]
+            log_info(f"Reusing existing session for {username}", "auth")
+        else:
+            # Create new session only if none exists
+            session_token = create_session(user["id"])
+            log_info(f"New session created for {username}", "auth")
+        
+        conn.close()
         
         response_data = {
             "success": True,

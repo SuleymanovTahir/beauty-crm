@@ -59,5 +59,9 @@ export const visitorApi = {
         }
 
         return api.get(url);
+    },
+
+    async bulkDelete(filters: any) {
+        return api.delete('/api/analytics/visitors/bulk-delete', filters);
     }
 };

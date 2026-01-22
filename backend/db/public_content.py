@@ -9,7 +9,7 @@ from utils.logger import log_info, log_error
 
 def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> List[Dict]:
     """
-    Получить активные отзывы на указанном языке
+    Получить активные отзывы на указанном языке БЕЗ ДУБЛИКАТОВ
     
     Args:
         language: Код языка (ru, en, ar, es, de, fr, hi, kk, pt)
@@ -30,11 +30,13 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
         # Determine text column based on language
         text_field = f'text_{language}'
         
-        # Check if column exists (safe fallback)
-        # Actually, we know we added them. But let's be safe and use COALESCE with ru/en
-        
+        # CRITICAL FIX: Use DISTINCT ON to prevent duplicates
+        # Same person in different languages (Fatima/Фатима) should show only once
         query = f"""
-            SELECT 
+            SELECT DISTINCT ON (
+                LOWER(COALESCE(author_name_{language}, author_name_en, author_name_ru, author_name)),
+                LOWER(COALESCE({text_field}, text_ru, text_en))
+            )
                 id,
                 COALESCE(author_name_{language}, author_name_en, author_name_ru, author_name) as name,
                 rating,
@@ -46,7 +48,11 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
                 created_at
             FROM public_reviews
             WHERE is_active = TRUE
-            ORDER BY display_order DESC, created_at DESC
+            ORDER BY 
+                LOWER(COALESCE(author_name_{language}, author_name_en, author_name_ru, author_name)),
+                LOWER(COALESCE({text_field}, text_ru, text_en)),
+                display_order DESC, 
+                created_at DESC
         """
         
         if limit:
@@ -57,7 +63,7 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
         columns = [desc[0] for desc in cursor.description]
         reviews = [dict(zip(columns, row)) for row in rows]
         
-        log_info(f"Получено {len(reviews)} отзывов на языке {language}", "db")
+        log_info(f"Получено {len(reviews)} уникальных отзывов на языке {language}", "db")
         return reviews
         
     except Exception as e:
@@ -134,22 +140,6 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
     cursor = conn.cursor()
     
     try:
-        # Note: Gallery usually returns ALL fields because frontend might need them%s
-        # But here we are returning specific fields.
-        # Wait, the previous implementation returned title_ru, description_ru hardcoded!
-        # We should return ALL localized fields or at least the requested language%s
-        # The API signature doesn't take language.
-        # Let's look at how it's used.
-        # Frontend `Portfolio.tsx` calls `getPublicGallery`.
-        # It expects `title`.
-        # If we don't pass language, we should probably return ALL fields so frontend can choose%s
-        # OR we should update the API to take language.
-        # `backend/api/public_content.py` -> `get_gallery` DOES NOT take language.
-        # But `backend/api/public.py` -> `get_public_gallery` DOES NOT take language.
-        
-        # Let's return ALL language columns so frontend can pick.
-        # Or better, let's just select * because we added columns to the table.
-        
         query = """
             SELECT *
             FROM gallery_images
@@ -173,9 +163,6 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
         gallery = [dict(zip(columns, row)) for row in rows]
 
         log_info(f"📸 [Gallery DB] Получено {len(gallery)} элементов галереи (category: {category})", "db")
-
-        # Пути уже корректные в БД, sanitize_url не требуется
-        # (sanitize_url вызывается в api/gallery.py если нужно)
 
         return gallery
         

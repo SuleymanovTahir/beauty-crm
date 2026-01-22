@@ -125,6 +125,7 @@ from api.marketplace_integrations import router as marketplace_integrations_rout
 from api.recordings import router as recordings_router
 from api.admin_stubs import router as admin_stubs_router
 from api.chat_ws import router as chat_ws_router
+from api.push_tokens import router as push_tokens_router
 
 
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -234,6 +235,7 @@ app.include_router(payment_integrations_router, prefix="/api")  # Payment Integr
 app.include_router(marketplace_integrations_router, prefix="/api")  # Marketplace Integrations API
 app.include_router(recordings_router, prefix="/api")  # Recordings & Folders API
 app.include_router(admin_stubs_router, prefix="/api")  # Admin Stubs (temporary endpoints)
+app.include_router(push_tokens_router)  # Push Notifications Tokens API
 
 
 
@@ -295,10 +297,20 @@ async def log_requests(request: Request, call_next):
 # 1. Timing (Inner layer - closest to app)
 app.add_middleware(TimingMiddleware)
 
-# 2. Cache Control
+# 2. Rate Limiting (защита от перегрузки)
+if os.getenv("ENVIRONMENT") == "production":
+    from middleware.rate_limit import RateLimitMiddleware
+    app.add_middleware(
+        RateLimitMiddleware,
+        requests_per_minute=120,  # 120 запросов в минуту на IP
+        requests_per_second=20    # 20 запросов в секунду на IP
+    )
+    log_info("✅ Rate limiting enabled: 120/min, 20/sec per IP", "startup")
+
+# 3. Cache Control
 app.add_middleware(CacheControlMiddleware)
 
-# 3. GZip Compression
+# 4. GZip Compression
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # 3. CORS Layer (Outer layer)

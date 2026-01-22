@@ -31,15 +31,8 @@ export class WebRTCService {
   private remoteUserId: number | null = null;
   private callType: CallType = 'audio';
 
-  // Callbacks
-  public onIncomingCall: ((from: number, callType: CallType) => void) | null = null;
-  public onCallAccepted: (() => void) | null = null;
-  public onCallRejected: (() => void) | null = null;
-  public onRemoteStream: ((stream: MediaStream) => void) | null = null;
-  public onCallEnded: (() => void) | null = null;
-  public onError: ((error: string) => void) | null = null;
-  public onQualityChange: ((quality: 'excellent' | 'good' | 'poor' | 'disconnected', stats: any) => void) | null = null;
-  public onUserStatusChange: ((userId: number, isOnline: boolean, lastSeen?: string | null) => void) | null = null;
+  // Event listeners storage
+  private listeners: Record<string, Function[]> = {};
 
   // Internal state
   private iceCandidatesQueue: RTCIceCandidateInit[] = [];
@@ -49,6 +42,146 @@ export class WebRTCService {
   private isAudioEnabled: boolean = true;
   private isVideoEnabled: boolean = true;
   private qualityCheckInterval: any = null;
+
+  // Audio handling
+  private audioContext: AudioContext | null = null;
+  private activeOscillators: any[] = [];
+  private isRinging: boolean = false;
+
+  /**
+   * Subscribe to an event
+   */
+  addEventListener(event: string, callback: Function): void {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
+    }
+    this.listeners[event].push(callback);
+  }
+
+  /**
+   * Unsubscribe from an event
+   */
+  removeEventListener(event: string, callback: Function): void {
+    if (!this.listeners[event]) return;
+    this.listeners[event] = this.listeners[event].filter(cb => cb !== callback);
+  }
+
+  /**
+   * Emit an event to all subscribers
+   */
+  private emit(event: string, ...args: any[]): void {
+    if (this.listeners[event]) {
+      this.listeners[event].forEach((cb) => {
+        try {
+          cb(...args);
+        } catch (err) {
+          console.error(`Error in listener for event ${event}:`, err);
+        }
+      });
+    }
+  }
+
+  /**
+   * Stop all playing ringtones/sounds
+   */
+  stopRingtone(): void {
+    this.activeOscillators.forEach((osc) => {
+      try {
+        osc.stop();
+        osc.disconnect();
+      } catch (e) { /* ignore */ }
+    });
+    this.activeOscillators = [];
+    this.isRinging = false;
+  }
+
+  /**
+   * Play ringtone sounds
+   */
+  playRingtone(type: 'incoming' | 'outgoing' | 'end'): void {
+    try {
+      // Don't play if already ringing (prevent overlap)
+      if (this.isRinging && type !== 'end') return;
+
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+
+      if (!this.audioContext) {
+        this.audioContext = new AudioCtx();
+      }
+      const ctx = this.audioContext;
+
+      // Resume context if suspended
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+
+      this.stopRingtone(); // Stop previous sounds
+
+      if (type === 'incoming') {
+        this.isRinging = true;
+        // Rhythmic ringing loop
+        const startBeep = (time: number) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.frequency.value = 800;
+          g.gain.setValueAtTime(0.1, time);
+          g.gain.linearRampToValueAtTime(0, time + 1);
+          o.start(time);
+          o.stop(time + 1);
+          this.activeOscillators.push(o);
+        };
+
+        // Schedule 15 seconds of ringing
+        for (let i = 0; i < 15; i++) {
+          startBeep(ctx.currentTime + i * 2);
+        }
+
+      } else if (type === 'outgoing') {
+        this.isRinging = true;
+        // Dial tone
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.frequency.value = 440;
+        gain.gain.value = 0.05;
+
+        // Pulse it
+        const lfo = ctx.createOscillator();
+        lfo.type = 'square';
+        lfo.frequency.value = 0.5;
+        const lfoGain = ctx.createGain();
+        lfoGain.gain.value = 500;
+
+        osc.start();
+        this.activeOscillators.push(osc);
+
+        // Stop dialing after 30s timeout
+        setTimeout(() => {
+          if (this.isRinging) this.stopRingtone();
+        }, 30000);
+
+      } else if (type === 'end') {
+        // Disconnect tone
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.frequency.value = 300;
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+      }
+    } catch (e) {
+      console.error('Audio playback failed', e);
+    }
+  }
 
   /**
    * Инициализация WebRTC сервиса
@@ -69,9 +202,8 @@ export class WebRTCService {
    */
   private async connectWebSocket(): Promise<void> {
     return new Promise((resolve, reject) => {
-      // Используем wss:// для HTTPS и ws:// для HTTP
+      // Используем wss:// для HTTPS (Secure WebSocket) для безопасности
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      // Use same port as current location for WebSocket
       const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
       const wsUrl = `${protocol}//${window.location.hostname}${port !== '443' && port !== '80' ? ':' + port : ''}/api/webrtc/signal`;
       console.log(`🔌 [WebRTC] Connecting to WebSocket: ${wsUrl}`);
@@ -94,7 +226,7 @@ export class WebRTCService {
 
       this.ws.onerror = (error) => {
         console.error('WebSocket error:', error);
-        this.onError?.('Ошибка подключения к серверу звонков');
+        this.emit('error', 'Ошибка подключения к серверу звонков');
         reject(error);
       };
 
@@ -118,18 +250,18 @@ export class WebRTCService {
         console.log('📞 Incoming call from:', data.from);
         this.remoteUserId = data.from;
         this.callType = data.call_type;
-        this.onIncomingCall?.(data.from, data.call_type);
+        this.emit('incomingCall', data.from, data.call_type);
         break;
 
       case 'call-accepted':
         console.log('Call accepted by:', data.from);
-        this.onCallAccepted?.();
+        this.emit('callAccepted');
         await this.createOffer();
         break;
 
       case 'call-rejected':
         console.log('Call rejected by:', data.from);
-        this.onCallRejected?.();
+        this.emit('callRejected');
         this.cleanup();
         break;
 
@@ -150,18 +282,18 @@ export class WebRTCService {
 
       case 'hangup':
         console.log('📴 Call ended by remote user');
-        this.onCallEnded?.();
+        this.emit('callEnded');
         this.cleanup();
         break;
 
       case 'error':
         console.error('Server error:', data.message);
-        this.onError?.(data.message);
+        this.emit('error', data.message);
         break;
 
       case 'user_status':
         console.log(`👤 User ${data.user_id} is ${data.status}`);
-        this.onUserStatusChange?.(data.user_id, data.status === 'online', data.last_seen || data.timestamp);
+        this.emit('userStatus', data.user_id, data.status === 'online', data.last_seen || data.timestamp);
         break;
     }
   }
@@ -200,7 +332,7 @@ export class WebRTCService {
       console.log(`📞 Calling user ${toUserId} (${callType})`);
     } catch (error) {
       console.error('Error starting call:', error);
-      this.onError?.('Не удалось получить доступ к камере/микрофону');
+      this.emit('error', 'Не удалось получить доступ к камере/микрофону');
       this.cleanup();
     }
   }
@@ -223,13 +355,13 @@ export class WebRTCService {
         to: this.remoteUserId
       });
 
-      // Вызываем callback
-      this.onCallAccepted?.();
+      // Вызываем событие локально
+      this.emit('callAccepted');
 
       console.log('Call accepted');
     } catch (error) {
       console.error('Error accepting call:', error);
-      this.onError?.('Не удалось получить доступ к камере/микрофону');
+      this.emit('error', 'Не удалось получить доступ к камере/микрофону');
       this.cleanup();
     }
   }
@@ -250,28 +382,51 @@ export class WebRTCService {
    * Завершить звонок
    */
   endCall(): void {
-    this.sendSignal({
-      type: 'hangup',
-      from: this.currentUserId,
-      to: this.remoteUserId
-    });
+    if (this.remoteUserId) {
+      console.log(`Ending call with user ${this.remoteUserId}`);
+      this.sendSignal({
+        type: 'hangup',
+        from: this.currentUserId,
+        to: this.remoteUserId
+      });
+    } else {
+      console.warn('Attempted to end call but remoteUserId is null');
+    }
     this.cleanup();
   }
 
   /**
    * Получить доступ к медиа-устройствам
    */
+  /**
+   * Получить доступ к медиа-устройствам
+   */
   private async getMediaDevices(callType: CallType): Promise<void> {
+    // Stop any existing stream first to ensure camera/mic are released
+    if (this.localStream) {
+      console.log('Stopping existing local stream tracks...');
+      this.localStream.getTracks().forEach(track => track.stop());
+    }
+
     const constraints = {
-      audio: true,
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+      },
       video: callType === 'video' ? {
         width: { ideal: 1280 },
         height: { ideal: 720 }
       } : false
     };
 
-    this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
-    console.log('🎥 Local stream obtained');
+    try {
+      this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('🎥 Local stream obtained per constraints');
+    } catch (error) {
+      console.error('Failed to get media devices:', error);
+      throw error;
+    }
   }
 
   /**
@@ -279,14 +434,14 @@ export class WebRTCService {
    */
   private createPeerConnection(): void {
     if (this.peerConnection) {
-      // If connection exists, close it first
       this.peerConnection.close();
     }
     this.peerConnection = new RTCPeerConnection(DEFAULT_CONFIG);
+    // WebRTC connection is encrypted by default (DTLS-SRTP)
 
     // Добавляем локальный stream
     if (this.localStream) {
-      this.localStream.getTracks().forEach(track => {
+      this.localStream.getTracks().forEach((track) => {
         this.peerConnection!.addTrack(track, this.localStream!);
       });
     }
@@ -295,7 +450,7 @@ export class WebRTCService {
     this.peerConnection.ontrack = (event) => {
       console.log('📺 Remote track received');
       this.remoteStream = event.streams[0];
-      this.onRemoteStream?.(this.remoteStream);
+      this.emit('remoteStream', this.remoteStream);
     };
 
     // Обработка ICE candidates
@@ -315,13 +470,12 @@ export class WebRTCService {
       console.log('Connection state:', this.peerConnection?.connectionState);
 
       if (this.peerConnection?.connectionState === 'connected') {
-        // Соединение установлено - начинаем мониторинг качества
         this.startQualityMonitoring();
       }
 
       if (this.peerConnection?.connectionState === 'disconnected' ||
         this.peerConnection?.connectionState === 'failed') {
-        this.onCallEnded?.();
+        this.emit('callEnded');
         this.cleanup();
       }
     };
@@ -372,8 +526,6 @@ export class WebRTCService {
       });
 
       console.log('📤 Answer sent');
-
-      // Process queued ICE candidates
       this.processIceQueue();
     } catch (error) {
       console.error('Error handling offer:', error);
@@ -390,8 +542,6 @@ export class WebRTCService {
       await this.peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
       this.isRemoteDescriptionSet = true;
       console.log('Answer applied');
-
-      // Process queued ICE candidates
       this.processIceQueue();
     } catch (error) {
       console.error('Error handling answer:', error);
@@ -404,7 +554,6 @@ export class WebRTCService {
   private async handleIceCandidate(candidate: RTCIceCandidateInit): Promise<void> {
     if (!this.peerConnection) return;
 
-    // Changes: Queue candidates if remote description is not set yet
     if (!this.peerConnection.remoteDescription && !this.isRemoteDescriptionSet) {
       console.log('🧊 Queuing ICE candidate (remote description not set)');
       this.iceCandidatesQueue.push(candidate);
@@ -520,7 +669,6 @@ export class WebRTCService {
           }
         });
 
-        // Определяем качество
         if (latency < 100 && packetLoss < 2) {
           quality = 'excellent';
         } else if (latency < 200 && packetLoss < 5) {
@@ -531,12 +679,11 @@ export class WebRTCService {
           quality = 'poor';
         }
 
-        // Уведомляем о изменении качества
-        this.onQualityChange?.(quality, { latency, packetLoss });
+        this.emit('qualityChange', quality, { latency, packetLoss });
       } catch (error) {
         console.error('Error getting stats:', error);
       }
-    }, 2000); // Проверка каждые 2 секунды
+    }, 2000);
   }
 
   /**
@@ -554,17 +701,14 @@ export class WebRTCService {
    */
   private cleanup(): void {
     console.log('🧹 Cleaning up WebRTC resources');
-
-    // Останавливаем мониторинг качества
+    this.stopRingtone();
     this.stopQualityMonitoring();
 
-    // Останавливаем треки
     if (this.localStream) {
-      this.localStream.getTracks().forEach(track => track.stop());
+      this.localStream.getTracks().forEach((track) => track.stop());
       this.localStream = null;
     }
 
-    // Закрываем peer connection
     if (this.peerConnection) {
       this.peerConnection.close();
       this.peerConnection = null;
