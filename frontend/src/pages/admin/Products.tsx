@@ -36,8 +36,13 @@ const Products = () => {
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
 
     useEffect(() => {
-        loadProducts();
-        loadCategories();
+        // Параллельная загрузка для ускорения
+        Promise.all([
+            loadProducts(),
+            loadCategories()
+        ]).catch(error => {
+            console.error('Error loading products data:', error);
+        });
     }, [filterCategory]);
 
     const loadProducts = async () => {
