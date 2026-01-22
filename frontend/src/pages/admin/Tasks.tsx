@@ -36,8 +36,13 @@ interface Task {
     due_date?: string;
     assignee_id?: number;
     assignee_name?: string;
+    assignee_ids?: number[];
+    assignee_names?: string[];
+    created_by?: number;
+    created_by_name?: string;
     created_at: string;
 }
+
 
 interface Stage {
     id: number;
@@ -339,22 +344,47 @@ export default function Tasks() {
                                                 </div>
 
                                                 <h4 className="text-sm font-semibold text-gray-900 mb-1 leading-snug">{task.title}</h4>
-                                                {task.description && <p className="text-xs text-gray-500 line-clamp-2 mb-3">{task.description}</p>}
+                                                {task.description && <p className="text-xs text-gray-500 line-clamp-2 mb-2">{task.description}</p>}
+
+                                                {task.created_by_name && (
+                                                    <div className="flex items-center gap-1.5 mb-3 text-[10px] text-gray-400">
+                                                        <User className="w-3 h-3" />
+                                                        <span>{t('created_by')}: {task.created_by_name}</span>
+                                                    </div>
+                                                )}
 
                                                 <div className="flex items-center justify-between pt-3 border-t border-gray-50 mt-3">
-                                                    <div className="flex items-center gap-2" title={task.assignee_name}>
-                                                        {task.assignee_name ? (
-                                                            <Avatar className="w-5 h-5">
-                                                                <AvatarFallback className="text-[9px] bg-pink-50 text-pink-600">
-                                                                    {task.assignee_name[0]}
-                                                                </AvatarFallback>
-                                                            </Avatar>
+                                                    <div className="flex items-center gap-1.5">
+                                                        {task.assignee_names && task.assignee_names.length > 0 ? (
+                                                            <>
+                                                                <div className="flex -space-x-2">
+                                                                    {task.assignee_names.slice(0, 3).map((name, idx) => (
+                                                                        <Avatar key={idx} className="w-6 h-6 border-2 border-white">
+                                                                            <AvatarFallback className="text-[9px] bg-pink-50 text-pink-600">
+                                                                                {name[0]}
+                                                                            </AvatarFallback>
+                                                                        </Avatar>
+                                                                    ))}
+                                                                    {task.assignee_names.length > 3 && (
+                                                                        <div className="w-6 h-6 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[9px] text-gray-600 font-medium">
+                                                                            +{task.assignee_names.length - 3}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <span className="text-xs text-gray-400 ml-1">
+                                                                    {task.assignee_names.length === 1
+                                                                        ? task.assignee_names[0]
+                                                                        : `${task.assignee_names.length} ${t('assignees', 'ответственных')}`}
+                                                                </span>
+                                                            </>
                                                         ) : (
-                                                            <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center border border-dashed border-gray-300 text-gray-400">
-                                                                <User className="w-3 h-3" />
-                                                            </div>
+                                                            <>
+                                                                <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center border border-dashed border-gray-300 text-gray-400">
+                                                                    <User className="w-3 h-3" />
+                                                                </div>
+                                                                <span className="text-xs text-gray-400">{t('unassigned')}</span>
+                                                            </>
                                                         )}
-                                                        <span className="text-xs text-gray-400">{task.assignee_name || t('unassigned')}</span>
                                                     </div>
 
                                                     {task.due_date && (

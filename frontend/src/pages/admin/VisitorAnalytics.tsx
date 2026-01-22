@@ -1,7 +1,8 @@
 // /frontend/src/pages/admin/VisitorAnalytics.tsx
 import { useState, useEffect, useMemo, useRef, startTransition } from 'react';
-import { MapPin, RefreshCw, Download, Loader, ChevronLeft, ChevronRight, Home, Globe, ArrowUpDown, ArrowUp, ArrowDown, X } from 'lucide-react';
+import { MapPin, RefreshCw, Download, Loader, ChevronLeft, ChevronRight, Globe, ArrowUpDown, ArrowUp, ArrowDown, X, Trash2 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog";
 import { visitorApi } from '../../services/visitorApi';
 import { toast } from 'sonner';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -9,6 +10,7 @@ import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { useTranslation } from 'react-i18next';
 // Removed heavy import: import * as Flags from 'country-flag-icons/react/3x2';
 import { getCountryCode } from '../../utils/countryCodes';
+import { useAuth } from '../../contexts/AuthContext';
 import './VisitorAnalytics.css';
 
 interface Visitor {
@@ -57,7 +59,13 @@ const CountryFlag = ({ countryName, className }: { countryName: string, classNam
 
 export default function VisitorAnalytics() {
     const { t } = useTranslation('admin/visitoranalytics');
+    const { user } = useAuth();
     const [visitors, setVisitors] = useState<Visitor[]>([]);
+
+    // Delete dialog state
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+
     const [locationBreakdown, setLocationBreakdown] = useState<any>(null);
     const [countryBreakdown, setCountryBreakdown] = useState<any[]>([]);
     const [cityBreakdown, setCityBreakdown] = useState<any[]>([]);
@@ -162,7 +170,7 @@ export default function VisitorAnalytics() {
 
             if (dashboardData.success && dashboardData.data) {
                 const data = dashboardData.data;
-                
+
                 // Helper to translate chart data
                 const translateData = (arr: any[], keyMap: Record<string, string>) =>
                     arr.map(item => ({
@@ -182,7 +190,7 @@ export default function VisitorAnalytics() {
                     const deviceMap: Record<string, string> = {
                         'Desktop': 'desktop', 'Mobile': 'mobile', 'Tablet': 'tablet', 'Other': 'other'
                     };
-                    
+
                     setVisitors(data.visitors || []);
                     setLocationBreakdown(data.location_breakdown);
                     setCountryBreakdown(data.countries || []);
@@ -308,6 +316,43 @@ export default function VisitorAnalytics() {
             toast.error(t('export_failed'));
         } finally {
             setExporting(false);
+        }
+    };
+
+    const handleDeleteClick = () => {
+        setShowDeleteConfirm(true);
+    };
+
+    const handleBulkDelete = async () => {
+        if (!user || user.role !== 'director') return;
+
+        try {
+            setDeleting(true);
+
+            const filters: any = {};
+
+            // Apply current filters
+            if (period) filters.period = period;
+            if (dateFrom) filters.date_from = dateFrom;
+            if (dateTo) filters.date_to = dateTo;
+            if (countryFilter) filters.country = countryFilter;
+            if (cityFilter) filters.city = cityFilter;
+            if (deviceFilter) filters.device_type = deviceFilter;
+
+            const result = await visitorApi.bulkDelete(filters);
+
+            if (result.success) {
+                toast.success(`Удалено записей: ${result.deleted_count}`);
+                setShowDeleteConfirm(false);
+                loadData(); // Reload data
+            } else {
+                toast.error(result.message || 'Ошибка удаления');
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            toast.error('Ошибка при удалении записей');
+        } finally {
+            setDeleting(false);
         }
     };
 
@@ -744,6 +789,18 @@ export default function VisitorAnalytics() {
                         <Download className="w-4 h-4" />
                         {exporting ? t('exporting') : t('export_csv')}
                     </Button>
+
+                    {user?.role === 'director' && (
+                        <Button
+                            variant="destructive"
+                            onClick={handleDeleteClick}
+                            disabled={deleting}
+                            className="gap-2"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            {t('delete_filtered', 'Удалить')}
+                        </Button>
+                    )}
                 </div>
             </div>
 
@@ -1488,6 +1545,31 @@ export default function VisitorAnalytics() {
                     </div>
                 )}
             </div>
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Подтверждение удаления</DialogTitle>
+                        <DialogDescription>
+                            Вы собираетесь удалить данные о посещениях.
+                            Это действие необратимо.
+                            <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-md text-red-800 text-sm">
+                                <strong>Будет удалено записей:</strong> {totalFiltered} шт.<br />
+                                (с учетом текущих фильтров: период, даты, страна, город и т.д.)
+                            </div>
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} disabled={deleting}>
+                            Отмена
+                        </Button>
+                        <Button variant="destructive" onClick={handleBulkDelete} disabled={deleting}>
+                            {deleting ? 'Удаление...' : 'Удалить записи'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

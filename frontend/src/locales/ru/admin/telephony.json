@@ -29,5 +29,6 @@
   "status_ongoing": "В процессе",
   "telephony": "Телефония",
   "telephony_recordings": "записи телефонии",
-  "type": "Тип"
+  "type": "Тип",
+  "records_count": "Записи звонков"
 }

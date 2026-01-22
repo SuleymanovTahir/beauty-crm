@@ -81,7 +81,7 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
         stage_id: defaultStageId?.toString() || stages[0]?.id?.toString() || '',
         priority: 'medium',
         due_date: '',
-        assignee_id: '',
+        assignee_ids: [] as string[],  // Changed to array for multiple assignees
     };
 
     const [formData, setFormData] = useState(initialFormState);
@@ -90,13 +90,15 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
     useEffect(() => {
         if (open) {
             if (taskToEdit) {
+                const assigneeIds = (taskToEdit as any).assignee_ids ||
+                    (taskToEdit.assignee_id ? [taskToEdit.assignee_id.toString()] : []);
                 setFormData({
                     title: taskToEdit.title || '',
                     description: taskToEdit.description || '',
                     stage_id: taskToEdit.stage_id?.toString() || stages[0]?.id?.toString() || '',
                     priority: taskToEdit.priority || 'medium',
                     due_date: taskToEdit.due_date ? taskToEdit.due_date.split('T')[0] : '',
-                    assignee_id: taskToEdit.assignee_id?.toString() || '',
+                    assignee_ids: assigneeIds.map(String),
                 });
             } else {
                 setFormData({
@@ -115,7 +117,7 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
             const payload = {
                 ...formData,
                 stage_id: parseInt(formData.stage_id),
-                assignee_id: formData.assignee_id ? parseInt(formData.assignee_id) : undefined,
+                assignee_ids: formData.assignee_ids.map(id => parseInt(id)),
                 due_date: formData.due_date || null,
             };
 
@@ -215,52 +217,46 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
                     </div>
 
                     {!isEmployee && (
-                        <div className="space-y-2 flex flex-col">
-                            <Label htmlFor="assignee">{t('assignee', 'Ответственный')}</Label>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        className={cn(
-                                            "w-full justify-between font-normal",
-                                            !formData.assignee_id && "text-muted-foreground"
-                                        )}
-                                    >
-                                        {formData.assignee_id
-                                            ? users.find((user) => user.id.toString() === formData.assignee_id)?.full_name
-                                            : t('select_assignee')}
-                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
-                                    <Command>
-                                        <CommandInput placeholder={t('search_assignee')} />
-                                        <CommandList>
-                                            <CommandEmpty>{t('no_user_found')}</CommandEmpty>
-                                            <CommandGroup>
-                                                {users.map((user) => (
-                                                    <CommandItem
-                                                        key={user.id}
-                                                        value={user.full_name + " " + user.username}
-                                                        onSelect={() => {
-                                                            setFormData({ ...formData, assignee_id: user.id.toString() });
-                                                        }}
-                                                    >
-                                                        <Check
-                                                            className={cn(
-                                                                "mr-2 h-4 w-4",
-                                                                formData.assignee_id === user.id.toString() ? "opacity-100" : "opacity-0"
-                                                            )}
-                                                        />
-                                                        {user.full_name} (@{user.username})
-                                                    </CommandItem>
-                                                ))}
-                                            </CommandGroup>
-                                        </CommandList>
-                                    </Command>
-                                </PopoverContent>
-                            </Popover>
+                        <div className="space-y-2">
+                            <Label>{t('assignees', 'Ответственные')}</Label>
+                            <div className="border rounded-md p-3 max-h-48 overflow-y-auto space-y-2">
+                                {users.length === 0 ? (
+                                    <p className="text-sm text-muted-foreground">{t('no_user_found')}</p>
+                                ) : (
+                                    users.map((user) => (
+                                        <label
+                                            key={user.id}
+                                            className="flex items-center space-x-2 cursor-pointer hover:bg-accent p-2 rounded"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.assignee_ids.includes(user.id.toString())}
+                                                onChange={(e) => {
+                                                    const userId = user.id.toString();
+                                                    if (e.target.checked) {
+                                                        setFormData({
+                                                            ...formData,
+                                                            assignee_ids: [...formData.assignee_ids, userId]
+                                                        });
+                                                    } else {
+                                                        setFormData({
+                                                            ...formData,
+                                                            assignee_ids: formData.assignee_ids.filter(id => id !== userId)
+                                                        });
+                                                    }
+                                                }}
+                                                className="w-4 h-4 rounded border-gray-300"
+                                            />
+                                            <span className="text-sm">{user.full_name} (@{user.username})</span>
+                                        </label>
+                                    ))
+                                )}
+                            </div>
+                            {formData.assignee_ids.length > 0 && (
+                                <p className="text-xs text-muted-foreground">
+                                    {t('selected_count', { count: formData.assignee_ids.length })}
+                                </p>
+                            )}
                         </div>
                     )}
 

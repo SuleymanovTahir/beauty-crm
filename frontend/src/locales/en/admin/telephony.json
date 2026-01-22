@@ -16,6 +16,7 @@
   "phone": "Telephone",
   "recording_file": "Booking file",
   "recording_url": "booking Link (URL)",
+  "records_count": "Call records",
   "search_client": "Searching for a client...",
   "search_manager": "Search for a master...",
   "search_service": "Search for a service...",

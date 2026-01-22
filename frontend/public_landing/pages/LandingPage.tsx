@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Header } from '../components/Header';
 import { Hero } from '../components/Hero';
 import { IntroSection } from '../components/IntroSection';
@@ -25,7 +26,30 @@ const LoadingSpinner = () => (
 );
 
 export function LandingPage() {
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
   const [initialData, setInitialData] = useState<any>(null);
+
+  // SEO: Dynamic meta tags
+  useEffect(() => {
+    const salonName = initialData?.salon?.name || 'ML Ediamant';
+    const description = t('seo.description', 'Профессиональный салон красоты в Дубае. Маникюр, педикюр, микроблейдинг, косметология.');
+    const keywords = t('seo.keywords', 'салон красоты дубай, маникюр, педикюр, микроблейдинг, косметология, beauty salon dubai');
+
+    document.title = `${salonName} - ${t('seo.title', 'Салон красоты в Дубае')}`;
+
+    const updateMeta = (name: string, content: string) => {
+      let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('name', name);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    updateMeta('description', description);
+    updateMeta('keywords', keywords);
+  }, [initialData, t, i18n.language]);
 
   useEffect(() => {
     // 1. Check if we have cached data to show immediately
@@ -52,8 +76,6 @@ export function LandingPage() {
     fetchInitialData();
 
     // 3. Setup section tracking
-
-    // Track initial load (hero)
     trackSection('hero');
 
     const observer = new IntersectionObserver((entries) => {
@@ -65,9 +87,8 @@ export function LandingPage() {
           }
         }
       });
-    }, { threshold: 0.3 }); // Track when 30% of section is visible
+    }, { threshold: 0.3 });
 
-    // Observe all sections with IDs
     const sections = document.querySelectorAll('main > div[id]');
     sections.forEach(section => observer.observe(section));
 
@@ -92,7 +113,6 @@ export function LandingPage() {
             <Services initialServices={initialData?.services} />
           </Suspense>
         </div>
-
 
         <div id="portfolio">
           <Suspense fallback={<LoadingSpinner />}>
@@ -142,4 +162,3 @@ export function LandingPage() {
     </div>
   );
 }
-

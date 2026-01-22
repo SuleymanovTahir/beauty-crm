@@ -44,6 +44,8 @@ import { api } from '../../services/api';
 import { usePermissions } from '../../utils/permissions';
 import { getPhotoUrl } from '../../utils/photoUtils';
 
+import { webrtcService } from '../../services/webrtc';
+
 interface MainLayoutProps {
     user: { id: number; role: string; full_name: string; username?: string } | null;
     onLogout: () => void;
@@ -53,6 +55,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const navigate = useNavigate();
     const location = useLocation();
     const { t } = useTranslation(['layouts/mainlayout', 'common']);
+    // ... (rest of state definitions)
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const [expandedMenu, setExpandedMenu] = useState<string | null>(() => {
@@ -82,7 +85,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     // Используем централизованную систему прав
     const permissions = usePermissions(user?.role || 'employee');
 
-    // Определяем префикс путей в зависимости от роли или текущего пути
+    // ... (dashboardPath memo)
     const rolePrefix = useMemo(() => {
         const path = location.pathname;
         if (path.startsWith('/crm')) return '/crm';
@@ -103,12 +106,12 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         return `${rolePrefix}/dashboard`;
     }, [user?.role, rolePrefix]);
 
-    // WebSocket для real-time уведомлений (заменяет HTTP polling)
+    // WebSocket для real-time уведомлений
     useNotificationsWebSocket({
         userId: user?.id || null,
         onNotification: (data) => {
             console.log('🔔 New notification via WebSocket:', data);
-            loadNotifications(); // Обновляем список уведомлений
+            loadNotifications();
             toast.info(data.title || 'Новое уведомление');
         },
         onUnreadCountUpdate: (count) => {
@@ -122,6 +125,48 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             console.log('🔔 WebSocket disconnected - will try to reconnect');
         }
     });
+
+    // WebRTC Service Initialization (Global Online Status & Calls)
+    useEffect(() => {
+        if (user?.id) {
+            webrtcService.initialize(user.id).catch(err => {
+                console.error('Failed to initialize WebRTC globally:', err);
+            });
+
+            // Global Incoming Call Handler
+            const handleIncomingCall = (_fromUserId: number, _callType: string) => {
+                webrtcService.playRingtone('incoming');
+                // If we are already on the chat page, we don't need a toast because the chat handles it
+                if (!location.pathname.includes('/internal-chat')) {
+                    toast.info(t('calls.incoming_call', 'Входящий звонок!'), {
+                        description: t('calls.click_to_answer', 'Нажмите, чтобы ответить'),
+                        action: {
+                            label: t('common:answer', 'Ответить'),
+                            onClick: () => navigate(`${rolePrefix}/internal-chat`)
+                        },
+                        duration: 10000,
+                        onDismiss: () => webrtcService.stopRingtone(),
+                        onAutoClose: () => webrtcService.stopRingtone(),
+                    });
+                }
+            };
+
+            const handleStopRinging = () => webrtcService.stopRingtone();
+
+            webrtcService.addEventListener('incomingCall', handleIncomingCall);
+            webrtcService.addEventListener('callAccepted', handleStopRinging);
+            webrtcService.addEventListener('callRejected', handleStopRinging);
+            webrtcService.addEventListener('callEnded', handleStopRinging);
+
+            return () => {
+                webrtcService.removeEventListener('incomingCall', handleIncomingCall);
+                webrtcService.removeEventListener('callAccepted', handleStopRinging);
+                webrtcService.removeEventListener('callRejected', handleStopRinging);
+                webrtcService.removeEventListener('callEnded', handleStopRinging);
+                webrtcService.disconnect();
+            };
+        }
+    }, [user?.id, location.pathname, navigate, rolePrefix, t]);
 
     useEffect(() => {
         // Загружаем все данные параллельно для ускорения загрузки
@@ -141,6 +186,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             loadNotifications();
         };
         window.addEventListener('notifications-updated', handleNotificationsUpdate);
+
 
         const handleMessengersUpdate = () => {
             loadEnabledMessengers();
