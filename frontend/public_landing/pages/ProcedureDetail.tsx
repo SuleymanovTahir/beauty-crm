@@ -169,18 +169,8 @@ export function ProcedureDetail() {
   const scrollToBooking = () => navigate("/#booking");
 
   if (!serviceId) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="pt-24 pb-24 px-6 lg:px-12">
-          <div className="container mx-auto max-w-3xl">
-            <h1 className="text-3xl font-bold mb-4">Invalid service URL</h1>
-            <Button onClick={() => navigate("/")}>Go home</Button>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
+    navigate("/");
+    return null;
   }
 
   return (
@@ -189,14 +179,12 @@ export function ProcedureDetail() {
       <main className="pt-24 pb-24 px-6 lg:px-12">
         <div className="container mx-auto max-w-4xl">
           <h1 className="text-4xl font-bold mb-4 text-[var(--heading)]">
-            {service?.name || t("loading", { ns: "common", defaultValue: "Loading..." })}
+            {service?.name}
           </h1>
 
-          {service?.description ? (
-            <p className="text-muted-foreground text-lg mb-6 leading-relaxed">{service.description}</p>
-          ) : (
+          {service?.description && (
             <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
-              {t("serviceDescriptionFallback", { ns: "public_landing", defaultValue: "Подробности процедуры уточняйте у администратора." })}
+              {service.description}
             </p>
           )}
 
