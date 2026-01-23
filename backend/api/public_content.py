@@ -1,5 +1,6 @@
 """
 API endpoints для публичного контента
+С Redis кэшированием для высокой нагрузки
 """
 from fastapi import APIRouter, Query
 from typing import Optional, List, Dict
@@ -9,8 +10,14 @@ from db.public_content import (
     get_active_gallery
 )
 from utils.logger import log_info
+from utils.cache import cache
 
 router = APIRouter()
+
+# Cache TTL в секундах
+CACHE_TTL_REVIEWS = 300  # 5 минут
+CACHE_TTL_FAQ = 600      # 10 минут
+CACHE_TTL_GALLERY = 300  # 5 минут
 
 @router.get("/public/reviews")
 async def get_reviews(
@@ -19,13 +26,23 @@ async def get_reviews(
 ) -> Dict:
     """
     Получить активные отзывы на указанном языке
-    
+
     - **language**: Код языка (по умолчанию 'ru')
     - **limit**: Максимальное количество отзывов
     """
+    # Try cache first
+    cache_key = f"public:reviews:{language}:{limit or 'all'}"
+    cached = cache.get(cache_key)
+    if cached:
+        return cached
+
     log_info(f"API: Запрос отзывов на языке {language}", "api")
     reviews = get_active_reviews(language=language, limit=limit)
-    return {"reviews": reviews}
+    result = {"reviews": reviews}
+
+    # Cache the result
+    cache.set(cache_key, result, CACHE_TTL_REVIEWS)
+    return result
 
 @router.get("/public/testimonials")
 async def get_testimonials(
@@ -35,8 +52,17 @@ async def get_testimonials(
     """
     Алиас для /public/reviews (для совместимости)
     """
+    # Try cache first
+    cache_key = f"public:testimonials:{language}:{limit}"
+    cached = cache.get(cache_key)
+    if cached:
+        return cached
+
     reviews = get_active_reviews(language=language, limit=limit)
-    return {"reviews": reviews}
+    result = {"reviews": reviews}
+
+    cache.set(cache_key, result, CACHE_TTL_REVIEWS)
+    return result
 
 @router.get("/public/faq")
 async def get_faq(

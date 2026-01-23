@@ -1,5 +1,6 @@
 """
 API endpoints для публичных данных сотрудников
+С Redis кэшированием для высокой нагрузки
 """
 from fastapi import APIRouter, Query
 from typing import Optional, List, Dict
@@ -7,9 +8,13 @@ from typing import Optional, List, Dict
 from db.connection import get_db_connection
 from utils.logger import log_info
 from utils.utils import sanitize_url
+from utils.cache import cache
 import time
 
 router = APIRouter()
+
+# Cache TTL
+CACHE_TTL_EMPLOYEES = 300  # 5 минут
 
 @router.get("/public/employees")
 async def get_public_employees(
@@ -17,9 +22,15 @@ async def get_public_employees(
 ) -> List[Dict]:
     """
     Получить активных сотрудников для публичной страницы
-    
+
     - **language**: Код языка (по умолчанию 'ru')
     """
+    # Try cache first
+    cache_key = f"public:employees:{language}"
+    cached = cache.get(cache_key)
+    if cached:
+        return cached
+
     log_info(f"API: Запрос сотрудников на языке {language}", "api")
     start_time = time.time()
     
@@ -199,10 +210,13 @@ async def get_public_employees(
         log_info(f"⏱️ get_public_employees took {duration:.4f}s returning {len(employees)} employees", "api")
 
         log_info(f"Получено {len(employees)} сотрудников на языке {language}", "api")
-        
+
+        # Cache in Redis
+        cache.set(cache_key, employees, CACHE_TTL_EMPLOYEES)
+
         from fastapi.responses import JSONResponse
         response = JSONResponse(employees)
-        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Cache-Control"] = "public, max-age=60"  # Browser can cache for 60 seconds
         return response
         
     except Exception as e:

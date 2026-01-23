@@ -948,7 +948,10 @@ async def get_gallery(session_token: Optional[str] = Cookie(None)):
             conn.close()
 
 @router.get("/favorite-masters")
-async def get_fav_masters(session_token: Optional[str] = Cookie(None)):
+async def get_fav_masters(
+    session_token: Optional[str] = Cookie(None),
+    language: str = 'ru'
+):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
 
@@ -959,14 +962,24 @@ async def get_fav_masters(session_token: Optional[str] = Cookie(None)):
         # Try to find canonical client_id for favorites lookup
         client_id = _get_client_id(user, c)
 
+        # Sanitize language
+        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+        if language not in valid_languages:
+            language = 'ru'
+
+        # Build localized field names
+        position_field = f'position_{language}'
+        name_field = f'full_name_{language}'
+        spec_field = f'specialization_{language}'
+
         # Get all service providers (masters) with their favorite status and ratings
-        c.execute("""
+        c.execute(f"""
             SELECT
                 u.id,
-                u.full_name,
-                u.position,
+                COALESCE(u.{name_field}, u.full_name) as name,
+                COALESCE(u.{position_field}, u.position) as position,
                 COALESCE(u.photo, u.photo_url),
-                u.specialization,
+                COALESCE(u.{spec_field}, u.specialization) as specialization,
                 CASE WHEN cfm.master_id IS NOT NULL THEN true ELSE false END as is_favorite,
                 COALESCE(AVG(r.rating), 0) as rating,
                 COUNT(DISTINCT r.id) as reviews_count
@@ -975,11 +988,12 @@ async def get_fav_masters(session_token: Optional[str] = Cookie(None)):
             LEFT JOIN bookings b ON b.master_id = u.id
             LEFT JOIN ratings r ON r.booking_id = b.id
             WHERE u.is_service_provider = true AND u.is_active = true
-            GROUP BY u.id, u.full_name, u.position, u.photo, u.photo_url, u.specialization, cfm.master_id
+            GROUP BY u.id, u.{name_field}, u.full_name, u.{position_field}, u.position, u.photo, u.photo_url, u.{spec_field}, u.specialization, cfm.master_id
             ORDER BY u.full_name
         """, (client_id,))
 
         masters = []
+        default_specialty = "Специалист" if language == 'ru' else "Specialist"
         for row in c.fetchall():
             photo = row[3]
             if photo and photo.startswith('/static'):
@@ -988,12 +1002,12 @@ async def get_fav_masters(session_token: Optional[str] = Cookie(None)):
             masters.append({
                 "id": row[0],
                 "name": row[1],
-                "specialty": row[2] or "Специалист",
+                "specialty": row[2] or default_specialty,
                 "avatar": photo or "/default-avatar.png",
-                "photo": photo or "/default-avatar.png",  # Добавлено для совместимости
+                "photo": photo or "/default-avatar.png",
                 "specialization": row[4],
                 "is_favorite": row[5],
-                "rating": round(row[6], 1) if row[6] else 5.0,  # Дефолт 5.0 вместо 0
+                "rating": round(row[6], 1) if row[6] else 5.0,
                 "reviews_count": row[7] or 0
             })
 

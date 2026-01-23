@@ -379,3 +379,21 @@ img[loading="lazy"] {
   margin-left: 0.25rem;
   opacity: 0.6;
 }
+
+/* Placeholder Styles - улучшенная видимость */
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af; /* gray-400 - хорошо видно на белом и светлом фоне */
+  opacity: 1;
+}
+
+/* Специально для формы подписки в Footer */
+.bg-muted\/30 input::placeholder {
+  color: #6b7280; /* gray-500 - более темный для контраста */
+}
+
+/* Для форм на темном фоне */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #9ca3af;
+}

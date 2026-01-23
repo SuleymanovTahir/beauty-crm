@@ -11,7 +11,7 @@ from db.tasks import (
 )
 from db.connection import get_db_connection
 from utils.utils import get_current_user
-from utils.logger import log_warning
+from utils.logger import log_warning, log_info
 
 router = APIRouter()
 
@@ -186,6 +186,13 @@ async def new_task(
     if data.get('assignee_id') and data['assignee_id'] not in assignee_ids:
         assignee_ids.append(data['assignee_id'])
 
+    # AUTO-ASSIGN: Если ответственные не указаны, назначаем создателя
+    if not assignee_ids:
+        assignee_ids = [current_user['id']]
+        data['assignee_ids'] = assignee_ids
+        data['assignee_id'] = current_user['id']
+        log_info(f"Auto-assigned creator {current_user['id']} as assignee for new task", "tasks")
+
     # Check each assignee against hierarchy
     for assignee_id in assignee_ids:
         if not can_assign_to_user(current_user['role'], assignee_id):
@@ -231,4 +238,5 @@ async def remove_task(
 
 @router.get("/tasks/analytics")
 async def analytics(current_user: dict = Depends(get_current_user)):
-    return get_task_analytics()
+    """Статистика задач для текущего пользователя (только его задачи)"""
+    return get_task_analytics(user_id=current_user['id'])

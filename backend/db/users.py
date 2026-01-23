@@ -72,43 +72,62 @@ def create_user(username: str, password: str, full_name: str = None,
 
 def verify_user(username: str, password: str) -> Optional[Dict]:
     """Проверить логин и пароль"""
+    from utils.logger import log_info, log_warning, log_error
+
     conn = get_db_connection()
     c = conn.cursor()
-    
-    c.execute("""SELECT id, username, full_name, email, role, employee_id, phone, password_hash
-                 FROM users 
-                 WHERE username = %s AND is_active = TRUE""",
+
+    # Сначала проверяем существует ли пользователь вообще
+    c.execute("""SELECT id, username, full_name, email, role, employee_id, phone, password_hash, is_active
+                 FROM users
+                 WHERE username = %s""",
               (username,))
-    
+
     user_row = c.fetchone()
     conn.close()
-    
-    if user_row:
-        stored_hash = user_row[7]
-        is_valid = False
-        
-        if stored_hash.startswith("pbkdf2:"):
-            try:
-                _, algorithm, iterations_salt_hash = stored_hash.split(':')
-                iterations, salt, hash_value = iterations_salt_hash.split('$')
-                new_hash = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), int(iterations)).hex()
-                is_valid = (new_hash == hash_value)
-            except Exception:
-                is_valid = False
-        else:
-            # Legacy SHA256 support
-            is_valid = (hashlib.sha256(password.encode()).hexdigest() == stored_hash)
-            
-        if is_valid:
-            return {
-                "id": user_row[0],
-                "username": user_row[1],
-                "full_name": user_row[2],
-                "email": user_row[3],
-                "role": user_row[4],
-                "employee_id": user_row[5],
-                "phone": user_row[6]
-            }
+
+    if not user_row:
+        log_warning(f"[AUTH] User '{username}' not found in database", "auth")
+        return None
+
+    is_active = user_row[8]
+    if not is_active:
+        log_warning(f"[AUTH] User '{username}' exists but is_active=FALSE (deactivated account)", "auth")
+        return None
+
+    stored_hash = user_row[7]
+    is_valid = False
+
+    log_info(f"[AUTH] Verifying password for '{username}', hash type: {'pbkdf2' if stored_hash.startswith('pbkdf2:') else 'legacy_sha256'}", "auth")
+
+    if stored_hash.startswith("pbkdf2:"):
+        try:
+            _, algorithm, iterations_salt_hash = stored_hash.split(':')
+            iterations, salt, hash_value = iterations_salt_hash.split('$')
+            new_hash = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), int(iterations)).hex()
+            is_valid = (new_hash == hash_value)
+            if not is_valid:
+                log_warning(f"[AUTH] Password mismatch for '{username}' (pbkdf2 hash)", "auth")
+        except Exception as e:
+            log_error(f"[AUTH] Error verifying pbkdf2 hash for '{username}': {e}", "auth")
+            is_valid = False
+    else:
+        # Legacy SHA256 support
+        is_valid = (hashlib.sha256(password.encode()).hexdigest() == stored_hash)
+        if not is_valid:
+            log_warning(f"[AUTH] Password mismatch for '{username}' (legacy sha256 hash)", "auth")
+
+    if is_valid:
+        log_info(f"[AUTH] Login successful for '{username}' (role: {user_row[4]})", "auth")
+        return {
+            "id": user_row[0],
+            "username": user_row[1],
+            "full_name": user_row[2],
+            "email": user_row[3],
+            "role": user_row[4],
+            "employee_id": user_row[5],
+            "phone": user_row[6]
+        }
     return None
 
 def delete_user(user_id: int) -> bool:

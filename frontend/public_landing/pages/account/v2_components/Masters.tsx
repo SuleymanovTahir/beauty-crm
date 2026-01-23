@@ -11,20 +11,21 @@ import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../../../src/api/client';
 
 export function Masters() {
-  const { t } = useTranslation(['account', 'common']);
+  const { t, i18n } = useTranslation(['account', 'common']);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [mastersData, setMastersData] = useState<any>(null);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const language = i18n.language?.slice(0, 2) || 'ru';
 
   useEffect(() => {
     loadMasters();
-  }, []);
+  }, [language]);
 
   const loadMasters = async () => {
     try {
       setLoading(true);
-      const data = await apiClient.getFavoriteMasters();
+      const data = await apiClient.getFavoriteMasters(language);
       if (data.success) {
         setMastersData(data);
       }

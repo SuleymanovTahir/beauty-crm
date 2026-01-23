@@ -46,8 +46,8 @@
   "pipeline_overview": "Task funnel",
   "priority": {
     "high": "High",
-    "low": "Short",
-    "medium": "Average"
+    "low": "Low",
+    "medium": "Medium"
   },
   "priority_title": "Priority",
   "quick_add": "Quick Add",
@@ -81,5 +81,17 @@
   "tasks_for_today": "Things to do today",
   "title": "Heading",
   "unassigned": "Not assigned",
-  "update_failed": "Task update error"
+  "update_failed": "Task update error",
+  "created_by": "Created by",
+  "assignees": "Assignees",
+  "selected_count": "Selected: {{count}}",
+  "filters": "Filters",
+  "filter_assignee": "Assignee",
+  "filter_priority": "Priority",
+  "all_assignees": "All assignees",
+  "all_priorities": "All priorities",
+  "overdue_only": "Overdue only",
+  "clear_filters": "Clear",
+  "showing_tasks": "Showing",
+  "of": "of"
 }

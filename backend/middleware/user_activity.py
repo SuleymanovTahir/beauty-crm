@@ -6,7 +6,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from datetime import datetime, timedelta
 from db.connection import get_db_connection
-from utils.utils import get_session_user
+from db.users import get_user_by_session
 from utils.logger import log_error
 
 # Cache to avoid updating DB on every request
@@ -33,7 +33,7 @@ class UserActivityMiddleware(BaseHTTPMiddleware):
                 session_token = request.cookies.get('session_token')
                 if session_token:
                     # Get user from session (lightweight check)
-                    user = get_session_user(session_token)
+                    user = get_user_by_session(session_token)
                     if user and user.get('id'):
                         user_id = user['id']
                         now = datetime.now()

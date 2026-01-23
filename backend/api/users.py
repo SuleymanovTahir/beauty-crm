@@ -709,26 +709,26 @@ async def update_user_profile(
     try:
         # 1. Fetch current user data for partial updates
         c.execute("""
-            SELECT username, full_name, email, position, photo, bio, specialization, 
-                   years_of_experience, phone, birthday, base_salary, commission_rate, 
-                   telegram_id, instagram_username, is_public_visible, sort_order
+            SELECT username, full_name, email, position, photo, bio, specialization,
+                   years_of_experience, phone, birthday, base_salary, commission_rate,
+                   telegram_id, instagram_username, is_public_visible, sort_order, secondary_role
             FROM users WHERE id = %s
         """, (user_id,))
         curr = c.fetchone()
-        
+
         if not curr:
             conn.close()
             return JSONResponse({"error": "User not found"}, status_code=404)
 
         # 2. Merge data (incoming takes precedence, fallback to current)
         # Note: We must handle field mapping between JSON keys and DB columns
-        
+
         username = data.get('username', curr[0])
         full_name = data.get('full_name', curr[1])
         email = data.get('email', curr[2])
         position = data.get('position', curr[3])
         # photo handled specially below
-        
+
         # Mapped fields
         bio = data.get('about_me', curr[5])
         specialization = data.get('specialization', curr[6])
@@ -740,6 +740,7 @@ async def update_user_profile(
         instagram_username = data.get('instagram', curr[13])
         is_public_visible = data.get('is_public_visible', curr[14])
         sort_order = data.get('sort_order', curr[15])
+        secondary_role = data.get('secondary_role', curr[16])
         
         # Handle years_of_experience specially due to conversion
         if 'years_of_experience' in data:
@@ -787,10 +788,10 @@ async def update_user_profile(
                SET username = %s, full_name = %s, email = %s, position = %s, photo = %s,
                    bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
                    base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s,
-                   is_public_visible = %s, sort_order = %s
+                   is_public_visible = %s, sort_order = %s, secondary_role = %s
                WHERE id = %s""",
-            (username, full_name, email, position, photo, bio, specialization, years_of_experience, phone, birthday, 
-             base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, user_id))
+            (username, full_name, email, position, photo, bio, specialization, years_of_experience, phone, birthday,
+             base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, secondary_role, user_id))
         
         conn.commit()
         

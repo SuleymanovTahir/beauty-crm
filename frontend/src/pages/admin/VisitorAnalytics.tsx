@@ -114,7 +114,7 @@ export default function VisitorAnalytics() {
     const [browserFilter, setBrowserFilter] = useState<string | null>(null);
 
     // Sorting states
-    const [sortField, setSortField] = useState<'ip_address' | 'city' | 'country' | 'distance_km' | 'visited_at' | null>(null);
+    const [sortField, setSortField] = useState<'ip_address' | 'city' | 'country' | 'distance_km' | 'visited_at' | 'device_type' | 'referrer' | null>(null);
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
     // Ref for scrolling to table
@@ -1425,11 +1425,23 @@ export default function VisitorAnalytics() {
                                         {getSortIcon('country')}
                                     </div>
                                 </th>
-                                <th className="px-6 py-4 text-left text-sm text-gray-600 select-none">
-                                    {t('source')}
+                                <th
+                                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100 select-none"
+                                    onClick={() => handleSort('referrer')}
+                                >
+                                    <div className="flex items-center">
+                                        {t('source')}
+                                        {getSortIcon('referrer')}
+                                    </div>
                                 </th>
-                                <th className="px-6 py-4 text-left text-sm text-gray-600 select-none">
-                                    {t('device')}
+                                <th
+                                    className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100 select-none"
+                                    onClick={() => handleSort('device_type')}
+                                >
+                                    <div className="flex items-center">
+                                        {t('device')}
+                                        {getSortIcon('device_type')}
+                                    </div>
                                 </th>
                                 <th
                                     className="px-6 py-4 text-left text-sm text-gray-600 cursor-pointer hover:bg-gray-100 select-none"

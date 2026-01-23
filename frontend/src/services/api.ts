@@ -64,6 +64,13 @@ export class ApiClient {
       }
 
       if (response.status === 401) {
+        // Не редиректить на логин если это сам запрос логина - просто вернуть ошибку
+        if (endpoint === '/api/login') {
+          const errorData = await response.json().catch(() => ({ error: 'Invalid credentials' }))
+          const error: any = new Error(errorData.error || 'Неверный логин или пароль')
+          error.status = 401
+          throw error
+        }
         localStorage.removeItem('user')
         localStorage.removeItem('session_token')
         window.location.href = '/login'
