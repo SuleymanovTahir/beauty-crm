@@ -31,7 +31,8 @@ export default function EditUser() {
     specialization: '',
     about_me: '',
     phone_number: '',
-    birth_date: ''
+    birth_date: '',
+    secondary_role: ''
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -74,7 +75,8 @@ export default function EditUser() {
         specialization: data.specialization || '',
         about_me: data.bio || data.about_me || '',
         phone_number: data.phone || data.phone_number || '',
-        birth_date: data.birthday || data.birth_date || ''
+        birth_date: data.birthday || data.birth_date || '',
+        secondary_role: data.secondary_role || ''
       });
     } catch (err: any) {
       toast.error(t('users:error_loading_profile'));
@@ -279,6 +281,26 @@ export default function EditUser() {
                       placeholder="5"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="secondary_role">{t('users:secondary_role', 'Дополнительная роль')}</Label>
+                  <select
+                    id="secondary_role"
+                    disabled={saving}
+                    value={profileData.secondary_role}
+                    onChange={(e) => setProfileData({ ...profileData, secondary_role: e.target.value })}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="">{t('users:no_secondary_role', 'Нет')}</option>
+                    <option value="employee">{t('users:role_employee', 'Мастер (employee)')}</option>
+                    <option value="manager">{t('users:role_manager', 'Менеджер')}</option>
+                    <option value="sales">{t('users:role_sales', 'Продажи')}</option>
+                    <option value="marketer">{t('users:role_marketer', 'Маркетолог')}</option>
+                  </select>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {t('users:secondary_role_hint', 'Позволяет сотруднику иметь две роли. Например, менеджер может также оказывать услуги как мастер.')}
+                  </p>
                 </div>
 
                 <div>

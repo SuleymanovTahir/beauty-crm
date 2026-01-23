@@ -31,6 +31,14 @@ export class WebRTCService {
   private remoteUserId: number | null = null;
   private callType: CallType = 'audio';
 
+  // Callback properties (for component compatibility)
+  public onIncomingCall: ((fromUserId: number, type: CallType) => void) | null = null;
+  public onCallAccepted: (() => void) | null = null;
+  public onCallRejected: (() => void) | null = null;
+  public onCallEnded: (() => void) | null = null;
+  public onRemoteStream: ((stream: MediaStream) => void) | null = null;
+  public onError: ((error: string) => void) | null = null;
+
   // Event listeners storage
   private listeners: Record<string, Function[]> = {};
 
@@ -67,9 +75,32 @@ export class WebRTCService {
   }
 
   /**
-   * Emit an event to all subscribers
+   * Emit an event to all subscribers and callback properties
    */
   private emit(event: string, ...args: any[]): void {
+    // Call callback properties for backwards compatibility
+    switch (event) {
+      case 'incomingCall':
+        if (this.onIncomingCall) this.onIncomingCall(args[0], args[1]);
+        break;
+      case 'callAccepted':
+        if (this.onCallAccepted) this.onCallAccepted();
+        break;
+      case 'callRejected':
+        if (this.onCallRejected) this.onCallRejected();
+        break;
+      case 'callEnded':
+        if (this.onCallEnded) this.onCallEnded();
+        break;
+      case 'remoteStream':
+        if (this.onRemoteStream) this.onRemoteStream(args[0]);
+        break;
+      case 'error':
+        if (this.onError) this.onError(args[0]);
+        break;
+    }
+
+    // Also call event listeners
     if (this.listeners[event]) {
       this.listeners[event].forEach((cb) => {
         try {

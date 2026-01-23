@@ -127,6 +127,7 @@ from api.recordings import router as recordings_router
 from api.admin_stubs import router as admin_stubs_router
 from api.chat_ws import router as chat_ws_router
 from api.push_tokens import router as push_tokens_router
+from api.service_change_requests import router as service_change_requests_router
 
 
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -188,6 +189,7 @@ app.include_router(permissions_router, prefix="/api")  # Permissions & Roles API
 app.include_router(roles_router, prefix="/api")  # Roles API
 app.include_router(plans_router, prefix="/api")  # Plans API
 app.include_router(employee_services_router, prefix="/api")  # Employee Services API
+app.include_router(service_change_requests_router, prefix="/api")  # Service Change Requests API
 app.include_router(employee_schedule_router, prefix="/api")  # Employee Schedule API& Goals API
 app.include_router(client_import_router, prefix="/api")  # Client Import API
 app.include_router(booking_import_router, prefix="/api")  # Booking Import API

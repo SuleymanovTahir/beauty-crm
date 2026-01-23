@@ -763,8 +763,8 @@ export default function Chat() {
   });
 
 
-  // Check permissions
-  if (!userPermissions.canViewAllClients) {
+  // Check permissions - sales role has limited clients access but should still use chat
+  if (!userPermissions.canViewAllClients && currentUser?.role !== 'sales') {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50">
         <div className="bg-white/80 backdrop-blur-xl rounded-[32px] shadow-2xl border border-white p-12 max-w-md w-full text-center relative overflow-hidden group">
