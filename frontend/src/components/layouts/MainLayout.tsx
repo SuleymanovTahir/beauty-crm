@@ -412,6 +412,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 requirePermission: () => true,
                 items: [
                     { id: 'services', icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, requirePermission: () => permissions.canViewServices },
+                    { id: 'service-requests', icon: Scissors, label: t('menu.service_requests', 'Запросы услуг'), path: `${rolePrefix}/service-change-requests`, requirePermission: () => permissions.roleLevel >= 80 },
                     { id: 'products', icon: Package, label: t('menu.products'), path: `${rolePrefix}/products`, requirePermission: () => permissions.canViewServices },
                 ]
             },
@@ -444,7 +445,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 label: t('menu.tools'),
                 requirePermission: () => true,
                 items: [
-                    { id: 'tasks', icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, requirePermission: () => permissions.canViewTasks || permissions.roleLevel >= 70 || user?.role === 'sales' },
+                    { id: 'tasks', icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, requirePermission: () => permissions.canViewTasks || permissions.roleLevel >= 70 || user?.role === 'sales' || user?.role === 'marketer' || user?.role === 'manager' },
                     { id: 'broadcasts', icon: Send, label: t('menu.broadcasts'), path: `${rolePrefix}/broadcasts`, requirePermission: () => permissions.canSendBroadcasts || user?.role === 'sales' },
                     { id: 'telephony', icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, requirePermission: () => permissions.roleLevel >= 80 || user?.role === 'sales' },
                 ]
@@ -468,7 +469,8 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 label: t('menu.settings'),
                 requirePermission: () => true,
                 items: [
-                    { id: 'app-settings', icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => (permissions.canViewSettings || user?.role === 'manager' || user?.role === 'sales') && user?.role !== 'employee' },
+                    { id: 'app-settings', icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, requirePermission: () => (permissions.canViewSettings || user?.role === 'manager' || user?.role === 'sales' || user?.role === 'marketer') && user?.role !== 'employee' },
+                    { id: 'employee-settings', icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/profile`, requirePermission: () => user?.role === 'employee' },
                     { id: 'users', icon: UserCog, label: t('menu.users'), path: `${rolePrefix}/users`, requirePermission: () => permissions.canViewAllUsers },
                     { id: 'public-content', icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, requirePermission: () => permissions.canViewSettings && permissions.roleLevel >= 80 },
                     { id: 'bot-settings', icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, requirePermission: () => permissions.canViewBotSettings || user?.role === 'sales' },

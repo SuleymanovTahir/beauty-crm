@@ -58,15 +58,24 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState<Array<{ id: number; username: string; full_name: string; role: string }>>([]);
 
-    // Load users for assignee selection (only for admins/managers)
+    // Load assignable users based on role hierarchy
     useEffect(() => {
         const loadUsers = async () => {
             try {
-                const response = await api.getUsers(i18n.language);
-                const usersArray = Array.isArray(response) ? response : (response?.users || []);
+                // Use new endpoint that filters by role hierarchy
+                const response = await api.get('/api/tasks/assignable-users');
+                const usersArray = response?.users || [];
                 setUsers(usersArray);
             } catch (err) {
-                console.error('Error loading users:', err);
+                console.error('Error loading assignable users:', err);
+                // Fallback to all users
+                try {
+                    const fallback = await api.getUsers(i18n.language);
+                    const usersArray = Array.isArray(fallback) ? fallback : (fallback?.users || []);
+                    setUsers(usersArray);
+                } catch {
+                    setUsers([]);
+                }
             }
         };
         if (open && !isEmployee) {

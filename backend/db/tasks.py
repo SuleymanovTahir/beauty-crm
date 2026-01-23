@@ -199,7 +199,11 @@ def get_tasks(filters: Dict = None) -> List[Dict]:
                 query += " AND t.stage_id = %s"
                 params.append(filters['stage_id'])
             if filters.get('assignee_id'):
-                query += " AND t.assignee_id = %s"
+                # Проверяем и в tasks.assignee_id, и в task_assignees (для множественных ответственных)
+                query += """ AND (t.assignee_id = %s OR t.id IN (
+                    SELECT task_id FROM task_assignees WHERE user_id = %s
+                ))"""
+                params.append(filters['assignee_id'])
                 params.append(filters['assignee_id'])
             
         query += " ORDER BY t.created_at DESC"
@@ -319,36 +323,50 @@ def delete_task(task_id: int) -> bool:
     finally:
         conn.close()
 
-def get_task_analytics() -> Dict:
-    """Get task analytics overview"""
+def get_task_analytics(user_id: int = None) -> Dict:
+    """Get task analytics overview, optionally filtered by user (assignee)"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
+        # Build user filter
+        user_filter = ""
+        user_filter_params = []
+        if user_id:
+            user_filter = """
+                AND (t.assignee_id = %s OR t.id IN (
+                    SELECT task_id FROM task_assignees WHERE user_id = %s
+                ))
+            """
+            user_filter_params = [user_id, user_id]
+
         # Counts by status/stage key
-        c.execute("""
-            SELECT s.key, COUNT(t.id) 
+        query = f"""
+            SELECT s.key, COUNT(t.id)
             FROM task_stages s
-            LEFT JOIN tasks t ON t.stage_id = s.id
+            LEFT JOIN tasks t ON t.stage_id = s.id {user_filter if user_id else ''}
             GROUP BY s.key
-        """)
+        """
+        c.execute(query, user_filter_params if user_id else [])
         status_counts = dict(c.fetchall())
-        
+
         # Overdue tasks
-        c.execute("""
-            SELECT COUNT(t.id) 
+        query = f"""
+            SELECT COUNT(t.id)
             FROM tasks t
             JOIN task_stages s ON t.stage_id = s.id
-            WHERE s.key != 'done' AND t.due_date < NOW()
-        """)
+            WHERE s.key != 'done' AND t.due_date < NOW() {user_filter if user_id else ''}
+        """
+        c.execute(query, user_filter_params if user_id else [])
         overdue_count = c.fetchone()[0]
-        
+
         # Today's tasks
-        c.execute("""
-            SELECT COUNT(t.id) 
+        query = f"""
+            SELECT COUNT(t.id)
             FROM tasks t
             JOIN task_stages s ON t.stage_id = s.id
-            WHERE s.key != 'done' AND t.due_date::date = CURRENT_DATE
-        """)
+            WHERE s.key != 'done' AND t.due_date::date = CURRENT_DATE {user_filter if user_id else ''}
+        """
+        c.execute(query, user_filter_params if user_id else [])
         today_count = c.fetchone()[0]
 
         return {

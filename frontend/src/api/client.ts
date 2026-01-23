@@ -414,8 +414,8 @@ export const apiClient = {
   getClientBeautyMetrics: () =>
     apiCall('/api/client/beauty-metrics'),
 
-  getFavoriteMasters: () =>
-    apiCall('/api/client/favorite-masters'),
+  getFavoriteMasters: (language: string = 'ru') =>
+    apiCall(`/api/client/favorite-masters?language=${language}`),
 
   toggleFavoriteMaster: (data: { master_id: number; is_favorite: boolean }) =>
     apiCall('/api/client/favorite-masters', {

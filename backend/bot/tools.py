@@ -50,26 +50,26 @@ def get_available_time_slots(
         # Если нет - берем всех активных
         if service_id:
             # Get only masters who provide this service AND have online booking enabled
-            # ✅ EXCLUDE admins/directors even if they are marked as service providers
+            # Только те у кого role='employee' или secondary_role='employee'
             c.execute("""
                 SELECT DISTINCT u.id, u.full_name
                 FROM users u
                 JOIN user_services us ON u.id = us.user_id
-                WHERE u.is_active = TRUE 
+                WHERE u.is_active = TRUE
                   AND u.is_service_provider = TRUE
-                  AND u.role NOT IN ('director', 'admin', 'manager')
+                  AND (u.role = 'employee' OR u.secondary_role = 'employee')
                   AND us.service_id = %s
                   AND us.is_online_booking_enabled = TRUE
             """, (service_id,))
             potential_masters = c.fetchall()
         else:
-            # Fallback: все активные мастера (исключая директоров)
+            # Fallback: мастера с role='employee' или secondary_role='employee'
             c.execute("""
-                SELECT id, full_name 
-                FROM users 
-                WHERE is_active = TRUE 
+                SELECT id, full_name
+                FROM users
+                WHERE is_active = TRUE
                   AND is_service_provider = TRUE
-                  AND role NOT IN ('director', 'admin', 'manager')
+                  AND (role = 'employee' OR secondary_role = 'employee')
             """)
             potential_masters = c.fetchall()
 

@@ -38,11 +38,19 @@ async def api_login(request: Request, username: str = Form(...), password: str =
     # Rate limiting
     limiter = getattr(request.app.state, "limiter", None)
     if limiter:
-        # Note: In a real app we would use limiter.limit here, 
+        # Note: In a real app we would use limiter.limit here,
         # but for simplicity and to avoid decorator issues with dynamic app state
-        pass 
+        pass
     try:
-        log_info(f"API Login attempt: {username}", "auth")
+        # Детальное логирование для отладки мобильных устройств
+        client_ip = request.client.host if request.client else "unknown"
+        user_agent = request.headers.get("user-agent", "unknown")
+        origin = request.headers.get("origin", "unknown")
+        referer = request.headers.get("referer", "unknown")
+
+        log_info(f"[LOGIN] Attempt: username='{username}' | IP={client_ip} | Origin={origin}", "auth")
+        log_info(f"[LOGIN] User-Agent: {user_agent[:100]}...", "auth")
+
         user = verify_user(username, password)
         
         if not user:

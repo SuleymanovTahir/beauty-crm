@@ -84,5 +84,14 @@
   "update_failed": "Ошибка обновления задачи",
   "created_by": "Создал",
   "assignees": "Ответственные",
-  "selected_count": "Выбрано: {{count}}"
+  "selected_count": "Выбрано: {{count}}",
+  "filters": "Фильтры",
+  "filter_assignee": "Ответственный",
+  "filter_priority": "Приоритет",
+  "all_assignees": "Все ответственные",
+  "all_priorities": "Все приоритеты",
+  "overdue_only": "Только просроченные",
+  "clear_filters": "Сбросить",
+  "showing_tasks": "Показано",
+  "of": "из"
 }

@@ -17,8 +17,17 @@ import {
     Layout,
     LayoutDashboard,
     Settings,
-    Eye
+    Eye,
+    Filter,
+    X
 } from 'lucide-react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "../../components/ui/select";
 import { format, isToday, isPast } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -70,9 +79,25 @@ export default function Tasks() {
     const [manageStagesOpen, setManageStagesOpen] = useState(false);
     const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
 
+    // Filter states
+    const [filterAssignee, setFilterAssignee] = useState<string>('all');
+    const [filterPriority, setFilterPriority] = useState<string>('all');
+    const [filterOverdue, setFilterOverdue] = useState<boolean>(false);
+    const [users, setUsers] = useState<Array<{ id: number; full_name: string; role: string }>>([]);
+
     useEffect(() => {
         loadData();
+        loadUsers();
     }, []);
+
+    const loadUsers = async () => {
+        try {
+            const response = await api.get('/api/tasks/assignable-users');
+            setUsers(response?.users || []);
+        } catch (err) {
+            console.error('Error loading users for filter:', err);
+        }
+    };
 
     const loadData = async () => {
         try {
@@ -160,6 +185,37 @@ export default function Tasks() {
     // View state
     const [viewMode, setViewMode] = useState<'board' | 'dashboard'>('board');
 
+    // Filter tasks
+    const filteredTasks = tasks.filter(task => {
+        // Filter by assignee
+        if (filterAssignee !== 'all') {
+            const assigneeId = parseInt(filterAssignee);
+            const hasAssignee = task.assignee_ids?.includes(assigneeId) || task.assignee_id === assigneeId;
+            if (!hasAssignee) return false;
+        }
+
+        // Filter by priority
+        if (filterPriority !== 'all' && task.priority !== filterPriority) {
+            return false;
+        }
+
+        // Filter by overdue
+        if (filterOverdue && task.due_date) {
+            const dueDate = new Date(task.due_date);
+            if (!isPast(dueDate) || isToday(dueDate)) return false;
+        }
+
+        return true;
+    });
+
+    const hasActiveFilters = filterAssignee !== 'all' || filterPriority !== 'all' || filterOverdue;
+
+    const clearFilters = () => {
+        setFilterAssignee('all');
+        setFilterPriority('all');
+        setFilterOverdue(false);
+    };
+
     return (
         <div className="h-full flex flex-col bg-gray-50/50">
             {/* Header & Analytics */}
@@ -224,6 +280,70 @@ export default function Tasks() {
                     onOpenChange={setManageStagesOpen}
                     onSuccess={loadData}
                 />
+
+                {/* Filters */}
+                {viewMode === 'board' && (
+                    <div className="flex items-center gap-3 mb-4 flex-wrap">
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <Filter className="w-4 h-4" />
+                            <span>{t('filters', 'Фильтры')}:</span>
+                        </div>
+
+                        <Select value={filterAssignee} onValueChange={setFilterAssignee}>
+                            <SelectTrigger className="w-[180px] h-9 bg-white">
+                                <SelectValue placeholder={t('filter_assignee', 'Ответственный')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">{t('all_assignees', 'Все ответственные')}</SelectItem>
+                                {users.map(user => (
+                                    <SelectItem key={user.id} value={user.id.toString()}>
+                                        {user.full_name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Select value={filterPriority} onValueChange={setFilterPriority}>
+                            <SelectTrigger className="w-[140px] h-9 bg-white">
+                                <SelectValue placeholder={t('filter_priority', 'Приоритет')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">{t('all_priorities', 'Все приоритеты')}</SelectItem>
+                                <SelectItem value="high">{t('priority.high')}</SelectItem>
+                                <SelectItem value="medium">{t('priority.medium')}</SelectItem>
+                                <SelectItem value="low">{t('priority.low')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                        <Button
+                            variant={filterOverdue ? "default" : "outline"}
+                            size="sm"
+                            className={filterOverdue ? "bg-red-500 hover:bg-red-600 text-white" : "bg-white"}
+                            onClick={() => setFilterOverdue(!filterOverdue)}
+                        >
+                            <AlertCircle className="w-4 h-4 mr-1" />
+                            {t('overdue_only', 'Только просроченные')}
+                        </Button>
+
+                        {hasActiveFilters && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={clearFilters}
+                                className="text-gray-500 hover:text-gray-700"
+                            >
+                                <X className="w-4 h-4 mr-1" />
+                                {t('clear_filters', 'Сбросить')}
+                            </Button>
+                        )}
+
+                        {hasActiveFilters && (
+                            <Badge variant="secondary" className="ml-auto">
+                                {t('showing_tasks', 'Показано')}: {filteredTasks.length} {t('of', 'из')} {tasks.length}
+                            </Badge>
+                        )}
+                    </div>
+                )}
 
                 {/* Only show analytics summary in Board view */}
                 {viewMode === 'board' && (
@@ -294,14 +414,14 @@ export default function Tasks() {
                                             <span className="font-semibold text-gray-700">{t(`stages.${stage.key || stage.name.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: stage.name })}</span>
                                         </div>
                                         <Badge variant="secondary" className="bg-white text-gray-500 shadow-sm border">
-                                            {tasks.filter(t => t.stage_id === stage.id).length}
+                                            {filteredTasks.filter(t => t.stage_id === stage.id).length}
                                         </Badge>
                                     </div>
                                 </div>
 
                                 <ScrollArea className="flex-1 p-3">
                                     <div className="space-y-3 pb-2">
-                                        {tasks.filter(t => t.stage_id === stage.id).map(task => (
+                                        {filteredTasks.filter(t => t.stage_id === stage.id).map(task => (
                                             <div
                                                 key={task.id}
                                                 draggable
@@ -396,7 +516,7 @@ export default function Tasks() {
                                                 </div>
                                             </div>
                                         ))}
-                                        {tasks.filter(t => t.stage_id === stage.id).length === 0 && (
+                                        {filteredTasks.filter(t => t.stage_id === stage.id).length === 0 && (
                                             <div className="text-center py-10 text-gray-400 text-xs italic border-2 border-dashed border-gray-100 rounded-lg">
                                                 {t('no_tasks')}
                                             </div>

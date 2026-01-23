@@ -42,6 +42,14 @@ const MarketplaceIntegrations = React.lazy(() => import('./pages/admin/Marketpla
 const Messengers = React.lazy(() => import('./pages/admin/Messengers'));
 const CRMReferrals = React.lazy(() => import('./pages/admin/Referrals'));
 const CRMChallenges = React.lazy(() => import('./pages/admin/Challenges'));
+const ServiceChangeRequests = React.lazy(() => import('./pages/admin/ServiceChangeRequests'));
+
+// Aliases for shared components across roles
+const CRMTasks = AdminTasks;
+const CRMServices = Services;
+const CRMBookings = Bookings;
+const CRMCalendar = Calendar;
+const CRMClients = Clients;
 
 
 // Admin Panel pages
@@ -340,6 +348,7 @@ export default function App() {
                 <Route path="referrals" element={<CRMReferrals />} />
                 <Route path="challenges" element={<CRMChallenges />} />
                 <Route path="notifications" element={<NotificationsPage />} />
+                <Route path="service-change-requests" element={<ServiceChangeRequests />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
@@ -370,6 +379,13 @@ export default function App() {
                 <Route path="settings/:tab?" element={<Settings />} />
                 <Route path="bot-settings" element={<BotSettings />} />
                 <Route path="notifications" element={<NotificationsPage />} />
+                <Route path="tasks" element={<CRMTasks />} />
+                <Route path="services" element={<CRMServices />} />
+                <Route path="bookings" element={<CRMBookings />} />
+                <Route path="calendar" element={<CRMCalendar />} />
+                <Route path="clients" element={<CRMClients />} />
+                <Route path="internal-chat" element={<InternalChat />} />
+                <Route path="visitor-analytics" element={<VisitorAnalytics />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
@@ -391,10 +407,19 @@ export default function App() {
                   />
                 }
               >
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="clients" element={<Clients />} />
+                <Route path="bookings" element={<CRMBookings />} />
+                <Route path="calendar" element={<CRMCalendar />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="analytics" element={<Analytics />} />
+                <Route path="funnel" element={<Funnel />} />
+                <Route path="tasks" element={<CRMTasks />} />
+                <Route path="services" element={<CRMServices />} />
                 <Route path="internal-chat" element={<InternalChat />} />
+                <Route path="messengers" element={<Messengers />} />
+                <Route path="bot-settings" element={<BotSettings />} />
+                <Route path="settings" element={<Settings />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="" element={<Navigate to="clients" replace />} />
               </Route>
@@ -417,10 +442,17 @@ export default function App() {
                   />
                 }
               >
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="analytics" element={<Analytics />} />
+                <Route path="visitor-analytics" element={<VisitorAnalytics />} />
+                <Route path="funnel" element={<Funnel />} />
+                <Route path="clients" element={<Clients />} />
+                <Route path="tasks" element={<CRMTasks />} />
+                <Route path="services" element={<CRMServices />} />
                 <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="notifications" element={<NotificationsPage />} />
-                <Route path="" element={<Navigate to="analytics" replace />} />
+                <Route path="settings/:tab?" element={<Settings />} />
+                <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
               {/* Employee Routes - Protected */}

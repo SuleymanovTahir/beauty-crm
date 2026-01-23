@@ -42,7 +42,7 @@ interface EmployeeProfileData {
 export default function EmployeeProfile() {
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const userId = currentUser.id;
-  const { t } = useTranslation(['employee/Profile', 'common']);
+  const { t } = useTranslation(['employee/profile', 'common']);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [employeeProfile, setEmployeeProfile] = useState<EmployeeProfileData | null>(null);
   const [loading, setLoading] = useState(true);

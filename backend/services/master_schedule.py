@@ -641,14 +641,15 @@ class MasterScheduleService:
         c = conn.cursor()
 
         try:
-            # ✅ ИСПРАВЛЕНО: Используем ту же логику что и get_available_time_slots
-            # Получаем всех активных мастеров-провайдеров (исключая директоров)
+            # Получаем мастеров для бронирования:
+            # - is_service_provider = TRUE
+            # - role='employee' ИЛИ secondary_role='employee'
             c.execute("""
                 SELECT DISTINCT u.full_name
                 FROM users u
-                WHERE u.is_active = TRUE 
+                WHERE u.is_active = TRUE
                   AND u.is_service_provider = TRUE
-                  AND u.role NOT IN ('director', 'admin', 'manager')
+                  AND (u.role = 'employee' OR u.secondary_role = 'employee')
             """)
 
             active_masters = [row[0] for row in c.fetchall()]
@@ -707,13 +708,12 @@ class MasterScheduleService:
                 if user_id:
                     masters_to_check.append({"id": user_id, "name": master_name})
             else:
-                # Global Availability: Get all service providers
+                # Global Availability: мастера с role='employee' или secondary_role='employee'
                 c.execute("""
-                    SELECT id, full_name FROM users 
+                    SELECT id, full_name FROM users
                     WHERE is_service_provider = TRUE AND is_active = TRUE
-                    AND role NOT IN ('director', 'admin', 'manager') 
-                """) 
-                # Note: Excluding roles might be business logic specific, adjust if needed
+                    AND (role = 'employee' OR secondary_role = 'employee')
+                """)
                 for row in c.fetchall():
                     masters_to_check.append({"id": row[0], "name": row[1]})
 
