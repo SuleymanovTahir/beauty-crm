@@ -102,13 +102,28 @@ export default function Login() {
         return;
       }
 
+      // Проверяем на сетевые ошибки (Failed to fetch, Network error, etc.)
+      const errorMessage = err instanceof Error ? err.message : (err.error || '');
+      const isNetworkError = errorMessage.toLowerCase().includes('failed to fetch') ||
+                            errorMessage.toLowerCase().includes('network') ||
+                            errorMessage.toLowerCase().includes('timeout') ||
+                            errorMessage === 'Load failed';
+
+      if (isNetworkError) {
+        const networkErrorMsg = t('login:network_error', 'Ошибка сети. Проверьте подключение к интернету или попробуйте позже.');
+        setError(networkErrorMsg);
+        toast.error(networkErrorMsg);
+        console.error('Network error during login:', err);
+        return;
+      }
+
       const messageKey = err.error || (err instanceof Error ? err.message : 'login_error');
 
       // Try to translate using auth_errors from common
       const translatedError = t(`common:auth_errors.${messageKey}`);
       const finalMessage = translatedError && translatedError !== `common:auth_errors.${messageKey}`
         ? translatedError
-        : (typeof err.error === 'string' ? err.error : messageKey);
+        : (typeof err.error === 'string' ? err.error : t('login:authorization_error'));
 
       setError(finalMessage);
       toast.error(finalMessage);

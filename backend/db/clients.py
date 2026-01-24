@@ -179,7 +179,8 @@ def update_client_info(instagram_id: str, phone: str = None, name: str = None, n
                        gender: str = None, age: int = None, birth_date: str = None,
                        profile_pic: str = None, email: str = None,
                        referral_code: str = None, password_hash: str = None,
-                       telegram_id: str = None, reminder_date: str = None):
+                       telegram_id: str = None, reminder_date: str = None,
+                       assigned_employee_id: int = None):
     """Обновить информацию о клиенте"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -235,7 +236,10 @@ def update_client_info(instagram_id: str, phone: str = None, name: str = None, n
     if reminder_date is not None:
         updates.append("reminder_date = %s")
         params.append(reminder_date)
-        
+    if assigned_employee_id is not None:
+        updates.append("assigned_employee_id = %s")
+        params.append(assigned_employee_id)
+
     try:
         if updates:
             params.append(instagram_id)

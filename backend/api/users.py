@@ -534,15 +534,15 @@ async def get_user_profile(
     
     c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo,
                         years_of_experience, bio, specialization, phone, birthday, position,
-                        base_salary, commission_rate
+                        base_salary, commission_rate, secondary_role
                  FROM users WHERE id = %s""", (user_id,))
-    
+
     result = c.fetchone()
     conn.close()
-    
+
     if not result:
         return JSONResponse({"error": "User not found"}, status_code=404)
-    
+
     return {
         "id": result[0],
         "username": result[1],
@@ -559,7 +559,8 @@ async def get_user_profile(
         "birthday": result[12],
         "position": result[13],
         "base_salary": result[14],
-        "commission_rate": result[15]
+        "commission_rate": result[15],
+        "secondary_role": result[16]
     }
 
 @router.get("/users/by-username/{username}/profile")
@@ -576,19 +577,20 @@ async def get_user_profile_by_username(
     c = conn.cursor()
     
     c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo,
-                        years_of_experience, bio, specialization, phone, birthday, position
+                        years_of_experience, bio, specialization, phone, birthday, position,
+                        base_salary, commission_rate, secondary_role
                  FROM users WHERE username = %s""", (username,))
-    
+
     result = c.fetchone()
     conn.close()
-    
+
     if not result:
         return JSONResponse({"error": "User not found"}, status_code=404)
-    
+
     # Админ может смотреть всех, остальные только себя
     if user["role"] != "admin" and user["id"] != result[0]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
+
     return {
         "id": result[0],
         "username": result[1],
@@ -603,7 +605,10 @@ async def get_user_profile_by_username(
         "specialization": result[10],
         "phone": result[11],
         "birthday": result[12],
-        "position": result[13]
+        "position": result[13],
+        "base_salary": result[14],
+        "commission_rate": result[15],
+        "secondary_role": result[16]
     }
 
 @router.post("/users/{user_id}/change-password")
