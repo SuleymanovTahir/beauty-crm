@@ -45,7 +45,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
   
-  <!-- Schema.org markup for Google -->
+  <!-- Schema.org markup for Google & Yandex -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -53,6 +53,8 @@
     "name": "M Le Diamant",
     "description": "Premium Russian-speaking beauty salon in Dubai offering spa, nails, hair, brows, lashes, massage, cosmetology, and permanent makeup services",
     "url": "https://mlediamant.com",
+    "logo": "https://mlediamant.com/favicon.png",
+    "image": "https://mlediamant.com/og-image.jpg",
     "telephone": "+971-XX-XXX-XXXX",
     "address": {
       "@type": "PostalAddress",
@@ -142,8 +144,27 @@
       "reviewCount": "150"
     },
     "sameAs": [
-      "https://www.instagram.com/mlediamant",
-      <!-- "https://www.facebook.com/mlediamant" -->
+      "https://www.instagram.com/mlediamant"
+    ]
+  }
+  </script>
+
+  <!-- Organization schema for Yandex logo -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "M Le Diamant",
+    "url": "https://mlediamant.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://mlediamant.com/favicon.png",
+      "width": 512,
+      "height": 512
+    },
+    "image": "https://mlediamant.com/og-image.jpg",
+    "sameAs": [
+      "https://www.instagram.com/mlediamant"
     ]
   }
   </script>

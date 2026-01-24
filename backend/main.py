@@ -580,9 +580,9 @@ async def startup_event():
     # 1. Создание БД если не существует (recreate_database)
     # 2. Инициализация базовых таблиц (init_database)
     # 3. Все консолидированные миграции
-    from db.migrations.run_all_migrations import run_all_migrations
-    log_info("🔧 Запуск миграций...", "startup")
-    run_all_migrations()  # Will be called later at line 599
+    # from db.migrations.run_all_migrations import run_all_migrations
+    # log_info("🔧 Запуск миграций...", "startup")
+    # run_all_migrations()  # Will be called later at line 599
     
     # ================================
     # УДАЛЕНИЕ БАЗЫ ДАННЫХ (ОПЦИОНАЛЬНО)
@@ -677,6 +677,14 @@ async def startup_event():
     # Загрузка модулей
     from modules import print_modules_status, is_module_enabled
     print_modules_status()
+
+    # from scripts.run_all_fixes import main as run_all_fixes
+    # log_info("🔧 Запуск всех исправлений...", "startup")
+    # await run_all_fixes()
+
+    # from tests.run_all_tests import run_all_tests
+    # log_info("🧪 Запуск всех тестов...", "startup")
+    # run_all_tests()
 
     # run_all_migrations()  # Автоматически создаст таблицы для системы записей
     # await run_all_fixes()

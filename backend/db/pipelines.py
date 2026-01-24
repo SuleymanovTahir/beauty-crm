@@ -31,25 +31,30 @@ def get_pipeline_stages() -> List[Dict]:
     finally:
         conn.close()
 
-def get_clients_by_stage(stage_id: int, limit: int = 50, offset: int = 0, search: str = None) -> List[Dict]:
-    """Get clients in a specific stage"""
+def get_clients_by_stage(stage_id: int, limit: int = 50, offset: int = 0, search: str = None, user_id: int = None) -> List[Dict]:
+    """Get clients in a specific stage, optionally filtered by assigned employee"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
         query = """
-            SELECT instagram_id, name, username, phone, total_spend, last_contact, temperature, profile_pic
-            FROM clients 
+            SELECT instagram_id, name, username, phone, total_spend, last_contact, temperature, profile_pic, assigned_employee_id, reminder_date, pipeline_stage_id
+            FROM clients
             WHERE pipeline_stage_id = %s
         """
         params = [stage_id]
-        
+
+        # Filter by assigned employee if user_id is provided
+        if user_id is not None:
+            query += " AND (assigned_employee_id = %s OR assigned_employee_id IS NULL)"
+            params.append(user_id)
+
         if search:
             query += " AND (name ILIKE %s OR username ILIKE %s OR phone ILIKE %s)"
             params.extend([f"%{search}%"] * 3)
-            
+
         query += " ORDER BY last_contact DESC LIMIT %s OFFSET %s"
         params.extend([limit, offset])
-        
+
         c.execute(query, params)
         rows = c.fetchall()
         return [
@@ -61,7 +66,10 @@ def get_clients_by_stage(stage_id: int, limit: int = 50, offset: int = 0, search
                 "total_spend": row[4],
                 "last_contact": row[5],
                 "temperature": row[6] or 'cold',
-                "profile_pic": row[7]
+                "profile_pic": row[7],
+                "assigned_employee_id": row[8],
+                "reminder_date": row[9],
+                "pipeline_stage_id": row[10]
             }
             for row in rows
         ]
@@ -111,22 +119,33 @@ def remove_client_from_funnel(client_id: str) -> bool:
     finally:
         conn.close()
 
-def get_funnel_stats(start_date: str = None, end_date: str = None) -> Dict:
-    """Get stats for the funnel (count per stage, etc)"""
+def get_funnel_stats(start_date: str = None, end_date: str = None, user_id: int = None) -> Dict:
+    """Get stats for the funnel (count per stage, etc), optionally filtered by assigned employee"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        # Simplest stat: count per stage
-        c.execute("""
-            SELECT ps.id, ps.name, COUNT(c.instagram_id), SUM(NULLIF(c.total_spend, 0)), ps.key
-            FROM pipeline_stages ps
-            LEFT JOIN clients c ON c.pipeline_stage_id = ps.id
-            WHERE ps.is_active = TRUE
-            GROUP BY ps.id, ps.name, ps.order_index, ps.key
-            ORDER BY ps.order_index
-        """)
+        # Build query with optional user filter
+        if user_id is not None:
+            c.execute("""
+                SELECT ps.id, ps.name, COUNT(c.instagram_id), SUM(NULLIF(c.total_spend, 0)), ps.key
+                FROM pipeline_stages ps
+                LEFT JOIN clients c ON c.pipeline_stage_id = ps.id
+                    AND (c.assigned_employee_id = %s OR c.assigned_employee_id IS NULL)
+                WHERE ps.is_active = TRUE
+                GROUP BY ps.id, ps.name, ps.order_index, ps.key
+                ORDER BY ps.order_index
+            """, (user_id,))
+        else:
+            c.execute("""
+                SELECT ps.id, ps.name, COUNT(c.instagram_id), SUM(NULLIF(c.total_spend, 0)), ps.key
+                FROM pipeline_stages ps
+                LEFT JOIN clients c ON c.pipeline_stage_id = ps.id
+                WHERE ps.is_active = TRUE
+                GROUP BY ps.id, ps.name, ps.order_index, ps.key
+                ORDER BY ps.order_index
+            """)
         rows = c.fetchall()
-        
+
         return [
             {
                 "stage_id": row[0],
@@ -139,6 +158,9 @@ def get_funnel_stats(start_date: str = None, end_date: str = None) -> Dict:
         ]
     except Exception as e:
         log_error(f"Error getting funnel stats: {e}", "db.pipelines")
+        return []
+    finally:
+        conn.close()
 
 def create_pipeline_stage(name: str, color: str, order_index: int) -> Optional[int]:
     """Create a new pipeline stage"""

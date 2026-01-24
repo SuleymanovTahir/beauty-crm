@@ -87,6 +87,9 @@ async def reorder_stages(
         return {"success": True}
     raise HTTPException(status_code=500, detail="Failed to reorder stages")
 
+# Роли которые видят ВСЕХ клиентов в воронке
+ADMIN_ROLES = ['admin', 'director', 'manager']
+
 @router.get("/funnel/clients")
 async def get_clients(
     stage_id: int = Query(...),
@@ -95,7 +98,13 @@ async def get_clients(
     search: str = None,
     current_user: dict = Depends(get_current_user)
 ):
-    return get_clients_by_stage(stage_id, limit, offset, search)
+    # Admin/director/manager видят всех клиентов
+    # Остальные (sales, marketer, employee) - только своих назначенных
+    user_id = None
+    if current_user['role'] not in ADMIN_ROLES:
+        user_id = current_user['id']
+
+    return get_clients_by_stage(stage_id, limit, offset, search, user_id)
 
 @router.post("/funnel/move")
 async def move_client(
@@ -108,7 +117,13 @@ async def move_client(
 
 @router.get("/funnel/stats")
 async def get_stats(current_user: dict = Depends(get_current_user)):
-    return get_funnel_stats()
+    # Admin/director/manager видят статистику по всем клиентам
+    # Остальные - только по своим назначенным
+    user_id = None
+    if current_user['role'] not in ADMIN_ROLES:
+        user_id = current_user['id']
+
+    return get_funnel_stats(user_id=user_id)
 
 class CreateClientRequest(BaseModel):
     name: str
@@ -116,31 +131,35 @@ class CreateClientRequest(BaseModel):
     username: Optional[str] = None
     stage_id: int
     notes: Optional[str] = None
+    assigned_employee_id: Optional[int] = None
 
 @router.post("/funnel/clients")
 async def create_funnel_client(
     request: CreateClientRequest,
     current_user: dict = Depends(get_current_user)
 ):
-    from db.clients import get_or_create_client
-    
+    from db.clients import get_or_create_client, update_client_info
+
     # Generate username if not provided (required for unique constraint usually, but let's see db logic)
     # Using phone as fallback username is a common pattern or letting db handle it
     username = request.username or f"user_{request.phone.replace('+', '')}"
-    
+
     client = get_or_create_client(username, username=username, phone=request.phone)
     if not client:
         raise HTTPException(status_code=500, detail="Failed to create client")
-        
+
     # Update name and stage
     client_id = client['instagram_id'] if isinstance(client, dict) else client
-    
+
     # Update stage
     update_client_stage(client_id, request.stage_id)
-    
-    # Update name if provided
-    if request.name:
-        from db.clients import update_client_info
-        update_client_info(client_id, name=request.name, notes=request.notes)
-        
+
+    # Если ответственный не указан, назначаем создателя (для sales/marketer/employee)
+    assigned_id = request.assigned_employee_id
+    if assigned_id is None and current_user['role'] not in ADMIN_ROLES:
+        assigned_id = current_user['id']
+
+    # Update name, notes, and assigned employee
+    update_client_info(client_id, name=request.name, notes=request.notes, assigned_employee_id=assigned_id)
+
     return {"success": True, "client_id": client_id}
