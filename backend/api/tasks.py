@@ -145,9 +145,8 @@ async def reorder_stages(
     raise HTTPException(status_code=500, detail="Failed to reorder stages")
 
 @router.get("/tasks")
-
 async def list_tasks(
-    stage_id: int = None, 
+    stage_id: int = None,
     assignee_id: int = None,
     current_user: dict = Depends(get_current_user)
 ):
@@ -156,7 +155,14 @@ async def list_tasks(
         filters['stage_id'] = stage_id
     if assignee_id:
         filters['assignee_id'] = assignee_id
-    
+
+    # Роли которые видят ВСЕ задачи
+    admin_roles = ['admin', 'director', 'manager']
+
+    # Если пользователь НЕ admin/director/manager - показываем только его задачи
+    if current_user['role'] not in admin_roles:
+        filters['assignee_id'] = current_user['id']
+
     return get_tasks(filters)
 
 @router.get("/tasks/my")
@@ -238,5 +244,12 @@ async def remove_task(
 
 @router.get("/tasks/analytics")
 async def analytics(current_user: dict = Depends(get_current_user)):
-    """Статистика задач для текущего пользователя (только его задачи)"""
+    """Статистика задач. Admin/director/manager видят все, остальные - только свои"""
+    admin_roles = ['admin', 'director', 'manager']
+
+    # Если admin/director/manager - показываем всю статистику
+    if current_user['role'] in admin_roles:
+        return get_task_analytics(user_id=None)
+
+    # Остальные видят только свою статистику
     return get_task_analytics(user_id=current_user['id'])
