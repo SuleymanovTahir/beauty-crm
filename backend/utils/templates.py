@@ -14,17 +14,17 @@ def get_booking_notification_email(
     """
     Generates subject and body for booking notification email.
     """
-    subject = f"📅 НОВАЯ ЗАПИСЬ: {date_str} {time_str} - {service_name}"
+    subject = f"НОВАЯ ЗАПИСЬ: {date_str} {time_str} - {service_name}"
     
     source_text = "(Получено через AI-ассистента)" if is_bot_booking else "(Запись через админку/сайт)"
     
     body = f"""
     Новая запись подтверждена!
     
-    📅 Дата: {date_str}
-    ⏰ Время: {time_str}
-    💅 Услуга: {service_name}
-    👤 Мастер: {master_name}
+    Дата: {date_str}
+    Время: {time_str}
+    Услуга: {service_name}
+    Мастер: {master_name}
     
     Клиент: {client_name}
     Телефон: {client_phone}

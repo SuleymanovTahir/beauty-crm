@@ -1,7 +1,10 @@
-"""
-Утилиты для кэширования в Redis
-"""
-import redis
+try:
+    import redis
+    REDIS_AVAILABLE = True
+except ImportError:
+    redis = None
+    REDIS_AVAILABLE = False
+
 import json
 import os
 from utils.logger import log_info, log_error
@@ -13,6 +16,12 @@ REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", None)
 
 class Cache:
     def __init__(self):
+        if not REDIS_AVAILABLE:
+            log_info("⚠️ Redis library not installed - cache disabled", "cache")
+            self.enabled = False
+            self.client = None
+            return
+
         try:
             self.client = redis.Redis(
                 host=REDIS_HOST,
@@ -31,7 +40,7 @@ class Cache:
             log_info(f"🚀 Redis connected: {REDIS_HOST}:{REDIS_PORT}", "cache")
         except Exception as e:
             log_error(f"❌ Redis connection failed: {e}", "cache")
-            log_info("⚠️ Continuing without Redis cache - using in-memory fallback", "cache")
+            log_info("⚠️ Continuing without Redis cache", "cache")
             self.enabled = False
             self.client = None
 

@@ -1,16 +1,13 @@
-#!/usr/bin/env python3
-"""
-Тестовый скрипт для проверки SmartAssistant
-"""
 import sys
 import os
+import asyncio
 
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from services.smart_assistant import SmartAssistant, get_smart_greeting, get_smart_suggestion
 
-def test_smart_assistant():
+async def test_smart_assistant():
     """Тест SmartAssistant"""
     print("=" * 60)
     print("🧠 Тестирование SmartAssistant")
@@ -52,7 +49,7 @@ def test_smart_assistant():
 
         # 4. Получаем персонализированное приветствие
         print("\n4️⃣ Персонализированное приветствие...")
-        greeting = assistant.get_personalized_greeting("Анна")
+        greeting = await assistant.get_personalized_greeting("Анна")
         print(f"✅ Приветствие: {greeting}")
 
         # 5. Получаем умное предложение
@@ -65,7 +62,7 @@ def test_smart_assistant():
             print(f"   - Рекомендуемая дата: {suggestion['recommended_date']}")
             print(f"   - Уверенность: {suggestion['confidence']*100:.0f}%")
 
-            message = assistant.generate_booking_suggestion_message("Анна")
+            message = await assistant.generate_booking_suggestion_message("Анна")
             print(f"   - Сообщение: {message}")
         else:
             print("ℹ️  Предложений пока нет (недостаточно данных)")
@@ -128,5 +125,5 @@ def test_smart_assistant():
         return False
 
 if __name__ == "__main__":
-    success = test_smart_assistant()
+    success = asyncio.run(test_smart_assistant())
     sys.exit(0 if success else 1)

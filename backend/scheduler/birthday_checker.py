@@ -137,17 +137,17 @@ async def send_birthday_notifications():
             
             # Формируем сообщение
             if notification_type == "week":
-                title = "🎂 День рождения через неделю"
+                title = "День рождения через неделю"
                 message = f"Через неделю ({birthday_date}) день рождения у {full_name} (@{username})"
             elif notification_type == "three_days":
-                title = "🎉 День рождения через 3 дня"
+                title = "День рождения через 3 дня"
                 message = f"Через 3 дня ({birthday_date}) день рождения у {full_name} (@{username})"
             elif notification_type == "one_day":
-                title = "🎈 День рождения завтра!"
+                title = "День рождения завтра!"
                 message = f"Завтра ({birthday_date}) день рождения у {full_name} (@{username})"
             else:  # today
-                title = "🎊 День рождения сегодня!"
-                message = f"Сегодня день рождения у {full_name} (@{username})! Не забудьте поздравить! 🎁"
+                title = "День рождения сегодня!"
+                message = f"Сегодня день рождения у {full_name} (@{username})! Не забудьте поздравить!"
             
             # Отправляем уведомление всем сотрудникам (кроме именинника)
             email_recipients = []
@@ -176,7 +176,7 @@ async def send_birthday_notifications():
                 <html>
                   <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
-                      <h1 style="color: white; margin: 0;">🎂 {title}</h1>
+                      <h1 style="color: white; margin: 0;">{title}</h1>
                     </div>
                     <div style="padding: 30px; background-color: #f7f7f7;">
                       <p style="color: #666; font-size: 16px;">{message}</p>
@@ -210,7 +210,7 @@ async def send_birthday_notifications():
 async def birthday_checker_loop():
     """Основной цикл проверки дней рождения (async версия)"""
     if SHOW_SCHEDULER_START:
-        log_info("🎂 Запущен планировщик проверки дней рождения", "birthday_checker")
+        log_info("Запущен планировщик проверки дней рождения", "birthday_checker")
 
     while True:
         try:
@@ -232,7 +232,7 @@ def start_birthday_checker():
     """Запустить проверку дней рождения как фоновую задачу"""
     # Создаем фоновую задачу в текущем event loop (НЕ используем threading!)
     asyncio.create_task(birthday_checker_loop())
-    log_info("✅ Планировщик дней рождения запущен", "birthday_checker")
+    log_info("Планировщик дней рождения запущен", "birthday_checker")
 
 # ===== ПОЗДРАВЛЕНИЯ КЛИЕНТОВ =====
 
@@ -322,20 +322,13 @@ async def send_birthday_congratulations():
             # Формируем поздравление
             birthday_discount = salon.get('birthday_discount', '15%')  # Configurable discount
             
-            message = f"""🎉🎂 С Днём Рождения, {name}! 🎂🎉
-
-Команда {salon_name} поздравляет вас с этим особенным днём!
-Желаем счастья, здоровья, красоты и исполнения всех желаний! ✨
-
-🎁 Специально для вас - скидка {birthday_discount} на любую услугу в день рождения!
-
-Будем рады видеть вас! 💖"""
+            message = f"С Днём Рождения, {name}!\n\nКоманда {salon_name} поздравляет вас с этим особенным днём! Желаем счастья, здоровья, красоты и исполнения всех желаний!\n\nСпециально для вас - скидка {birthday_discount} на любую услугу в день рождения!\n\nБудем рады видеть вас!"
 
             try:
                 # Отправляем поздравление в Instagram
                 if instagram_id and not instagram_id.startswith('web_'):
                     await send_message(instagram_id, message)
-                    log_info(f"🎂 Отправлено поздравление клиенту {name} ({instagram_id})", "birthday_checker")
+                    log_info(f"Отправлено поздравление клиенту {name} ({instagram_id})", "birthday_checker")
 
                 # Сохраняем уведомление в БД
                 conn = get_db_connection()
@@ -366,7 +359,7 @@ async def send_birthday_congratulations():
 
 async def client_birthday_checker_loop():
     """Основной цикл проверки дней рождения клиентов (async версия)"""
-    log_info("🎂 Запущен планировщик поздравлений клиентов", "birthday_checker")
+    log_info("Запущен планировщик поздравлений клиентов", "birthday_checker")
 
     while True:
         try:
@@ -388,7 +381,7 @@ def start_client_birthday_checker():
     """Запустить проверку дней рождения клиентов как фоновую задачу"""
     # Создаем фоновую задачу в текущем event loop (НЕ используем threading!)
     asyncio.create_task(client_birthday_checker_loop())
-    log_info("✅ Планировщик поздравлений клиентов запущен", "birthday_checker")
+    log_info("Планировщик поздравлений клиентов запущен", "birthday_checker")
 
 # ===== SCHEDULER ДЛЯ ЗАПИСЕЙ =====
 
@@ -416,14 +409,14 @@ async def send_booking_reminders():
                 
                 # Отправляем только если близко к 24 часам (23-25 часов)
                 if 23 <= hours_until <= 25:
-                    message = f"""Напоминаю: завтра {service} в {dt_obj.strftime('%H:%M')} 💅
+                    message = f"""Напоминаю: завтра {service} в {dt_obj.strftime('%H:%M')}
 {f'Мастер: {master}' if master else ''}
 
 Адрес: {salon_name}, {salon_address}
-Ждём вас! 💎"""
+Ждём вас!"""
                     
                     await send_message(instagram_id, message)
-                    log_info(f"✅ Reminder sent (24h) to {instagram_id}", "scheduler")
+                    log_info(f"Reminder sent (24h) to {instagram_id}", "scheduler")
                     
             except Exception as e:
                 log_error(f"Error sending 24h reminder: {e}", "scheduler")
@@ -440,13 +433,13 @@ async def send_booking_reminders():
                 
                 # Отправляем только если близко к 2 часам (1.5-2.5 часа)
                 if 1.5 <= hours_until <= 2.5:
-                    message = f"""Через 2 часа увидимся! 😊
+                    message = f"""Через 2 часа увидимся!
 
 {service} в {dt_obj.strftime('%H:%M')}
-Если не успеваете - дайте знать, перенесём 💖"""
+Если не успеваете - дайте знать, перенесём"""
                     
                     await send_message(instagram_id, message)
-                    log_info(f"✅ Reminder sent (2h) to {instagram_id}", "scheduler")
+                    log_info(f"Reminder sent (2h) to {instagram_id}", "scheduler")
                     
             except Exception as e:
                 log_error(f"Error sending 2h reminder: {e}", "scheduler")
@@ -478,9 +471,9 @@ async def send_immediate_booking_reminders():
                 salon_name = salon_settings.get('name')
                 salon_address = salon_settings.get('address')
                 
-                message = f"🔔 Через {int(minutes_until)} мин {service} в {dt_obj.strftime('%H:%M')} 💅\n{f'Mастер: {master}' if master else ''}\n\nАдрес: {salon_name}, {salon_address}\nЖдём вас! 💎"
+                message = f"Через {int(minutes_until)} мин {service} в {dt_obj.strftime('%H:%M')}\n{f'Mастер: {master}' if master else ''}\n\nАдрес: {salon_name}, {salon_address}\nЖдём вас!"
                 await send_message(instagram_id, message)
-                log_info(f"✅ Immediate reminder (≤1h) sent to {instagram_id}", "scheduler")
+                log_info(f"Immediate reminder (≤1h) sent to {instagram_id}", "scheduler")
             except Exception as e:
                 log_error(f"Error sending immediate reminder: {e}", "scheduler")
     except Exception as e:
@@ -497,7 +490,7 @@ async def check_rebooking_opportunities():
         
         for instagram_id, name, username in manicure_clients[:5]:  # Макс 5 в день
             try:
-                message = f"""Привет! Маникюр уже 3 недели, пора обновить? 💅
+                message = f"""Привет! Маникюр уже 3 недели, пора обновить?
 
 Записать как в прошлый раз?"""
                 
@@ -515,7 +508,7 @@ async def check_rebooking_opportunities():
         
         for instagram_id, name, username in pedicure_clients[:5]:
             try:
-                message = f"""Привет! Педикюр уже месяц 🦶
+                message = f"""Привет! Педикюр уже месяц
 
 Хотите записаться снова%s"""
                 
@@ -532,7 +525,7 @@ async def check_rebooking_opportunities():
 
 async def booking_scheduler_loop():
     """Основной цикл scheduler для записей (async версия)"""
-    log_info("📅 Запущен планировщик записей", "scheduler")
+    log_info("Запущен планировщик записей", "scheduler")
 
     while True:
         try:

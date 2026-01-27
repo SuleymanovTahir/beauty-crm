@@ -27,17 +27,25 @@ def setup_test_employee():
         cursor.execute("""
             INSERT INTO users (username, password_hash, full_name, role, is_active, is_service_provider, position, email, phone, bio)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (username) DO UPDATE SET full_name = EXCLUDED.full_name
         """, ('test_emp_mgmt', 'hash123', 'Test Employee', 'employee', True, True, 'Test Master', 'test@test.com', '123', 'Test bio'))
         cursor.execute("SELECT id FROM users WHERE username = %s", ('test_emp_mgmt',))
         user_id = cursor.fetchone()[0]
         
-        # Create test services
-        cursor.execute("INSERT INTO services (name, service_key, category, price, duration) VALUES (%s, %s, %s, %s, %s) RETURNING id",
-                      ('Test Service 1', 'test_service_1', 'Test', 100, 60))
+        cursor.execute("""
+            INSERT INTO services (name, service_key, category, price, duration) 
+            VALUES (%s, %s, %s, %s, %s) 
+            ON CONFLICT (service_key) DO UPDATE SET name = EXCLUDED.name
+        """, ('Test Service 1', 'test_service_1', 'Test', 100, 60))
+        cursor.execute("SELECT id FROM services WHERE service_key = %s", ('test_service_1',))
         service1_id = cursor.fetchone()[0]
         
-        cursor.execute("INSERT INTO services (name, service_key, category, price, duration) VALUES (%s, %s, %s, %s, %s) RETURNING id",
-                      ('Test Service 2', 'test_service_2', 'Test', 200, 90))
+        cursor.execute("""
+            INSERT INTO services (name, service_key, category, price, duration) 
+            VALUES (%s, %s, %s, %s, %s) 
+            ON CONFLICT (service_key) DO UPDATE SET name = EXCLUDED.name
+        """, ('Test Service 2', 'test_service_2', 'Test', 200, 90))
+        cursor.execute("SELECT id FROM services WHERE service_key = %s", ('test_service_2',))
         service2_id = cursor.fetchone()[0]
         
         conn.commit()
@@ -168,7 +176,7 @@ def test_update_user_service(data, conn):
                   (user_id, service_id))
     row = cursor.fetchone()
     
-    if not row or row[0] != 200 or str(row[1]) != '90' or row[2] != 0:
+    if not row or abs(row[0] - 200.0) > 0.01 or int(row[1]) != 90 or bool(row[2]) != False:
         print(f"FAILED (Update not applied: {row})")
         return False
     

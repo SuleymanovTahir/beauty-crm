@@ -75,20 +75,6 @@ const EmployeeServices = React.lazy(() => import('./pages/employee/Services'));
 const EmployeeDashboard = React.lazy(() => import('./pages/employee/Dashboard'));
 const NotificationsPage = React.lazy(() => import('./pages/common/Notifications'));
 
-// const PublicLayout = React.lazy(() => import('./components/layouts/PublicLayout'));
-// const Success = React.lazy(() => import('./pages/public/Success'));
-// const About = React.lazy(() => import('./pages/public/About'));
-// const Contacts = React.lazy(() => import('./pages/public/Contacts'));
-// const Cooperation = React.lazy(() => import('./pages/public/Cooperation'));
-// const FAQ = React.lazy(() => import('./pages/public/FAQ'));
-const EditUser = React.lazy(() => import('./pages/admin/EditUser'));
-// const UserCabinet = React.lazy(() => import('./pages/public/UserCabinet'));
-// const DataDeletion = React.lazy(() => import('./pages/public/DataDeletion'));
-// const Booking = React.lazy(() => import('./pages/public/Booking'));
-// const ClientCabinet = React.lazy(() => import('./pages/public/ClientCabinet'));
-// const RateUs = React.lazy(() => import('./pages/public/RateUs'));
-
-// New Public Landing Pages
 // New Public Landing Pages - Lazy Loaded
 const LandingPage = React.lazy(() => import('../public_landing/pages/LandingPage').then(module => ({ default: module.LandingPage })));
 const PrivacyPolicyNew = React.lazy(() => import('../public_landing/pages/PrivacyPolicy').then(module => ({ default: module.PrivacyPolicy })));
@@ -100,6 +86,7 @@ const UserBookingWizard = React.lazy(() => import('../public_landing/pages/accou
 const DataDeletionNew = React.lazy(() => import('../public_landing/pages/DataDeletion'));
 const Unsubscribe = React.lazy(() => import('./pages/public/Unsubscribe'));
 const NotFound = React.lazy(() => import('../public_landing/pages/NotFound').then(module => ({ default: module.NotFound })));
+const EditUser = React.lazy(() => import('./pages/admin/EditUser'));
 
 const Login = React.lazy(() => import('../public_landing/pages/LoginPage').then(module => ({ default: module.LoginPage })));
 const AdminLogin = React.lazy(() => import('./pages/auth/Login'));
@@ -500,32 +487,6 @@ export default function App() {
                 />
                 <Route path="/new-booking" element={<UserBookingWizard />} />
               </Route>
-
-              {/* Public Routes using PublicLayout - COMMENTED OUT: files don't exist */}
-              {/* <Route element={<PublicLayout />}>
-                <Route path="booking" element={<Booking />} />
-                <Route path="client/cabinet" element={<ClientCabinet />} />
-                <Route path="success" element={<Success />} />
-                <Route path="about" element={<About />} />
-                <Route path="contacts" element={<Contacts />} />
-                <Route path="cooperation" element={<Cooperation />} />
-                <Route path="faq" element={<FAQ />} />
-                <Route path="data-deletion" element={<DataDeletion />} />
-                <Route path="rate-us" element={<RateUs />} />
-                <Route
-                  path="cabinet"
-                  element={
-                    currentUser ? (
-                      currentUser.role === 'admin' ? <Navigate to="/crm/dashboard" replace /> :
-                        currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
-                          currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
-                            <Navigate to="/" replace />
-                    ) : (
-                      <UserCabinet />
-                    )
-                  }
-                />
-              </Route> */}
 
               {/* 404 Page - Returns 404 status for SEO */}
               <Route path="*" element={<NotFound />} />

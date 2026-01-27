@@ -13,11 +13,12 @@
 """
 import sys
 import os
-from db.connection import get_db_connection
 from datetime import datetime
 
 # Добавляем путь к backend
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from db.connection import get_db_connection
 
 from core.config import (
     DATABASE_NAME, ROLES, CLIENT_STATUSES,

@@ -82,7 +82,7 @@ async def test_booking_reminder_notification():
         'id': 999,
         'full_name': 'Genrih',
         'name': 'Genrih',
-        'email': test_email,
+        'email': TEST_CONFIG['test_email'],
         'phone': '+77056054308',
         'service_name': 'Массаж (ног/стоп/рук) 40 мин',
         'master': 'Анна Иванова',
@@ -153,7 +153,7 @@ async def main():
 
     if passed == total:
         print("\n🎉 ВСЕ ТЕСТЫ ПРОЙДЕНЫ!")
-        print(f"   Проверьте почту {test_email}")
+        print(f"   Проверьте почту {TEST_CONFIG['test_email']}")
     else:
         print("\n⚠️  НЕКОТОРЫЕ ТЕСТЫ НЕ ПРОШЛИ")
         print("   Проверьте настройки SMTP в .env файле")

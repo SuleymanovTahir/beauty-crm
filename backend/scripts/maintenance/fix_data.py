@@ -1,486 +1,84 @@
-import sys
-import os
-import psycopg2
-from datetime import datetime
-
-# Add the backend directory to the Python path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
 from db.connection import get_db_connection
-from db.init import init_database
-
-def merge_clients(main_id: str, redundant_id: str):
-    """Объединить двух клиентов в одного"""
-    print(f"🔗 Merging client '{redundant_id}' into '{main_id}'...")
-    conn = get_db_connection()
-    c = conn.cursor()
-    
-    try:
-        # Tables to update (column names might vary, so we handle them carefully)
-        tables = [
-            ("bookings", "instagram_id"),
-            ("bot_analytics", "instagram_id"),
-            ("challenge_progress", "client_id"),
-            ("client_beauty_metrics", "client_id"),
-            ("client_favorite_masters", "client_id"),
-            ("client_gallery", "client_id"),
-            ("client_interaction_patterns", "client_id"),
-            ("client_notifications", "client_instagram_id"),
-            ("client_preferences", "client_id"),
-            ("client_referrals", "referrer_id"),
-            ("client_referrals", "referred_id"),
-            ("conversation_context", "client_id"),
-            ("conversations", "client_id"),
-            ("gallery_photos", "client_id"),
-            ("loyalty_transactions", "client_id"),
-            ("messenger_messages", "client_id"),
-            ("notifications", "client_id"),
-            ("referral_campaign_users", "client_id")
-        ]
-        
-        updated_total = 0
-        for table, col in tables:
-            try:
-                # В PostgreSQL ошибка в транзакции прерывает её всю. 
-                # Используем SAVEPOINT чтобы игнорировать отсутствие таблиц.
-                c.execute(f"SAVEPOINT merge_{table}")
-                c.execute(f"UPDATE {table} SET {col} = %s WHERE {col} = %s", (main_id, redundant_id))
-                count = c.rowcount
-                if count > 0:
-                    print(f"  ✅ Updated {count} rows in {table}")
-                    updated_total += count
-                c.execute(f"RELEASE SAVEPOINT merge_{table}")
-            except Exception as e:
-                # Если таблицы нет или ошибка - откатываем только этот шаг
-                c.execute(f"ROLLBACK TO SAVEPOINT merge_{table}")
-                pass
-        
-        # Finally delete redundant client
-        c.execute("DELETE FROM clients WHERE instagram_id = %s", (redundant_id,))
-        conn.commit()
-        print(f"✅ Merged {updated_total} total records. Duplicate client deleted.")
-    except Exception as e:
-        conn.rollback()
-        print(f"❌ Error merging clients: {e}")
-    finally:
-        conn.close()
-
-def localize_staff_data():
-    """Update staff details with localized names, positions, and specializations."""
-    print("🌍 Localizing staff details...")
-    conn = get_db_connection()
-    c = conn.cursor()
-    
-    staff_data = [
-        {
-            "username": "mestan", 
-            "full_name_ru": "Амандурдыева Местан",
-            "full_name_en": "Amandurdyyeva Mestan",
-            "full_name_ar": "أماندوردييفا ميستان",
-            "position_ru": "Стилист-парикмахер",
-            "position_en": "Hair Stylist",
-            "position_ar": "مصفف شعر",
-            "specialization_ru": "Брови, Уход за лицом, Волосы, Ресницы, Ногти, Перманентный макияж, Ваксинг",
-            "specialization_en": "Brows, Facial, Hair, Lashes, Nails, Permanent Makeup, Waxing",
-            "specialization_ar": "حواجب، وجه، شعر، رموش، أظافر، مكياج دائم، إزالة الشعر بالشمع"
-        },
-        {
-            "username": "lyazzat", 
-            "full_name_ru": "Кожабай Ляззат",
-            "full_name_en": "Kozhabay Lyazzat",
-            "full_name_ar": "كوزاباي ليازات",
-            "position_ru": "Мастер ногтевого сервиса",
-            "position_en": "Nail Master",
-            "position_ar": "أخصائية أظافر",
-            "specialization_ru": "Маникюр, Педикюр, Дизайн ногтей, Наращивание, Уход за руками",
-            "specialization_en": "Manicure, Pedicure, Nail Design, Extension, Hand Care",
-            "specialization_ar": "مانيكير، باديكير، تصميم الأظافر، تمديد، عناية باليدين"
-        },
-        {
-            "username": "simo", 
-            "full_name_ru": "Мохамед Сабри",
-            "full_name_en": "Mohamed Sabri",
-            "full_name_ar": "محمد صبري",
-            "position_ru": "Стилист-парикмахер",
-            "position_en": "Hair Stylist",
-            "position_ar": "مصفف شعر",
-            "specialization_ru": "Сложное окрашивание, Стрижки, Укладки, Уход за волосами, Балаяж",
-            "specialization_en": "Complex Coloring, Haircuts, Styling, Hair Care, Balayage",
-            "specialization_ar": "صبغ معقد، قص الشعر، تصفيف، عناية بالشعر، بالياج"
-        },
-        {
-            "username": "gulya", 
-            "full_name_ru": "Касымова Гульчере",
-            "full_name_en": "Kasymova Gulcehre",
-            "full_name_ar": "قاسيموفا غولشيري",
-            "position_ru": "Мастер ногтевого сервиса / Ваксинг",
-            "position_en": "Nail Master / Waxing",
-            "position_ar": "أخصائية أظافر / إزالة الشعر بالشمع",
-            "specialization_ru": "Маникюр, Педикюр, Ваксинг, Шугаринг, Уход за кожей",
-            "specialization_en": "Manicure, Pedicure, Waxing, Sugaring, Skin Care",
-            "specialization_ar": "مانيكير، باديكير، إزالة الشعر بالشمع، سكر، عناية بالبشرة"
-        },
-        {
-            "username": "jennifer", 
-            "full_name_ru": "Перадилья Дженнифер",
-            "full_name_en": "Peradilla Jennifer",
-            "full_name_ar": "بيراديليا جينيفر",
-            "position_ru": "Мастер ногтевого сервиса / Массаж",
-            "position_en": "Nail Master / Massage",
-            "position_ar": "أخصائية أظافر / مساج",
-            "specialization_ru": "Маникюр, Педикюр, Массаж лица, SPA-процедуры, Релакс",
-            "specialization_en": "Manicure, Pedicure, Facial Massage, SPA, Relax",
-            "specialization_ar": "مانيكير، باديكير، مساج للوجه، سبا، استرخاء"
-        },
-        {
-            "username": "tursunai",
-            "full_name_ru": "Турсунай",
-            "full_name_en": "Tursunai",
-            "full_name_ar": "تورسوناي",
-            "position_ru": "Директор",
-            "position_en": "Director",
-            "position_ar": "مدير",
-            "specialization_ru": "Управление салоном",
-            "specialization_en": "Salon Management",
-            "specialization_ar": "إدارة الصالون"
-        }
-    ]
-
-    try:
-        updated_count = 0
-        for staff in staff_data:
-            try:
-                c.execute("SAVEPOINT loc_staff")
-                c.execute("""
-                    UPDATE users
-                    SET 
-                        full_name_ru = %s, full_name_en = %s, full_name_ar = %s,
-                        position_ru = %s, position_en = %s, position_ar = %s,
-                        specialization_ru = %s, specialization_en = %s, specialization_ar = %s
-                    WHERE username = %s
-                """, (
-                    staff['full_name_ru'], staff['full_name_en'], staff['full_name_ar'],
-                    staff['position_ru'], staff['position_en'], staff['position_ar'],
-                    staff['specialization_ru'], staff['specialization_en'], staff['specialization_ar'],
-                    staff['username']
-                ))
-                updated_count += c.rowcount
-                c.execute("RELEASE SAVEPOINT loc_staff")
-            except Exception:
-                c.execute("ROLLBACK TO SAVEPOINT loc_staff")
-        
-        conn.commit()
-        print(f"  ✅ Localized {updated_count} staff members.")
-    except Exception as e:
-        conn.rollback()
-        print(f"  ❌ Error localizing staff: {e}")
-    finally:
-        conn.close()
+from utils.logger import log_info, log_error
 
 def run_all_fixes():
-    print("🔧 Starting data fixes...")
-    
-    # 0. Initialize database schema if missing
-    print("🚀 Initializing database schema...")
-    init_database()
-    
-    # 0. Merge known duplicates
-    merge_clients('admin', '1') # Tahir duplication fix
-    
-    # 0.1 Localize staff
-    localize_staff_data()
+    """Entry point for centralized maintenance runner"""
+    return run_fix()
+
+def run_fix():
+    print("🚀 Running system data maintenance...")
     
     conn = get_db_connection()
     c = conn.cursor()
-    
+
     try:
-        # 1. Populate specialization and position based on services
-        print("🔍 Populating specialization and position for service providers...")
-        
+        # 1. Deduplicate Achievement Templates
+        log_info("🧹 Cleaning up duplicate achievements...", "maintenance")
         c.execute("""
-            SELECT id, full_name 
-            FROM users 
-            WHERE is_service_provider = TRUE 
-            AND is_active = TRUE
+            DELETE FROM client_achievements 
+            WHERE id NOT IN (
+                SELECT MIN(id) 
+                FROM client_achievements 
+                WHERE client_id = 'template'
+                GROUP BY achievement_type, COALESCE(title_ru, '')
+            ) AND client_id = 'template';
         """)
-        
-        service_providers = c.fetchall()
-        
-        for provider_id, provider_name in service_providers:
-            # Get categories of services provided by this user
-            c.execute("""
-                SELECT s.category 
-                FROM user_services us 
-                JOIN services s ON us.service_id = s.id 
-                WHERE us.user_id = %s 
-                GROUP BY s.category
-                ORDER BY s.category
-            """, (provider_id,))
-            
-            categories = [row[0] for row in c.fetchall() if row[0]]
-            
-            if categories:
-                specialization = ", ".join(categories)
-                # If position is not set, set a reasonable default
-                c.execute("SELECT position FROM users WHERE id = %s", (provider_id,))
-                current_position = c.fetchone()[0]
-                
-                new_position = current_position
-                if not current_position or current_position == 'Специалист':
-                    # Determine position based on number of services or categories
-                    if len(categories) >= 3:
-                        new_position = "Top Specialist"
-                    else:
-                        new_position = "Specialist"
-                
-                print(f"➕ Updating {provider_name}: Position='{new_position}', Spec='{specialization}'")
-                
-                # Update specialization and position (and translations if needed)
-                c.execute("""
-                    UPDATE users 
-                    SET specialization = %s, position = %s
-                    WHERE id = %s
-                """, (specialization, new_position, provider_id))
-        
-        # 2. Fix specific experience and details
-        print("🔍 Updating specific employee details by username...")
-        
-        employee_fixes = [
-            ("lyazzat", 7, None),
-            ("mestan", 15, "+971 50 180 0346"),
-            ("simo", 13, None),
-            ("gulya", 9, None),
-            ("jennifer", 11, None)
-        ]
+        log_info(f"✅ Removed {c.rowcount} redundant templates", "maintenance")
 
-        for username, exp, phone in employee_fixes:
-            if phone:
-                c.execute("UPDATE users SET years_of_experience = %s, phone = %s WHERE username = %s", (exp, phone, username))
-            else:
-                c.execute("UPDATE users SET years_of_experience = %s WHERE username = %s", (exp, username))
-
-        # 3. Create Sales profile: Akbota
-        print("🔍 Ensuring Sales profile: Akbota...")
-        c.execute("SELECT id FROM users WHERE username = 'Akbota' OR full_name = 'Akbota'")
-        akbota = c.fetchone()
-        default_hash = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' # For 'defaultPassword123'
-        if not akbota:
-            c.execute("""
-                INSERT INTO users (username, full_name, role, phone, telegram_username, is_active, password_hash)
-                VALUES ('Akbota', 'Akbota', 'sales', '+7 778 282 8758', '@bbbas7700', TRUE, %s)
-            """, (default_hash,))
-        else:
-            c.execute("""
-                UPDATE users 
-                SET role = 'sales', phone = '+7 778 282 8758', telegram_username = '@bbbas7700'
-                WHERE id = %s
-            """, (akbota[0],))
-
-        # 4. Cleanup Test Users
-        print("🔍 Cleaning up test users (@test.com)...")
-        # Get IDs of test users to delete their related records first
-        c.execute("SELECT id FROM users WHERE email LIKE '%@test.com' OR username IN ('admin1', 'admin2', 'master1', 'master2', 'master3', 'master4', 'master5', 'director1', 'manager1', 'manager2', 'sales1', 'sales2', 'sales3', 'marketer1')")
-        test_user_ids = [row[0] for row in c.fetchall()]
+        # 2. Staff Schedule Generation
+        log_info("📅 Verifying staff schedules...", "maintenance")
+        c.execute("SELECT id, full_name FROM users WHERE role IN ('master', 'employee', 'director', 'admin') AND is_active = TRUE")
+        users = c.fetchall()
         
-        if test_user_ids:
-            # Delete related records
-            tables_with_user_id = ["user_services", "user_schedule", "user_permissions", "audit_log", "internal_chat", "notifications"]
-            for table in tables_with_user_id:
-                try:
-                    c.execute(f"SAVEPOINT cleanup_{table}")
-                    c.execute(f"DELETE FROM {table} WHERE user_id = ANY(%s)", (test_user_ids,))
-                    c.execute(f"RELEASE SAVEPOINT cleanup_{table}")
-                except Exception:
-                    c.execute(f"ROLLBACK TO SAVEPOINT cleanup_{table}")
-            
-            # Additional cleanup for internal_chat where user could be sender or receiver
-            try:
-                c.execute("SAVEPOINT cleanup_internal_chat_ext")
-                c.execute("DELETE FROM internal_chat WHERE sender_id = ANY(%s) OR receiver_id = ANY(%s)", (test_user_ids, test_user_ids))
-                c.execute("RELEASE SAVEPOINT cleanup_internal_chat_ext")
-            except Exception:
-                c.execute(f"ROLLBACK TO SAVEPOINT cleanup_internal_chat_ext")
-            
-            # Finally delete the users
-            c.execute("DELETE FROM users WHERE id = ANY(%s)", (test_user_ids,))
-            deleted_count = c.rowcount
-            print(f"  ✅ Deleted {deleted_count} test users and their related data.")
-        else:
-            print("  ℹ️ No test users found to delete.")
-
-        # 5. Generate attractive bios
-        print("🔍 Generating attractive bios with more variety...")
-        c.execute("SELECT id, full_name, specialization, position FROM users WHERE is_service_provider = TRUE")
-        providers = c.fetchall()
-        
-        import random
-        
-        bio_templates_ru = [
-            "{name} — ведущий эксперт в области {spec}. С опытом работы {experience} лет, создает неповторимые образы, учитывая каждое пожелание гостя.",
-            "Профессионализм и творческий подход: {name} специализируется на {spec}. Мастер, для которого нет невыполнимых задач.",
-            "Ищете идеальный результат? {name} сочетает в себе талант и глубокие знания в {spec}. Ваш комфорт и красота в надежных руках.",
-            "Мастер {name} превращает каждую процедуру в искусство. Специализация: {spec}. Индивидуальный стиль и безупречное качество.",
-            "Для {name} красота — это гармония. Эксперт по {spec}, мастер регулярно совершенствует навыки, чтобы радовать вас лучшими техниками."
-        ]
-        
-        bio_templates_en = [
-            "{name} is a leading expert in {spec}. With {experience} years of experience, creating unique looks based on every guest's wish.",
-            "Professionalism and creativity: {name} specializes in {spec}. A master for whom no task is too complex.",
-            "Looking for the perfect result? {name} combines talent and deep knowledge in {spec}. Your comfort and beauty are in safe hands.",
-            "{name} turns every procedure into art. Specialization: {spec}. Individual style and flawless quality.",
-            "For {name}, beauty is harmony. An expert in {spec}, this specialist regularly improves skills to delight you with the best techniques."
-        ]
-
-        for pid, name, spec, pos in providers:
-            # Get experience for this user
-            c.execute("SELECT years_of_experience FROM users WHERE id = %s", (pid,))
-            exp = c.fetchone()[0] or 5
-            
-            # Select random template
-            template_ru = random.choice(bio_templates_ru)
-            template_en = random.choice(bio_templates_en)
-            
-            use_spec = spec or pos or "индустрии красоты"
-            use_spec_en = spec or pos or "beauty industry"
-            
-            bio_ru = template_ru.format(name=name, spec=use_spec, experience=exp)
-            bio_en = template_en.format(name=name, spec=use_spec_en, experience=exp)
-            
-            # Special logic for specific mentions
-            if "Hair" in str(use_spec) or "волос" in str(use_spec).lower():
-                bio_ru = f"Мастер преображения ваших волос. {name} использует авторские техники окрашивания и ухода, которые подчеркнут вашу индивидуальность."
-            elif "Nail" in str(use_spec) or "маникюр" in str(use_spec).lower():
-                bio_ru = f"Ваш эксперт по идеальному маникюру. {name} — это тонкое чувство вкуса, безупречная стерильность и внимание к каждой детали."
-            
-            # Use COALESCE with NULLIF to only set bio if it's empty/null
-            c.execute("""
-                UPDATE users 
-                SET bio = COALESCE(NULLIF(bio, ''), %s), 
-                    bio_ru = COALESCE(NULLIF(bio_ru, ''), %s), 
-                    bio_en = COALESCE(NULLIF(bio_en, ''), %s)
-                WHERE id = %s
-            """, (bio_ru, bio_ru, bio_en, pid))
-
-        # 6. Ensure all service providers have at least some specialization text
-        print("🔍 Finalizing specialization...")
-        c.execute("UPDATE users SET specialization = position WHERE (specialization IS NULL OR specialization = '') AND position IS NOT NULL AND is_service_provider = TRUE")
-
-        # 7. EXPORT CREDENTIALS (Requested by user)
-        print("📝 Generating staff credentials file...")
-        c.execute("SELECT username, full_name, role, position FROM users WHERE is_active = TRUE")
-        users_for_cred = c.fetchall()
-        
-        cred_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "staff_credentials.txt")
-        # Also copy to frontend/public for easy access or root
-        root_cred_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "staff_credentials.txt")
-        
-        with open(cred_path, "w", encoding="utf-8") as f:
-            f.write("=== STAFF CREDENTIALS (CONFIDENTIAL) ===\n")
-            f.write(f"Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-            f.write("Default Password for new accounts: defaultPassword123\n")
-            f.write("-" * 40 + "\n")
-            for username, full_name, role, pos in users_for_cred:
-                # Password logic used in seeding (username[:4] + '123' for old ones)
-                p_hint = f"{username[:4]}123 (likely)" if role != 'sales' and username != 'admin2' else "defaultPassword123"
-                if username == 'admin': p_hint = "admin123"
-                
-                f.write(f"Name: {full_name}\n")
-                f.write(f"Login: {username}\n")
-                f.write(f"Role: {role}\n")
-                f.write(f"Position: {pos or 'N/A'}\n")
-                f.write(f"Password Hint: {p_hint}\n")
-                f.write("-" * 40 + "\n")
-        
-        import shutil
-        shutil.copy2(cred_path, root_cred_path)
-        print(f"✅ Credentials file created at: {root_cred_path}")
-
-        # 8. Set default schedule for all service providers (10:30 - 21:00)
-        print("🔍 Setting default schedules (10:30-21:00) for all masters...")
-        c.execute("SELECT id, full_name FROM users WHERE is_service_provider = TRUE")
-        all_masters = c.fetchall()
-        
-        for master_id, master_name in all_masters:
-            # For each day of the week (0-6)
+        gen_count = 0
+        for user in users:
+            uid = user[0]
             for day in range(7):
-                c.execute("""
-                    INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
-                    VALUES (%s, %s, %s, %s, TRUE)
-                    ON CONFLICT (user_id, day_of_week) DO UPDATE 
-                    SET start_time = EXCLUDED.start_time, 
-                        end_time = EXCLUDED.end_time, 
-                        is_active = TRUE
-                """, (master_id, day, "10:30", "21:00"))
-        print(f"✅ Set default schedule for {len(all_masters)} masters.")
+                c.execute("SELECT id FROM user_schedule WHERE user_id = %s AND day_of_week = %s", (uid, day))
+                if not c.fetchone():
+                    c.execute("""
+                        INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
+                        VALUES (%s, %s, '10:30', '21:00', true)
+                    """, (uid, day))
+                    gen_count += 1
+        
+        if gen_count > 0:
+            log_info(f"✅ Generated {gen_count} missing shifts", "maintenance")
+        else:
+            log_info("🗓️ All staff schedules are complete", "maintenance")
 
-        # 9. Clean up gallery and fix image paths
-        print("🔍 Cleaning up gallery and fixing image paths...")
-        # Fix paths (add /images/ if missing)
+        # 3. Schedule Uniqueness check
         c.execute("""
-            UPDATE public_banners SET image_url = REPLACE(image_url, '/static/uploads/', '/static/uploads/images/') 
-            WHERE image_url LIKE '/static/uploads/%' AND image_url NOT LIKE '/static/uploads/images/%'
+            DELETE FROM user_schedule 
+            WHERE id NOT IN (
+                SELECT MIN(id) 
+                FROM user_schedule 
+                GROUP BY user_id, day_of_week
+            );
         """)
-        c.execute("""
-            UPDATE gallery_images SET image_path = REPLACE(image_path, '/static/uploads/', '/static/uploads/images/') 
-            WHERE image_path LIKE '/static/uploads/%' AND image_path NOT LIKE '/static/uploads/images/%'
-        """)
-        # Specific fix for salon images if they are in root uploads but not in salon folder
-        # (Already handled by previous steps mostly)
-        
-        # Remove duplicates
-        c.execute("""
-            DELETE FROM gallery_images a USING gallery_images b 
-            WHERE a.id > b.id AND a.image_path = b.image_path
-        """)
-        print("✅ Gallery cleanup and path fixing completed.")
 
-        # 10. Fix localhost URLs and logo
-        print("🔍 Fixing localhost URLs and logo settings...")
-        
-        # Lists of tables and columns to clean from localhost prefixes
-        url_fields = [
-            ('public_banners', 'image_url'),
-            ('public_reviews', 'avatar_url'),
-            ('public_gallery', 'image_url'),
-            ('users', 'photo'),
-            ('salon_settings', 'logo_url'),
-            ('gallery_images', 'image_path'),
-            ('salon_settings', 'google_maps')
-        ]
-        
-        # Specific fix for Google Maps URL
+        # 4. Sync Service Positions (Migration from position_id to service_positions)
+        log_info("🔗 Syncing service positions...", "maintenance")
         c.execute("""
-            UPDATE salon_settings 
-            SET google_maps = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1806.63583569841!2d55.1278216!3d25.0745229!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f13459ada2307%3A0x6b453a232f6b3e8c!2sM%20Le%20Diamant!5e0!3m2!1sen!2sae!4v1704980000000!5m2!1sen!2sae'
-            WHERE google_maps LIKE '%maps.app.goo.gl%' OR google_maps IS NULL OR google_maps = ''
+            INSERT INTO service_positions (service_id, position_id)
+            SELECT id, position_id 
+            FROM services 
+            WHERE position_id IS NOT NULL
+            ON CONFLICT DO NOTHING
         """)
-        
-        for table, col in url_fields:
-            try:
-                c.execute(f"SAVEPOINT fix_url_{table}")
-                c.execute(f"UPDATE {table} SET {col} = REPLACE({col}, 'http://localhost:8000', '') WHERE {col} LIKE 'http://localhost:8000%'")
-                c.execute(f"RELEASE SAVEPOINT fix_url_{table}")
-            except Exception:
-                c.execute(f"ROLLBACK TO SAVEPOINT fix_url_{table}")
-        
-        # Specific fix for default logo path
-        try:
-             c.execute("""
-                UPDATE salon_settings 
-                SET logo_url = '/static/uploads/images/salon/logo.webp' 
-                WHERE (logo_url IS NULL OR logo_url = '' OR logo_url = '/assets/logo.webp')
-            """)
-        except Exception:
-            pass
+        if c.rowcount > 0:
+            log_info(f"✅ Synced {c.rowcount} primary positions to service_positions mapping", "maintenance")
 
         conn.commit()
-        print("✅ Data fixes completed successfully!")
-        
+        log_info("🏆 Data maintenance completed successfully!", "maintenance")
+        return True
+
     except Exception as e:
+        log_error(f"❌ Maintenance failed: {e}", "maintenance")
         conn.rollback()
-        print(f"❌ Error during fixes: {e}")
+        return False
     finally:
         conn.close()
 
 if __name__ == "__main__":
-    run_all_fixes()
+    run_fix()

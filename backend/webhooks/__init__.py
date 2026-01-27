@@ -516,8 +516,8 @@ async def process_message_background(messaging_event: dict):
                 for manager in managers:
                     create_notification(
                         user_id=str(manager[0]),
-                        title="🏢 КОРПОРАТИВНАЯ ЗАЯВКА",
-                        message=f"Клиент @{username or sender_id[:8]} запросил групповую услугу\nКонтекст: {message_text[:100]}",
+                        title="CORPORATE SERVICE REQUEST",
+                        message=f"Client @{username or sender_id[:8]} requested group/corporate service\nContext: {message_text[:100]}",
                         notification_type="urgent",
                         action_url=f"/admin/chat?client_id={sender_id}"
                     )
@@ -591,7 +591,7 @@ async def process_message_background(messaging_event: dict):
                 import traceback
                 logger.error(f"📋 Traceback:\n{traceback.format_exc()}")
             
-                ai_response = "Извините, возникла техническая проблема. Наш менеджер скоро вам ответит! 💎"
+                ai_response = "I am currently experiencing a technical issue. Our manager will assist you shortly."
 
             # ✅ ПАРСИНГ КОМАНДЫ СОЗДАНИЯ ЗАПИСИ
             import re

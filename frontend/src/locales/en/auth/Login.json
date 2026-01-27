@@ -1,15 +1,15 @@
 {
+  "account_pending": "Your account is pending administrator approval",
   "authorization_error": "Authorization failed",
+  "email_not_verified_redirect": "Email not verified. Redirecting to verification page...",
   "enter_login": "Enter your login",
   "fill_both_fields": "Please fill in both fields",
   "login": "Login",
   "login_error": "Login error",
   "login_title": "Login to your account",
-  "password": "Password",
-  "username": "Username",
-  "welcome": "Welcome",
   "network_error": "Network error. Check your internet connection or try again later.",
-  "account_pending": "Your account is pending administrator approval",
+  "password": "Password",
   "registration_pending_toast": "Your registration is pending administrator approval. You will receive an email when your account is activated.",
-  "email_not_verified_redirect": "Email not verified. Redirecting to verification page..."
+  "username": "Username",
+  "welcome": "Welcome"
 }

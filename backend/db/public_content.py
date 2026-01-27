@@ -127,30 +127,30 @@ def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List
 
 def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = None) -> List[Dict]:
     """
-    Получить активные элементы галереи
-    
-    Args:
-        category: Категория (опционально)
-        limit: Максимальное количество
-    
-    Returns:
-        List[Dict]: Список элементов галереи
+    Получить активные элементы галереи из media_library
     """
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
+        # Use media_library with context='gallery'
         query = """
-            SELECT *
-            FROM gallery_images
-            WHERE is_visible = TRUE
+            SELECT 
+                id, 
+                url as image_url, 
+                title as title_ru, 
+                description as description_ru, 
+                category, 
+                sort_order, 
+                created_at
+            FROM media_library
+            WHERE context = 'gallery' AND is_public = TRUE
         """
+        params = []
         
         if category:
             query += " AND category = %s"
-            params = [category]
-        else:
-            params = []
+            params.append(category)
             
         query += " ORDER BY sort_order ASC, created_at DESC"
         
@@ -162,8 +162,7 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
         columns = [desc[0] for desc in cursor.description]
         gallery = [dict(zip(columns, row)) for row in rows]
 
-        log_info(f"📸 [Gallery DB] Получено {len(gallery)} элементов галереи (category: {category})", "db")
-
+        log_info(f"📸 [Gallery DB] Получено {len(gallery)} элементов из media_library (category: {category})", "db")
         return gallery
         
     except Exception as e:
@@ -302,52 +301,28 @@ def add_faq(data: Dict) -> Optional[int]:
 
 def add_gallery_item(data: Dict) -> Optional[int]:
     """
-    Добавить элемент в галерею
-    
-    Args:
-        data: Данные элемента (image_url, title_ru, description_ru, etc.)
-    
-    Returns:
-        int: ID созданного элемента или None при ошибке
+    Добавить элемент в галерею в media_library
     """
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
         cursor.execute("""
-            INSERT INTO public_gallery (
-                title_ru, title_en, title_ar, title_de, title_es, title_fr, title_hi, title_kk, title_pt,
-                description_ru, description_en, description_ar, description_de, description_es, description_fr, description_hi, description_kk, description_pt,
-                image_url, category, is_active, display_order
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO media_library (
+                context, url, title, description, category, sort_order, is_public
+            ) VALUES ('gallery', %s, %s, %s, %s, %s, TRUE)
+            RETURNING id
         """, (
-            data.get('title_ru'),
-            data.get('title_en'),
-            data.get('title_ar'),
-            data.get('title_de'),
-            data.get('title_es'),
-            data.get('title_fr'),
-            data.get('title_hi'),
-            data.get('title_kk'),
-            data.get('title_pt'),
-            data.get('description_ru'),
-            data.get('description_en'),
-            data.get('description_ar'),
-            data.get('description_de'),
-            data.get('description_es'),
-            data.get('description_fr'),
-            data.get('description_hi'),
-            data.get('description_kk'),
-            data.get('description_pt'),
             data.get('image_url'),
+            data.get('title_ru'),
+            data.get('description_ru'),
             data.get('category', 'works'),
-            data.get('is_active', 1),
             data.get('display_order', 0)
         ))
         
+        item_id = cursor.fetchone()[0]
         conn.commit()
-        item_id = cursor.lastrowid
-        log_info(f"Добавлен элемент галереи ID {item_id}", "db")
+        log_info(f"Добавлен элемент галереи ID {item_id} в media_library", "db")
         return item_id
         
     except Exception as e:

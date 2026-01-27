@@ -158,3 +158,19 @@ def get_cursor(conn, dict_cursor=False):
         return conn.cursor(cursor_factory=RealDictCursor)
     return conn.cursor()
 
+def close_connection_pool():
+    """Close all connections in the pool and reset it.
+    
+    This should be called before dropping/recreating the database
+    to avoid 'database is being accessed by other users' errors.
+    """
+    global _connection_pool
+    if _connection_pool is not None:
+        try:
+            _connection_pool.closeall()
+            log_info("🔌 Connection pool closed", "db")
+        except Exception as e:
+            log_error(f"Error closing connection pool: {e}", "db")
+        finally:
+            _connection_pool = None
+

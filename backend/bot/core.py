@@ -18,8 +18,6 @@ from db import (
     get_bot_settings,
     get_client_by_id,
 )
-from services.smart_assistant import SmartAssistant
-from services.conversation_context import ConversationContext
 from core.config import DEFAULT_HOURS_WEEKDAYS
 
 # ✅ ДОБАВЛЕНО: Инициализация logger
@@ -305,6 +303,7 @@ class SalonBot:
             # ✅ ПРЕДПОЧТЕНИЯ КЛИЕНТА (SmartAssistant)
             # ========================================
             try:
+                from services.smart_assistant import SmartAssistant
                 smart_assistant = SmartAssistant(instagram_id)
                 if smart_assistant.preferences:
                     prefs = smart_assistant.preferences
@@ -1173,7 +1172,18 @@ class SalonBot:
             # Генерируем ответ через прокси
             # ========================================
 
-            ai_response = await self._generate_via_proxy(full_prompt, instagram_id=instagram_id)
+            try:
+                ai_response = await self._generate_via_proxy(full_prompt, instagram_id=instagram_id)
+            except Exception as e:
+                err_str = str(e)
+                if "Rate limit" in err_str:
+                    print(f"⚠️ Handled Rate Limit Error: {e}")
+                    # Fallback response based on language
+                    if client_language == 'ru':
+                        return "Извините, сейчас очень много запросов. Пожалуйста, напишите через минуту! 🙏"
+                    else:
+                        return "Sorry, too many requests right now. Please try again in a minute! 🙏"
+                raise e
             
             # ✅ ОБЯЗАТЕЛЬНО: Проверяем необходимость уведомления на успешном ответе
             await self._check_and_escalate(ai_response, instagram_id)

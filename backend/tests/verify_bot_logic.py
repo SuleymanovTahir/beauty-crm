@@ -1,5 +1,9 @@
 import sys
 import os
+
+# Ensure backend directory is in python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from db.connection import get_db_connection as _get_db_connection
 from datetime import datetime, timedelta
 from bot.tools import get_available_time_slots

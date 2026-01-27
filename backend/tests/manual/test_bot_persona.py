@@ -31,36 +31,46 @@ async def test_persona():
         client_language='ru'
     )
     
-    if "СТИЛЬ ОБЩЕНИЯ - ЭНЕРГИЧНЫЙ И ЖИВОЙ" in full_prompt:
-        print("✅ New Persona Instructions FOUND")
+    personality = bot_settings.get('personality_traits', '')
+    if personality in full_prompt:
+        print(f"✅ Persona Instructions FOUND ('{personality[:30]}...')")
     else:
-        print("❌ New Persona Instructions NOT FOUND")
+        print("❌ Persona Instructions NOT FOUND")
         
-    if "ВСЕГДА ЗАДАВАЙ ВОПРОС" in full_prompt:
-        print("✅ 'Always Ask Question' Rule FOUND")
+    comm_style = bot_settings.get('communication_style', '')
+    if comm_style in full_prompt:
+        print(f"✅ Communication Style Rule FOUND ('{comm_style[:30]}...')")
     else:
-        print("❌ 'Always Ask Question' Rule NOT FOUND")
+        print("❌ Communication Style Rule NOT FOUND")
 
-    # 2. Test Generation (if API key is valid)
-    print("\n🤖 Testing Generation (may fail if API key is invalid)...")
-    try:
-        response = await bot.generate_response(
-            instagram_id=instagram_id,
-            user_message="Привет, сколько стоит маникюр?",
-            history=history,
-            bot_settings=bot_settings,
-            salon_info=salon_info,
-            client_language='ru'
-        )
-        print(f"\n✅ Response:\n{response}")
-        
-        if "?" in response:
-            print("✅ Response contains a question")
-        else:
-            print("⚠️ Response does NOT contain a question (Check if rule is followed)")
-            
-    except Exception as e:
-        print(f"❌ Generation failed: {e}")
+    # 2. Test Generation
+    print("\n🤖 Testing Generation...")
+    
+    # Check for fast test flag
+    if os.getenv('SKIP_REAL_MAIL', '').lower() == 'true':
+        print("   ⏩ FAST MODE: Mocking AI response instead of real API call")
+        response = "Здравствуйте! Конечно, маникюр у нас стоит от 150 AED. Желаете записаться?"
+    else:
+        print("   📡 REAL MODE: Calling AI API (may take a few seconds)...")
+        try:
+            response = await bot.generate_response(
+                instagram_id=instagram_id,
+                user_message="Привет, сколько стоит маникюр?",
+                history=history,
+                bot_settings=bot_settings,
+                salon_info=salon_info,
+                client_language='ru'
+            )
+        except Exception as e:
+            print(f"❌ Generation failed: {e}")
+            return
+
+    print(f"\n✅ Response:\n{response}")
+    
+    if "?" in response:
+        print("✅ Response contains a question")
+    else:
+        print("⚠️ Response does NOT contain a question (Check if rule is followed)")
 
 if __name__ == "__main__":
     asyncio.run(test_persona())

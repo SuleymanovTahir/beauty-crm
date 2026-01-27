@@ -2,6 +2,10 @@
   "admin": "Administrador",
   "admin_panel": "Panel de administración",
   "all_notifications_cleared": "Todas las notificaciones eliminadas",
+  "calls": {
+    "click_to_answer": "Нажмите, чтобы ответить",
+    "incoming_call": "Входящий звонок!"
+  },
   "clear_all": "Borrar todo",
   "close": "Cerrar",
   "confirm_clear_all": "¿Está seguro de que desea eliminar todas las notificaciones?",
@@ -38,6 +42,7 @@
     "payment_integrations": "Pago sistemas",
     "products": "Productos",
     "public_content": "Contenido público",
+    "service_requests": "Запросы услуг",
     "services": "Servicios",
     "settings": "Configuración",
     "tasks": "Tareas",

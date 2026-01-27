@@ -3,58 +3,49 @@
 
 Проверяет предстоящие записи и отправляет напоминания согласно настройкам
 """
-from db.connection import get_db_connection
-from datetime import datetime, timedelta
-from typing import List, Dict
-import asyncio
 import os
 import sys
 
 # Добавляем корневую директорию в PYTHONPATH
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from db.connection import get_db_connection
+from datetime import datetime, timedelta
+from typing import List, Dict
+import asyncio
+
 from db.settings import get_salon_settings
 from utils.logger import log_info, log_error
 from utils.email import send_email_async
 
 def get_active_reminder_settings() -> List[Dict]:
-    """Получить активные настройки напоминаний"""
-    conn = get_db_connection()
-    c = conn.cursor()
-
+    """Получить активные настройки напоминаний из настроек салона"""
     try:
-        c.execute("""
-            SELECT id, days_before, hours_before, notification_type
-            FROM booking_reminder_settings
-            WHERE is_enabled = TRUE
-            ORDER BY days_before DESC, hours_before DESC
-        """)
+        settings = get_salon_settings()
+        
+        # Get from custom_settings or use defaults
+        custom_settings = settings.get('custom_settings', {})
+        reminder_settings = custom_settings.get('booking_reminders', [])
+        
+        # If no settings configured, use defaults
+        if not reminder_settings:
+            reminder_settings = [
+                {'id': 1, 'name': '24 hours before', 'days_before': 1, 'hours_before': 0, 'notification_type': 'email', 'is_enabled': True},
+                {'id': 2, 'name': '2 hours before', 'days_before': 0, 'hours_before': 2, 'notification_type': 'email', 'is_enabled': True}
+            ]
+        
+        # Filter only enabled settings
+        active_settings = [s for s in reminder_settings if s.get('is_enabled', False)]
+        
+        return active_settings
 
-        settings = []
-        for row in c.fetchall():
-            # Generate a descriptive name based on timing
-            days = row[1] if row[1] else 0
-            hours = row[2] if row[2] else 0
-            
-            if days > 0:
-                name = f"{days} day(s) before"
-            elif hours > 0:
-                name = f"{hours} hour(s) before"
-            else:
-                name = "At booking time"
-            
-            settings.append({
-                'id': row[0],
-                'name': name,
-                'days_before': row[1],
-                'hours_before': row[2],
-                'notification_type': row[3]
-            })
-
-        return settings
-
-    finally:
-        conn.close()
+    except Exception as e:
+        log_error(f"Error fetching reminder settings: {e}", "booking_reminders")
+        # Return defaults on error
+        return [
+            {'id': 1, 'name': '24 hours before', 'days_before': 1, 'hours_before': 0, 'notification_type': 'email', 'is_enabled': True},
+            {'id': 2, 'name': '2 hours before', 'days_before': 0, 'hours_before': 2, 'notification_type': 'email', 'is_enabled': True}
+        ]
 
 def get_bookings_needing_reminders() -> List[Dict]:
     """Получить записи, которым нужны напоминания"""
@@ -68,7 +59,7 @@ def get_bookings_needing_reminders() -> List[Dict]:
 
         c.execute("""
             SELECT
-                b.id, b.datetime, b.name, b.phone, b.service_name, b.master, b.notes,
+                b.id, b.datetime, cl.name, cl.phone, b.service_name, b.master, b.notes,
                 b.instagram_id,
                 cl.email, cl.name as full_name, cl.phone as client_phone
             FROM bookings b
@@ -95,10 +86,13 @@ def check_if_reminder_sent(booking_id: int, reminder_setting_id: int) -> bool:
     c = conn.cursor()
 
     try:
+        # Check in unified log
         c.execute("""
-            SELECT COUNT(*) FROM booking_reminders_sent
-            WHERE booking_id = %s AND reminder_setting_id = %s AND status = 'sent'
-        """, (booking_id, reminder_setting_id))
+            SELECT COUNT(*) FROM unified_communication_log
+            WHERE booking_id = %s 
+              AND trigger_type = %s 
+              AND status = 'sent'
+        """, (booking_id, f"booking_reminder_{reminder_setting_id}"))
 
         count = c.fetchone()[0]
         return count > 0
@@ -112,11 +106,19 @@ def mark_reminder_sent(booking_id: int, reminder_setting_id: int, status: str = 
     c = conn.cursor()
 
     try:
+        # Log to unified communication log
         c.execute("""
-            INSERT INTO booking_reminders_sent
-            (booking_id, reminder_setting_id, sent_at, status, error_message)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (booking_id, reminder_setting_id, datetime.now().isoformat(), status, error_message))
+            INSERT INTO unified_communication_log
+            (booking_id, trigger_type, medium, status, error_message, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (
+            booking_id, 
+            f"booking_reminder_{reminder_setting_id}", 
+            "email",
+            status, 
+            error_message,
+            datetime.now().isoformat()
+        ))
 
         conn.commit()
 
@@ -133,36 +135,41 @@ def format_booking_reminder_email(booking: Dict, salon_settings: Dict) -> tuple:
 
     # Парсим дату
     try:
-        dt = datetime.fromisoformat(booking_datetime)
+        if isinstance(booking_datetime, datetime):
+            dt = booking_datetime
+        else:
+            dt = datetime.fromisoformat(booking_datetime)
+        
         date_str = dt.strftime('%d.%m.%Y')
         time_str = dt.strftime('%H:%M')
-    except:
-        date_str = booking_datetime.split('T')[0] if 'T' in booking_datetime else booking_datetime
-        time_str = booking_datetime.split('T')[1][:5] if 'T' in booking_datetime else ''
+    except Exception as e:
+        log_error(f"Error formatting date in email: {e}", "booking_reminders")
+        date_str = str(booking_datetime).split(' ')[0] if booking_datetime else ''
+        time_str = str(booking_datetime).split(' ')[1][:5] if booking_datetime and ' ' in str(booking_datetime) else ''
 
     salon_name = salon_settings.get('name')
     salon_address = salon_settings.get('address')
     salon_phone = salon_settings.get('phone')
-    google_maps = salon_settings.get('google_maps', 'https://maps.app.goo.gl/BTw4X1gzgyFhmkYF8')
+    google_maps = salon_settings.get('google_maps') or os.getenv('SALON_GOOGLE_MAPS') or 'https://maps.google.com'
 
     # Plain text версия
     plain = f"""
-Напоминание о записи 💅
+Напоминание о записи
 
 Здравствуйте, {client_name}!
 
 Напоминаем о вашей записи:
 
-📅 Дата: {date_str}
-🕐 Время: {time_str}
-💅 Услуга: {service}
-👤 Мастер: {master}
+Дата: {date_str}
+Время: {time_str}
+Услуга: {service}
+Мастер: {master}
 
-📍 Адрес: {salon_address}
-📞 Телефон: {salon_phone}
-🗺️ Google Maps: {google_maps}
+Адрес: {salon_address}
+Телефон: {salon_phone}
+Карта: {google_maps}
 
-До встречи! 💎
+До встречи!
 {salon_name}
 """
 
@@ -274,7 +281,7 @@ def format_booking_reminder_email(booking: Dict, salon_settings: Dict) -> tuple:
 <body>
     <div class="container">
         <div class="header">
-            <h1>💅 Напоминание о записи</h1>
+            <h1>Напоминание о записи</h1>
         </div>
         <div class="content">
             <div class="greeting">
@@ -284,28 +291,28 @@ def format_booking_reminder_email(booking: Dict, salon_settings: Dict) -> tuple:
 
             <div class="info-box">
                 <div class="info-row">
-                    <span class="icon">📅</span>
+                    <div class="icon">#</div>
                     <div>
                         <span class="label">Дата:</span>
                         <span class="value">{date_str}</span>
                     </div>
                 </div>
                 <div class="info-row">
-                    <span class="icon">🕐</span>
+                    <div class="icon">></div>
                     <div>
                         <span class="label">Время:</span>
                         <span class="value">{time_str}</span>
                     </div>
                 </div>
                 <div class="info-row">
-                    <span class="icon">💅</span>
+                    <div class="icon">*</div>
                     <div>
                         <span class="label">Услуга:</span>
                         <span class="value">{service}</span>
                     </div>
                 </div>
                 <div class="info-row">
-                    <span class="icon">👤</span>
+                    <div class="icon">@</div>
                     <div>
                         <span class="label">Мастер:</span>
                         <span class="value">{master}</span>
@@ -314,20 +321,20 @@ def format_booking_reminder_email(booking: Dict, salon_settings: Dict) -> tuple:
             </div>
 
             <div class="location-section">
-                <div class="location-title">📍 Как нас найти</div>
+                <div class="location-title">Как нас найти</div>
                 <div class="info-row">
-                    <span class="icon">🏢</span>
+                    <div class="icon">H</div>
                     <div>
                         <span class="value">{salon_address}</span>
                     </div>
                 </div>
                 <div class="info-row">
-                    <span class="icon">📞</span>
+                    <div class="icon">P</div>
                     <div>
                         <span class="value">{salon_phone}</span>
                     </div>
                 </div>
-                <a href="{google_maps}" class="map-button">🗺️ Открыть на карте</a>
+                <a href="{google_maps}" class="map-button">Открыть на карте</a>
             </div>
 
             <p style="color: #666; font-size: 14px; margin-top: 20px;">
@@ -360,7 +367,7 @@ async def send_booking_reminder(booking: Dict, reminder_setting: Dict, salon_set
         plain_text, html_text = format_booking_reminder_email(booking, salon_settings)
 
         # Отправляем email
-        subject = f"💅 Напоминание о записи - {salon_settings.get('name', 'Салон')}"
+        subject = f"Напоминание о записи - {salon_settings.get('name', 'Салон')}"
 
         success = await send_email_async(
             recipients=[client_email],
@@ -371,10 +378,10 @@ async def send_booking_reminder(booking: Dict, reminder_setting: Dict, salon_set
 
         if success:
             mark_reminder_sent(booking['id'], reminder_setting['id'], status='sent')
-            log_info(f"✅ Напоминание отправлено: booking_id={booking['id']}, email={client_email}", "booking_reminders")
+            log_info(f"Напоминание отправлено: booking_id={booking['id']}, email={client_email}", "booking_reminders")
         else:
             mark_reminder_sent(booking['id'], reminder_setting['id'], status='failed', error_message='Email send failed')
-            log_error(f"❌ Не удалось отправить напоминание: booking_id={booking['id']}", "booking_reminders")
+            log_info(f"Не удалось отправить напоминание: booking_id={booking['id']}", "booking_reminders")
 
         return success
 
@@ -385,24 +392,24 @@ async def send_booking_reminder(booking: Dict, reminder_setting: Dict, salon_set
 
 async def check_and_send_reminders():
     """Главная функция проверки и отправки напоминаний"""
-    log_info("🔔 Начинаю проверку напоминаний о записях...", "booking_reminders")
+    log_info("Начинаю проверку напоминаний о записях...", "booking_reminders")
 
     try:
         # Получаем активные настройки напоминаний
         reminder_settings = get_active_reminder_settings()
         if not reminder_settings:
-            log_info("⚠️ Нет активных настроек напоминаний", "booking_reminders")
+            log_info("Нет активных настроек напоминаний", "booking_reminders")
             return
 
-        log_info(f"📋 Найдено активных настроек: {len(reminder_settings)}", "booking_reminders")
+        log_info(f"Найдено активных настроек: {len(reminder_settings)}", "booking_reminders")
 
         # Получаем будущие записи
         bookings = get_bookings_needing_reminders()
         if not bookings:
-            log_info("✓ Нет предстоящих записей для напоминаний", "booking_reminders")
+            log_info("Нет предстоящих записей для напоминаний", "booking_reminders")
             return
 
-        log_info(f"📅 Найдено предстоящих записей: {len(bookings)}", "booking_reminders")
+        log_info(f"Найдено предстоящих записей: {len(bookings)}", "booking_reminders")
 
         # Получаем настройки салона
         salon_settings = get_salon_settings()
@@ -413,9 +420,14 @@ async def check_and_send_reminders():
 
         for booking in bookings:
             try:
-                booking_dt = datetime.fromisoformat(booking['datetime'])
-            except:
-                log_error(f"Неверный формат даты для booking_id={booking['id']}", "booking_reminders")
+                booking_dt = booking['datetime']
+                if isinstance(booking_dt, str):
+                    booking_dt = datetime.fromisoformat(booking_dt)
+                elif not isinstance(booking_dt, datetime):
+                    log_error(f"Неподдерживаемый тип даты ({type(booking_dt)}) для booking_id={booking['id']}", "booking_reminders")
+                    continue
+            except Exception as e:
+                log_error(f"Неверный формат даты для booking_id={booking['id']}: {e}", "booking_reminders")
                 continue
 
             for reminder_setting in reminder_settings:
@@ -440,21 +452,21 @@ async def check_and_send_reminders():
                     await send_booking_reminder(booking, reminder_setting, salon_settings)
                     sent_count += 1
 
-        log_info(f"✅ Проверка завершена. Отправлено напоминаний: {sent_count}", "booking_reminders")
+        log_info(f"Проверка завершена. Отправлено напоминаний: {sent_count}", "booking_reminders")
 
     except Exception as e:
         log_error(f"Ошибка в check_and_send_reminders: {e}", "booking_reminders")
 
 async def booking_reminder_loop():
     """Основной цикл планировщика напоминаний (async версия)"""
-    log_info("🔔 Запущен планировщик email-напоминаний о записях", "booking_reminders")
+    log_info("Запущен планировщик email-напоминаний о записях", "booking_reminders")
 
     while True:
         try:
             now = datetime.now()
 
             # Проверяем каждые 10 минут
-            log_info(f"⏰ Проверка напоминаний: {now.strftime('%H:%M')}", "booking_reminders")
+            log_info(f"Проверка напоминаний: {now.strftime('%H:%M')}", "booking_reminders")
             await check_and_send_reminders()
 
             # Ждем 10 минут (используем async sleep вместо blocking time.sleep)
@@ -471,7 +483,7 @@ def start_booking_reminder_checker():
     # Создаем фоновую задачу в текущем event loop (НЕ используем threading!)
     # Это должно вызываться из async контекста (например, из FastAPI startup event)
     asyncio.create_task(booking_reminder_loop())
-    log_info("✅ Планировщик email-напоминаний запущен (проверка каждые 10 минут)", "booking_reminders")
+    log_info("Планировщик email-напоминаний запущен (проверка каждые 10 минут)", "booking_reminders")
 
 if __name__ == "__main__":
     # Для ручного запуска

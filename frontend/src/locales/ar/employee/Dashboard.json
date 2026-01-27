@@ -1,6 +1,24 @@
 {
+  "browse_available_services": "عرض الخدمات المتاحة",
+  "confirmed": "تم التأكيد",
+  "enjoy_free_day": "استمتع بيومك المجاني!",
+  "loading_error": "خطأ في التحميل",
+  "manage_personal_data_and_security_settings": "إدارة البيانات الشخصية وإعدادات الأمان",
+  "month_bookings": "الإدخالات الشهرية",
   "my_bookings": "إدخالاتي",
+  "my_conversion": "تحويلاتي",
+  "my_profile": "ملفي الشخصي",
+  "new_clients": "العملاء الجدد",
   "no_bookings_today": "لا توجد إدخالات لهذا اليوم",
+  "now": "الآن",
+  "our_services": "لدينا الخدمات",
+  "pending": "المتوقعة",
   "schedule_for_today": "الجدول الزمني لهذا اليوم",
-  "today_bookings": "مداخل اليوم"
+  "today": "اليوم",
+  "today_bookings": "مداخل اليوم",
+  "unknown_error": "خطأ غير معروف",
+  "view_and_manage_bookings": "عرض الإدخالات وإدارتها",
+  "view_bookings_desc": "إدارة إدخالاتك والجدول الزمني",
+  "week_bookings": "الإدخالات الأسبوعية",
+  "your_revenue": "إيراداتك"
 }

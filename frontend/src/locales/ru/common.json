@@ -1,6 +1,7 @@
 {
   "access_denied": "Доступ запрещен",
   "actions": "Действия",
+  "active": "Активно",
   "add": "Добавить",
   "add_new_stage": "Добавить новую стадию",
   "all": "Все сотрудники",
@@ -9,6 +10,7 @@
   "all_periods": "Все периоды",
   "all_read_message": "Все уведомления прочитаны",
   "all_time": "За все время",
+  "answer": "Ответить",
   "any_master": "любой мастер",
   "are_you_sure": "Вы уверены?",
   "back": "Назад",
@@ -251,10 +253,7 @@
   "stage_deleted": "Стадия удалена",
   "stage_name": "Название стадии",
   "start_conversation": "Начать беседу",
-  "status": {
-    "last_seen": "Был(а)",
-    "online": "В сети"
-  },
+  "status": "Статус",
   "status_active": "Активен",
   "status_added": "Статус добавлен",
   "status_blocked": "Заблокирован",

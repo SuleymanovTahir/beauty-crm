@@ -2,6 +2,10 @@
   "admin": "Администратор",
   "admin_panel": "Әкімші тақтасы",
   "all_notifications_cleared": "Барлық хабарландырулар жойылды",
+  "calls": {
+    "click_to_answer": "Нажмите, чтобы ответить",
+    "incoming_call": "Входящий звонок!"
+  },
   "clear_all": "Барлығын өшіру",
   "close": "Жабу",
   "confirm_clear_all": "Барлық хабарландыруларды жойғыңыз келетініне сенімдісіз бе?",
@@ -38,6 +42,7 @@
     "payment_integrations": "Төлем жүйелері",
     "products": "Өнімдер",
     "public_content": "Қоғамдық мазмұн",
+    "service_requests": "Запросы услуг",
     "services": "Қызметтер",
     "settings": "Параметрлер",
     "tasks": "Тапсырмалар",

@@ -37,23 +37,22 @@ STYLE_METRICS = {
 
 # === ТЕХНИЧЕСКИЕ СООБЩЕНИЯ (FALLBACK) ===
 FALLBACK_PHRASES = [
-    "Сейчас очень много запросов, отвечу через минуту",
-    "I'm overloaded with requests",
-    "أنا محمل بالطلبات",
-    "что-то пошло не так"
+    "I'm currently receiving many requests, I will respond in a moment.",
+    "Our system is under heavy load, please stay on the line.",
+    "A technical error occurred, our manager will assist you shortly."
 ]
 
 # === ЗАГОЛОВКИ ПРОМТОВ (PROMPT HEADERS) ===
 PROMPT_HEADERS = {
-    'SALON_INFO': "=== 🏥 ГЛАВНАЯ ИНФОРМАЦИЯ О САЛОНЕ ===",
-    'SERVICES': "=== УСЛУГИ САЛОНА (ИСПОЛЬЗУЙ ЭТИ НАЗВАНИЯ) ===",
-    'MASTERS': "=== 👥 МАСТЕРА И ИХ УСЛУГИ (из БД) ===",
-    'HISTORY': "💬 ИСТОРИЯ (последние сообщения):",
-    'PREFERENCES': "=== 💎 ПАМЯТЬ О КЛИЕНТЕ ===",
-    'OBJECTIONS': "=== ⚠️ ИСТОРИЯ ВОЗРАЖЕНИЙ КЛИЕНТА ===",
-    'AVAILABILITY': "=== 📅 УМНЫЙ ПОИСК СЛОТОВ ({service_name}) ===",
-    'UNKNOWN_SERVICE': "=== ❓ УТОЧНИ УСЛУГУ ===",
-    'NOT_FOUND_SERVICE': "=== 🤔 УТОЧНЕНИЕ ==="
+    'SALON_INFO': "[SALON CORE INFORMATION]",
+    'SERVICES': "[SALON SERVICES LIST]",
+    'MASTERS': "[STAFF & QUALIFICATIONS]",
+    'HISTORY': "HISTORY (Recent Messages):",
+    'PREFERENCES': "[CLIENT PROFILE & PREFERENCES]",
+    'OBJECTIONS': "[HISTORY OF CLIENT CONCERNS]",
+    'AVAILABILITY': "[SCHEDULE AVAILABILITY - {service_name}]",
+    'UNKNOWN_SERVICE': "[AWAITING SERVICE CLARIFICATION]",
+    'NOT_FOUND_SERVICE': "[SERVICE SEARCH CLARIFICATION]"
 }
 
 # === ИНСТРУКЦИИ ПО СТИЛЮ (TONE INSTRUCTIONS) ===

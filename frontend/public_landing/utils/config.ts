@@ -14,12 +14,12 @@ export const config = {
   env: getEnvironment(),
   isDev: import.meta.env.DEV,
   isProd: import.meta.env.PROD,
-  
+
   api: {
-    baseUrl: import.meta.env.VITE_API_URL || window.location.origin,
+    baseUrl: import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? `${window.location.protocol}//${window.location.hostname}:8000` : window.location.origin),
     timeout: 10000,
   },
-  
+
   features: {
     enableDebugLogs: import.meta.env.DEV,
     enablePerformanceMonitoring: import.meta.env.PROD,

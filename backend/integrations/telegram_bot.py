@@ -3,10 +3,10 @@ Telegram Bot Integration
 Обработка сообщений от Telegram Bot API
 """
 from db.connection import get_db_connection
-import requests
+import httpx
 import json
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List, Tuple
 import asyncio
 
 from core.config import TELEGRAM_BOT_TOKEN
@@ -52,7 +52,7 @@ class TelegramBot:
         except Exception as e:
             log_error(f"Error loading Telegram token: {e}", "telegram")
 
-    def set_webhook(self, webhook_url: str) -> Dict[str, Any]:
+    async def set_webhook(self, webhook_url: str) -> Dict[str, Any]:
         """
         Установить webhook для получения обновлений
         Args:
@@ -67,7 +67,8 @@ class TelegramBot:
                 "url": webhook_url,
                 "allowed_updates": ["message", "callback_query"]
             }
-            response = requests.post(url, json=data)
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.post(url, json=data)
             result = response.json()
 
             if result.get("ok"):
@@ -80,7 +81,7 @@ class TelegramBot:
             log_error(f"Error setting webhook: {e}", "telegram")
             return {"success": False, "error": str(e)}
 
-    def send_message(self, chat_id: int, text: str, parse_mode: str = "HTML") -> Dict[str, Any]:
+    async def send_message(self, chat_id: int, text: str, parse_mode: str = "HTML") -> Dict[str, Any]:
         """
         Отправить сообщение
         Args:
@@ -99,8 +100,8 @@ class TelegramBot:
                 "parse_mode": parse_mode
             }
 
-            # Added timeout to prevent hanging
-            response = requests.post(url, json=data, timeout=10)
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.post(url, json=data)
             result = response.json()
 
             if result.get("ok"):
@@ -113,20 +114,21 @@ class TelegramBot:
             log_error(f"Error sending message: {e}", "telegram")
             return {"success": False, "error": str(e)}
 
-    def get_webhook_info(self) -> Dict[str, Any]:
+    async def get_webhook_info(self) -> Dict[str, Any]:
         """Получить информацию о текущем webhook"""
         if not self.token:
             return {"success": False, "error": "Token not loaded"}
 
         try:
             url = f"{self.base_url}/getWebhookInfo"
-            response = requests.get(url)
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.get(url)
             return response.json()
         except Exception as e:
             log_error(f"Error getting webhook info: {e}", "telegram")
             return {"success": False, "error": str(e)}
 
-    def process_update(self, update: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def process_update(self, update: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Обработать входящее обновление от Telegram
         Args:
@@ -145,12 +147,10 @@ class TelegramBot:
                 # Логируем получение сообщения
                 log_info(f"Received Telegram message from {user.get('username', user.get('first_name'))}: {text}", "telegram")
 
-                # Уведомляем админов через WebSocket (делаем это СРАЗУ для UX)
+                # Уведомляем админов через WebSocket
                 client_id = f"telegram_{chat_id}"
                 from api.chat_ws import notify_new_message
-                import asyncio
                 
-                # Сообщение для уведомления
                 ws_message = {
                     "id": message["message_id"],
                     "message_text": text,
@@ -159,11 +159,8 @@ class TelegramBot:
                     "message_type": "text"
                 }
                 
-                # Запускаем уведомление в фоне
                 try:
-                    loop = asyncio.get_event_loop()
-                    if loop.is_running():
-                        loop.create_task(notify_new_message(client_id, ws_message))
+                    await notify_new_message(client_id, text, "client", message_type="text")
                 except Exception as e:
                     log_error(f"Error sending Telegram WS notification: {e}", "telegram")
 
@@ -177,36 +174,74 @@ class TelegramBot:
                 )
 
                 # Получаем или создаем клиента
-                client = self.get_or_create_client(chat_id, user)
+                self.get_or_create_client(chat_id, user)
 
                 # Формируем ответ
+                from db.settings import get_bot_settings, get_salon_settings
+                bot_settings = get_bot_settings()
                 salon_settings = get_salon_settings()
                 salon_name = salon_settings.get("name", "Beauty Salon")
 
                 if text == "/start":
-                    response_text = f"""
-👋 Добро пожаловать в <b>{salon_name}</b>!
-
-Я бот для записи и общения с нашим салоном.
-
-Вы можете:
-📅 Записаться на услугу
-💬 Задать вопрос
-📞 Связаться с администратором
-
-Напишите ваш вопрос или выберите действие.
-"""
-                    return self.send_message(chat_id, response_text)
+                    # Используем приветствие из настроек бота
+                    greeting = bot_settings.get("greeting_message")
+                    if not greeting:
+                        greeting = f"Welcome to <b>{salon_name} Luxury Assistant</b>.\nI am your personal digital concierge."
+                    
+                    return await self.send_message(chat_id, greeting)
                 else:
-                    # Уведомляем что сообщение получено
-                    response_text = f"""
-✅ Ваше сообщение получено!
+                    # ✅ ИСПОЛЬЗУЕМ AI БОТА ДЛЯ ОТВЕТА (как в Instagram)
+                    try:
+                        from bot import get_bot
+                        from db import get_chat_history, detect_and_save_language, get_client_bot_mode
+                        from db.bookings import get_booking_progress
 
-Администратор ответит вам в ближайшее время через этот чат.
+                        # Определяем язык
+                        client_language = detect_and_save_language(client_id, text)
+                        
+                        # Проверяем режим бота для клиента
+                        bot_mode = get_client_bot_mode(client_id)
+                        if bot_mode == 'manual':
+                            log_info(f"👤 Manual mode for {client_id}, skipping AI response", "telegram")
+                            return None
 
-Сообщение: "{text}"
-"""
-                    return self.send_message(chat_id, response_text)
+                        # Показываем индикатор печати (в Telegram это отдельный метод, но пока пропустим)
+                        
+                        # Генерируем ответ через AI
+                        ai_bot = get_bot()
+                        history = get_chat_history(client_id, limit=10)
+                        booking_progress = get_booking_progress(client_id)
+                        
+                        response_text = await ai_bot.generate_response(
+                            instagram_id=client_id,
+                            user_message=text,
+                            history=history,
+                            bot_settings=bot_settings,
+                            salon_info=salon_settings,
+                            booking_progress=booking_progress,
+                            client_language=client_language
+                        )
+
+                        # Сохраняем ответ бота в БД
+                        self.save_message(
+                            chat_id=chat_id,
+                            message_id=0, # Временное ID
+                            from_user={"username": "bot", "first_name": "Assistant"},
+                            text=response_text,
+                            sender_type="bot"
+                        )
+                        
+                        # Уведомляем через WS
+                        await notify_new_message(client_id, response_text, "bot", message_type="text")
+
+                        return await self.send_message(chat_id, response_text)
+                    except Exception as ai_err:
+                        log_error(f"Error generating AI response for Telegram: {ai_err}", "telegram")
+                        
+                        # Use AI to generate a professional fallback message
+                        from bot.ai_responses import generate_ai_response
+                        fallback_text = await generate_ai_response('bot_error', client_language)
+                        return await self.send_message(chat_id, fallback_text)
 
             return None
         except Exception as e:
@@ -334,7 +369,7 @@ async def send_telegram_alert(message: str, chat_id: Optional[int] = None) -> Di
             try:
                 # Reverting to synchronous call to fix boot error
                 # Timeout is handled inside send_message
-                result = telegram_bot.send_message(int(cid), message, parse_mode="HTML")
+                result = await telegram_bot.send_message(int(cid), message, parse_mode="HTML")
                 results.append({"chat_id": cid, "result": result})
                 
                 if result.get("ok"):

@@ -232,11 +232,10 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int)
             if "notification" in broadcast.channels:
                 try:
                     c.execute("""
-                        INSERT INTO notifications (user_id, title, message, type, created_at)
-                        VALUES (%s, %s, %s, %s, %s)
-                    """, (user_id, broadcast.subject, broadcast.message, 'info', datetime.now().isoformat()))
+                        INSERT INTO unified_communication_log (user_id, medium, trigger_type, title, content, status)
+                        VALUES (%s, 'in_app', 'broadcast', %s, %s, 'sent')
+                    """, (user_id, broadcast.subject, broadcast.message))
                     results["notification"]["sent"] += 1
-                    conn.commit() # Commit notification immediately
                 except Exception as e:
                     log_error(f"In-app notification error for user {user_id}: {e}", "broadcasts")
                     results["notification"]["failed"] += 1
@@ -259,6 +258,11 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int)
                         broadcast.attachment_urls
                     )
                     results["email"]["sent"] += 1
+                    # Log to unified log
+                    c.execute("""
+                        INSERT INTO unified_communication_log (user_id, medium, trigger_type, title, content, status)
+                        VALUES (%s, 'email', 'broadcast', %s, %s, 'sent')
+                    """, (user_id, broadcast.subject, broadcast.message))
                 except Exception as e:
                     log_error(f"Email ошибка для {email}: {e}", "broadcasts")
                     results["email"]["failed"] += 1
@@ -272,6 +276,11 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int)
                     # Используем await, так как мы в async функции
                     await bot.send_message(telegram_id, broadcast.message + unsubscribe_text)
                     results["telegram"]["sent"] += 1
+                    # Log to unified log
+                    c.execute("""
+                        INSERT INTO unified_communication_log (user_id, medium, trigger_type, title, content, status)
+                        VALUES (%s, 'telegram', 'broadcast', %s, %s, 'sent')
+                    """, (user_id, broadcast.subject, broadcast.message))
                 except Exception as e:
                     log_error(f"Telegram ошибка для {telegram_id}: {e}", "broadcasts")
                     results["telegram"]["failed"] += 1
@@ -284,6 +293,11 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int)
                     await asyncio.sleep(2) 
                     send_instagram_dm(instagram_username, broadcast.message)
                     results["instagram"]["sent"] += 1
+                    # Log to unified log
+                    c.execute("""
+                        INSERT INTO unified_communication_log (user_id, medium, trigger_type, title, content, status)
+                        VALUES (%s, 'instagram', 'broadcast', %s, %s, 'sent')
+                    """, (user_id, broadcast.subject, broadcast.message))
                 except Exception as e:
                     log_error(f"Instagram ошибка для {instagram_username}: {e}", "broadcasts")
                     results["instagram"]["failed"] += 1

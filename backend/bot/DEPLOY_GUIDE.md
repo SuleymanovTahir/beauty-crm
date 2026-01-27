@@ -10,6 +10,7 @@ cd /Users/tahir/Desktop/beauty-crm
 ```
 
 Скрипт автоматически:
+
 1. ✅ Синхронизирует файлы backend и frontend на сервер
 2. ✅ Перезапускает beauty_crm service
 3. ✅ Перезапускает nginx
@@ -54,6 +55,7 @@ ssh ubuntu@32.235 'sudo journalctl -u beauty_crm -f'
 ```
 
 Или сразу после деплоя:
+
 ```bash
 ./deploy.sh && ssh ubuntu@32.235 'sudo journalctl -u beauty_crm -f'
 ```
@@ -73,13 +75,15 @@ ssh ubuntu@32.235 'sudo journalctl -u beauty_crm -n 50 --no-pager'
 ## Что было исправлено в этом деплое
 
 ### 1. Система записей (Recordings)
+
 - ✅ Backend API полностью реализован ([backend/api/recordings.py](backend/api/recordings.py))
-- ✅ Миграция базы данных ([backend/db/migrations/consolidated/schema_recording_folders.py](backend/db/migrations/consolidated/schema_recording_folders.py))
+- ✅ Миграция базы данных ([backend/db/init.py](backend/db/init.py))
 - ✅ 9 новых frontend компонентов в `frontend/src/components/recordings/`
 - ✅ Вкладка "Записи" в телефонии
 - ✅ Меню троеточия во внутреннем чате
 
 ### 2. Исправлены тесты
+
 - ✅ Создана утилита [backend/tests/test_utils.py](backend/tests/test_utils.py)
 - ✅ Исправлены duplicate key errors в тестах:
   - `test_detailed.py`
@@ -88,10 +92,12 @@ ssh ubuntu@32.235 'sudo journalctl -u beauty_crm -n 50 --no-pager'
 - ✅ Автоматическая очистка связанных данных (расписание, выходные, перерывы)
 
 ### 3. Исправлены импорты
+
 - ✅ [backend/main.py:512](backend/main.py#L512) - `diagnostic_full` импорт
 - ✅ [backend/main.py:41](backend/main.py#L41) - `middleware` импорт
 
 ### 4. Миграции
+
 - ✅ Идемпотентная миграция для системы записей
 - ✅ Автоматический запуск при старте сервера ([backend/main.py:598](backend/main.py#L598))
 
@@ -147,6 +153,7 @@ sudo systemctl restart beauty_crm
 ```
 
 Затем:
+
 ```bash
 sudo systemctl restart beauty_crm
 ```
@@ -188,6 +195,7 @@ ssh ubuntu@32.235 'sudo journalctl -u beauty_crm -f'
 ```
 
 Следите за:
+
 - ❌ Ошибки импорта (`ModuleNotFoundError`)
 - ❌ Ошибки миграций (`duplicate key`, `table already exists`)
 - ❌ Ошибки тестов (если они запускаются автоматически)
@@ -222,6 +230,7 @@ ssh ubuntu@32.235 'sudo nginx -t'
 ## Контакты для поддержки
 
 Если возникли проблемы:
+
 1. Проверьте логи: `sudo journalctl -u beauty_crm -n 100`
 2. Проверьте статус: `sudo systemctl status beauty_crm`
 3. Проверьте документацию: `RECORDINGS_SETUP.md`, `TESTS_FIXED.md`

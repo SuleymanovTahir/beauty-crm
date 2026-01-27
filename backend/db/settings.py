@@ -19,82 +19,77 @@ from core.config import (
     DEFAULT_REPORT_TIME
 )
 
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super().default(obj)
+
 # ===== НАСТРОЙКИ САЛОНА =====
 
 def get_salon_settings() -> dict:
-    """Получить настройки салона из БД"""
+    """Получить настройки салона из БД (Архитектура v2.0)"""
     conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        c.execute("SELECT * FROM salon_settings LIMIT 1")
+        c.execute("SELECT * FROM salon_settings WHERE id = 1")
         result = c.fetchone()
 
         if result:
             columns = [description[0] for description in c.description]
-            row_dict = dict(zip(columns, result))
+            row = dict(zip(columns, result))
+            
+            # Extract custom_settings
+            custom = row.get("custom_settings") or {}
+            if isinstance(custom, str):
+                try:
+                    custom = json.loads(custom)
+                except:
+                    custom = {}
+
             return {
-                "id": row_dict.get("id", 1),
-                "name": row_dict.get("name"),
-                "name_ar": row_dict.get("name_ar"),
-                "address": row_dict.get("address", ""),
-                "address_ar": row_dict.get("address_ar"),
-                "google_maps": row_dict.get("google_maps", ""),
-                "google_place_id": row_dict.get("google_place_id", ""),
-                "google_api_key": row_dict.get("google_api_key", ""),
-                "hours": row_dict.get("hours", f"Daily {DEFAULT_HOURS_WEEKDAYS}"),
-                "hours_ru": row_dict.get("hours_ru", f"Ежедневно {DEFAULT_HOURS_WEEKDAYS}"),
-                "hours_ar": row_dict.get("hours_ar", f"يوميًا {DEFAULT_HOURS_WEEKDAYS}"),
-                "booking_url": row_dict.get("booking_url", ""),
-                "phone": row_dict.get("phone", ""),
-                "email": row_dict.get("email"),
-                "instagram": row_dict.get("instagram"),
-                "whatsapp": row_dict.get("whatsapp"),
-                "bot_name": row_dict.get("bot_name", "Assistant"),
-                "bot_name_en": row_dict.get("bot_name_en", "Assistant"),
-                "bot_name_ar": row_dict.get("bot_name_ar", "مساعد"),
-                "city": row_dict.get("city", ""),
-                "country": row_dict.get("country", ""),
-                "timezone": row_dict.get("timezone", "UTC"),
-                "timezone_offset": row_dict.get("timezone_offset", "UTC+0"),
-                "currency": row_dict.get("currency", ""),
-                "birthday_discount": row_dict.get("birthday_discount", ""),
-                "updated_at": row_dict.get("updated_at"),
-                "hours_weekdays": row_dict.get("hours_weekdays", DEFAULT_HOURS_WEEKDAYS),  # ✅ Используем константу
-                "hours_weekends": row_dict.get("hours_weekends", DEFAULT_HOURS_WEEKENDS),  # ✅ Используем константу
-                "promo_end_date": row_dict.get("promo_end_date"),
-                "lunch_start": row_dict.get("lunch_start", DEFAULT_LUNCH_START),  # ✅ Используем константу
-                "lunch_end": row_dict.get("lunch_end", DEFAULT_LUNCH_END),  # ✅ Используем константу
-                # SEO & Analytics fields
-                "google_analytics_id": row_dict.get("google_analytics_id"),
-                "facebook_pixel_id": row_dict.get("facebook_pixel_id"),
-                "latitude": row_dict.get("latitude", 25.0744782),  # M Le Diamant default
-                "longitude": row_dict.get("longitude", 55.1317665),  # M Le Diamant default
-                "logo_url": row_dict.get("logo_url", "/static/uploads/images/salon/logo.webp"),
-                "base_url": row_dict.get("base_url", "https://mlediamant.com"),
-                # Feature Management
-                "points_expiration_days": row_dict.get("points_expiration_days", 365),
-                "feature_flags": row_dict.get("feature_flags", "{}"),
-                "telephony_settings": row_dict.get("telephony_settings", "{}"),
-                "gallery_display_count": row_dict.get("gallery_display_count", 6),
-                "portfolio_display_count": row_dict.get("portfolio_display_count", 6),
-                "services_display_count": row_dict.get("services_display_count", 6),
-                "faces_display_count": row_dict.get("faces_display_count", 6)
+                "id": row.get("id", 1),
+                "name": row.get("name"),
+                "name_ar": row.get("name_ar"),
+                "address": row.get("address", ""),
+                "address_ar": row.get("address_ar"),
+                "google_maps": row.get("google_maps", ""),
+                "hours_weekdays": row.get("hours_weekdays", DEFAULT_HOURS_WEEKDAYS),
+                "hours_weekends": row.get("hours_weekends", DEFAULT_HOURS_WEEKENDS),
+                "hours_ru": row.get("hours_ru"),
+                "hours_ar": row.get("hours_ar"),
+                "lunch_start": row.get("lunch_start"),
+                "lunch_end": row.get("lunch_end"),
+                "phone": row.get("phone", ""),
+                "email": row.get("email"),
+                "instagram": row.get("instagram"),
+                "whatsapp": row.get("whatsapp"),
+                "booking_url": row.get("booking_url", ""),
+                "timezone": row.get("timezone", "Asia/Dubai"),
+                "currency": row.get("currency", "AED"),
+                "city": row.get("city", ""),
+                "country": row.get("country", ""),
+                "latitude": row.get("latitude"),
+                "longitude": row.get("longitude"),
+                "logo_url": row.get("logo_url", "/static/uploads/images/salon/logo.webp"),
+                "base_url": row.get("base_url", "https://mlediamant.com"),
+                "bot_name": row.get("bot_name"),
+                "bot_name_en": row.get("bot_name_en"),
+                "bot_name_ar": row.get("bot_name_ar"),
+                # Display settings from custom_settings
+                "gallery_display_count": custom.get("gallery_display_count", 6),
+                "portfolio_display_count": custom.get("portfolio_display_count", 6),
+                "services_display_count": custom.get("services_display_count", 6),
+                "faces_display_count": custom.get("faces_display_count", 6),
+                "updated_at": row.get("updated_at")
             }
         else:
-            log_warning(
-                "⚠️ Настройки салона пусты, используются дефолты", "database")
+            log_warning("⚠️ Настройки салона пусты, используются дефолты", "database")
             return _get_default_salon_settings()
 
-    except pg_errors.UndefinedTable as e:
-        log_error(f"❌ Таблица salon_settings не существует: {e}", "database")
-        return _get_default_salon_settings()
-    except psycopg2.OperationalError as e:
-        log_error(f"❌ Ошибка подключения к БД: {e}", "database")
-        return _get_default_salon_settings()
     except Exception as e:
-        log_error(
-            f"❌ Непредвиденная ошибка в get_salon_settings: {e}", "database")
+        log_error(f"❌ Ошибка в get_salon_settings: {e}", "database")
         return _get_default_salon_settings()
     finally:
         conn.close()
@@ -104,117 +99,82 @@ def _get_default_salon_settings() -> dict:
     return {
         "id": 1,
         "name": os.getenv('SALON_NAME', 'Beauty Salon'),
-        "name_ar": None,
-        "address": "",
-        "address_ar": None,
-        "google_maps": "",
-        "hours": f"Daily {DEFAULT_HOURS_WEEKDAYS}",
-        "hours_ru": f"Ежедневно {DEFAULT_HOURS_WEEKDAYS}",
-        "hours_ar": f"يوميًا {DEFAULT_HOURS_WEEKDAYS}",
         "hours_weekdays": DEFAULT_HOURS_WEEKDAYS,
         "hours_weekends": DEFAULT_HOURS_WEEKENDS,
         "lunch_start": DEFAULT_LUNCH_START,
         "lunch_end": DEFAULT_LUNCH_END,
-        "booking_url": "",
         "phone": os.getenv('SALON_PHONE', ''),
         "email": os.getenv('SALON_EMAIL', ''),
-        "instagram": "",
-        "whatsapp": None,
         "bot_name": os.getenv('BOT_NAME', 'Assistant'),
-        "bot_name_en": os.getenv('BOT_NAME_EN', 'Assistant'),
-        "bot_name_ar": os.getenv('BOT_NAME_AR', 'مساعد'),
-        "city": "",
-        "country": "",
-        "timezone": "UTC",
-        "timezone_offset": "UTC+0",
-        "currency": "",
-        "birthday_discount": "",
-        "updated_at": None,
-        "promo_end_date": None,
-        # SEO & Analytics fields
-        "google_analytics_id": None,
-        "facebook_pixel_id": None,
-        "latitude": None,
-        "longitude": None,
-        "logo_url": "/static/uploads/images/salon/logo.webp",
-        "base_url": os.getenv('BASE_URL', ''),
-        "points_expiration_days": 365,
-        "feature_flags": "{}"
+        "timezone": "Asia/Dubai",
+        "currency": "AED",
+        "gallery_display_count": 6,
+        "portfolio_display_count": 6,
+        "services_display_count": 6,
+        "faces_display_count": 6
     }
 
 def update_salon_settings(data: dict) -> bool:
-    """Обновить настройки салона (поддерживает частичное обновление)"""
+    """Обновить настройки салона (Архитектура v2.0 - SSOT)"""
     conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        # Список всех возможных полей для обновления
-        field_mapping = {
-            'name': 'name',
-            'name_ar': 'name_ar',
-            'address': 'address',
-            'address_ar': 'address_ar',
-            'google_maps': 'google_maps',
-            'hours': 'hours',
-            'hours_ru': 'hours_ru',
-            'hours_ar': 'hours_ar',
-            'hours_weekdays': 'hours_weekdays',
-            'hours_weekends': 'hours_weekends',
-            'lunch_start': 'lunch_start',
-            'lunch_end': 'lunch_end',
-            'booking_url': 'booking_url',
-            'phone': 'phone',
-            'email': 'email',
-            'instagram': 'instagram',
-            'whatsapp': 'whatsapp',
-            'bot_name': 'bot_name',
-            'bot_name_en': 'bot_name_en',
-            'bot_name_ar': 'bot_name_ar',
-            'city': 'city',
-            'country': 'country',
-            'timezone': 'timezone',
-            'timezone_offset': 'timezone_offset',
-            'currency': 'currency',
-            'birthday_discount': 'birthday_discount',
-            'promo_end_date': 'promo_end_date',
-            # SEO & Analytics fields
-            'google_analytics_id': 'google_analytics_id',
-            'facebook_pixel_id': 'facebook_pixel_id',
-            'latitude': 'latitude',
-            'longitude': 'longitude',
-            'logo_url': 'logo_url',
-            'base_url': 'base_url',
-            'points_expiration_days': 'points_expiration_days',
-            'feature_flags': 'feature_flags',
-            'telephony_settings': 'telephony_settings',
-            'gallery_display_count': 'gallery_display_count',
-            'portfolio_display_count': 'portfolio_display_count',
-            'services_display_count': 'services_display_count',
-            'faces_display_count': 'faces_display_count'
-        }
+        # 1. Fetch current for merging custom_settings
+        c.execute("SELECT custom_settings FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
+        custom = row[0] if row and row[0] else {}
+        if isinstance(custom, str):
+            try:
+                custom = json.loads(custom)
+            except:
+                custom = {}
 
-        # Формируем SET часть запроса только для предоставленных полей
+        # 2. Map fields
+        direct_fields = [
+            'name', 'name_en', 'name_ar', 'address', 'address_ru', 'address_ar',
+            'google_maps', 'hours_weekdays', 'hours_weekends', 'hours_ru', 'hours_ar',
+            'lunch_start', 'lunch_end', 'phone', 'email', 'instagram', 'whatsapp',
+            'booking_url', 'timezone', 'currency', 'city', 'country',
+            'latitude', 'longitude', 'logo_url', 'base_url',
+            'bot_name', 'bot_name_en', 'bot_name_ar'
+        ]
+        
+        custom_fields = [
+            'gallery_display_count', 'portfolio_display_count', 
+            'services_display_count', 'faces_display_count'
+        ]
+
         set_parts = []
         params = []
 
-        for data_key, db_column in field_mapping.items():
-            if data_key in data:
-                set_parts.append(f"{db_column} = %s")
-                params.append(data[data_key])
+        # Handle direct fields
+        for field in direct_fields:
+            if field in data:
+                set_parts.append(f"{field} = %s")
+                params.append(data[field])
+
+        # Handle custom fields (consolidate into JSONB)
+        custom_updated = False
+        for field in custom_fields:
+            if field in data:
+                custom[field] = data[field]
+                custom_updated = True
+        
+        if custom_updated:
+            set_parts.append("custom_settings = %s")
+            params.append(json.dumps(custom))
 
         if not set_parts:
-            log_warning("⚠️ Нет полей для обновления", "database")
             return False
 
-        # Добавляем updated_at
-        set_parts.append("updated_at = CURRENT_TIMESTAMP")
+        set_parts.append("updated_at = NOW()")
+        params.append(1) # ID = 1
 
-        # Формируем и выполняем запрос
-        query = f"UPDATE salon_settings SET {', '.join(set_parts)} WHERE id = 1"
+        query = f"UPDATE salon_settings SET {', '.join(set_parts)} WHERE id = %s"
         c.execute(query, params)
-
         conn.commit()
-        log_info(f"✅ Настройки салона обновлены ({len(set_parts)-1} полей)", "database")
+        log_info(f"✅ Настройки салона обновлены", "database")
         return True
     except Exception as e:
         log_error(f"Ошибка обновления настроек салона: {e}", "database")
@@ -226,119 +186,40 @@ def update_salon_settings(data: dict) -> bool:
 # ===== НАСТРОЙКИ БОТА =====
 
 def get_bot_settings() -> dict:
-    """Получить настройки бота из БД"""
+    """Получить настройки бота из единой таблицы salon_settings (bot_config)"""
     conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        c.execute("SELECT * FROM bot_settings LIMIT 1")
-        result = c.fetchone()
+        # Теперь читаем из salon_settings
+        c.execute("SELECT bot_config FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
 
-        if result:
-            # ✅ БЕЗОПАСНЫЙ СПОСОБ - используем названия колонок
-            columns = [description[0] for description in c.description]
-            row_dict = dict(zip(columns, result))
+        if row and row[0]:
+            bot_data = row[0]
+            if isinstance(bot_data, str):
+                bot_data = json.loads(bot_data)
 
-            log_info(
-                f"✅ Loaded bot settings with {len(columns)} columns", "database")
+            log_info("✅ Loaded bot settings from salon_settings.bot_config", "database")
 
-            # ✅ Создаём словарь result вместо прямого return
-            result_dict = {
-                "id": row_dict.get("id"),
-                "bot_name": row_dict.get("bot_name"),
-                "personality_traits": row_dict.get("personality_traits", ""),
-                "greeting_message": row_dict.get("greeting_message", ""),
-                "farewell_message": row_dict.get("farewell_message", ""),
-                "price_explanation": row_dict.get("price_explanation", ""),
-                "price_response_template": row_dict.get("price_response_template", ""),
-                "premium_justification": row_dict.get("premium_justification", ""),
-                "booking_redirect_message": row_dict.get("booking_redirect_message", ""),
-                "fomo_messages": row_dict.get("fomo_messages", ""),
-                "upsell_techniques": row_dict.get("upsell_techniques", ""),
-                "communication_style": row_dict.get("communication_style", ""),
-                "max_message_length": row_dict.get("max_message_length", 4),
-                "emoji_usage": row_dict.get("emoji_usage", ""),
-                "languages_supported": row_dict.get("languages_supported", "ru,en,ar"),
-                "objection_handling": row_dict.get("objection_handling", ""),
-                "negative_handling": row_dict.get("negative_handling", ""),
-                "safety_guidelines": row_dict.get("safety_guidelines", ""),
-                "example_good_responses": row_dict.get("example_good_responses", ""),
-                "algorithm_actions": row_dict.get("algorithm_actions", ""),
-                "location_features": row_dict.get("location_features", ""),
-                "seasonality": row_dict.get("seasonality", ""),
-                "emergency_situations": row_dict.get("emergency_situations", ""),
-                "success_metrics": row_dict.get("success_metrics", ""),
-                "objection_expensive": row_dict.get("objection_expensive", ""),
-                "objection_think_about_it": row_dict.get("objection_think_about_it", ""),
-                "objection_no_time": row_dict.get("objection_no_time", ""),
-                "objection_pain": row_dict.get("objection_pain", ""),
-                "objection_result_doubt": row_dict.get("objection_result_doubt", ""),
-                "objection_cheaper_elsewhere": row_dict.get("objection_cheaper_elsewhere", ""),
-                "objection_too_far": row_dict.get("objection_too_far", ""),
-                "objection_consult_husband": row_dict.get("objection_consult_husband", ""),
-                "objection_first_time": row_dict.get("objection_first_time", ""),
-                "objection_not_happy": row_dict.get("objection_not_happy", ""),
-                "emotional_triggers": row_dict.get("emotional_triggers", ""),
-                "social_proof_phrases": row_dict.get("social_proof_phrases", ""),
-                "personalization_rules": row_dict.get("personalization_rules", ""),
-                "example_dialogues": row_dict.get("example_dialogues", ""),
-                "emotional_responses": row_dict.get("emotional_responses", ""),
-                "anti_patterns": row_dict.get("anti_patterns", ""),
-                "voice_message_response": row_dict.get("voice_message_response", ""),
-                "contextual_rules": row_dict.get("contextual_rules", ""),
-                "auto_cancel_discounts": row_dict.get("auto_cancel_discounts", ""),
-                "comment_reply_settings": row_dict.get("comment_reply_settings", "{}"),
-                "ad_campaign_detection": row_dict.get("ad_campaign_detection", ""),
-                "pre_booking_data_collection": row_dict.get("pre_booking_data_collection", ""),
-                "manager_consultation_prompt": row_dict.get("manager_consultation_prompt", ""),
-                "booking_time_logic": row_dict.get("booking_time_logic", ""),
-                "booking_data_collection": row_dict.get("booking_data_collection", ""),
-                # ✅ ДОБАВЬ
-                "booking_availability_instructions": row_dict.get("booking_availability_instructions", ""),
-                "context_memory": row_dict.get("context_memory", ""),
-                "avoid_repetition": row_dict.get("avoid_repetition", ""),
-                "conversation_flow_rules": row_dict.get("conversation_flow_rules", ""),
-                "personality_adaptations": row_dict.get("personality_adaptations", ""),
-                "smart_objection_detection": row_dict.get("smart_objection_detection", ""),
-                "service_synonyms": row_dict.get("service_synonyms", "{}"),
-                "objection_keywords": row_dict.get("objection_keywords", "{}"),
-                "prompt_headers": row_dict.get("prompt_headers", "{}"),
-                "updated_at": row_dict.get("updated_at"),
-            }
-
-            # ✅ Дозаполняем критические пустые поля дефолтами
+            # Дефолты для отсутствующих полей
             defaults = _get_default_bot_settings()
-            if not result_dict.get('booking_time_logic'):
-                result_dict['booking_time_logic'] = defaults['booking_time_logic']
-                log_info(
-                    "✅ Дозаполнено booking_time_logic из дефолтов", "database")
-            if not result_dict.get('booking_data_collection'):
-                result_dict['booking_data_collection'] = defaults['booking_data_collection']
-                log_info(
-                    "✅ Дозаполнено booking_data_collection из дефолтов", "database")
-
-            # ✅ Заменяем плейсхолдеры перед возвратом
+            
+            # Накладываем данные из БД на дефолты
+            result_dict = {**defaults, **bot_data}
+            
+            # Заменяем плейсхолдеры
             salon_settings = get_salon_settings()
             result_dict = _replace_bot_placeholders(result_dict, salon_settings)
 
             return result_dict
 
         else:
-            log_warning(
-                "⚠️ Настройки бота пусты, используются дефолты", "database")
+            log_warning("⚠️ Настройки бота в salon_settings пусты, используются дефолты", "database")
             return _get_default_bot_settings()
 
-    except pg_errors.UndefinedTable as e:
-        log_error(f"❌ Таблица bot_settings не существует: {e}", "database")
-        return _get_default_bot_settings()
-    except psycopg2.OperationalError as e:
-        log_error(f"❌ Ошибка подключения к БД: {e}", "database")
-        return _get_default_bot_settings()
     except Exception as e:
-        log_error(
-            f"❌ Непредвиденная ошибка в get_bot_settings: {e}", "database")
-        import traceback
-        log_error(traceback.format_exc(), "database")
+        log_error(f"❌ Ошибка в get_bot_settings: {e}", "database")
         return _get_default_bot_settings()
     finally:
         conn.close()
@@ -346,13 +227,13 @@ def get_bot_settings() -> dict:
 def _replace_bot_placeholders(bot_settings: dict, salon_settings: dict) -> dict:
     """Заменить плейсхолдеры в настройках бота на реальные значения"""
     replacements = {
-        '{SALON_NAME}': salon_settings.get('name') or 'Salon',
-        '{CURRENCY}': salon_settings.get('currency', 'AED'),
-        '{LOCATION}': f"{salon_settings.get('city', 'Dubai')}, {salon_settings.get('address', '')}".strip(', '),
-        '{CITY}': salon_settings.get('city', 'Dubai'),
-        '{ADDRESS}': salon_settings.get('address', ''),
-        '{PHONE}': salon_settings.get('phone', ''),
-        '{BOOKING_URL}': salon_settings.get('booking_url', ''),
+        '{SALON_NAME}': str(salon_settings.get('name') or 'Salon'),
+        '{CURRENCY}': str(salon_settings.get('currency') or 'AED'),
+        '{LOCATION}': f"{salon_settings.get('city') or 'Dubai'}, {salon_settings.get('address') or ''}".strip(', '),
+        '{CITY}': str(salon_settings.get('city') or 'Dubai'),
+        '{ADDRESS}': str(salon_settings.get('address') or ''),
+        '{PHONE}': str(salon_settings.get('phone') or ''),
+        '{BOOKING_URL}': str(salon_settings.get('booking_url') or ''),
     }
 
     # Проходим по всем полям и заменяем плейсхолдеры
@@ -368,70 +249,75 @@ def _get_default_bot_settings() -> dict:
     """Дефолтные настройки бота"""
     from bot.constants import SERVICE_SYNONYMS, OBJECTION_KEYWORDS, PROMPT_HEADERS
     
+    salon_name_env = os.getenv('SALON_NAME', 'Beauty Salon')
+    bot_name_env = os.getenv('BOT_NAME', 'Assistant')
+    
     try:
         salon = get_salon_settings()
-        bot_name = salon.get('bot_name', os.getenv('BOT_NAME', 'Beauty Assistant'))
+        bot_name = salon.get('bot_name') or bot_name_env
+        salon_name = salon.get('name') or salon_name_env
     except:
-        bot_name = os.getenv('BOT_NAME', 'Beauty Assistant')
+        bot_name = bot_name_env
+        salon_name = salon_name_env
 
     return {
         "id": 1,
         "bot_name": bot_name,
-        "personality_traits": "Профессионал с международным опытом\nУверенный, харизматичный, НЕ навязчивый",
-        "greeting_message": f"Привет! 😊 Добро пожаловать в {os.getenv('SALON_NAME', 'наш салон')}!",
-        "farewell_message": "Спасибо! До встречи! 💖",
-        "price_explanation": "Мы в премиум-сегменте 💎",
-        "price_response_template": "{SERVICE} {PRICE} AED 💎\n{DESCRIPTION}\nЗаписаться%s",
-        "premium_justification": "",
-        "booking_redirect_message": "Я AI-ассистент, запись онлайн!\nВыберите время: {BOOKING_URL}",
-        "fomo_messages": "🔥 'Осталось всего 2 места на завтра!'\n⏳ 'Этот мастер очень популярен, лучше записаться заранее'",
-        "upsell_techniques": "➕ 'Хотите добавить SPA-уход для рук? Это всего +15 минут и +50 AED, но руки будут как шёлк!'\n💅 'Сделаем дизайн на 2 пальчика в подарок?'",
-        "communication_style": "Короткий, дружелюбный, экспертный",
-        "emoji_usage": "Минимальное (1-2 на сообщение)",
+        "personality_traits": "Professional expert with international experience. Confident, charismatic, and knowledgeable. Not intrusive, focusing on high-quality service and attention to detail.",
+        "greeting_message": f"Greetings! Welcome to {salon_name}. How may I assist you today with your beauty and care needs?",
+        "farewell_message": "Thank you for contacting us. We look forward to seeing you soon!",
+        "price_explanation": "Our pricing reflects the use of premium products, high standards of sterilization, and the expertise of our masters.",
+        "price_response_template": "{SERVICE}: {PRICE} {CURRENCY}\n{DESCRIPTION}\nTo book an appointment, please choose a convenient time.",
+        "premium_justification": "We prioritize your health and beauty, using only the finest international brands and maintaining strict medical-grade hygiene protocols.",
+        "booking_redirect_message": "As your AI assistant, I can help you book instantly. Please select your time: {BOOKING_URL}",
+        "fomo_messages": "Our slots fill up quickly - we recommend booking in advance to ensure your preferred time.",
+        "upsell_techniques": "Would you like to complement your treatment with a SPA enhancement? It adds only a short time to your visit but offers a truly elevated experience.",
+        "communication_style": "Concise, friendly, and expert-driven.",
+        "emoji_usage": "Minimal and professional (e.g., # or > symbols, or 1 subtle emoji).",
         "languages_supported": "ru,en,ar",
-        "objection_handling": "",
-        "negative_handling": "😞 'Нам очень жаль, что так вышло. Пожалуйста, напишите управляющему: {PHONE}. Мы обязательно разберемся и компенсируем!'",
-        "safety_guidelines": "🛡️ 'Мы используем одноразовые пилки и крафт-пакеты, вскрываем при вас.'",
-        "example_good_responses": "✅ 'Отлично! Записала вас на субботу 14:00. Придет SMS с подтверждением.'",
+        "objection_handling": "Always acknowledge the client's concern and offer value-based solutions.",
+        "negative_handling": "We sincerely regret any inconvenience. Please share your contact details or contact our manager directly at {PHONE} so we can resolve this immediately.",
+        "safety_guidelines": "We use single-use files and craft-packets, opened in your presence for maximum safety.",
+        "example_good_responses": "Excellent choice! I have reserved your slot for Saturday at 14:00. You will receive a confirmation shortly.",
         "algorithm_actions": "",
-        "location_features": "🅿️ 'У нас есть бесплатная парковка для клиентов.'\n☕ 'Вкусный кофе и сериалы включены!'",
-        "seasonality": "🌞 'Летом рекомендуем педикюр с покрытием Luxio - держится до 4 недель!'",
-        "emergency_situations": "🆘 'Если вы опаздываете - предупредите, пожалуйста, мы постараемся сдвинуть запись.'",
+        "location_features": "Complimentary valet parking and premium beverages are provided for all our guests.",
+        "seasonality": "We provide seasonal treatments tailored to your needs year-round.",
+        "emergency_situations": "If you are running late, please notify us as soon as possible, and we will do our best to accommodate you.",
         "success_metrics": "",
-        "objection_expensive": "💰 'Дорого' - НЕ снижай цену! Подчеркни ценность и качество (премиум материалы, стерильность)",
-        "objection_think_about_it": "🤔 'Подумать' - Дай конкретную информацию, предложи свободное окно на выбор",
-        "objection_no_time": "⏰ 'Нет времени' - Покажи что процедура быстрая (есть экспресс), предложи вечернее время",
-        "objection_pain": "😣 'Больно' - Успокой, расскажи про стерильность и аккуратность мастеров",
-        "objection_result_doubt": "🧐 'Сомнения' - Предложи посмотреть портфолио в Instagram, расскажи про гарантию",
-        "objection_cheaper_elsewhere": "💸 'Где-то дешевле' - Объясни разницу в качестве материалов (мы не экономим на здоровье)",
-        "objection_too_far": "📍 'Далеко' - Подчеркни удобство локации, скажи что результат стоит поездки",
-        "objection_consult_husband": "💑 'Посоветоваться' - Скажи 'Конечно!', предложи подарочный сертификат или запиши предварительно",
-        "objection_first_time": "👋 'Первый раз' - Расскажи подробно про этапы, успокой, предложи скидку на первый визит",
-        "objection_not_happy": "😡 'Был плохой опыт' - Вырази сожаление, предложи исправить и комплимент от салона",
-        "emotional_triggers": "✨ 'Почувствуйте себя королевой!'\n💆‍♀️ 'Время для себя любимой'",
-        "social_proof_phrases": "⭐ 'У этого мастера рейтинг 5.0 на Google Maps'\n🏆 'Наш топ-мастер, к ней запись за неделю'",
-        "personalization_rules": "🎂 'Поздравляем с прошедшим Днем Рождения! Вам скидка 15%!'",
+        "objection_expensive": "Focus on the quality of premium materials and absolute safety protocols. We do not compromise on your health.",
+        "objection_think_about_it": "Provide additional details and offer a few available time slots to help make the decision easier.",
+        "objection_no_time": "Highlight our express treatments or suggest evening/weekend availability.",
+        "objection_pain": "Assure the client of our masters' extreme gentleness and the use of the latest safe techniques.",
+        "objection_result_doubt": "Suggest viewing our portfolio or testimonials to see the consistent quality of our results.",
+        "objection_cheaper_elsewhere": "Explain the difference in product quality and hygiene standards compared to standard salons.",
+        "objection_too_far": "Emphasize our convenient location and that the premium result is worth the journey.",
+        "objection_consult_husband": "Offer a digital gift certificate or make a tentative reservation for them.",
+        "objection_first_time": "Walk through the steps clearly, ensuring total comfort and providing a special welcome offer.",
+        "objection_not_happy": "Express immediate regret and offer a senior specialist to review and compensate.",
+        "emotional_triggers": "Rediscover your radiance. Experience the luxury you deserve.",
+        "social_proof_phrases": "Our top specialists are highly rated for their precision and artistry.",
+        "personalization_rules": "Always address returning guests by name and remember their preferences.",
         "example_dialogues": "",
         "emotional_responses": "",
-        "anti_patterns": "",
-        "voice_message_response": "Извините, я AI и не слушаю голосовые 😊\nНапишите текстом!",
+        "anti_patterns": "Avoid over-promising or being overly familiar. Keep a professional distance while being warm.",
+        "voice_message_response": "I apologize, but I am currently unable to process voice messages. Could you please send your request as text? 😊",
         "contextual_rules": "",
         "ad_campaign_detection": "",
-        "pre_booking_data_collection": "Для записи нужно имя и WhatsApp — это займет секунду! 😊",
+        "pre_booking_data_collection": "To finalize your reservation, I just need your name and contact number. This will only take a moment! 😊",
         "manager_consultation_prompt": "",
-        "booking_time_logic": "Предлагай конкретное время (например: 'Есть окно завтра в 14:00 или послезавтра в 17:00')",
+        "booking_time_logic": "Always suggest 2-3 specific time slots rather than asking open-ended questions.",
         "booking_data_collection": """
-        Для записи собери следующие данные:
-        - Услуга (если не указана)
-        - Мастер (по желанию)
-        - Дата и время
-        - Телефон (обязательно!)
+        For every booking, please ensure we have:
+        - Service requested
+        - Preferred Master (optional)
+        - Date and Time
+        - Contact Phone (mandatory)
         """,
         "booking_availability_instructions": """
-        ВАЖНЫЕ ПРАВИЛА ПОИСКА СЛОТОВ:
-        1. Используй ТОЛЬКО слоты из раздела "ДОСТУПНЫЕ МАСТЕРА".
-        2. Если слотов нет - предложи альтернативу или запиши в лист ожидания.
-        3. Не придумывай время, которого нет в списке.
+        AVAILABILITY GUIDELINES:
+        1. ONLY use slots listed in the "AVAILABLE MASTERS" section.
+        2. Never invent time slots that are not present in the database.
+        3. If no slots are available, offer a waitlist or the next closest date.
         """,
         "service_synonyms": json.dumps(SERVICE_SYNONYMS, ensure_ascii=False),
         "objection_keywords": json.dumps(OBJECTION_KEYWORDS, ensure_ascii=False),
@@ -439,107 +325,35 @@ def _get_default_bot_settings() -> dict:
     }
 
 def update_bot_settings(data: dict) -> bool:
-    """Обновить настройки бота"""
+    """Обновить настройки бота в единой таблице salon_settings"""
     conn = get_db_connection()
     c = conn.cursor()
 
     try:
-        # Получаем список всех колонок
+        # 1. Получаем текущий конфиг
+        c.execute("SELECT bot_config FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
+        current_config = row[0] if row and row[0] else {}
+        
+        if isinstance(current_config, str):
+            current_config = json.loads(current_config)
+
+        # 2. Сливаем данные
+        updated_config = {**current_config, **data}
+
+        # 3. Сохраняем обратно
         c.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name='bot_settings'
-        """)
-        columns = [row[0] for row in c.fetchall()]
-
-        # Формируем SET часть запроса только для существующих колонок
-        set_parts = []
-        params = []
-
-        field_mapping = {
-            'bot_name': 'bot_name',
-            'personality_traits': 'personality_traits',
-            'greeting_message': 'greeting_message',
-            'farewell_message': 'farewell_message',
-            'price_explanation': 'price_explanation',
-            'price_response_template': 'price_response_template',
-            'premium_justification': 'premium_justification',
-            'booking_redirect_message': 'booking_redirect_message',
-            'fomo_messages': 'fomo_messages',
-            'upsell_techniques': 'upsell_techniques',
-            'communication_style': 'communication_style',
-            'emoji_usage': 'emoji_usage',
-            'languages_supported': 'languages_supported',
-            'objection_handling': 'objection_handling',
-            'negative_handling': 'negative_handling',
-            'safety_guidelines': 'safety_guidelines',
-            'example_good_responses': 'example_good_responses',
-            'algorithm_actions': 'algorithm_actions',
-            'location_features': 'location_features',
-            'seasonality': 'seasonality',
-            'emergency_situations': 'emergency_situations',
-            'success_metrics': 'success_metrics',
-            'objection_expensive': 'objection_expensive',
-            'objection_think_about_it': 'objection_think_about_it',
-            'objection_no_time': 'objection_no_time',
-            'objection_pain': 'objection_pain',
-            'objection_result_doubt': 'objection_result_doubt',
-            'objection_cheaper_elsewhere': 'objection_cheaper_elsewhere',
-            'objection_too_far': 'objection_too_far',
-            'objection_consult_husband': 'objection_consult_husband',
-            'objection_first_time': 'objection_first_time',
-            'objection_not_happy': 'objection_not_happy',
-            'emotional_triggers': 'emotional_triggers',
-            'social_proof_phrases': 'social_proof_phrases',
-            'personalization_rules': 'personalization_rules',
-            'example_dialogues': 'example_dialogues',
-            'emotional_responses': 'emotional_responses',
-            'anti_patterns': 'anti_patterns',
-            'voice_message_response': 'voice_message_response',
-            'contextual_rules': 'contextual_rules',
-            'ad_campaign_detection': 'ad_campaign_detection',
-            'pre_booking_data_collection': 'pre_booking_data_collection',
-            'manager_consultation_prompt': 'manager_consultation_prompt',
-            'booking_time_logic': 'booking_time_logic',
-            'booking_data_collection': 'booking_data_collection',
-            'booking_data_collection': 'booking_data_collection',
-            'booking_availability_instructions': 'booking_availability_instructions',
-            'service_synonyms': 'service_synonyms',
-            'objection_keywords': 'objection_keywords',
-            'prompt_headers': 'prompt_headers',
-            # Reminder Settings
-            'abandoned_cart_enabled': 'abandoned_cart_enabled',
-            'abandoned_cart_delay': 'abandoned_cart_delay',
-            'abandoned_cart_message': 'abandoned_cart_message',
-            'post_visit_feedback_enabled': 'post_visit_feedback_enabled',
-            'post_visit_delay': 'post_visit_delay',
-            'post_visit_feedback_message': 'post_visit_feedback_message',
-            'return_client_reminder_enabled': 'return_client_reminder_enabled',
-            'return_client_delay': 'return_client_delay',
-            'return_client_message': 'return_client_message',
-        }
-
-        for data_key, db_column in field_mapping.items():
-            if db_column in columns and data_key in data:
-                set_parts.append(f"{db_column} = %s")
-                params.append(data[data_key])
-
-        if set_parts:
-            set_parts.append("updated_at = CURRENT_TIMESTAMP")
-            query = f"UPDATE bot_settings SET {', '.join(set_parts)} WHERE id = 1"
-            c.execute(query, params)
-            conn.commit()
-            log_info(
-                f"✅ Настройки бота обновлены ({len(set_parts)-1} полей)", "database")
-            return True
-        else:
-            log_warning("⚠️ Нет полей для обновления", "database")
-            return False
+            UPDATE salon_settings 
+            SET bot_config = %s, updated_at = CURRENT_TIMESTAMP 
+            WHERE id = 1
+        """, (json.dumps(updated_config, cls=DateTimeEncoder),))
+        
+        conn.commit()
+        log_info(f"✅ Настройки бота обновлены в salon_settings.bot_config", "database")
+        return True
 
     except Exception as e:
-        log_error(f"Ошибка обновления настроек бота: {e}", "database")
-        import traceback
-        log_error(traceback.format_exc(), "database")
+        log_error(f"❌ Ошибка обновления настроек бота: {e}", "database")
         conn.rollback()
         return False
     finally:
@@ -887,15 +701,35 @@ def check_user_permission(user_id: int, permission_key: str, action: str = 'view
         conn.close()
 
 def update_bot_globally_enabled(enabled: bool):
-    """Включить/выключить бота глобально"""
+    """Включить/выключить бота глобально (через bot_config)"""
     conn = get_db_connection()
     c = conn.cursor()
 
-    c.execute("""
-        UPDATE salon_settings 
-        SET bot_globally_enabled = %s
-        WHERE id = 1
-    """, (True if enabled else False,))
+    try:
+        # 1. Get current config
+        c.execute("SELECT bot_config FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
+        current_config = {}
+        if row and row[0]:
+            if isinstance(row[0], str):
+                current_config = json.loads(row[0])
+            else:
+                current_config = row[0]
+        
+        # 2. Update field
+        current_config['enabled'] = enabled
+        
+        # 3. Save back
+        c.execute("""
+            UPDATE salon_settings 
+            SET bot_config = %s, updated_at = CURRENT_TIMESTAMP
+            WHERE id = 1
+        """, (json.dumps(current_config, cls=DateTimeEncoder),))
 
-    conn.commit()
-    conn.close()
+        conn.commit()
+        log_info(f"✅ Bot globally {'enabled' if enabled else 'disabled'}", "database")
+    except Exception as e:
+        log_error(f"Error updating bot global status: {e}", "database")
+        conn.rollback()
+    finally:
+        conn.close()

@@ -37,53 +37,46 @@ def check_database():
         print("=" * 70)
         print()
         
-        # 2. Проверяем BOT_SETTINGS
-        print("📝 BOT_SETTINGS:")
-        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'bot_settings\'")
+        # 2. Проверяем SALON_SETTINGS и BOT_CONFIG
+        print("🏪 SALON_SETTINGS & BOT_CONFIG:")
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'salon_settings\'")
         cols = [row[0] for row in c.fetchall()]
-        print(f"   Колонок: {len(cols)}")
+        print(f"   Колонок в salon_settings: {len(cols)}")
         
-        c.execute("SELECT COUNT(*) FROM bot_settings")
+        c.execute("SELECT COUNT(*) FROM salon_settings")
         count = c.fetchone()[0]
         print(f"   Записей: {count}")
         
         if count > 0:
-            critical_fields = [
-                'bot_name', 'personality_traits',
-                'greeting_message', 'emoji_usage', 'objection_expensive',
-                'emotional_triggers', 'fomo_messages', 'upsell_techniques'
-            ]
+            c.execute("SELECT name, bot_config FROM salon_settings LIMIT 1")
+            row = c.fetchone()
+            name, bot_config = row
+            print(f"   ✅ Салон: {name}")
             
-            for field in critical_fields:
-                if field in cols:
-                    c.execute(f"SELECT {field} FROM bot_settings LIMIT 1")
-                    value = c.fetchone()[0]
-                    
-                    if value:
-                        preview = str(value)[:40] + "..." if len(str(value)) > 40 else str(value)
-                        print(f"   ✅ {field:25s}: {preview}")
-                    else:
-                        print(f"   ⚠️  {field:25s}: ПУСТО!")
+            if bot_config:
+                if isinstance(bot_config, str):
+                    bot_data = json.loads(bot_config)
                 else:
-                    print(f"   ❌ {field:25s}: ОТСУТСТВУЕТ!")
+                    bot_data = bot_config
+                print(f"   ✅ Bot Config: {len(bot_data)} полей")
+                print(f"   ✅ Bot Name: {bot_data.get('bot_name', 'N/A')}")
+            else:
+                print("   ⚠️  Bot Config: ПУСТО!")
         
         print()
         
-        # 3. Проверяем EMPLOYEES
-        print("👥 EMPLOYEES:")
-        if 'employees' in tables:
-            c.execute("SELECT COUNT(*) FROM employees")
-            count = c.fetchone()[0]
-            print(f"   Записей: {count}")
-            
-            if count > 0:
-                c.execute("SELECT full_name, position FROM employees ORDER BY sort_order LIMIT 10")
-                for i, (name, pos) in enumerate(c.fetchall(), 1):
-                    print(f"   {i}. {name:20s} - {pos}")
-            else:
-                print("   ⚠️  ТАБЛИЦА ПУСТА! Нужна миграция seed_employees")
+        # 3. Проверяем USERS (как сотрудников)
+        print("👥 EMPLOYEES (Staff in users table):")
+        c.execute("SELECT COUNT(*) FROM users WHERE role IN ('employee', 'master', 'director', 'admin')")
+        count = c.fetchone()[0]
+        print(f"   Записей: {count}")
+        
+        if count > 0:
+            c.execute("SELECT full_name, position FROM users WHERE role IN ('employee', 'master', 'director', 'admin') ORDER BY sort_order LIMIT 10")
+            for i, (name, pos) in enumerate(c.fetchall(), 1):
+                print(f"   {i}. {name:20s} - {pos}")
         else:
-            print("   ❌ ТАБЛИЦА НЕ СУЩЕСТВУЕТ!")
+            print("   ⚠️  СОТРУДНИКИ НЕ НАЙДЕНЫ!")
         
         print()
         

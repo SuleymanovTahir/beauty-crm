@@ -10,18 +10,29 @@
 ╚════════════════════════════════════════════════════════════════════════════╝
 """
 
-from db.connection import get_db_connection
 import os
 import sys
+
+# Добавляем путь к backend для импортов (находим корень проекта)
+# Мы находимся в backend/tests/comprehensive_test.py
+BACKEND_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BACKEND_ROOT not in sys.path:
+    sys.path.insert(0, BACKEND_ROOT)
+
+from db.connection import get_db_connection
 import traceback
 from datetime import datetime
 from typing import Dict, List, Tuple, Any
 import json
+from psycopg2.extras import RealDictCursor
 
-# Добавляем путь к backend
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-from core.config import DATABASE_NAME
+# Дополнительно убеждаемся что core и db доступны
+try:
+    from core.config import DATABASE_NAME
+except ImportError:
+    # Если запуск идет из корня или другим способом
+    sys.path.insert(0, os.getcwd())
+    from core.config import DATABASE_NAME
 
 class Colors:
     """ANSI цвета для вывода"""
@@ -49,7 +60,7 @@ class TestResult:
     def success(self, message: str = "", data: Dict = None):
         self.passed = True
         if message:
-            self.details.append(f"✅ {message}")
+            self.details.append(f"[OK] {message}")
         if data:
             self.data.update(data)
 
@@ -81,27 +92,29 @@ class ComprehensiveTest:
 
     def print_test_result(self, result: TestResult):
         """Печать результата теста"""
-        status = f"{Colors.GREEN}✅ PASS{Colors.END}" if result.passed else f"{Colors.RED}❌ FAIL{Colors.END}"
+        status = f"{Colors.GREEN}[PASS]{Colors.END}" if result.passed else f"{Colors.RED}[FAIL]{Colors.END}"
         print(f"  {status} - {result.name}")
 
         if result.details:
             for detail in result.details:
-                if "❌" in detail:
-                    print(f"      {Colors.RED}{detail}{Colors.END}")
-                elif "⚠️" in detail:
-                    print(f"      {Colors.YELLOW}{detail}{Colors.END}")
+                if "[FAIL]" in detail or "[FAIL]" in detail:
+                    print(f"      {Colors.RED}{detail.replace('[FAIL]', '[FAIL]')}{Colors.END}")
+                elif "[WARN]" in detail or "[WARN]" in detail:
+                    print(f"      {Colors.YELLOW}{detail.replace('[WARN]', '[WARN]')}{Colors.END}")
                 else:
                     print(f"      {Colors.GREEN}{detail}{Colors.END}")
 
         if result.error:
-            print(f"      {Colors.RED}❌ ОШИБКА: {result.error}{Colors.END}")
+            print(f"      {Colors.RED}[FAIL] ОШИБКА: {result.error}{Colors.END}")
 
         if result.data:
-            print(f"      {Colors.MAGENTA}📊 Данные: {json.dumps(result.data, ensure_ascii=False, indent=8)}{Colors.END}")
+            print(f"      {Colors.MAGENTA}[DATA] Данные: {json.dumps(result.data, ensure_ascii=False, indent=8)}{Colors.END}")
 
     def connect_db(self) -> Any:
         """Подключение к базе данных"""
+        from psycopg2.extras import RealDictCursor
         conn = get_db_connection()
+        # Мы используем кастомный conn.cursor(RealDictCursor) в тестах
         return conn
 
     # ========================================================================
@@ -114,13 +127,13 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
             cursor.execute("SELECT 1")
             result.success("Подключение к PostgreSQL установлено")
             conn.close()
         except Exception as e:
             result.fail(f"Не удалось подключиться к базе данных: {str(e)}", [
-                f"❌ Traceback:\n{traceback.format_exc()}"
+                f"[FAIL] Traceback:\n{traceback.format_exc()}"
             ])
 
         return result
@@ -131,24 +144,25 @@ class ComprehensiveTest:
 
         required_tables = [
             'users', 'clients', 'services', 'bookings',
-            'positions', 'salon_settings', 'bot_settings'
+            'positions', 'salon_settings'
         ]
 
         try:
+            from psycopg2.extras import RealDictCursor
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("SELECT tablename FROM pg_tables WHERE schemaname='public'")
-            existing_tables = {row[0] for row in cursor.fetchall()}
+            existing_tables = {row['tablename'] for row in cursor.fetchall()}
 
             missing_tables = set(required_tables) - existing_tables
             extra_tables = existing_tables - set(required_tables)
 
             if missing_tables:
                 result.fail(f"Отсутствуют таблицы: {', '.join(missing_tables)}", [
-                    f"❌ Необходимые таблицы: {', '.join(required_tables)}",
-                    f"❌ Найденные таблицы: {', '.join(existing_tables)}",
-                    f"❌ Отсутствуют: {', '.join(missing_tables)}",
+                    f"[FAIL] Необходимые таблицы: {', '.join(required_tables)}",
+                    f"[FAIL] Найденные таблицы: {', '.join(existing_tables)}",
+                    f"[FAIL] Отсутствуют: {', '.join(missing_tables)}",
                     "💡 Решение: Запустите миграции или перезапустите приложение"
                 ])
             else:
@@ -161,7 +175,7 @@ class ComprehensiveTest:
 
         except Exception as e:
             result.fail(f"Ошибка проверки таблиц: {str(e)}", [
-                f"❌ Traceback:\n{traceback.format_exc()}"
+                f"[FAIL] Traceback:\n{traceback.format_exc()}"
             ])
 
         return result
@@ -177,25 +191,25 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='users'")
             columns_info = cursor.fetchall()
-            existing_columns = {row[0] for row in columns_info}
+            existing_columns = {row['column_name'] for row in columns_info}
 
             missing_columns = required_columns - existing_columns
 
             if missing_columns:
                 result.fail(f"Отсутствуют колонки: {', '.join(missing_columns)}", [
-                    f"❌ Необходимые колонки: {', '.join(required_columns)}",
-                    f"❌ Найденные колонки: {', '.join(existing_columns)}",
-                    f"❌ Отсутствуют: {', '.join(missing_columns)}",
+                    f"[FAIL] Необходимые колонки: {', '.join(required_columns)}",
+                    f"[FAIL] Найденные колонки: {', '.join(existing_columns)}",
+                    f"[FAIL] Отсутствуют: {', '.join(missing_columns)}",
                     "💡 Решение: Запустите миграции структуры базы данных"
                 ])
             else:
                 details = []
                 for col in columns_info:
-                    details.append(f"  • {col[0]}")
+                    details.append(f"  • {col['column_name']}")
 
                 result.success(f"Все {len(required_columns)} колонок присутствуют", {
                     "columns": list(existing_columns)
@@ -206,7 +220,7 @@ class ComprehensiveTest:
 
         except Exception as e:
             result.fail(f"Ошибка проверки структуры: {str(e)}", [
-                f"❌ Traceback:\n{traceback.format_exc()}"
+                f"[FAIL] Traceback:\n{traceback.format_exc()}"
             ])
 
         return result
@@ -221,14 +235,14 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("SELECT COUNT(*) as count FROM users")
             count = cursor.fetchone()['count']
 
             if count == 0:
                 result.fail("В базе данных нет пользователей", [
-                    "❌ Количество пользователей: 0",
+                    "[FAIL] Количество пользователей: 0",
                     "💡 Решение: Запустите миграцию seed_employees или создайте пользователей вручную"
                 ])
             else:
@@ -257,7 +271,7 @@ class ComprehensiveTest:
 
         except Exception as e:
             result.fail(f"Ошибка проверки пользователей: {str(e)}", [
-                f"❌ Traceback:\n{traceback.format_exc()}"
+                f"[FAIL] Traceback:\n{traceback.format_exc()}"
             ])
 
         return result
@@ -268,7 +282,7 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("""
                 SELECT id, username, full_name, position, role
@@ -288,10 +302,10 @@ class ComprehensiveTest:
 
             if users_without_position:
                 error_details = [
-                    f"❌ Пользователей БЕЗ должности: {len(users_without_position)}",
-                    f"✅ Пользователей С должностью: {len(users_with_position)}",
+                    f"[FAIL] Пользователей БЕЗ должности: {len(users_without_position)}",
+                    f"[OK] Пользователей С должностью: {len(users_with_position)}",
                     "",
-                    "❌ ПОЛЬЗОВАТЕЛИ БЕЗ ДОЛЖНОСТИ:"
+                    "[FAIL] ПОЛЬЗОВАТЕЛИ БЕЗ ДОЛЖНОСТИ:"
                 ]
 
                 for user in users_without_position:
@@ -321,10 +335,10 @@ class ComprehensiveTest:
                 }
 
             else:
-                details = ["✅ Все пользователи имеют должности:"]
+                details = ["[OK] Все пользователи имеют должности:"]
                 for user in users_with_position:
                     details.append(
-                        f"  ✅ {user['username']:<15} | {user['full_name']:<20} | {user['position']:<25}"
+                        f"  [OK] {user['username']:<15} | {user['full_name']:<20} | {user['position']:<25}"
                     )
 
                 result.success(f"Все {len(users)} пользователей имеют должности", {
@@ -337,7 +351,7 @@ class ComprehensiveTest:
 
         except Exception as e:
             result.fail(f"Ошибка проверки должностей: {str(e)}", [
-                f"❌ Traceback:\n{traceback.format_exc()}"
+                f"[FAIL] Traceback:\n{traceback.format_exc()}"
             ])
 
         return result
@@ -348,7 +362,7 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("""
                 SELECT id, username, full_name, position
@@ -384,10 +398,10 @@ class ComprehensiveTest:
 
             if wrong_format_users:
                 error_details = [
-                    f"❌ Должностей в неправильном формате: {len(wrong_format_users)}",
-                    f"✅ Должностей в правильном формате: {len(correct_format_users)}",
+                    f"[FAIL] Должностей в неправильном формате: {len(wrong_format_users)}",
+                    f"[OK] Должностей в правильном формате: {len(correct_format_users)}",
                     "",
-                    "❌ НЕПРАВИЛЬНЫЕ ФОРМАТЫ:"
+                    "[FAIL] НЕПРАВИЛЬНЫЕ ФОРМАТЫ:"
                 ]
 
                 for item in wrong_format_users:
@@ -402,9 +416,9 @@ class ComprehensiveTest:
                     "",
                     "💡 РЕШЕНИЕ:",
                     "  Измените должности на правильный формат:",
-                    "  ❌ 'HAIR STYLIST' -> ✅ 'Hair Stylist'",
-                    "  ❌ 'NAIL MASTER' -> ✅ 'Nail Master'",
-                    "  ❌ 'nail master' -> ✅ 'Nail Master'",
+                    "  [FAIL] 'HAIR STYLIST' -> [OK] 'Hair Stylist'",
+                    "  [FAIL] 'NAIL MASTER' -> [OK] 'Nail Master'",
+                    "  [FAIL] 'nail master' -> [OK] 'Nail Master'",
                     "",
                     "  Файлы для проверки:",
                     "  - backend/db/migrations/data/seed_employees.py (строки ~27-73)",
@@ -422,9 +436,9 @@ class ComprehensiveTest:
                 }
 
             else:
-                details = ["✅ Все должности в правильном формате:"]
+                details = ["[OK] Все должности в правильном формате:"]
                 for user in correct_format_users:
-                    details.append(f"  ✅ {user['username']:<15} | {user['position']:<25}")
+                    details.append(f"  [OK] {user['username']:<15} | {user['position']:<25}")
 
                 result.success(f"Все {len(users)} должностей в правильном формате", {
                     "total_positions": len(users),
@@ -436,7 +450,7 @@ class ComprehensiveTest:
 
         except Exception as e:
             result.fail(f"Ошибка проверки формата должностей: {str(e)}", [
-                f"❌ Traceback:\n{traceback.format_exc()}"
+                f"[FAIL] Traceback:\n{traceback.format_exc()}"
             ])
 
         return result
@@ -451,21 +465,21 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-            cursor.execute("SELECT COUNT(*) as count FROM employees WHERE is_active = TRUE")
+            cursor.execute("SELECT COUNT(*) as count FROM users WHERE is_service_provider = TRUE")
             count = cursor.fetchone()['count']
 
             if count == 0:
                 result.fail("В базе данных нет активных сотрудников", [
-                    "❌ Количество активных сотрудников: 0",
+                    "[FAIL] Количество активных сотрудников: 0",
                     "💡 Решение: Запустите миграцию seed_employees"
                 ])
             else:
                 cursor.execute("""
                     SELECT id, full_name, position, phone, email
-                    FROM employees
-                    WHERE is_active = TRUE
+                    FROM users
+                    WHERE is_active = TRUE AND role IN ('employee', 'master', 'director', 'admin')
                     ORDER BY sort_order
                 """)
                 employees = cursor.fetchall()
@@ -473,7 +487,7 @@ class ComprehensiveTest:
                 employee_details = []
                 for emp in employees:
                     employee_details.append(
-                        f"  • {emp['id']:<3} | {emp['full_name']:<20} | {emp['position']:<25} | {emp['phone'] or 'N/A':<20}"
+                        f"  • {emp['id']:<3} | {emp['full_name']:<20} | {str(emp['position'] or 'N/A'):<25} | {emp['phone'] or 'N/A':<20}"
                     )
 
                 result.success(f"Найдено {count} активных сотрудников", {
@@ -486,7 +500,7 @@ class ComprehensiveTest:
 
         except Exception as e:
             result.fail(f"Ошибка проверки сотрудников: {str(e)}", [
-                f"❌ Traceback:\n{traceback.format_exc()}"
+                f"[FAIL] Traceback:\n{traceback.format_exc()}"
             ])
 
         return result
@@ -497,11 +511,11 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("""
                 SELECT id, full_name, position, phone, email
-                FROM employees
+                FROM users
                 WHERE is_active = TRUE
             """)
             employees = cursor.fetchall()
@@ -517,9 +531,9 @@ class ComprehensiveTest:
 
             if employees_without_position:
                 error_details = [
-                    f"❌ Сотрудников БЕЗ должности: {len(employees_without_position)}",
+                    f"[FAIL] Сотрудников БЕЗ должности: {len(employees_without_position)}",
                     "",
-                    "❌ СОТРУДНИКИ БЕЗ ДОЛЖНОСТИ:"
+                    "[FAIL] СОТРУДНИКИ БЕЗ ДОЛЖНОСТИ:"
                 ]
 
                 for emp in employees_without_position:
@@ -542,7 +556,7 @@ class ComprehensiveTest:
             else:
                 details = []
                 for emp in employees_with_position:
-                    details.append(f"  ✅ {emp['full_name']:<20} | {emp['position']:<25}")
+                    details.append(f"  [OK] {emp['full_name']:<20} | {emp['position']:<25}")
 
                 result.success(f"Все {len(employees)} сотрудников имеют должности")
                 result.details.extend(details)
@@ -550,7 +564,7 @@ class ComprehensiveTest:
             conn.close()
 
         except Exception as e:
-            result.fail(f"Ошибка: {str(e)}", [f"❌ Traceback:\n{traceback.format_exc()}"])
+            result.fail(f"Ошибка: {str(e)}", [f"[FAIL] Traceback:\n{traceback.format_exc()}"])
 
         return result
 
@@ -560,11 +574,11 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("""
                 SELECT id, full_name, position
-                FROM employees
+                FROM users
                 WHERE is_active = TRUE
             """)
             employees = cursor.fetchall()
@@ -591,9 +605,9 @@ class ComprehensiveTest:
 
             if wrong_format_employees:
                 error_details = [
-                    f"❌ Имен в неправильном формате: {len(wrong_format_employees)}",
+                    f"[FAIL] Имен в неправильном формате: {len(wrong_format_employees)}",
                     "",
-                    "❌ НЕПРАВИЛЬНЫЕ ФОРМАТЫ:"
+                    "[FAIL] НЕПРАВИЛЬНЫЕ ФОРМАТЫ:"
                 ]
 
                 for item in wrong_format_employees:
@@ -606,8 +620,8 @@ class ComprehensiveTest:
                     "",
                     "💡 РЕШЕНИЕ:",
                     "  Измените имена на правильный формат:",
-                    "  ❌ 'SIMO' -> ✅ 'Simo'",
-                    "  ❌ 'MESTAN' -> ✅ 'Mestan'",
+                    "  [FAIL] 'SIMO' -> [OK] 'Simo'",
+                    "  [FAIL] 'MESTAN' -> [OK] 'Mestan'",
                     "",
                     "  Файл: backend/db/migrations/data/seed_employees.py (строки ~27-73)"
                 ])
@@ -620,7 +634,7 @@ class ComprehensiveTest:
             conn.close()
 
         except Exception as e:
-            result.fail(f"Ошибка: {str(e)}", [f"❌ Traceback:\n{traceback.format_exc()}"])
+            result.fail(f"Ошибка: {str(e)}", [f"[FAIL] Traceback:\n{traceback.format_exc()}"])
 
         return result
 
@@ -634,7 +648,7 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("SELECT COUNT(*) as count FROM positions WHERE is_active = TRUE")
             count = cursor.fetchone()['count']
@@ -662,7 +676,7 @@ class ComprehensiveTest:
             conn.close()
 
         except Exception as e:
-            result.fail(f"Ошибка: {str(e)}", [f"❌ Traceback:\n{traceback.format_exc()}"])
+            result.fail(f"Ошибка: {str(e)}", [f"[FAIL] Traceback:\n{traceback.format_exc()}"])
 
         return result
 
@@ -671,15 +685,16 @@ class ComprehensiveTest:
         result = TestResult("Стандартные должности существуют", "Positions")
 
         required_positions = [
-            "Hair Stylist",
+            "Owner",
+            "Manager",
+            "Stylist",
             "Nail Master",
-            "Nail/Waxing",
-            "Nail Master/Massages"
+            "Receptionist"
         ]
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             missing_positions = []
             found_positions = []
@@ -695,7 +710,7 @@ class ComprehensiveTest:
 
             if missing_positions:
                 error_details = [
-                    f"❌ Отсутствующие должности: {', '.join(missing_positions)}",
+                    f"[FAIL] Отсутствующие должности: {', '.join(missing_positions)}",
                     "",
                     "💡 РЕШЕНИЕ:",
                     "  Проверьте backend/db/migrations/schema/create_positions_table.py",
@@ -707,7 +722,7 @@ class ComprehensiveTest:
             else:
                 details = []
                 for pos in found_positions:
-                    details.append(f"  ✅ {pos['name']:<30} | EN: {pos['name_en']:<30}")
+                    details.append(f"  [OK] {pos['name']:<30} | EN: {pos['name_en']:<30}")
 
                 result.success(f"Все {len(required_positions)} стандартных должностей присутствуют")
                 result.details.extend(details)
@@ -715,7 +730,7 @@ class ComprehensiveTest:
             conn.close()
 
         except Exception as e:
-            result.fail(f"Ошибка: {str(e)}", [f"❌ Traceback:\n{traceback.format_exc()}"])
+            result.fail(f"Ошибка: {str(e)}", [f"[FAIL] Traceback:\n{traceback.format_exc()}"])
 
         return result
 
@@ -729,7 +744,7 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("SELECT * FROM salon_settings WHERE id = 1")
             settings = cursor.fetchone()
@@ -759,9 +774,9 @@ class ComprehensiveTest:
 
                     # Проверка booking_url
                     if settings['booking_url'] == '/public/booking':
-                        details.append("  ✅ Booking URL правильный (/public/booking)")
+                        details.append("  [OK] Booking URL правильный (/public/booking)")
                     else:
-                        details.append(f"  ⚠️ Booking URL: {settings['booking_url']} (ожидается: /public/booking)")
+                        details.append(f"  [WARN] Booking URL: {settings['booking_url']} (ожидается: /public/booking)")
 
                     result.success("Настройки салона корректны")
                     result.details.extend(details)
@@ -769,7 +784,7 @@ class ComprehensiveTest:
             conn.close()
 
         except Exception as e:
-            result.fail(f"Ошибка: {str(e)}", [f"❌ Traceback:\n{traceback.format_exc()}"])
+            result.fail(f"Ошибка: {str(e)}", [f"[FAIL] Traceback:\n{traceback.format_exc()}"])
 
         return result
 
@@ -783,7 +798,7 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("SELECT COUNT(*) as count FROM services WHERE is_active = TRUE")
             count = cursor.fetchone()['count']
@@ -811,7 +826,7 @@ class ComprehensiveTest:
             conn.close()
 
         except Exception as e:
-            result.fail(f"Ошибка: {str(e)}", [f"❌ Traceback:\n{traceback.format_exc()}"])
+            result.fail(f"Ошибка: {str(e)}", [f"[FAIL] Traceback:\n{traceback.format_exc()}"])
 
         return result
 
@@ -825,7 +840,7 @@ class ComprehensiveTest:
 
         try:
             conn = self.connect_db()
-            cursor = conn.cursor()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute("""
                 SELECT u.id, u.username, u.full_name, u.employee_id,
@@ -847,7 +862,7 @@ class ComprehensiveTest:
 
             if unlinked_users:
                 error_details = [
-                    f"❌ Пользователей без связи с employees: {len(unlinked_users)}",
+                    f"[FAIL] Пользователей без связи с employees: {len(unlinked_users)}",
                     ""
                 ]
 
@@ -862,7 +877,7 @@ class ComprehensiveTest:
             else:
                 details = []
                 for user in linked_users:
-                    details.append(f"  ✅ {user['username']:<15} -> employee #{user['employee_id']} ({user['emp_name']})")
+                    details.append(f"  [OK] {user['username']:<15} -> employee #{user['employee_id']} ({user['emp_name']})")
 
                 result.success(f"Все {len(users)} пользователей связаны с employees")
                 result.details.extend(details)
@@ -870,7 +885,7 @@ class ComprehensiveTest:
             conn.close()
 
         except Exception as e:
-            result.fail(f"Ошибка: {str(e)}", [f"❌ Traceback:\n{traceback.format_exc()}"])
+            result.fail(f"Ошибка: {str(e)}", [f"[FAIL] Traceback:\n{traceback.format_exc()}"])
 
         return result
 
@@ -882,47 +897,43 @@ class ComprehensiveTest:
         """Запуск всех тестов"""
         self.start_time = datetime.now()
 
-        self.print_header("🧪 КОМПЛЕКСНАЯ ПРОВЕРКА ВСЕЙ СИСТЕМЫ BEAUTY CRM")
+        self.print_header("[TEST] КОМПЛЕКСНАЯ ПРОВЕРКА ВСЕЙ СИСТЕМЫ BEAUTY CRM")
 
-        print(f"{Colors.CYAN}📅 Время запуска: {self.start_time.strftime('%Y-%m-%d %H:%M:%S')}{Colors.END}")
-        print(f"{Colors.CYAN}💾 База данных: {self.db_path}{Colors.END}\n")
+        print(f"{Colors.CYAN}Время запуска: {self.start_time.strftime('%Y-%m-%d %H:%M:%S')}{Colors.END}")
+        print(f"{Colors.CYAN}База данных: {DATABASE_NAME}{Colors.END}\n")
 
         # Список всех тестов
         all_tests = [
             # Database
-            ("🗄️  БАЗА ДАННЫХ", [
+            ("--- БАЗА ДАННЫХ ---", [
                 self.test_database_connection,
                 self.test_tables_exist,
                 self.test_users_table_structure,
             ]),
             # Users
-            ("👤 ПОЛЬЗОВАТЕЛИ", [
+            ("--- ПОЛЬЗОВАТЕЛИ ---", [
                 self.test_users_exist,
                 self.test_all_users_have_positions,
                 self.test_user_positions_proper_case,
             ]),
             # Employees
-            ("👥 СОТРУДНИКИ", [
+            ("--- СОТРУДНИКИ ---", [
                 self.test_employees_exist,
                 self.test_all_employees_have_positions,
                 self.test_employee_names_proper_case,
             ]),
             # Positions
-            ("📋 ДОЛЖНОСТИ", [
+            ("--- ДОЛЖНОСТИ ---", [
                 self.test_positions_exist,
                 self.test_default_positions_exist,
             ]),
             # Settings
-            ("⚙️  НАСТРОЙКИ", [
+            ("  НАСТРОЙКИ", [
                 self.test_salon_settings_exist,
             ]),
             # Services
-            ("💈 УСЛУГИ", [
+            (" УСЛУГИ", [
                 self.test_services_exist,
-            ]),
-            # Integration
-            ("🔗 ИНТЕГРАЦИЯ", [
-                self.test_user_employee_link,
             ]),
         ]
 
@@ -939,13 +950,13 @@ class ComprehensiveTest:
         self.end_time = datetime.now()
         duration = (self.end_time - self.start_time).total_seconds()
 
-        self.print_header("📊 ИТОГОВЫЙ ОТЧЕТ")
+        self.print_header(" ИТОГОВЫЙ ОТЧЕТ")
 
         total_tests = len(self.results)
         passed_tests = sum(1 for r in self.results if r.passed)
         failed_tests = total_tests - passed_tests
 
-        print(f"{Colors.BOLD}📈 Статистика:{Colors.END}")
+        print(f"{Colors.BOLD} Статистика:{Colors.END}")
         print(f"   ├─ Всего тестов: {total_tests}")
         print(f"   ├─ Пройдено: {Colors.GREEN}{passed_tests}{Colors.END}")
         print(f"   ├─ Провалено: {Colors.RED if failed_tests > 0 else Colors.GREEN}{failed_tests}{Colors.END}")
@@ -953,11 +964,11 @@ class ComprehensiveTest:
 
         # Проваленные тесты
         if failed_tests > 0:
-            print(f"{Colors.RED}{Colors.BOLD}❌ ПРОВАЛЕННЫЕ ТЕСТЫ:{Colors.END}\n")
+            print(f"{Colors.RED}{Colors.BOLD}[FAIL] ПРОВАЛЕННЫЕ ТЕСТЫ:{Colors.END}\n")
 
             for result in self.results:
                 if not result.passed:
-                    print(f"  {Colors.RED}❌ [{result.category}] {result.name}{Colors.END}")
+                    print(f"  {Colors.RED}[FAIL] [{result.category}] {result.name}{Colors.END}")
                     if result.error:
                         print(f"     {Colors.RED}Ошибка: {result.error}{Colors.END}")
 
@@ -968,7 +979,7 @@ class ComprehensiveTest:
             print(f"{Colors.GREEN}{Colors.BOLD}")
             print("╔════════════════════════════════════════════════════════════════════════╗")
             print("║                                                                        ║")
-            print("║                    ✅ ВСЕ ТЕСТЫ ПРОЙДЕНЫ!                              ║")
+            print("║                    [OK] ВСЕ ТЕСТЫ ПРОЙДЕНЫ!                              ║")
             print("║                                                                        ║")
             print("╚════════════════════════════════════════════════════════════════════════╝")
             print(Colors.END)
@@ -977,7 +988,7 @@ class ComprehensiveTest:
             print(f"{Colors.RED}{Colors.BOLD}")
             print("╔════════════════════════════════════════════════════════════════════════╗")
             print("║                                                                        ║")
-            print("║                    ❌ ЕСТЬ ПРОВАЛЕННЫЕ ТЕСТЫ                           ║")
+            print("║                    [FAIL] ЕСТЬ ПРОВАЛЕННЫЕ ТЕСТЫ                           ║")
             print("║                                                                        ║")
             print("╚════════════════════════════════════════════════════════════════════════╝")
             print(Colors.END)
@@ -989,7 +1000,7 @@ def run_comprehensive_test() -> bool:
         tester = ComprehensiveTest()
         return tester.run_all_tests()
     except Exception as e:
-        print(f"{Colors.RED}❌ КРИТИЧЕСКАЯ ОШИБКА: {str(e)}{Colors.END}")
+        print(f"{Colors.RED}[FAIL] КРИТИЧЕСКАЯ ОШИБКА: {str(e)}{Colors.END}")
         print(f"{Colors.RED}Traceback:\n{traceback.format_exc()}{Colors.END}")
         return False
 

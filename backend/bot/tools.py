@@ -25,7 +25,7 @@ def get_available_time_slots(
         # 1. Определяем ID услуги и длительность если передано название
         service_id = None
         if service_name:
-            c.execute("SELECT id, duration FROM services WHERE name_ru LIKE %s OR name LIKE %s", 
+            c.execute("SELECT id, duration FROM services WHERE name_ru ILIKE %s OR name ILIKE %s", 
                      (f"%{service_name}%", f"%{service_name}%"))
             service_row = c.fetchone()
             if service_row:
@@ -271,18 +271,21 @@ def check_time_slot_available(
                 requested_time = datetime.strptime(time, '%H:%M').time()
                 salon_start = datetime.strptime(start_time_str, '%H:%M').time()
                 salon_end = datetime.strptime(end_time_str, '%H:%M').time()
-                lunch_start_time = datetime.strptime(lunch_start, '%H:%M').time()
-                lunch_end_time = datetime.strptime(lunch_end, '%H:%M').time()
                 
                 print(f"   ⏱️ Working hours check: {requested_time} vs {salon_start}-{salon_end}")
-                print(f"   🍽️ Lunch time check: {requested_time} vs {lunch_start_time}-{lunch_end_time}")
 
                 if requested_time < salon_start:
                     reason = f"Салон ещё не работает (открываемся в {start_time_str})"
                 elif requested_time >= salon_end:
                     reason = f"Салон уже закрыт (работаем до {end_time_str})"
-                elif lunch_start_time <= requested_time < lunch_end_time:
-                    reason = f"В это время у мастеров обед ({lunch_start}-{lunch_end})"
+                elif (lunch_start and lunch_end and lunch_start not in ['-', ''] and lunch_end not in ['-', ''] and 
+                      ':' in lunch_start and ':' in lunch_end):
+                    l_start = datetime.strptime(lunch_start[:5], '%H:%M').time()
+                    l_end = datetime.strptime(lunch_end[:5], '%H:%M').time()
+                    if l_start <= requested_time < l_end:
+                        reason = f"В это время у мастеров обед ({lunch_start}-{lunch_end})"
+                    else:
+                        reason = f"Время {time} занято у всех мастеров"
                 else:
                     reason = f"Время {time} занято у всех мастеров"
             except Exception as e:

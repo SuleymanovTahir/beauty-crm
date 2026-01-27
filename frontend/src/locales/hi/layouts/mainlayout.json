@@ -2,6 +2,10 @@
   "admin": "प्रशासक",
   "admin_panel": "एडमिन पैनल",
   "all_notifications_cleared": "सभी सूचनाएं हटा दी गईं",
+  "calls": {
+    "click_to_answer": "Нажмите, чтобы ответить",
+    "incoming_call": "Входящий звонок!"
+  },
   "clear_all": "साफ़ करें सभी",
   "close": "बंद करें",
   "confirm_clear_all": "क्या आप वाकई सभी सूचनाएं हटाना चाहते हैं?",
@@ -38,6 +42,7 @@
     "payment_integrations": "भुगतान प्रणाली",
     "products": "उत्पाद",
     "public_content": "सार्वजनिक सामग्री",
+    "service_requests": "Запросы услуг",
     "services": "सेवाएं",
     "settings": "सेटिंग्स",
     "tasks": "कार्य",

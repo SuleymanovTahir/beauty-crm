@@ -21,6 +21,7 @@ import {
 } from '../../components/ui/dialog';
 import { Label } from '../../components/ui/label';
 import { Progress } from '../../components/ui/progress';
+import { useSalonSettings } from '../../hooks/useSalonSettings';
 import { toast } from 'sonner';
 
 interface Challenge {
@@ -39,6 +40,7 @@ interface Challenge {
 
 export default function Challenges() {
     const { t } = useTranslation(['admin/challenges', 'common', 'services']);
+    const { currency } = useSalonSettings();
     const navigate = useNavigate();
 
     const [challenges, setChallenges] = useState<Challenge[]>([]);
@@ -351,7 +353,7 @@ export default function Challenges() {
                                         onChange={(e) => setFormData({ ...formData, target_value: parseInt(e.target.value) })}
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-gray-300 text-sm">
-                                        {formData.type === 'spend' ? 'AED' : formData.type === 'visits' ? 'X' : ''}
+                                        {formData.type === 'spend' ? currency : formData.type === 'visits' ? 'X' : ''}
                                     </span>
                                 </div>
                             </div>
