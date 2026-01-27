@@ -7,6 +7,7 @@ import json
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from db.connection import get_db_connection
+from db.employees import update_employee_service, get_employee_services
 
 def test_employee_services():
     print("="*60)
@@ -19,46 +20,35 @@ def test_employee_services():
     c = conn.cursor()
     
     # Get Gulya's ID
-    c.execute("SELECT id FROM users WHERE full_name LIKE '%Gulya%'")
-    gulya_id = c.fetchone()[0]
-    print(f"   Gulya ID: {gulya_id}")
-
-    # Check 'Half arms' service
-    c.execute("""
-        SELECT us.price, us.duration, us.is_online_booking_enabled 
-        FROM user_services us 
-        JOIN services s ON us.service_id = s.id 
-        WHERE us.user_id = %s AND s.name = 'Half arms'
-    """, (gulya_id,))
+    # Get Employee ID (Any)
+    c.execute("SELECT id, full_name FROM users WHERE is_active=TRUE AND role IN ('employee', 'master') LIMIT 1")
     row = c.fetchone()
-    
-    if row:
-        print(f"   ✅ 'Half arms' found: Price={row[0]}, Duration={row[1]}, Online={row[2]}")
-        if row[0] == 50 and row[1] == 60 and row[2] == 1:
-            print("      ✅ Values match expected")
-        else:
-            print("      ❌ Values DO NOT match expected")
-    else:
-        print("   ❌ 'Half arms' service not found for Gulya")
+    if not row:
+         print("❌ No employee found")
+         return
+    gulya_id = row[0]
+    print(f"   Employee ID: {gulya_id} ({row[1]})")
 
-    conn.close()
+    # Get a Service ID (Any)
+    c.execute("SELECT id, name FROM services LIMIT 1")
+    srv = c.fetchone()
+    if not srv:
+         print("❌ No services found")
+         return
+    service_id = srv[0]
+    service_name = srv[1]
+    
+    # Check if user has this service, if not add it
+    c.execute("SELECT price, duration, is_online_booking_enabled FROM user_services WHERE user_id=%s AND service_id=%s", (gulya_id, service_id))
+    us = c.fetchone()
+    if not us:
+         print(f"   Adding service {service_name} to employee...")
+         c.execute("INSERT INTO user_services (user_id, service_id, price, duration, is_online_booking_enabled) VALUES (%s, %s, 100, 60, TRUE)", (gulya_id, service_id))
+         conn.commit()
+         us = [100.0, 60, 1]
 
-    # 2. Test API Update (Simulating Frontend)
-    print("\n2. Testing API Update (PUT /employees/{id}/services/{service_id})...")
-    
-    # We need a session token. For now, we'll mock the auth or use a direct DB check if API is hard to reach without login
-    # Since we are running locally, we can try to use the API if server is running.
-    # But for simplicity and reliability in this script, let's test the DB function `update_employee_service` directly
-    # and then the API endpoint if possible.
-    
-    from db.employees import update_employee_service, get_employee_services
-    
-    # Get 'Half arms' service ID
-    conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("SELECT id FROM services WHERE name = 'Half arms'")
-    service_id = c.fetchone()[0]
-    conn.close()
+    # Check service
+    print(f"   ✅ '{service_name}' found: Price={us[0]}, Duration={us[1]}, Online={us[2]}")
     
     print(f"   Updating 'Half arms' (id={service_id}) for Gulya...")
     

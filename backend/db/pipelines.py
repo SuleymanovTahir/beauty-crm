@@ -4,22 +4,22 @@ from db.connection import get_db_connection
 from utils.logger import log_error, log_info
 
 def get_pipeline_stages() -> List[Dict]:
-    """Get all pipeline stages"""
+    """Get all pipeline stages from unified workflow_stages"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
         c.execute("""
-            SELECT id, name, key, order_index, color 
-            FROM pipeline_stages 
-            WHERE is_active = TRUE 
-            ORDER BY order_index ASC
+            SELECT id, name, name_ru, sort_order, color 
+            FROM workflow_stages 
+            WHERE entity_type = 'pipeline' 
+            ORDER BY sort_order ASC
         """)
         rows = c.fetchall()
         return [
             {
                 "id": row[0],
-                "name": row[1],
-                "key": row[2],
+                "name": row[2] or row[1], # Use Russian if available
+                "key": row[1].lower().replace(" ", "_"),
                 "order_index": row[3],
                 "color": row[4]
             }
@@ -32,7 +32,7 @@ def get_pipeline_stages() -> List[Dict]:
         conn.close()
 
 def get_clients_by_stage(stage_id: int, limit: int = 50, offset: int = 0, search: str = None, user_id: int = None) -> List[Dict]:
-    """Get clients in a specific stage, optionally filtered by assigned employee"""
+    """Get clients in a specific stage"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -42,34 +42,22 @@ def get_clients_by_stage(stage_id: int, limit: int = 50, offset: int = 0, search
             WHERE pipeline_stage_id = %s
         """
         params = [stage_id]
-
-        # Filter by assigned employee if user_id is provided
         if user_id is not None:
             query += " AND (assigned_employee_id = %s OR assigned_employee_id IS NULL)"
             params.append(user_id)
-
         if search:
             query += " AND (name ILIKE %s OR username ILIKE %s OR phone ILIKE %s)"
             params.extend([f"%{search}%"] * 3)
-
         query += " ORDER BY last_contact DESC LIMIT %s OFFSET %s"
         params.extend([limit, offset])
-
         c.execute(query, params)
         rows = c.fetchall()
         return [
             {
-                "id": row[0],
-                "name": row[1],
-                "username": row[2],
-                "phone": row[3],
-                "total_spend": row[4],
-                "last_contact": row[5],
-                "temperature": row[6] or 'cold',
-                "profile_pic": row[7],
-                "assigned_employee_id": row[8],
-                "reminder_date": row[9],
-                "pipeline_stage_id": row[10]
+                "id": row[0], "name": row[1], "username": row[2], "phone": row[3],
+                "total_spend": row[4], "last_contact": row[5], "temperature": row[6] or 'cold',
+                "profile_pic": row[7], "assigned_employee_id": row[8],
+                "reminder_date": row[9], "pipeline_stage_id": row[10]
             }
             for row in rows
         ]
@@ -79,170 +67,118 @@ def get_clients_by_stage(stage_id: int, limit: int = 50, offset: int = 0, search
     finally:
         conn.close()
 
-
 def update_client_stage(client_id: str, stage_id: int) -> bool:
-    """Move client to a new stage"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("""
-            UPDATE clients 
-            SET pipeline_stage_id = %s 
-            WHERE instagram_id = %s
-        """, (stage_id, client_id))
+        c.execute("UPDATE clients SET pipeline_stage_id = %s WHERE instagram_id = %s", (stage_id, client_id))
         conn.commit()
-        log_info(f" moved client {client_id} to stage {stage_id}", "db.pipelines")
         return True
     except Exception as e:
         log_error(f"Error updating client stage: {e}", "db.pipelines")
-        conn.rollback()
         return False
     finally:
         conn.close()
 
-def remove_client_from_funnel(client_id: str) -> bool:
-    """Remove client from funnel (set stage to NULL)"""
+def get_funnel_stats(user_id: int = None) -> List[Dict]:
+    """Get stats from workflow_stages"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("""
-            UPDATE clients 
-            SET pipeline_stage_id = NULL
-            WHERE instagram_id = %s
-        """, (client_id,))
-        conn.commit()
-        return True
-    except Exception as e:
-        log_error(f"Error removing client from funnel: {e}", "db.pipelines")
-        conn.rollback()
-        return False
-    finally:
-        conn.close()
-
-def get_funnel_stats(start_date: str = None, end_date: str = None, user_id: int = None) -> Dict:
-    """Get stats for the funnel (count per stage, etc), optionally filtered by assigned employee"""
-    conn = get_db_connection()
-    c = conn.cursor()
-    try:
-        # Build query with optional user filter
-        if user_id is not None:
-            c.execute("""
-                SELECT ps.id, ps.name, COUNT(c.instagram_id), SUM(NULLIF(c.total_spend, 0)), ps.key
-                FROM pipeline_stages ps
-                LEFT JOIN clients c ON c.pipeline_stage_id = ps.id
-                    AND (c.assigned_employee_id = %s OR c.assigned_employee_id IS NULL)
-                WHERE ps.is_active = TRUE
-                GROUP BY ps.id, ps.name, ps.order_index, ps.key
-                ORDER BY ps.order_index
-            """, (user_id,))
-        else:
-            c.execute("""
-                SELECT ps.id, ps.name, COUNT(c.instagram_id), SUM(NULLIF(c.total_spend, 0)), ps.key
-                FROM pipeline_stages ps
-                LEFT JOIN clients c ON c.pipeline_stage_id = ps.id
-                WHERE ps.is_active = TRUE
-                GROUP BY ps.id, ps.name, ps.order_index, ps.key
-                ORDER BY ps.order_index
-            """)
+        sql = """
+            SELECT ws.id, ws.name, ws.name_ru, COUNT(c.instagram_id), SUM(NULLIF(c.total_spend, 0))
+            FROM workflow_stages ws
+            LEFT JOIN clients c ON c.pipeline_stage_id = ws.id
+                {user_filter}
+            WHERE ws.entity_type = 'pipeline'
+            GROUP BY ws.id, ws.name, ws.name_ru, ws.sort_order
+            ORDER BY ws.sort_order ASC
+        """
+        user_filter = "AND (c.assigned_employee_id = %s OR c.assigned_employee_id IS NULL)" if user_id else ""
+        c.execute(sql.format(user_filter=user_filter), (user_id,) if user_id else ())
         rows = c.fetchall()
-
         return [
             {
-                "stage_id": row[0],
-                "stage_name": row[1],
-                "count": row[2],
-                "total_value": row[3] or 0,
-                "key": row[4]
+                "stage_id": row[0], "stage_name": row[2] or row[1],
+                "count": row[3], "total_value": row[4] or 0, "key": row[1].lower().replace(" ", "_")
             }
             for row in rows
         ]
     except Exception as e:
-        log_error(f"Error getting funnel stats: {e}", "db.pipelines")
+        log_error(f"Error funnel stats: {e}", "db.pipelines")
         return []
     finally:
         conn.close()
 
 def create_pipeline_stage(name: str, color: str, order_index: int) -> Optional[int]:
-    """Create a new pipeline stage"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        # Generate a key from name (simple slug)
-        key = name.lower().replace(" ", "_")[:50]
-        
         c.execute("""
-            INSERT INTO pipeline_stages (name, key, color, order_index)
-            VALUES (%s, %s, %s, %s)
-            RETURNING id
-        """, (name, key, color, order_index))
-        stage_id = c.fetchone()[0]
+            INSERT INTO workflow_stages (entity_type, name, color, sort_order)
+            VALUES ('pipeline', %s, %s, %s) RETURNING id
+        """, (name, color, order_index))
+        sid = c.fetchone()[0]
         conn.commit()
-        return stage_id
+        return sid
     except Exception as e:
-        log_error(f"Error creating pipeline stage: {e}", "db.pipelines")
-        conn.rollback()
+        log_error(f"Error create stage: {e}", "db.pipelines")
         return None
     finally:
         conn.close()
 
 def update_pipeline_stage(stage_id: int, name: str, color: str) -> bool:
-    """Update a pipeline stage"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("""
-            UPDATE pipeline_stages 
-            SET name = %s, color = %s
-            WHERE id = %s
-        """, (name, color, stage_id))
+        c.execute("UPDATE workflow_stages SET name = %s, color = %s WHERE id = %s", (name, color, stage_id))
         conn.commit()
         return True
     except Exception as e:
-        log_error(f"Error updating pipeline stage: {e}", "db.pipelines")
-        conn.rollback()
+        log_error(f"Error update stage: {e}", "db.pipelines")
         return False
     finally:
         conn.close()
 
-def delete_pipeline_stage(stage_id: int, fallback_stage_id: int = None) -> bool:
-    """Delete a pipeline stage and move clients to fallback if provided"""
+def delete_pipeline_stage(stage_id: int, fallback_id: int = None) -> bool:
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        # If fallback provided, move clients first
-        if fallback_stage_id:
-            c.execute("""
-                UPDATE clients 
-                SET pipeline_stage_id = %s 
-                WHERE pipeline_stage_id = %s
-            """, (fallback_stage_id, stage_id))
-            
-        c.execute("DELETE FROM pipeline_stages WHERE id = %s", (stage_id,))
+        if fallback_id:
+            c.execute("UPDATE clients SET pipeline_stage_id = %s WHERE pipeline_stage_id = %s", (fallback_id, stage_id))
+        c.execute("DELETE FROM workflow_stages WHERE id = %s", (stage_id,))
         conn.commit()
         return True
     except Exception as e:
-        log_error(f"Error deleting pipeline stage: {e}", "db.pipelines")
-        conn.rollback()
+        log_error(f"Error delete stage: {e}", "db.pipelines")
         return False
     finally:
         conn.close()
 
 def reorder_pipeline_stages(ordered_ids: List[int]) -> bool:
-    """Update order_index for a list of stage IDs"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        for idx, stage_id in enumerate(ordered_ids):
-            c.execute("""
-                UPDATE pipeline_stages 
-                SET order_index = %s 
-                WHERE id = %s
-            """, (idx, stage_id))
+        for idx, sid in enumerate(ordered_ids):
+            c.execute("UPDATE workflow_stages SET sort_order = %s WHERE id = %s", (idx, sid))
         conn.commit()
         return True
     except Exception as e:
-        log_error(f"Error reordering pipeline stages: {e}", "db.pipelines")
-        conn.rollback()
+        log_error(f"Error reorder: {e}", "db.pipelines")
+        return False
+    finally:
+        conn.close()
+
+def remove_client_from_funnel(client_id: str) -> bool:
+    """Убрать клиента из воронки (обнулить stage_id)"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("UPDATE clients SET pipeline_stage_id = NULL WHERE instagram_id = %s", (client_id,))
+        conn.commit()
+        return True
+    except Exception as e:
+        log_error(f"Error removing client from funnel: {e}", "db.pipelines")
         return False
     finally:
         conn.close()

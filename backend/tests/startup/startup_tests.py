@@ -5,12 +5,13 @@ Startup тесты - БЕЗ HTTP запросов (для запуска при 
 """
 import sys
 import os
-from db.connection import get_db_connection
 
 # Добавляем путь к backend для импортов
 backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 if backend_path not in sys.path:
     sys.path.insert(0, backend_path)
+
+from db.connection import get_db_connection
 
 from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error, log_warning
@@ -133,20 +134,24 @@ def run_all_startup_tests():
 
     results = []
 
-    # 1. Проверка таблиц
-    results.append(startup_test_notifications())
-
-    # 2. Проверка API напоминаний
+    # 1. Проверка API напоминаний (создает таблицы если нет)
     results.append(startup_test_reminders_api())
 
-    # 3. Проверка API уведомлений
+    # 2. Проверка API уведомлений (создает таблицы если нет)
     results.append(startup_test_notifications_api())
+
+    # 3. Проверка таблиц (пост-фактум)
+    results.append(startup_test_notifications())
 
     # Итоги
     passed = sum(1 for r in results if r)
     total = len(results)
 
     log_info("=" * 70, "startup_test")
+    
+    # DEBUG info
+    print(f"DEBUG: passed={passed} (type={type(passed)}), total={total} (type={type(total)})")
+    
     if passed == total:
         log_info(f"✅ Все тесты пройдены: {passed}/{total}", "startup_test")
     else:

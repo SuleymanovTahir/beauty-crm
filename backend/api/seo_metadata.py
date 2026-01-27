@@ -2,6 +2,7 @@
 SEO Metadata API
 Provides dynamic SEO metadata from database for public landing page
 """
+import os
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from db.settings import get_salon_settings
@@ -24,8 +25,8 @@ def get_seo_metadata():
         salon = get_salon_settings()
         
         # Get dynamic values from database
-        base_url = salon.get('base_url', 'https://mlediamant.com')
-        logo_url = salon.get('logo_url', '/assets/logo.webp')
+        base_url = salon.get('base_url') or os.getenv('SALON_BASE_URL', 'https://mlediamant.com')
+        logo_url = salon.get('logo_url') or '/assets/logo.webp'
         # Make logo URL absolute if it's relative
         if logo_url and not logo_url.startswith('http'):
             logo_url = f"{base_url}{logo_url}"
@@ -108,10 +109,10 @@ def get_seo_metadata():
         return JSONResponse(
             content={
                 "error": str(e),
-                "salon_name": "Beauty Salon",
-                "phone": salon.get('phone', ''),
+                "salon_name": os.getenv('SALON_NAME', "Beauty Salon"),
+                "phone": salon.get('phone', '') if 'salon' in locals() else '',
                 "city": "Dubai",
-                "base_url": "https://mlediamant.com"
+                "base_url": os.getenv('SALON_BASE_URL', "https://mlediamant.com")
             },
             status_code=500
         )

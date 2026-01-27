@@ -35,7 +35,7 @@ def startup_test_notifications():
         # Проверяем booking_reminder_settings
         c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='booking_reminder_settings'")
         if c.fetchone():
-            c.execute("SELECT COUNT(*) FROM booking_reminder_settings WHERE reminder_24h_enabled = 1")
+            c.execute("SELECT COUNT(*) FROM booking_reminder_settings WHERE is_enabled = TRUE")
             enabled = c.fetchone()[0]
             c.execute("SELECT COUNT(*) FROM booking_reminder_settings")
             total = c.fetchone()[0]
@@ -95,7 +95,7 @@ def startup_test_notifications_api():
         column_names = [col[0] for col in columns]
 
         required = ['user_id', 'email_notifications', 'sms_notifications', 
-                    'booking_notifications', 'birthday_reminders']
+                    'booking_notifications']
 
         missing = [col for col in required if col not in column_names]
 

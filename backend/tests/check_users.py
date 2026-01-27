@@ -1,19 +1,15 @@
 """
 Проверка пользователей в базе данных
 """
-from db.connection import get_db_connection
-import os
 import sys
+import os
 
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from core.config import DATABASE_NAME as db_path
+from db.connection import get_db_connection
 
-if not os.path.exists(db_path):
-    print("❌ База данных не существует!")
-    print("   Запустите backend чтобы создать базу: python main.py")
-    exit(1)
+# PostgreSQL doesn't use a file path for check
 
 try:
     conn = get_db_connection()

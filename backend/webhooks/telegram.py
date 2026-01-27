@@ -33,7 +33,7 @@ async def handle_telegram_webhook(request: Request):
         log_info(f"📦 Telegram update: {json.dumps(update, indent=2, ensure_ascii=False)[:500]}...", "telegram_webhook")
 
         # Обрабатываем обновление
-        telegram_bot.process_update(update)
+        await telegram_bot.process_update(update)
 
         log_info("✅ Telegram update processed successfully", "telegram_webhook")
         log_info("=" * 70, "telegram_webhook")

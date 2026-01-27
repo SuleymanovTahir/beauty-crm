@@ -7,24 +7,24 @@ from utils.logger import log_error, log_info
 # ===== STAGES =====
 
 def get_task_stages() -> List[Dict]:
-    """Get all active task stages ordered by index"""
+    """Get all active task stages ordered by index from workflow_stages"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
         c.execute("""
-            SELECT id, name, key, order_index, color 
-            FROM task_stages 
-            WHERE is_active = TRUE 
-            ORDER BY order_index ASC
+            SELECT id, name, name_ru, color, sort_order 
+            FROM workflow_stages 
+            WHERE entity_type = 'task' 
+            ORDER BY sort_order ASC
         """)
         rows = c.fetchall()
         return [
             {
                 "id": row[0],
-                "name": row[1],
-                "key": row[2],
-                "order_index": row[3],
-                "color": row[4]
+                "name": row[2] or row[1],
+                "key": row[1],
+                "order_index": row[4],
+                "color": row[3]
             }
             for row in rows
         ]
@@ -34,25 +34,21 @@ def get_task_stages() -> List[Dict]:
     finally:
         conn.close()
 
-def create_task_stage(name: str, color: str = 'bg-gray-500') -> Optional[int]:
-    """Create a new task stage"""
+def create_task_stage(name: str, color: str = '#3b82f6') -> Optional[int]:
+    """Create a new task stage in workflow_stages"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
         # Get max order index
-        c.execute("SELECT MAX(order_index) FROM task_stages")
+        c.execute("SELECT MAX(sort_order) FROM workflow_stages WHERE entity_type = 'task'")
         max_order = c.fetchone()[0]
         new_order = (max_order or 0) + 1
         
-        # Key generation (simple slug)
-        # In real app, make sure it's unique
-        key = 'stage_' + str(datetime.now().timestamp()).replace('.', '')
-
         c.execute("""
-            INSERT INTO task_stages (name, key, order_index, color)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO workflow_stages (entity_type, name, name_ru, color, sort_order)
+            VALUES ('task', %s, %s, %s, %s)
             RETURNING id
-        """, (name, key, new_order, color))
+        """, (name, name, color, new_order))
         stage_id = c.fetchone()[0]
         conn.commit()
         return stage_id
@@ -65,12 +61,12 @@ def create_task_stage(name: str, color: str = 'bg-gray-500') -> Optional[int]:
 
 
 def update_task_stage_order(orders: List[int]) -> bool:
-    """Update order of stages. orders = [id1, id2, ...]"""
+    """Update order of stages in workflow_stages. orders = [id1, id2, ...]"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
         for idx, stage_id in enumerate(orders):
-            c.execute("UPDATE task_stages SET order_index = %s WHERE id = %s", (idx, stage_id))
+            c.execute("UPDATE workflow_stages SET sort_order = %s WHERE id = %s", (idx, stage_id))
         conn.commit()
         return True
     except Exception as e:
@@ -81,11 +77,11 @@ def update_task_stage_order(orders: List[int]) -> bool:
         conn.close()
 
 def update_stage_details(stage_id: int, name: str, color: str) -> bool:
-    """Update stage name and color"""
+    """Update stage name and color in workflow_stages"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("UPDATE task_stages SET name = %s, color = %s WHERE id = %s", (name, color, stage_id))
+        c.execute("UPDATE workflow_stages SET name = %s, name_ru = %s, color = %s WHERE id = %s", (name, name, color, stage_id))
         conn.commit()
         return True
     except Exception as e:
@@ -103,7 +99,7 @@ def delete_task_stage(stage_id: int, fallback_stage_id: Optional[int] = None) ->
         if fallback_stage_id:
             c.execute("UPDATE tasks SET stage_id = %s WHERE stage_id = %s", (fallback_stage_id, stage_id))
         
-        c.execute("DELETE FROM task_stages WHERE id = %s", (stage_id,))
+        c.execute("DELETE FROM workflow_stages WHERE id = %s", (stage_id,))
         conn.commit()
         return True
     except Exception as e:
@@ -124,7 +120,7 @@ def create_task(data: Dict) -> Optional[int]:
         stage_id = data.get('stage_id')
         if not stage_id:
             # Default to first stage
-            c.execute("SELECT id FROM task_stages ORDER BY order_index ASC LIMIT 1")
+            c.execute("SELECT id FROM workflow_stages WHERE entity_type = 'task' ORDER BY sort_order ASC LIMIT 1")
             res = c.fetchone()
             stage_id = res[0] if res else None
         
@@ -189,7 +185,7 @@ def get_tasks(filters: Dict = None) -> List[Dict]:
             LEFT JOIN users u ON t.assignee_id = u.id
             LEFT JOIN users creator ON t.created_by = creator.id
             LEFT JOIN clients c ON t.client_id = c.instagram_id
-            LEFT JOIN task_stages s ON t.stage_id = s.id
+            LEFT JOIN workflow_stages s ON t.stage_id = s.id
             WHERE 1=1
         """
         params = []
@@ -241,8 +237,8 @@ def get_tasks(filters: Dict = None) -> List[Dict]:
                 "created_at": row[9],
                 "assignee_name": row[10],  # Primary assignee name
                 "client_name": row[11],
-                "status": row[14],
-                "stage_name": row[12],
+                "status": row[14], # key
+                "stage_name": row[12], # name
                 "stage_color": row[13],
                 "created_by_name": row[15],
                 "assignee_ids": assignee_ids,  # All assignees
@@ -341,10 +337,11 @@ def get_task_analytics(user_id: int = None) -> Dict:
 
         # Counts by status/stage key
         query = f"""
-            SELECT s.key, COUNT(t.id)
-            FROM task_stages s
+            SELECT s.name, COUNT(t.id)
+            FROM workflow_stages s
             LEFT JOIN tasks t ON t.stage_id = s.id {user_filter if user_id else ''}
-            GROUP BY s.key
+            WHERE s.entity_type = 'task'
+            GROUP BY s.name
         """
         c.execute(query, user_filter_params if user_id else [])
         status_counts = dict(c.fetchall())
@@ -353,8 +350,8 @@ def get_task_analytics(user_id: int = None) -> Dict:
         query = f"""
             SELECT COUNT(t.id)
             FROM tasks t
-            JOIN task_stages s ON t.stage_id = s.id
-            WHERE s.key != 'done' AND t.due_date < NOW() {user_filter if user_id else ''}
+            JOIN workflow_stages s ON t.stage_id = s.id
+            WHERE s.entity_type = 'task' AND s.name != 'done' AND t.due_date < NOW() {user_filter if user_id else ''}
         """
         c.execute(query, user_filter_params if user_id else [])
         overdue_count = c.fetchone()[0]
@@ -363,8 +360,8 @@ def get_task_analytics(user_id: int = None) -> Dict:
         query = f"""
             SELECT COUNT(t.id)
             FROM tasks t
-            JOIN task_stages s ON t.stage_id = s.id
-            WHERE s.key != 'done' AND t.due_date::date = CURRENT_DATE {user_filter if user_id else ''}
+            JOIN workflow_stages s ON t.stage_id = s.id
+            WHERE s.entity_type = 'task' AND s.name != 'done' AND t.due_date::date = CURRENT_DATE {user_filter if user_id else ''}
         """
         c.execute(query, user_filter_params if user_id else [])
         today_count = c.fetchone()[0]

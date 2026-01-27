@@ -1,6 +1,24 @@
 {
+  "browse_available_services": "Қолжетімді қызметтерді қараңыз",
+  "confirmed": "расталған",
+  "enjoy_free_day": "Бос күніңізді пайдаланыңыз!",
+  "loading_error": "Жүктеу қатесі",
+  "manage_personal_data_and_security_settings": "Жеке деректер мен қауіпсіздік параметрлерін басқару",
+  "month_bookings": "Ай сайынғы жазбалар",
   "my_bookings": "Мои записи",
+  "my_conversion": "Менің түрлендіруім",
+  "my_profile": "Менің профилім",
+  "new_clients": "Новые клиенты",
   "no_bookings_today": "На сегодня записей нет",
+  "now": "қазір",
+  "our_services": "Біздің қызметтеріміз",
+  "pending": "күтілетін",
   "schedule_for_today": "Расписание на сегодня",
-  "today_bookings": "Записей сегодня"
+  "today": "Бүгін",
+  "today_bookings": "Записей сегодня",
+  "unknown_error": "Белгісіз қате",
+  "view_and_manage_bookings": "Жазбаларды көру және басқару",
+  "view_bookings_desc": "Управляйте своими записями и расписанием",
+  "week_bookings": "Записей за неделю",
+  "your_revenue": "Ваша выручка"
 }

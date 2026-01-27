@@ -499,7 +499,10 @@ async def resolve_service_name(provider: str, external_service_id: str, default_
         provider_row = cursor.fetchone()
         
         if provider_row and provider_row[0]:
-            settings = json.loads(provider_row[0])
+            settings = provider_row[0]
+            if isinstance(settings, str):
+                settings = json.loads(settings)
+            
             service_mapping = settings.get("service_mapping", {}) # {internal_id: external_id}
             
             # Инвертируем маппинг: {external_id: internal_id}

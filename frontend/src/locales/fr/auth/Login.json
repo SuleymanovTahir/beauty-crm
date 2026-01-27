@@ -1,11 +1,15 @@
 {
+  "account_pending": "Votre compte est en attente de l'approbation de l'administrateur",
   "authorization_error": "Authorization failed",
+  "email_not_verified_redirect": "L'adresse e-mail n'a pas été vérifiée. Redirection vers la page de vérification...",
   "enter_login": "Enter username",
   "fill_both_fields": "Please fill in both fields",
   "login": "Connexion",
   "login_error": "Login error",
   "login_title": "Login to your account",
+  "network_error": "Erreur réseau. Veuillez vérifier votre connexion Internet ou réessayer plus tard.",
   "password": "Password",
+  "registration_pending_toast": "Votre inscription est en attente de l'approbation de l'administrateur. Vous recevrez un e-mail lorsque votre compte sera activé.",
   "username": "Nom d'utilisateur",
   "welcome": "Welcome"
 }

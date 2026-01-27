@@ -1,6 +1,7 @@
 """
 Публичные API endpoints (без авторизации)
 """
+import os
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel, validator
 from typing import Optional, List
@@ -46,34 +47,54 @@ class ContactForm(BaseModel):
     message: str
 
 @router.get("/salon-settings")
-def get_public_salon_settings():
+@router.get("/salon-info")
+def get_public_salon_settings(language: str = "ru"):
     """Получить публичную информацию о салоне (контакты, адрес)"""
     from utils.logger import log_error
+    from db.settings import get_salon_settings
     
     try:
         settings = get_salon_settings()
         if not settings:
-            return {
-                "phone": None,
-                "email": None,
-                "address": None,
-                "whatsapp": None,
-                "instagram": None,
-                "google_maps": None,
-                "name": None,
-                "logo_url": None
-            }
+            return {"error": "Settings not found"}
+        
+        lang_key = language[:2] if language else 'ru'
+    
+        # Localized fields
+        localized_name = settings.get(f"name_{lang_key}") or settings.get("name") or os.getenv('SALON_NAME', "Beauty Salon")
+        localized_address = settings.get(f"address_{lang_key}") or settings.get("address")
+        
+        # Handle hours
+        localized_hours = settings.get(f"hours_{lang_key}")
+        if not localized_hours:
+            hours_weekdays = settings.get('hours_weekdays')
+            hours_weekends = settings.get('hours_weekends')
+            if hours_weekdays and hours_weekends:
+                localized_hours = f"{hours_weekdays} / {hours_weekends}"
+            else:
+                localized_hours = hours_weekdays or hours_weekends or ""
+
+        # Fetch FAQ and Reviews
+        from db.public_content import get_active_faq, get_active_reviews
+        
+        faq_items = get_active_faq(language=lang_key)
+        reviews = get_active_reviews(language=lang_key, limit=10)
         
         return {
+            "name": localized_name,
             "phone": settings.get("phone"),
             "email": settings.get("email"),
-            "address": settings.get("address"),
-            "whatsapp": settings.get("whatsapp"),
+            "address": localized_address,
+            "hours": localized_hours,
             "instagram": settings.get("instagram"),
+            "whatsapp": settings.get("whatsapp"),
+            "logo_url": settings.get("logo_url"),
             "google_maps": settings.get("google_maps"),
-            "name": settings.get("name"),
+            "google_maps_embed_url": settings.get("google_maps"),
+            "booking_url": settings.get("booking_url"),
             "currency": settings.get("currency", "AED"),
-            "logo_url": settings.get("logo_url")
+            "faq": faq_items,
+            "reviews": reviews
         }
     except Exception as e:
         log_error(f"Error fetching salon settings: {e}", "public_api")
@@ -162,12 +183,12 @@ def notify_admin_new_booking(data: BookingCreate, booking_id: int, services_str:
     
     admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
     
-    # Красивое имя источника
-    source_display = "🌐 Веб-сайт"
+    # Professional source name
+    source_display = "Website"
     if data.source == 'public_landing':
-        source_display = "🏠 Лендинг (Главная)"
+        source_display = "Landing Page"
     elif data.source == 'client_cabinet':
-        source_display = "👤 Личный кабинет"
+        source_display = "Client Portal"
     
     subject = f"📅 Новая заявка на запись: {data.name}"
     message = (
@@ -192,25 +213,22 @@ def notify_admin_new_booking(data: BookingCreate, booking_id: int, services_str:
         formatted_services = "\n".join([f"  • {s.strip()}" for s in services_str.split(',')])
         
         # Красивое имя источника для TG
-        source_emoji = "🌐"
-        source_text = "Веб-сайт"
+        source_text = "Website"
         if data.source == 'public_landing':
-            source_emoji = "🏠"
-            source_text = "Лендинг (Главная)"
+            source_text = "Landing Page"
         elif data.source == 'client_cabinet':
-            source_emoji = "👤"
-            source_text = "Личный кабинет"
+            source_text = "Client Portal"
 
         tg_msg = (
-            f"📅 <b>Новая заявка на запись!</b>\n"
+            f"📅 <b>NEW BOOKING REQUEST</b>\n"
             f"━━━━━━━━━━━━━━━━━━\n"
-            f"👤 <b>Имя:</b> {data.name}\n"
-            f"📞 <b>Телефон:</b> <code>{data.phone}</code>\n"
-            f"🕒 <b>Время:</b> {data.date} в {data.time}\n"
-            f"💅 <b>Услуги:</b>\n{formatted_services}\n"
+            f"👤 <b>Client:</b> {data.name}\n"
+            f"📞 <b>Phone:</b> <code>{data.phone}</code>\n"
+            f"🕒 <b>Time:</b> {data.date} at {data.time}\n"
+            f"💅 <b>Services:</b>\n{formatted_services}\n"
             f"━━━━━━━━━━━━━━━━━━\n"
-            f"⚠️ <b>Статус:</b> ⏳ Ожидает подтверждения\n"
-            f"{source_emoji} <b>Источник:</b> {source_text}"
+            f"⚠️ <b>Status:</b> PENDING CONFIRMATION\n"
+            f"Source: {source_text}"
         )
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -259,10 +277,10 @@ def process_contact_notifications(form: ContactForm):
     # 4. Отправляем уведомление в Telegram
     try:
         telegram_message = (
-            f"📩 <b>Новая заявка с сайта!</b>\n\n"
-            f"👤 <b>Имя:</b> {form.name}\n"
-            f"📧 <b>Email:</b> {form.email or 'Не указан'}\n\n"
-            f"📝 <b>Сообщение:</b>\n{form.message}"
+            f"📩 <b>New Contact Form Submission</b>\n\n"
+            f"<b>Name:</b> {form.name}\n"
+            f"<b>Email:</b> {form.email or 'Not provided'}\n\n"
+            f"<b>Message:</b>\n{form.message}"
         )
         
         # send_telegram_alert is async, so we need to run it in an event loop
@@ -280,48 +298,37 @@ def process_contact_notifications(form: ContactForm):
 
 @router.get("/services")
 def get_public_services():
-    """Публичный список активных услуг"""
-    services = get_all_services(active_only=True)
+    """Публичный список активных услуг (все языки)"""
+    services = get_all_services(active_only=True, include_positions=True)
+    from utils.language_utils import SUPPORTED_LANGUAGES
     from utils.utils import sanitize_url
 
-    return [
-        {
-            "id": s[0],  # id
-            "name": s[2],  # name (English)
-            "name_ru": s[3] if len(s) > 3 else None,
-            "name_ar": s[4] if len(s) > 4 else None,
-            "name_en": s[20] if len(s) > 20 else None,
-            "name_de": s[21] if len(s) > 21 else None,
-            "name_es": s[22] if len(s) > 22 else None,
-            "name_fr": s[23] if len(s) > 23 else None,
-            "name_hi": s[24] if len(s) > 24 else None,
-            "name_kk": s[25] if len(s) > 25 else None,
-            "name_pt": s[26] if len(s) > 26 else None,
-            "price": s[5],  # price
-            "currency": s[8],  # currency
-            "category": s[9],  # category
-            "duration": s[15],  # duration in minutes
-            "duration_ru": s[34] if len(s) > 34 else None,
-            "duration_en": s[35] if len(s) > 35 else None,
-            "duration_ar": s[36] if len(s) > 36 else None,
-            "duration_de": s[37] if len(s) > 37 else None,
-            "duration_es": s[38] if len(s) > 38 else None,
-            "duration_fr": s[39] if len(s) > 39 else None,
-            "duration_hi": s[40] if len(s) > 40 else None,
-            "duration_kk": s[41] if len(s) > 41 else None,
-            "duration_pt": s[42] if len(s) > 42 else None,
-            "description": s[10] or "",  # description
-            "description_ru": s[11] if len(s) > 11 else None,
-            "description_ar": s[12] if len(s) > 12 else None,
-            "description_en": s[27] if len(s) > 27 else None,
-            "description_de": s[28] if len(s) > 28 else None,
-            "description_es": s[29] if len(s) > 29 else None,
-            "description_fr": s[30] if len(s) > 30 else None,
-            "description_hi": s[31] if len(s) > 31 else None,
-            "description_kk": s[32] if len(s) > 32 else None,
-            "description_pt": s[33] if len(s) > 33 else None
-        } for s in services
-    ]
+    results = []
+    for s in services:
+        # s is a dict because include_positions=True
+        item = {
+            "id": s.get("id"),
+            "price": s.get("price"),
+            "currency": s.get("currency"),
+            "category": s.get("category"),
+            "duration": s.get("duration"),
+            "service_key": s.get("service_key"),
+            "positions": s.get("positions", [])
+        }
+        
+        # Add localized fields for all supported languages
+        for lang in SUPPORTED_LANGUAGES:
+            item[f"name_{lang}"] = s.get(f"name_{lang}")
+            item[f"description_{lang}"] = s.get(f"description_{lang}")
+            item[f"duration_{lang}"] = s.get(f"duration_{lang}")
+            
+        # Legacy compatibility: 'name' is English
+        item["name"] = s.get("name_en") or s.get("name")
+        item["description"] = s.get("description_en") or s.get("description")
+        
+        results.append(item)
+        
+    return results
 
 
 @router.get("/services/{service_id}")
@@ -628,27 +635,22 @@ def get_public_banners():
 @router.get("/gallery")
 def get_public_gallery(category: Optional[str] = None):
     """
-    Получить изображения галереи (публичный доступ)
-    category: 'portfolio' или 'salon' (опционально, если не указан - возвращает все)
+    Получить изображения галереи из media_library
     """
     try:
         conn = get_db_connection()
         c = conn.cursor()
         
+        query = "SELECT id, category, url, title, description, sort_order FROM media_library WHERE context = 'gallery' AND is_public = TRUE"
+        params = []
+        
         if category:
-            c.execute("""
-                SELECT id, category, image_path, title, description, sort_order 
-                FROM gallery_images 
-                WHERE category = %s AND is_visible = TRUE
-                ORDER BY sort_order ASC, id ASC
-            """, (category,))
-        else:
-            c.execute("""
-                SELECT id, category, image_path, title, description, sort_order 
-                FROM gallery_images 
-                WHERE is_visible = TRUE
-                ORDER BY category, sort_order ASC, id ASC
-            """)        
+            query += " AND category = %s"
+            params.append(category)
+            
+        query += " ORDER BY sort_order ASC, id ASC"
+        
+        c.execute(query, params)
         images = []
         for row in c.fetchall():
             images.append({
@@ -741,55 +743,66 @@ def get_initial_load_data(language: str = "ru"):
 
     # 4. Get Services (Active only)
     try:
-        raw_services = get_all_services(active_only=True)
+        raw_services = get_all_services(active_only=True, include_positions=True)
+        from utils.language_utils import SUPPORTED_LANGUAGES, validate_language
+
         services = []
-        lang_key = language[:2] if language else 'ru'
-        
-        lang_indices = {
-            'ru': {'name': 3, 'desc': 11},
-            'en': {'name': 20, 'desc': 27},
-            'ar': {'name': 4, 'desc': 12},
-            'de': {'name': 21, 'desc': 28},
-            'es': {'name': 22, 'desc': 29},
-            'fr': {'name': 23, 'desc': 30},
-            'hi': {'name': 24, 'desc': 31},
-            'kk': {'name': 25, 'desc': 32},
-            'pt': {'name': 26, 'desc': 33}
-        }
-        idx = lang_indices.get(lang_key, lang_indices['en'])
+        lang_key = validate_language(language)
 
         for s in raw_services:
+            # s is a dict because include_positions=True
             service_dict = {
-                "id": s[0],
-                "name": s[idx['name']] or s[20] or s[3], # Preferred -> EN -> RU
-                "description": s[idx['desc']] or s[27] or s[11] or "",
-                "price": s[5],
-                "currency": s[8],
-                "category": s[9],
-                "duration": s[15],
+                "id": s.get("id"),
+                "name": s.get(f"name_{lang_key}") or s.get("name_en") or s.get("name"),
+                "description": s.get(f"description_{lang_key}") or s.get("description_en") or s.get("description") or "",
+                "price": s.get("price"),
+                "currency": s.get("currency"),
+                "category": s.get("category"),
+                "duration": s.get("duration"),
             }
             services.append(service_dict)
     except Exception:
         services = []
         
+    # 5. Get FAQ
+    try:
+        from db.public_content import get_active_faq
+        faqs = get_active_faq(language=language)
+    except Exception:
+        faqs = []
+
+    # 6. Get Reviews
+    try:
+        from db.public_content import get_active_reviews
+        reviews = get_active_reviews(language=language, limit=10)
+    except Exception:
+        reviews = []
+        
+    lang_key = validate_language(language)
+    localized_name = settings.get(f"name_{lang_key}") or settings.get("name")
+    localized_address = settings.get(f"address_{lang_key}") or settings.get("address")
+    localized_hours = settings.get(f"hours_{lang_key}") or f"{settings.get('hours_weekdays')} / {settings.get('hours_weekends')}"
+
     return {
         "salon": {
-            "name": settings.get("name"),
+            "name": localized_name,
             "phone": settings.get("phone"),
             "email": settings.get("email"),
-            "address": settings.get("address"),
+            "address": localized_address,
             "instagram": settings.get("instagram"),
             "whatsapp": settings.get("whatsapp"),
             "logo_url": settings.get("logo_url"),
             "currency": settings.get("currency", "AED"),
-            "google_maps_embed_url": f"https://maps.google.com/maps?q={settings.get('latitude', 25.0744782)},{settings.get('longitude', 55.1317665)}&z=15&output=embed" if settings.get('latitude') else settings.get("google_maps"),
+            "google_maps_embed_url": settings.get("google_maps") if not settings.get('latitude') else f"https://maps.google.com/maps?q={settings.get('latitude')},{settings.get('longitude')}&z=15&output=embed",
             "google_maps": settings.get("google_maps"),
             "map_url": settings.get("google_maps"),
-            "hours": settings.get("hours"),
+            "hours": localized_hours,
         },
         "banners": banners,
         "seo": seo,
         "services": services,
+        "faq": faqs,
+        "reviews": reviews,
         "language": language
     }
 

@@ -1,2116 +1,1446 @@
 """
-Инициализация базы данных
+Инициализация единой базы данных системы
+Единый источник истины (SSOT) для схемы CRM
 """
-import sys
-import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from db.connection import get_db_connection
-from datetime import datetime
-import hashlib
-
-from core.config import DATABASE_NAME
-from utils.logger import log_info, log_warning
+from utils.logger import log_info, log_error
+import os
+import json
 
 def init_database():
-    """Создать базу данных и все таблицы"""
+    """Создать всю схему системы с нуля или синхронизировать существующие таблицы."""
     conn = get_db_connection()
     c = conn.cursor()
     
-    # PostgreSQL не использует PRAGMA, foreign keys включены по умолчанию
-    
-    # Таблица клиентов
-    c.execute('''CREATE TABLE IF NOT EXISTS clients
-             (instagram_id TEXT PRIMARY KEY,
-              username TEXT,
-              phone TEXT,
-              name TEXT,
-              first_contact TEXT,
-              last_contact TEXT,
-              total_messages INTEGER DEFAULT 0,
-              labels TEXT,
-              status TEXT DEFAULT 'new',
-              lifetime_value REAL DEFAULT 0,
-              profile_pic TEXT,
-              notes TEXT,
-              is_pinned BOOLEAN DEFAULT FALSE,
-              detected_language TEXT,
-              gender TEXT,
-              card_number TEXT,
-              discount REAL DEFAULT 0,
-              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-              total_visits INTEGER DEFAULT 0,
-              additional_phone TEXT,
-              newsletter_agreed BOOLEAN DEFAULT FALSE,
-              personal_data_agreed BOOLEAN DEFAULT FALSE,
-              total_spend REAL DEFAULT 0,
-              paid_amount REAL DEFAULT 0,
-              birthday TEXT,
-              email TEXT,
-              password_hash TEXT,
-              last_login TEXT,
-              is_verified BOOLEAN DEFAULT FALSE,
-              preferred_messenger TEXT,
-              language TEXT,
-              bot_mode TEXT DEFAULT 'assistant',
-              temperature TEXT DEFAULT 'warm',
-              loyalty_points INTEGER DEFAULT 0,
-              reminder_date TIMESTAMP,
-              deleted_at TIMESTAMP NULL)''')
+    def add_column_if_not_exists(table, column, definition):
+        try:
+            c.execute(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {definition}")
+        except Exception as e:
+            log_error(f"Ошибка при добавлении колонки {column} в {table}: {e}", "db")
 
-    # Таблица настроек бота
-    c.execute('''CREATE TABLE IF NOT EXISTS bot_settings (
-        id INTEGER PRIMARY KEY CHECK (id = 1),
-        bot_name TEXT NOT NULL,
-        personality_traits TEXT,
-        greeting_message TEXT,
-        farewell_message TEXT,
-        price_explanation TEXT,
-        price_response_template TEXT,
-        premium_justification TEXT,
-        booking_redirect_message TEXT,
-        fomo_messages TEXT,
-        upsell_techniques TEXT,
-        communication_style TEXT,
-        max_message_length INTEGER DEFAULT 4,
-        emoji_usage TEXT,
-        languages_supported TEXT DEFAULT 'ru,en,ar',
-        response_style TEXT DEFAULT 'adaptive',
-        objection_handling TEXT,
-        negative_handling TEXT,
-        safety_guidelines TEXT,
-        example_good_responses TEXT,
-        algorithm_actions TEXT,
-        location_features TEXT,
-        seasonality TEXT,
-        emergency_situations TEXT,
-        success_metrics TEXT,
-        objection_expensive TEXT,
-        objection_think_about_it TEXT,
-        objection_no_time TEXT,
-        objection_pain TEXT,
-        objection_result_doubt TEXT,
-        objection_cheaper_elsewhere TEXT,
-        objection_too_far TEXT,
-        objection_consult_husband TEXT,
-        objection_first_time TEXT,
-        objection_not_happy TEXT,
-        emotional_triggers TEXT,
-        social_proof_phrases TEXT,
-        personalization_rules TEXT,
-        example_dialogues TEXT,
-        emotional_responses TEXT,
-        anti_patterns TEXT,
-        voice_message_response TEXT,
-        contextual_rules TEXT,
-        auto_cancel_discounts TEXT DEFAULT 'Не предлагай скидки и специальные предложения автоматически. Предлагай их только если клиент явно интересуется скидками.',
-        comment_reply_settings TEXT DEFAULT '{}',
-        manager_consultation_enabled BOOLEAN DEFAULT TRUE,
-        manager_consultation_prompt TEXT,
-        booking_data_collection TEXT,
-        booking_time_logic TEXT,
-        pre_booking_data_collection TEXT,
-        bot_mode TEXT DEFAULT 'sales',
-        temperature REAL DEFAULT 0.7,
-        updated_at TEXT
-    )''')
-
-    # Миграция: добавить отсутствующие колонки в bot_settings
-    try:
-        c.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name='bot_settings'
-        """)
-        bot_columns = [row[0] for row in c.fetchall()]
-    except:
-        bot_columns = []
-
-    # Список колонок которые могут отсутствовать в старой схеме
-    migrations_needed = {
-        'max_message_length': 'INTEGER DEFAULT 4',
-        'voice_message_response': 'TEXT',
-        'contextual_rules': 'TEXT',
-        'auto_cancel_discounts': "TEXT DEFAULT 'Не предлагай скидки и специальные предложения автоматически. Предлагай их только если клиент явно интересуется скидками.'",
-        'comment_reply_settings': "TEXT DEFAULT '{}'",
-        'manager_consultation_enabled': 'INTEGER DEFAULT 1',
-        'manager_consultation_prompt': 'TEXT',
-        'booking_data_collection': 'TEXT',
-        'booking_time_logic': 'TEXT',
-        'pre_booking_data_collection': 'TEXT',
-        'bot_mode': "TEXT DEFAULT 'sales'",
-        'temperature': 'REAL DEFAULT 0.7',
-        'response_style': "TEXT DEFAULT 'adaptive'"
-    }
-
-    for column_name, column_type in migrations_needed.items():
-        if column_name not in bot_columns:
-            c.execute(f"ALTER TABLE bot_settings ADD COLUMN {column_name} {column_type}")
-
-    # Таблица настроек салона
-    c.execute('''CREATE TABLE IF NOT EXISTS salon_settings (
-        id INTEGER PRIMARY KEY CHECK (id = 1),
-        name TEXT NOT NULL,
-        name_ar TEXT,
-        address TEXT,
-        address_ar TEXT,
-        google_maps TEXT,
-        google_place_id TEXT,
-        google_api_key TEXT,
-        hours TEXT,
-        hours_ru TEXT,
-        hours_ar TEXT,
-        hours_weekdays TEXT DEFAULT '10:30 - 21:00',
-        hours_weekends TEXT DEFAULT '10:30 - 21:00',
-        lunch_start TEXT DEFAULT '13:00',
-        lunch_end TEXT DEFAULT '14:00',
-        booking_url TEXT,
-        phone TEXT,
-        email TEXT,
-        instagram TEXT,
-        whatsapp TEXT,
-        bot_name TEXT,
-        bot_name_en TEXT,
-        bot_name_ar TEXT,
-        city TEXT,
-        country TEXT,
-        timezone TEXT,
-        timezone_offset TEXT DEFAULT 'UTC+4',
-        currency TEXT DEFAULT 'AED',
-        birthday_discount TEXT DEFAULT '15%',
-        payment_methods TEXT DEFAULT 'Наличные, карта',
-        prepayment_required BOOLEAN DEFAULT FALSE,
-        parking_info TEXT,
-        wifi_available BOOLEAN DEFAULT TRUE,
-        latitude REAL,
-        longitude REAL,
-        logo_url TEXT,
-        base_url TEXT,
-        google_analytics_id TEXT,
-        facebook_pixel_id TEXT,
-        promo_end_date TEXT,
-        updated_at TEXT,
-        main_location TEXT,
-        main_location_ru TEXT,
-        main_location_en TEXT,
-        main_location_ar TEXT,
-        points_expiration_days INTEGER DEFAULT 365,
-        feature_flags TEXT DEFAULT '{}',
-        telephony_settings TEXT DEFAULT '{}'
-    )''')
-
-    # Миграция: добавить bot_name_en и bot_name_ar если их нет
-    try:
-
-        c.execute("""
-
-            SELECT column_name 
-
-            FROM information_schema.columns 
-
-            WHERE table_name='salon_settings'
-
-        """)
-
-        columns = [row[0] for row in c.fetchall()]
-
-    except:
-
-        columns = []
-    if 'bot_name_en' not in columns:
-        c.execute("ALTER TABLE salon_settings ADD COLUMN bot_name_en TEXT")
-    if 'bot_name_ar' not in columns:
-        c.execute("ALTER TABLE salon_settings ADD COLUMN bot_name_ar TEXT")
-    
-    # Миграция: добавить универсальные настройки
-    if 'timezone_offset' not in columns:
-        c.execute("ALTER TABLE salon_settings ADD COLUMN timezone_offset TEXT DEFAULT 'UTC+4'")
-    if 'birthday_discount' not in columns:
-        c.execute("ALTER TABLE salon_settings ADD COLUMN birthday_discount TEXT DEFAULT '15%'")
-        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekdays TEXT DEFAULT '10:30 - 21:00'")
-    if 'hours_weekends' not in columns:
-        c.execute("ALTER TABLE salon_settings ADD COLUMN hours_weekends TEXT DEFAULT '10:30 - 21:00'")
-    
-    # Миграция: добавить main_location
-    location_migrations = {
-        'main_location': 'TEXT',
-        'main_location_ru': 'TEXT',
-        'main_location_en': 'TEXT',
-        'main_location_ar': 'TEXT'
-    }
-    for col, col_type in location_migrations.items():
-        if col not in columns:
-            c.execute(f"ALTER TABLE salon_settings ADD COLUMN {col} {col_type}")
-
-    # Миграция: Feature Management & Cashback
-    feature_migrations = {
-        'points_expiration_days': 'INTEGER DEFAULT 365',
-        'feature_flags': "TEXT DEFAULT '{}'",
-        'telephony_settings': "TEXT DEFAULT '{}'"
-    }
-    for col, col_type in feature_migrations.items():
-        if col not in columns:
-            c.execute(f"ALTER TABLE salon_settings ADD COLUMN {col} {col_type}")
-
-    # Таблица истории чата
-    c.execute('''CREATE TABLE IF NOT EXISTS chat_history
-                 (id SERIAL PRIMARY KEY,
-                  instagram_id TEXT,
-                  message TEXT,
-                  sender TEXT,
-                  timestamp TEXT,
-                  language TEXT,
-                  is_read BOOLEAN DEFAULT FALSE,
-                  message_type TEXT DEFAULT 'text')''')
-
-    # Индексы для оптимизации
-    try:
-        c.execute('''CREATE INDEX IF NOT EXISTS idx_chat_history_instagram_id ON chat_history(instagram_id)''')
-        c.execute('''CREATE INDEX IF NOT EXISTS idx_chat_history_is_read_sender ON chat_history(is_read, sender)''')
-        c.execute('''CREATE INDEX IF NOT EXISTS idx_chat_history_timestamp ON chat_history(timestamp DESC)''')
-        c.execute('''CREATE INDEX IF NOT EXISTS idx_client_preferences_client_id ON client_preferences(client_id)''')
-    except Exception as e:
-        log_info(f"⚠️ Index creation skipped or already exists: {e}", "db")
-
-    # Таблица записей
-    c.execute('''CREATE TABLE IF NOT EXISTS bookings
-                 (id SERIAL PRIMARY KEY,
-                  instagram_id TEXT,
-                  service_name TEXT,
-                  master TEXT,
-                  datetime TEXT,
-                  phone TEXT,
-                  name TEXT,
-                  status TEXT,
-                  created_at TEXT,
-                  completed_at TEXT,
-                  revenue REAL DEFAULT 0,
-                  notes TEXT,
-                  special_package_id INTEGER,
-                  source TEXT DEFAULT 'manual',
-                  deleted_at TIMESTAMP NULL)''')
-
-    # Индексы для оптимизации поиска записей
-    c.execute('''CREATE INDEX IF NOT EXISTS idx_bookings_instagram_id ON bookings(instagram_id)''')
-    c.execute('''CREATE INDEX IF NOT EXISTS idx_bookings_phone ON bookings(phone)''')
-    c.execute('''CREATE INDEX IF NOT EXISTS idx_bookings_datetime ON bookings(datetime)''')
-
-    # Таблица настроек напоминаний о записях
-    c.execute('''CREATE TABLE IF NOT EXISTS booking_reminder_settings
-                 (id SERIAL PRIMARY KEY,
-                  name TEXT NOT NULL,
-                  days_before INTEGER DEFAULT 0,
-                  hours_before INTEGER DEFAULT 0,
-                  notification_type TEXT DEFAULT 'email',
-                  is_enabled BOOLEAN DEFAULT TRUE,
-                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
-    
-    # Таблица отправленных напоминаний
-    c.execute('''CREATE TABLE IF NOT EXISTS booking_reminders_sent
-                 (id SERIAL PRIMARY KEY,
-                  booking_id INTEGER NOT NULL,
-                  reminder_setting_id INTEGER NOT NULL,
-                  sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                  status TEXT DEFAULT 'sent',
-                  error_message TEXT,
-                  UNIQUE(booking_id, reminder_setting_id),
-                  FOREIGN KEY (booking_id) REFERENCES bookings(id),
-                  FOREIGN KEY (reminder_setting_id) REFERENCES booking_reminder_settings(id))''')
-    
-    # Заполняем дефолтные настройки напоминаний если пусто
-    c.execute("SELECT COUNT(*) FROM booking_reminder_settings")
-    if c.fetchone()[0] == 0:
-        default_reminders = [
-            {
-                'name': 'Напоминание за 1 день',
-                'days_before': 1,
-                'hours_before': 0,
-                'notification_type': 'whatsapp',
-                'is_enabled': True
-            },
-            {
-                'name': 'Напоминание за 3 часа',
-                'days_before': 0,
-                'hours_before': 3,
-                'notification_type': 'whatsapp',
-                'is_enabled': True
-            },
-            {
-                'name': 'Напоминание за 1 час',
-                'days_before': 0,
-                'hours_before': 1,
-                'notification_type': 'whatsapp',
-                'is_enabled': True
-            }
-        ]
-        
-        for reminder in default_reminders:
-            c.execute("""
-                INSERT INTO booking_reminder_settings (name, days_before, hours_before, notification_type, is_enabled)
-                VALUES (%s, %s, %s, %s, %s)
-            """, (reminder['name'], reminder['days_before'], reminder['hours_before'], 
-                  reminder['notification_type'], reminder['is_enabled']))
-        
-        log_info(f"✅ Создано {len(default_reminders)} дефолтных настроек напоминаний", "db")
-
-    # Миграция: добавить master в bookings
-    try:
-        c.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name='bookings'
-        """)
-        booking_columns = [row[0] for row in c.fetchall()]
-    except:
-        booking_columns = []
-    if 'master' not in booking_columns:
-        c.execute("ALTER TABLE bookings ADD COLUMN master TEXT")
-
-    # Таблица временных данных записи
-    c.execute('''CREATE TABLE IF NOT EXISTS booking_temp
-                 (instagram_id TEXT PRIMARY KEY,
-                  service_name TEXT,
-                  date TEXT,
-                  time TEXT,
-                  phone TEXT,
-                  name TEXT,
-                  step TEXT)''')
-
-    # Таблица взаимодействий
-    c.execute('''CREATE TABLE IF NOT EXISTS client_interactions
-                 (id SERIAL PRIMARY KEY,
-                  instagram_id TEXT,
-                  interaction_type TEXT,
-                  timestamp TEXT,
-                  metadata TEXT)''')
-
-    # ✅ Таблица аналитики бота (трекинг эффективности)
-    c.execute('''CREATE TABLE IF NOT EXISTS bot_analytics
-                 (id SERIAL PRIMARY KEY,
-                  instagram_id TEXT NOT NULL,
-                  session_started TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                  session_ended TIMESTAMP,
-                  messages_count INTEGER DEFAULT 0,
-                  outcome TEXT DEFAULT 'in_progress',
-                  escalated_to_manager BOOLEAN DEFAULT FALSE,
-                  booking_created BOOLEAN DEFAULT FALSE,
-                  booking_id INTEGER,
-                  cancellation_requested BOOLEAN DEFAULT FALSE,
-                  language_detected TEXT,
-                  FOREIGN KEY (instagram_id) REFERENCES clients(instagram_id))''')
-
-    # ✅ Таблица рефералов (кто кого привёл)
-    c.execute('''CREATE TABLE IF NOT EXISTS client_referrals
-                 (id SERIAL PRIMARY KEY,
-                  referrer_id TEXT NOT NULL,
-                  referred_id TEXT NOT NULL,
-                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                  bonus_given BOOLEAN DEFAULT FALSE,
-                  FOREIGN KEY (referrer_id) REFERENCES clients(instagram_id),
-                  FOREIGN KEY (referred_id) REFERENCES clients(instagram_id))''')
-
-    # Таблица истории переписки
-    c.execute('''CREATE TABLE IF NOT EXISTS conversations
-                 (id SERIAL PRIMARY KEY,
-                  client_id TEXT,
-                  role TEXT,
-                  content TEXT,
-                  timestamp TEXT,
-                  FOREIGN KEY (client_id) REFERENCES clients(instagram_id))''')
-
-    # Таблица должностей (Positions)
-    c.execute('''CREATE TABLE IF NOT EXISTS positions
-                 (id SERIAL PRIMARY KEY,
-                  name TEXT NOT NULL,
-                  name_en TEXT,
-                  name_ru TEXT,
-                  name_ar TEXT,
-                  name_fr TEXT,
-                  name_de TEXT,
-                  name_es TEXT,
-                  name_hi TEXT,
-                  name_zh TEXT,
-                  name_pt TEXT,
-                  description TEXT,
-                  sort_order INTEGER DEFAULT 0,
-                  is_active BOOLEAN DEFAULT TRUE,
-                  created_at TEXT,
-                  updated_at TEXT)''')
-    
-    # Миграция: добавить отсутствующие колонки в positions
-    try:
-        c.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name='positions'
-        """)
-        position_columns = [row[0] for row in c.fetchall()]
-    except:
-        position_columns = []
-    pos_migrations = {
-        'name_en': 'TEXT',
-        'name_ru': 'TEXT',
-        'name_ar': 'TEXT',
-        'name_fr': 'TEXT',
-        'name_de': 'TEXT',
-        'name_es': 'TEXT',
-        'name_hi': 'TEXT',
-        'name_zh': 'TEXT',
-        'name_pt': 'TEXT',
-        'sort_order': 'INTEGER DEFAULT 0',
-        'is_active': 'INTEGER DEFAULT 1',
-        'updated_at': 'TEXT'
-    }
-    for col, col_type in pos_migrations.items():
-        if col not in position_columns:
-            c.execute(f"ALTER TABLE positions ADD COLUMN {col} {col_type}")
-
-    # Таблица пользователей
-    c.execute('''CREATE TABLE IF NOT EXISTS users
-                 (id SERIAL PRIMARY KEY,
-                  username TEXT UNIQUE NOT NULL,
-                  password_hash TEXT NOT NULL,
-                  full_name TEXT,
-                  email TEXT,
-                  role TEXT DEFAULT 'employee',
-                  created_at TEXT,
-                  last_login TEXT,
-                  is_active BOOLEAN DEFAULT TRUE,
-                  position TEXT,
-                  photo TEXT,
-                  photo_url TEXT,
-                  bio TEXT,
-                  experience TEXT,
-                  specialization TEXT,
-                  years_of_experience INTEGER,
-                  certificates TEXT,
-                  is_service_provider BOOLEAN DEFAULT FALSE,
-                  base_salary REAL DEFAULT 0,
-                  commission_rate REAL DEFAULT 0,
-                  deleted_at TIMESTAMP NULL)''')
-
-    # Миграция: добавить отсутствующие колонки в users
-    try:
-        c.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name='users'
-        """)
-        user_columns = [row[0] for row in c.fetchall()]
-    except:
-        user_columns = []
-
-    # Список колонок которые могут отсутствовать в старой схеме
-    user_migrations = {
-        'position': 'TEXT',
-        'position_ru': 'TEXT',
-        'position_ar': 'TEXT',
-        'position_en': 'TEXT',
-        'employee_id': 'INTEGER',
-        'birthday': 'TEXT',
-        'phone': 'TEXT',
-        'full_name_ru': 'TEXT',
-        'full_name_en': 'TEXT',
-        'full_name_ar': 'TEXT',
-        'base_salary': 'REAL DEFAULT 0',
-        'commission_rate': 'REAL DEFAULT 0',
-        'position_id': 'INTEGER',
-        'telegram_id': 'TEXT',
-        'instagram_username': 'TEXT',
-        'is_public_visible': 'BOOLEAN DEFAULT TRUE',
-        'sort_order': 'INTEGER DEFAULT 0'
-    }
-
-    for column_name, column_type in user_migrations.items():
-        if column_name not in user_columns:
-            try:
-                c.execute(f"ALTER TABLE users ADD COLUMN {column_name} {column_type}")
-            except Exception as e:
-                log_warning(f"⚠️ Could not add column {column_name} to users: {e}", "db")
-
-    # Таблица сессий
-    c.execute('''CREATE TABLE IF NOT EXISTS sessions
-                 (id SERIAL PRIMARY KEY,
-                  user_id INTEGER,
-                  session_token TEXT UNIQUE,
-                  created_at TEXT,
-                  expires_at TEXT,
-                  FOREIGN KEY (user_id) REFERENCES users(id))''')
-    c.execute("CREATE INDEX IF NOT EXISTS idx_sessions_token_expires ON sessions(session_token, expires_at)")
-    c.execute("CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id)")
-
-    
-    # Индексы для оптимизации производительности аутентификации
-    c.execute('''CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(session_token)''')
-    c.execute('''CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at)''')
-    c.execute('''CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)''')
-
-    # Таблица логов активности
-    c.execute('''CREATE TABLE IF NOT EXISTS activity_log
-                 (id SERIAL PRIMARY KEY,
-                  user_id INTEGER,
-                  action TEXT,
-                  entity_type TEXT,
-                  entity_id TEXT,
-                  details TEXT,
-                  timestamp TEXT,
-                  FOREIGN KEY (user_id) REFERENCES users(id))''')
-
-    # Таблица кастомных статусов
-    c.execute('''CREATE TABLE IF NOT EXISTS custom_statuses
-                 (id SERIAL PRIMARY KEY,
-                  status_key TEXT UNIQUE NOT NULL,
-                  status_label TEXT NOT NULL,
-                  status_color TEXT NOT NULL,
-                  status_icon TEXT NOT NULL,
-                  created_at TEXT,
-                  created_by INTEGER,
-                  FOREIGN KEY (created_by) REFERENCES users(id))''')
-
-    # Таблица услуг
-    c.execute('''CREATE TABLE IF NOT EXISTS services
-                 (id SERIAL PRIMARY KEY,
-                  service_key TEXT UNIQUE NOT NULL,
-                  name TEXT NOT NULL,
-                  name_ru TEXT,
-                  name_ar TEXT,
-                  price REAL NOT NULL,
-                  min_price REAL,
-                  max_price REAL,
-                  currency TEXT DEFAULT 'AED',
-                  category TEXT NOT NULL,
-                  description TEXT,
-                  description_ru TEXT,
-                  description_ar TEXT,
-                  benefits TEXT,
-                  is_active BOOLEAN DEFAULT TRUE,
-                  duration TEXT,
-                  created_at TEXT,
-                  updated_at TEXT)''')
-    
-    # Таблица связи пользователей с услугами
-    c.execute('''CREATE TABLE IF NOT EXISTS user_services (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        service_id INTEGER NOT NULL,
-        price REAL,
-        price_min REAL,
-        price_max REAL,
-        duration TEXT,
-        is_online_booking_enabled BOOLEAN DEFAULT TRUE,
-        is_calendar_enabled BOOLEAN DEFAULT TRUE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(user_id, service_id),
-        FOREIGN KEY (user_id) REFERENCES users(id),
-        FOREIGN KEY (service_id) REFERENCES services(id)
-    )''')
-    c.execute("CREATE INDEX IF NOT EXISTS idx_user_services_user_id ON user_services(user_id)")
-    c.execute("CREATE INDEX IF NOT EXISTS idx_user_services_service_id ON user_services(service_id)")
-
-    
-    # Таблица связи услуг с должностями (многие-ко-многим)
-    c.execute('''CREATE TABLE IF NOT EXISTS service_positions (
-        id SERIAL PRIMARY KEY,
-        service_id INTEGER NOT NULL REFERENCES services(id) ON DELETE CASCADE,
-        position_id INTEGER NOT NULL REFERENCES positions(id) ON DELETE CASCADE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(service_id, position_id)
-    )''')
-    
-    # DEPRECATED: employees table consolidated into users with is_service_provider flag
-    # c.execute('''CREATE TABLE IF NOT EXISTS employees
-    #              (id SERIAL PRIMARY KEY,
-    #               full_name TEXT NOT NULL,
-    #               position TEXT,
-    #               experience TEXT,
-    #               photo TEXT,
-    #               bio TEXT,
-    #               phone TEXT,
-    #               email TEXT,
-    #               instagram TEXT,
-    #               is_active BOOLEAN DEFAULT TRUE,
-    #               sort_order BOOLEAN DEFAULT FALSE,
-    #               created_at TEXT,
-    #               updated_at TEXT)''')
-
-    # Таблица уведомлений
-    c.execute('''CREATE TABLE IF NOT EXISTS notification_settings (
-        id INTEGER PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        email_notifications BOOLEAN DEFAULT TRUE,
-        sms_notifications BOOLEAN DEFAULT FALSE,
-        booking_notifications BOOLEAN DEFAULT TRUE,
-        birthday_reminders BOOLEAN DEFAULT TRUE,
-        birthday_days_advance INTEGER DEFAULT 7,
-        UNIQUE(user_id),
-        FOREIGN KEY (user_id) REFERENCES users(id)
-    )''')
-    
-    # Миграция: добавить отсутствующие колонки в notification_settings
-    try:
-
-        c.execute("""
-
-            SELECT column_name 
-
-            FROM information_schema.columns 
-
-            WHERE table_name='notification_settings'
-
-        """)
-
-        notif_columns = [row[0] for row in c.fetchall()]
-
-    except:
-
-        notif_columns = []
-    notif_migrations = {
-        'birthday_reminders': 'BOOLEAN DEFAULT TRUE',
-        'birthday_days_advance': 'INTEGER DEFAULT 7',
-        'chat_notifications': 'INTEGER DEFAULT 1',
-        'daily_report': 'INTEGER DEFAULT 1',
-        'report_time': "TEXT DEFAULT '09:00'",
-        'telegram_notifications': 'BOOLEAN DEFAULT FALSE',
-        'updated_at': 'TEXT DEFAULT CURRENT_TIMESTAMP'
-    }
-    for col, col_type in notif_migrations.items():
-        if col not in notif_columns:
-            try:
-                c.execute(f"ALTER TABLE notification_settings ADD COLUMN {col} {col_type}")
-            except Exception as e:
-                log_warning(f"⚠️ Could not add column {col} to notification_settings: {e}", "db")
+    def ensure_fk_cascade(table, column, ref_table, ref_column):
+        """Гарантирует, что внешний ключ имеет ON DELETE CASCADE"""
+        try:
+            # Ищем имя существующего ограничения
+            c.execute(f"""
+                SELECT conname 
+                FROM pg_constraint 
+                WHERE conrelid = '{table}'::regclass 
+                AND confrelid = '{ref_table}'::regclass 
+                AND contype = 'f'
+            """)
+            constraints = c.fetchall()
+            for con in constraints:
+                con_name = con[0]
+                c.execute(f"ALTER TABLE {table} DROP CONSTRAINT {con_name}")
             
-    # Таблица выплат (Payroll History)
-    c.execute('''CREATE TABLE IF NOT EXISTS payroll_payments (
-        id SERIAL PRIMARY KEY,
-        employee_id INTEGER NOT NULL,
-        amount REAL NOT NULL,
-        currency TEXT DEFAULT 'AED',
-        period_start TEXT NOT NULL,
-        period_end TEXT NOT NULL,
-        status TEXT DEFAULT 'paid',
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (employee_id) REFERENCES users(id)
-    )''')            
-    # ✅ Таблица уведомлений (поддерживает и сотрудников, и клиентов)
-    c.execute('''CREATE TABLE IF NOT EXISTS notifications (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER,
-        client_id TEXT,
-        title TEXT NOT NULL,
-        message TEXT NOT NULL,
-        type TEXT DEFAULT 'info',
-        is_read BOOLEAN DEFAULT FALSE,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        read_at TEXT,
-        action_url TEXT,
-        FOREIGN KEY (user_id) REFERENCES users (id),
-        FOREIGN KEY (client_id) REFERENCES clients (instagram_id) ON DELETE CASCADE
-    )''')
+            # Создаем новое со стандартным именем
+            new_con_name = f"{table}_{column}_fkey"
+            c.execute(f"""
+                ALTER TABLE {table} 
+                ADD CONSTRAINT {new_con_name} 
+                FOREIGN KEY ({column}) REFERENCES {ref_table}({ref_column}) ON DELETE CASCADE
+            """)
+        except Exception as e:
+            # log_error(f"Error ensuring cascade for {table}.{column}: {e}", "db")
+            pass
+
+    log_info("🔌 Инициализация единой схемы базы данных...", "db")
     
-    # Миграция: убедиться что таблица notifications правильная
     try:
-        c.execute("SELECT column_name, data_type FROM information_schema.columns WHERE table_name='notifications'")
-        columns_info = {row[0]: row[1] for row in c.fetchall()}
+        # --- 1. ЯДРО СИСТЕМЫ ---
         
-        # 1. Если user_id TEXT (старая версия), нужно пересоздать (или конвертировать, но DROP проще для уведомлений)
-        if columns_info.get('user_id', '').lower() == 'text':
-             log_warning("⚠️ Таблица notifications имеет неправильный тип user_id (TEXT). Пересоздание...", "db")
-             c.execute("DROP TABLE notifications")
-             c.execute('''CREATE TABLE notifications (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER,
-                client_id TEXT,
-                title TEXT NOT NULL,
-                message TEXT NOT NULL,
-                type TEXT DEFAULT 'info',
-                is_read BOOLEAN DEFAULT FALSE,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                read_at TEXT,
-                action_url TEXT,
-                FOREIGN KEY (user_id) REFERENCES users (id),
-                FOREIGN KEY (client_id) REFERENCES clients (instagram_id) ON DELETE CASCADE
-            )''')
-        else:
-            # 2. Если нет client_id, добавляем
-            if 'client_id' not in columns_info:
-                log_info("➕ Adding client_id column to notifications...", "db")
-                c.execute("ALTER TABLE notifications ADD COLUMN client_id TEXT")
-                c.execute("ALTER TABLE notifications ADD CONSTRAINT fk_notifications_client FOREIGN KEY (client_id) REFERENCES clients(instagram_id) ON DELETE CASCADE")
-            
-            # 3. Убедиться что user_id nullable
-            c.execute("SELECT is_nullable FROM information_schema.columns WHERE table_name='notifications' AND column_name='user_id'")
-            is_nullable = c.fetchone()
-            if is_nullable and is_nullable[0] == 'NO':
-                log_info("🔓 Making notifications.user_id nullable...", "db")
-                c.execute("ALTER TABLE notifications ALTER COLUMN user_id DROP NOT NULL")
-
-    except Exception as e:
-        log_warning(f"Ошибка проверки notifications: {e}", "db")
-
-    # Миграция: добавить отсутствующие колонки в bot_analytics
-    try:
-        c.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name='bot_analytics'
-        """)
-        analytics_columns = [row[0] for row in c.fetchall()]
-    except:
-        analytics_columns = []
-        
-    ba_migrations = {
-        'context': 'TEXT',
-        'reminder_sent': 'BOOLEAN DEFAULT FALSE',
-        'last_message_at': 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
-    }
-    
-    for col, col_type in ba_migrations.items():
-        if col not in analytics_columns:
-            c.execute(f"ALTER TABLE bot_analytics ADD COLUMN {col} {col_type}")
-    
-    # Таблица расписания сотрудников
-    c.execute('''CREATE TABLE IF NOT EXISTS user_schedule (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        day_of_week INTEGER NOT NULL,
-        start_time TEXT,
-        end_time TEXT,
-        is_active BOOLEAN DEFAULT TRUE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id),
-        UNIQUE(user_id, day_of_week)
-    )''')
-    
-    # Таблица индивидуальных прав пользователей
-    c.execute('''CREATE TABLE IF NOT EXISTS user_permissions
-                 (id SERIAL PRIMARY KEY,
-                  user_id INTEGER NOT NULL,
-                  permission_key TEXT NOT NULL,
-                  granted BOOLEAN DEFAULT TRUE,
-                  granted_by INTEGER,
-                  granted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                  FOREIGN KEY (user_id) REFERENCES users(id),
-                  FOREIGN KEY (granted_by) REFERENCES users(id),
-                  UNIQUE(user_id, permission_key))''')
-
-    # Таблица выходных дней сотрудников
-    c.execute('''CREATE TABLE IF NOT EXISTS user_time_off (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        start_date TEXT NOT NULL,
-        end_date TEXT NOT NULL,
-        reason TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-    )''')
-    
-    # Таблица для хранения удаленных данных (корзина)
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS deleted_items (
+        # Основной справочник статусов и этапов для всех сущностей
+        c.execute('''CREATE TABLE IF NOT EXISTS workflow_stages (
             id SERIAL PRIMARY KEY,
-            entity_type VARCHAR(50) NOT NULL,
-            entity_id VARCHAR(255) NOT NULL,
-            deleted_by INTEGER REFERENCES users(id),
-            deleted_by_role VARCHAR(50),
-            reason TEXT,
-            can_restore BOOLEAN DEFAULT TRUE,
-            restored_at TIMESTAMP NULL,
-            restored_by INTEGER REFERENCES users(id),
+            entity_type TEXT NOT NULL,
+            name TEXT NOT NULL,
+            name_ru TEXT,
+            color TEXT DEFAULT '#3b82f6',
+            sort_order INTEGER DEFAULT 0,
+            is_system BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(entity_type, name)
+        )''')
+
+        # Unified Media & Asset Library
+        c.execute('''CREATE TABLE IF NOT EXISTS media_library (
+            id SERIAL PRIMARY KEY,
+            url TEXT NOT NULL,
+            context TEXT NOT NULL DEFAULT 'general',
+            title TEXT,
+            description TEXT,
+            category TEXT,
+            sort_order INTEGER DEFAULT 0,
+            client_id TEXT,
+            user_id INTEGER,
+            booking_id INTEGER,
+            is_public BOOLEAN DEFAULT TRUE,
+            metadata JSONB DEFAULT '{}',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    
-    # Индексы для корзины
-    c.execute("CREATE INDEX IF NOT EXISTS idx_deleted_items_entity ON deleted_items(entity_type, entity_id)")
-    c.execute("CREATE INDEX IF NOT EXISTS idx_deleted_items_created ON deleted_items(created_at)")
+        )''')
 
-
-    c.execute('''CREATE TABLE IF NOT EXISTS schedule_breaks (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        day_of_week INTEGER,
-        start_time TEXT NOT NULL,
-        end_time TEXT NOT NULL,
-        reason TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-    )''')
-    
-    # Таблица праздников салона
-    c.execute('''CREATE TABLE IF NOT EXISTS salon_holidays (
-        id SERIAL PRIMARY KEY,
-        date DATE UNIQUE NOT NULL,
-        name TEXT NOT NULL,
-        is_closed BOOLEAN DEFAULT TRUE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )''')
-    
-    # Таблица уровней лояльности
-    c.execute('''CREATE TABLE IF NOT EXISTS loyalty_levels (
-        id SERIAL PRIMARY KEY,
-        level_name TEXT NOT NULL,
-        min_points INTEGER NOT NULL,
-        discount_percent REAL DEFAULT 0,
-        points_multiplier REAL DEFAULT 1.0,
-        benefits TEXT,
-        icon TEXT,
-        color TEXT,
-        is_active BOOLEAN DEFAULT TRUE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )''')
-    
-    # Заполняем уровни лояльности если пусто
-    c.execute("SELECT COUNT(*) FROM loyalty_levels")
-    if c.fetchone()[0] == 0:
-        loyalty_levels_data = [
-            {"name": "bronze", "min_points": 0, "discount_percentage": 0, "points_multiplier": 1.0, "perks": "Базовый уровень", "icon": "🥉", "color": "#CD7F32"},
-            {"name": "silver", "min_points": 1000, "discount_percentage": 5, "points_multiplier": 1.1, "perks": "Скидка 5% на услуги", "icon": "🥈", "color": "#C0C0C0"},
-            {"name": "gold", "min_points": 5000, "discount_percentage": 10, "points_multiplier": 1.2, "perks": "Скидка 10% на услуги, приоритетная запись", "icon": "🥇", "color": "#FFD700"},
-            {"name": "platinum", "min_points": 10000, "discount_percentage": 15, "points_multiplier": 1.5, "perks": "Скидка 15%, личный менеджер, такси", "icon": "💎", "color": "#E5E4E2"}
-        ]
-        for level in loyalty_levels_data:
-            c.execute("""
-                INSERT INTO loyalty_levels (level_name, min_points, discount_percent, points_multiplier, benefits, icon, color, is_active, created_at)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, NOW())
-            """, (level["name"], level["min_points"], level["discount_percentage"], level["points_multiplier"], level["perks"], level["icon"], level["color"]))
-        log_info(f"✅ Создано {len(loyalty_levels_data)} уровней лояльности", "db")
-    
-    # Таблица баллов лояльности клиентов
-    c.execute('''CREATE TABLE IF NOT EXISTS client_loyalty_points (
-        id SERIAL PRIMARY KEY,
-        client_id TEXT NOT NULL,
-        total_points INTEGER DEFAULT 0,
-        available_points INTEGER DEFAULT 0,
-        spent_points INTEGER DEFAULT 0,
-        loyalty_level TEXT DEFAULT 'bronze',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(client_id)
-    )''')
-
-    # Таблица транзакций баллов лояльности
-    c.execute('''CREATE TABLE IF NOT EXISTS loyalty_transactions (
-        id SERIAL PRIMARY KEY,
-        client_id TEXT NOT NULL,
-        transaction_type TEXT NOT NULL,
-        points INTEGER NOT NULL,
-        reason TEXT,
-        booking_id INTEGER,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        expires_at TEXT,
-        FOREIGN KEY (client_id) REFERENCES clients(instagram_id),
-        FOREIGN KEY (booking_id) REFERENCES bookings(id)
-    )''')
-
-    # Таблица шаблонов сообщений
-    c.execute('''CREATE TABLE IF NOT EXISTS message_templates
-                 (id SERIAL PRIMARY KEY,
-                  name TEXT NOT NULL,
-                  content TEXT NOT NULL,
-                  category TEXT DEFAULT 'general',
-                  user_id INTEGER,
-                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                  FOREIGN KEY (user_id) REFERENCES users(id))''')
-
-    # Таблица заметок клиентов
-    c.execute('''CREATE TABLE IF NOT EXISTS client_notes
-                 (id SERIAL PRIMARY KEY,
-                  client_id TEXT NOT NULL,
-                  note_text TEXT NOT NULL,
-                  created_by INTEGER,
-                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                  FOREIGN KEY (client_id) REFERENCES clients(instagram_id) ON DELETE CASCADE,
-                  FOREIGN KEY (created_by) REFERENCES users(id))''')
-
-    # Таблица специальных пакетов
-    c.execute('''CREATE TABLE IF NOT EXISTS special_packages
-                 (id SERIAL PRIMARY KEY,
-                  name TEXT NOT NULL,
-                  name_ru TEXT NOT NULL,
-                  description TEXT,
-                  description_ru TEXT,
-                  original_price REAL NOT NULL,
-                  special_price REAL NOT NULL,
-                  currency TEXT DEFAULT 'AED',
-                  discount_percent INTEGER,
-                  services_included TEXT,
-                  promo_code TEXT UNIQUE,
-                  keywords TEXT NOT NULL,
-                  valid_from TEXT NOT NULL,
-                  valid_until TEXT NOT NULL,
-                  is_active BOOLEAN DEFAULT TRUE,
-                  usage_count BOOLEAN DEFAULT FALSE,
-                  max_usage INTEGER,
-                  created_at TEXT,
-                  updated_at TEXT)''')
-    
-    # Таблица кастомных ролей
-    c.execute('''CREATE TABLE IF NOT EXISTS custom_roles
-                 (id SERIAL PRIMARY KEY,
-                  role_key TEXT UNIQUE NOT NULL,
-                  role_name TEXT NOT NULL,
-                  role_description TEXT,
-                  created_at TEXT,
-                  created_by INTEGER,
-                  FOREIGN KEY (created_by) REFERENCES users(id))''')
-    
-    # Таблица прав доступа
-    c.execute('''CREATE TABLE IF NOT EXISTS role_permissions
-                 (id SERIAL PRIMARY KEY,
-                  role_key TEXT NOT NULL,
-                  permission_key TEXT NOT NULL,
-                  can_view BOOLEAN DEFAULT FALSE,
-                  can_create BOOLEAN DEFAULT FALSE,
-                  can_edit BOOLEAN DEFAULT FALSE,
-                  can_delete BOOLEAN DEFAULT FALSE,
-                  UNIQUE(role_key, permission_key))''')
-    
-    # Создать дефолтного администратора если его нет
-    c.execute("SELECT COUNT(*) FROM users WHERE username = 'admin'")
-    if c.fetchone()[0] == 0:
-        import hashlib
-        password_hash = hashlib.sha256('admin123'.encode()).hexdigest()
-        c.execute("""
-            INSERT INTO users (username, password_hash, full_name, role, position, is_active, created_at)
-            VALUES ('admin', %s, 'Tahir', 'director', 'Director', TRUE, NOW())
-        """, (password_hash,))
-        log_info("✅ Создан администратор (логин: admin, пароль: admin123)", "db")
-    
-    # Создать дефолтные настройки салона
-    c.execute("SELECT COUNT(*) FROM salon_settings")
-    if c.fetchone()[0] == 0:
-        log_info("📝 Создание дефолтных настроек салона...", "database")
-        now = datetime.now().isoformat()
-        c.execute("""INSERT INTO salon_settings 
-                     (id, name, address, google_maps, hours, hours_ru, hours_ar,
-                      booking_url, phone, email, instagram, whatsapp, bot_name, bot_name_en, bot_name_ar,
-                      city, country, timezone, currency, 
-                      latitude, longitude, logo_url, base_url, updated_at)
-                     VALUES (1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                  ("M Le Diamant",
-                   "Shop 13, Amwaj 3 Plaza Level, JBR, Dubai",
-                   "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1806.63583569841!2d55.1278216!3d25.0745229!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f13459ada2307%3A0x6b453a232f6b3e8c!2sM%20Le%20Diamant!5e0!3m2!1sen!2sae!4v1704980000000!5m2!1sen!2sae",
-                   "Daily 10:30 - 21:00",
-                   "Ежедневно 10:30 - 21:00",
-                   "يوميًا 10:30 - 21:00",
-                   "https://n1314037.alteg.io",
-                   "+971526961100",
-                   "mladiamontuae@gmail.com",  # email
-                   "www.instagram.com/mlediamant/",  # instagram
-                   "+971526961100",  # whatsapp
-                   "M Le Diamant Assistant",
-                   "M Le Diamant Assistant",
-                   "مساعد M Le Diamant",
-                   "Dubai",
-                   "UAE",
-                   "Asia/Dubai",
-                   "AED",
-                   25.2048,  # latitude (JBR Dubai)
-                   55.2708,  # longitude (JBR Dubai)
-                   "/assets/logo.webp",  # logo_url
-                   "https://mlediamant.com",  # base_url
-                   now))
-        log_info("✅ Дефолтные настройки салона созданы (включая SEO поля)", "database")
-    
-    # Создать дефолтные настройки бота
-    c.execute("SELECT COUNT(*) FROM bot_settings")
-    if c.fetchone()[0] == 0:
-        log_info("📝 Создание дефолтных настроек бота...", "database")
-        now = datetime.now().isoformat()
-        
-        # Полный контент настроек
-        bot_settings_data = {
-            'id': 1,
-            'bot_name': "{salon_name} Assistant",
-            'personality_traits': "Обаятельная, уверенная, харизматичная, экспертная",
-            'greeting_message': 'Добро пожаловать в {SALON_NAME}!',
-            'farewell_message': "Спасибо за визит! 💖",
-            'price_explanation': '''Наши цены отражают премиальное качество услуг, опыт мастеров и расположение в самом сердце JBR.
-Мы используем только профессиональные материалы от ведущих брендов.
-Все цены указаны без НДС (добавляется 5% при оплате).''',
-            'price_response_template': '''Наши цены отражают качество и профессионализм:
-- {service_name}: от {price_min} до {price_max} AED
-- Точная стоимость зависит от сложности работы и мастера
-- У нас работают опытные специалисты с международными сертификатами''',
-            'premium_justification': '''Мы предлагаем премиум-качество потому что:
-✨ Используем только профессиональную косметику (Olaplex, Kerastase, OPI)
-👩‍🎨 Наши мастера регулярно проходят обучение в Европе
-🏆 Более 500 довольных клиентов
-💎 Индивидуальный подход к каждому
-🎁 Бонусная программа лояльности''',
-            'booking_redirect_message': "Я AI-ассистент, запись онлайн за 2 минуты!\nВыбирайте мастера и время здесь: {BOOKING_URL}",
-            'fomo_messages': '''⏰ Сегодня осталось всего 2 свободных окна!
-🔥 На эту неделю уже почти все забронировано
-💫 Этот мастер очень популярен, советую записаться заранее
-⭐ Специальное предложение действует только до конца месяца''',
-            'upsell_techniques': '''Деликатно предлагай дополнительные услуги:
-- После маникюра: Хотите добавить парафинотерапию для рук?
-- После стрижки: Рекомендую добавить уход Olaplex
-- Перед праздниками: Может быть интересен вечерний макияж?
-НО: не навязывай, только если клиент заинтересован''',
-            'communication_style': "Дружелюбный, экспертный, вдохновляющий",
-            'max_message_length': 4,
-            'emoji_usage': """ТОЛЬКО эмоции и РЕДКО сердечки:
-✅ Разрешены: 😊 😔 😉 🎉 и редко ❤️ 💖
-❌ ЗАПРЕЩЕНЫ: 💎 💅 ✨ 🌟 (декоративные смайлики - это спам!)
-
-Правило: 1-2 смайлика на сообщение МАКСИМУМ
-Используй только для передачи эмоций, НЕ для украшения!""",
-            'languages_supported': "ru,en,ar",
-            'objection_handling': '''При возражениях:
-1. Выслушай полностью
-2. Покажи понимание
-3. Предложи решение
-4. Не спорь и не дави
-5. Используй социальное доказательство
-6. Предложи альтернативу''',
-            'negative_handling': '''Если клиент недоволен:
-1. Извинись искренне
-2. Выясни детали проблемы
-3. Предложи решение (переделать, скидка, бонус)
-4. Обязательно передай менеджеру
-5. Не обещай то, что не можешь выполнить''',
-            'safety_guidelines': '''🚨 НЕ ПРИДУМЫВАЙ:
-- Скидки, акции, специальные цены (только если ЕСТЬ в БД!)
-- Даты и время записи (только реальные слоты!)
-- Информацию которой нет в базе
-- Цены (только из БД!)
-→ Если в БД нет активных спецпакетов = акций НЕТ!
-
-⚠️ НДС 5%:
-- Все цены БЕЗ НДС
-- Упоминай ТОЛЬКО если клиент спрашивает итоговую сумму
-- Формула: "1000 AED + 5% НДС = 1050 AED итого"
-
-🔒 ТАРГЕТИРОВАННАЯ РЕКЛАМА:
-- Если клиент спрашивает "откуда у вас мой номер" или "как вы меня нашли"
-- Ответ: "Мы используем таргетированную рекламу в Instagram/Facebook для продвижения наших услуг в {main_location}. Если не хотите получать наши сообщения - дайте знать, удалим из базы"
-- НЕ извиняйся, это нормальная практика
-
-🎭 ТЫ НЕ МАСТЕР - ТЫ АССИСТЕНТ:
-- НИКОГДА не говори от первого лица о работе мастера
-- ❌ "Конечно, делаю!" / "Я делаю маникюр"
-- ✅ "Да, Местан делает маникюр" / "Наши мастера делают"
-- Ты помогаешь записаться, НЕ выполняешь процедуры
-- Говори о мастерах в ТРЕТЬЕМ лице
-
-🚫 НЕ ПРЕДЛАГАЙ скидки автоматически!
-Только если клиент САМ спрашивает про акции!
-
-📞 МЕНЕДЖЕР:
-Предлагай связь с менеджером если:
-- Клиент агрессивен/недоволен
-- Сложный кейс (группа >5 человек, корпоратив)
-- Жалоба на качество
-- Ты не можешь решить вопрос''',
-            'example_good_responses': '''Примеры хороших ответов:
-Плохо: Да, есть время
-Хорошо: Отлично! У нас свободно завтра в 14:00 и 16:30. Какое время вам удобнее?
-
-Плохо: Дорого
-Хорошо: Понимаю ваши сомнения! Наша цена включает работу мастера с 10-летним опытом и премиум-материалы.''',
-            'algorithm_actions': '''Алгоритм действий:
-1. Поприветствуй тепло
-2. Выясни потребность
-3. Предложи услугу
-4. Ответь на вопросы
-5. Предложи время
-6. Подтверди запись
-7. Напомни за день
-8. Попрощайся''',
-            'location_features': '''О нашем салоне:
-📍 Удобное расположение в центре
-🅿️ Бесплатная парковка для клиентов
-☕ Кофе и чай в зоне ожидания
-📶 Быстрый WiFi
-🛋️ Комфортная зона отдыха''',
-            'seasonality': '''Сезонные предложения:
-🌸 Весна: уход за кожей после зимы
-☀️ Лето: защита волос от солнца, депиляция
-🍂 Осень: восстановление после лета
-❄️ Зима: увлажнение, SPA-процедуры
-🎄 Праздники: вечерние образы, подарочные сертификаты''',
-            'emergency_situations': '''В экстренных случаях:
-- Клиент заболел: Выздоравливайте! Перенесем запись без штрафа
-- Мастер заболел: К сожалению, мастер заболел. Можем предложить другого специалиста
-- Форс-мажор: сразу связывай с менеджером
-- Жалоба: выслушай, извинись, передай менеджеру''',
-            'success_metrics': '''Показатели успеха:
-✅ Конверсия в запись > 60%
-✅ Средний чек > 300 AED
-✅ Повторные визиты > 70%
-✅ Время ответа < 2 минуты
-✅ Оценка клиентов > 4.5/5''',
-            'objection_expensive': '''Понимаю ваши сомнения по поводу цены. Наша стоимость включает:
-- Работу сертифицированного мастера с опытом 10+ лет
-- Премиум-материалы (Olaplex, OPI, Kerastase)
-- Индивидуальный подход
-- Многие клиенты говорят, что результат того стоит! Могу предложить более доступный вариант?''',
-            'objection_think_about_it': '''Конечно, понимаю! Пока думаете, могу рассказать:
-- У нас действует бонусная программа
-- Первое посещение со скидкой 10%
-- Можем забронировать удобное время без предоплаты
-Когда будете готовы - напишите, буду рада помочь!''',
-            'objection_no_time': '''Понимаю, что график плотный! У нас есть:
-- Ранние слоты с 10:00
-- Вечерние до 21:00
-- Выходные дни
-- Экспресс-услуги (быстрее на 30%)
-Какое время вам обычно удобно?''',
-            'objection_pain': '''Понимаю ваши опасения! У нас:
-- Используем современные безболезненные техники
-- Есть обезболивающие средства
-- Мастера работают очень деликатно
-- Можем сделать тест на небольшом участке
-Ваш комфорт - наш приоритет!''',
-            'objection_result_doubt': '''Понимаю ваши сомнения! Мы гарантируем:
-- Бесплатную коррекцию в течение 2 недель
-- Работу только с проверенными материалами
-- Портфолио работ наших мастеров в Instagram
-- Более 500 довольных клиентов
-Могу показать примеры работ?''',
-            'objection_cheaper_elsewhere': '''Да, возможно где-то дешевле. Но у нас:
-- Гарантия качества и безопасности
-- Стерильные инструменты
-- Сертифицированные мастера
-- Премиум-материалы
-Дешевле может обойтись дороже, если придется переделывать. Мы ценим ваше здоровье!''',
-            'objection_too_far': '''Понимаю! Но многие клиенты говорят, что дорога того стоит:
-- Бесплатная парковка
-- Удобное расположение (5 мин от метро)
-- Можем совместить несколько услуг за один визит
-- Комфортная зона ожидания с кофе
-Попробуйте один раз?''',
-            'objection_consult_husband': '''Конечно, посоветуйтесь! Пока можем:
-- Забронировать удобное время (без предоплаты)
-- Отправить прайс и примеры работ
-- Ответить на все вопросы
-Напишите, когда решите!''',
-            'objection_first_time': '''Отлично, что выбрали нас для первого раза! Мы:
-- Подробно расскажем о процедуре
-- Ответим на все вопросы
-- Сделаем всё максимально комфортно
-- Дадим рекомендации по уходу
-Для новых клиентов скидка 10%!''',
-            'objection_not_happy': '''Мне очень жаль, что вы недовольны! Давайте исправим:
-- Бесплатная коррекция
-- Или полный возврат средств
-- Или другая услуга в подарок
-Сейчас свяжу вас с менеджером, мы обязательно решим эту ситуацию!''',
-            'emotional_triggers': '''Эмоциональные триггеры:
-💝 Забота о себе
-✨ Преображение
-👑 Статус
-🎁 Подарок себе
-⏰ Срочность
-👥 Социальное доказательство''',
-            'social_proof_phrases': '''Социальные доказательства:
-Более 500 довольных клиентов
-Средняя оценка 4.9/5
-Наши мастера - призеры международных конкурсов
-Работаем с 2018 года
-Посмотрите отзывы в Instagram
-Многие клиенты приходят к нам годами''',
-            'personalization_rules': '''Персонализация:
-- Обращайся по имени (если известно)
-- Помни предыдущие визиты
-- Учитывай предпочтения мастера
-- Запоминай любимые услуги
-- Поздравляй с днем рождения
-- Предлагай то, что подходит именно этому клиенту''',
-            'example_dialogues': '''Пример диалога:
-Клиент: Привет, хочу маникюр
-Бот: Здравствуйте! Буду рада помочь с записью на маникюр!
-Клиент: Классический с покрытием
-Бот: Отлично! Классический маникюр с покрытием гель-лаком - 150 AED. Когда вам удобно прийти?''',
-            'emotional_responses': '''Эмоциональные ответы:
-Радость: Как здорово!
-Сочувствие: Понимаю вас
-Поддержка: Мы обязательно поможем!
-Восхищение: Замечательный выбор!
-Благодарность: Спасибо за доверие!''',
-            'anti_patterns': '''ИЗБЕГАЙ:
-❌ Слишком длинных сообщений (>300 символов)
-❌ Много эмодзи подряд (максимум 2-3)
-❌ Формальности
-❌ Сленга и жаргона
-❌ Давления на клиента
-❌ Обещаний, которые не можешь выполнить
-❌ Игнорирования вопросов''',
-            'voice_message_response': '''На голосовые сообщения:
-Спасибо за голосовое! Я прослушала и поняла, что вам нужно [краткое резюме]. Правильно?
-Если не понял: Извините, не смогла разобрать голосовое. Не могли бы вы написать текстом?''',
-            'contextual_rules': '''Контекстные правила:
-Утро (6-12): Доброе утро!
-День (12-18): Добрый день!
-Вечер (18-22): Добрый вечер!
-Ночь (22-6): Здравствуйте! Мы работаем {hours_weekdays}
-
-Первое сообщение: более развернутое приветствие
-Повторное обращение: Рада видеть вас снова!''',
-            'manager_consultation_prompt': '''Ты - опытный консультант для менеджеров салона красоты. Твоя задача - п��могать менеджерам вести диалог с клиентами эффективно.
-
-ТВОЯ РОЛЬ:
-- Анализируй контекст диалога
-- Предлагай конкретные фразы для ответа клиенту
-- Объясняй психологию и логику своих рекомендаций
-- Помогай закрывать возражения
-- Подсказывай как довести до записи
-
-ФОРМАТ ОТВЕТА:
-1. Анализ ситуации (1-2 предложения)
-2. Рекомендуемый ответ клиенту (готовый текст)
-3. Почему это сработает (краткое объяснение)
-
-ПРИМЕР:
-"Вижу что клиент молчит после информации о цене. Это типичное возражение по стоимости.
-
-Я бы на твоем месте написал:
-'Кстати, эта процедура включает премиум-материалы и держится 3-4 недели без коррекции 💅 Многие клиентки говорят что это выгоднее чем делать обычный маникюр каждую неделю. Хотите посмотреть расписание на удобное время?'
-
-Почему это работает: ты показываешь ценность (премиум + долговечность), создаешь социальное доказательство (другие клиентки) и даешь мягкий призыв к действию."
-
-НЕ НАЧИНАЙ С ФРАЗ:
-❌ "Супер! Давайте оформим запись!"
-❌ "Для записи мне нужно..."
-❌ Любой текст обращенный к клиенту напрямую
-
-НАЧИНАЙ С ФРАЗ:
-✅ "Я вижу что..."
-✅ "Я бы на твоем месте..."
-✅ "Рекомендую написать клиенту..."''',
-            'booking_data_collection': '''СБОР ДАННЫХ ДЛЯ ЗАПИСИ:
-
-ОБЯЗАТЕЛЬНЫЕ ДАННЫЕ:
-1. Имя клиента
-2. Номер WhatsApp
-3. Выбранная услуга
-4. Желаемая дата и время
-5. Предпочитаемый мастер (опционально)
-
-ПОСЛЕДОВАТЕЛЬНОСТЬ СБОРА:
-1. Сначала услуга (что хочет клиент)
-2. Потом дата и время (когда удобно)
-3. Затем мастер (если есть предпочтения)
-4. В конце имя и WhatsApp
-
-ПРАВИЛА:
-- Собирай данные естественно в ходе диалога
-- Не запрашивай все данные сразу
-- Если клиент дал несколько данных сразу - отлично, используй их
-- Подтверждай каждое полученное данное
-- Перед финальным подтверждением повтори все детали записи
-
-ПРИМЕРЫ:
-❌ "Для записи нужно: имя, телефон, дата, время, услуга"
-✅ "Отлично! Маникюр с покрытием - 150 AED. Когда вам удобно прийти?"
-
-❌ "Напишите ваше имя"
-✅ "Замечательно! Как вас зовут и какой номер WhatsApp для подтверждения?"''',
-            'booking_time_logic': '''ЛОГИКА ВЫБОРА ВРЕМЕНИ:
-
-ПРОВЕРКИ:
-1. Время в рабочих часах салона ({hours_weekdays})
-2. Мастер доступен в это время
-3. Достаточно времени для процедуры
-4. Не конфликтует с другими записями
-
-РЕКОМЕНДАЦИИ:
-- Предлагай 2-3 ближайших свободных слота
-- Учитывай длительность процедуры
-- Оставляй 15 минут между записями
-- Предупреждай если время на грани закрытия
-
-ПРИМЕРЫ:
-"Свободное время завтра:
-• 11:00 - утренний слот
-• 14:30 - после обеда  
-• 18:00 - вечернее время
-
-Какое удобнее?"
-
-ЕСЛИ ВРЕМЯ ЗАНЯТО:
-"Это время уже занято 😊 Ближайшие свободные слоты:
-• Сегодня в 16:00
-• Завтра в 11:00
-• Послезавтра в 14:00
-
-Что подойдет?"''',
-            'pre_booking_data_collection': '''ДАННЫЕ ДО НАЧАЛА ЗАПИСИ:
-
-МИНИМУМ ДЛЯ СТАРТА ЗАПИСИ:
-1. Услуга (что хочет клиент)
-2. Примерная дата (сегодня/завтра/на неделе)
-
-МОЖНО НАЧАТЬ ЗАПИСЬ ЕСЛИ:
-✅ Клиент написал "Хочу маникюр завтра"
-✅ Клиент выбрал услугу из меню
-✅ Клиент спросил "Когда можно записаться на педикюр?"
-
-НЕЛЬЗЯ НАЧАТЬ ЗАПИСЬ ЕСЛИ:
-❌ Клиент только поздоровался
-❌ Клиент задает общие вопросы
-❌ Клиент уточняет цены без намерения записаться
-
-ПЕРЕХОД К ЗАПИСИ:
-"Отлично! [Услуга] - [Цена]. Когда вам удобно прийти?"
-
-ЕСЛИ ДАННЫХ НЕДОСТАТОЧНО:
-"С удовольствием помогу с записью! Какая процедура вас интересует?"''',
-            'updated_at': now
-        }
-
-        # Build query dynamically
-        columns = ', '.join(bot_settings_data.keys())
-        placeholders = ', '.join(['%s'] * len(bot_settings_data))
-        values = list(bot_settings_data.values())
-
-        c.execute(f"INSERT INTO bot_settings ({columns}) VALUES ({placeholders})", values)
-        log_info("✅ Дефолтные настройки бота созданы (расширенная версия)", "database")
-    
-    
-    # Таблица отзывов и рейтингов
-    c.execute('''CREATE TABLE IF NOT EXISTS ratings (
-        id SERIAL PRIMARY KEY,
-        booking_id INTEGER,
-        instagram_id TEXT,
-        rating INTEGER,
-        comment TEXT,
-        created_at TEXT,
-        FOREIGN KEY (booking_id) REFERENCES bookings(id)
-    )''')
-    
-    # Таблица логов напоминаний
-    c.execute('''CREATE TABLE IF NOT EXISTS reminder_logs (
-        id SERIAL PRIMARY KEY,
-        booking_id INTEGER,
-        client_id TEXT,
-        reminder_type TEXT,
-        sent_at TEXT,
-        status TEXT,
-        error_message TEXT,
-        FOREIGN KEY (booking_id) REFERENCES bookings(id)
-    )''')
-
-    # Таблица публичных отзывов
-    c.execute('''CREATE TABLE IF NOT EXISTS public_reviews (
-        id SERIAL PRIMARY KEY,
-        author_name TEXT NOT NULL,
-        rating INTEGER NOT NULL,
-        text_ru TEXT,
-        text_en TEXT,
-        text_ar TEXT,
-        text_de TEXT,
-        text_es TEXT,
-        text_fr TEXT,
-        text_hi TEXT,
-        text_kk TEXT,
-        text_pt TEXT,
-        avatar_url TEXT,
-        is_active BOOLEAN DEFAULT TRUE,
-        display_order INTEGER DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        employee_name TEXT,
-        employee_name_ru TEXT,
-        employee_name_en TEXT,
-        employee_name_ar TEXT,
-        employee_position TEXT,
-        employee_position_ru TEXT,
-        employee_position_en TEXT,
-        employee_position_ar TEXT
-    )''')
-    
-    # Миграция: добавить поля сотрудников в public_reviews если их нет
-    try:
-
-        c.execute("""
-
-            SELECT column_name 
-
-            FROM information_schema.columns 
-
-            WHERE table_name='public_reviews'
-
-        """)
-
-        review_columns = [row[0] for row in c.fetchall()]
-
-    except:
-
-        review_columns = []
-    review_migrations = {
-        'employee_name': 'TEXT',
-        'employee_name_ru': 'TEXT',
-        'employee_name_en': 'TEXT',
-        'employee_name_ar': 'TEXT',
-        'employee_position': 'TEXT',
-        'employee_position_ru': 'TEXT',
-        'employee_position_en': 'TEXT',
-        'employee_position_ar': 'TEXT'
-    }
-    for col, col_type in review_migrations.items():
-        if col not in review_columns:
-            c.execute(f"ALTER TABLE public_reviews ADD COLUMN {col} {col_type}")
-
-    # Таблица публичных FAQ
-    c.execute('''CREATE TABLE IF NOT EXISTS public_faq (
-        id SERIAL PRIMARY KEY,
-        question_ru TEXT,
-        question_en TEXT,
-        question_ar TEXT,
-        question_de TEXT,
-        question_es TEXT,
-        question_fr TEXT,
-        question_hi TEXT,
-        question_kk TEXT,
-        question_pt TEXT,
-        answer_ru TEXT,
-        answer_en TEXT,
-        answer_ar TEXT,
-        answer_de TEXT,
-        answer_es TEXT,
-        answer_fr TEXT,
-        answer_hi TEXT,
-        answer_kk TEXT,
-        answer_pt TEXT,
-        category TEXT,
-        is_active BOOLEAN DEFAULT TRUE,
-        display_order INTEGER DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )''')
-
-    # Таблица предпочтений клиентов
-    c.execute('''CREATE TABLE IF NOT EXISTS client_preferences (
-        id SERIAL PRIMARY KEY,
-        client_id TEXT NOT NULL,
-        preferred_master INTEGER,
-        preferred_service INTEGER,
-        preferred_day_of_week INTEGER,
-        preferred_time_of_day TEXT,
-        allergies TEXT,
-        special_notes TEXT,
-        auto_book_enabled BOOLEAN DEFAULT TRUE,
-        auto_book_interval_weeks INTEGER DEFAULT 3,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (client_id) REFERENCES clients(instagram_id),
-        FOREIGN KEY (preferred_master) REFERENCES users(id),
-        FOREIGN KEY (preferred_service) REFERENCES services(id),
-        UNIQUE(client_id)
-    )''')
-
-    # Таблица подписок пользователей
-    c.execute('''CREATE TABLE IF NOT EXISTS user_subscriptions (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        subscription_type TEXT NOT NULL,
-        is_subscribed BOOLEAN DEFAULT TRUE,
-        email_enabled BOOLEAN DEFAULT TRUE,
-        telegram_enabled BOOLEAN DEFAULT TRUE,
-        instagram_enabled BOOLEAN DEFAULT TRUE,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id),
-        UNIQUE(user_id, subscription_type)
-    )''')
-
-    # Таблица типов подписок для рассылок
-    c.execute('''CREATE TABLE IF NOT EXISTS broadcast_subscription_types (
-        id SERIAL PRIMARY KEY,
-        key TEXT UNIQUE NOT NULL,
-        target_role TEXT DEFAULT 'all',
-        name_ru TEXT,
-        name_en TEXT,
-        description_ru TEXT,
-        description_en TEXT,
-        is_active BOOLEAN DEFAULT TRUE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )''')
-
-    # Заполняем типы подписок если пусто (из core/subscriptions.py)
-    c.execute("SELECT COUNT(*) FROM broadcast_subscription_types")
-    if c.fetchone()[0] == 0:
-        from core.subscriptions import CLIENT_SUBSCRIPTION_TYPES, STAFF_SUBSCRIPTION_TYPES
-        
-        # Клиентские подписки
-        for key, info in CLIENT_SUBSCRIPTION_TYPES.items():
-            name_key = info.get('name', f"subscription_{key}")
-            desc_key = info.get('description', f"subscription_{key}_desc")
-            c.execute("""
-                INSERT INTO broadcast_subscription_types (key, target_role, name_ru, name_en, description_ru, description_en)
-                VALUES (%s, 'client', %s, %s, %s, %s)
-            """, (key, name_key, name_key, desc_key, desc_key))
-            
-        # Подписки для сотрудников
-        for key, info in STAFF_SUBSCRIPTION_TYPES.items():
-            name_key = info.get('name', f"subscription_{key}")
-            desc_key = info.get('description', f"subscription_{key}_desc")
-            c.execute("""
-                INSERT INTO broadcast_subscription_types (key, target_role, name_ru, name_en, description_ru, description_en)
-                VALUES (%s, 'employee', %s, %s, %s, %s)
-            """, (key, name_key, name_key, desc_key, desc_key))
-            
-        log_info("✅ Заполнены дефолтные типы подписок для рассылок", "db")
-
-    # Таблица настроек мессенджеров
-    c.execute('''CREATE TABLE IF NOT EXISTS messenger_settings (
-        id SERIAL PRIMARY KEY,
-        messenger_type TEXT UNIQUE NOT NULL,
-        display_name TEXT NOT NULL,
-        is_enabled BOOLEAN DEFAULT FALSE,
-        api_token TEXT,
-        webhook_url TEXT,
-        config_json TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )''')
-
-    # Таблица провайдеров платежей
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS payment_providers (
+        # Unified Communication & Notification Log
+        c.execute('''CREATE TABLE IF NOT EXISTS unified_communication_log (
             id SERIAL PRIMARY KEY,
-            name VARCHAR(50) UNIQUE NOT NULL,
-            api_key TEXT,
-            secret_key TEXT,
-            webhook_secret TEXT,
+            client_id TEXT,
+            user_id INTEGER,
+            booking_id INTEGER, -- Link to specific booking
+            medium TEXT NOT NULL,
+            trigger_type TEXT,
+            title TEXT,
+            content TEXT,
+            status TEXT DEFAULT 'sent',
+            is_read BOOLEAN DEFAULT FALSE,
+            action_url TEXT,
+            error_message TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Broadcast History (Batches)
+        c.execute('''CREATE TABLE IF NOT EXISTS broadcast_history (
+            id SERIAL PRIMARY KEY,
+            sender_id INTEGER,
+            subscription_type TEXT,
+            channels TEXT,
+            subject TEXT,
+            message TEXT,
+            target_role TEXT,
+            total_sent INTEGER DEFAULT 0,
+            results TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Scheduled Notifications Queue
+        c.execute('''CREATE TABLE IF NOT EXISTS notification_history (
+            id SERIAL PRIMARY KEY,
+            title TEXT,
+            message TEXT,
+            notification_type TEXT,
+            recipients_count INTEGER DEFAULT 0,
+            status TEXT DEFAULT 'pending',
+            scheduled BOOLEAN DEFAULT FALSE,
+            schedule_datetime TIMESTAMP,
+            repeat_enabled BOOLEAN DEFAULT FALSE,
+            repeat_interval TEXT,
+            repeat_end_date DATE,
+            target_segment TEXT,
+            filter_params JSONB,
+            sent_at TIMESTAMP,
+            sent_count INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # --- 2. BASE ENTITIES ---
+
+        # Main Settings Orchestrator
+        c.execute('''CREATE TABLE IF NOT EXISTS salon_settings (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            name TEXT,
+            address TEXT, google_maps TEXT,
+            hours_weekdays TEXT DEFAULT '10:30 - 21:00',
+            hours_weekends TEXT DEFAULT '10:30 - 21:00',
+            lunch_start TEXT,
+            lunch_end TEXT,
+            phone TEXT, email TEXT,
+            whatsapp TEXT, instagram TEXT,
+            booking_url TEXT, timezone TEXT DEFAULT 'Asia/Dubai',
+            timezone_offset INTEGER DEFAULT 4,
+            currency TEXT DEFAULT 'AED',
+            city TEXT, country TEXT,
+            latitude REAL, longitude REAL,
+            logo_url TEXT, base_url TEXT,
+            main_location TEXT,
+            bot_name TEXT, bot_config JSONB DEFAULT '{}',
+            messenger_config JSONB DEFAULT '[]',
+            menu_config JSONB DEFAULT '{}',
+            custom_settings JSONB DEFAULT '{}',
+            feature_flags JSONB DEFAULT '{}',
+            loyalty_points_conversion_rate REAL DEFAULT 0.1,
+            points_expiration_days INTEGER DEFAULT 365,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        
+        from utils.language_utils import SUPPORTED_LANGUAGES
+        for lang in SUPPORTED_LANGUAGES:
+            add_column_if_not_exists('salon_settings', f'name_{lang}', 'TEXT')
+            add_column_if_not_exists('salon_settings', f'address_{lang}', 'TEXT')
+            add_column_if_not_exists('salon_settings', f'hours_{lang}', 'TEXT')
+            add_column_if_not_exists('salon_settings', f'main_location_{lang}', 'TEXT')
+
+        add_column_if_not_exists('salon_settings', 'lunch_start', 'TEXT')
+        add_column_if_not_exists('salon_settings', 'lunch_end', 'TEXT')
+        add_column_if_not_exists('salon_settings', 'timezone_offset', 'INTEGER DEFAULT 4')
+        add_column_if_not_exists('salon_settings', 'main_location', 'TEXT')
+        add_column_if_not_exists('salon_settings', 'loyalty_points_conversion_rate', 'REAL DEFAULT 0.1')
+        add_column_if_not_exists('salon_settings', 'points_expiration_days', 'INTEGER DEFAULT 365')
+
+        # Users and Staff
+        c.execute('''CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            full_name TEXT,
+            email TEXT, phone TEXT, role TEXT DEFAULT 'employee',
+            secondary_role TEXT,
+            position TEXT,
+            position_id INTEGER,
+            employee_id TEXT,
+            photo TEXT, photo_url TEXT,
+            birthday TEXT,
+            bio TEXT, experience TEXT, years_of_experience INTEGER,
+            specialization TEXT,
+            base_salary REAL DEFAULT 0, commission_rate REAL DEFAULT 0,
+            telegram_id TEXT, telegram_chat_id TEXT, instagram_username TEXT,
             is_active BOOLEAN DEFAULT TRUE,
-            settings JSONB,
+            is_service_provider BOOLEAN DEFAULT FALSE,
+            is_public_visible BOOLEAN DEFAULT TRUE,
+            email_verified BOOLEAN DEFAULT FALSE,
+            verification_code TEXT,
+            verification_code_expires TIMESTAMP,
+            sort_order INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP, deleted_at TIMESTAMP NULL
+        )''')
+        
+        for lang in SUPPORTED_LANGUAGES:
+            add_column_if_not_exists('users', f'full_name_{lang}', 'TEXT')
+            add_column_if_not_exists('users', f'position_{lang}', 'TEXT')
+            add_column_if_not_exists('users', f'bio_{lang}', 'TEXT')
+            add_column_if_not_exists('users', f'specialization_{lang}', 'TEXT')
+
+        add_column_if_not_exists('users', 'birthday', 'TEXT')
+        add_column_if_not_exists('users', 'gender', "TEXT DEFAULT 'female'")
+        add_column_if_not_exists('users', 'secondary_role', 'TEXT')
+        add_column_if_not_exists('users', 'position_id', 'INTEGER')
+        add_column_if_not_exists('users', 'employee_id', 'TEXT')
+        add_column_if_not_exists('users', 'email_verified', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('users', 'verification_code', 'TEXT')
+        add_column_if_not_exists('users', 'verification_code_expires', 'TIMESTAMP')
+        add_column_if_not_exists('users', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        add_column_if_not_exists('users', 'phone', 'TEXT')
+
+        # Registration Audit Log
+        c.execute('''CREATE TABLE IF NOT EXISTS registration_audit (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER,
+            action TEXT, -- 'approved', 'rejected', 'deleted'
+            approved_by INTEGER,
+            reason TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # User Notification Settings
+        c.execute('''CREATE TABLE IF NOT EXISTS notification_settings (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) NOT NULL,
+            email_notifications BOOLEAN DEFAULT TRUE,
+            sms_notifications BOOLEAN DEFAULT FALSE,
+            booking_notifications BOOLEAN DEFAULT TRUE,
+            chat_notifications BOOLEAN DEFAULT TRUE,
+            daily_report BOOLEAN DEFAULT TRUE,
+            report_time TEXT DEFAULT '21:00',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id)
+        )''')
+
+        # Services and Pricing
+        c.execute('''CREATE TABLE IF NOT EXISTS services (
+            id SERIAL PRIMARY KEY,
+            service_key TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL,
+            category TEXT,
+            price REAL NOT NULL,
+            min_price REAL,
+            max_price REAL,
+            currency TEXT DEFAULT 'AED',
+            duration TEXT, -- '60', '30 min', etc.
+            description TEXT,
+            benefits TEXT, -- '|' separated list
+            position_id INTEGER, -- Primary position for this service
+            is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
+        )''')
 
-    # Таблица транзакций
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS payment_transactions (
+        for lang in SUPPORTED_LANGUAGES:
+            add_column_if_not_exists('services', f'name_{lang}', 'TEXT')
+            add_column_if_not_exists('services', f'description_{lang}', 'TEXT')
+            add_column_if_not_exists('services', f'duration_{lang}', 'TEXT')
+
+        # Master-Service Mapping
+        c.execute('''CREATE TABLE IF NOT EXISTS user_services (
             id SERIAL PRIMARY KEY,
-            invoice_id INTEGER REFERENCES invoices(id) ON DELETE CASCADE,
-            amount DECIMAL(10, 2) NOT NULL,
-            currency VARCHAR(3) DEFAULT 'AED',
-            provider VARCHAR(50) NOT NULL,
-            status VARCHAR(20) DEFAULT 'pending',
-            provider_transaction_id TEXT,
-            metadata JSONB,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            service_id INTEGER REFERENCES services(id) ON DELETE CASCADE,
+            price REAL,
+            duration INTEGER,
+            price_override REAL, -- Deprecated but kept for compatibility
+            is_online_booking_enabled BOOLEAN DEFAULT TRUE,
+            is_calendar_enabled BOOLEAN DEFAULT TRUE,
+            UNIQUE(user_id, service_id)
+        )''')
+        
+        add_column_if_not_exists('services', 'position_id', 'INTEGER')
+        add_column_if_not_exists('user_services', 'price', 'REAL')
+        add_column_if_not_exists('user_services', 'price_min', 'REAL')
+        add_column_if_not_exists('user_services', 'price_max', 'REAL')
+        add_column_if_not_exists('user_services', 'duration', 'INTEGER')
+        add_column_if_not_exists('user_services', 'is_online_booking_enabled', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('user_services', 'is_calendar_enabled', 'BOOLEAN DEFAULT TRUE')
+
+        # Staff Schedules
+        c.execute('''CREATE TABLE IF NOT EXISTS user_schedule (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            day_of_week INTEGER NOT NULL,
+            start_time TEXT DEFAULT '10:30',
+            end_time TEXT DEFAULT '21:00',
+            is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            completed_at TIMESTAMP,
-            error_message TEXT
-        )
-    """)
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id, day_of_week)
+        )''')
 
-    # Таблица провайдеров маркетплейсов
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS marketplace_providers (
+        # Staff Time Off
+        c.execute('''CREATE TABLE IF NOT EXISTS user_time_off (
             id SERIAL PRIMARY KEY,
-            name VARCHAR(50) UNIQUE NOT NULL,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            start_date TIMESTAMP NOT NULL,
+            end_date TIMESTAMP NOT NULL,
+            reason TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Clients and CRM Profiles
+        c.execute('''CREATE TABLE IF NOT EXISTS clients (
+            instagram_id TEXT PRIMARY KEY,
+            username TEXT, phone TEXT, name TEXT, email TEXT,
+            password_hash TEXT, status TEXT DEFAULT 'new',
+            language TEXT DEFAULT 'ru',
+            pipeline_stage_id INTEGER REFERENCES workflow_stages(id),
+            loyalty_points INTEGER DEFAULT 0,
+            lifetime_value REAL DEFAULT 0,
+            total_visits INTEGER DEFAULT 0,
+            total_spend REAL DEFAULT 0,
+            birthday TEXT, gender TEXT, profile_pic TEXT, notes TEXT,
+            temperature TEXT DEFAULT 'cold',
+            is_verified BOOLEAN DEFAULT FALSE,
+            assigned_employee_id INTEGER REFERENCES users(id),
+            reminder_date TIMESTAMP,
+            first_contact TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            deleted_at TIMESTAMP NULL
+        )''')
+
+        add_column_if_not_exists('clients', 'first_contact', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        add_column_if_not_exists('clients', 'last_contact', 'TIMESTAMP')
+        add_column_if_not_exists('clients', 'total_messages', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('clients', 'labels', 'TEXT')
+        add_column_if_not_exists('clients', 'is_pinned', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('clients', 'phone', 'TEXT')
+        add_column_if_not_exists('clients', 'source', 'TEXT')
+        add_column_if_not_exists('clients', 'detected_language', 'TEXT')
+        add_column_if_not_exists('clients', 'card_number', 'TEXT')
+        add_column_if_not_exists('clients', 'discount', 'REAL DEFAULT 0')
+        add_column_if_not_exists('clients', 'age', 'INTEGER')
+        add_column_if_not_exists('clients', 'birth_date', 'TEXT')
+        add_column_if_not_exists('clients', 'referral_code', 'TEXT')
+        add_column_if_not_exists('clients', 'telegram_id', 'TEXT')
+        add_column_if_not_exists('clients', 'pipeline_stage_id', 'INTEGER')
+
+        # --- 3. OPERATIONAL LOGIC ---
+
+        # Bookings and Appointments
+        c.execute('''CREATE TABLE IF NOT EXISTS bookings (
+            id SERIAL PRIMARY KEY,
+            instagram_id TEXT REFERENCES clients(instagram_id) ON DELETE SET NULL,
+            service_id INTEGER REFERENCES services(id),
+            service_name TEXT, master TEXT,
+            datetime TIMESTAMP NOT NULL,
+            status TEXT DEFAULT 'pending',
+            revenue REAL DEFAULT 0,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            deleted_at TIMESTAMP NULL
+        )''')
+        
+        add_column_if_not_exists('bookings', 'source', "TEXT DEFAULT 'manual'")
+
+        # Tasks and Project Management
+        c.execute('''CREATE TABLE IF NOT EXISTS tasks (
+            id SERIAL PRIMARY KEY,
+            title TEXT NOT NULL,
+            description TEXT,
+            stage_id INTEGER REFERENCES workflow_stages(id),
+            priority TEXT DEFAULT 'medium',
+            due_date TIMESTAMP,
+            assignee_id INTEGER REFERENCES users(id),
+            created_by INTEGER REFERENCES users(id),
+            client_id TEXT REFERENCES clients(instagram_id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            deleted_at TIMESTAMP NULL
+        )''')
+
+        # Multiple task assignees support
+        c.execute('''CREATE TABLE IF NOT EXISTS task_assignees (
+            task_id INTEGER REFERENCES tasks(id) ON DELETE CASCADE,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            PRIMARY KEY(task_id, user_id)
+        )''')
+
+        # --- 4. DOCUMENTS & FINANCE ---
+
+        # Invoices
+        c.execute('''CREATE TABLE IF NOT EXISTS invoices (
+            id SERIAL PRIMARY KEY,
+            invoice_number TEXT UNIQUE NOT NULL,
+            client_id TEXT REFERENCES clients(instagram_id),
+            booking_id INTEGER REFERENCES bookings(id),
+            status TEXT DEFAULT 'draft',
+            stage_id INTEGER REFERENCES workflow_stages(id),
+            total_amount REAL DEFAULT 0,
+            paid_amount REAL DEFAULT 0,
+            currency TEXT DEFAULT 'AED',
+            items JSONB DEFAULT '[]',
+            notes TEXT, pdf_path TEXT,
+            created_by INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Contracts
+        c.execute('''CREATE TABLE IF NOT EXISTS contracts (
+            id SERIAL PRIMARY KEY,
+            contract_number TEXT UNIQUE NOT NULL,
+            client_id TEXT REFERENCES clients(instagram_id),
+            booking_id INTEGER REFERENCES bookings(id),
+            contract_type TEXT DEFAULT 'service',
+            template_name TEXT DEFAULT 'default',
+            status TEXT DEFAULT 'draft',
+            stage_id INTEGER REFERENCES workflow_stages(id),
+            data JSONB DEFAULT '{}',
+            pdf_path TEXT,
+            created_by INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            signed_at TIMESTAMP
+        )''')
+
+        # --- 5. LOGS & ANALYTICS ---
+
+        # Audit Trial
+        c.execute('''CREATE TABLE IF NOT EXISTS audit_log (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER,
+            user_role TEXT,
+            username TEXT,
+            action TEXT NOT NULL,
+            entity_type TEXT,
+            entity_id TEXT,
+            old_data JSONB,
+            new_data JSONB,
+            ip_address TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        
+        add_column_if_not_exists('audit_log', 'user_role', 'TEXT')
+        add_column_if_not_exists('audit_log', 'username', 'TEXT')
+
+        # Visitor Tracking
+        c.execute('''CREATE TABLE IF NOT EXISTS visitor_tracking (
+            id SERIAL PRIMARY KEY,
+            ip_address TEXT,
+            ip_hash TEXT,
+            latitude REAL,
+            longitude REAL,
+            city TEXT,
+            country TEXT,
+            distance_km REAL,
+            is_local BOOLEAN,
+            user_agent TEXT,
+            page_url TEXT,
+            referrer TEXT,
+            device_type TEXT,
+            browser TEXT,
+            visited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        add_column_if_not_exists('visitor_tracking', 'ip_hash', 'TEXT')
+        add_column_if_not_exists('visitor_tracking', 'latitude', 'REAL')
+        add_column_if_not_exists('visitor_tracking', 'longitude', 'REAL')
+        add_column_if_not_exists('visitor_tracking', 'city', 'TEXT')
+        add_column_if_not_exists('visitor_tracking', 'country', 'TEXT')
+        add_column_if_not_exists('visitor_tracking', 'distance_km', 'REAL')
+        add_column_if_not_exists('visitor_tracking', 'is_local', 'BOOLEAN')
+        add_column_if_not_exists('visitor_tracking', 'visited_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        
+        # Rename created_at to visited_at if it exists
+        c.execute("""
+            SELECT count(*) 
+            FROM information_schema.columns 
+            WHERE table_name = 'visitor_tracking' AND column_name = 'created_at'
+        """)
+        if c.fetchone()[0] > 0:
+            try:
+                c.execute("ALTER TABLE visitor_tracking RENAME COLUMN created_at TO visited_at")
+                conn.commit() # Commit rename immediately to avoid locking issues if needed
+            except Exception as e:
+                print(f"⚠️ Could not rename created_at: {e}")
+                conn.rollback()
+
+        # Bot Analytics
+        c.execute('''CREATE TABLE IF NOT EXISTS bot_analytics (
+            id SERIAL PRIMARY KEY,
+            instagram_id TEXT NOT NULL,
+            session_started TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            session_ended TIMESTAMP,
+            messages_count INTEGER DEFAULT 0,
+            outcome TEXT DEFAULT 'in_progress',
+            booking_created BOOLEAN DEFAULT FALSE,
+            escalated_to_manager BOOLEAN DEFAULT FALSE,
+            cancellation_requested BOOLEAN DEFAULT FALSE,
+            booking_id INTEGER,
+            language_detected TEXT,
+            last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            context TEXT,
+            reminder_sent BOOLEAN DEFAULT FALSE,
+            metric_key TEXT, -- Compatibility
+            metric_value REAL DEFAULT 0 -- Compatibility
+        )''')
+
+        add_column_if_not_exists('bot_analytics', 'context', 'TEXT')
+        add_column_if_not_exists('bot_analytics', 'reminder_sent', 'BOOLEAN DEFAULT FALSE')
+
+        # Drop NotNull if exists from old schema
+        try:
+            c.execute("ALTER TABLE bot_analytics ALTER COLUMN metric_key DROP NOT NULL")
+        except:
+            pass
+
+        add_column_if_not_exists('bot_analytics', 'instagram_id', 'TEXT')
+
+        add_column_if_not_exists('bot_analytics', 'instagram_id', 'TEXT')
+        add_column_if_not_exists('bot_analytics', 'session_started', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        add_column_if_not_exists('bot_analytics', 'session_ended', 'TIMESTAMP')
+        add_column_if_not_exists('bot_analytics', 'messages_count', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('bot_analytics', 'outcome', "TEXT DEFAULT 'in_progress'")
+        add_column_if_not_exists('bot_analytics', 'booking_created', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('bot_analytics', 'escalated_to_manager', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('bot_analytics', 'cancellation_requested', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('bot_analytics', 'booking_id', 'INTEGER')
+        add_column_if_not_exists('bot_analytics', 'language_detected', 'TEXT')
+        add_column_if_not_exists('bot_analytics', 'last_message_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+
+        # Должности (Positions)
+        c.execute('''CREATE TABLE IF NOT EXISTS positions (
+            id SERIAL PRIMARY KEY,
+            name TEXT UNIQUE NOT NULL,
+            name_en TEXT,
+            name_ar TEXT,
+            name_fr TEXT,
+            name_de TEXT,
+            description TEXT,
+            sort_order INTEGER DEFAULT 0,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Связь Услуги - Должности (Service-Position mapping)
+        c.execute('''CREATE TABLE IF NOT EXISTS service_positions (
+            service_id INTEGER REFERENCES services(id) ON DELETE CASCADE,
+            position_id INTEGER REFERENCES positions(id) ON DELETE CASCADE,
+            PRIMARY KEY (service_id, position_id)
+        )''')
+
+        # Предпочтения клиентов (Client Preferences)
+        c.execute('''CREATE TABLE IF NOT EXISTS client_preferences (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id) ON DELETE CASCADE UNIQUE,
+            preferred_master TEXT,
+            preferred_service TEXT,
+            preferred_day_of_week TEXT,
+            preferred_time_of_day TEXT,
+            allergies TEXT,
+            special_notes TEXT,
+            auto_book_enabled BOOLEAN DEFAULT FALSE,
+            auto_book_interval_weeks INTEGER DEFAULT 4,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Паттерны поведения клиентов (Client Interaction Patterns)
+        c.execute('''CREATE TABLE IF NOT EXISTS client_interaction_patterns (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            interaction_type TEXT NOT NULL,
+            pattern_data JSONB,
+            confidence_score REAL DEFAULT 0,
+            last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(client_id, interaction_type)
+        )''')
+
+        # Conversation Context
+        c.execute('''CREATE TABLE IF NOT EXISTS conversation_context (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT NOT NULL,
+            context_type TEXT NOT NULL,
+            context_data TEXT, -- Changed from JSONB to TEXT to allow raw strings as in tests
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP -- Made nullable
+        )''')
+
+        # Sync changes if table exists
+        try:
+            c.execute("ALTER TABLE conversation_context ALTER COLUMN expires_at DROP NOT NULL")
+            c.execute("ALTER TABLE conversation_context ALTER COLUMN context_data TYPE TEXT")
+        except:
+            pass
+
+        # Notification Logs
+        c.execute('''CREATE TABLE IF NOT EXISTS notification_logs (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            client_id TEXT REFERENCES clients(instagram_id),
+            type TEXT,
+            message TEXT,
+            status TEXT DEFAULT 'sent',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Reminder Logs
+        c.execute('''CREATE TABLE IF NOT EXISTS reminder_logs (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            booking_id INTEGER REFERENCES bookings(id),
+            type TEXT,
+            status TEXT DEFAULT 'sent',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Challenges and Gamification
+        c.execute('''CREATE TABLE IF NOT EXISTS active_challenges (
+            id SERIAL PRIMARY KEY,
+            title TEXT NOT NULL,
+            title_ru TEXT,
+            description TEXT,
+            points_reward INTEGER DEFAULT 0,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Loyalty and Rewards
+        c.execute('''CREATE TABLE IF NOT EXISTS loyalty_levels (
+            id SERIAL PRIMARY KEY,
+            level_name TEXT UNIQUE NOT NULL,
+            min_points INTEGER DEFAULT 0,
+            discount_percent INTEGER DEFAULT 0,
+            points_multiplier REAL DEFAULT 1.0,
+            benefits TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Newsletter Subscribers
+        c.execute('''CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+            id SERIAL PRIMARY KEY,
+            email TEXT UNIQUE NOT NULL,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Cookies Consent
+        c.execute('''CREATE TABLE IF NOT EXISTS cookie_consents (
+            id SERIAL PRIMARY KEY,
+            ip_address TEXT,
+            accepted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            preferences JSONB DEFAULT '{}'
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS public_gallery (
+            id SERIAL PRIMARY KEY,
+            image_url TEXT NOT NULL,
+            title_ru TEXT, title_en TEXT, title_ar TEXT,
+            description_ru TEXT, description_en TEXT, description_ar TEXT,
+            category TEXT DEFAULT 'works',
+            display_order INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Migrations for public_gallery
+        for lang in ['de', 'es', 'fr', 'hi', 'kk', 'pt']:
+            add_column_if_not_exists('public_gallery', f'title_{lang}', 'TEXT')
+            add_column_if_not_exists('public_gallery', f'description_{lang}', 'TEXT')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS public_banners (
+            id SERIAL PRIMARY KEY,
+            title_ru TEXT, title_en TEXT, title_ar TEXT,
+            title_de TEXT, title_es TEXT, title_fr TEXT,
+            title_hi TEXT, title_kk TEXT, title_pt TEXT,
+            subtitle_ru TEXT, subtitle_en TEXT, subtitle_ar TEXT,
+            subtitle_de TEXT, subtitle_es TEXT, subtitle_fr TEXT,
+            subtitle_hi TEXT, subtitle_kk TEXT, subtitle_pt TEXT,
+            image_url TEXT,
+            link_url TEXT,
+            bg_pos_desktop_x INTEGER DEFAULT 50,
+            bg_pos_desktop_y INTEGER DEFAULT 50,
+            bg_pos_mobile_x INTEGER DEFAULT 50,
+            bg_pos_mobile_y INTEGER DEFAULT 50,
+            is_flipped_horizontal BOOLEAN DEFAULT FALSE,
+            is_flipped_vertical BOOLEAN DEFAULT FALSE,
+            display_order INTEGER DEFAULT 0,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Migrations for public_banners
+        for lang in ['de', 'es', 'fr', 'hi', 'kk', 'pt']:
+            add_column_if_not_exists('public_banners', f'title_{lang}', 'TEXT')
+            add_column_if_not_exists('public_banners', f'subtitle_{lang}', 'TEXT')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS client_notes (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            content TEXT NOT NULL,
+            author_id INTEGER REFERENCES users(id),
+            is_pinned BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS client_gallery (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            before_photo TEXT,
+            after_photo TEXT,
+            category TEXT,
+            notes TEXT,
+            master_id INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS client_favorite_masters (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            master_id INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(client_id, master_id)
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS client_email_verifications (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            email TEXT NOT NULL,
+            code TEXT NOT NULL,
+            is_verified BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS client_notifications (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            title TEXT,
+            message TEXT,
+            type TEXT DEFAULT 'info',
+            is_read BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS booking_drafts (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT,
+            master TEXT,
+            service_id INTEGER,
+            datetime TIMESTAMP,
+            expires_at TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS funnel_stages (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            sort_order INTEGER DEFAULT 0,
+            color TEXT,
+            is_static BOOLEAN DEFAULT FALSE
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS client_loyalty_points (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id) UNIQUE,
+            total_points INTEGER DEFAULT 0,
+            available_points INTEGER DEFAULT 0,
+            spent_points INTEGER DEFAULT 0,
+            loyalty_level TEXT DEFAULT 'bronze',
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        
+        add_column_if_not_exists('client_loyalty_points', 'total_points', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('client_loyalty_points', 'available_points', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('client_loyalty_points', 'spent_points', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('client_loyalty_points', 'loyalty_level', "TEXT DEFAULT 'bronze'")
+        add_column_if_not_exists('client_loyalty_points', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        add_column_if_not_exists('client_loyalty_points', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS loyalty_category_rules (
+            id SERIAL PRIMARY KEY,
+            category TEXT UNIQUE NOT NULL,
+            points_multiplier REAL DEFAULT 1.0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS loyalty_transactions (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            points INTEGER NOT NULL,
+            transaction_type TEXT NOT NULL, -- earn, spend, adjust
+            reason TEXT,
+            booking_id INTEGER REFERENCES bookings(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP
+        )''')
+        
+        add_column_if_not_exists('loyalty_transactions', 'expires_at', 'TIMESTAMP')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS client_achievements (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            achievement_type TEXT NOT NULL,
+            title_ru TEXT,
+            icon TEXT,
+            points_awarded INTEGER DEFAULT 0,
+            unlocked_at TIMESTAMP,
+            progress REAL DEFAULT 0,
+            max_progress REAL DEFAULT 1,
+            description_ru TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS invoice_payments (
+            id SERIAL PRIMARY KEY,
+            invoice_id INTEGER REFERENCES invoices(id),
+            amount REAL NOT NULL,
+            payment_method TEXT,
+            payment_date DATE DEFAULT CURRENT_DATE,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS marketplace_reviews (
+            id SERIAL PRIMARY KEY,
+            provider TEXT NOT NULL,
+            external_id TEXT,
+            author_name TEXT,
+            rating REAL,
+            text TEXT,
+            created_at TIMESTAMP,
+            raw_data JSONB
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT,
+            setting_key TEXT UNIQUE, -- Alias for key to support both naming conventions
+            setting_value JSONB
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS client_tags (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            tag_id INTEGER, -- Link to tags table if exists, or just use text
+            tag_name TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+
+        # Salon Holidays
+        c.execute('''CREATE TABLE IF NOT EXISTS salon_holidays (
+            id SERIAL PRIMARY KEY,
+            date DATE UNIQUE NOT NULL,
+            name TEXT,
+            is_closed BOOLEAN DEFAULT TRUE,
+            master_exceptions JSONB DEFAULT '[]',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        add_column_if_not_exists('salon_holidays', 'master_exceptions', "JSONB DEFAULT '[]'")
+
+        # Booking Reminder Settings
+        c.execute('''CREATE TABLE IF NOT EXISTS booking_reminder_settings (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            days_before INTEGER DEFAULT 0,
+            hours_before INTEGER DEFAULT 0,
+            notification_type TEXT DEFAULT 'email',
+            is_enabled BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Индивидуальные напоминания (Client Specific Reminders)
+        c.execute('''CREATE TABLE IF NOT EXISTS reminders (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id) ON DELETE CASCADE,
+            title TEXT NOT NULL,
+            description TEXT,
+            reminder_date TIMESTAMP NOT NULL,
+            reminder_type TEXT DEFAULT 'general',
+            is_completed BOOLEAN DEFAULT FALSE,
+            created_by TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            completed_at TIMESTAMP
+        )''')
+
+        # Conversations (Cleanup support)
+        c.execute('''CREATE TABLE IF NOT EXISTS conversations (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            last_message TEXT,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Funnel Advanced
+        c.execute('''CREATE TABLE IF NOT EXISTS funnel_checkpoints (
+            id SERIAL PRIMARY KEY,
+            stage_id INTEGER REFERENCES funnel_stages(id) ON DELETE CASCADE,
+            name TEXT NOT NULL,
+            name_ru TEXT, name_en TEXT, name_ar TEXT,
+            description TEXT,
+            is_required BOOLEAN DEFAULT FALSE,
+            sort_order INTEGER DEFAULT 0,
+            auto_complete_conditions JSONB,
+            notification_settings JSONB,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS client_checkpoint_progress (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            checkpoint_id INTEGER REFERENCES funnel_checkpoints(id),
+            status TEXT DEFAULT 'pending',
+            notes TEXT,
+            is_completed BOOLEAN DEFAULT FALSE,
+            completed_at TIMESTAMP,
+            completed_by INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(client_id, checkpoint_id)
+        )''')
+
+        # Products & Inventory
+        c.execute('''CREATE TABLE IF NOT EXISTS products (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            name_ru TEXT, name_en TEXT, name_ar TEXT,
+            category TEXT,
+            price REAL DEFAULT 0, cost_price REAL DEFAULT 0,
+            weight REAL, weight_unit TEXT DEFAULT 'g',
+            volume REAL, volume_unit TEXT DEFAULT 'ml',
+            expiry_date DATE,
+            stock_quantity INTEGER DEFAULT 0,
+            min_stock_level INTEGER DEFAULT 0,
+            sku TEXT, barcode TEXT, supplier TEXT,
+            notes TEXT, is_active BOOLEAN DEFAULT TRUE,
+            photos TEXT,
+            created_by INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS product_movements (
+            id SERIAL PRIMARY KEY,
+            product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
+            movement_type TEXT NOT NULL,
+            quantity INTEGER NOT NULL,
+            price REAL,
+            reason TEXT,
+            booking_id INTEGER REFERENCES bookings(id),
+            created_by INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Customization & Roles
+        c.execute('''CREATE TABLE IF NOT EXISTS custom_statuses (
+            status_key TEXT PRIMARY KEY,
+            status_label TEXT NOT NULL,
+            status_color TEXT NOT NULL,
+            status_icon TEXT,
+            created_by INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS custom_roles (
+            role_key TEXT PRIMARY KEY,
+            role_name TEXT NOT NULL,
+            role_description TEXT,
+            created_by INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS role_permissions (
+            id SERIAL PRIMARY KEY,
+            role_key TEXT NOT NULL,
+            permission_key TEXT NOT NULL,
+            can_view BOOLEAN DEFAULT FALSE,
+            can_create BOOLEAN DEFAULT FALSE,
+            can_edit BOOLEAN DEFAULT FALSE,
+            can_delete BOOLEAN DEFAULT FALSE,
+            UNIQUE(role_key, permission_key)
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS menu_settings (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            role TEXT,
+            menu_order JSONB,
+            hidden_items JSONB,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id),
+            UNIQUE(role)
+        )''')
+
+        # Communication & Chat
+        c.execute('''CREATE TABLE IF NOT EXISTS internal_chat (
+            id SERIAL PRIMARY KEY,
+            sender_id INTEGER REFERENCES users(id),
+            receiver_id INTEGER REFERENCES users(id),
+            message TEXT,
+            type TEXT DEFAULT 'text',
+            is_read BOOLEAN DEFAULT FALSE,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            edited BOOLEAN DEFAULT FALSE,
+            edited_at TIMESTAMP,
+            deleted_for_sender BOOLEAN DEFAULT FALSE,
+            deleted_for_receiver BOOLEAN DEFAULT FALSE,
+            reactions JSONB DEFAULT '[]'
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS chat_recordings (
+            id SERIAL PRIMARY KEY,
+            sender_id INTEGER REFERENCES users(id),
+            receiver_id INTEGER REFERENCES users(id),
+            recording_type TEXT DEFAULT 'audio',
+            recording_file TEXT,
+            recording_url TEXT,
+            custom_name TEXT,
+            file_size INTEGER,
+            file_format TEXT,
+            duration INTEGER,
+            folder_id INTEGER,
+            tags JSONB,
+            is_archived BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS user_status (
+            user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+            is_online BOOLEAN DEFAULT FALSE,
+            last_seen TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS user_subscriptions (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            subscription_type TEXT NOT NULL,
+            is_subscribed BOOLEAN DEFAULT TRUE,
+            email_enabled BOOLEAN DEFAULT TRUE,
+            telegram_enabled BOOLEAN DEFAULT TRUE,
+            instagram_enabled BOOLEAN DEFAULT TRUE,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id, subscription_type)
+        )''')
+
+        add_column_if_not_exists('user_subscriptions', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS user_push_tokens (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            token TEXT NOT NULL,
+            device_type TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_used_at TIMESTAMP,
+            UNIQUE(user_id, token)
+        )''')
+
+        # Public Content
+        c.execute('''CREATE TABLE IF NOT EXISTS public_reviews (
+            id SERIAL PRIMARY KEY,
+            author_name TEXT,
+            author_name_ru TEXT, author_name_en TEXT, author_name_ar TEXT,
+            author_name_de TEXT, author_name_es TEXT, author_name_fr TEXT,
+            author_name_hi TEXT, author_name_kk TEXT, author_name_pt TEXT,
+            rating INTEGER DEFAULT 5,
+            text_ru TEXT, text_en TEXT, text_ar TEXT,
+            text_de TEXT, text_es TEXT, text_fr TEXT,
+            text_hi TEXT, text_kk TEXT, text_pt TEXT,
+            avatar_url TEXT,
+            is_active BOOLEAN DEFAULT TRUE,
+            display_order INTEGER DEFAULT 0,
+            employee_name TEXT, employee_name_ru TEXT, employee_name_en TEXT, employee_name_ar TEXT,
+            employee_name_es TEXT, employee_name_de TEXT, employee_name_fr TEXT, employee_name_hi TEXT,
+            employee_name_kk TEXT, employee_name_pt TEXT,
+            employee_position TEXT, employee_position_ru TEXT, employee_position_en TEXT, employee_position_ar TEXT,
+            employee_position_es TEXT, employee_position_de TEXT, employee_position_fr TEXT, employee_position_hi TEXT,
+            employee_position_kk TEXT, employee_position_pt TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Migrations for author_name
+        for lang in SUPPORTED_LANGUAGES:
+            add_column_if_not_exists('public_reviews', f'author_name_{lang}', 'TEXT')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS public_faq (
+            id SERIAL PRIMARY KEY,
+            question_ru TEXT, question_en TEXT, question_ar TEXT,
+            question_de TEXT, question_es TEXT, question_fr TEXT,
+            question_hi TEXT, question_kk TEXT, question_pt TEXT,
+            answer_ru TEXT, answer_en TEXT, answer_ar TEXT,
+            answer_de TEXT, answer_es TEXT, answer_fr TEXT,
+            answer_hi TEXT, answer_kk TEXT, answer_pt TEXT,
+            category TEXT DEFAULT 'general',
+            is_active BOOLEAN DEFAULT TRUE,
+            display_order INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Integrations
+        c.execute('''CREATE TABLE IF NOT EXISTS marketplace_providers (
+            id SERIAL PRIMARY KEY,
+            name TEXT UNIQUE NOT NULL,
             api_key TEXT,
             api_secret TEXT,
-            webhook_url TEXT,
-            is_active BOOLEAN DEFAULT TRUE,
-            sync_enabled BOOLEAN DEFAULT FALSE,
-            settings JSONB,
+            settings JSONB DEFAULT '{}',
+            is_active BOOLEAN DEFAULT FALSE,
             last_sync_at TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        
+        add_column_if_not_exists('marketplace_providers', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS marketplace_bookings (
+            id SERIAL PRIMARY KEY,
+            provider TEXT NOT NULL,
+            external_id TEXT UNIQUE NOT NULL,
+            booking_id INTEGER REFERENCES bookings(id),
+            raw_data JSONB,
+            synced_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        
+        add_column_if_not_exists('marketplace_bookings', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS payment_providers (
+            id SERIAL PRIMARY KEY,
+            name TEXT UNIQUE NOT NULL,
+            api_key TEXT,
+            secret_key TEXT,
+            is_test_mode BOOLEAN DEFAULT TRUE,
+            settings JSONB DEFAULT '{}',
+            is_active BOOLEAN DEFAULT FALSE
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS payment_transactions (
+            id SERIAL PRIMARY KEY,
+            provider TEXT NOT NULL,
+            transaction_id TEXT,
+            amount REAL,
+            currency TEXT,
+            status TEXT,
+            booking_id INTEGER REFERENCES bookings(id),
+            invoice_id INTEGER REFERENCES invoices(id),
+            raw_response JSONB,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS payroll_payments (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            amount REAL NOT NULL,
+            period_start DATE,
+            period_end DATE,
+            payment_date DATE DEFAULT CURRENT_DATE,
+            type TEXT DEFAULT 'salary',
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS user_salary_settings (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+            salary_type TEXT DEFAULT 'commission',
+            hourly_rate REAL DEFAULT 0,
+            monthly_rate REAL DEFAULT 0,
+            commission_rate REAL DEFAULT 0,
+            bonus_rate REAL DEFAULT 0,
+            kpi_settings JSONB,
+            currency TEXT DEFAULT 'AED',
+            is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
+        )''')
 
-    # Таблица записей из маркетплейсов
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS marketplace_bookings (
+        c.execute('''CREATE TABLE IF NOT EXISTS salary_calculations (
             id SERIAL PRIMARY KEY,
-            booking_id INTEGER REFERENCES bookings(id) ON DELETE CASCADE,
-            provider VARCHAR(50) NOT NULL,
-            external_id TEXT,
-            raw_data JSONB,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE(provider, external_id)
-        )
-    """)
+            user_id INTEGER REFERENCES users(id),
+            period_start DATE,
+            period_end DATE,
+            total_services REAL,
+            commission_amount REAL,
+            base_salary REAL,
+            total_payout REAL,
+            details JSONB,
+            is_paid BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
 
-    # Таблица отзывов из маркетплейсов
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS marketplace_reviews (
+        c.execute('''CREATE TABLE IF NOT EXISTS service_change_requests (
             id SERIAL PRIMARY KEY,
-            provider VARCHAR(50) NOT NULL,
-            external_id TEXT,
-            author_name VARCHAR(255),
-            rating INTEGER,
-            text TEXT,
+            user_id INTEGER REFERENCES users(id),
+            service_id INTEGER REFERENCES services(id),
+            requested_changes JSONB,
+            status TEXT DEFAULT 'pending',
+            admin_comment TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            raw_data JSONB,
-            UNIQUE(provider, external_id)
-        )
-    """)
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
 
-    # Индексы для интеграций
-    try:
-        c.execute("CREATE INDEX IF NOT EXISTS idx_payment_transactions_invoice ON payment_transactions(invoice_id)")
-        c.execute("CREATE INDEX IF NOT EXISTS idx_payment_transactions_status ON payment_transactions(status)")
-        c.execute("CREATE INDEX IF NOT EXISTS idx_marketplace_bookings_provider ON marketplace_bookings(provider)")
-        c.execute("CREATE INDEX IF NOT EXISTS idx_marketplace_bookings_booking ON marketplace_bookings(booking_id)")
-        c.execute("CREATE INDEX IF NOT EXISTS idx_marketplace_reviews_provider ON marketplace_reviews(provider)")
-    except Exception as e:
-        log_warning(f"⚠️ Integration indexes creation skipped: {e}", "db")
+        # Advanced Loyalty
+        c.execute('''CREATE TABLE IF NOT EXISTS referral_campaigns (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            description TEXT,
+            bonus_points INTEGER DEFAULT 0,
+            referrer_bonus INTEGER DEFAULT 0,
+            is_active BOOLEAN DEFAULT TRUE,
+            target_type TEXT DEFAULT 'all', -- all, specific_users, by_master, by_service, by_inactivity
+            target_criteria JSONB,          -- {user_ids: [], master_id: int, service_ids: [], days_inactive: int}
+            start_date TIMESTAMP,
+            end_date TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
 
-    # Таблица типов договоров
-    c.execute('''CREATE TABLE IF NOT EXISTS contract_types (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL,
-        code TEXT UNIQUE NOT NULL,
-        description TEXT,
-        is_system BOOLEAN DEFAULT FALSE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )''')
+        c.execute('''CREATE TABLE IF NOT EXISTS referral_campaign_users (
+            id SERIAL PRIMARY KEY,
+            campaign_id INTEGER REFERENCES referral_campaigns(id),
+            client_id TEXT REFERENCES clients(instagram_id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(campaign_id, client_id)
+        )''')
 
-    # Сидинг дефолтных типов договоров
-    contract_types = [
-        ('Оказание услуг', 'service', 'Договор на оказание услуг', True),
-        ('Трудовой договор', 'employment', 'Трудовой договор с сотрудником', True),
-        ('Аренда места', 'rental', 'Договор аренды рабочего места', True)
-    ]
-    
-    for name, code, desc, is_sys in contract_types:
-        c.execute("""
-            INSERT INTO contract_types (name, code, description, is_system)
-            VALUES (%s, %s, %s, %s)
-            ON CONFLICT (code) DO NOTHING
-        """, (name, code, desc, is_sys))
+        c.execute('''CREATE TABLE IF NOT EXISTS client_referrals (
+            id SERIAL PRIMARY KEY,
+            referrer_id TEXT REFERENCES clients(instagram_id),
+            referred_id TEXT REFERENCES clients(instagram_id),
+            campaign_id INTEGER REFERENCES referral_campaigns(id),
+            status TEXT DEFAULT 'pending',
+            points_awarded INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
 
-    # Таблица стадий договоров (Contract Stages)
-    c.execute('''CREATE TABLE IF NOT EXISTS contract_stages (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        key VARCHAR(50),
-        order_index INTEGER DEFAULT 0,
-        color VARCHAR(50),
-        is_active BOOLEAN DEFAULT TRUE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )''')
+        c.execute('''CREATE TABLE IF NOT EXISTS referrals (
+            id SERIAL PRIMARY KEY,
+            referrer_id TEXT REFERENCES clients(instagram_id),
+            referred_id TEXT REFERENCES clients(instagram_id),
+            campaign_id INTEGER REFERENCES referral_campaigns(id),
+            status TEXT DEFAULT 'pending',
+            reward_paid BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
 
-    # Заполняем дефолтные стадии договоров если пусто
-    c.execute("SELECT COUNT(*) FROM contract_stages")
-    if c.fetchone()[0] == 0:
-        default_contract_stages = [
-            ('Черновик', 'draft', 0, '#94a3b8'),
-            ('Отправлен', 'sent', 1, '#3b82f6'),
-            ('Подписан', 'signed', 2, '#22c55e'),
-            ('Отменен', 'cancelled', 3, '#ef4444')
+        c.execute('''CREATE TABLE IF NOT EXISTS challenge_progress (
+            id SERIAL PRIMARY KEY,
+            challenge_id INTEGER REFERENCES active_challenges(id),
+            client_id TEXT REFERENCES clients(instagram_id),
+            current_value REAL DEFAULT 0,
+            target_value REAL,
+            is_completed BOOLEAN DEFAULT FALSE,
+            completed_at TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(challenge_id, client_id)
+        )''')
+
+        # --- 7. DEFAULT DATA SYNC ---
+        
+        # Stages
+        default_stages = [
+            ('pipeline', 'new', 'Новый лид', '#3b82f6', 0),
+            ('pipeline', 'negotiation', 'Переговоры', '#eab308', 1),
+            ('pipeline', 'sent_offer', 'Предложение отправлено', '#a855f7', 2),
+            ('pipeline', 'closed_won', 'Успешно реализовано', '#22c55e', 3),
+            ('pipeline', 'closed_lost', 'Закрыто не реализовано', '#ef4444', 4),
+            ('invoice', 'draft', 'Черновик', '#94a3b8', 0),
+            ('invoice', 'sent', 'Отправлен', '#3b82f6', 1),
+            ('invoice', 'paid', 'Оплачен', '#22c55e', 2),
+            ('task', 'todo', 'Сделать', '#94a3b8', 0),
+            ('task', 'done', 'Завершено', '#22c55e', 3)
         ]
-        c.executemany("""
-            INSERT INTO contract_stages (name, key, order_index, color) 
-            VALUES (%s, %s, %s, %s)
-        """, default_contract_stages)
+        for ent, nm, ru, clr, ord in default_stages:
+            c.execute("""
+                INSERT INTO workflow_stages (entity_type, name, name_ru, color, sort_order)
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (entity_type, name) DO UPDATE SET name_ru = EXCLUDED.name_ru
+            """, (ent, nm, ru, clr, ord))
 
-    # Таблица договоров
-    c.execute('''CREATE TABLE IF NOT EXISTS contracts (
-        id SERIAL PRIMARY KEY,
-        contract_number TEXT UNIQUE NOT NULL,
-        client_id TEXT,
-        booking_id INTEGER,
-        contract_type TEXT DEFAULT 'service',
-        template_name TEXT DEFAULT 'default',
-        status TEXT DEFAULT 'draft',
-        stage_id INTEGER REFERENCES contract_stages(id),
-        data TEXT DEFAULT '{}',
-        pdf_path TEXT,
-        created_by INTEGER,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        sent_at TIMESTAMP,
-        signed_at TIMESTAMP,
-        FOREIGN KEY (client_id) REFERENCES clients(instagram_id),
-        FOREIGN KEY (booking_id) REFERENCES bookings(id),
-        FOREIGN KEY (created_by) REFERENCES users(id)
-    )''')
+        # Настройки салона (Архитектура v2.0 - SSOT)
+        # Убираем хардкод - используем переменные окружения без выдуманных данных
+        salon_name = os.getenv('SALON_NAME', 'Beauty Salon')
+        salon_google_maps = os.getenv('SALON_GOOGLE_MAPS', '')
+        salon_phone = os.getenv('SALON_PHONE', '')
+        salon_whatsapp = os.getenv('SALON_WHATSAPP', '')
+        salon_instagram = os.getenv('SALON_INSTAGRAM', '')
+        salon_email = os.getenv('SALON_EMAIL', '')
+        salon_base_url = os.getenv('BASE_URL', '')
+        salon_address = os.getenv('SALON_ADDRESS', '')
+        salon_address_ru = os.getenv('SALON_ADDRESS_RU', '')
+        salon_hours_weekdays = os.getenv('SALON_HOURS_WEEKDAYS', '10:30 - 21:00')
+        salon_hours_weekends = os.getenv('SALON_HOURS_WEEKENDS', '10:30 - 21:00')
+        salon_currency = os.getenv('SALON_CURRENCY', 'AED')
+        
+        bot_config = {
+            "enabled": True,
+            "bot_name": os.getenv('BOT_NAME', "M.Le Diamant Luxury Assistant"),
+            "personality_traits": os.getenv('BOT_PERSONALITY', "Professional expert assistant for a high-end luxury salon. Sophisticated, articulate, and dedicated to exceptional service quality. Focuses on premium materials, hygiene standards, and customer comfort."),
+            "greeting_message": os.getenv('BOT_GREETING', "Greetings from M.Le Diamant. How may I assist you today with our premium beauty and wellness services?"),
+            "farewell_message": os.getenv('BOT_FAREWELL', "Thank you for choosing M.Le Diamant. We look forward to your visit!"),
+            "booking_redirect_message": os.getenv('BOT_BOOKING_REDIRECT', "I am your virtual concierge for instant bookings. Please select your preferred time here: {BOOKING_URL}"),
+            "communication_style": os.getenv('BOT_COMM_STYLE', "Polite, expert-driven, and internationally professional."),
+            "emoji_usage": os.getenv('BOT_EMOJI_USAGE', "Minimal and professional (max 1 per message)."),
+            "languages_supported": os.getenv('BOT_LANGUAGES', "ru,en,ar"),
+            "voice_message_response": "I apologize, but I am currently unable to process voice messages. Could you please send your request as text? I am here to help. 😊",
+            "location_features": "We offer complimentary valet parking, premium beverages, and a quiet, luxurious atmosphere for our selected guests.",
+            "safety_guidelines": "Hygiene is our priority. We use medical-grade sterilization for all instruments and single-use supplies for every guest.",
+            "booking_availability_instructions": "Please strictly adhere to the 'AVAILABLE MASTERS' section. Do not suggest times not explicitly listed as available."
+        }
 
-    # Лог отправки договоров
-    c.execute('''CREATE TABLE IF NOT EXISTS contract_delivery_log (
-        id SERIAL PRIMARY KEY,
-        contract_id INTEGER NOT NULL,
-        delivery_method TEXT NOT NULL,
-        recipient TEXT NOT NULL,
-        status TEXT DEFAULT 'sent',
-        sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (contract_id) REFERENCES contracts(id)
-    )''')
+        c.execute("""
+            INSERT INTO salon_settings (
+                id, name, name_en, name_ar, address, address_ru, 
+                phone, whatsapp, instagram, email, booking_url, google_maps,
+                hours_weekdays, hours_weekends, hours_ru, hours_ar, bot_name, base_url, 
+                currency, bot_config
+            )
+            VALUES (
+                1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+            )
+            ON CONFLICT (id) DO UPDATE SET 
+                name = EXCLUDED.name,
+                address = EXCLUDED.address,
+                address_ru = EXCLUDED.address_ru,
+                phone = EXCLUDED.phone,
+                whatsapp = EXCLUDED.whatsapp,
+                instagram = EXCLUDED.instagram,
+                email = EXCLUDED.email,
+                google_maps = EXCLUDED.google_maps,
+                hours_weekdays = EXCLUDED.hours_weekdays,
+                hours_weekends = EXCLUDED.hours_weekends,
+                hours_ru = EXCLUDED.hours_ru,
+                hours_ar = EXCLUDED.hours_ar,
+                currency = EXCLUDED.currency,
+                bot_config = EXCLUDED.bot_config,
+                updated_at = CURRENT_TIMESTAMP
+        """, (
+            salon_name, salon_name, 'M.Le Diamant',
+            salon_address, salon_address_ru,
+            salon_phone, salon_whatsapp, salon_instagram, salon_email, f"{salon_base_url}/booking",
+            salon_google_maps,
+            salon_hours_weekdays, salon_hours_weekends,
+            f"Ежедневно: {salon_hours_weekdays}", f"يومياً: {salon_hours_weekdays}",
+            bot_config['bot_name'], salon_base_url,
+            salon_currency, json.dumps(bot_config)
+        ))
 
-    # Таблица стадий счетов (Invoice Stages)
-    c.execute('''CREATE TABLE IF NOT EXISTS invoice_stages (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        key VARCHAR(50),
-        order_index INTEGER DEFAULT 0,
-        color VARCHAR(50),
-        is_active BOOLEAN DEFAULT TRUE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )''')
-
-    # Заполняем дефолтные стадии счетов если пусто
-    c.execute("SELECT COUNT(*) FROM invoice_stages")
-    if c.fetchone()[0] == 0:
-        default_invoice_stages = [
-            ('Черновик', 'draft', 0, '#94a3b8'),
-            ('Отправлен', 'sent', 1, '#3b82f6'),
-            ('Оплачен', 'paid', 2, '#22c55e'),
-            ('Частично оплачен', 'partially_paid', 3, '#eab308'),
-            ('Просрочен', 'overdue', 4, '#f97316'),
-            ('Отменен', 'cancelled', 5, '#ef4444')
+        # Продуктовые сотрудники
+        default_employees = [
+            ('Kasymova Gulcehre', 'kasymova_gulcehre', 'employee', 'Nail & Waxing Master', 'female'),
+            ('Peradilla Jennifer', 'peradilla_jennifer', 'employee', 'Universal Beauty Master', 'female'),
+            ('Amandurdyyeva Mestan', 'amandurdyyeva_mestan', 'employee', 'Hair Stylist & Permanent Makeup Artist', 'female'),
+            ('Mohamed Sabri', 'mohamed_sabri', 'employee', 'Hair Stylist', 'male'),
+            ('Kozhabay Lyazat', 'kozhabay_lyazat', 'employee', 'Nail Master', 'female'),
+            ('Турсунай', 'tursunay', 'director', 'Owner / Director', 'female')
         ]
-        c.executemany("""
-            INSERT INTO invoice_stages (name, key, order_index, color) 
-            VALUES (%s, %s, %s, %s)
-        """, default_invoice_stages)
-
-    # Таблица счетов
-    c.execute('''CREATE TABLE IF NOT EXISTS invoices (
-        id SERIAL PRIMARY KEY,
-        invoice_number TEXT UNIQUE NOT NULL,
-        client_id TEXT,
-        booking_id INTEGER,
-        status TEXT DEFAULT 'draft',
-        stage_id INTEGER REFERENCES invoice_stages(id),
-        total_amount REAL DEFAULT 0,
-        paid_amount REAL DEFAULT 0,
-        currency TEXT DEFAULT 'AED',
-        items TEXT DEFAULT '[]',
-        notes TEXT,
-        due_date DATE,
-        pdf_path TEXT,
-        created_by INTEGER,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        paid_at TIMESTAMP,
-        sent_at TIMESTAMP,
-        FOREIGN KEY (client_id) REFERENCES clients(instagram_id),
-        FOREIGN KEY (booking_id) REFERENCES bookings(id),
-        FOREIGN KEY (created_by) REFERENCES users(id)
-    )''')
-
-    # Платежи по счетам
-    c.execute('''CREATE TABLE IF NOT EXISTS invoice_payments (
-        id SERIAL PRIMARY KEY,
-        invoice_id INTEGER NOT NULL,
-        amount REAL NOT NULL,
-        payment_method TEXT NOT NULL,
-        notes TEXT,
-        created_by INTEGER,
-        payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (invoice_id) REFERENCES invoices(id),
-        FOREIGN KEY (created_by) REFERENCES users(id)
-    )''')
-
-    # Лог отправки счетов
-    c.execute('''CREATE TABLE IF NOT EXISTS invoice_delivery_log (
-        id SERIAL PRIMARY KEY,
-        invoice_id INTEGER NOT NULL,
-        delivery_method TEXT NOT NULL,
-        recipient TEXT NOT NULL,
-        status TEXT DEFAULT 'sent',
-        sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (invoice_id) REFERENCES invoices(id)
-    )''')
-    
-    # Инициализация дефолтных настроек мессенджеров
-    messenger_defaults = [
-        ('instagram', 'Instagram', True),
-        ('whatsapp', 'WhatsApp', False),
-        ('telegram', 'Telegram', False),
-        ('tiktok', 'TikTok', False)
-    ]
-    for messenger_type, display_name, is_enabled in messenger_defaults:
-        c.execute("""
-            INSERT INTO messenger_settings (messenger_type, display_name, is_enabled)
-            VALUES (%s, %s, %s)
-            ON CONFLICT (messenger_type) DO NOTHING
-        """, (messenger_type, display_name, is_enabled))
-
-    # Миграция: добавить position_ru в users если нет
-    try:
-
-        c.execute("""
-
-            SELECT column_name 
-
-            FROM information_schema.columns 
-
-            WHERE table_name='users'
-
-        """)
-
-        user_columns = [row[0] for row in c.fetchall()]
-
-    except:
-
-        user_columns = []
-    if 'position_ru' not in user_columns:
-        c.execute("ALTER TABLE users ADD COLUMN position_ru TEXT")
-    
-    # Миграция: добавить telegram_manager_chat_id в salon_settings
-    try:
-
-        c.execute("""
-
-            SELECT column_name 
-
-            FROM information_schema.columns 
-
-            WHERE table_name='salon_settings'
-
-        """)
-
-        salon_columns = [row[0] for row in c.fetchall()]
-
-    except:
-
-        salon_columns = []
-    if 'telegram_manager_chat_id' not in salon_columns:
-        c.execute("ALTER TABLE salon_settings ADD COLUMN telegram_manager_chat_id TEXT")
-    
-    # Миграция: добавить недостающие колонки в loyalty_levels
-    try:
-
-        c.execute("""
-
-            SELECT column_name 
-
-            FROM information_schema.columns 
-
-            WHERE table_name='loyalty_levels'
-
-        """)
-
-        loyalty_columns = [row[0] for row in c.fetchall()]
-
-    except:
-
-        loyalty_columns = []
-    if 'points_multiplier' not in loyalty_columns:
-        c.execute("ALTER TABLE loyalty_levels ADD COLUMN points_multiplier REAL DEFAULT 1.0")
-    
-    # Миграция: добавить недостающие колонки в client_loyalty_points
-    try:
-
-        c.execute("""
-
-            SELECT column_name 
-
-            FROM information_schema.columns 
-
-            WHERE table_name='client_loyalty_points'
-
-        """)
-
-        client_loyalty_columns = [row[0] for row in c.fetchall()]
-
-    except:
-
-        client_loyalty_columns = []
-    if 'total_points' not in client_loyalty_columns:
-        c.execute("ALTER TABLE client_loyalty_points ADD COLUMN total_points INTEGER DEFAULT 0")
-    
-    # Миграция: добавить name в booking_reminder_settings если есть таблица
-    c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='booking_reminder_settings'")
-    if c.fetchone():
-        try:
-
+        for name, uname, role, pos, gender in default_employees:
             c.execute("""
+                INSERT INTO users (full_name, username, password_hash, role, position, gender, is_active, is_service_provider)
+                VALUES (%s, %s, %s, %s, %s, %s, TRUE, TRUE)
+                ON CONFLICT (username) DO UPDATE SET 
+                    full_name = EXCLUDED.full_name,
+                    role = EXCLUDED.role,
+                    position = EXCLUDED.position,
+                    gender = EXCLUDED.gender
+            """, (name, uname, 'pbkdf2:sha256:260000$default_staff_hash', role, pos, gender))
 
-                SELECT column_name 
+        # Fix gender for Mohamed and Tahir specifically
+        c.execute("UPDATE users SET gender = 'male' WHERE full_name ILIKE '%Mohamed%' OR full_name ILIKE '%Tahir%' OR username ILIKE '%tahir%'")
 
-                FROM information_schema.columns 
-
-                WHERE table_name='booking_reminder_settings'
-
-            """)
-
-            reminder_columns = [row[0] for row in c.fetchall()]
-
-        except:
-
-            reminder_columns = []
-        if 'name' not in reminder_columns:
-            c.execute("ALTER TABLE booking_reminder_settings ADD COLUMN name TEXT DEFAULT 'Default Reminder'")
-    
-    # Ensure client columns exist
-    from db.clients import ensure_client_columns
-    ensure_client_columns(conn)
-    
-    
-    # Создать начальных сотрудников с фото
-    
-    # Функция для восстановления фото
-    def ensure_employee_photos():
-        import shutil
-        import os
-        
-        # Determine project root and potential paths
-        # __file__ = backend/db/init.py
-        # dirname = backend/db
-        # dirname = backend
-        # dirname = project_root
-        backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        project_root = os.path.dirname(backend_dir)
-        
-        # Универсальный путь, который работает везде, где сохранена структура проекта
-        source_dir = os.path.join(project_root, "frontend", "public_landing", "styles", "img", "Сотрудники")
-        
-        target_dir = os.path.join(backend_dir, "static", "uploads", "images")
-        
-        if not os.path.exists(source_dir):
-            log_warning(f"⚠️ Папка с фото не найдена: {source_dir}", "db")
-            return {}
-
-        if not os.path.exists(target_dir):
-            os.makedirs(target_dir, exist_ok=True)
-            
-        photo_mapping = {
-            "simo": "Симо.webp",
-            "mestan": "Местан.webp",
-            "lyazzat": "Ляззат.webp",
-            "gulya": "Гуля.webp",
-            "jennifer": "Дженнифер.webp",
-        }
-        
-        restored_photos = {}
-        
-        for username, source_filename in photo_mapping.items():
-            source_path = os.path.join(source_dir, source_filename)
-            
-            if os.path.exists(source_path):
-                ext = os.path.splitext(source_filename)[1].lower()
-                new_filename = f"{username}{ext}"
-                target_path = os.path.join(target_dir, new_filename)
-                
-                shutil.copy2(source_path, target_path)
-                restored_photos[username] = f"/static/uploads/images/{new_filename}"
-                log_info(f"📸 Фото восстановлено: {username} -> {new_filename}", "db")
-            else:
-                log_info(f"⚠️ Фото не найдено: {source_path}", "db")
-                
-        return restored_photos
-
-    # Восстанавливаем фото перед созданием сотрудников
-    restored_photos = ensure_employee_photos()
-
-    employees_data = [
-        {
-            "username": "simo",
-            "full_name": "Mohamed Sabri",
-            "position": "Hair Stylist",
-            "role": "employee",
-            "photo": restored_photos.get("simo", "/static/uploads/images/simo.webp")
-        },
-        {
-            "username": "mestan",
-            "full_name": "Amandurdyyeva Mestan",
-            "position": "Hair Stylist",
-            "role": "employee",
-            "photo": restored_photos.get("mestan", "/static/uploads/images/mestan.webp")
-        },
-        {
-            "username": "lyazzat",
-            "full_name": "Kozhabay Lyazat",
-            "position": "Nail Master",
-            "role": "employee",
-            "photo": restored_photos.get("lyazzat", "/static/uploads/images/lyazzat.webp")
-        },
-        {
-            "username": "gulya",
-            "full_name": "Kasymova Gulcehre",
-            "position": "Nail/Waxing",
-            "role": "employee",
-            "photo": restored_photos.get("gulya", "/static/uploads/images/gulya.webp")
-        },
-        {
-            "username": "jennifer",
-            "full_name": "Peradilla Jennifer",
-            "position": "Nail Master/Massages",
-            "role": "employee",
-            "photo": restored_photos.get("jennifer", "/static/uploads/images/jennifer.webp")
-        },
-        {
-            "username": "tursunai",
-            "full_name": "Турсунай",
-            "position": "Director",
-            "role": "director",
-            "photo": None
-        }
-    ]
-    
-    for emp in employees_data:
-        c.execute("SELECT COUNT(*) FROM users WHERE username = %s", (emp["username"],))
-        if c.fetchone()[0] == 0:
-            password_hash = hashlib.sha256((emp["username"][:4] + "123").encode()).hexdigest()
+        # Уровни лояльности
+        default_loyalty = [
+            ('bronze', 0, 0, 1.0, 'Базовый уровень'),
+            ('silver', 1000, 5, 1.1, 'Серебряный уровень'),
+            ('gold', 5000, 10, 1.2, 'Золотой уровень'),
+            ('platinum', 10000, 15, 1.5, 'Платиновый уровень')
+        ]
+        for name, min_pts, disc, mult, ben in default_loyalty:
             c.execute("""
-                INSERT INTO users (username, password_hash, full_name, role, position, photo, is_active, is_service_provider, created_at)
-                VALUES (%s, %s, %s, %s, %s, %s, TRUE, TRUE, NOW())
-                RETURNING id
-            """, (emp["username"], password_hash, emp["full_name"], emp["role"], emp["position"], emp["photo"]))
-            
-            user_id = c.fetchone()[0]
-            log_info(f"✅ Создан сотрудник: {emp['full_name']} (логин: {emp['username']}, пароль: {emp['username'][:4]}123)", "db")
-            
-            # Назначаем все услуги сотруднику
-            c.execute("SELECT id, price, duration FROM services")
-            services = c.fetchall()
-            for svc in services:
-                c.execute("""
-                    INSERT INTO user_services (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled)
-                    VALUES (%s, %s, %s, %s, TRUE, TRUE)
-                    ON CONFLICT (user_id, service_id) DO NOTHING
-                """, (user_id, svc[0], svc[1], svc[2]))
-        else:
-            # Если сотрудник уже есть, тоже проверим и добавим услуги если их нет
-            c.execute("SELECT id FROM users WHERE username = %s", (emp["username"],))
-            user_id = c.fetchone()[0]
-            
-            c.execute("SELECT id, price, duration FROM services")
-            services = c.fetchall()
-            for svc in services:
-                c.execute("""
-                    INSERT INTO user_services (user_id, service_id, price, duration, is_online_booking_enabled, is_calendar_enabled)
-                    VALUES (%s, %s, %s, %s, TRUE, TRUE)
-                    ON CONFLICT (user_id, service_id) DO NOTHING
-                """, (user_id, svc[0], svc[1], svc[2]))
-    
-    conn.commit()
-    conn.close()
-    
-    # Run public content schema migration
-    try:
-        from db.migrations.consolidated.schema_public import migrate_public_schema
-        migrate_public_schema()
-        log_info("✅ Public content tables migrated", "db")
-    except Exception as e:
-        log_warning(f"⚠️ Public content migration warning: {e}", "db")
-    
-    # Run telephony schema migration
-    try:
-        from db.migrations.consolidated.schema_telephony import run_migration as migrate_telephony
-        migrate_telephony()
-        log_info("✅ Telephony tables migrated", "db")
-    except Exception as e:
-        log_warning(f"⚠️ Telephony migration warning: {e}", "db")
+                INSERT INTO loyalty_levels (level_name, min_points, discount_percent, points_multiplier, benefits)
+                VALUES (%s, %s, %s, %s, %s)
+                ON CONFLICT (level_name) DO UPDATE SET
+                    min_points = EXCLUDED.min_points,
+                    discount_percent = EXCLUDED.discount_percent,
+                    points_multiplier = EXCLUDED.points_multiplier
+            """, (name, min_pts, disc, mult, ben))
 
-    # Run menu settings schema migration
-    try:
-         from db.migrations.consolidated.schema_menu_settings import run_migration as migrate_menu
-         migrate_menu()
-         log_info("✅ Menu settings tables migrated", "db")
-    except Exception as e:
-        log_warning(f"⚠️ Menu settings migration warning: {e}", "db")
+        # Дефолтные должности
+        default_positions = [
+            ('Owner', 'Владелец', 0),
+            ('Manager', 'Менеджер', 1),
+            ('Senior Stylist', 'Старший стилист', 2),
+            ('Stylist', 'Стилист', 3),
+            ('Junior Stylist', 'Младший стилист', 4),
+            ('Nail Master', 'Мастер маникюра', 5),
+            ('Receptionist', 'Администратор', 6)
+        ]
+        for en, ru, ord in default_positions:
+            c.execute("""
+                INSERT INTO positions (name, name_en, sort_order)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (name) DO NOTHING
+            """, (en, en, ord))
 
-    # Run other schema migration (consolidated)
-    try:
-        from db.migrations.consolidated.schema_other import migrate_other_schema
-        migrate_other_schema()
-        log_info("✅ Other tables migrated (consolidated)", "db")
-    except Exception as e:
-        log_warning(f"⚠️ Other tables migration warning: {e}", "db")
+        # Fix FK for client_preferences to cascade delete
+        client_dep_tables = [
+            ('bookings', 'instagram_id'),
+            ('client_preferences', 'client_id'),
+            ('client_loyalty_points', 'client_id'),
+            ('conversations', 'client_id'),
+            ('reminders', 'client_id'),
+            ('client_notes', 'client_id'),
+            ('client_gallery', 'client_id'),
+            ('client_favorite_masters', 'client_id'),
+            ('client_notifications', 'client_id'),
+            ('client_tags', 'client_id'),
+            ('notification_logs', 'client_id'),
+            ('reminder_logs', 'client_id')
+        ]
+        for tbl, col in client_dep_tables:
+            ensure_fk_cascade(tbl, col, 'clients', 'instagram_id')
 
-    log_info("✅ База данных инициализирована", "db")
+        conn.commit()
+        log_info("✅ Unified schema initialized successfully", "db")
+        
+    except Exception as e:
+        conn.rollback()
+        log_error(f"❌ Failed to initialize schema: {e}", "db")
+        raise
+    finally:
+        conn.close()
 
 if __name__ == "__main__":
     init_database()

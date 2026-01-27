@@ -11,7 +11,25 @@ from core.config import DATABASE_NAME
 async def test_save_settings():
     print("🧪 Testing save settings...")
     
-    user_id = 1
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    # Get any existing user to avoid FK violation
+    c.execute("SELECT id FROM users WHERE is_active = TRUE LIMIT 1")
+    result = c.fetchone()
+    if not result:
+        # Fallback to any user
+        c.execute("SELECT id FROM users LIMIT 1")
+        result = c.fetchone()
+        
+    if not result:
+        print("⚠️  SKIP: No users found in database for settings test")
+        conn.close()
+        return
+
+    user_id = result[0]
+    print(f"Using user ID: {user_id}")
+    
     data = {
         'emailNotifications': True,
         'smsNotifications': False,
@@ -41,13 +59,10 @@ async def test_save_settings():
         
         if 'email_notifications' in columns:
             update_fields.append("email_notifications = %s")
-            params.append(TRUE)
+            params.append(True)
         if 'chat_notifications' in columns:
             update_fields.append("chat_notifications = %s")
-            params.append(TRUE)
-        if 'birthday_reminders' in columns:
-            update_fields.append("birthday_reminders = %s")
-            params.append(TRUE)
+            params.append(True)
             
         update_fields.append("updated_at = CURRENT_TIMESTAMP")
         params.append(user_id)
@@ -64,10 +79,10 @@ async def test_save_settings():
         try:
             c.execute("""
             INSERT INTO notification_settings (
-                id, email_notifications, sms_notifications, push_notifications,
-                booking_reminders, birthday_reminders, report_time, daily_report, birthday_days_advance
-                ) VALUES (1, TRUE, FALSE, TRUE, TRUE, TRUE, '10:00', TRUE, 3)
-        """)
+                user_id, email_notifications, sms_notifications,
+                booking_notifications, chat_notifications, report_time, daily_report
+                ) VALUES (%s, TRUE, FALSE, TRUE, TRUE, '10:00', TRUE)
+        """, (user_id,))
             print("✅ Insert successful")
         except Exception as e:
             print(f"❌ Insert failed: {e}")

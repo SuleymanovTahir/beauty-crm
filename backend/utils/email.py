@@ -386,6 +386,11 @@ def send_email_sync(recipients: list, subject: str, message: str, html: str = No
         bool: True если отправлено успешно
     """
     try:
+        # Быстрый выход для тестов (если установлено SKIP_REAL_MAIL=true)
+        if os.getenv('SKIP_REAL_MAIL', '').lower() == 'true':
+            log_info(f"MOCK EMAIL (Skipped sending to {', '.join(recipients)}): {subject}", "email")
+            return True
+
         # SMTP настройки из переменных окружения
         smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
         smtp_port = int(os.getenv('SMTP_PORT', '587'))

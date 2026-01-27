@@ -37,6 +37,33 @@ def create_reminders_table():
     conn.commit()
     conn.close()
 
+def create_booking_reminder_settings_table():
+    """Создать таблицу настроек напоминаний"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    # Резервный вариант, если init_database еще не запущен
+    c.execute('''CREATE TABLE IF NOT EXISTS booking_reminder_settings (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        days_before INTEGER DEFAULT 0,
+        hours_before INTEGER DEFAULT 0,
+        notification_type TEXT DEFAULT 'email',
+        is_enabled BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+    
+    # Добавляем стандартные настройки если их нет
+    c.execute("SELECT COUNT(*) FROM booking_reminder_settings")
+    if c.fetchone()[0] == 0:
+        c.execute("""
+            INSERT INTO booking_reminder_settings (name, days_before, hours_before, notification_type)
+            VALUES (%s, %s, %s, %s)
+        """, ("За 1 день до визита", 1, 0, "email"))
+    
+    conn.commit()
+    conn.close()
+
 @router.get("/reminders")
 async def get_reminders(
     client_id: Optional[str] = Query(None),
@@ -300,26 +327,40 @@ async def get_upcoming_reminders(
         conn.close()
 
 # ============================================================================
-# BOOKING REMINDER SETTINGS
+# BOOKING REMINDER SETTINGS (Stored in salon_settings.custom_settings)
 # ============================================================================
 
-def create_booking_reminder_settings_table():
-    """Создать таблицу настроек напоминаний о записях"""
+def get_reminder_settings_from_salon():
+    """Получить настройки напоминаний из salon_settings"""
     conn = get_db_connection()
     c = conn.cursor()
+    try:
+        c.execute("SELECT custom_settings FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
+        if row and row[0]:
+            return row[0].get('booking_reminders', [])
+        return []
+    finally:
+        conn.close()
 
-    c.execute('''CREATE TABLE IF NOT EXISTS booking_reminder_settings (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL,
-        days_before INTEGER DEFAULT 0,
-        hours_before INTEGER DEFAULT 0,
-        notification_type TEXT DEFAULT 'email',
-        is_enabled INTEGER DEFAULT 1,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    )''')
-
-    conn.commit()
-    conn.close()
+def save_reminder_settings_to_salon(settings):
+    """Сохранить настройки напоминаний в salon_settings"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("SELECT custom_settings FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
+        custom_settings = row[0] if row and row[0] else {}
+        custom_settings['booking_reminders'] = settings
+        
+        c.execute("""
+            UPDATE salon_settings 
+            SET custom_settings = %s, updated_at = CURRENT_TIMESTAMP 
+            WHERE id = 1
+        """, (custom_settings,))
+        conn.commit()
+    finally:
+        conn.close()
 
 @router.get("/booking-reminder-settings")
 async def get_booking_reminder_settings(
@@ -330,39 +371,12 @@ async def get_booking_reminder_settings(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    create_booking_reminder_settings_table()
-
-    conn = get_db_connection()
-    c = conn.cursor()
-
     try:
-        c.execute("""
-            SELECT id, name, days_before, hours_before, notification_type, is_enabled
-            FROM booking_reminder_settings
-            ORDER BY days_before DESC, hours_before DESC
-        """)
-
-        settings = c.fetchall()
-
-        return {
-            "settings": [
-                {
-                    "id": s[0],
-                    "name": s[1],
-                    "days_before": s[2],
-                    "hours_before": s[3],
-                    "notification_type": s[4],
-                    "is_enabled": bool(s[5])
-                } for s in settings
-            ]
-        }
+        settings = get_reminder_settings_from_salon()
+        return {"settings": settings}
     except Exception as e:
         log_error(f"Error getting booking reminder settings: {e}", "reminders")
-        import traceback
-        log_error(f"Traceback: {traceback.format_exc()}", "reminders")
-        raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        conn.close()
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/booking-reminder-settings")
 async def create_booking_reminder_setting(
@@ -373,8 +387,6 @@ async def create_booking_reminder_setting(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-
-    create_booking_reminder_settings_table()
 
     try:
         data = await request.json()
@@ -391,24 +403,28 @@ async def create_booking_reminder_setting(
             return JSONResponse({"error": "At least days_before or hours_before must be > 0"},
                               status_code=400)
 
-        conn = get_db_connection()
-        c = conn.cursor()
+        settings = get_reminder_settings_from_salon()
+        
+        # Generate new ID
+        new_id = max([s.get('id', 0) for s in settings], default=0) + 1
+        
+        new_setting = {
+            "id": new_id,
+            "name": name,
+            "days_before": days_before,
+            "hours_before": hours_before,
+            "notification_type": notification_type,
+            "is_enabled": is_enabled
+        }
+        
+        settings.append(new_setting)
+        save_reminder_settings_to_salon(settings)
 
-        c.execute("""
-            INSERT INTO booking_reminder_settings (name, days_before, hours_before,
-                                                   notification_type, is_enabled)
-            VALUES (%s,%s,%s,%s,%s)
-        """, (name, days_before, hours_before, notification_type, True if is_enabled else False))
-
-        setting_id = c.lastrowid
-        conn.commit()
-        conn.close()
-
-        log_info(f"Booking reminder setting created: ID={setting_id}, name={name}", "reminders")
+        log_info(f"Booking reminder setting created: ID={new_id}, name={name}", "reminders")
 
         return {
             "success": True,
-            "setting_id": setting_id,
+            "setting_id": new_id,
             "message": "Booking reminder setting created successfully"
         }
 
@@ -427,56 +443,32 @@ async def update_booking_reminder_setting(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    create_booking_reminder_settings_table()
-    data = await request.json()
-
     try:
-        conn = get_db_connection()
-        c = conn.cursor()
-
-        # Проверяем существование
-        c.execute("SELECT id FROM booking_reminder_settings WHERE id =%s", (setting_id,))
-        if not c.fetchone():
-            conn.close()
+        data = await request.json()
+        settings = get_reminder_settings_from_salon()
+        
+        # Find setting by ID
+        setting_found = False
+        for setting in settings:
+            if setting.get('id') == setting_id:
+                setting_found = True
+                # Update fields
+                if 'name' in data:
+                    setting['name'] = data['name']
+                if 'days_before' in data:
+                    setting['days_before'] = data['days_before']
+                if 'hours_before' in data:
+                    setting['hours_before'] = data['hours_before']
+                if 'notification_type' in data:
+                    setting['notification_type'] = data['notification_type']
+                if 'is_enabled' in data:
+                    setting['is_enabled'] = data['is_enabled']
+                break
+        
+        if not setting_found:
             return JSONResponse({"error": "Setting not found"}, status_code=404)
-
-        name = data.get("name")
-        days_before = data.get("days_before")
-        hours_before = data.get("hours_before")
-        notification_type = data.get("notification_type")
-        is_enabled = data.get("is_enabled")
-
-        # Строим динамический UPDATE
-        updates = []
-        params = []
-
-        if name is not None:
-            updates.append("name =%s")
-            params.append(name)
-        if days_before is not None:
-            updates.append("days_before =%s")
-            params.append(days_before)
-        if hours_before is not None:
-            updates.append("hours_before =%s")
-            params.append(hours_before)
-        if notification_type is not None:
-            updates.append("notification_type =%s")
-            params.append(notification_type)
-        if is_enabled is not None:
-            updates.append("is_enabled =%s")
-            params.append(True if is_enabled else False)
-
-        if not updates:
-            conn.close()
-            return JSONResponse({"error": "No fields to update"}, status_code=400)
-
-        params.append(setting_id)
-        query = f"UPDATE booking_reminder_settings SET {', '.join(updates)} WHERE id =%s"
-
-        c.execute(query, params)
-        conn.commit()
-        conn.close()
-
+        
+        save_reminder_settings_to_salon(settings)
         log_info(f"Booking reminder setting updated: ID={setting_id}", "reminders")
 
         return {
@@ -498,33 +490,27 @@ async def toggle_booking_reminder_setting(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    create_booking_reminder_settings_table()
-
     try:
-        conn = get_db_connection()
-        c = conn.cursor()
-
-        # Получаем текущее состояние
-        c.execute("SELECT is_enabled FROM booking_reminder_settings WHERE id =%s", (setting_id,))
-        row = c.fetchone()
-
-        if not row:
-            conn.close()
+        settings = get_reminder_settings_from_salon()
+        
+        setting_found = False
+        new_state = False
+        for setting in settings:
+            if setting.get('id') == setting_id:
+                setting_found = True
+                new_state = not setting.get('is_enabled', False)
+                setting['is_enabled'] = new_state
+                break
+        
+        if not setting_found:
             return JSONResponse({"error": "Setting not found"}, status_code=404)
-
-        new_state = False if row[0] else True
-
-        c.execute("UPDATE booking_reminder_settings SET is_enabled =%s WHERE id =%s",
-                 (new_state, setting_id))
-        conn.commit()
-        conn.close()
-
-        log_info(f"Booking reminder setting toggled: ID={setting_id}, enabled={bool(new_state)}",
-                "reminders")
+        
+        save_reminder_settings_to_salon(settings)
+        log_info(f"Booking reminder setting toggled: ID={setting_id}, enabled={new_state}", "reminders")
 
         return {
             "success": True,
-            "is_enabled": bool(new_state),
+            "is_enabled": new_state,
             "message": f"Setting {'enabled' if new_state else 'disabled'}"
         }
 
@@ -542,21 +528,16 @@ async def delete_booking_reminder_setting(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    create_booking_reminder_settings_table()
-
     try:
-        conn = get_db_connection()
-        c = conn.cursor()
-
-        c.execute("DELETE FROM booking_reminder_settings WHERE id =%s", (setting_id,))
-
-        if c.rowcount == 0:
-            conn.close()
+        settings = get_reminder_settings_from_salon()
+        
+        # Filter out the setting with matching ID
+        new_settings = [s for s in settings if s.get('id') != setting_id]
+        
+        if len(new_settings) == len(settings):
             return JSONResponse({"error": "Setting not found"}, status_code=404)
-
-        conn.commit()
-        conn.close()
-
+        
+        save_reminder_settings_to_salon(new_settings)
         log_info(f"Booking reminder setting deleted: ID={setting_id}", "reminders")
 
         return {

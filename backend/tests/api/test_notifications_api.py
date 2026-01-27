@@ -92,10 +92,14 @@ def test_notifications_endpoint():
 
     try:
         from api.notifications import get_notification_settings_api
+        from unittest.mock import patch
         import asyncio
 
         print("\n🔄 Вызов get_notification_settings_api()...")
-        result = asyncio.run(get_notification_settings_api())
+        
+        # Mock require_auth to return a test user
+        with patch('utils.utils.require_auth', return_value={"id": 1, "username": "test_admin", "role": "admin"}):
+            result = asyncio.run(get_notification_settings_api())
 
         print("\n✅ УСПЕШНО!")
         print(f"Результат: {result}")
@@ -114,15 +118,17 @@ def test_booking_reminder_endpoint():
 
     try:
         from api.reminders import get_booking_reminder_settings
-        from unittest.mock import Mock
+        from unittest.mock import patch
         import asyncio
 
-        # Создаем mock session_token (для обхода авторизации в тесте)
         print("\n🔄 Вызов get_booking_reminder_settings()...")
-
-        # Здесь нужна авторизация, поэтому просто проверим импорт
-        print("✅ Функция импортирована успешно")
-        print("⚠️  Требуется авторизация для полного теста")
+        
+        # Mock require_auth to return a test user
+        with patch('utils.utils.require_auth', return_value={"id": 1, "username": "test_admin", "role": "admin"}):
+            result = asyncio.run(get_booking_reminder_settings())
+            
+        print("\n✅ УСПЕШНО!")
+        print(f"Результат: {result}")
         return True
 
     except Exception as e:

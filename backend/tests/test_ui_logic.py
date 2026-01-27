@@ -14,20 +14,27 @@ def test_ui_logic():
     print("🧪 TESTING UI LOGIC (BACKEND SIDE)")
     print("="*60)
 
-    # 1. Get Gulya's ID
+    # 1. Get Employee ID (Any employee)
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT id FROM users WHERE full_name LIKE '%Gulya%'")
-    gulya_id = c.fetchone()[0]
+    c.execute("SELECT id FROM users WHERE is_active=TRUE AND role IN ('employee', 'master') LIMIT 1")
+    row = c.fetchone()
+    if not row:
+        print("❌ No employee found!")
+        return 
+    gulya_id = row[0]
     conn.close()
-    print(f"   Gulya ID: {gulya_id}")
+    print(f"   Employee ID: {gulya_id}")
 
     # 2. Simulate "Toggle Service" (Add 'Manicure')
     print("\n1. Simulating 'Toggle Service' (Add 'Manicure')...")
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT id, price, duration FROM services WHERE name = 'Manicure'")
+    c.execute("SELECT id, price, duration FROM services WHERE name LIKE '%Manicure%' LIMIT 1")
     service = c.fetchone()
+    if not service:
+        print("❌ Service 'Manicure' not found!")
+        return
     service_id = service[0]
     default_price = service[1]
     default_duration = service[2]
@@ -91,7 +98,7 @@ def test_ui_logic():
     conn.close()
     
     print(f"   New Values: Price={row[0]}, Duration={row[1]}, Online={row[2]}")
-    if row[0] == 123.0 and row[1] == 90 and row[2] == 0:
+    if float(row[0]) == 123.0 and str(row[1]) == "90" and bool(row[2]) == False:
         print("   ✅ Values match update")
     else:
         print("   ❌ Values DO NOT match")

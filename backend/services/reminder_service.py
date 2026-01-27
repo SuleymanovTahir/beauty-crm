@@ -27,10 +27,14 @@ async def check_and_send_reminders():
         c.execute("""
             SELECT b.id, b.instagram_id, b.service_name, b.datetime, b.phone
             FROM bookings b
-            LEFT JOIN reminder_logs r ON b.id = r.booking_id AND r.reminder_type = '24h'
+            LEFT JOIN unified_communication_log l ON 
+                l.client_id = b.instagram_id AND 
+                l.medium = 'instagram' AND
+                l.title LIKE '%%24h%%' AND
+                l.booking_id = b.id -- Check linked booking
             WHERE b.datetime BETWEEN %s AND %s
             AND b.status = 'confirmed'
-            AND r.id IS NULL
+            AND l.id IS NULL
         """, (tomorrow_start.isoformat(), tomorrow_end.isoformat()))
         
         bookings_24h = c.fetchall()
@@ -45,10 +49,14 @@ async def check_and_send_reminders():
         c.execute("""
             SELECT b.id, b.instagram_id, b.service_name, b.datetime, b.phone
             FROM bookings b
-            LEFT JOIN reminder_logs r ON b.id = r.booking_id AND r.reminder_type = '2h'
+            LEFT JOIN unified_communication_log l ON 
+                l.client_id = b.instagram_id AND 
+                l.medium = 'instagram' AND
+                l.title LIKE '%%2h%%' AND
+                l.booking_id = b.id
             WHERE b.datetime BETWEEN %s AND %s
             AND b.status = 'confirmed'
-            AND r.id IS NULL
+            AND l.id IS NULL
         """, (two_hours_start.isoformat(), two_hours_end.isoformat()))
         
         bookings_2h = c.fetchall()
@@ -95,9 +103,16 @@ async def send_reminder(booking, reminder_type):
         conn = get_db_connection()
         c = conn.cursor()
         c.execute("""
-            INSERT INTO reminder_logs (booking_id, client_id, reminder_type, sent_at, status)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (booking_id, instagram_id, reminder_type, datetime.now().isoformat(), status))
+            INSERT INTO unified_communication_log (client_id, booking_id, medium, title, content, status, created_at)
+            VALUES (%s, %s, 'instagram', %s, %s, %s, %s)
+        """, (
+            instagram_id, 
+            booking_id, 
+            f"Reminder {reminder_type}", 
+            message, 
+            status, 
+            datetime.now().isoformat()
+        ))
         conn.commit()
         conn.close()
         
@@ -108,9 +123,16 @@ async def send_reminder(booking, reminder_type):
             conn = get_db_connection()
             c = conn.cursor()
             c.execute("""
-                INSERT INTO reminder_logs (booking_id, client_id, reminder_type, sent_at, status)
-                VALUES (%s, %s, %s, %s, 'error')
-            """, (booking_id, instagram_id, reminder_type, datetime.now().isoformat()))
+                INSERT INTO unified_communication_log (client_id, booking_id, medium, title, content, status, error_message, created_at)
+                VALUES (%s, %s, 'instagram', %s, %s, 'failed', %s, %s)
+            """, (
+                instagram_id, 
+                booking_id, 
+                f"Reminder {reminder_type}", 
+                "Failed to send",
+                str(e),
+                datetime.now().isoformat()
+            ))
             conn.commit()
             conn.close()
         except:

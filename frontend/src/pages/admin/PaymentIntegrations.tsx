@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { CreditCard, Settings, CheckCircle, XCircle, ExternalLink, Link as LinkIcon, Copy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
+import { useSalonSettings } from '../../hooks/useSalonSettings';
 import '../../styles/crm-pages.css';
 
 import { toast } from 'sonner';
@@ -241,8 +242,9 @@ const PaymentIntegrations = () => {
 
 const CreatePaymentDialog = ({ provider, providerInfo, onClose }: any) => {
     const { t } = useTranslation('admin/integrations');
+    const { currency: salonCurrency } = useSalonSettings();
     const [amount, setAmount] = useState('');
-    const [currency, setCurrency] = useState('AED');
+    const [currency, setCurrency] = useState(salonCurrency || 'AED');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
     const [createdLink, setCreatedLink] = useState<string | null>(null);

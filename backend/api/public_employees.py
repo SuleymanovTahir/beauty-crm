@@ -234,19 +234,28 @@ async def get_salon_info(
     
     - **language**: Код языка
     """
+    # Sanitize language
+    valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
+    if language not in valid_languages:
+        language = 'ru'
+
+    # Try cache first
+    cache_key = f"public:salon_info:{language}"
+    try:
+        if cache:
+            cached = cache.get(cache_key)
+            if cached:
+                return cached
+    except:
+        pass
+
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        # Sanitize language
-        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
-        if language not in valid_languages:
-            language = 'ru'
-
         # Определяем поля для перевода
         name_field = 'name_ar' if language == 'ar' else 'name'
         address_field = 'address_ar' if language == 'ar' else ('address_ru' if language == 'ru' else 'address')
-        hours_field = f'hours_{language}' if language in ['ru', 'ar'] else 'hours'
         location_field = f'main_location_{language}' if language != 'ru' else 'main_location'
         
         query = f"""
@@ -255,9 +264,10 @@ async def get_salon_info(
                 COALESCE({address_field}, address) as address,
                 COALESCE({location_field}, main_location) as main_location,
                 google_maps,
-                COALESCE({hours_field}, hours) as hours,
                 hours_weekdays,
                 hours_weekends,
+                hours_ru,
+                hours_ar,
                 phone,
                 email,
                 instagram,
@@ -279,29 +289,32 @@ async def get_salon_info(
             columns = [desc[0] for desc in cursor.description]
             row_dict = dict(zip(columns, row))
 
-            # Get hours with proper language fallback
-            hours = row_dict["hours"]
+            # Handle hours logic
             hours_weekdays = row_dict["hours_weekdays"] or "10:30 - 21:00"
+            hours_weekends = row_dict["hours_weekends"] or hours_weekdays
+            
+            # Select appropriate hours base for display
+            if language == 'ru' and row_dict.get("hours_ru"):
+                hours = row_dict["hours_ru"]
+            elif language == 'ar' and row_dict.get("hours_ar"):
+                hours = row_dict["hours_ar"]
+            else:
+                # Build default display
+                if hours_weekdays == hours_weekends:
+                    label = "Daily" if language != 'ru' else "Ежедневно"
+                    hours = f"{label} {hours_weekdays}"
+                else:
+                    hours = f"Weekdays: {hours_weekdays}, Weekends: {hours_weekends}"
 
-            # If hours contains "Daily" and language is not English, translate it
-            if hours and language == 'ru':
-                if hours.startswith('Daily'):
-                    hours = hours.replace('Daily', 'Ежедневно')
-                elif not hours.startswith('Ежедневно') and hours_weekdays:
-                    hours = f"Ежедневно {hours_weekdays}"
-            elif hours and language == 'ar':
-                if hours.startswith('Daily'):
-                    hours = hours.replace('Daily', 'يوميًا')
-
-            return {
+            result = {
                 "name": row_dict["name"],
                 "address": row_dict["address"],
-                "main_location": row_dict["main_location"],
-                "google_maps_embed_url": row_dict["google_maps"],  # Map to frontend expected key
+                "main_location": row_dict.get("main_location") or "",
+                "google_maps_embed_url": row_dict["google_maps"],
                 "google_maps": row_dict["google_maps"],
                 "hours": hours,
-                "hours_weekdays": row_dict["hours_weekdays"],
-                "hours_weekends": row_dict["hours_weekends"],
+                "hours_weekdays": hours_weekdays,
+                "hours_weekends": hours_weekends,
                 "phone": row_dict["phone"],
                 "email": row_dict["email"],
                 "instagram": row_dict["instagram"],
@@ -313,6 +326,15 @@ async def get_salon_info(
                 "currency": row_dict["currency"],
                 "logo_url": row_dict["logo_url"]
             }
+            
+            # Cache the result
+            try:
+                if cache:
+                    cache.set(cache_key, result, 300) # 5 min
+            except:
+                pass
+                
+            return result
         else:
             return {}
         

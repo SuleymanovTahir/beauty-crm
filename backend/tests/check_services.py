@@ -1,11 +1,12 @@
 # Создай файл backend/check_services.py
 
-from db.connection import get_db_connection
 import sys
 import os
 
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
+from db.connection import get_db_connection
 
 from core.config import DATABASE_NAME
 

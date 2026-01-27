@@ -7,12 +7,11 @@ from pydantic import BaseModel
 import hashlib
 import secrets
 from datetime import datetime, timedelta
-from typing import Optional, List
+from typing import Optional
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from services.features import FeatureService
-import traceback
 from core.config import BASE_URL
 
 # No prefix here because it's added in main.py
@@ -327,12 +326,11 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
         """, (client_id,))
         unique_services = c.fetchone()[0] or 0
 
-        # Default achievement templates
         default_achievements = [
             {
                 "type": "first_visit",
                 "title": "Первый визит",
-                "icon": "🎉",
+                "icon": "party-popper",
                 "points": 10,
                 "progress": min(total_visits, 1),
                 "maxProgress": 1,
@@ -341,7 +339,7 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
             {
                 "type": "regular_client",
                 "title": "Постоянный клиент",
-                "icon": "⭐",
+                "icon": "star",
                 "points": 50,
                 "progress": min(total_visits, 5),
                 "maxProgress": 5,
@@ -350,7 +348,7 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
             {
                 "type": "loyal_customer",
                 "title": "Верный поклонник",
-                "icon": "💎",
+                "icon": "gem",
                 "points": 100,
                 "progress": min(total_visits, 10),
                 "maxProgress": 10,
@@ -359,7 +357,7 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
             {
                 "type": "service_explorer",
                 "title": "Исследователь услуг",
-                "icon": "🔍",
+                "icon": "search",
                 "points": 75,
                 "progress": min(unique_services, 3),
                 "maxProgress": 3,
@@ -388,6 +386,16 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                         """, (client_id, default["type"], default["title"], default["icon"], default["points"], 
                               unlocked_at, default["progress"], default["maxProgress"], default["description"]))
+                        
+                        # Award points
+                        from services.loyalty import LoyaltyService
+                        ls = LoyaltyService()
+                        ls.earn_points(
+                            client_id=client_id,
+                            points=default["points"],
+                            reason=f"Достижение: {default['title']}"
+                        )
+                        
                         conn.commit()
                         
                         achievements.append({
@@ -577,27 +585,29 @@ async def get_client_notifications(session_token: Optional[str] = Cookie(None)):
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Get client notifications
         client_id = _get_client_id(user, c)
 
         c.execute("""
-            SELECT id, title, message, created_at, is_read, action_url
-            FROM notifications
-            WHERE client_id = %s
+            SELECT id, title, content, created_at, is_read, action_url, trigger_type
+            FROM unified_communication_log
+            WHERE client_id = %s AND medium = 'in_app'
             ORDER BY created_at DESC
             LIMIT 50
         """, (client_id,))
 
         notifications = []
         for row in c.fetchall():
-            msg = row[2].lower()
-            notif_type = "notification"
-            if any(x in msg for x in ["запись", "booking", "визит", "visit"]):
-                notif_type = "appointment"
-            elif any(x in msg for x in ["акция", "промо", "promotion", "скидка", "discount", "sale"]):
-                notif_type = "promotion"
-            elif any(x in msg for x in ["достижение", "achievement", "награда", "bonus", "reward"]):
-                notif_type = "achievement"
+            msg = row[2].lower() if row[2] else ""
+            notif_type = row[6] or "notification"
+            
+            # Legacy fallback for icons
+            if notif_type == "notification":
+                if any(x in msg for x in ["запись", "booking", "визит", "visit"]):
+                    notif_type = "appointment"
+                elif any(x in msg for x in ["акция", "промо", "promotion", "скидка", "discount", "sale"]):
+                    notif_type = "promotion"
+                elif any(x in msg for x in ["достижение", "achievement", "награда", "bonus", "reward"]):
+                    notif_type = "achievement"
 
             notifications.append({
                 "id": row[0],
@@ -606,7 +616,7 @@ async def get_client_notifications(session_token: Optional[str] = Cookie(None)):
                 "created_at": row[3],
                 "is_read": row[4],
                 "type": notif_type,
-                "action_url": row[5] if len(row) > 5 else None
+                "action_url": row[5]
             })
 
         return {"success": True, "notifications": notifications}
@@ -614,8 +624,8 @@ async def get_client_notifications(session_token: Optional[str] = Cookie(None)):
         log_error(f"Error loading notifications: {e}", "client_auth")
         return {"success": True, "notifications": []}
     finally:
-        if 'conn' in locals():
-            conn.close()
+        if 'conn' in locals(): conn.close()
+
 
 @router.post("/notifications/{notification_id}/read")
 async def mark_notification_read(notification_id: int, session_token: Optional[str] = Cookie(None)):
@@ -625,16 +635,12 @@ async def mark_notification_read(notification_id: int, session_token: Optional[s
     try:
         conn = get_db_connection()
         c = conn.cursor()
-
         client_id = _get_client_id(user, c)
-
-        # Verify notification belongs to user and mark as read
         c.execute("""
-            UPDATE notifications
+            UPDATE unified_communication_log
             SET is_read = TRUE
-            WHERE id = %s AND client_id = %s
+            WHERE id = %s AND client_id = %s AND medium = 'in_app'
         """, (notification_id, client_id))
-
         conn.commit()
         return {"success": True}
     except Exception as e:
@@ -642,6 +648,7 @@ async def mark_notification_read(notification_id: int, session_token: Optional[s
         return {"success": False, "error": str(e)}
     finally:
         conn.close()
+
 
 @router.post("/notifications/mark-all-read")
 async def mark_all_notifications_read(session_token: Optional[str] = Cookie(None)):
@@ -654,17 +661,19 @@ async def mark_all_notifications_read(session_token: Optional[str] = Cookie(None
         client_id = _get_client_id(user, c)
 
         c.execute("""
-            UPDATE notifications
+            UPDATE unified_communication_log
             SET is_read = TRUE
-            WHERE client_id = %s AND is_read = FALSE
+            WHERE client_id = %s AND is_read = FALSE AND medium = 'in_app'
         """, (client_id,))
 
         conn.commit()
-        conn.close()
         return {"success": True}
     except Exception as e:
         log_error(f"Error marking all notifications as read: {e}", "client_auth")
         return {"success": False, "error": str(e)}
+    finally:
+        if 'conn' in locals():
+            conn.close()
 
 @router.get("/my-bookings")
 async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
