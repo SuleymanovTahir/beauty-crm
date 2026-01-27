@@ -427,16 +427,12 @@ class MasterScheduleService:
             from db.settings import get_salon_settings
             settings = get_salon_settings()
             
-            lunch_start = settings.get('lunch_start', DEFAULT_LUNCH_START)  # ✅ Используем константу
-            lunch_end = settings.get('lunch_end', DEFAULT_LUNCH_END)  # ✅ Используем константу
+            lunch_start = settings.get('lunch_start')
+            lunch_end = settings.get('lunch_end')
             
             # Проверяем отпуска (на весь день или часть)
             day_start = f"{date} 00:00:00"
             day_end = f"{date} 23:59:59"
-            
-            # Добавляем обед как "недоступное время" на этот день
-            lunch_start_dt = f"{date} {lunch_start}:00"
-            lunch_end_dt = f"{date} {lunch_end}:00"
             
             c.execute("""
                 SELECT start_date, end_date
@@ -451,8 +447,16 @@ class MasterScheduleService:
 
             unavailability = c.fetchall()
             
-            # Add lunch to unavailable intervals
-            unavailability.append((lunch_start_dt, lunch_end_dt))
+            # Добавляем обед только если он корректно заполнен (не пустой и не прочерк)
+            if lunch_start and lunch_end and lunch_start not in ['-', ''] and lunch_end not in ['-', '']:
+                try:
+                    # Простейшая валидация формата (HH:MM)
+                    if ':' in lunch_start and ':' in lunch_end:
+                        lunch_start_dt = f"{date} {lunch_start[:5]}:00"
+                        lunch_end_dt = f"{date} {lunch_end[:5]}:00"
+                        unavailability.append((lunch_start_dt, lunch_end_dt))
+                except Exception as e:
+                    log_warning(f"⚠️ Invalid lunch format: {lunch_start}-{lunch_end}: {e}", "schedule")
             
             # Если есть перекрытие на весь рабочий день - возвращаем пусто
             # Для простоты, если есть любое отсутствие в этот день, нужно проверять слоты детально

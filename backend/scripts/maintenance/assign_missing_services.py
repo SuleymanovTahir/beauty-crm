@@ -13,15 +13,15 @@ from utils.logger import log_info, log_error
 
 # Расширенный маппинг категорий на ключевые слова
 CATEGORY_KEYWORD_MAP = {
-    'Hair': ['hair', 'stylist', 'blow dry'],
-    'Nails': ['nail'],
-    'Massage': ['massage', 'masseur', 'body'],
-    'Waxing': ['waxing', 'sugaring', 'esthetician', 'bikini'],
-    'Facial': ['facial', 'skin', 'esthetician', 'massage'], # Jennifer does massage & facials
-    'Brows': ['brow', 'esthetician', 'permanent', 'pmu', 'hair'], # Mestan does brows
-    'Lashes': ['lash', 'esthetician', 'massage'], # Jennifer does lashes
-    'Permanent Makeup': ['permanent', 'pmu', 'hair', 'stylist'], # Mestan does PMU
-    'Promo': [], # Special handling
+    'Hair': ['hair', 'stylist', 'blow dry', 'owner'],
+    'Nails': ['nail', 'manicure', 'pedicure'],
+    'Massage': ['massage', 'body', 'facial'],
+    'Waxing': ['waxing', 'sugaring', 'bikini', 'esthetician'],
+    'Facial': ['facial', 'skin', 'massage', 'esthetician'],
+    'Brows': ['brow', 'permanent', 'pmu', 'esthetician'],
+    'Lashes': ['lash', 'esthetician'],
+    'Permanent Makeup': ['permanent', 'pmu', 'esthetician'],
+    'Promo': ['hair', 'nail', 'facial', 'waxing'], # Broad for promo
 }
 
 def assign_missing_services():
@@ -39,10 +39,11 @@ def assign_missing_services():
                 SELECT DISTINCT us.service_id
                 FROM user_services us
                 JOIN users u ON u.id = us.user_id
-                WHERE u.is_active = TRUE 
-                AND u.is_service_provider = TRUE
+                WHERE u.is_active = TRUE AND u.is_service_provider = TRUE
                 AND u.role NOT IN ('director', 'admin', 'manager')
+                AND (us.is_online_booking_enabled = TRUE OR us.is_online_booking_enabled IS NULL)
             )
+            AND s.service_key NOT IN ('underarms', 'hair_wash')
         """)
         
         missing_services = c.fetchall()
@@ -88,24 +89,22 @@ def assign_missing_services():
                     target_masters.append((m_id, m_name))
 
             if not target_masters:
-                # Если всё еще нет мастеров, попробуем назначить "универсалов" (Estheticians) 
-                # или тех, кто делает массаж (часто совмещают с Facial/Lashes)
-                if s_cat in ['Facial', 'Lashes', 'Brows', 'Permanent Makeup']:
-                    # JENNIFER и GULYA - основные кандидаты на эти услуги (по CSV)
-                    for m_id, m_name, m_pos, m_role in masters:
-                        if m_name.upper() in ['JENNIFER', 'GULYA', 'MESTAN']:
-                            target_masters.append((m_id, m_name))
+                # Если всё еще нет мастеров, используем универсальных мастеров
+                for m_id, m_name, m_pos, m_role in masters:
+                    m_name_low = m_name.lower()
+                    if any(n.lower() in m_name_low for n in ['Jennifer', 'Gulya', 'Mestan']):
+                        target_masters.append((m_id, m_name))
 
             if not target_masters:
-                print(f"      ⚠️  Не удалось подобрать мастера (не 'на угад')")
+                print(f"      ⚠️  Не удалось автоматически подобрать мастера для этой услуги")
                 continue
 
             for m_id, m_name in target_masters:
                 try:
                     c.execute("""
-                        INSERT INTO user_services (user_id, service_id)
-                        VALUES (%s, %s)
-                        ON CONFLICT DO NOTHING
+                        INSERT INTO user_services (user_id, service_id, is_online_booking_enabled)
+                        VALUES (%s, %s, TRUE)
+                        ON CONFLICT (user_id, service_id) DO UPDATE SET is_online_booking_enabled = TRUE
                     """, (m_id, s_id))
                     if c.rowcount > 0:
                         added_count += 1

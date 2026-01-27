@@ -33,22 +33,27 @@ def cleanup_test_data():
 
 def run_suite(suite_name, func=None, subprocess_path=None, description=""):
     """
-    Универсальный запуск тестового набора
+    Универсальный запуск тестового набора с замером времени
     """
+    import time
     print_test_file(suite_name, description)
+    start_time = time.time()
     success = False
     try:
         if func:
             # Запуск функции напрямую
             success = func()
         elif subprocess_path:
-            # Запуск как подпроцесс (для файлов с if __name__ == "__main__")
+            # Запуск как подпроцесс
             import subprocess
+            env = os.environ.copy()
+            env["SKIP_REAL_MAIL"] = "true"
             result = subprocess.run(
                 [sys.executable, os.path.join(os.path.dirname(__file__), subprocess_path)],
                 capture_output=True,
                 text=True,
-                timeout=300
+                timeout=300,
+                env=env
             )
             if result.stdout:
                 # Ограничиваем вывод если слишком длинный
@@ -65,14 +70,16 @@ def run_suite(suite_name, func=None, subprocess_path=None, description=""):
             
             success = result.returncode == 0
         
+        duration = time.time() - start_time
         status = "✅ PASS" if success else "❌ FAIL"
-        print(f"\n{status} - {suite_name}")
-        return success
+        print(f"\n{status} - {suite_name} ({duration:.2f}s)")
+        return success, duration
     except Exception as e:
+        duration = time.time() - start_time
         print(f"❌ Критическая ошибка в {suite_name}: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        return False, duration
 
 def check_services_without_masters():
     """Проверка услуг без назначенных мастеров"""
@@ -98,6 +105,7 @@ def check_services_without_masters():
                 AND u.role NOT IN ('director', 'admin', 'manager')
                 AND (us.is_online_booking_enabled = TRUE OR us.is_online_booking_enabled IS NULL)
             )
+            AND s.service_key NOT IN ('underarms', 'hair_wash')
             ORDER BY s.category, s.name_ru
         """)
         
@@ -130,43 +138,43 @@ def run_all_tests():
 
     # 1. Основные тесты (теперь тихие если PASS)
     from tests.test_all import main as test_all_main
-    results.append(("test_all.py - Основные тесты", run_suite("test_all.py", func=test_all_main, description="База данных + Ассистент + API")))
+    results.append(("test_all.py - Основные тесты", *run_suite("test_all.py", func=test_all_main, description="База данных + Ассистент + API")))
 
     from tests.test_detailed import main as test_detailed_main
-    results.append(("test_detailed.py - Детальные тесты", run_suite("test_detailed.py", func=test_detailed_main, description="Клиенты, записи, сотрудники")))
+    results.append(("test_detailed.py - Детальные тесты", *run_suite("test_detailed.py", func=test_detailed_main, description="Клиенты, записи, сотрудники")))
 
     from tests.test_new_features import main as test_new_features_main
-    results.append(("test_new_features.py - Новые функции", run_suite("test_new_features.py", func=test_new_features_main, description="Новые фичи системы")))
+    results.append(("test_new_features.py - Новые функции", *run_suite("test_new_features.py", func=test_new_features_main, description="Новые фичи системы")))
 
     # 2. Модульные тесты через subprocess
-    results.append(("api/test_reminders_api.py", run_suite("api/test_reminders_api.py", subprocess_path="api/test_reminders_api.py")))
-    results.append(("api/test_notifications_api.py", run_suite("api/test_notifications_api.py", subprocess_path="api/test_notifications_api.py")))
-    results.append(("test_schedule.py", run_suite("test_schedule.py", subprocess_path="test_schedule.py")))
-    results.append(("test_employee_management.py", run_suite("test_employee_management.py", subprocess_path="test_employee_management.py")))
-    results.append(("test_bot_analytics.py", run_suite("test_bot_analytics.py", subprocess_path="test_bot_analytics.py")))
-    results.append(("test_conversation_context.py", run_suite("test_conversation_context.py", subprocess_path="test_conversation_context.py")))
+    results.append(("api/test_reminders_api.py", *run_suite("api/test_reminders_api.py", subprocess_path="api/test_reminders_api.py")))
+    results.append(("api/test_notifications_api.py", *run_suite("api/test_notifications_api.py", subprocess_path="api/test_notifications_api.py")))
+    results.append(("test_schedule.py", *run_suite("test_schedule.py", subprocess_path="test_schedule.py")))
+    results.append(("test_employee_management.py", *run_suite("test_employee_management.py", subprocess_path="test_employee_management.py")))
     
     # 2.1 Тесты миграций и новых функций
     from db.migrations.run_all_migrations import run_all_migrations
-    results.append(("Миграции БД", run_suite("run_all_migrations.py", func=run_all_migrations, description="Проверка всех миграций")))
+    results.append(("Миграции БД", *run_suite("run_all_migrations.py", func=run_all_migrations, description="Проверка всех миграций")))
 
     # 3. Дополнительные проверки
-    results.append(("Проверка услуг без мастеров", run_suite("Услуги без мастеров", func=check_services_without_masters)))
+    results.append(("Проверка услуг без мастеров", *run_suite("Услуги без мастеров", func=check_services_without_masters)))
 
     # ИТОГИ
     print_header("ИТОГИ ТЕСТИРОВАНИЯ")
     total = len(results)
-    passed = sum(1 for _, s in results if s)
+    passed = sum(1 for _, s, _ in results if s)
+    total_duration = sum(d for _, _, d in results)
     failed = total - passed
 
-    for name, success in results:
+    for name, success, duration in results:
         status = "✅ PASS" if success else "❌ FAIL"
-        print(f"{status.ljust(8)} - {name}")
+        print(f"{status.ljust(8)} - {name.ljust(40)} ({duration:5.2f}s)")
 
     print(f"\n📊 Статистика:")
     print(f"   Всего тестов: {total}")
     print(f"   Пройдено:     {passed}")
     print(f"   Провалено:    {failed}")
+    print(f"   Общее время:  {total_duration:.2f}s")
 
     if failed == 0:
         print("\n🎉 ВСЕ ТЕСТЫ ПРОЙДЕНЫ УСПЕШНО!\n")

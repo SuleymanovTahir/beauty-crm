@@ -12,7 +12,7 @@ from utils.logger import log_info, log_error
 from utils.cache import cache
 import csv
 import io
-from db.migrations.consolidated.schema_cookies import log_cookie_consent, create_cookie_consents_table, check_cookie_consent
+from db.cookies import log_cookie_consent, create_cookie_consents_table, check_cookie_consent
 import time
 
 router = APIRouter(tags=["Analytics"])

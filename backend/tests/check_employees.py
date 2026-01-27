@@ -2,12 +2,13 @@
 """
 Проверка существующих сотрудников в БД
 """
-from db.connection import get_db_connection
 import sys
 import os
 
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
+from db.connection import get_db_connection
 
 from core.config import DATABASE_NAME as DB_PATH
 
@@ -20,30 +21,15 @@ def check_employees():
     print("👥 ПРОВЕРКА СУЩЕСТВУЮЩИХ СОТРУДНИКОВ")
     print("=" * 80)
 
-    # Проверяем таблицу employees
-    print("\n📋 Таблица EMPLOYEES:")
+    # Проверяем таблицу users (employees table is deprecated)
+    print("\n📋 Таблица USERS (включая сотрудников):")
     print("-" * 80)
-    c.execute("""
-        SELECT id, full_name, position, email, is_active
-        FROM employees
-        ORDER BY id
-    """)
-
-    employees = c.fetchall()
-    if employees:
-        print(f"{'ID':<5} {'Имя':<30} {'Должность':<25} {'Email':<25} {'Активен'}")
-        print("-" * 80)
-        for emp in employees:
-            emp_id, name, position, email, is_active = emp
-            print(f"{emp_id:<5} {name:<30} {position or 'НЕТ':<25} {email or 'НЕТ':<25} {'Да' if is_active else 'Нет'}")
-    else:
-        print("❌ Нет сотрудников в таблице employees")
 
     # Проверяем таблицу users
     print("\n\n📋 Таблица USERS:")
     print("-" * 80)
     c.execute("""
-        SELECT id, username, full_name, email, role, position, assigned_employee_id, email_verified, is_active
+        SELECT id, username, full_name, email, role, position, employee_id, email_verified, is_active
         FROM users
         ORDER BY id
     """)
@@ -61,7 +47,7 @@ def check_employees():
     print("\n" + "=" * 80)
 
     conn.close()
-    return employees, users
+    return None, users
 
 if __name__ == "__main__":
     check_employees()

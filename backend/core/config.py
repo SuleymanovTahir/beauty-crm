@@ -105,8 +105,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 CSS_VERSION = datetime.now().strftime('%Y%m%d%H%M%S')
 
 # ===== ТОКЕНЫ И КЛЮЧИ (из .env) =====
-SALON_LAT = 25.07398834046777
-SALON_LON = 55.13161571633984
+SALON_LAT = float(os.getenv("SALON_LAT", "25.07398834046777"))
+SALON_LON = float(os.getenv("SALON_LON", "55.13161571633984"))
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "taha")
 PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -371,19 +371,19 @@ def can_manage_role(manager_role: str, target_role: str) -> bool:
 # Единый источник истины для всех дефолтных значений настроек салона
 
 # === РАБОЧИЕ ЧАСЫ САЛОНА ===
-DEFAULT_HOURS_WEEKDAYS = "10:30 - 21:00"
-DEFAULT_HOURS_WEEKENDS = "10:30 - 21:00"
-DEFAULT_HOURS_START = "10:30"
-DEFAULT_HOURS_END = "21:00"
-DEFAULT_HOURS_START_HOUR = 10
-DEFAULT_HOURS_END_HOUR = 21
+DEFAULT_HOURS_WEEKDAYS = os.getenv("DEFAULT_HOURS_WEEKDAYS", "10:30 - 21:00")
+DEFAULT_HOURS_WEEKENDS = os.getenv("DEFAULT_HOURS_WEEKENDS", "10:30 - 21:00")
+DEFAULT_HOURS_START = os.getenv("DEFAULT_HOURS_START", "10:30")
+DEFAULT_HOURS_END = os.getenv("DEFAULT_HOURS_END", "21:00")
+DEFAULT_HOURS_START_HOUR = int(os.getenv("DEFAULT_HOURS_START_HOUR", "10"))
+DEFAULT_HOURS_END_HOUR = int(os.getenv("DEFAULT_HOURS_END_HOUR", "21"))
 
 # === ОБЕДЕННОЕ ВРЕМЯ ===
-DEFAULT_LUNCH_START = "13:00"
-DEFAULT_LUNCH_END = "14:00"
+DEFAULT_LUNCH_START = os.getenv("DEFAULT_LUNCH_START", "13:00")
+DEFAULT_LUNCH_END = os.getenv("DEFAULT_LUNCH_END", "14:00")
 
 # === ВРЕМЯ ОТЧЕТОВ ===
-DEFAULT_REPORT_TIME = "09:00"
+DEFAULT_REPORT_TIME = os.getenv("DEFAULT_REPORT_TIME", "09:00")
 
 # === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
 def get_default_hours_dict():

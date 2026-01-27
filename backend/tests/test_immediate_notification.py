@@ -46,6 +46,12 @@ def create_immediate_test_booking(email: str = None, hours_ahead: float = 0.05):
             INSERT INTO clients
             (instagram_id, username, name, phone, email, status, first_contact, last_contact)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (instagram_id) DO UPDATE SET
+            username = EXCLUDED.username,
+            name = EXCLUDED.name,
+            phone = EXCLUDED.phone,
+            email = EXCLUDED.email,
+            last_contact = EXCLUDED.last_contact
         """, (
             'test_immediate_notification',
             '@test_notification',
@@ -67,12 +73,10 @@ def create_immediate_test_booking(email: str = None, hours_ahead: float = 0.05):
         print(f"2️⃣ Создание тестовой записи...")
         c.execute("""
             INSERT INTO bookings
-            (datetime, name, phone, service_name, master, status, instagram_id, notes, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            (datetime, service_name, master, status, instagram_id, notes, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (
             booking_time.isoformat(),
-            'Test Notification Client',
-            test_phone,
             'Тестовая услуга (напоминание)',
             'Тестовый мастер',
             'pending',

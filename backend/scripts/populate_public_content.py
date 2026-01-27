@@ -1,453 +1,221 @@
 """
 Скрипт для заполнения базы данных публичным контентом с автоматическим переводом
+Обновлено: Исправлены пути к изображениям и добавлены переводы имен
 """
 import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import json
+import asyncio
+
+# Fix path
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
 
 from db.connection import get_db_connection
-from core.config import DATABASE_NAME
 from services.translation_service import translate_to_all_languages
 from utils.logger import log_info, log_error
 
-# Расширенные отзывы
+# 1. Расширенные отзывы (Диверсифицированные имена)
 REVIEWS = [
     {
-        "author_name": "Анна Петрова",
+        "author_name": "Sarah Johnson",
         "rating": 5,
         "text_ru": "Потрясающий салон! Мастера настоящие профессионалы. Маникюр держится больше 3 недель, а результат превосходит все ожидания. Обязательно вернусь!",
         "display_order": 10
     },
     {
-        "author_name": "Мария Соколова",
+        "author_name": "Fatima Al-Sayed",
         "rating": 5,
         "text_ru": "Делала окрашивание волос - результат просто шикарный! Цвет получился именно такой, как я хотела. Спасибо за профессионализм!",
         "display_order": 9
     },
     {
-        "author_name": "Елена Волкова",
+        "author_name": "Elena Petrova",
         "rating": 5,
         "text_ru": "Лучший салон в городе! Атмосфера уютная, мастера внимательные. Особенно понравился макияж на свадьбу - держался весь день и выглядел безупречно.",
         "display_order": 8
     },
     {
-        "author_name": "Ольга Иванова",
+        "author_name": "Linda Moore",
         "rating": 5,
         "text_ru": "Хожу в этот салон уже год. Всегда довольна результатом! Цены адекватные, качество на высоте. Рекомендую всем подругам!",
         "display_order": 7
     },
     {
-        "author_name": "Наталья Смирнова",
+        "author_name": "Ayesha Khan",
         "rating": 5,
         "text_ru": "Прекрасный сервис! Записалась онлайн за пару минут, пришла вовремя, без ожидания. Мастер сделала все быстро и качественно. Очень довольна!",
         "display_order": 6
     },
     {
-        "author_name": "Дарья Козлова",
+        "author_name": "Isabella Rossi",
         "rating": 5,
         "text_ru": "Делала педикюр и маникюр - все на высшем уровне! Стерильность, качественные материалы, приятная атмосфера. Буду ходить только сюда!",
         "display_order": 5
     },
 ]
 
-# Расширенные FAQ
+# 2. Расширенные FAQ
 FAQ_ITEMS = [
     {
-        "question_ru": "Как записаться на процедуру%s",
-        "answer_ru": "Вы можете записаться онлайн через форму на нашем сайте, позвонив по телефону или написав нам в социальных сетях. Мы работаем ежедневно с 10:30 до 21:00.",
+        "question_ru": "Как записаться на процедуру?",
+        "answer_ru": "Вы можете записаться онлайн через форму на нашем сайте, позвонив по телефону или написав нам в WhatsApp, Instagram.",
         "category": "booking",
         "display_order": 10
     },
     {
-        "question_ru": "Можно ли отменить или перенести запись%s",
-        "answer_ru": "Да, вы можете отменить или перенести запись, предупредив нас не менее чем за 24 часа. Просьба сообщать об изменениях заранее, чтобы мы могли предложить время другим клиентам.",
+        "question_ru": "Можно ли отменить или перенести запись?",
+        "answer_ru": "Да, вы можете отменить или перенести запись, предупредив нас не менее чем за 24 часа. Просьба сообщать об изменениях заранее.",
         "category": "booking",
         "display_order": 9
     },
     {
-        "question_ru": "Какие материалы вы используете%s",
-        "answer_ru": "Мы используем только профессиональные материалы премиум-класса от ведущих мировых брендов: OPI, CND, L'Oreal Professional, Kerastase, MAC и другие. Все продукты сертифицированы и безопасны.",
+        "question_ru": "Какие материалы вы используете?",
+        "answer_ru": "Мы используем только профессиональные материалы премиум-класса. Все инструменты проходят медицинскую стерилизацию.",
         "category": "services",
         "display_order": 8
     },
     {
-        "question_ru": "Есть ли у вас программа лояльности%s",
-        "answer_ru": "Да, у нас действует накопительная система скидок для постоянных клиентов. При первом посещении вы получаете карту клиента, на которую начисляются бонусы. Также действуют специальные предложения и акции.",
-        "category": "loyalty",
-        "display_order": 7
-    },
-    {
-        "question_ru": "Сколько времени занимает процедура%s",
-        "answer_ru": "Длительность зависит от выбранной процедуры. В среднем: маникюр - 60-90 минут, окрашивание волос - 2-3 часа, макияж - 60-90 минут. Точное время уточняйте при записи.",
+        "question_ru": "Делаете ли вы процедуры в 4 руки?",
+        "answer_ru": "Да, мы ценим ваше время и можем организовать одновременное выполнение нескольких процедур.",
         "category": "services",
         "display_order": 6
     },
     {
-        "question_ru": "Можно ли делать несколько процедур за одно посещение%s",
-        "answer_ru": "Конечно! Вы можете комбинировать различные услуги. Например, маникюр + педикюр, окрашивание + стрижка + укладка. При бронировании нескольких услуг сообщите об этом администратору для корректного планирования времени.",
-        "category": "services",
+        "question_ru": "Где вы находитесь?",
+        "answer_ru": "Наш салон расположен в удобном месте с прекрасным видом и уютной атмосферой. Точный адрес вы найдете в разделе контактов.",
+        "category": "general",
         "display_order": 5
+    }
+]
+
+# 3. Баннеры (Исправленные пути)
+BANNERS = [
+    {
+        "title_ru": "Красота и Элегантность",
+        "subtitle_ru": "Профессиональные услуги красоты высшего класса",
+        "image_url": "/static/uploads/images/faces/banner.webp",
+        "display_order": 1
     },
     {
-        "question_ru": "Есть ли противопоказания к процедурам%s",
-        "answer_ru": "Некоторые процедуры имеют противопоказания (беременность, аллергические реакции, кожные заболевания). Наши мастера проведут консультацию перед процедурой и подберут безопасные варианты.",
-        "category": "health",
-        "display_order": 4
+        "title_ru": "Премиальный сервис",
+        "subtitle_ru": "Забота о вашем стиле и здоровье",
+        "image_url": "/static/uploads/images/faces/main.webp",
+        "display_order": 2
     },
     {
-        "question_ru": "Какие способы оплаты вы принимаете%s",
-        "answer_ru": "Мы принимаем наличные, банковские карты (Visa, Mastercard), а также оплату через мобильные приложения. Оплата производится после оказания услуги.",
-        "category": "payment",
+        "title_ru": "Марокканская Баня",
+        "subtitle_ru": "Ощутите полное расслабление и ритуал очищения",
+        "image_url": "/static/uploads/images/faces/moroccan_bath.webp",
         "display_order": 3
-    },
+    }
+]
+
+# 4. Галерея (media_library)
+GALLERY = [
+    {"url": "/static/uploads/images/portfolio/nails1.webp", "title_ru": "Маникюр", "category": "nails", "order": 1},
+    {"url": "/static/uploads/images/portfolio/hair1.webp", "title_ru": "Окрашивание волос", "category": "hair", "order": 2},
+    {"url": "/static/uploads/images/portfolio/spa1.webp", "title_ru": "SPA уход", "category": "spa", "order": 3},
+    {"url": "/static/uploads/images/portfolio/lips1.webp", "title_ru": "Перманентный макияж", "category": "makeup", "order": 4}
 ]
 
 async def populate_reviews():
-    """Заполнить базу отзывами с переводами"""
-    log_info("⭐ Заполнение отзывов с переводами...", "populate")
-    
+    log_info("⭐ Заполнение отзывов...", "populate")
     conn = get_db_connection()
-    cursor = conn.cursor()
-    
+    c = conn.cursor()
     try:
-        # Очистка существующих отзывов
-        cursor.execute("DELETE FROM public_reviews")
-        
-        for review in REVIEWS:
-            log_info(f"Переводим отзыв от {review['author_name']}", "populate")
+        c.execute("DELETE FROM public_reviews")
+        for r in REVIEWS:
+            name_trans = await translate_to_all_languages(r['author_name'], 'ru')
+            text_trans = await translate_to_all_languages(r['text_ru'], 'ru')
             
-            # Переводим текст отзыва
-            text_translations = await translate_to_all_languages(review['text_ru'], 'ru')
+            cols = ['author_name_ru', 'author_name_en', 'author_name_ar', 'author_name_de', 'author_name_es', 'author_name_fr', 'author_name_hi', 'author_name_kk', 'author_name_pt',
+                    'text_ru', 'text_en', 'text_ar', 'text_de', 'text_es', 'text_fr', 'text_hi', 'text_kk', 'text_pt', 'rating', 'display_order', 'is_active']
+            vals = [name_trans.get(l) for l in ['ru','en','ar','de','es','fr','hi','kk','pt']] + \
+                   [text_trans.get(l) for l in ['ru','en','ar','de','es','fr','hi','kk','pt']] + \
+                   [r['rating'], r['display_order'], True]
             
-            # Вставляем в БД
-            cursor.execute("""
-                INSERT INTO public_reviews (
-                    author_name, rating, 
-                    text_ru, text_en, text_ar, text_de, text_es,
-                    text_fr, text_hi, text_kk, text_pt,
-                    avatar_url, is_active, display_order
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (
-                review['author_name'],
-                review['rating'],
-                text_translations.get('ru'),
-                text_translations.get('en'),
-                text_translations.get('ar'),
-                text_translations.get('de'),
-                text_translations.get('es'),
-                text_translations.get('fr'),
-                text_translations.get('hi'),
-                text_translations.get('kk'),
-                text_translations.get('pt'),
-                review.get('avatar_url'),
-                True,
-                review['display_order']
-            ))
-        
+            c.execute(f"INSERT INTO public_reviews ({', '.join(cols)}) VALUES ({', '.join(['%s']*len(cols))})", vals)
         conn.commit()
-        log_info(f"✅ Добавлено {len(REVIEWS)} отзывов с переводами", "populate")
-        
-    except Exception as e:
-        log_error(f"Ошибка при заполнении отзывов: {e}", "populate")
-        import traceback
-        log_error(traceback.format_exc(), "populate")
-        conn.rollback()
-    finally:
-        conn.close()
+    finally: conn.close()
 
 async def populate_faq():
-    """Заполнить базу FAQ с переводами"""
-    log_info("📝 Заполнение FAQ с переводами...", "populate")
-    
+    log_info("📝 Заполнение FAQ...", "populate")
     conn = get_db_connection()
-    cursor = conn.cursor()
-    
+    c = conn.cursor()
     try:
-        # Очистка существующих FAQ
-        cursor.execute("DELETE FROM public_faq")
-        
-        for faq in FAQ_ITEMS:
-            log_info(f"Переводим вопрос: {faq['question_ru'][:50]}...", "populate")
+        c.execute("DELETE FROM public_faq")
+        for f in FAQ_ITEMS:
+            q_trans = await translate_to_all_languages(f['question_ru'], 'ru')
+            a_trans = await translate_to_all_languages(f['answer_ru'], 'ru')
             
-            # Переводим вопрос
-            question_translations = await translate_to_all_languages(faq['question_ru'], 'ru')
+            cols = ['question_ru', 'question_en', 'question_ar', 'question_de', 'question_es', 'question_fr', 'question_hi', 'question_kk', 'question_pt',
+                    'answer_ru', 'answer_en', 'answer_ar', 'answer_de', 'answer_es', 'answer_fr', 'answer_hi', 'answer_kk', 'answer_pt', 'category', 'display_order']
+            vals = [q_trans.get(l) for l in ['ru','en','ar','de','es','fr','hi','kk','pt']] + \
+                   [a_trans.get(l) for l in ['ru','en','ar','de','es','fr','hi','kk','pt']] + \
+                   [f['category'], f['display_order']]
             
-            # Переводим ответ
-            answer_translations = await translate_to_all_languages(faq['answer_ru'], 'ru')
-            
-            # Вставляем в БД
-            cursor.execute("""
-                INSERT INTO public_faq (
-                    question_ru, question_en, question_ar, question_de, question_es, 
-                    question_fr, question_hi, question_kk, question_pt,
-                    answer_ru, answer_en, answer_ar, answer_de, answer_es,
-                    answer_fr, answer_hi, answer_kk, answer_pt,
-                    category, is_active, display_order
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (
-                question_translations.get('ru'),
-                question_translations.get('en'),
-                question_translations.get('ar'),
-                question_translations.get('de'),
-                question_translations.get('es'),
-                question_translations.get('fr'),
-                question_translations.get('hi'),
-                question_translations.get('kk'),
-                question_translations.get('pt'),
-                answer_translations.get('ru'),
-                answer_translations.get('en'),
-                answer_translations.get('ar'),
-                answer_translations.get('de'),
-                answer_translations.get('es'),
-                answer_translations.get('fr'),
-                answer_translations.get('hi'),
-                answer_translations.get('kk'),
-                answer_translations.get('pt'),
-                faq['category'],
-                True,
-                faq['display_order']
-            ))
-        
+            c.execute(f"INSERT INTO public_faq ({', '.join(cols)}) VALUES ({', '.join(['%s']*len(cols))})", vals)
         conn.commit()
-        log_info(f"✅ Добавлено {len(FAQ_ITEMS)} FAQ с переводами", "populate")
-        
-    except Exception as e:
-        log_error(f"Ошибка при заполнении FAQ: {e}", "populate")
-        import traceback
-        log_error(traceback.format_exc(), "populate")
-        conn.rollback()
-    finally:
-        conn.close()
+    finally: conn.close()
 
-async def populate_employees():
-    """Заполнить базу сотрудниками с фото и переводами"""
-    log_info("👥 Заполнение сотрудников с фото...", "populate")
-    
-    employees = [
-        {
-            "username": "gulya",
-            "full_name": "GULYA",
-            "position_ru": "Мастер маникюра и ваксинга",
-            "bio_ru": "Профессиональный мастер с многолетним опытом",
-            "photo": "/static/uploads/images/gulya.webp"
-        },
-        {
-            "username": "jennifer",
-            "full_name": "JENNIFER",
-            "position_ru": "Мастер маникюра и массажист",
-            "bio_ru": "Специалист по nail-дизайну и массажным техникам",
-            "photo": "/static/uploads/images/jennifer.webp"
-        },
-        {
-            "username": "lyazzat",
-            "full_name": "LYAZZAT",
-            "position_ru": "Мастер маникюра",
-            "bio_ru": "Эксперт по уходу за ногтями",
-            "photo": "/static/uploads/images/lyazzat.webp"
-        },
-        {
-            "username": "mestan",
-            "full_name": "MESTAN",
-            "position_ru": "Парикмахер",
-            "bio_ru": "Стилист-парикмахер с креативным подходом",
-            "photo": "/static/uploads/images/mestan.webp"
-        },
-        {
-            "username": "simo",
-            "full_name": "SIMO",
-            "position_ru": "Парикмахер",
-            "bio_ru": "Мастер стрижек и окрашивания",
-            "photo": "/static/uploads/images/simo.webp"
-        }
-    ]
-    
+async def populate_banners():
+    log_info("🖼 Заполнение баннеров...", "populate")
     conn = get_db_connection()
-    cursor = conn.cursor()
-    
+    c = conn.cursor()
     try:
-        for emp in employees:
-            # Проверяем существует ли сотрудник
-            cursor.execute("SELECT id FROM users WHERE username = %s", (emp['username'],))
-            existing = cursor.fetchone()
+        c.execute("DELETE FROM public_banners")
+        for b in BANNERS:
+            t_trans = await translate_to_all_languages(b['title_ru'], 'ru')
+            s_trans = await translate_to_all_languages(b['subtitle_ru'], 'ru')
             
-            if existing:
-                log_info(f"Обновляем {emp['full_name']}", "populate")
-                
-                # Переводим должность и био
-                position_translations = await translate_to_all_languages(emp['position_ru'], 'ru')
-                bio_translations = await translate_to_all_languages(emp['bio_ru'], 'ru')
-                
-                # Обновляем сотрудника с фото и переводами
-                cursor.execute("""
-                    UPDATE users SET
-                        photo = %s,
-                        position_ru = %s,
-                        position_en = %s,
-                        position_ar = %s,
-                        position_de = %s,
-                        position_es = %s,
-                        position_fr = %s,
-                        position_hi = %s,
-                        position_kk = %s,
-                        position_pt = %s,
-                        bio = %s,
-                        bio_en = %s,
-                        bio_ar = %s,
-                        bio_de = %s,
-                        bio_es = %s,
-                        bio_fr = %s,
-                        bio_hi = %s,
-                        bio_kk = %s,
-                        bio_pt = %s,
-                        is_service_provider = TRUE
-                    WHERE username = %s
-                """, (
-                    emp['photo'],
-                    emp['position_ru'],
-                    position_translations.get('en', emp['position_ru']),
-                    position_translations.get('ar', emp['position_ru']),
-                    position_translations.get('de', emp['position_ru']),
-                    position_translations.get('es', emp['position_ru']),
-                    position_translations.get('fr', emp['position_ru']),
-                    position_translations.get('hi', emp['position_ru']),
-                    position_translations.get('kk', emp['position_ru']),
-                    position_translations.get('pt', emp['position_ru']),
-                    emp['bio_ru'],
-                    bio_translations.get('en', emp['bio_ru']),
-                    bio_translations.get('ar', emp['bio_ru']),
-                    bio_translations.get('de', emp['bio_ru']),
-                    bio_translations.get('es', emp['bio_ru']),
-                    bio_translations.get('fr', emp['bio_ru']),
-                    bio_translations.get('hi', emp['bio_ru']),
-                    bio_translations.get('kk', emp['bio_ru']),
-                    bio_translations.get('pt', emp['bio_ru']),
-                    emp['username']
-                ))
-            else:
-                log_info(f"➕ Создаем {emp['full_name']}", "populate")
-                
-                # Переводим должность и био
-                position_translations = await translate_to_all_languages(emp['position_ru'], 'ru')
-                bio_translations = await translate_to_all_languages(emp['bio_ru'], 'ru')
-                
-                # Создаем нового сотрудника
-                cursor.execute("""
-                    INSERT INTO users (
-                        username, full_name, role, phone, 
-                        photo, position_ru, position_en, position_ar,
-                        position_de, position_es, position_fr, position_hi,
-                        position_kk, position_pt,
-                        bio, bio_en, bio_ar, bio_de, bio_es,
-                        bio_fr, bio_hi, bio_kk, bio_pt,
-                        is_service_provider, created_at
-                    ) VALUES (%s, %s, 'master', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, True, CURRENT_TIMESTAMP)
-                """, (
-                    emp['username'],
-                    emp['full_name'],
-                    f"+97100000{len(emp['username'])}", # Fake phone
-                    emp['photo'],
-                    emp['position_ru'],
-                    position_translations.get('en', emp['position_ru']),
-                    position_translations.get('ar', emp['position_ru']),
-                    position_translations.get('de', emp['position_ru']),
-                    position_translations.get('es', emp['position_ru']),
-                    position_translations.get('fr', emp['position_ru']),
-                    position_translations.get('hi', emp['position_ru']),
-                    position_translations.get('kk', emp['position_ru']),
-                    position_translations.get('pt', emp['position_ru']),
-                    emp['bio_ru'],
-                    bio_translations.get('en', emp['bio_ru']),
-                    bio_translations.get('ar', emp['bio_ru']),
-                    bio_translations.get('de', emp['bio_ru']),
-                    bio_translations.get('es', emp['bio_ru']),
-                    bio_translations.get('fr', emp['bio_ru']),
-                    bio_translations.get('hi', emp['bio_ru']),
-                    bio_translations.get('kk', emp['bio_ru']),
-                    bio_translations.get('pt', emp['bio_ru'])
-                ))
-                
-                user_id = cursor.lastrowid
-                
-                # Создаем настройки уведомлений
-                cursor.execute("""
-                    INSERT INTO notification_settings (
-                        user_id, email_notifications, sms_notifications, 
-                        booking_notifications, birthday_reminders, birthday_days_advance,
-                        chat_notifications, daily_report, report_time
-                    ) VALUES (%s, True, False, True, True, 7, True, True, '09:00')
-                """, (user_id,))
-                
+            cols = ['title_ru', 'title_en', 'title_ar', 'title_de', 'title_es', 'title_fr', 'title_hi', 'title_kk', 'title_pt',
+                    'subtitle_ru', 'subtitle_en', 'subtitle_ar', 'subtitle_de', 'subtitle_es', 'subtitle_fr', 'subtitle_hi', 'subtitle_kk', 'subtitle_pt',
+                    'image_url', 'display_order', 'is_active']
+            vals = [t_trans.get(l) for l in ['ru','en','ar','de','es','fr','hi','kk','pt']] + \
+                   [s_trans.get(l) for l in ['ru','en','ar','de','es','fr','hi','kk','pt']] + \
+                   [b['image_url'], b['display_order'], True]
+            
+            c.execute(f"INSERT INTO public_banners ({', '.join(cols)}) VALUES ({', '.join(['%s']*len(cols))})", vals)
         conn.commit()
-        log_info("✅ Сотрудники обновлены/созданы с фото и переводами", "populate")
-        
-    except Exception as e:
-        log_error(f"Ошибка при заполнении сотрудников: {e}", "populate")
-        conn.rollback()
-    finally:
-        conn.close()
+    finally: conn.close()
 
-def update_employee_schema():
-    """Обновить схему сотрудников для переводов"""
-    log_info("👥 Обновление схемы сотрудников...", "populate")
-    
+async def populate_gallery():
+    log_info("📸 Заполнение галереи (media_library)...", "populate")
     conn = get_db_connection()
-    cursor = conn.cursor()
-    
+    c = conn.cursor()
     try:
-        # Проверяем наличие нужных колонок
-        cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='users'")
-        columns = [col[0] for col in cursor.fetchall()]
+        # Также очищаем старую таблицу для синхронизации
+        c.execute("DELETE FROM public_gallery")
+        c.execute("DELETE FROM media_library WHERE context = 'gallery'")
         
-        # Добавляем колонки для переводов если их нет
-        needed_columns = {
-            'position_ru': 'TEXT',
-            'position_en': 'TEXT',
-            'position_ar': 'TEXT',
-            'position_de': 'TEXT',
-            'position_es': 'TEXT',
-            'position_fr': 'TEXT',
-            'position_hi': 'TEXT',
-            'position_kk': 'TEXT',
-            'position_pt': 'TEXT',
-            'bio_en': 'TEXT',
-            'bio_ar': 'TEXT',
-            'bio_de': 'TEXT',
-            'bio_es': 'TEXT',
-            'bio_fr': 'TEXT',
-            'bio_hi': 'TEXT',
-            'bio_kk': 'TEXT',
-            'bio_pt': 'TEXT',
-        }
-
-        
-        for col_name, col_type in needed_columns.items():
-            if col_name not in columns:
-                cursor.execute(f"ALTER TABLE users ADD COLUMN {col_name} {col_type}")
-                log_info(f"Добавлена колонка {col_name}", "populate")
-        
+        for g in GALLERY:
+            t_trans = await translate_to_all_languages(g['title_ru'], 'ru')
+            
+            # Вставляем в media_library (SSOT для новых API)
+            c.execute("""
+                INSERT INTO media_library (url, context, title, category, sort_order, is_public)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (g['url'], 'gallery', t_trans.get('ru'), g['category'], g['order'], True))
+            
+            # Для обратной совместимости
+            c.execute("""
+                INSERT INTO public_gallery (image_url, title_ru, title_en, title_ar, category, display_order)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (g['url'], t_trans.get('ru'), t_trans.get('en'), t_trans.get('ar'), g['category'], g['order']))
+            
         conn.commit()
-        log_info("✅ Схема users обновлена для переводов", "populate")
-        
-    except Exception as e:
-        log_error(f"Ошибка при обновлении схемы users: {e}", "populate")
-        conn.rollback()
-    finally:
-        conn.close()
+    finally: conn.close()
 
-async def populate_all():
-    """Run all population tasks"""
-    log_info("🚀 Запуск полного заполнения публичного контента...", "populate")
-    try:
-        update_employee_schema()
-        await populate_employees()
-        await populate_faq()
-        await populate_reviews()
-        log_info("✅ Полное заполнение завершено!", "populate")
-    except Exception as e:
-        log_error(f"Ошибка при полном заполнении: {e}", "populate")
-        raise
+async def main():
+    log_info("🚀 Запуск восстановления контента...", "restore")
+    await populate_banners()
+    await populate_gallery()
+    await populate_faq()
+    await populate_reviews()
+    log_info("🏁 Восстановление завершено!", "restore")
 
 if __name__ == "__main__":
-    import asyncio
-    asyncio.run(populate_all())
-
+    asyncio.run(main())

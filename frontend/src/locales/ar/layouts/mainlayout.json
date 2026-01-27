@@ -2,6 +2,10 @@
   "admin": "المسؤول",
   "admin_panel": "لوحة الإدارة",
   "all_notifications_cleared": "تم حذف جميع الإشعارات",
+  "calls": {
+    "click_to_answer": "Нажмите, чтобы ответить",
+    "incoming_call": "Входящий звонок!"
+  },
   "clear_all": "مسح الكل",
   "close": "إغلاق",
   "confirm_clear_all": "هل أنت متأكد من أنك تريد حذف جميع الإشعارات؟",
@@ -38,6 +42,7 @@
     "payment_integrations": "أنظمة الدفع",
     "products": "المنتجات",
     "public_content": "المحتوى العام",
+    "service_requests": "Запросы услуг",
     "services": "الخدمات",
     "settings": "الإعدادات",
     "tasks": "المهام",

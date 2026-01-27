@@ -5,7 +5,7 @@ from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, EmailStr
 from utils.logger import log_error, log_info
-from db.migrations.consolidated.schema_newsletter import add_subscriber, create_newsletter_table
+from db.newsletter import add_subscriber, create_newsletter_table
 from utils.email_service import send_newsletter_welcome_email
 
 router = APIRouter(tags=["Newsletter"])

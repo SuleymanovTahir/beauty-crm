@@ -1105,8 +1105,8 @@ async def get_smart_greeting_api(
         if not client:
             return JSONResponse({"error": "Client not found"}, status_code=404)
 
-        client_name = client[3] or client[1] or "друг"
-        greeting = get_smart_greeting(client_id, client_name)
+        client_name = client[3] or client[1] or "guest"
+        greeting = await get_smart_greeting(client_id, client_name)
 
         return {
             "greeting": greeting,
@@ -1138,7 +1138,7 @@ async def get_smart_suggestion_api(
 
         assistant = SmartAssistant(client_id)
         suggestion = assistant.suggest_next_booking()
-        message = assistant.generate_booking_suggestion_message(client_name)
+        message = await assistant.generate_booking_suggestion_message(client_name)
 
         return {
             "suggestion": suggestion,

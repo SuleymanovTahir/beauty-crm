@@ -124,15 +124,27 @@ class TestDataCleaner:
             if specific_ids:
                 # Удаляем конкретных клиентов
                 for client_id in specific_ids:
-                    # Удаляем связанные данные
-                    c.execute("DELETE FROM conversations WHERE client_id = %s", (client_id,))
-                    c.execute("DELETE FROM bookings WHERE instagram_id = %s", (client_id,))
-                    c.execute("DELETE FROM client_loyalty_points WHERE client_id = %s", (client_id,))
-                    
-                    # Check if loyalty_transactions exists
-                    c.execute("SELECT table_name FROM information_schema.tables WHERE table_name='loyalty_transactions'")
-                    if c.fetchone():
-                        c.execute("DELETE FROM loyalty_transactions WHERE client_id = %s", (client_id,))
+                    # Удаляем связанные данные из ВСЕХ таблиц для надежности
+                    dep_tables = [
+                        'conversations', 'bookings', 'client_loyalty_points', 
+                        'loyalty_transactions', 'client_preferences', 'tasks',
+                        'client_notes', 'client_notifications', 'reminder_logs'
+                    ]
+                    for table in dep_tables:
+                        try:
+                            c.execute(f"SAVEPOINT cleanup_client_{table}")
+                            try:
+                                c.execute(f"DELETE FROM {table} WHERE client_id = %s", (client_id,))
+                            except:
+                                c.execute(f"ROLLBACK TO SAVEPOINT cleanup_client_{table}")
+                                c.execute(f"SAVEPOINT cleanup_client_alt_{table}")
+                                try:
+                                    c.execute(f"DELETE FROM {table} WHERE instagram_id = %s", (client_id,))
+                                except:
+                                    c.execute(f"ROLLBACK TO SAVEPOINT cleanup_client_alt_{table}")
+                            c.execute(f"RELEASE SAVEPOINT cleanup_client_{table}")
+                        except Exception:
+                            pass
                         
                     c.execute("DELETE FROM clients WHERE instagram_id = %s", (client_id,))
                     deleted += c.rowcount
@@ -288,3 +300,7 @@ def cleanup_test_data(test_client_id: str = None, verbose: bool = True):
         return cleanup_after_test(test_clients=[test_client_id], verbose=verbose)
     else:
         return cleanup_after_test(verbose=verbose)
+
+if __name__ == "__main__":
+    print("🚀 Running full test data cleanup...")
+    cleanup_after_test()

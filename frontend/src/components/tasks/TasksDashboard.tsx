@@ -17,6 +17,7 @@ import {
     Filter,
     Banknote
 } from 'lucide-react';
+import { useSalonSettings } from '../../hooks/useSalonSettings';
 
 interface Task {
     id: number;
@@ -48,6 +49,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
 
 export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
     const { t } = useTranslation(['admin/tasks', 'common']);
+    const { currency } = useSalonSettings();
 
     const stats = useMemo(() => {
         const today = tasks.filter(t => t.due_date && isToday(new Date(t.due_date)) && t.status !== 'done');
@@ -315,7 +317,7 @@ export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
                                 <Banknote className="w-8 h-8 text-emerald-300" />
                             </div>
                             <div>
-                                <p className="text-3xl font-bold text-gray-900 tracking-tight">0.00 AED</p>
+                                <p className="text-3xl font-bold text-gray-900 tracking-tight">0.00 {currency}</p>
                                 <p className="text-xs text-gray-400 mt-1">{t('finance_module_coming_soon')}</p>
                             </div>
                         </div>

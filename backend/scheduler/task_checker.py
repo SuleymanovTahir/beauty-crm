@@ -19,9 +19,10 @@ async def check_tasks_due():
         c.execute("""
             SELECT t.id, t.title, t.due_date, t.assignee_id, u.full_name
             FROM tasks t
-            JOIN task_stages s ON t.stage_id = s.id
+            JOIN workflow_stages s ON t.stage_id = s.id
             JOIN users u ON t.assignee_id = u.id
-            WHERE s.key != 'done' 
+            WHERE s.name != 'done' 
+              AND s.entity_type = 'task'
               AND t.due_date IS NOT NULL
               AND t.due_date <= %s
               AND t.due_date >= %s
@@ -46,13 +47,13 @@ async def check_tasks_due():
             today_str = now.strftime('%Y-%m-%d')
             
             # Simple check: have we sent a notification for this task ID today?
-            # We can use filtering by title or action_url.
             c.execute("""
-                SELECT id FROM notifications 
+                SELECT id FROM unified_communication_log 
                 WHERE user_id = %s 
                   AND action_url = %s
+                  AND medium = 'in_app'
                   AND created_at::date = CURRENT_DATE
-            """, (str(assignee_id), action_url))
+            """, (assignee_id, action_url))
             
             if c.fetchone():
                 continue
@@ -60,7 +61,7 @@ async def check_tasks_due():
             # Create notification
             message = f"Задача '{title}' должна быть выполнена до {due_date.strftime('%d.%m %H:%M')}"
             create_notification(
-                user_id=str(assignee_id),
+                user_id=assignee_id,
                 title="⏰ Напоминание о задаче",
                 message=message,
                 notification_type="task",
@@ -79,8 +80,6 @@ async def check_client_reminders():
     c = conn.cursor()
     try:
         now = datetime.now()
-        # Look for reminders due in the next hour or passed recently
-        # We want to notify exactly when due or slightly before.
         
         c.execute("""
             SELECT instagram_id, name, reminder_date 
@@ -92,46 +91,35 @@ async def check_client_reminders():
         
         clients = c.fetchall()
         
-        # Get all admins/managers to notify
         c.execute("SELECT id FROM users WHERE role IN ('admin', 'manager')")
-        managers = c.fetchall()
+        managers = [m[0] for m in c.fetchall()]
         
         for client in clients:
             client_id, name, reminder_date = client
-            
             if isinstance(reminder_date, str):
-                try:
-                    reminder_date = datetime.fromisoformat(reminder_date)
-                except ValueError:
-                    log_error(f"Invalid date format for client {client_id}: {reminder_date}", "task_checker")
-                    continue
+                try: reminder_date = datetime.fromisoformat(reminder_date)
+                except: continue
             
             action_url = f"/crm/funnel?client_id={client_id}"
             
-            # Check if notified check via a generic way involves checking notifications for any manager
-            notified = False
-            for manager in managers:
-                manager_id = manager[0]
-                c.execute("""
-                    SELECT id FROM notifications 
-                    WHERE user_id = %s 
-                      AND action_url = %s
-                      AND created_at::date = CURRENT_DATE
-                """, (str(manager_id), action_url))
-                if c.fetchone():
-                    notified = True
-                    break
+            # Check if any manager was notified today for this client
+            c.execute("""
+                SELECT id FROM unified_communication_log 
+                WHERE action_url = %s 
+                  AND medium = 'in_app'
+                  AND created_at::date = CURRENT_DATE
+                LIMIT 1
+            """, (action_url,))
             
-            if notified:
+            if c.fetchone():
                 continue
                 
             # Notify all managers
-            for manager in managers:
-                manager_id = manager[0]
+            for manager_id in managers:
                 create_notification(
-                    user_id=str(manager_id),
+                    user_id=manager_id,
                     title="🔔 Напоминание о клиенте",
-                    message=f"Клиент {name or client_id} требует внимания (Дата: {reminder_date.strftime('%d.%m %H:%M')})",
+                    message=f"Клиент {name or client_id} требует внимания ({reminder_date.strftime('%d.%m %H:%M')})",
                     notification_type="reminder",
                     action_url=action_url
                 )

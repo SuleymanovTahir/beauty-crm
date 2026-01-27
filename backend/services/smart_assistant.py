@@ -10,6 +10,8 @@ import json
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
+from bot.ai_responses import generate_ai_response
+from db import get_client_language
 
 class SmartAssistant:
     """Умный помощник для персонализированного общения с клиентами"""
@@ -74,23 +76,26 @@ class SmartAssistant:
         conn.close()
         return bookings
 
-    def get_personalized_greeting(self, client_name: str) -> str:
-        """Персонализированное приветствие"""
+    async def get_personalized_greeting(self, client_name: str) -> str:
+        """Персонализированное приветствие через AI"""
+        language = get_client_language(self.client_id)
+        
         if not self.history:
             # Новый клиент
-            return f"Привет, {client_name}! 👋 Рады видеть тебя впервые! Я помогу тебе записаться на процедуру. Что тебя интересует?"
+            return await generate_ai_response('greeting_new', language, name=client_name)
 
         # Постоянный клиент
         last_booking = self.history[0]
-        last_date = datetime.fromisoformat(last_booking['datetime'].replace(' ', 'T'))
-        days_since = (datetime.now() - last_date).days
+        try:
+            last_date = datetime.fromisoformat(last_booking['datetime'].replace(' ', 'T'))
+            days_since = (datetime.now() - last_date).days
+        except:
+            days_since = 30 # Default
 
         if days_since < 7:
-            return f"Привет, {client_name}! 😊 Как впечатления от последнего визита?"
-        elif days_since < 30:
-            return f"Привет, {client_name}! 💖 Давно не виделись! Как дела?"
+            return await generate_ai_response('greeting_recent', language, name=client_name)
         else:
-            return f"Привет, {client_name}! 🌟 Соскучились! Прошло уже {days_since} дней. Пора бы нам встретиться! 😉"
+            return await generate_ai_response('retention_reminder', language, name=client_name)
 
     def suggest_next_booking(self) -> Optional[Dict[str, Any]]:
         """Умное предложение следующей записи"""
@@ -201,27 +206,30 @@ class SmartAssistant:
         """Alias for suggest_next_booking() for backward compatibility"""
         return self.suggest_next_booking()
 
-    def generate_booking_suggestion_message(self, client_name: str) -> str:
-        """Сгенерировать сообщение с предложением записи"""
+    async def generate_booking_suggestion_message(self, client_name: str) -> str:
+        """Сгенерировать сообщение с предложением записи через AI"""
         suggestion = self.suggest_next_booking()
+        language = get_client_language(self.client_id)
 
         if not suggestion:
-            return "Давай запишу тебя на процедуру! Что тебя интересует?"
+            return await generate_ai_response('booking_suggestion_general', language, name=client_name)
 
         service = suggestion['service']
         master = suggestion['master']
         date = suggestion['recommended_date']
         confidence = suggestion['confidence']
 
-        if confidence > 0.8:
-            # Высокая уверенность - прямое предложение
-            return f"Как обычно, {service} к мастеру {master}? 😊 Могу записать на {date}!"
-        elif confidence > 0.5:
-            # Средняя уверенность - предложение с вопросом
-            return f"Давно не делала {service}! Записать к {master} как в прошлый раз?"
+        if confidence > 0.5:
+            return await generate_ai_response(
+                'abandoned_booking', 
+                language, 
+                name=client_name, 
+                service=service, 
+                master=master, 
+                date=date
+            )
         else:
-            # Низкая уверенность - общий вопрос
-            return "Что будем делать на этот раз? 💅"
+            return await generate_ai_response('booking_suggestion_general', language, name=client_name)
 
     def save_preferences(self, preferences: Dict) -> bool:
         """Сохранить предпочтения клиента"""
@@ -331,12 +339,12 @@ class SmartAssistant:
         finally:
             conn.close()
 
-def get_smart_greeting(client_id: str, client_name: str) -> str:
+async def get_smart_greeting(client_id: str, client_name: str) -> str:
     """Получить умное приветствие для клиента"""
     assistant = SmartAssistant(client_id)
-    return assistant.get_personalized_greeting(client_name)
+    return await assistant.get_personalized_greeting(client_name)
 
-def get_smart_suggestion(client_id: str, client_name: str) -> str:
+async def get_smart_suggestion(client_id: str, client_name: str) -> str:
     """Получить умное предложение для клиента"""
     assistant = SmartAssistant(client_id)
-    return assistant.generate_booking_suggestion_message(client_name)
+    return await assistant.generate_booking_suggestion_message(client_name)

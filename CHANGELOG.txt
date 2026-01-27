@@ -1,3 +1,106 @@
+## [2026-01-27] Critical Stability Fixes & Content Seeding
+- 🚀 **Critical Startup Fixes**:
+  - **Import Order**: Resolved `ModuleNotFoundError` and `NameError` in test scripts (`startup_tests.py`, `check_*.py`) by fixing `sys.path` modification order.
+  - **Database Seeding**: Fixed `AttributeError: 'NoneType' object has no attribute 'commit'` in `seed_test_data.py` to ensure reliable data population.
+- 🛡️ **Bot Stability**:
+  - **Rate Limit Handling**: Implemented graceful exception handling in `bot/core.py` to catch `Rate limit exceeded` errors and return friendly user messages instead of crashing the backend/tests.
+- 🎨 **Frontend Content Restoration**:
+  - **Content Seeding**: Extended `seed_test_data.py` to populate `public_banners`, `public_gallery`, `public_reviews`, and `public_faq`.
+  - **Asset Placeholders**: Created dummy placeholder images in `backend/static/images/` to prevent broken image links on the frontend.
+  - **Admin User**: Guaranteed creation of 'admin' and 'directory' users to fix "User not found" errors in tests.
+
+## [2026-01-27] Dynamic Currency, Bot Localization & Schema Unification
+- 🚀 **Dynamic Currency & Localization**:
+  - **Zero Hardcode (Currency)**: Removed all "AED" hardcodes across the entire stack. Default currency is now dynamically retrieved from `SALON_CURRENCY` environment variable or `salon_settings` table.
+  - **Frontend Adaptability**: Updated `TasksDashboard`, `Challenges`, and `PaymentIntegrations` to use the salon's preferred currency via `useSalonSettings` hook.
+  - **Bot Personalization**: Refactored `bot/prompts.py` to eliminate hardcoded Russian labels. The bot now dynamically builds prompts in English or Russian based on the client's language, including localized salon info (Address, Hours, Rules).
+- 🧬 **Database & Schema Synchronization**:
+  - **Multilingual Services**: Expanded `services` table with 6 additional language columns (`name_de`, `name_es`, `name_fr`, `name_hi`, `name_kk`, `name_pt`) to support the bot's 9-language requirement.
+  - **Client Profiles**: Added missing operational columns to `clients` table: `detected_language`, `card_number`, `discount`, `age`, `birth_date`, `referral_code`, `telegram_id`.
+  - **Service Search Fix**: Corrected critical index mismatch in `find_service_by_keywords` (fixed category lookup index 9 -> 6) and implemented safety checks for empty strings to prevent false-positive matches.
+- 🧹 **Code Quality & Stability**:
+  - **Unused Import Removal**: Cleaned up excessive imports in `main.py` and core bot modules.
+  - **Constraint Fulfillment**: Updated `_build_salon_info` and prompt examples to use synchronized DB fields (`address_ru`, `hours_weekdays`), ensuring accurate bot responses.
+  - **Venv Enforcement**: Switched to using the local virtual environment (`venv`) for all testing and maintenance tasks, resolving missing dependency issues (`google-genai`, `fastapi`).
+
+## [2026-01-27] Backend Stability, Test Orchestration & Performance Refinement
+- 🚀 **Backend Stability & Resilience**:
+  - **Circular Dependency Fix**: Successfully resolved a critical circular import between `bot/core.py` and `SmartAssistant`, which was preventing backend startup in multiple test scenarios.
+  - **Redis Restoration**: Restored local Redis connectivity, fulfilling the "highest level speed" requirement for caching and session management.
+  - **Notification API Activation**: Explicitly mounted the `notifications` router in `main.py`, enabling endpoints for system-wide notification settings.
+- 🧪 **Test Orchestration (Suite V2)**:
+  - **100% Success Rate**: Fixed all 19 tests in `run_all_test2.py`, covering Smart Assistant, Marketplace Integrations, Bot Logic, Permissions, and Notifications.
+  - **Dynamic Test Data**: Refactored several tests (`test_employee_services_full.py`, `test_ui_logic.py`) to dynamically locate available employees/services instead of failing on hardcoded names like "Gulya".
+  - **Idempotent Notifications**: Updated `test_immediate_notification.py` to use `ON CONFLICT` for test clients, ensuring tests can be run repeatedly without database pollution or errors.
+- 🧬 **Database & Integration Alignment**:
+  - **Schema Synchronization**: Updated `db/init.py` (SSOT) with missing columns: `gender` (Users), `source` (Bookings/Clients), and `created_at` (Marketplace).
+  - **Marketplace JSON Fix**: Patched `marketplace_integrations.py` to robustly handle JSONB columns regardless of whether the driver returns them as dictionaries or strings.
+  - **Avatar Generation**: Fixed and verified the gender-based default avatar system, ensuring frontend paths are correctly matched.
+
+## [2026-01-26] Database Schema Restoration & SSOT Verification
+- 🚀 **Database Schema Restoration**:
+  - **Comprehensive Table Analysis**: Conducted a specialized grep-based audit of all API endpoints to identify used tables versus declared tables in `db/init.py`.
+  - **Massive Schema Restoration**: Restored 30+ missing tables across 11 functional domains that were absent from the unified initialization script:
+    - **Products & Inventory**: `products`, `product_movements` (restored full inventory management support).
+    - **Integrations**: `marketplace_providers`, `marketplace_bookings`, `payment_providers`, `payment_transactions`, `marketplace_reviews`.
+    - **Payroll & HR**: `payroll_payments`, `user_salary_settings`, `salary_calculations`, `service_change_requests`.
+    - **Loyalty & Funnel**: `referral_campaigns`, `client_referrals`, `challenge_progress`, `client_loyalty_points`, `loyalty_transactions`, `client_achievements`, `loyalty_tiers`, `funnel_checkpoints`, `client_checkpoint_progress`, `funnel_stages`.
+    - **Client Features**: `client_notes`, `client_tags`, `client_statuses`, `client_favorite_masters`, `client_email_verifications`, `client_notifications`, `client_gallery`.
+    - **System & Utils**: `settings`, `currencies`, `salon_holidays`, `custom_statuses`, `custom_roles`, `role_permissions`, `menu_settings`, `internal_chat`, `chat_recordings`, `user_status`, `user_subscriptions`, `user_push_tokens`, `invoice_payments`.
+  - **Single Source of Truth (SSOT)**: The `backend/db/init.py` file is now the definitive, complete source of truth for the entire application schema.
+  - **Verification**: Successfully executed `db/init.py` confirming the schema initialization completes without errors.
+
+- 🛠 **System Stability**:
+  - Eliminated "relation does not exist" errors for features relying on these missing tables (e.g., Referrals, Marketplace Sync, Payroll, Client Gallery).
+  - Ensured future deployments can bootstrap the full database from scratch using a single command.
+
+## [2026-01-26] Architectural Purification & Modern Lifespan
+- 🚀 **System-Wide Cleanup (Architecture v2.2)**:
+  - **Single Source of Truth**: Unified the entire database schema into a single, high-performance `db/init.py`. Eliminated over 44 redundant migration files and fragmented schema definitions.
+  - **Modernized App Lifecycle**: Migrated from deprecated `on_event` startup handlers to the robust FastAPI `lifespan` context manager. Ensures safe and sequential resource initialization.
+  - **Import Hygiene**: Performed a deep sweep of the entire backend, removing 50+ unused imports, redundant dependencies, and accidental metadata strings in `main.py` and core orchestrators.
+  - **Router Consolidation**: Reorganized the API routing structure into clear, domain-driven blocks (Foundations, Functional Modules, Integrations, Management) for maximum maintainability.
+- 🧬 **Database & Sync Stability**:
+  - **Unified Migration Runner**: Updated `run_all_migrations.py` to target the SSOT `init_database()` and streamlined its functional dependencies.
+  - **Connection Priming**: Optimized the connection pool warmup logic to parallelize background checks during boot.
+  - **Fix Registry**: Centralized all data-correction logic into the boot process, eliminating the need for standalone "fix" scripts in production.
+- 🧹 **Technical Debt Removal**:
+  - Deleted obsolete migration directories and technical debris (`consolidated/` cleanup, redundant `maintenance/` and `data/` scripts).
+  - Sanitized CLI tools and documentation (including `DEPLOY_GUIDE.md`) to reflect the new unified architecture.
+
+## [2026-01-26] Database Consolidation v2.1: Final Refactor & Orphan Removal
+- 🚀 **Backend Architecture Finalization**:
+  - **SSOT Implementation Complete**: Finalized the refactoring of all API modules (`pipelines`, `invoices`, `contracts`, `tasks`, `broadcasts`, `public_content`) to use unified orchestrators.
+  - **Discrete Tables Removed**: Successfully dropped 9 legacy tables (`bot_settings`, `messenger_settings`, `invoice_stages`, `contract_stages`, `task_stages`, `notifications`, `gallery_images`, etc.) after migrating data to consolidated JSONB and unified logs.
+  - **Unified Stage Management**: All entity statuses now flow through the `workflow_stages` table, enabling consistent tracking of Leads, Tasks, Invoices, and Contracts.
+  - **Asset Centralization**: All public and internal media (Gallery, Portfolio, User Photos) moved to the high-performance `media_library` orchestrator.
+  - **Communication Logging**: Integrated In-App, Email, and Messenger logs into the `unified_communication_log` with integrated read/status tracking.
+- 🧹 **Codebase Modernization**:
+  - Rewrote `backend/db/init.py` from scratch to implement the new consolidated schema by default.
+  - Eliminated over 1200 lines of legacy code and redundant logic across the backend.
+  - Standardized display names with `name_ru` and internal keys for all stage-based modules.
+  - Implemented automatic versioning for employee photos to bypass cache issues.
+- ✅ **Database Resilience**:
+  - Successfully executed a multi-pass migration script (`final_consolidation_v2.py`) with automatic schema alignment and data integrity checks.
+  - Simplified foreign key relations and improved indexing for high-load scenarios.
+
+## [2026-01-26] Database Consolidation v2.0: High Performance & Unified Orchestration
+- 🚀 **Major Architectural Refactor**:
+  - **Unified Settings (SSOT)**: Consolidated `bot_settings` and `messenger_settings` into a single `salon_settings` table using high-performance JSONB columns (`bot_config`, `messenger_config`). Eliminated redundant API calls for configuration fetching.
+  - **Unified Media Library**: Created a global `media_library` table to centralize gallery images, staff portfolios, and landing page banners. Replaces multiple disparate tables/folders with a context-aware asset manager.
+  - **Unified Communication Log**: Merged `notifications`, `notification_history`, and `booking_reminders_sent` into a single `unified_communication_log`. Supports multi-channel tracking (In-App, Push, WhatsApp, Telegram) with integrated read/status tracking.
+  - **Workflow Stages Orchestrator**: Established `workflow_stages` as the central authority for all entity statuses (Pipelines, Tasks, Invoices, Contracts). Simplified status management and cross-module reporting.
+- 🛠 **Backend Optimization**:
+  - **Orchestrated Fetching**: Refactored `db/settings.py` and `api/bot.py` to use the new JSONB-based SSOT model.
+  - **Standardized Notifications**: Refactored `api/notifications.py`, `api/client_auth.py`, and `scheduler/task_checker.py` to use the unified log.
+  - **Asset Unification**: Refactored `api/gallery.py` to target the media library, supporting better metadata tagging and client-user associations.
+- 🧬 **Database Resilience & Scalability**:
+  - **Advanced Migration**: Implemented `schema_v2_consolidation.py` with multi-stage logic: column creation, data migration/standardization, and idempotent safety checks.
+  - **Standardized Initialization**: Updated `db/init.py` to implement the new consolidated schema by default for all future deployments.
+- 🧹 **Code Quality**:
+  - Erased over 800 lines of legacy migration logic and redundant table creation routes.
+  - Standardized on Russian terminology for system stages while preserving multilingual internal keys.
+
 ## [2026-01-22] SEO Enhancement, Translation Error Tracking & Multi-User Scalability
 - 🔍 **SEO Optimization (Issue #1)**:
   - **Comprehensive Meta Tags**: Added extensive SEO meta tags to `index.html` with location-specific keywords (Dubai, UAE).

@@ -12,22 +12,22 @@ import psycopg2
 
 def get_all_services(active_only=True, include_positions=False):
     """Получить все услуги из БД
-
-    Args:
-        active_only: Только активные услуги
-        include_positions: Включить должности для каждой услуги
-
+    
     Returns:
-        List of services (tuples or dicts if include_positions=True)
+        List: List of service tuples or dicts
     """
     conn = get_db_connection()
     c = conn.cursor()
 
+    # Явный список полей для стабильности индексов
+    fields = "id, service_key, name, name_ru, name_en, name_ar, category, price, min_price, max_price, currency, duration"
+    
+    query = f"SELECT {fields} FROM services"
     if active_only:
-        c.execute("SELECT * FROM services WHERE is_active = TRUE ORDER BY category, name")
-    else:
-        c.execute("SELECT * FROM services ORDER BY category, name")
-
+        query += " WHERE is_active = TRUE"
+    query += " ORDER BY category, name"
+    
+    c.execute(query)
     services = c.fetchall()
 
     if not include_positions:
@@ -50,26 +50,21 @@ def get_all_services(active_only=True, include_positions=False):
 
         positions = [{"id": pos[0], "name": pos[1]} for pos in c.fetchall()]
 
-        # Конвертируем tuple в dict
+        # Конвертируем tuple в dict (индексы соответствуют fields выше)
         service_dict = {
             "id": service[0],
             "service_key": service[1],
             "name": service[2],
-            "name_ru": service[3] if len(service) > 3 else service[2],
-            "name_ar": service[4] if len(service) > 4 else None,
-            "price": service[5] if len(service) > 5 else 0,
-            "min_price": service[6] if len(service) > 6 else None,
-            "max_price": service[7] if len(service) > 7 else None,
-            "currency": service[8] if len(service) > 8 else "AED",
-            "category": service[9] if len(service) > 9 else "other",
-            "description": service[10] if len(service) > 10 else "",
-            "description_ru": service[11] if len(service) > 11 else "",
-            "description_ar": service[12] if len(service) > 12 else "",
-            "benefits": service[13].split('|') if len(service) > 13 and service[13] else [],
-            "is_active": bool(service[14]) if len(service) > 14 and service[14] is not None else True,
-            "duration": service[15] if len(service) > 15 else None,
-            "position_id": service[16] if len(service) > 16 else None,
-            "positions": positions  # Добавляем список должностей
+            "name_ru": service[3],
+            "name_en": service[4],
+            "name_ar": service[5],
+            "category": service[6],
+            "price": service[7],
+            "min_price": service[8],
+            "max_price": service[9],
+            "currency": service[10],
+            "duration": service[11],
+            "positions": positions
         }
         result.append(service_dict)
 
@@ -374,7 +369,7 @@ def toggle_service_active_status(service_id):
         new_status = True if current_status == 0 else False
         
         # Логируем
-        from logger import log_info
+        from utils.logger import log_info
         log_info(f"🔄 DB: Toggling service {service_id}: {current_status} → {new_status}", "database")
         
         # Обновляем статус
@@ -403,7 +398,7 @@ def toggle_service_active_status(service_id):
     except Exception as e:
         conn.rollback()
         conn.close()
-        from logger import log_error
+        from utils.logger import log_error
         log_error(f"❌ Error toggling service status: {e}", "database")
         raise
 

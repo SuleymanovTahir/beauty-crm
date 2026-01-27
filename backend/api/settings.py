@@ -118,65 +118,6 @@ async def save_notification_settings(
             "message": "Настройки сохранены"
         }
 
-    except psycopg2.OperationalError as e:
-        # Таблица не существует - создадим её
-        if "no such table" in str(e).lower():
-            log_info("Creating notification_settings table", "settings")
-            try:
-                conn = get_db_connection()
-                c = conn.cursor()
-                c.execute(f"""
-                    CREATE TABLE IF NOT EXISTS notification_settings (
-                        id SERIAL PRIMARY KEY,
-                        user_id INTEGER NOT NULL,
-                        email_notifications INTEGER DEFAULT 1,
-                        sms_notifications INTEGER DEFAULT 0,
-                        booking_notifications INTEGER DEFAULT 1,
-                        chat_notifications INTEGER DEFAULT 1,
-                        daily_report INTEGER DEFAULT 1,
-                        report_time TEXT DEFAULT '{DEFAULT_REPORT_TIME}',
-                        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                        updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                        UNIQUE(user_id)
-                    )
-                """)
-
-                # Вставляем настройки после создания таблицы
-                c.execute("""
-                    INSERT INTO notification_settings (
-                        user_id,
-                        email_notifications,
-                        sms_notifications,
-                        booking_notifications,
-                        chat_notifications,
-                        daily_report,
-                        report_time
-                    ) VALUES (%s,%s,%s,%s,%s,%s,%s)
-                """, (
-                    user_id,
-                    True if settings.emailNotifications else False,
-                    True if settings.smsNotifications else False,
-                    True if settings.bookingNotifications else False,
-                    True if settings.chatNotifications else False,
-                    True if settings.dailyReport else False,
-                    settings.reportTime
-                ))
-
-                conn.commit()
-                conn.close()
-
-                log_info("notification_settings table created and settings saved", "settings")
-                return {
-                    "success": True,
-                    "message": "Настройки сохранены"
-                }
-            except Exception as create_error:
-                log_error(f"Error creating notification_settings table: {create_error}", "settings")
-                raise HTTPException(status_code=500, detail=str(create_error))
-        else:
-            log_error(f"Database error: {e}", "settings")
-            raise HTTPException(status_code=500, detail=str(e))
-
     except Exception as e:
         log_error(f"Error saving notification settings: {e}", "settings")
         raise HTTPException(status_code=500, detail=str(e))
@@ -500,8 +441,8 @@ async def get_salon_working_hours():
         # Парсим часы работы
         hours_weekdays = salon.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)  # ✅ Используем константу
         hours_weekends = salon.get('hours_weekends', DEFAULT_HOURS_WEEKENDS)  # ✅ Используем константу
-        lunch_start = salon.get('lunch_start', DEFAULT_LUNCH_START)  # ✅ Используем константу
-        lunch_end = salon.get('lunch_end', DEFAULT_LUNCH_END)  # ✅ Используем константу
+        lunch_start = salon.get('lunch_start')
+        lunch_end = salon.get('lunch_end')
         
         # Парсим время начала и конца
         def parse_hours(hours_str):

@@ -33,37 +33,29 @@ async def get_messenger_settings(
     c = conn.cursor()
 
     try:
-        c.execute("""
-            SELECT
-                id, messenger_type, is_enabled, display_name,
-                api_token, webhook_url, config_json,
-                created_at, updated_at
-            FROM messenger_settings
-            ORDER BY
-                CASE messenger_type
-                    WHEN 'instagram' THEN 1
-                    WHEN 'whatsapp' THEN 2
-                    WHEN 'telegram' THEN 3
-                    WHEN 'tiktok' THEN 4
-                    ELSE 5
-                END
-        """)
+        c.execute("SELECT messenger_config FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
+        messenger_data = row[0] if row and row[0] else []
+        
+        if isinstance(messenger_data, str):
+            messenger_data = json.loads(messenger_data)
 
-        columns = [desc[0] for desc in c.description]
-        settings = []
-        for row in c.fetchall():
-            row_dict = dict(zip(columns, row))
-            # Скрываем токены в списке (показываем только наличие)
-            if row_dict['api_token']:
+        # Скрываем токены и подготавливаем ответ
+        processed_settings = []
+        for row_dict in messenger_data:
+            if row_dict.get('api_token'):
                 row_dict['has_token'] = True
                 row_dict['api_token'] = '***'
             else:
                 row_dict['has_token'] = False
+            processed_settings.append(row_dict)
 
-            settings.append(row_dict)
+        # Сортировка (Инстаграм, Вотсап, Телеграм, ТикТок)
+        type_order = {'instagram': 1, 'whatsapp': 2, 'telegram': 3, 'tiktok': 4}
+        processed_settings.sort(key=lambda x: type_order.get(x.get('messenger_type'), 5))
 
         return {
-            "settings": settings
+            "settings": processed_settings
         }
     except Exception as e:
         log_error(f"Error getting messenger settings: {e}", "messengers")
@@ -105,26 +97,24 @@ async def get_enabled_messengers(
     c = conn.cursor()
 
     try:
-        c.execute("""
-            SELECT messenger_type, display_name
-            FROM messenger_settings
-            WHERE is_enabled = TRUE
-            ORDER BY
-                CASE messenger_type
-                    WHEN 'instagram' THEN 1
-                    WHEN 'whatsapp' THEN 2
-                    WHEN 'telegram' THEN 3
-                    WHEN 'tiktok' THEN 4
-                    ELSE 5
-                END
-        """)
+        c.execute("SELECT messenger_config FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
+        messenger_data = row[0] if row and row[0] else []
+        
+        if isinstance(messenger_data, str):
+            messenger_data = json.loads(messenger_data)
 
         enabled = []
-        for row in c.fetchall():
-            enabled.append({
-                "type": row[0],
-                "name": row[1]
-            })
+        for m in messenger_data:
+            if m.get('is_enabled'):
+                enabled.append({
+                    "type": m.get('messenger_type'),
+                    "name": m.get('display_name')
+                })
+
+        # Сортировка по типу
+        type_order = {'instagram': 1, 'whatsapp': 2, 'telegram': 3, 'tiktok': 4}
+        enabled.sort(key=lambda x: type_order.get(x['type'], 5))
 
         result = {
             "enabled_messengers": enabled
@@ -168,42 +158,42 @@ async def update_messenger_setting(
     c = conn.cursor()
 
     try:
-        # Получаем текущие настройки
-        c.execute("SELECT id FROM messenger_settings WHERE messenger_type = %s", (messenger_type,))
-        if not c.fetchone():
-            return JSONResponse({"error": "Messenger not found"}, status_code=404)
+        # 1. Получаем текущий список
+        c.execute("SELECT messenger_config FROM salon_settings WHERE id = 1")
+        row = c.fetchone()
+        messenger_data = row[0] if row and row[0] else []
+        
+        if isinstance(messenger_data, str):
+            messenger_data = json.loads(messenger_data)
 
-        # Собираем поля для обновления
-        updates = []
-        params = []
+        # 2. Находим нужный мессенджер
+        found = False
+        for i, m in enumerate(messenger_data):
+            if m.get('messenger_type') == messenger_type:
+                # Обновляем поля
+                if 'is_enabled' in request:
+                    messenger_data[i]['is_enabled'] = bool(request['is_enabled'])
+                if 'api_token' in request:
+                    messenger_data[i]['api_token'] = request['api_token']
+                if 'webhook_url' in request:
+                    messenger_data[i]['webhook_url'] = request['webhook_url']
+                if 'config_json' in request:
+                    cfg = request['config_json']
+                    messenger_data[i]['config_json'] = json.dumps(cfg) if isinstance(cfg, dict) else cfg
+                
+                messenger_data[i]['updated_at'] = datetime.now().isoformat()
+                found = True
+                break
+        
+        if not found:
+            return JSONResponse({"error": "Messenger not found in configuration"}, status_code=404)
 
-        if 'is_enabled' in request:
-            updates.append("is_enabled = %s")
-            params.append(True if request['is_enabled'] else False)
-
-        if 'api_token' in request:
-            updates.append("api_token = %s")
-            params.append(request['api_token'])
-
-        if 'webhook_url' in request:
-            updates.append("webhook_url = %s")
-            params.append(request['webhook_url'])
-
-        if 'config_json' in request:
-            updates.append("config_json = %s")
-            params.append(json.dumps(request['config_json']) if isinstance(request['config_json'], dict) else request['config_json'])
-
-        if not updates:
-            return JSONResponse({"error": "No fields to update"}, status_code=400)
-
-        updates.append("updated_at = CURRENT_TIMESTAMP")
-        params.append(messenger_type)
-
-        query = f"UPDATE messenger_settings SET {', '.join(updates)} WHERE messenger_type = %s"
-        c.execute(query, params)
+        # 3. Сохраняем в БД
+        c.execute("UPDATE salon_settings SET messenger_config = %s, updated_at = CURRENT_TIMESTAMP WHERE id = 1", 
+                  (json.dumps(messenger_data),))
 
         conn.commit()
-        log_info(f"Messenger settings updated: {messenger_type}", "messengers")
+        log_info(f"Messenger settings updated in salon_settings: {messenger_type}", "messengers")
 
         return {
             "success": True,

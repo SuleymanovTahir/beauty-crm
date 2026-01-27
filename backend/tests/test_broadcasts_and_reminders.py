@@ -8,13 +8,13 @@
 """
 import sys
 import os
-from db.connection import get_db_connection
 from datetime import datetime, timedelta
 import asyncio
 
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from db.connection import get_db_connection
 from tests.config import get_test_config
 TEST_CONFIG = get_test_config()
 
@@ -85,15 +85,16 @@ def test_broadcast_email_setup():
             c.execute("""
                 INSERT INTO users (
                     username, email, password_hash, full_name, role,
-                    is_active, email_verified, created_at
+                    position, is_active, email_verified, created_at
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 "test_broadcast_user",
                 test_email,
                 "test_password_hash",  # В реальной системе - хэш пароля
                 "Тестовый Пользователь Рассылки",
                 "client",
+                "Tester",
                 True,  # is_active
                 True,  # email_verified
                 datetime.now().isoformat()

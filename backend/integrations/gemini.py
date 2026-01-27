@@ -37,4 +37,4 @@ async def ask_gemini(prompt: str, context: str = "", **kwargs) -> str:
         return response.text.strip()
     except Exception as e:
         print(f"❌ Ошибка Gemini: {e}")
-        return "Извините, что-то пошло не так. Давайте попробуем ещё раз! 😊"
+        return "Извините, что-то пошло не так. Давайте попробуем ещё раз!"

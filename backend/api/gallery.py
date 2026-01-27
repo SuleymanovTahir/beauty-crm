@@ -21,66 +21,55 @@ async def get_gallery_images(
     visible_only: bool = True
 ):
     """
-    Получить фото галереи
+    Получить фото из единой медиа-библиотеки (Архитектура v2.0)
     category: 'portfolio' или 'salon'
     """
     start_time = time.time()
     try:
-        log_info(f"📸 [Gallery] Fetching images for category: {category}, visible_only: {visible_only}", "api")
+        # Прямой маппинг в категорию media_library
+        db_category = 'public_gallery' if category == 'salon' else category
+        
+        log_info(f"📸 [Gallery] Fetching images for category: {db_category}", "api")
 
         conn = get_db_connection()
         c = conn.cursor()
 
-        query = "SELECT id, image_path, title, description, sort_order, is_visible FROM gallery_images WHERE category = %s"
-        params = [category]
+        # Используем новые колонки category и sort_order
+        query = """
+            SELECT id, url, title, description, sort_order, is_public 
+            FROM media_library 
+            WHERE category = %s
+        """
+        params = [db_category]
 
         if visible_only:
-            query += " AND is_visible = TRUE"
+            query += " AND is_public = TRUE"
 
         query += " ORDER BY sort_order ASC, id ASC"
 
-        log_info(f"📊 [Gallery] Executing query: {query} with params: {params}", "api")
         c.execute(query, params)
-
         rows = c.fetchall()
-        log_info(f"✅ [Gallery] Found {len(rows)} images in database", "api")
 
         images = []
         for row in rows:
-            image_path = row[1]
-            log_info(f"🖼️ [Gallery] Processing image ID {row[0]}: {image_path}", "api")
-
-            # Fallback если sanitize_url не работает
-            try:
-                clean_path = sanitize_url(image_path) if image_path else image_path
-            except Exception as sanitize_error:
-                log_error(f"⚠️ [Gallery] sanitize_url failed: {sanitize_error}, using original path", "api")
-                clean_path = image_path
-
             images.append({
                 "id": row[0],
-                "image_path": clean_path,
+                "image_path": sanitize_url(row[1]),
                 "title": row[2],
                 "description": row[3],
-                "sort_order": row[4],
+                "sort_order": row[4] or 0,
                 "is_visible": row[5]
             })
-            log_info(f"✓ [Gallery] Added image: {clean_path}", "api")
 
         conn.close()
 
         duration = time.time() - start_time
-        duration = time.time() - start_time
         log_info(f"⏱️ get_gallery_images took {duration:.4f}s returning {len(images)} images", "api")
         
-        response = JSONResponse({"success": True, "images": images})
-        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-        return response
+        return {"success": True, "images": images}
 
     except Exception as e:
         log_error(f"❌ [Gallery] Error getting gallery images: {e}", "api")
-        import traceback
-        log_error(f"❌ [Gallery] Traceback: {traceback.format_exc()}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/gallery")
@@ -88,7 +77,7 @@ async def add_gallery_image(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Добавить фото в галерею (только admin)"""
+    """Добавить фото в медиа-библиотеку (v2.0)"""
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
@@ -96,26 +85,30 @@ async def add_gallery_image(
     try:
         data = await request.json()
         
+        # Мапим категорию
+        category = data.get('category')
+        db_category = 'public_gallery' if category == 'salon' else category
+
         conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
-            INSERT INTO gallery_images (category, image_path, title, description, sort_order, is_visible)
+            INSERT INTO media_library (url, title, description, category, sort_order, is_public)
             VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id
         """, (
-            data.get('category'),
             data.get('image_path'),
             data.get('title', ''),
             data.get('description', ''),
+            db_category,
             data.get('sort_order', 0),
             True if data.get('is_visible', True) else False
         ))
         
-        image_id = c.lastrowid
+        image_id = c.fetchone()[0]
         conn.commit()
         conn.close()
         
-        log_info(f"Added gallery image {image_id}", "api")
         return {"success": True, "image_id": image_id}
         
     except Exception as e:
@@ -128,62 +121,50 @@ async def update_gallery_image(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Обновить фото в галерее"""
+    """Обновить фото в медиа-библиотеку (v2.0)"""
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
         data = await request.json()
-        
         conn = get_db_connection()
         c = conn.cursor()
+        
+        c.execute("SELECT url FROM media_library WHERE id = %s", (image_id,))
+        row = c.fetchone()
+        if not row: return JSONResponse({"error": "Not found"}, status_code=404)
+        
+        current_url = row[0]
         
         updates = []
         params = []
         
         if 'title' in data:
-            updates.append("title = %s")
-            params.append(data['title'])
-        
+            updates.append("title = %s"); params.append(data['title'])
         if 'description' in data:
-            updates.append("description = %s")
-            params.append(data['description'])
-        
-        if 'sort_order' in data:
-            updates.append("sort_order = %s")
-            params.append(data['sort_order'])
-        
+            updates.append("description = %s"); params.append(data['description'])
         if 'is_visible' in data:
-            updates.append("is_visible = %s")
-            params.append(True if data['is_visible'] else False)
+            updates.append("is_public = %s"); params.append(bool(data['is_visible']))
+        if 'sort_order' in data:
+            updates.append("sort_order = %s"); params.append(int(data['sort_order']))
 
         if 'image_path' in data:
-            # ✅ Удаляем старое фото если оно есть и отличается от нового
-            c.execute("SELECT image_path FROM gallery_images WHERE id = %s", (image_id,))
-            old_row = c.fetchone()
-            if old_row:
+            if current_url != data['image_path']:
                 from api.uploads import delete_old_photo_if_exists
-                delete_old_photo_if_exists(old_row[0], data['image_path'])
-                
-            updates.append("image_path = %s")
-            params.append(data['image_path'])
+                delete_old_photo_if_exists(current_url, data['image_path'])
+            updates.append("url = %s"); params.append(data['image_path'])
         
         if updates:
-            updates.append("updated_at = CURRENT_TIMESTAMP")
             params.append(image_id)
-            
-            query = f"UPDATE gallery_images SET {', '.join(updates)} WHERE id = %s"
-            c.execute(query, params)
+            c.execute(f"UPDATE media_library SET {', '.join(updates)} WHERE id = %s", params)
             conn.commit()
         
         conn.close()
-        
-        log_info(f"Updated gallery image {image_id}", "api")
         return {"success": True}
         
     except Exception as e:
-        log_error(f"Error updating gallery image: {e}", "api")
+        log_error(f"Error updating media: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.delete("/gallery/{image_id}")
@@ -191,41 +172,29 @@ async def delete_gallery_image(
     image_id: int,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Удалить фото из галереи"""
-    start_time = time.time()
+    """Удалить фото из медиа-библиотеки"""
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     try:
         from api.uploads import delete_upload_file
-        
         conn = get_db_connection()
         c = conn.cursor()
         
-        # Получаем путь к файлу
-        c.execute("SELECT image_path FROM gallery_images WHERE id = %s", (image_id,))
+        c.execute("SELECT url FROM media_library WHERE id = %s", (image_id,))
         row = c.fetchone()
         
         if row:
-            # Удаляем из БД
-            c.execute("DELETE FROM gallery_images WHERE id = %s", (image_id,))
+            c.execute("DELETE FROM media_library WHERE id = %s", (image_id,))
             conn.commit()
-            
-            # Удаляем файл с диска
-            image_path = row[0]
-            if image_path:
-                delete_upload_file(image_path)
+            if row[0]: delete_upload_file(row[0])
         
         conn.close()
-        
-        log_info(f"Deleted gallery image {image_id}", "api")
-        duration = time.time() - start_time
-        log_info(f"⏱️ delete_gallery_image took {duration:.4f}s for ID {image_id}", "api")
         return {"success": True}
         
     except Exception as e:
-        log_error(f"Error deleting gallery image: {e}", "api")
+        log_error(f"Error deleting media: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/gallery/upload")
@@ -234,70 +203,66 @@ async def upload_gallery_image(
     file: UploadFile = File(...),
     session_token: Optional[str] = Cookie(None)
 ):
-    """Загрузить новое фото в галерею"""
+    """Загрузить новое фото в медиа-библиотеку (v2.0)"""
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
-        # Используем центральный UPLOAD_DIR из конфига
         from core.config import UPLOAD_DIR
         from datetime import datetime
         import re
 
+        # Мапим категорию
+        db_category = 'public_gallery' if category == 'salon' else category
+
         target_dir = Path(UPLOAD_DIR) / "images" / category
         target_dir.mkdir(parents=True, exist_ok=True)
 
-        # Генерируем уникальное имя файла с timestamp
         original_filename = file.filename or 'image'
         timestamp = int(datetime.now().timestamp())
 
+        # Очистка имени файла
         if '.' in original_filename:
             name_parts = original_filename.rsplit('.', 1)
             base_name = re.sub(r'[^a-zA-Z0-9_-]', '_', name_parts[0])
-            extension = name_parts[1]
-            unique_filename = f"{base_name}_{timestamp}.{extension}"
+            unique_filename = f"{base_name}_{timestamp}.{name_parts[1]}"
         else:
-            base_name = re.sub(r'[^a-zA-Z0-9_-]', '_', original_filename)
-            unique_filename = f"{base_name}_{timestamp}.jpg"
+            unique_filename = f"{re.sub(r'[^a-zA-Z0-9_-]', '_', original_filename)}_{timestamp}.jpg"
 
-        # Сохраняем файл с уникальным именем
         file_path = target_dir / unique_filename
         with open(file_path, "wb") as f:
             content = await file.read()
             f.write(content)
 
-        # URL должен начинаться с /static, так как мы маунтим static папку
-        # Путь теперь вложен в /images/
-        image_path = f"/static/uploads/images/{category}/{unique_filename}"
+        image_url = f"/static/uploads/images/{category}/{unique_filename}"
         
         conn = get_db_connection()
         c = conn.cursor()
         
-        # Get max sort_order
-        c.execute("SELECT MAX(sort_order) FROM gallery_images WHERE category = %s", (category,))
-        row = c.fetchone()
-        max_order = row[0] if row and row[0] is not None else 0
+        # Получаем макс sort_order для категории
+        c.execute("SELECT MAX(sort_order) FROM media_library WHERE category = %s", (db_category,))
+        max_order = c.fetchone()[0] or 0
         
         c.execute("""
-            INSERT INTO gallery_images (category, image_path, title, sort_order, is_visible)
-            VALUES (%s, %s, %s, %s, TRUE)
-        """, (category, image_path, original_filename, max_order + 1))
+            INSERT INTO media_library (url, title, category, is_public, sort_order)
+            VALUES (%s, %s, %s, TRUE, %s)
+            RETURNING id
+        """, (image_url, original_filename, db_category, max_order + 1))
         
-        image_id = c.lastrowid
+        image_id = c.fetchone()[0]
         conn.commit()
         conn.close()
         
-        log_info(f"Uploaded gallery image {image_id}: {file.filename}", "api")
-        return {"success": True, "image_id": image_id, "image_path": image_path}
+        return {"success": True, "image_id": image_id, "image_path": image_url}
         
     except Exception as e:
-        log_error(f"Error uploading gallery image: {e}", "api")
+        log_error(f"Error uploading media: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.get("/gallery/settings/display")
 async def get_gallery_settings():
-    """Получить настройки отображения галереи"""
+    """Получить настройки отображения галереи (v2.0)"""
     try:
         from db.settings import get_salon_settings
         settings = get_salon_settings()
@@ -315,89 +280,23 @@ async def update_gallery_settings(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Обновить настройки отображения галереи"""
+    """Обновить настройки отображения галереи (v2.0)"""
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
         
     try:
         data = await request.json()
-        conn = get_db_connection()
-        c = conn.cursor()
+        from db.settings import update_salon_settings
         
-        # Update or Insert settings
-        # Assuming salon_settings is a key-value store or single row. 
-        # Based on get_salon_settings, it seems to be a single row table 'salon_settings' with columns.
-        # We need to check if columns exist, if not create them (migration is better but I can't do migration easily now without checking schema).
-        # Alternatively, use a generic settings table if exists.
-        # Let's check salon_settings schema first.
+        # Передаем данные напрямую, update_salon_settings теперь умеет их консолидировать в JSONB
+        success = update_salon_settings({
+            "gallery_display_count": data.get('gallery_count'),
+            "portfolio_display_count": data.get('portfolio_count'),
+            "services_display_count": data.get('services_count'),
+            "faces_display_count": data.get('faces_count')
+        })
         
-        # For now, I'll assume columns might not exist and I should probably use a migration.
-        # But user asked to "add button", implying I should make it work.
-        # I will check schema in next step. For now I will write the logic assuming columns exist.
-        
-        updates = []
-        params = []
-        
-        if 'gallery_count' in data:
-            updates.append("gallery_display_count = %s")
-            params.append(data['gallery_count'])
-            
-        if 'portfolio_count' in data:
-            updates.append("portfolio_display_count = %s")
-            params.append(data['portfolio_count'])
-
-        if 'services_count' in data:
-            updates.append("services_display_count = %s")
-            params.append(data['services_count'])
-
-        if 'faces_count' in data:
-            updates.append("faces_display_count = %s")
-            params.append(data['faces_count'])
-            
-        if updates:
-            # Check if row exists
-            c.execute("SELECT id FROM salon_settings LIMIT 1")
-            if c.fetchone():
-                c.execute(f"UPDATE salon_settings SET {', '.join(updates)}", params)
-            else:
-                # Insert default row
-                c.execute("INSERT INTO salon_settings (gallery_display_count, portfolio_display_count, services_display_count, faces_display_count) VALUES (%s, %s, %s, %s)", 
-                          (data.get('gallery_count', 6), data.get('portfolio_count', 6), data.get('services_count', 6), data.get('faces_count', 6)))
-            
-            conn.commit()
-            
-        conn.close()
-        return {"success": True}
-        
+        return {"success": success}
     except Exception as e:
-        # If column missing error
-        if "no such column" in str(e):
-             # Auto-migration fallback (risky but effective for this task)
-             try:
-                 conn = get_db_connection()
-                 c = conn.cursor()
-                 if 'gallery_count' in data:
-                     try:
-                         c.execute("ALTER TABLE salon_settings ADD COLUMN gallery_display_count INTEGER DEFAULT 6")
-                     except: pass
-                 if 'portfolio_count' in data:
-                      try:
-                          c.execute("ALTER TABLE salon_settings ADD COLUMN portfolio_display_count INTEGER DEFAULT 6")
-                      except: pass
-                 if 'services_count' in data:
-                     try:
-                         c.execute("ALTER TABLE salon_settings ADD COLUMN services_display_count INTEGER DEFAULT 6")
-                     except: pass
-                 if 'faces_count' in data:
-                     try:
-                         c.execute("ALTER TABLE salon_settings ADD COLUMN faces_display_count INTEGER DEFAULT 6")
-                     except: pass
-                 conn.commit()
-                 conn.close()
-                 # Retry update
-                 return await update_gallery_settings(request, session_token)
-             except Exception as ex:
-                 return JSONResponse({"error": str(ex)}, status_code=500)
-                 
         return JSONResponse({"error": str(e)}, status_code=500)

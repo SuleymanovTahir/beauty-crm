@@ -18,15 +18,16 @@ from utils.logger import log_info, log_error, log_warning
 def get_salon_name() -> str:
     """
     Получить название салона из базы данных
-    Returns: Название салона или 'Beauty Salon' по умолчанию
+    Returns: Название салона или 'Beauty Salon' из окружения или по умолчанию
     """
     try:
         from db import get_salon_settings
         salon_settings = get_salon_settings()
-        return salon_settings.get('salon_name', 'Beauty Salon')
+        # Corrected key from 'salon_name' to 'name'
+        return salon_settings.get('name') or os.getenv('SALON_NAME') or 'Beauty Salon'
     except Exception as e:
         log_warning(f"Could not get salon name: {e}", "email")
-        return 'Beauty Salon'
+        return os.getenv('SALON_NAME') or 'Beauty Salon'
 
 
 
@@ -163,7 +164,7 @@ def send_verification_code_email(email: str, code: str, name: str, user_type: st
     <body>
         <div class="container">
             <div class="header">
-                <h1>💎 {salon_name}</h1>
+                <h1>{salon_name}</h1>
                 <p>Подтверждение регистрации</p>
             </div>
             <div class="content">
@@ -241,7 +242,7 @@ def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
     <body>
         <div class="container">
             <div class="header">
-                <h1>⭐ Новая регистрация!</h1>
+                <h1>Новая регистрация!</h1>
             </div>
             <div class="content">
                 <p>Новый пользователь зарегистрировался в системе и ожидает одобрения:</p>
@@ -317,7 +318,7 @@ def send_registration_approved_email(email: str, name: str) -> bool:
     <body>
         <div class="container">
             <div class="header">
-                <h1>✅ Регистрация одобрена!</h1>
+                <h1>Регистрация одобрена!</h1>
             </div>
             <div class="content">
                 <h2>Здравствуйте, {name}!</h2>
@@ -381,7 +382,7 @@ def send_registration_rejected_email(email: str, name: str, reason: str = "") ->
     <body>
         <div class="container">
             <div class="header">
-                <h1>❌ Регистрация отклонена</h1>
+                <h1>Регистрация отклонена</h1>
             </div>
             <div class="content">
                 <h2>Здравствуйте, {name}!</h2>

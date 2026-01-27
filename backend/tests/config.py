@@ -58,8 +58,8 @@ def get_test_config():
         'work_end_saturday': work_end_weekend,      # Для совместимости
         
         # Контактные данные салона для тестов
-        'test_phone': settings.get('phone'),
-        'test_email': settings.get('email'),
+        'test_phone': settings.get('phone') or '+1234567890',
+        'test_email': settings.get('email') or 'test@example.com',
         'test_instagram': settings.get('instagram'),
         'salon_name': settings.get('name'),
         

@@ -112,7 +112,7 @@ async def notifications_websocket(websocket: WebSocket):
                         conn = get_db_connection()
                         c = conn.cursor()
                         try:
-                            c.execute("SELECT COUNT(*) FROM notifications WHERE user_id = %s AND is_read = FALSE", (user_id,))
+                            c.execute("SELECT COUNT(*) FROM unified_communication_log WHERE user_id = %s AND is_read = FALSE AND medium = 'in_app'", (user_id,))
                             return c.fetchone()[0]
                         finally:
                             conn.close()

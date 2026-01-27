@@ -26,34 +26,29 @@ async def get_notifications(
     limit: int = Query(50),
     session_token: Optional[str] = Cookie(None)
 ):
-    """Получить уведомления пользователя"""
+    """Получить уведомления пользователя из единого лога"""
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-
     
     conn = get_db_connection()
     c = conn.cursor()
     
     try:
+        query = """
+            SELECT id, title, content, trigger_type, is_read, created_at, action_url
+            FROM unified_communication_log 
+            WHERE user_id = %s AND medium = 'in_app'
+        """
+        params = [user["id"]]
+
         if unread_only:
-            c.execute("""
-                SELECT id, title, message, type, is_read, created_at, action_url
-                FROM notifications 
-                WHERE user_id = %s AND is_read = FALSE
-                ORDER BY created_at DESC
-                LIMIT %s
-            """, (user["id"], limit))
-        else:
-            c.execute("""
-                SELECT id, title, message, type, is_read, created_at, action_url
-                FROM notifications 
-                WHERE user_id = %s
-                ORDER BY created_at DESC
-                LIMIT %s
-            """, (user["id"], limit))
-        
+            query += " AND is_read = FALSE"
+            
+        query += " ORDER BY created_at DESC LIMIT %s"
+        params.append(limit)
+
+        c.execute(query, params)
         notifications = c.fetchall()
         
         return {
@@ -64,7 +59,7 @@ async def get_notifications(
                     "message": n[2],
                     "type": n[3],
                     "is_read": bool(n[4]),
-                    "created_at": n[5],
+                    "created_at": n[5].isoformat() if hasattr(n[5], 'isoformat') else n[5],
                     "action_url": n[6]
                 } for n in notifications
             ]
@@ -74,6 +69,7 @@ async def get_notifications(
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:
         conn.close()
+
 
 @router.post("/notifications/{notification_id}/read")
 async def mark_notification_read(
@@ -85,17 +81,15 @@ async def mark_notification_read(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-
-    
     try:
         conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
-            UPDATE notifications 
-            SET is_read = TRUE, read_at =%s
-            WHERE id =%s AND user_id =%s
-        """, (get_current_time().isoformat(), notification_id, user["id"]))
+            UPDATE unified_communication_log 
+            SET is_read = TRUE
+            WHERE id = %s AND user_id = %s AND medium = 'in_app'
+        """, (notification_id, user["id"]))
         
         if c.rowcount == 0:
             conn.close()
@@ -103,9 +97,7 @@ async def mark_notification_read(
         
         conn.commit()
         conn.close()
-        
-        return {"success": True, "message": "Notification marked as read"}
-        
+        return {"success": True}
     except Exception as e:
         log_error(f"Error marking notification as read: {e}", "notifications")
         return JSONResponse({"error": str(e)}, status_code=500)
@@ -119,152 +111,81 @@ async def mark_all_notifications_read(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-
-    
     try:
         conn = get_db_connection()
         c = conn.cursor()
         
         c.execute("""
-            UPDATE notifications 
-            SET is_read = TRUE, read_at =%s
-            WHERE user_id =%s AND is_read = FALSE
-        """, (get_current_time().isoformat(), user["id"]))
+            UPDATE unified_communication_log 
+            SET is_read = TRUE
+            WHERE user_id = %s AND is_read = FALSE AND medium = 'in_app'
+        """, (user["id"],))
         
-        updated_count = c.rowcount
         conn.commit()
         conn.close()
-        
-        return {
-            "success": True, 
-            "message": f"Marked {updated_count} notifications as read"
-        }
-        
+        return {"success": True}
     except Exception as e:
-        log_error(f"Error marking all notifications as read: {e}", "notifications")
+        log_error(f"Error marking all read: {e}", "notifications")
         return JSONResponse({"error": str(e)}, status_code=500)
 
+
 @router.get("/notifications/unread-count")
-async def get_unread_count(
-    session_token: Optional[str] = Cookie(None)
-):
-    """Получить количество непрочитанных уведомлений"""
+async def get_unread_count(session_token: Optional[str] = Cookie(None)):
+    """Количество непрочитанных"""
     user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
-
-
-
+    if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
     try:
         conn = get_db_connection()
         c = conn.cursor()
-
-        c.execute("""
-            SELECT COUNT(*)
-            FROM notifications
-            WHERE user_id =%s AND is_read = FALSE
-        """, (user["id"],))
-
+        c.execute("SELECT COUNT(*) FROM unified_communication_log WHERE user_id = %s AND is_read = FALSE AND medium = 'in_app'", (user["id"],))
         count = c.fetchone()[0]
         conn.close()
-
         return {"unread_count": count}
-
     except Exception as e:
-        log_error(f"Error getting unread count: {e}", "notifications")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.delete("/notifications/{notification_id}")
-async def delete_notification(
-    notification_id: int,
-    session_token: Optional[str] = Cookie(None)
-):
-    """Удалить одно уведомление"""
+async def delete_notification(notification_id: int, session_token: Optional[str] = Cookie(None)):
+    """Удалить уведомление"""
     user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
-
+    if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
     try:
         conn = get_db_connection()
         c = conn.cursor()
-
-        c.execute("""
-            DELETE FROM notifications
-            WHERE id = %s AND user_id = %s
-        """, (notification_id, user["id"]))
-
-        if c.rowcount == 0:
-            conn.close()
-            return JSONResponse({"error": "Notification not found"}, status_code=404)
-
+        c.execute("DELETE FROM unified_communication_log WHERE id = %s AND user_id = %s AND medium = 'in_app'", (notification_id, user["id"]))
         conn.commit()
         conn.close()
-
-        log_info(f"Deleted notification {notification_id} for user {user['id']}", "notifications")
-
-        return {
-            "success": True,
-            "message": "Notification deleted"
-        }
-
+        return {"success": True}
     except Exception as e:
-        log_error(f"Error deleting notification: {e}", "notifications")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.delete("/notifications/clear-all")
-async def clear_all_notifications(
-    session_token: Optional[str] = Cookie(None)
-):
-    """Удалить все уведомления текущего пользователя"""
+async def clear_all_notifications(session_token: Optional[str] = Cookie(None)):
+    """Очистить всё"""
     user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
-
+    if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
     try:
         conn = get_db_connection()
         c = conn.cursor()
-
-        c.execute("""
-            DELETE FROM notifications
-            WHERE user_id = %s
-        """, (user["id"],))
-
-        deleted_count = c.rowcount
+        c.execute("DELETE FROM unified_communication_log WHERE user_id = %s AND medium = 'in_app'", (user["id"],))
         conn.commit()
         conn.close()
-
-        log_info(f"Deleted {deleted_count} notifications for user {user['id']}", "notifications")
-
-        return {
-            "success": True,
-            "message": f"Deleted {deleted_count} notifications",
-            "count": deleted_count
-        }
-
+        return {"success": True}
     except Exception as e:
-        log_error(f"Error clearing all notifications: {e}", "notifications")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-def create_notification(user_id: str, title: str, message: str, 
-                       notification_type: str = "info", action_url: str = None):
-    """Создать уведомление"""
-
-    
+def create_notification(user_id: int, title: str, message: str, notification_type: str = "info", action_url: str = None):
+    """Создать уведомление (системное)"""
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        
         c.execute("""
-            INSERT INTO notifications (user_id, title, message, type, action_url)
-            VALUES (%s,%s,%s,%s,%s)
+            INSERT INTO unified_communication_log (user_id, title, content, trigger_type, medium, action_url)
+            VALUES (%s, %s, %s, %s, 'in_app', %s)
         """, (user_id, title, message, notification_type, action_url))
-        
         conn.commit()
         conn.close()
-        
-        log_info(f"Notification created for user {user_id}: {title}", "notifications")
         return True
-        
     except Exception as e:
         log_error(f"Error creating notification: {e}", "notifications")
         return False
@@ -432,6 +353,8 @@ async def get_notification_settings_api(
                 "birthdayReminders": True,
                 "birthdayDaysAdvance": 7
             }
+    except HTTPException as he:
+        raise he
     except Exception as e:
         log_error(f"Error loading notification settings: {e}", "notifications")
         import traceback
@@ -559,6 +482,8 @@ async def save_notification_settings(
             "message": "Настройки сохранены"
         }
 
+    except HTTPException as he:
+        raise he
     except Exception as e:
         log_error(f"Error saving notification settings: {e}", "notifications")
         import traceback
