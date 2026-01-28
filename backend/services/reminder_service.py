@@ -25,7 +25,7 @@ async def check_and_send_reminders():
         tomorrow_end = now + timedelta(hours=24, minutes=30)
         
         c.execute("""
-            SELECT b.id, b.instagram_id, b.service_name, b.datetime, b.phone
+            SELECT b.id, b.instagram_id, b.service_name, b.datetime
             FROM bookings b
             LEFT JOIN unified_communication_log l ON 
                 l.client_id = b.instagram_id AND 
@@ -47,7 +47,7 @@ async def check_and_send_reminders():
         two_hours_end = now + timedelta(hours=2, minutes=30)
         
         c.execute("""
-            SELECT b.id, b.instagram_id, b.service_name, b.datetime, b.phone
+            SELECT b.id, b.instagram_id, b.service_name, b.datetime
             FROM bookings b
             LEFT JOIN unified_communication_log l ON 
                 l.client_id = b.instagram_id AND 
@@ -71,7 +71,7 @@ async def check_and_send_reminders():
 
 async def send_reminder(booking, reminder_type):
     """Отправляет напоминание через Instagram"""
-    booking_id, instagram_id, service, dt_str, phone = booking
+    booking_id, instagram_id, service, dt_str = booking
     
     try:
         from integrations.instagram import send_message

@@ -351,9 +351,7 @@ async def create_metric_api(request: Request, session_token: Optional[str] = Coo
         key=data.get("key"),
         name=data.get("name"),
         unit=data.get("unit"),
-        description=data.get("description"),
-        name_en=data.get("name_en"),
-        name_ru=data.get("name_ru")
+        description=data.get("description")
     )
     
     if metric_id:

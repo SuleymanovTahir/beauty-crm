@@ -6,12 +6,12 @@
   "buttons": {
     "cancel": "Болдырмау",
     "close": "Жабу",
-    "upload": "Жүктеп алу"
+    "upload": "Жүктеу балансы"
   },
   "card": {
     "featured": "Таңдаулылар",
     "toggle_featured": "Таңдаулылар</z41> <z42>Таңдаулылар",
-    "uploaded_by": "{{name}} жүктеген",
+    "uploaded_by": "Жүктелді {{name}}",
     "views": "көрулер"
   },
   "dialogs": {
@@ -24,19 +24,19 @@
         "after_photo": "Фотосуреттен кейін",
         "before_after": "Бұрын/Кейін",
         "before_photo": "«Бұрын» фотосы",
-        "category": "Санаты",
+        "category": "Санат",
         "client": "Клиент",
         "client_hint": "Фотосурет клиент галереясында қолжетімді болады",
         "description": "Сипаттамасы",
         "description_placeholder": "Фото сипаттамасы",
         "photo": "Фото",
-        "select_client": "Клиентті таңдаңыз",
+        "select_client": "Клиент таңдау",
         "single_photo": "Бір фото",
-        "title": "Тақырып",
+        "title": "Аты",
         "title_placeholder": "Тақырып суреті",
         "upload_type": "Жүктеп салу түрі"
       },
-      "title": "Фотосуретті жүктеп салу"
+      "title": "Фотосуреттерді жүктеп салу"
     }
   },
   "empty": {
@@ -67,5 +67,5 @@
     "uploaded": "Фотосурет сәтті жүктеп салынды",
     "visibility_updated": "Visibility updated"
   },
-  "upload_photo": "Фотосуретті жүктеп салу"
+  "upload_photo": "Фотосуреттерді жүктеп салу"
 }

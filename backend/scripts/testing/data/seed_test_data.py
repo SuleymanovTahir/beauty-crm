@@ -217,21 +217,11 @@ def seed_data():
         for day in range(6): # Mon-Sat
             c.execute("INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active) VALUES (%s, %s, '10:30', '21:00', TRUE)", (mid, day))
 
-    # 5. Public Content (Reviews & FAQ) - MOVED TO restore_full_content.py
-    print("📢 Skipping Public Reviews/FAQ/Banners (managed by restore_full_content.py)")
-    
-    # Keep Gallery for now as it doesn't have a full restored source yet
-    # But ensure we don't wipe it if it has data
-    c.execute("SELECT count(*) FROM public_gallery")
-    if c.fetchone()['count'] == 0:
-        print("🖼️ Seeding Public Gallery (minimal)...")
-        c.execute("""
-            INSERT INTO public_gallery (image_url, title_ru, title_en, category, display_order)
-            VALUES 
-            ('/static/images/portfolio/nail1.jpg', 'Классический маникюр', 'Classic Manicure', 'nails', 1),
-            ('/static/images/portfolio/nail2.jpg', 'Дизайн ногтей', 'Nail Art', 'nails', 2),
-            ('/static/images/portfolio/hair1.jpg', 'Окрашивание', 'Hair Coloring', 'hair', 3)
-        """)
+    # 5. Public Content (Reviews, FAQ, Banners, Gallery) - MANAGED BY restore_all_public_data.py
+    print("📢 Skipping Public Content (managed by restore_all_public_data.py)")
+    print("   💡 Для восстановления публичного контента запустите:")
+    print("   python3 backend/scripts/maintenance/restore_all_public_data.py")
+
 
     print("🏢 Seeding Salon Settings...")
     salon_name = os.getenv('SALON_NAME', 'Test Beauty Salon')

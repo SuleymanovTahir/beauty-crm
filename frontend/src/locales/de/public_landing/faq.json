@@ -1,16 +1,84 @@
 {
   "items": [
     {
-      "question": "Wie vereinbare ich einen Termin?",
-      "answer": "Sie können einen Termin über die Website oder WhatsApp vereinbaren."
+      "answer": "Sie können sich für das Verfahren über das Formular auf unserer Website anmelden, indem Sie uns anrufen oder uns auf Instagram schreiben. Wir werden Sie kontaktieren, um Ihren Termin zu bestätigen.",
+      "question": "So melden Sie sich für das Verfahren an"
     },
     {
-      "question": "Gibt es Parkplätze?",
-      "answer": "Ja, wir haben kostenlose Parkplätze für Kunden."
+      "answer": "Wir akzeptieren Zahlungen in bar und mit Karten (Visa, MasterCard, American Express). Die Bezahlung erfolgt nach Erbringung der Leistung.",
+      "question": "Welche Zahlungsmethoden akzeptieren Sie?"
     },
     {
-      "question": "Welche Marken verwenden Sie?",
-      "answer": "Wir verwenden Luxio, Fedua und andere Premium-Marken Marken."
+      "answer": "Sie können einen Termin über die Website oder WhatsApp vereinbaren.",
+      "question": "Wie vereinbare ich einen Termin?"
+    },
+    {
+      "answer": "Ja, Sie können einen Termin bis zu 24 Stunden vor Ihrem geplanten Zeitpunkt absagen oder verschieben. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Strafe datum bis 50 % der Kosten der Dienstleistung erhoben werden.",
+      "question": "Kann ich einen Termin absagen oder verschieben"
+    },
+    {
+      "answer": "Wir verwenden ausschließlich zertifizierte Premium-Materialien datum bis weltweit führenden Marken. Alle Pigmente sind hypoallergen und gesundheitlich unbedenklich.",
+      "question": "Welche Materialien verwenden Sie?"
+    },
+    {
+      "answer": "Ja, alle unsere Meister verfügen über internationale Zertifikate und nehmen regelmäßig an Fortbildungen teil.",
+      "question": "Verfügen Ihre Handwerker über Zertifikate?"
+    },
+    {
+      "answer": "Ja, einige Verfahren erfordern eine Vorbereitung. Detaillierte Empfehlungen geben wir Ihnen bei der Anmeldung.",
+      "question": "Ist vor dem Eingriff eine Vorbereitung notwendig?"
+    },
+    {
+      "answer": "Ja, wir haben kostenlose Parkplätze für Kunden.",
+      "question": "Gibt es Parkplätze?"
+    },
+    {
+      "answer": "Ja, jeder Eingriff hat seine eigenen Kontraindikationen. Hauptsächlich: Schwangerschaft, Stillzeit, akute entzündliche Prozesse, Blutkrankheiten, Onkologie. Vor dem Eingriff ist eine Konsultation mit einem Spezialisten erforderlich.",
+      "question": "Gibt es Kontraindikationen für die Eingriffe?"
+    },
+    {
+      "answer": "Ja, wir garantieren die Qualität aller unserer Leistungen. Wenn Sie mit dem Ergebnis nicht zufrieden sind, kontaktieren Sie uns innerhalb datum bis 7 Tagen und wir werden eine Lösung finden.",
+      "question": "Geben Sie eine Garantie für die Leistungen?"
+    },
+    {
+      "answer": "Wir verwenden Luxio, Fedua und andere Premium-Marken Marken.",
+      "question": "Welche Marken verwenden Sie?"
+    },
+    {
+      "answer": "Ja, wir haben ein kumulatives Treueprogramm. Nach jedem Besuch erhalten Sie Prämien, mit denen Sie weitere Besuche bezahlen können.",
+      "question": "Haben Sie ein Treueprogramm?"
+    },
+    {
+      "answer": "Ja, wir arbeiten 7 Tage die Woche.",
+      "question": "Arbeiten Sie am Wochenende"
+    },
+    {
+      "answer": "Ja, wir bieten Geschenkgutscheine über einen beliebigen Betrag oder für bestimmte Dienstleistungen an. Kontaktieren Sie uns, um ein Zertifikat auszustellen.",
+      "question": "Kann ich einen Gutschein für Dienstleistungen ausstellen?"
+    },
+    {
+      "answer": "Wir befinden uns im Zentrum datum bis Dubai. Detaillierte Informationen zur Anfahrt finden Sie auf der Seite „Kontakte“.",
+      "question": "Wo ist Ihr Ausstellungsraum?"
+    },
+    {
+      "answer": "Sie können sich online über das Formular auf unserer Website anmelden, indem Sie uns anrufen oder uns auf WhatsApp oder Instagram schreiben.",
+      "question": "Wie melde ich mich für den Eingriff an?"
+    },
+    {
+      "answer": "Ja, Sie können Ihren Termin absagen oder verschieben, indem Sie uns mindestens 24 Stunden im Voraus benachrichtigen. Bitte teilen Sie uns Änderungen im Voraus mit.",
+      "question": "Können Sie Ihren Termin absagen oder verschieben?"
+    },
+    {
+      "answer": "Wir verwenden nur hochwertige professionelle Materialien. Alle Instrumente werden medizinisch sterilisiert.",
+      "question": "Welche Materialien verwenden Sie?"
+    },
+    {
+      "answer": "Ja, wir schätzen Ihre Zeit und können dafür sorgen, dass mehrere Eingriffe gleichzeitig durchgeführt werden.",
+      "question": "Führen Sie Eingriffe mit vier Händen durch?"
+    },
+    {
+      "answer": "Unser Salon befindet sich in verkehrsgünstiger Lage mit schöner Aussicht und gemütlicher Atmosphäre. Die genaue Adresse finden Sie im Bereich Kontakte.",
+      "question": "Wo befinden Sie sich?"
     }
   ]
 }

@@ -8,8 +8,8 @@
   "form_company": "Компания",
   "form_company_placeholder": "Название вашей компании (необязательно)",
   "form_email_placeholder": "Введите ваш email",
-  "form_name": "Ваше имя",
-  "form_name_placeholder": "Введите ваше имя",
+  "form_name": "Аты-жөніңіз",
+  "form_name_placeholder": "Атыңызды енгізіңіз",
   "form_phone": "Телефон",
   "form_proposal": "Ваше предложение",
   "form_proposal_placeholder": "Опишите ваше предложение о сотрудничестве...",
@@ -43,7 +43,7 @@
   "suppliers_item2": "Профессиональное оборудование",
   "suppliers_item3": "Расходные материалы",
   "suppliers_title": "Поставщики",
-  "title": "Сотрудничество",
+  "title": "Ынтымақтастық",
   "types_subtitle": "Мы заинтересованы в различных форматах партнерства",
   "types_title": "Виды сотрудничества"
 }

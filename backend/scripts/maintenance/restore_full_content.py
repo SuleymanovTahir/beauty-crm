@@ -16,60 +16,55 @@ TABLES = ['public_faq', 'public_reviews', 'public_banners']
 def restore_full_content():
     print("🚀 Restoring full public content from locales...")
     
-    # 1. Collect all data from dynamic.json files
+    # 1. Collect all data from dynamic.json (Russian locale for base fields)
     master_data = {}
     
-    for lang in LANGUAGES:
-        dynamic_file = backend_dir.parent / 'frontend' / 'src' / 'locales' / lang / 'dynamic.json'
-        if not dynamic_file.exists():
-            print(f"⚠️  {dynamic_file} not found, skipping {lang}")
+    # Read Russian locale for base fields
+    ru_dynamic_file = backend_dir.parent / 'frontend' / 'src' / 'locales' / 'ru' / 'dynamic.json'
+    if not ru_dynamic_file.exists():
+        print(f"❌ Russian dynamic.json not found at {ru_dynamic_file}")
+        return
+        
+    with open(ru_dynamic_file, 'r', encoding='utf-8') as f:
+        ru_data = json.load(f)
+        
+    for key, value in ru_data.items():
+        # Format: table.id.field or table.id.field_ru.hash
+        parts = key.split('.')
+        if len(parts) < 3:
             continue
             
-        with open(dynamic_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+        table = parts[0]
+        if table not in TABLES:
+            continue
             
-        for key, value in data.items():
-            # Format: table.id.field_ru.suffix
-            parts = key.split('.')
-            if len(parts) < 3:
-                continue
-                
-            table = parts[0]
-            if table not in TABLES:
-                continue
-                
-            try:
-                item_id = int(parts[1])
-            except ValueError:
-                continue
-                
-            field_with_lang = parts[2]
-            # Strip _ru suffix if it was added by the translation tool for a base field
-            # and strip the hash suffix if it exists
-            # Wait, the keys in dynamic.json are like: public_faq.1.question_ru.ca37a34b
+        try:
+            item_id = int(parts[1])
+        except ValueError:
+            continue
             
-            # Extract actual field name
-            # We want 'question' from 'question_ru' or 'question'
-            field_parts = field_with_lang.split('_')
-            base_field = field_parts[0]
+        # Extract field name (remove _ru suffix and hash if present)
+        field_with_suffix = parts[2]
+        
+        # Determine base field name
+        if field_with_suffix.endswith('_ru'):
+            base_field = field_with_suffix[:-3]  # Remove '_ru'
+        else:
+            base_field = field_with_suffix
             
-            if table not in master_data:
-                master_data[table] = {}
-            if item_id not in master_data[table]:
-                master_data[table][item_id] = {}
-            
-            # Special case for employee_position and other fields
-            if field_with_lang.startswith('employee_position'):
-                base_field = 'employee_position'
-            elif field_with_lang.startswith('author_name'):
-                base_field = 'author_name'
-                
-            target_col = f"{base_field}_{lang}"
-            
-            # Special logic for image_url, category etc which might be in dynamic.json?
-            # Usually only text fields are there.
-            
-            master_data[table][item_id][target_col] = value
+        # Handle special multi-word fields
+        if field_with_suffix.startswith('employee_position'):
+            base_field = 'employee_position'
+        elif field_with_suffix.startswith('author_name'):
+            base_field = 'author_name'
+        
+        if table not in master_data:
+            master_data[table] = {}
+        if item_id not in master_data[table]:
+            master_data[table][item_id] = {}
+        
+        # Store in base field (without language suffix) for Rule 15 compliance
+        master_data[table][item_id][base_field] = value
 
     # 2. Update Database
     conn = get_db_connection()

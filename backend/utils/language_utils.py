@@ -8,126 +8,57 @@ SUPPORTED_LANGUAGES = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
 DEFAULT_LANGUAGE = 'ru'
 FALLBACK_LANGUAGE = 'en'
 
-def get_language_field_name(base_field: str, language: str) -> str:
-    """
-    Получить имя поля БД для указанного языка
-    
-    Args:
-        base_field: Базовое имя поля (например 'name', 'full_name', 'title')
-        language: Код языка
-        
-    Returns:
-        Имя поля с суффиксом языка (например 'name_ru', 'full_name_en')
-    """
-    if language not in SUPPORTED_LANGUAGES:
-        language = DEFAULT_LANGUAGE
-    
-    return f"{base_field}_{language}"
-
-def get_service_name_field(language: str) -> str:
-    """Получить имя поля для названия услуги на указанном языке"""
-    return get_language_field_name('name', language)
-
-def get_master_name_field(language: str) -> str:
-    """Получить имя поля для имени мастера на указанном языке"""
-    return get_language_field_name('full_name', language)
-
-def get_position_field(language: str) -> str:
-    """Получить имя поля для должности на указанном языке"""
-    return get_language_field_name('position', language)
-
 def validate_language(language: str) -> str:
     """Валидировать и нормализовать код языка"""
     if language in SUPPORTED_LANGUAGES:
         return language
     return DEFAULT_LANGUAGE
 
-def get_service_name_index(language: str) -> int:
+def build_coalesce_query(base_field, language_code, fallback_fields=[]):
     """
-    Получить индекс поля названия услуги в tuple из БД
-    
-    Структура services: 0:id, 1:code, 2:name (en), 3:name_ru, 4:name_ar, 
-                        5:name_es, 6:name_de, 7:name_fr, 8:name_pt, 9:name_hi, 10:name_kk
+    Returns the field name without language prefixes as per Rule 15.
+    Translations are handled via locale files in the frontend.
     """
-    index_map = {
-        'ru': 3,
-        'en': 2,
-        'ar': 4,
-        'es': 5,
-        'de': 6,
-        'fr': 7,
-        'pt': 8,
-        'hi': 9,
-        'kk': 10
-    }
-    return index_map.get(language, 2)  # По умолчанию английский
+    return base_field
 
-def build_coalesce_query(field_base: str, language: str, fallback_fields: Optional[List[str]] = None, include_base: bool = True) -> str:
+def get_localized_name(emp_id, full_name, language='ru'):
     """
-    Построить запрос для получения базового значения поля.
-    Раньше здесь был COALESCE для локализованных колонок.
-    Теперь вся локализация перенесена в locales/*.json на фронтенде.
+    Получить имя с учетом транслитерации.
     """
-    return field_base
-def get_localized_name(emp_id: int, full_name: str, language: str = 'ru') -> str:
+    return get_transliterated_name(full_name, language)
+
+def get_transliterated_name(name: str, language: str) -> str:
     """
-    Универсальная функция для получения локализованного имени мастера из БД
-    Используется в prompts.py и smart_scheduler.py
-    
-    Args:
-        emp_id: ID мастера в таблице users
-        full_name: Полное имя (fallback если локализация не найдена)
-        language: Код языка
-    
-    Returns:
-        Локализованное имя или full_name если не найдено
+    Универсальная транслитерация (обертка над utils.transliteration).
     """
-    from db.connection import get_db_connection
-    import logging
-    
-    logger = logging.getLogger(__name__)
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
     try:
-        # Проверяем, что мастер существует
-        cursor.execute("SELECT id, is_active FROM users WHERE id = %s", (emp_id,))
-        master_check = cursor.fetchone()
+        from utils.transliteration import transliterate_name
+        return transliterate_name(name, language)
+    except ImportError:
+        return name
+
+def translate_position(position: str, language: str) -> str:
+    """
+    Перевод должности с использованием словаря BeautySalonTranslator.
+    """
+    if not position:
+        return ""
         
-        if not master_check:
-            logger.error(f"❌ ERROR: Master with id={emp_id} NOT FOUND in DB! Using fallback: {full_name}")
-            print(f"❌ ERROR: Master with id={emp_id} NOT FOUND in DB! Using fallback: {full_name}")
-            return full_name
-        
-        if not master_check[1]:
-            logger.warning(f"⚠️ WARNING: Master id={emp_id} is NOT ACTIVE! Using fallback: {full_name}")
-            print(f"⚠️ WARNING: Master id={emp_id} is NOT ACTIVE! Using fallback: {full_name}")
-        
-        # Валидация языка
-        language = validate_language(language)
-        
-        # Получаем локализованное имя с универсальным COALESCE
-        coalesce_expr = build_coalesce_query('full_name', language)
-        cursor.execute(f"""
-            SELECT {coalesce_expr}
-            FROM users 
-            WHERE id = %s
-        """, (emp_id,))
-        
-        result = cursor.fetchone()
-        localized_name = result[0] if result and result[0] else full_name
-        
-        if localized_name != full_name:
-            logger.debug(f"✅ Localized name for id={emp_id}: {full_name} -> {localized_name} ({language})")
-        
-        return localized_name
-        
-    except Exception as e:
-        logger.error(f"❌ ERROR in get_localized_name for id={emp_id}: {e}", exc_info=True)
-        print(f"❌ ERROR in get_localized_name for id={emp_id}: {e}")
-        return full_name
-    finally:
-        conn.close()
+    language = validate_language(language)
+    
+    if language == 'ru':
+        try:
+            from utils.beauty_translator import BEAUTY_SALON_TERMS
+            pos_lower = position.lower().strip()
+            if pos_lower in BEAUTY_SALON_TERMS:
+                result = BEAUTY_SALON_TERMS[pos_lower]
+                # Делаем первую букву заглавной
+                if result:
+                    return result[0].upper() + result[1:]
+        except ImportError:
+            pass
+    
+    return position
 
 def get_dynamic_translation(table: str, item_id: int, field: str, language: str, default_value: str = "") -> str:
     """
@@ -140,7 +71,6 @@ def get_dynamic_translation(table: str, item_id: int, field: str, language: str,
     language = validate_language(language)
     
     # Путь к файлу локализации (относительно корня проекта)
-    # Предполагаем, что этот файл находится в backend/utils/
     base_dir = Path(__file__).parent.parent.parent
     locales_file = base_dir / 'frontend' / 'src' / 'locales' / language / 'dynamic.json'
     
@@ -152,17 +82,54 @@ def get_dynamic_translation(table: str, item_id: int, field: str, language: str,
             translations = json.load(f)
             
         # Ищем ключ: table.item_id.field (может быть с хешем в конце)
-        prefix = f"{table}.{item_id}.{field}"
+        if field:
+            prefix = f"{table}.{item_id}.{field}"
+        else:
+            prefix = f"{table}.{item_id}"
         
-        # Сначала ищем точное совпадение (если вдруг ключи без хеша)
+        # Ищем все подходящие ключи
+        matches = []
+        
+        # 1. Точное совпадение
         if prefix in translations:
-            return translations[prefix]
+            matches.append((prefix, translations[prefix]))
             
-        # Потом ищем любой ключ, начинающийся на префикс
+        # 2. Совпадение по префиксу (с хешем)
         for key, value in translations.items():
-            if key.startswith(prefix):
+            if key != prefix and key.startswith(prefix + "_ru."): # Format: field_ru.hash
+                matches.append((key, value))
+            elif key != prefix and key.startswith(prefix + "."): # Format: field.hash
+                matches.append((key, value))
+        
+        # Эвристика выбора: приоритет ключам с хешем (длинным), так как они содержат нормальные переводы
+        for key, value in matches:
+            if "_ru." in key:
                 return value
+        
+        # Если нет ключей с хешем, возвращаем точное совпадение или первое попавшееся
+        result = default_value
+        if matches:
+            result = matches[0][1]
+            
+        # Fallback: Dictionary check for EN if result contains Cyrillic
+        if language == 'en' and _has_cyrillic(result):
+            try:
+                from utils.beauty_translator import RU_TO_EN_TERMS
+                val_lower = result.lower().strip()
+                if val_lower in RU_TO_EN_TERMS:
+                    tr = RU_TO_EN_TERMS[val_lower]
+                    return tr[0].upper() + tr[1:]
+            except ImportError:
+                pass
+                
+        return result
+            
     except Exception:
         pass
         
     return default_value
+
+def _has_cyrillic(text: str) -> bool:
+    """Проверка на наличие кириллицы"""
+    if not text: return False
+    return any(u'\u0400' <= c <= u'\u04FF' for c in text)

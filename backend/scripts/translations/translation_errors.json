@@ -60,16 +60,59 @@
             "status": "fixed"
         },
         {
-            "incorrect": "Flexible Match",
-            "correct": "Any Professional / Any Master / Любой мастер",
-            "context": "Professional selection - any available",
+            "incorrect": "пилинг",
+            "correct": "Пилинг",
+            "context": "Capitalization consistency for services",
             "languages": [
-                "en",
                 "ru"
             ],
-            "date_found": "2026-01-20",
-            "priority": "high",
-            "status": "fixed"
+            "date_found": "2026-01-28",
+            "priority": "medium",
+            "status": "pending_fix"
+        },
+        {
+            "incorrect": "Мед. чистка лица",
+            "correct": "Медицинская чистка лица",
+            "context": "Professional terminology (no informal abbreviations)",
+            "languages": [
+                "ru"
+            ],
+            "date_found": "2026-01-28",
+            "priority": "medium",
+            "status": "pending_fix"
+        },
+        {
+            "incorrect": "Челка",
+            "correct": "Стрижка челки",
+            "context": "Service clarity (bangs/fringe cut)",
+            "languages": [
+                "ru"
+            ],
+            "date_found": "2026-01-28",
+            "priority": "medium",
+            "status": "pending_fix"
+        },
+        {
+            "incorrect": "Стрижка (только срез)",
+            "correct": "Стрижка кончиков (ровный срез)",
+            "context": "Professional terminology for hair trim",
+            "languages": [
+                "ru"
+            ],
+            "date_found": "2026-01-28",
+            "priority": "medium",
+            "status": "pending_fix"
+        },
+        {
+            "incorrect": "Подмышки",
+            "correct": "Эпиляция подмышек",
+            "context": "Adding action verb to body area services",
+            "languages": [
+                "ru"
+            ],
+            "date_found": "2026-01-28",
+            "priority": "medium",
+            "status": "pending_fix"
         }
     ],
     "glossary_additions": [

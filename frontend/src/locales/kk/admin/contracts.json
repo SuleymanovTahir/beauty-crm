@@ -4,7 +4,7 @@
   "all": "Барлығы",
   "allContracts": "Барлық келісімшарттар",
   "allStatuses": "Барлық күйлер",
-  "board": "Тақта",
+  "board": "Басқарма",
   "client": "Клиент",
   "clientContracts": "Клиент",
   "contractNumber": "Келісім-шарт №",
@@ -23,8 +23,8 @@
     "selectClient": "Клиент таңдау"
   },
   "internalContracts": "Отандық",
-  "manageTypes": "Келісімшарт түрлері",
   "manage_stages": "Бағандар",
+  "manageTypes": "Келісімшарттардың түрлері",
   "messages": {
     "confirmDelete": "Осы келісімшартты шынымен жойғыңыз келе ме?",
     "contractCreated": "Келісімшарт жасалды",
@@ -46,7 +46,7 @@
   },
   "status": "Күйі",
   "statuses": {
-    "cancelled": "Болды",
+    "cancelled": "Бас тартылды",
     "draft": "Жоба",
     "sent": "Жіберілді",
     "signed": "Қол қойылды"

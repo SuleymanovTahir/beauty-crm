@@ -1,28 +1,100 @@
 {
   "items": [
     {
-      "title": "20% de desconto na sua primeira visita",
-      "subtitle": "Só este mês",
-      "image_url": "/static/images/banners/banner1.jpg",
-      "link_url": "",
       "bg_pos_desktop_x": 50,
       "bg_pos_desktop_y": 50,
       "bg_pos_mobile_x": 50,
       "bg_pos_mobile_y": 50,
+      "image_url": "/static/uploads/images/banners/banner_main.webp",
       "is_flipped_horizontal": false,
-      "is_flipped_vertical": false
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "Serviços profissionais de beleza",
+      "title": "Beleza e Elegância"
     },
     {
-      "title": "Novo serviço: Smart Pedicure",
-      "subtitle": "Experimente a inovação",
-      "image_url": "/static/images/banners/banner2.jpg",
-      "link_url": "",
       "bg_pos_desktop_x": 50,
       "bg_pos_desktop_y": 50,
       "bg_pos_mobile_x": 50,
       "bg_pos_mobile_y": 50,
+      "image_url": "/static/uploads/images/banners/banner_main.webp",
       "is_flipped_horizontal": false,
-      "is_flipped_vertical": false
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "Serviços de cosméticos profissionais.",
+      "title": "Beleza e elegância"
+    },
+    {
+      "bg_pos_desktop_x": 50,
+      "bg_pos_desktop_y": 50,
+      "bg_pos_mobile_x": 50,
+      "bg_pos_mobile_y": 50,
+      "image_url": "/static/uploads/images/salon/moroccan_bath.webp",
+      "is_flipped_horizontal": false,
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "Para todos os serviços de salão",
+      "title": "Descontos de até {{percent}}%"
+    },
+    {
+      "bg_pos_desktop_x": 50,
+      "bg_pos_desktop_y": 50,
+      "bg_pos_mobile_x": 50,
+      "bg_pos_mobile_y": 50,
+      "image_url": "/static/uploads/images/salon/salon_main.webp",
+      "is_flipped_horizontal": false,
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "Serviços profissionais de beleza da mais alta classe",
+      "title": "Beleza e Elegância"
+    },
+    {
+      "bg_pos_desktop_x": 50,
+      "bg_pos_desktop_y": 50,
+      "bg_pos_mobile_x": 50,
+      "bg_pos_mobile_y": 50,
+      "image_url": "/static/uploads/images/employees/simo.webp",
+      "is_flipped_horizontal": false,
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "Cuidando do seu estilo e saúde",
+      "title": "Serviço premium"
+    },
+    {
+      "bg_pos_desktop_x": 50,
+      "bg_pos_desktop_y": 50,
+      "bg_pos_mobile_x": 50,
+      "bg_pos_mobile_y": 50,
+      "image_url": "/static/uploads/images/employees/jennifer.webp",
+      "is_flipped_horizontal": false,
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "Experimente relaxamento completo e um ritual de limpeza",
+      "title": "Banho Marroquino"
+    },
+    {
+      "bg_pos_desktop_x": 50,
+      "bg_pos_desktop_y": 50,
+      "bg_pos_mobile_x": 50,
+      "bg_pos_mobile_y": 50,
+      "image_url": "/static/uploads/images/employees/mestan.webp",
+      "is_flipped_horizontal": false,
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "Só este mês",
+      "title": "20% de desconto na sua primeira visita"
+    },
+    {
+      "bg_pos_desktop_x": 50,
+      "bg_pos_desktop_y": 50,
+      "bg_pos_mobile_x": 50,
+      "bg_pos_mobile_y": 50,
+      "image_url": "/static/uploads/images/employees/lyazzat.webp",
+      "is_flipped_horizontal": false,
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "Experimente a inovação",
+      "title": "Novo serviço: Smart Pedicure"
     }
   ]
 }

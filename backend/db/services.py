@@ -257,9 +257,9 @@ def find_special_package_by_keywords(message: str):
     
     return None
 
-def create_special_package(name, name_ru, original_price, special_price, currency,
+def create_special_package(name, original_price, special_price, currency,
                            keywords, valid_from, valid_until, description=None,
-                           description_ru=None, services_included=None, promo_code=None,
+                           services_included=None, promo_code=None,
                            max_usage=None, scheduled=False, schedule_date=None,
                            schedule_time=None, auto_activate=False, auto_deactivate=False):
     """Создать новый специальный пакет"""
@@ -274,14 +274,14 @@ def create_special_package(name, name_ru, original_price, special_price, currenc
 
     try:
         c.execute("""INSERT INTO special_packages
-                     (name, name_ru, description, description_ru, original_price,
+                     (name, description, original_price,
                       special_price, currency, discount_percent, services_included,
                       promo_code, keywords, valid_from, valid_until, created_at,
                       updated_at, max_usage, scheduled, schedule_date, schedule_time,
                       auto_activate, auto_deactivate)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                             %s, %s, %s, %s, %s)""",
-                  (name, name_ru, description, description_ru, original_price,
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                             %s, %s)""",
+                  (name, description, original_price,
                    special_price, currency, discount_percent, services_str,
                    promo_code, keywords_str, valid_from, valid_until, now, now,
                    max_usage, scheduled, schedule_date, schedule_time,

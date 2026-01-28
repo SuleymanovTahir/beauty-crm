@@ -1,16 +1,84 @@
 {
   "items": [
     {
-      "question": "Comment prendre rendez-vous ?",
-      "answer": "Vous pouvez prendre rendez-vous via le site internet ou WhatsApp."
+      "answer": "Vous pouvez vous inscrire à la procédure via le formulaire sur notre site Internet, en nous appelant ou en nous écrivant sur Instagram. Nous vous contacterons pour confirmer votre rendez-vous.",
+      "question": "Comment s'inscrire à la procédure"
     },
     {
-      "question": "Y a-t-il un parking ?",
-      "answer": "Oui, nous avons un parking gratuit pour les clients."
+      "answer": "Nous acceptons les paiements en espèces et à la date cartes (Visa, MasterCard, American Express). Le paiement est effectué après la prestation du service.",
+      "question": "Quels modes de paiement acceptez-vous ?"
     },
     {
-      "question": "Quelles marques utilisez-vous ?",
-      "answer": "Nous utilisons Luxio, Fedua et d'autres marques premium. marques."
+      "answer": "Vous pouvez prendre rendez-vous via le site internet ou WhatsApp.",
+      "question": "Comment prendre rendez-vous ?"
+    },
+    {
+      "answer": "Oui, vous pouvez annuler ou reprogrammer un rendez-vous jusqu'à 24 heures avant l'heure prévue. En cas d'annulation moins de 24 heures à l'avance, une pénalité de 50 % du coût de la prestation pourra être facturée.",
+      "question": "Puis-je annuler ou reprogrammer un rendez-vous"
+    },
+    {
+      "answer": "Мы используем только сертифицированные премиальные материалы от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.",
+      "question": "Какие материалы вы используете"
+    },
+    {
+      "answer": "Oui, tous nos masters sont titulaires de certificats internationaux et suivent régulièrement des formations avancées.",
+      "question": "Vos artisans ont-ils des certificats ?"
+    },
+    {
+      "answer": "Oui, certaines procédures nécessitent une préparation. Nous fournissons des recommandations détaillées lors de l’inscription.",
+      "question": "Une préparation est-elle nécessaire avant l’intervention ?"
+    },
+    {
+      "answer": "Oui, nous avons un parking gratuit pour les clients.",
+      "question": "Y a-t-il un parking ?"
+    },
+    {
+      "answer": "Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером.",
+      "question": "Есть ли противопоказания к процедурам"
+    },
+    {
+      "answer": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение 7 дней, и мы найдем решение.",
+      "question": "Предоставляете ли вы гарантию на услуги"
+    },
+    {
+      "answer": "Nous utilisons Luxio, Fedua et d'autres marques premium. marques.",
+      "question": "Quelles marques utilisez-vous ?"
+    },
+    {
+      "answer": "Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов.",
+      "question": "Есть ли у вас программа лояльности"
+    },
+    {
+      "answer": "Oui, nous travaillons 7 jours sur 7.",
+      "question": "Работаете ли вы в выходные"
+    },
+    {
+      "answer": "Oui, nous proposons des chèques-cadeaux pour n'importe quel montant ou pour des services spécifiques. Contactez-nous pour délivrer une attestation.",
+      "question": "Puis-je offrir un certificat pour des services"
+    },
+    {
+      "answer": "Nous sommes situés au centre de Dubaï. Vous pouvez trouver des informations détaillées sur la façon d'y accéder sur la page Contacts.",
+      "question": "Où se trouve votre showroom"
+    },
+    {
+      "answer": "Vous pouvez vous inscrire en ligne via le formulaire sur notre site Internet, en nous appelant ou en nous écrivant sur WhatsApp, Instagram.",
+      "question": "Comment s'inscrire à la procédure ?"
+    },
+    {
+      "answer": "Oui, vous pouvez annuler ou reprogrammer votre rendez-vous en nous prévenant au moins 24 heures à l'avance. Veuillez nous informer des modifications à l'avance.",
+      "question": "Pouvez-vous annuler ou reprogrammer votre rendez-vous ?"
+    },
+    {
+      "answer": "Nous utilisons uniquement des matériaux professionnels haut de gamme. Tous les instruments sont stérilisés médicalement.",
+      "question": "Quels supports utilisez-vous ?"
+    },
+    {
+      "answer": "Oui, nous apprécions votre temps et pouvons organiser plusieurs procédures simultanément.",
+      "question": "Effectuez-vous des procédures à 4 mains ?"
+    },
+    {
+      "answer": "Notre salon est situé dans un endroit idéal avec une vue magnifique et une atmosphère chaleureuse. Vous trouverez l'adresse exacte dans la rubrique contacts.",
+      "question": "Où es-tu situé?"
     }
   ]
 }

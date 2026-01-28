@@ -133,13 +133,13 @@ async def lifespan(app: FastAPI):
     # run_all_fixes()
 
     # [ТЕСТИРОВАНИЕ] - Запуск тестов при старте (можно выключить для ускорения запуска)
-    from tests.run_all_tests import run_all_tests
-    from tests.run_all_test2 import run_all_tests2
-    from tests.run_all_test3 import run_all_tests3
-    log_info("🧪 Запуск всех тестов (V1, V2, V3)...", "startup")
-    run_all_tests()
-    run_all_tests2()
-    run_all_tests3()
+    # from tests.run_all_tests import run_all_tests
+    # from tests.run_all_test2 import run_all_tests2
+    # from tests.run_all_test3 import run_all_tests3
+    # log_info("🧪 Запуск всех тестов (V1, V2, V3)...", "startup")
+    # run_all_tests()
+    # run_all_tests2()
+    # run_all_tests3()
 
     # 5. Сервисы
     get_bot()

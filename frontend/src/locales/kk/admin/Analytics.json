@@ -3,23 +3,23 @@
   "apply": "Қолдану",
   "avg_check": "Орташа чек",
   "avg_time": "Орташа уақыт",
-  "booked": "Тіркелдіңіз",
+  "booked": "Тіркелген",
   "booking_statuses": "Жазба күйлері",
   "bookings": "Жазбалар",
   "bookings_trend": "Жазбалар динамикасы",
   "clarify_services": "Қызметтерді нақтылау",
-  "completed": "Көрдіңіз",
+  "completed": "Барды",
   "conversation_stage": "Диалог кезеңі",
-  "conversion": "Түрлендіру",
+  "conversion": "Конверсия",
   "detailed_analysis": "Салонның жұмысын егжей-тегжейлі талдау",
   "drop_off_analysis": "Оқудан шығуды талдау",
   "drop_offs": "Қателіктер",
-  "engaged": "Қатысқан",
+  "engaged": "Вовлеченные",
   "errors": {
     "export_failed": "Файлды экспорттау қатесі",
     "invalid_date_range": "Бастау күні аяқталу күнінен бұрын болуы керек",
     "invalid_period": "Жарамсыз кезең",
-    "loading_error": "Жүктеу қатесі",
+    "loading_error": "Ошибка загрузки",
     "select_both_dates": "Екі күнді де таңдаңыз"
   },
   "export": "Экспорттау",
@@ -31,7 +31,7 @@
     "conversion": {
       "booked_to_completed": "Тіркелді -> Барды",
       "booking_to_booked": "Басталды -> Тіркелді",
-      "engaged_to_booking": "Қатысқан -> Жазуды бастады",
+      "engaged_to_booking": "Қатысты -> Жазуды бастады",
       "visitor_to_engaged": "Келуші -> Қатысқан"
     },
     "desc": {
@@ -41,20 +41,20 @@
       "started_booking": "Тіркеу формасын ашты",
       "visitors": "Сайтқа/әлеуметтік желіге кірушілер"
     },
-    "losses_few": "Шығын: {{count}}",
-    "losses_many": "Шығын: {{count}}",
+    "losses_few": "Шығындар: {{count}}",
+    "losses_many": "Шығындар: {{count}}",
     "losses_one": "Жоғалту: {{count}}",
-    "losses_other": "Шығын: {{count}}",
+    "losses_other": "Шығындар: {{count}}",
     "stages": {
-      "booked": "Тіркелдіңіз",
-      "completed": "Кірді",
-      "engaged": "Қатысқан",
-      "started_booking": "Жазуды бастады",
+      "booked": "Тіркелген",
+      "completed": "Барды",
+      "engaged": "Вовлеченные",
+      "started_booking": "Начали запись",
       "visitors": "Келушілер"
     }
   },
-  "funnel_chart": "Шұңқыр диаграммасы",
-  "funnel_overview": "Сату шұңқыры",
+  "funnel_chart": "Шұңқырдың графигі",
+  "funnel_overview": "Воронка продаж",
   "improve_greeting": "Сәлемдесуді жақсарту",
   "income": "Табыс",
   "min": "min",
@@ -81,7 +81,7 @@
   "status": {
     "cancelled": "Бас тартылды",
     "completed": "Аяқталды",
-    "confirmed": "Расталды",
+    "confirmed": "Расталған",
     "no_show": "Келмеді",
     "pending": "Күтуде"
   },

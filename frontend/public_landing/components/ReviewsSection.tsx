@@ -29,15 +29,22 @@ export function ReviewsSection() {
         if (data.reviews && data.reviews.length > 0) {
           // Map backend data to match expected structure if needed, or just use as is if compatible.
           // Backend returns: id, name (or author_name), avatar_url, rating, employee_position, text (or text_xx), created_at
-          const mappedReviews = data.reviews.map((review: any) => ({
-            id: review.id,
-            name: t(`dynamic:public_reviews.${review.id}.author_name`, { defaultValue: review.name || review.author_name || t('common:client') }),
-            avatar_url: review.avatar_url || "",
-            rating: review.rating || 5,
-            employee_position: t(`dynamic:public_reviews.${review.id}.employee_position`, { defaultValue: review.employee_position || t('common:service') }),
-            text: t(`dynamic:public_reviews.${review.id}.text`, { defaultValue: review.text || "" }),
-            created_at: review.created_at || ""
-          }));
+          const mappedReviews = data.reviews.map((review: any) => {
+            let avatarUrl = review.avatar_url || "";
+            if (avatarUrl && !avatarUrl.startsWith('http')) {
+              avatarUrl = `${API_URL}${avatarUrl.startsWith('/') ? '' : '/'}${avatarUrl}`;
+            }
+
+            return {
+              id: review.id,
+              name: t(`dynamic:public_reviews.${review.id}.author_name`, { defaultValue: review.name || review.author_name || t('common:client') }),
+              avatar_url: avatarUrl,
+              rating: review.rating || 5,
+              employee_position: t(`dynamic:public_reviews.${review.id}.employee_position`, { defaultValue: review.employee_position || t('common:service') }),
+              text: t(`dynamic:public_reviews.${review.id}.text`, { defaultValue: review.text || "" }),
+              created_at: review.created_at || ""
+            };
+          });
           setReviews(mappedReviews);
         } else {
           setReviews([]);

@@ -40,16 +40,16 @@ export function Services({ initialServices }: ServicesProps) {
 
       uniqueCategories.forEach(cat => {
         if (cat) {
-          // Try to get translation from booking.json services section
-          const translationKey = `services.category_${cat}`;
-          let label = t(translationKey, {
-            ns: 'booking',
-            defaultValue: undefined
-          });
+          // Try to get translation from dynamic or booking files
+          let label = t(`dynamic:categories.${cat}`, { defaultValue: "" });
+
+          if (!label) {
+            label = t(`services.category_${cat}`, { ns: 'booking', defaultValue: "" });
+          }
 
           // If translation not found, use capitalized category name
-          if (!label || label === translationKey) {
-            label = cat.charAt(0).toUpperCase() + cat.slice(1);
+          if (!label) {
+            label = cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
           }
 
           if (!cats.find(c => c.id === cat)) {
@@ -201,24 +201,33 @@ export function Services({ initialServices }: ServicesProps) {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
                 key={service.id}
-                className="service-card group cursor-pointer"
+                className="service-card group cursor-pointer relative overflow-hidden"
               >
-                <div className="flex justify-between items-start mb-3 sm:mb-4">
-                  <h3 className="text-[13px] sm:text-base font-medium group-hover:text-primary transition-colors">
+                <div className="service-category-tag ">
+                  {categories.find(c => c.id === service.category)?.label}
+                </div>
+                <div className="flex justify-between items-start mb-3 sm:mb-4 gap-2">
+                  <h3 className="text-[13px] sm:text-base font-medium group-hover:text-primary transition-colors pr-2">
                     {t(`dynamic:services.${service.id}.name`, { defaultValue: service.name || "" })}
                   </h3>
-                  <div className="service-badge">
+                  <div className="service-badge flex-shrink-0 ">
                     {formatCurrency(service.price)}
                   </div>
                 </div>
                 <div className="service-footer">
                   <div className="service-meta">
-                    <Clock className="w-4 h-4 mr-2" />
-                    {service.duration && service.duration !== 0 ? `${service.duration} ` : ""}{t('min')}
+                    <Clock className="w-3.5 h-3.5 mr-1.5 opacity-60" />
+                    <span className="flex items-center gap-1.5">
+                      <span>{service.duration && service.duration !== 0 ? `${service.duration} ` : ""}{t('min')}</span>
+                      <span className="text-muted-foreground/30">•</span>
+                      <span className="text-[10px] uppercase tracking-wider opacity-70">
+                        {categories.find(c => c.id === service.category)?.label}
+                      </span>
+                    </span>
                   </div>
                   <Button
                     size="sm"
-                    className="service-book-btn"
+                    className="service-book-btn translate-y-1"
                     onClick={() => {
                       const serviceId = service.id;
                       window.location.hash = `booking?service=${serviceId}`;

@@ -12,7 +12,7 @@ def get_task_stages() -> List[Dict]:
     c = conn.cursor()
     try:
         c.execute("""
-            SELECT id, name, name_ru, color, sort_order 
+            SELECT id, name, color, sort_order 
             FROM workflow_stages 
             WHERE entity_type = 'task' 
             ORDER BY sort_order ASC
@@ -21,10 +21,10 @@ def get_task_stages() -> List[Dict]:
         return [
             {
                 "id": row[0],
-                "name": row[2] or row[1],
+                "name": row[1],
                 "key": row[1],
-                "order_index": row[4],
-                "color": row[3]
+                "order_index": row[3],
+                "color": row[2]
             }
             for row in rows
         ]
@@ -45,10 +45,10 @@ def create_task_stage(name: str, color: str = '#3b82f6') -> Optional[int]:
         new_order = (max_order or 0) + 1
         
         c.execute("""
-            INSERT INTO workflow_stages (entity_type, name, name_ru, color, sort_order)
-            VALUES ('task', %s, %s, %s, %s)
+            INSERT INTO workflow_stages (entity_type, name, color, sort_order)
+            VALUES ('task', %s, %s, %s)
             RETURNING id
-        """, (name, name, color, new_order))
+        """, (name, color, new_order))
         stage_id = c.fetchone()[0]
         conn.commit()
         return stage_id
@@ -81,7 +81,7 @@ def update_stage_details(stage_id: int, name: str, color: str) -> bool:
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("UPDATE workflow_stages SET name = %s, name_ru = %s, color = %s WHERE id = %s", (name, name, color, stage_id))
+        c.execute("UPDATE workflow_stages SET name = %s, color = %s WHERE id = %s", (name, color, stage_id))
         conn.commit()
         return True
     except Exception as e:
