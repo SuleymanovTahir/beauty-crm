@@ -16,48 +16,43 @@ TRANSLATION_CONFIG = {
     },
     "public_reviews": {
         "id_field": "id",
-        "fields": ["text_ru", "author_name", "employee_name", "employee_position"],
+        "fields": ["text", "author_name", "employee_name", "employee_position"],
         "where": "is_active = TRUE"
     },
     "public_faq": {
         "id_field": "id",
-        "fields": ["question_ru", "answer_ru"],
+        "fields": ["question", "answer"],
         "where": "is_active = TRUE"
     },
     "services": {
         "id_field": "id",
-        "fields": ["name_ru", "description_ru"],
+        "fields": ["name", "description"],
         "where": "is_active = TRUE"
     },
     "salon_settings": {
         "id_field": "id",
-        "fields": ["main_location", "address", "city", "country"], 
+        "fields": ["name", "address", "hours_weekdays", "hours_weekends"], 
         "where": None
     },
     "public_banners": {
         "id_field": "id",
-        "fields": ["title_ru", "subtitle_ru"],
+        "fields": ["title", "subtitle"],
         "where": "is_active = TRUE"
     },
     "active_challenges": {
         "id_field": "id",
-        "fields": ["title_ru", "description_ru"],
+        "fields": ["title", "description"],
         "where": "is_active = TRUE"
     },
-    "gallery_images": {
+    "public_gallery": {
         "id_field": "id",
         "fields": ["title", "description"],
-        "where": "is_visible = TRUE"
-    },
-    "pipeline_stages": {
-        "id_field": "id",
-        "fields": ["name"],
         "where": "is_active = TRUE"
     },
-    "invoice_stages": {
+    "workflow_stages": {
         "id_field": "id",
         "fields": ["name"],
-        "where": "is_active = TRUE"
+        "where": None
     }
 }
 

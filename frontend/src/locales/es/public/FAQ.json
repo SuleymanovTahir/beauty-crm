@@ -1,21 +1,21 @@
 {
   "answer_1": "Puedes suscribirte a través de nuestra web, llamando o escribiendo a WhatsApp/Instagram.",
   "answer_2": "Aceptamos pagos en efectivo y con tarjetas bancarias.",
-  "answer_3": "Да, вы можете отменить или перенести встречу не позднее, чем за {{hours}} часа до назначенного времени.",
-  "answer_4": "Да, некоторые процедуры имеют медицинские противопоказания. Прежде чем писать, проконсультируйтесь с нашим специалистом.",
-  "answer_5": "Время процедуры зависит от выбранной услуги. Обычно от {{min}} минут до {{max}} часа.",
-  "answer_6": "Некоторые процедуры требуют специальной подготовки. Об этом специалист сообщит вам при регистрации.",
+  "answer_3": "Sí, puedes cancelar o reprogramar tu cita a más tardar {{hours}} horas antes a la hora programada.",
+  "answer_4": "Sí, algunos procedimientos tienen contraindicaciones médicas. Antes de escribir consulte con nuestro especialista.",
+  "answer_5": "El tiempo del trámite depende del servicio elegido. Normalmente, de {{min}} minutos a {{max}} horas.",
+  "answer_6": "Algunos procedimientos requieren una preparación especial. El especialista le informará sobre esto durante el reserva.",
   "cta": {
     "bookButton": "Regístrese para un procedimiento",
-    "contactButton": "Связаться с нами",
-    "description": "Свяжитесь с нами, мы будем рады ответить на все ваши вопросы",
-    "title": "Не нашли ответ на свой вопрос?"
+    "contactButton": "Contáctenos",
+    "description": "Contáctenos, estaremos encantados de responder a todas sus preguntas",
+    "title": "¿No encontró la respuesta a su pregunta?"
   },
   "faq_title": "Preguntas frecuentes",
-  "question_1": "Как записаться на процедуру?",
-  "question_2": "Какие способы оплаты вы принимаете?",
-  "question_3": "Могу ли я отменить или перенести встречу?",
-  "question_4": "Есть ли у вас противопоказания к процедурам?",
+  "question_1": "¿Cómo inscribirse en el procedimiento?",
+  "question_2": "¿Qué métodos de pago aceptan?",
+  "question_3": "¿Puedo? ¿Cancelar o reprogramar una cita?",
+  "question_4": "¿Tiene alguna contraindicación para los procedimientos?",
   "question_5": "Сколько времени занимает процедура?",
   "question_6": "Нужна ли предварительная подготовка к процедуре?",
   "questions": {

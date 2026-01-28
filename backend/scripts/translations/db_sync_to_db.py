@@ -48,6 +48,8 @@ def sync_to_database():
     total_updates = 0
     
     try:
+        table_columns_cache = {}
+
         for table_name, records in completed_translations.items():
             print(f"\n📋 Updating table: {table_name}")
             
@@ -59,45 +61,50 @@ def sync_to_database():
             
             id_field = config["id_field"]
             
+            # Cache columns for this table
+            if table_name not in table_columns_cache:
+                c.execute("SELECT column_name FROM information_schema.columns WHERE table_name = %s", (table_name,))
+                table_columns_cache[table_name] = {col[0] for col in c.fetchall()}
+            
+            columns = table_columns_cache[table_name]
+            if not columns:
+                print(f"  ⚠️  Table {table_name} seems to have no columns or doesn't exist")
+                continue
+
             for record in records:
                 record_id = record['id']
-                fields = record['fields']
+                fields_data = record['fields']
                 
-                for field_name, translations in fields.items():
-                    # Get detected language for this field
-                    detected_lang = translations.get('detected_language', SOURCE_LANGUAGE)
-                    
+                for field_name, translations in fields_data.items():
                     # Build UPDATE query for each language
                     for lang in LANGUAGES:
-                        
                         translation = translations.get(lang)
                         if not translation:
                             continue
                         
                         # Determine target column name
-                        # For fields like "title_ru", "title_en", "title_ar" - use as is
-                        # For fields like "name", "full_name" - append _{lang}
-                        
-                        # Check if field already has a language suffix
                         has_lang_suffix = False
+                        base_field = field_name
                         for check_lang in LANGUAGES:
                             if field_name.endswith(f"_{check_lang}"):
                                 has_lang_suffix = True
-                                # Extract base field name (e.g., "title" from "title_ru")
-                                base_field = field_name[:-3]  # Remove "_ru", "_en", etc.
-                                target_column = f"{base_field}_{lang}"
+                                base_field = field_name[:-(len(check_lang)+1)]
                                 break
                         
-                        if not has_lang_suffix:
-                            # Field doesn't have language suffix, add it
-                            target_column = f"{field_name}_{lang}"
+                        # Try potential column names for this language
+                        possible_columns = []
+                        if lang == 'en':
+                            possible_columns.append(base_field) # English is often the base field
                         
-                        # Check if column exists
-                        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name = %s", (table_name,))
-                        columns = {col[0] for col in c.fetchall()}
+                        possible_columns.append(f"{base_field}_{lang}")
                         
-                        if target_column not in columns:
-                            print(f"  ⚠️  Column {target_column} not found in {table_name}, skipping")
+                        target_column = None
+                        for col in possible_columns:
+                            if col in columns:
+                                target_column = col
+                                break
+                        
+                        if not target_column:
                             continue
                         
                         # Update the translation
@@ -105,7 +112,6 @@ def sync_to_database():
                             query = f"UPDATE {table_name} SET {target_column} = %s WHERE {id_field} = %s"
                             c.execute(query, (translation, record_id))
                             total_updates += 1
-                            print(f"  ✅ Updated {table_name}.{target_column} for ID {record_id}")
                         except Exception as e:
                             print(f"  ❌ Error updating {table_name}.{target_column}: {e}")
         

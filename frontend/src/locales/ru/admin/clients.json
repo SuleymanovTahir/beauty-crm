@@ -71,7 +71,7 @@
   "import_errors_count_many": "Найдено {{count}} ошибок",
   "import_errors_count_other": "Найдено {{count}} ошибок",
   "import_example_columns": "Имя, Телефон, Email",
-  "import_example_row_1": "Анна, +971501234567, anna@example.com",
+  "import_example_row_1": "Анна, 971526961100, anna@example.com",
   "import_example_row_2": "Елена, +971507654321,",
   "import_example_structure": "Пример структуры файла",
   "import_important_info": "Важная информация",

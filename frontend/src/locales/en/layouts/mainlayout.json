@@ -3,8 +3,8 @@
   "admin_panel": "Admin panel",
   "all_notifications_cleared": "All notifications have been deleted",
   "calls": {
-    "click_to_answer": "Нажмите, чтобы ответить",
-    "incoming_call": "Входящий звонок!"
+    "click_to_answer": "Click to answer",
+    "incoming_call": "Incoming call!"
   },
   "clear_all": "Clear all",
   "close": "Close",
@@ -42,7 +42,7 @@
     "payment_integrations": "Payment systems",
     "products": "Goods",
     "public_content": "Public Content",
-    "service_requests": "Запросы услуг",
+    "service_requests": "Service Requests",
     "services": "Services",
     "settings": "Settings",
     "tasks": "Tasks",

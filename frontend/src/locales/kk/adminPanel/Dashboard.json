@@ -10,50 +10,50 @@
     },
     "notifications": {
       "description": "Хабарландыруларды жіберу және басқару",
-      "title": "Уведомления"
+      "title": "Хабарландырулар"
     },
     "photo_gallery": {
-      "description": "Клиент фотосуреттері мен портфолиосын басқару",
-      "title": "Фото галереясы"
+      "description": "Тұтынушының фотосуреттері мен портфолиосын басқару",
+      "title": "Фотосуреттерді және сілтемелерді басқару"
     },
     "referral_program": {
-      "description": "Сілтемелерді көру және басқару",
-      "title": "Реферальная программа"
+      "description": "Рефералдарды көру және басқару",
+      "title": "Жолдау бағдарламасы"
     },
-    "title": "Быстрые действия",
+    "title": "Жылдам әрекеттер",
     "user_management": {
       "description": "Пайдаланушы тіркелгілері мен рұқсаттарын басқару",
-      "title": "Пайдаланушыны басқару"
+      "title": "Пайдаланушыларды басқару"
     }
   },
   "recent_activity": {
-    "challenge_completed_one": "Мақсаты \"[[V0]]]\" {{count}} пайдаланушы орындады",
-    "challenge_completed_few": "\"{{name}}\" мақсатын {{count}} пайдаланушы орындады",
-    "challenge_completed_many": "\"{{name}}\" мақсатын {{count}} пайдаланушы орындады",
-    "challenge_completed_other": "\"{{name}}\" мақсатын {{count}} пайдаланушы орындады",
-    "day_ago_one": "{{count}} день назад",
-    "day_ago_few": "{{count}} дня назад",
-    "day_ago_many": "{{count}} дней назад",
-    "day_ago_other": "{{count}} дней назад",
-    "hours_ago_one": "{{count}} час назад",
-    "hours_ago_few": "{{count}} часа назад",
-    "hours_ago_many": "{{count}} часов назад",
-    "hours_ago_other": "{{count}} часов назад",
+    "challenge_completed_few": "{{count}} пайдаланушылары толтырған \"{{name}} мақсаты",
+    "challenge_completed_many": "\"[[V0]]]\" мақсатын {{count}} пайдаланушы орындады",
+    "challenge_completed_one": "\"{{name}}\" мақсатын {{count}} пайдаланушы орындады",
+    "challenge_completed_other": "\"[[V0]]]\" мақсатын {{count}} пайдаланушы орындады",
+    "day_ago_few": "[[VAR0]]] күн бұрын",
+    "day_ago_many": "{{count}} күн бұрын",
+    "day_ago_one": "{{count}} күн бұрын",
+    "day_ago_other": "{{count}} күн бұрын",
+    "hours_ago_few": "{{count}} сағат бұрын",
+    "hours_ago_many": "{{count}} сағат бұрын",
+    "hours_ago_one": "{{count}} сағат бұрын",
+    "hours_ago_other": "{{count}} сағат артқа",
     "new_tier_activated": "Жаңа адалдық деңгейі іске қосылды",
     "subtitle": "Әкімші панеліндегі соңғы әрекеттер",
     "title": "Соңғы әрекет",
-    "users_registered_one": "{{count}} жаңа пайдаланушы тіркелді",
-    "users_registered_few": "{{count}} тіркелген жаңа пайдаланушылар",
+    "users_registered_few": "{{count}} жаңа пайдаланушы тіркелді",
     "users_registered_many": "{{count}} жаңа пайдаланушылар тіркелді",
+    "users_registered_one": "{{count}} жаңа пайдаланушы тіркелді",
     "users_registered_other": "{{count}} жаңа пайдаланушылар тіркелді"
   },
   "stats": {
     "active_challenges": "Белсенді мақсаттар",
     "from_last_month": "өткен айдан бері",
     "loyalty_points_issued": "Берілген адалдық ұпайлары",
-    "total_referrals": "Жалпы сілтемелер",
+    "total_referrals": "Барлығы",
     "total_users": "Жалпы пайдаланушылар"
   },
-  "subtitle": "Пайдаланушы, адалдық және келісімді басқару",
+  "subtitle": "Пайдаланушыларды, адалдықты және қатысуды басқару",
   "title": "Бақылау тақтасы"
 }

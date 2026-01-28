@@ -15,28 +15,22 @@
     "configSuccess": "تم حفظ الإعدادات",
     "configure": "تهيئة",
     "configureProvider": "الإعدادات",
-    "daysAgo_zero": "{{count}} дн назад",
-    "daysAgo_one": "{{count}} قبل أيام",
-    "daysAgo_two": "{{count}} дн назад",
     "daysAgo_few": "{{count}} قبل أيام",
     "daysAgo_many": "{{count}} قبل أيام",
+    "daysAgo_one": "{{count}} قبل أيام",
     "daysAgo_other": "{{count}} قبل أيام",
     "enableProvider": "تمكين التكامل",
-    "hoursAgo_zero": "{{count}} ч назад",
-    "hoursAgo_one": "{{count}} قبل ساعات",
-    "hoursAgo_two": "{{count}} ч назад",
     "hoursAgo_few": "{{count}} قبل ساعات",
     "hoursAgo_many": "{{count}} قبل ساعات",
+    "hoursAgo_one": "{{count}} قبل ساعات",
     "hoursAgo_other": "{{count}} قبل ساعات",
     "inactive": "لم تتم التهيئة",
     "justNow": "الآن",
     "lastSync": "آخر مزامنة",
     "mappingHint": "حدد معرف الخدمة من السوق للمزامنة.",
-    "minutesAgo_zero": "{{count}} мин назад",
-    "minutesAgo_one": "{{count}} قبل دقيقة",
-    "minutesAgo_two": "{{count}} мин назад",
     "minutesAgo_few": "{{count}} قبل دقيقة",
     "minutesAgo_many": "{{count}} قبل دقيقة",
+    "minutesAgo_one": "{{count}} قبل دقيقة",
     "minutesAgo_other": "{{count}} قبل دقيقة",
     "neverSynced": "أبدًا",
     "providers": {
@@ -45,7 +39,7 @@
         "name": "2GIS"
       },
       "amazon": {
-        "description": "Amazon Marketplace",
+        "description": "سوق أمازون",
         "name": "Amazon"
       },
       "booksy": {
@@ -57,20 +51,20 @@
         "name": "Google Business"
       },
       "ozon": {
-        "description": "Ozon Marketplace",
-        "name": "Ozon"
+        "description": "Маркетплейс Ozon",
+        "name": "الأوزون"
       },
       "wildberries": {
-        "description": "WB Marketplace",
-        "name": "التوت البري"
+        "description": "Маркетплейс WB",
+        "name": "Wildberry"
       },
       "yandex_maps": {
         "description": "السجلات والمراجعات من Yandex.Maps",
-        "name": "Yandex.Maps"
+        "name": "Яндекс.Карты"
       },
       "yclients": {
         "description": "منصة التسجيل عبر الإنترنت",
-        "name": "YCLIENTS"
+        "name": "العملاء"
       }
     },
     "reviews": "المراجعات",
@@ -79,8 +73,8 @@
     "status": "الحالة",
     "subtitle": "التكامل من تاريخ الحجز عبر الإنترنت و مراجعة الخدمات",
     "sync": "مزامنة",
-    "syncing": "المزامنة...",
     "syncStarted": "بدأت المزامنة",
+    "syncing": "المزامنة...",
     "title": "منصات الحجز",
     "totalBookings": "إجمالي الإدخالات",
     "urlCopied": "تم نسخ عنوان URL",

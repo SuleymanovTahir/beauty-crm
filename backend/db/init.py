@@ -2,8 +2,14 @@
 Инициализация единой базы данных системы
 Единый источник истины (SSOT) для схемы CRM
 """
+from core.config import (
+    DATABASE_NAME, 
+    SALON_PHONE_DEFAULT, 
+    SALON_EMAIL_DEFAULT
+)
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
+from utils.language_utils import SUPPORTED_LANGUAGES
 import os
 import json
 
@@ -55,7 +61,6 @@ def init_database():
             id SERIAL PRIMARY KEY,
             entity_type TEXT NOT NULL,
             name TEXT NOT NULL,
-            name_ru TEXT,
             color TEXT DEFAULT '#3b82f6',
             sort_order INTEGER DEFAULT 0,
             is_system BOOLEAN DEFAULT FALSE,
@@ -133,13 +138,53 @@ def init_database():
 
         # --- 2. BASE ENTITIES ---
 
-        # Main Settings Orchestrator
+        # Soft Delete Tracking (Trash) - REQUIRED by housekeeping
+        c.execute('''CREATE TABLE IF NOT EXISTS deleted_items (
+            id SERIAL PRIMARY KEY,
+            entity_type TEXT NOT NULL,
+            entity_id TEXT NOT NULL,
+            data JSONB,
+            reason TEXT,
+            can_restore BOOLEAN DEFAULT TRUE,
+            restored_at TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        
+        # --- BASE COLUMNS ONLY (Translations are in locales/*.json) ---
+        # We no longer create title_ru, title_en, etc. columns here.
+        # Frontend uses t('dynamic:TABLE.ID.FIELD') to get translations.
+        
+        # Ensure base columns exist for tables that might not have them
+        add_column_if_not_exists('salon_settings', 'hours', 'TEXT')
+        add_column_if_not_exists('salon_settings', 'address', 'TEXT')
+        add_column_if_not_exists('services', 'name', 'TEXT')
+        add_column_if_not_exists('services', 'description', 'TEXT')
+        add_column_if_not_exists('public_gallery', 'title', 'TEXT')
+        add_column_if_not_exists('public_gallery', 'description', 'TEXT')
+        add_column_if_not_exists('public_banners', 'title', 'TEXT')
+        add_column_if_not_exists('public_banners', 'subtitle', 'TEXT')
+        add_column_if_not_exists('public_faq', 'question', 'TEXT')
+        add_column_if_not_exists('public_faq', 'answer', 'TEXT')
+        add_column_if_not_exists('public_reviews', 'author_name', 'TEXT')
+        add_column_if_not_exists('public_reviews', 'text', 'TEXT')
+        add_column_if_not_exists('public_reviews', 'employee_name', 'TEXT')
+        add_column_if_not_exists('public_reviews', 'employee_position', 'TEXT')
+        add_column_if_not_exists('users', 'full_name', 'TEXT')
+        add_column_if_not_exists('users', 'position', 'TEXT')
+        add_column_if_not_exists('users', 'bio', 'TEXT')
+        add_column_if_not_exists('users', 'specialization', 'TEXT')
+        
+        # --- END BASE COLUMNS ---
+        
+        # Schema initialization for salon_settings
         c.execute('''CREATE TABLE IF NOT EXISTS salon_settings (
             id INTEGER PRIMARY KEY CHECK (id = 1),
             name TEXT,
-            address TEXT, google_maps TEXT,
+            address TEXT, 
+            google_maps TEXT,
             hours_weekdays TEXT DEFAULT '10:30 - 21:00',
             hours_weekends TEXT DEFAULT '10:30 - 21:00',
+            hours TEXT,
             lunch_start TEXT,
             lunch_end TEXT,
             phone TEXT, email TEXT,
@@ -160,14 +205,6 @@ def init_database():
             points_expiration_days INTEGER DEFAULT 365,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
-        
-        from utils.language_utils import SUPPORTED_LANGUAGES
-        for lang in SUPPORTED_LANGUAGES:
-            add_column_if_not_exists('salon_settings', f'name_{lang}', 'TEXT')
-            add_column_if_not_exists('salon_settings', f'address_{lang}', 'TEXT')
-            add_column_if_not_exists('salon_settings', f'hours_{lang}', 'TEXT')
-            add_column_if_not_exists('salon_settings', f'main_location_{lang}', 'TEXT')
-
         add_column_if_not_exists('salon_settings', 'lunch_start', 'TEXT')
         add_column_if_not_exists('salon_settings', 'lunch_end', 'TEXT')
         add_column_if_not_exists('salon_settings', 'timezone_offset', 'INTEGER DEFAULT 4')
@@ -204,12 +241,7 @@ def init_database():
             last_login TIMESTAMP, deleted_at TIMESTAMP NULL
         )''')
         
-        for lang in SUPPORTED_LANGUAGES:
-            add_column_if_not_exists('users', f'full_name_{lang}', 'TEXT')
-            add_column_if_not_exists('users', f'position_{lang}', 'TEXT')
-            add_column_if_not_exists('users', f'bio_{lang}', 'TEXT')
-            add_column_if_not_exists('users', f'specialization_{lang}', 'TEXT')
-
+        # Migrations for existing DBs
         add_column_if_not_exists('users', 'birthday', 'TEXT')
         add_column_if_not_exists('users', 'gender', "TEXT DEFAULT 'female'")
         add_column_if_not_exists('users', 'secondary_role', 'TEXT')
@@ -265,10 +297,8 @@ def init_database():
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
 
-        for lang in SUPPORTED_LANGUAGES:
-            add_column_if_not_exists('services', f'name_{lang}', 'TEXT')
-            add_column_if_not_exists('services', f'description_{lang}', 'TEXT')
-            add_column_if_not_exists('services', f'duration_{lang}', 'TEXT')
+        add_column_if_not_exists('services', 'name', 'TEXT')
+        add_column_if_not_exists('services', 'description', 'TEXT')
 
         # Master-Service Mapping
         c.execute('''CREATE TABLE IF NOT EXISTS user_services (
@@ -541,10 +571,6 @@ def init_database():
         c.execute('''CREATE TABLE IF NOT EXISTS positions (
             id SERIAL PRIMARY KEY,
             name TEXT UNIQUE NOT NULL,
-            name_en TEXT,
-            name_ar TEXT,
-            name_fr TEXT,
-            name_de TEXT,
             description TEXT,
             sort_order INTEGER DEFAULT 0,
             is_active BOOLEAN DEFAULT TRUE,
@@ -627,9 +653,10 @@ def init_database():
         # Challenges and Gamification
         c.execute('''CREATE TABLE IF NOT EXISTS active_challenges (
             id SERIAL PRIMARY KEY,
+            challenge_id TEXT UNIQUE,
             title TEXT NOT NULL,
-            title_ru TEXT,
             description TEXT,
+            reward_type TEXT,
             points_reward INTEGER DEFAULT 0,
             is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -665,26 +692,23 @@ def init_database():
         c.execute('''CREATE TABLE IF NOT EXISTS public_gallery (
             id SERIAL PRIMARY KEY,
             image_url TEXT NOT NULL,
-            title_ru TEXT, title_en TEXT, title_ar TEXT,
-            description_ru TEXT, description_en TEXT, description_ar TEXT,
+            title TEXT,
+            description TEXT,
             category TEXT DEFAULT 'works',
             display_order INTEGER DEFAULT 0,
+            is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
 
         # Migrations for public_gallery
-        for lang in ['de', 'es', 'fr', 'hi', 'kk', 'pt']:
-            add_column_if_not_exists('public_gallery', f'title_{lang}', 'TEXT')
-            add_column_if_not_exists('public_gallery', f'description_{lang}', 'TEXT')
+        add_column_if_not_exists('public_gallery', 'title', 'TEXT')
+        add_column_if_not_exists('public_gallery', 'description', 'TEXT')
+        add_column_if_not_exists('public_gallery', 'is_active', 'BOOLEAN DEFAULT TRUE')
 
         c.execute('''CREATE TABLE IF NOT EXISTS public_banners (
             id SERIAL PRIMARY KEY,
-            title_ru TEXT, title_en TEXT, title_ar TEXT,
-            title_de TEXT, title_es TEXT, title_fr TEXT,
-            title_hi TEXT, title_kk TEXT, title_pt TEXT,
-            subtitle_ru TEXT, subtitle_en TEXT, subtitle_ar TEXT,
-            subtitle_de TEXT, subtitle_es TEXT, subtitle_fr TEXT,
-            subtitle_hi TEXT, subtitle_kk TEXT, subtitle_pt TEXT,
+            title TEXT,
+            subtitle TEXT,
             image_url TEXT,
             link_url TEXT,
             bg_pos_desktop_x INTEGER DEFAULT 50,
@@ -699,9 +723,7 @@ def init_database():
         )''')
 
         # Migrations for public_banners
-        for lang in ['de', 'es', 'fr', 'hi', 'kk', 'pt']:
-            add_column_if_not_exists('public_banners', f'title_{lang}', 'TEXT')
-            add_column_if_not_exists('public_banners', f'subtitle_{lang}', 'TEXT')
+
 
         c.execute('''CREATE TABLE IF NOT EXISTS client_notes (
             id SERIAL PRIMARY KEY,
@@ -811,13 +833,13 @@ def init_database():
             id SERIAL PRIMARY KEY,
             client_id TEXT REFERENCES clients(instagram_id),
             achievement_type TEXT NOT NULL,
-            title_ru TEXT,
+            title TEXT,
             icon TEXT,
             points_awarded INTEGER DEFAULT 0,
             unlocked_at TIMESTAMP,
             progress REAL DEFAULT 0,
             max_progress REAL DEFAULT 1,
-            description_ru TEXT,
+            description TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
 
@@ -908,7 +930,6 @@ def init_database():
             id SERIAL PRIMARY KEY,
             stage_id INTEGER REFERENCES funnel_stages(id) ON DELETE CASCADE,
             name TEXT NOT NULL,
-            name_ru TEXT, name_en TEXT, name_ar TEXT,
             description TEXT,
             is_required BOOLEAN DEFAULT FALSE,
             sort_order INTEGER DEFAULT 0,
@@ -936,7 +957,6 @@ def init_database():
         c.execute('''CREATE TABLE IF NOT EXISTS products (
             id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
-            name_ru TEXT, name_en TEXT, name_ar TEXT,
             category TEXT,
             price REAL DEFAULT 0, cost_price REAL DEFAULT 0,
             weight REAL, weight_unit TEXT DEFAULT 'g',
@@ -1074,37 +1094,23 @@ def init_database():
         c.execute('''CREATE TABLE IF NOT EXISTS public_reviews (
             id SERIAL PRIMARY KEY,
             author_name TEXT,
-            author_name_ru TEXT, author_name_en TEXT, author_name_ar TEXT,
-            author_name_de TEXT, author_name_es TEXT, author_name_fr TEXT,
-            author_name_hi TEXT, author_name_kk TEXT, author_name_pt TEXT,
             rating INTEGER DEFAULT 5,
-            text_ru TEXT, text_en TEXT, text_ar TEXT,
-            text_de TEXT, text_es TEXT, text_fr TEXT,
-            text_hi TEXT, text_kk TEXT, text_pt TEXT,
+            text TEXT,
             avatar_url TEXT,
             is_active BOOLEAN DEFAULT TRUE,
             display_order INTEGER DEFAULT 0,
-            employee_name TEXT, employee_name_ru TEXT, employee_name_en TEXT, employee_name_ar TEXT,
-            employee_name_es TEXT, employee_name_de TEXT, employee_name_fr TEXT, employee_name_hi TEXT,
-            employee_name_kk TEXT, employee_name_pt TEXT,
-            employee_position TEXT, employee_position_ru TEXT, employee_position_en TEXT, employee_position_ar TEXT,
-            employee_position_es TEXT, employee_position_de TEXT, employee_position_fr TEXT, employee_position_hi TEXT,
-            employee_position_kk TEXT, employee_position_pt TEXT,
+            employee_name TEXT,
+            employee_position TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
 
         # Migrations for author_name
-        for lang in SUPPORTED_LANGUAGES:
-            add_column_if_not_exists('public_reviews', f'author_name_{lang}', 'TEXT')
+        add_column_if_not_exists('public_reviews', 'author_name', 'TEXT')
 
         c.execute('''CREATE TABLE IF NOT EXISTS public_faq (
             id SERIAL PRIMARY KEY,
-            question_ru TEXT, question_en TEXT, question_ar TEXT,
-            question_de TEXT, question_es TEXT, question_fr TEXT,
-            question_hi TEXT, question_kk TEXT, question_pt TEXT,
-            answer_ru TEXT, answer_en TEXT, answer_ar TEXT,
-            answer_de TEXT, answer_es TEXT, answer_fr TEXT,
-            answer_hi TEXT, answer_kk TEXT, answer_pt TEXT,
+            question TEXT,
+            answer TEXT,
             category TEXT DEFAULT 'general',
             is_active BOOLEAN DEFAULT TRUE,
             display_order INTEGER DEFAULT 0,
@@ -1284,25 +1290,31 @@ def init_database():
         ]
         for ent, nm, ru, clr, ord in default_stages:
             c.execute("""
-                INSERT INTO workflow_stages (entity_type, name, name_ru, color, sort_order)
-                VALUES (%s, %s, %s, %s, %s)
-                ON CONFLICT (entity_type, name) DO UPDATE SET name_ru = EXCLUDED.name_ru
-            """, (ent, nm, ru, clr, ord))
+                INSERT INTO workflow_stages (entity_type, name, color, sort_order)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (entity_type, name) DO NOTHING
+            """, (ent, nm, clr, ord))
 
-        # Настройки салона (Архитектура v2.0 - SSOT)
-        # Убираем хардкод - используем переменные окружения без выдуманных данных
-        salon_name = os.getenv('SALON_NAME', 'Beauty Salon')
-        salon_google_maps = os.getenv('SALON_GOOGLE_MAPS', '')
-        salon_phone = os.getenv('SALON_PHONE', '')
-        salon_whatsapp = os.getenv('SALON_WHATSAPP', '')
-        salon_instagram = os.getenv('SALON_INSTAGRAM', '')
-        salon_email = os.getenv('SALON_EMAIL', '')
-        salon_base_url = os.getenv('BASE_URL', '')
-        salon_address = os.getenv('SALON_ADDRESS', '')
-        salon_address_ru = os.getenv('SALON_ADDRESS_RU', '')
+        # Настройки салона (Архитектура v2.2 - REAL DATA)
+        salon_name = os.getenv('SALON_NAME', 'M.Le Diamant')
+        salon_google_maps = os.getenv('SALON_GOOGLE_MAPS', 'https://www.google.ru/maps/place/M+Le+Diamant+-+Best+Beauty+Salon+in+Jumeirah+Beach+Dubai/@25.0738739,55.1315886,17z')
+        salon_phone = os.getenv('SALON_PHONE', SALON_PHONE_DEFAULT)
+        salon_whatsapp = os.getenv('SALON_WHATSAPP', SALON_PHONE_DEFAULT)
+        salon_instagram = os.getenv('SALON_INSTAGRAM', 'mlediamant')
+        salon_email = os.getenv('SALON_EMAIL', SALON_EMAIL_DEFAULT)
+        salon_base_url = os.getenv('BASE_URL', 'https://mlediamant.com')
+        salon_address = os.getenv('SALON_ADDRESS', 'Shop 13, Amwaj 2, Plaza Level, JBR, Dubai')
         salon_hours_weekdays = os.getenv('SALON_HOURS_WEEKDAYS', '10:30 - 21:00')
         salon_hours_weekends = os.getenv('SALON_HOURS_WEEKENDS', '10:30 - 21:00')
         salon_currency = os.getenv('SALON_CURRENCY', 'AED')
+        
+        custom_settings = {
+            "stats": {
+                "years_experience": os.getenv('STAT_YEARS_EXP', "10+"),
+                "happy_clients": os.getenv('STAT_CLIENTS', "5000+"),
+                "quality_guarantee": os.getenv('STAT_QUALITY', "100%")
+            }
+        }
         
         bot_config = {
             "enabled": True,
@@ -1322,18 +1334,17 @@ def init_database():
 
         c.execute("""
             INSERT INTO salon_settings (
-                id, name, name_en, name_ar, address, address_ru, 
+                id, name, address, 
                 phone, whatsapp, instagram, email, booking_url, google_maps,
-                hours_weekdays, hours_weekends, hours_ru, hours_ar, bot_name, base_url, 
-                currency, bot_config
+                hours_weekdays, hours_weekends, hours, bot_name, base_url, 
+                currency, bot_config, custom_settings
             )
             VALUES (
-                1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             )
             ON CONFLICT (id) DO UPDATE SET 
                 name = EXCLUDED.name,
                 address = EXCLUDED.address,
-                address_ru = EXCLUDED.address_ru,
                 phone = EXCLUDED.phone,
                 whatsapp = EXCLUDED.whatsapp,
                 instagram = EXCLUDED.instagram,
@@ -1341,20 +1352,19 @@ def init_database():
                 google_maps = EXCLUDED.google_maps,
                 hours_weekdays = EXCLUDED.hours_weekdays,
                 hours_weekends = EXCLUDED.hours_weekends,
-                hours_ru = EXCLUDED.hours_ru,
-                hours_ar = EXCLUDED.hours_ar,
+                hours = EXCLUDED.hours,
                 currency = EXCLUDED.currency,
                 bot_config = EXCLUDED.bot_config,
+                custom_settings = EXCLUDED.custom_settings,
                 updated_at = CURRENT_TIMESTAMP
         """, (
-            salon_name, salon_name, 'M.Le Diamant',
-            salon_address, salon_address_ru,
-            salon_phone, salon_whatsapp, salon_instagram, salon_email, f"{salon_base_url}/booking",
+            salon_name, salon_address, 
+            salon_phone, salon_phone, salon_instagram, salon_email, f"{salon_base_url}/booking",
             salon_google_maps,
             salon_hours_weekdays, salon_hours_weekends,
-            f"Ежедневно: {salon_hours_weekdays}", f"يومياً: {salon_hours_weekdays}",
+            f"Ежедневно: {salon_hours_weekdays}",
             bot_config['bot_name'], salon_base_url,
-            salon_currency, json.dumps(bot_config)
+            salon_currency, json.dumps(bot_config), json.dumps(custom_settings)
         ))
 
         # Продуктовые сотрудники
@@ -1409,10 +1419,10 @@ def init_database():
         ]
         for en, ru, ord in default_positions:
             c.execute("""
-                INSERT INTO positions (name, name_en, sort_order)
-                VALUES (%s, %s, %s)
+                INSERT INTO positions (name, sort_order)
+                VALUES (%s, %s)
                 ON CONFLICT (name) DO NOTHING
-            """, (en, en, ord))
+            """, (en, ord))
 
         # Fix FK for client_preferences to cascade delete
         client_dep_tables = [

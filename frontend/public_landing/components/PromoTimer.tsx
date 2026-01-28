@@ -1,7 +1,6 @@
 // /frontend/public_landing/components/PromoTimer.tsx
 import { useState, useEffect } from "react";
-import { getApiUrl } from "../utils/apiUtils";
-import { safeFetch } from "../utils/errorHandler";
+import { fetchPublicApi } from "../utils/apiUtils";
 import { useTranslation } from "react-i18next";
 
 export function PromoTimer() {
@@ -18,14 +17,10 @@ export function PromoTimer() {
         // Fetch promo end date from API
         const fetchSettings = async () => {
             try {
-                const API_URL = getApiUrl();
-                const res = await safeFetch(`${API_URL}/api/salon-settings`);
-                if (res.ok) {
-                    const settings = await res.json();
-                    if (settings.promo_end_date) {
-                        startTimer(new Date(settings.promo_end_date));
-                        return;
-                    }
+                const settings = await fetchPublicApi('salon-settings');
+                if (settings.promo_end_date) {
+                    startTimer(new Date(settings.promo_end_date));
+                    return;
                 }
             } catch (error) {
                 console.error("Error fetching settings:", error);
@@ -66,45 +61,45 @@ export function PromoTimer() {
     if (!isVisible) return null;
 
     return (
-        <div className="animate-fade-in">
-            <div className="bg-background/50 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-pink-100 shadow-lg">
-                <p className="text-[oklch(0.145_0_0)] text-[10px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] mb-2 sm:mb-3 text-center font-medium">
+        <div className="animate-fade-in promo-timer-container">
+            <div className="promo-timer-card">
+                <p className="promo-timer-label">
                     {t('promoEnds')}
                 </p>
 
-                <div className="flex items-center justify-center gap-1 sm:gap-3 md:gap-4">
-                    <div className="flex flex-col items-center min-w-[40px] sm:min-w-[60px]">
-                        <div className="text-xl sm:text-3xl md:text-4xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
+                <div className="promo-timer-grid">
+                    <div className="promo-timer-unit">
+                        <div className="promo-timer-value">
                             {String(timeLeft.days).padStart(2, '0')}
                         </div>
-                        <div className="text-[9px] sm:text-[10px] text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-1.5 font-medium">
+                        <div className="promo-timer-unit-label">
                             {t('days')}
                         </div>
                     </div>
-                    <div className="text-lg sm:text-2xl text-[oklch(0.145_0_0)] opacity-60 pb-3 sm:pb-4">:</div>
-                    <div className="flex flex-col items-center min-w-[40px] sm:min-w-[60px]">
-                        <div className="text-xl sm:text-3xl md:text-4xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
+                    <div className="promo-timer-separator">:</div>
+                    <div className="promo-timer-unit">
+                        <div className="promo-timer-value">
                             {String(timeLeft.hours).padStart(2, '0')}
                         </div>
-                        <div className="text-[9px] sm:text-[10px] text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-1.5 font-medium">
+                        <div className="promo-timer-unit-label">
                             {t('hours')}
                         </div>
                     </div>
-                    <div className="text-lg sm:text-2xl text-[oklch(0.145_0_0)] opacity-60 pb-3 sm:pb-4">:</div>
-                    <div className="flex flex-col items-center min-w-[40px] sm:min-w-[60px]">
-                        <div className="text-xl sm:text-3xl md:text-4xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
+                    <div className="promo-timer-separator">:</div>
+                    <div className="promo-timer-unit">
+                        <div className="promo-timer-value">
                             {String(timeLeft.minutes).padStart(2, '0')}
                         </div>
-                        <div className="text-[9px] sm:text-[10px] text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-1.5 font-medium">
+                        <div className="promo-timer-unit-label">
                             {t('minutes')}
                         </div>
                     </div>
-                    <div className="text-lg sm:text-2xl text-[oklch(0.145_0_0)] opacity-60 pb-3 sm:pb-4">:</div>
-                    <div className="flex flex-col items-center min-w-[40px] sm:min-w-[60px]">
-                        <div className="text-xl sm:text-3xl md:text-4xl text-[oklch(0.145_0_0)] tabular-nums tracking-tight font-bold">
+                    <div className="promo-timer-separator">:</div>
+                    <div className="promo-timer-unit">
+                        <div className="promo-timer-value">
                             {String(timeLeft.seconds).padStart(2, '0')}
                         </div>
-                        <div className="text-[9px] sm:text-[10px] text-[oklch(0.145_0_0)] opacity-80 uppercase tracking-wider mt-1 sm:mt-1.5 font-medium">
+                        <div className="promo-timer-unit-label">
                             {t('seconds')}
                         </div>
                     </div>

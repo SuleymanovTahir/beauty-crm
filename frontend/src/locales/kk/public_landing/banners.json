@@ -1,28 +1,28 @@
 {
   "items": [
     {
-      "title": "Сұлулық пен талғампаздық",
-      "subtitle": "Кәсіби сұлулық қызметтері",
-      "image_url": "/static/uploads/images/faces/banner2.webp",
-      "link_url": "/services",
       "bg_pos_desktop_x": 50,
       "bg_pos_desktop_y": 50,
       "bg_pos_mobile_x": 50,
       "bg_pos_mobile_y": 50,
+      "image_url": "/static/images/banners/banner1.jpg",
       "is_flipped_horizontal": false,
-      "is_flipped_vertical": false
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "Тек осы айда",
+      "title": "Алғашқы барғанда 20% жеңілдік"
     },
     {
-      "title": "50% дейін жеңілдіктер",
-      "subtitle": "Барлық салон қызметтері үшін",
-      "image_url": "/static/uploads/images/faces/Мароканская баня.webp",
-      "link_url": "/services",
       "bg_pos_desktop_x": 50,
       "bg_pos_desktop_y": 50,
       "bg_pos_mobile_x": 50,
       "bg_pos_mobile_y": 50,
+      "image_url": "/static/images/banners/banner2.jpg",
       "is_flipped_horizontal": false,
-      "is_flipped_vertical": false
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "Инновацияны қолданып көріңіз",
+      "title": "Жаңа қызмет: Смарт педикюр"
     }
   ]
 }

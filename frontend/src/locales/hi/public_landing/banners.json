@@ -1,28 +1,28 @@
 {
   "items": [
     {
-      "title": "सुंदरता और सुंदरता",
-      "subtitle": "व्यावसायिक सौंदर्य सेवाएँ",
-      "image_url": "/static/uploads/images/faces/banner2.webp",
-      "link_url": "/services",
       "bg_pos_desktop_x": 50,
       "bg_pos_desktop_y": 50,
       "bg_pos_mobile_x": 50,
       "bg_pos_mobile_y": 50,
+      "image_url": "/static/images/banners/banner1.jpg",
       "is_flipped_horizontal": false,
-      "is_flipped_vertical": false
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "केवल इस महीने",
+      "title": "आपकी पहली यात्रा पर 20% छूट"
     },
     {
-      "title": "50% तक की छूट",
-      "subtitle": "सभी सैलून सेवाओं के लिए",
-      "image_url": "/static/uploads/images/faces/Мароканская баня.webp",
-      "link_url": "/services",
       "bg_pos_desktop_x": 50,
       "bg_pos_desktop_y": 50,
       "bg_pos_mobile_x": 50,
       "bg_pos_mobile_y": 50,
+      "image_url": "/static/images/banners/banner2.jpg",
       "is_flipped_horizontal": false,
-      "is_flipped_vertical": false
+      "is_flipped_vertical": false,
+      "link_url": "",
+      "subtitle": "नवीनता का प्रयास करें",
+      "title": "नई सेवा: स्मार्ट पेडीक्योर"
     }
   ]
 }

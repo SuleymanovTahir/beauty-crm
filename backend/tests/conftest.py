@@ -76,7 +76,7 @@ def sample_client(db_connection):
         INSERT INTO clients (name, phone, email, instagram_id, created_at)
         VALUES (%s, %s, %s, %s, %s)
         RETURNING id
-    """, ("John Doe", "+971501234567", "john@example.com", "john_doe", now))
+    """, ("John Doe", "971526961100", "john@example.com", "john_doe", now))
 
     client_id = cursor.fetchone()[0]
     db_connection.commit()
@@ -84,7 +84,7 @@ def sample_client(db_connection):
     return {
         "id": client_id,
         "name": "John Doe",
-        "phone": "+971501234567",
+        "phone": "971526961100",
         "email": "john@example.com",
         "instagram_id": "john_doe"
     }

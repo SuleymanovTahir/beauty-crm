@@ -22,10 +22,6 @@ def get_language_field_name(base_field: str, language: str) -> str:
     if language not in SUPPORTED_LANGUAGES:
         language = DEFAULT_LANGUAGE
     
-    # Специальный случай: 'en' использует базовое поле без суффикса
-    if language == 'en':
-        return base_field
-    
     return f"{base_field}_{language}"
 
 def get_service_name_field(language: str) -> str:
@@ -66,40 +62,13 @@ def get_service_name_index(language: str) -> int:
     }
     return index_map.get(language, 2)  # По умолчанию английский
 
-def build_coalesce_query(field_base: str, language: str, fallback_fields: Optional[List[str]] = None) -> str:
+def build_coalesce_query(field_base: str, language: str, fallback_fields: Optional[List[str]] = None, include_base: bool = True) -> str:
     """
-    Построить COALESCE запрос для получения локализованного значения с fallback
-    
-    Args:
-        field_base: Базовое имя поля
-        language: Код языка
-        fallback_fields: Дополнительные поля для fallback (по умолчанию: en, ru, base)
-    
-    Returns:
-        SQL выражение COALESCE
+    Построить запрос для получения базового значения поля.
+    Раньше здесь был COALESCE для локализованных колонок.
+    Теперь вся локализация перенесена в locales/*.json на фронтенде.
     """
-    if fallback_fields is None:
-        fallback_fields = ['en', 'ru']
-    
-    language = validate_language(language)
-    primary_field = get_language_field_name(field_base, language)
-    
-    # Строим список полей для COALESCE
-    fields = [primary_field]
-    
-    # Добавляем fallback поля
-    for fallback_lang in fallback_fields:
-        if fallback_lang != language:
-            fallback_field = get_language_field_name(field_base, fallback_lang)
-            if fallback_field not in fields:
-                fields.append(fallback_field)
-    
-    # Добавляем базовое поле в конце
-    if field_base not in fields:
-        fields.append(field_base)
-    
-    return f"COALESCE({', '.join(fields)})"
-
+    return field_base
 def get_localized_name(emp_id: int, full_name: str, language: str = 'ru') -> str:
     """
     Универсальная функция для получения локализованного имени мастера из БД
@@ -160,3 +129,40 @@ def get_localized_name(emp_id: int, full_name: str, language: str = 'ru') -> str
     finally:
         conn.close()
 
+def get_dynamic_translation(table: str, item_id: int, field: str, language: str, default_value: str = "") -> str:
+    """
+    Получить перевод динамического контента из locales/*.json
+    Служит заменой локализованным колонкам в БД.
+    """
+    import json
+    from pathlib import Path
+    
+    language = validate_language(language)
+    
+    # Путь к файлу локализации (относительно корня проекта)
+    # Предполагаем, что этот файл находится в backend/utils/
+    base_dir = Path(__file__).parent.parent.parent
+    locales_file = base_dir / 'frontend' / 'src' / 'locales' / language / 'dynamic.json'
+    
+    if not locales_file.exists():
+        return default_value
+        
+    try:
+        with open(locales_file, 'r', encoding='utf-8') as f:
+            translations = json.load(f)
+            
+        # Ищем ключ: table.item_id.field (может быть с хешем в конце)
+        prefix = f"{table}.{item_id}.{field}"
+        
+        # Сначала ищем точное совпадение (если вдруг ключи без хеша)
+        if prefix in translations:
+            return translations[prefix]
+            
+        # Потом ищем любой ключ, начинающийся на префикс
+        for key, value in translations.items():
+            if key.startswith(prefix):
+                return value
+    except Exception:
+        pass
+        
+    return default_value

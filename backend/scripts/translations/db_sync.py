@@ -59,13 +59,19 @@ def sync_translations():
                     # Fallback if key missing in older extract
                     key = f"{table_name}.{record_id}.{field_name}"
                 
-                for lang, value in translations.items():
-                    if lang == 'key' or lang == 'detected_language':
-                        continue
-                        
-                    if value:
-                        updates_by_lang[lang][key] = value
-                        total_updates += 1
+                if key:
+                    # Strip language suffix and hash (e.g. _ru.4d6731dd) to keep keys stable and clean for frontend
+                    import re
+                    # Match _xx.hash or just _xx or just .hash
+                    clean_key = re.sub(r'(_[a-z]{2})?(\.[a-f0-9]{8})?$', '', key)
+                    
+                    for lang, value in translations.items():
+                        if lang in ['key', 'detected_language', 'source_col']:
+                            continue
+                            
+                        if value:
+                            updates_by_lang[lang][clean_key] = value
+                            total_updates += 1
 
     # Update JSON files
     for lang, updates in updates_by_lang.items():

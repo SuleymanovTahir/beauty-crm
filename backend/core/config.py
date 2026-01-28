@@ -104,6 +104,10 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # ===== ВЕРСИЯ ДЛЯ КЭШИРОВАНИЯ =====
 CSS_VERSION = datetime.now().strftime('%Y%m%d%H%M%S')
 
+# === SALON CONTACTS (SSOT) ===
+SALON_PHONE_DEFAULT = "971526961100"
+SALON_EMAIL_DEFAULT = "mladiamontuae@gmail.com"
+
 # ===== ТОКЕНЫ И КЛЮЧИ (из .env) =====
 SALON_LAT = float(os.getenv("SALON_LAT", "25.07398834046777"))
 SALON_LON = float(os.getenv("SALON_LON", "55.13161571633984"))

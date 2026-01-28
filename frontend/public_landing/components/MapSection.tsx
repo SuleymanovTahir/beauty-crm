@@ -10,7 +10,7 @@ interface MapSectionProps {
 
 export function MapSection({ salonInfo: initialSalonInfo }: MapSectionProps) {
   const { t } = useTranslation(['public_landing', 'common']);
-  const { phone, email, address, workingHours, mapUrl } = useSalonInfo(initialSalonInfo);
+  const { phone, email, address, workingHours, mapUrl, googleMapsEmbedUrl } = useSalonInfo(initialSalonInfo);
 
   return (
     <section id="map-section" className="py-12 sm:py-16 bg-background">
@@ -96,14 +96,22 @@ export function MapSection({ salonInfo: initialSalonInfo }: MapSectionProps) {
           </div>
 
           <div className="w-full h-[400px] sm:h-[500px] lg:h-auto lg:min-h-[600px] rounded-lg sm:rounded-xl overflow-hidden shadow-lg bg-muted border border-border/50">
-            <iframe
-              className="w-full h-full"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1911.6982277277355!2d55.130208507174196!3d25.073873893619908!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f15!3m3!1m2!1s0x3e5f138d81fa2729%3A0x4f52784c0fa00c32!2sM%20Le%20Diamant%20-%20Best%20Beauty%20Salon%20in%20Jumeirah%20Beach%20Dubai!5e1!3m2!1sen!2sge!4v1768962138779!5m2!1sen!2sge"
-              loading="lazy"
-              title="Salon Location"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+            {googleMapsEmbedUrl ? (
+              <iframe
+                className="w-full h-full"
+                src={googleMapsEmbedUrl}
+                loading="lazy"
+                title="Salon Location"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground p-6 text-center">
+                <MapPin className="w-12 h-12 mb-4 opacity-20" />
+                <p>{t('address')}: {address}</p>
+                <p className="text-sm mt-2 opacity-60">Map not configured</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

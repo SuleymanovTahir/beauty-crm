@@ -1,9 +1,7 @@
 {
   "actions": "Ações",
   "all_good": "Tudo está ótimo! Seu funil está apresentando bons resultados.",
-  "client": {
-    "name": "Nome"
-  },
+  "client": "Cliente",
   "client_added": "Cliente adicionado",
   "client_deleted": "Cliente excluído",
   "client_updated": "Dados do cliente atualizados",

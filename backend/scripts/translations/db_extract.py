@@ -7,6 +7,7 @@ Identifies all text fields that need translation and checks against JSON files
 import json
 import sys
 import os
+import hashlib
 from pathlib import Path
 
 # Add backend directory to path
@@ -62,34 +63,53 @@ def extract_translatable_content():
         print(f"\n📋 Processing table: {table_name}")
         
         id_field = config["id_field"]
-        fields = config["fields"]
+        logical_fields = config["fields"]
         where_clause = config.get("where", None)
         
-        # Build SELECT query
-        # We need to fetch translation columns to check if they are empty/null
-        select_fields = [id_field]
-        for f in fields:
-            if f not in select_fields:
-                select_fields.append(f)
-                
-        # Add potential translation columns
-        for field in fields:
-            # Determine base name
-            base_name = field
-            if field.endswith(f"_{SOURCE_LANGUAGE}"):
-                base_name = field[:-len(SOURCE_LANGUAGE)-1]
+        # 1. Fetch table schema to resolve logical fields to real columns
+        cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name = %s", (table_name,))
+        actual_columns = {col[0] for col in cursor.fetchall()}
+        
+        # 2. Map logical fields to actual columns for querying
+        # And keep track of which logical field corresponds to which actual columns
+        query_columns = [id_field]
+        field_to_cols = {} # field -> [col1, col2, ...]
+        
+        for field in logical_fields:
+            mapped_cols = []
+            # Priority: 
+            # a) Exact match (e.g. 'address')
+            # b) SOURCE_LANGUAGE match (e.g. 'name' -> 'name_ru')
+            # c) Any other language match (e.g. 'name' -> 'name_en')
             
+            if field in actual_columns:
+                mapped_cols.append(field)
+            
+            # Check for _ru, _en, etc
+            best_source_col = f"{field}_{SOURCE_LANGUAGE}"
+            if best_source_col in actual_columns:
+                mapped_cols.append(best_source_col)
+                
             for lang in LANGUAGES:
-                if lang == SOURCE_LANGUAGE: continue
+                lang_col = f"{field}_{lang}"
+                if lang_col in actual_columns and lang_col not in mapped_cols:
+                    mapped_cols.append(lang_col)
+            
+            if not mapped_cols:
+                print(f"  ⚠️  Warning: Could not find any column for logical field '{field}' in table '{table_name}'")
+                continue
                 
-                # Construct target column name
-                target_col = f"{base_name}_{lang}"
-                
-                # We only add if not already in list (unlikely but safe)
-                if target_col not in select_fields:
-                    select_fields.append(target_col)
-                    
-        query = f"SELECT {', '.join(select_fields)} FROM {table_name}"
+            field_to_cols[field] = mapped_cols
+            for col in mapped_cols:
+                if col not in query_columns:
+                    query_columns.append(col)
+        
+        if not field_to_cols:
+            print(f"  ⚠️  No translatable fields found for {table_name}, skipping")
+            continue
+            
+        # Build SELECT query
+        query = f"SELECT {', '.join(query_columns)} FROM {table_name}"
         if where_clause:
             query += f" WHERE {where_clause}"
         
@@ -100,6 +120,11 @@ def extract_translatable_content():
             table_results = []
             table_missing = 0
             
+            # Lazy instantiation of translator for detection
+            if 'translator' not in locals():
+                from translator import Translator
+                translator = Translator(use_cache=True)
+            
             for row in rows:
                 row_dict = dict(row)
                 record_id = row_dict[id_field]
@@ -109,93 +134,90 @@ def extract_translatable_content():
                     "fields": {}
                 }
                 
-                # Process each field
-                for field in fields:
-                    source_value = row_dict.get(field)
+                # Process each logical field
+                for logical_field, cols in field_to_cols.items():
+                    # Find the best source value from available columns
+                    source_value = None
+                    actual_source_col = None
                     
-                    # Skip if source is empty
+                    # Try SOURCE_LANGUAGE column first (e.g. name_ru)
+                    ru_col = f"{logical_field}_{SOURCE_LANGUAGE}"
+                    if ru_col in cols and row_dict.get(ru_col):
+                        source_value = row_dict.get(ru_col)
+                        actual_source_col = ru_col
+                    
+                    # If not found, try base column (e.g. name)
+                    if not source_value and logical_field in cols and row_dict.get(logical_field):
+                        source_value = row_dict.get(logical_field)
+                        actual_source_col = logical_field
+                        
+                    # Still not found? Try any other language
+                    if not source_value:
+                        for col in cols:
+                            if row_dict.get(col):
+                                source_value = row_dict.get(col)
+                                actual_source_col = col
+                                break
+                    
+                    # Skip if absolutely no content found in any related column
                     if not source_value or not str(source_value).strip():
                         continue
                     
                     # Generate key: table.id.field.hash
-                    # We include hash of source value to detect content changes
-                    import hashlib
                     hash_val = hashlib.md5(str(source_value).encode()).hexdigest()[:8]
-                    key = f"{table_name}.{record_id}.{field}.{hash_val}"
+                    key = f"{table_name}.{record_id}.{logical_field}.{hash_val}"
                     
                     field_data = {
+                        "source_col": actual_source_col, # Audit info
                         SOURCE_LANGUAGE: source_value,
                         "key": key
                     }
                     
                     field_has_missing = False
                     
+                    # Verify ALL languages
                     for lang in LANGUAGES:
-                        # We also check SOURCE_LANGUAGE to ensure source file has the key
-                        if lang == SOURCE_LANGUAGE:
-                            existing_val = existing_translations.get(lang, {}).get(key)
-                            if not existing_val:
-                                field_has_missing = True
-                            continue
-
-                        
                         # Check if key exists in existing translations
                         existing_val = existing_translations.get(lang, {}).get(key)
                         
-                        # Check if target column in DB is empty
-                        # We try to guess the target column name
-                        target_col_name = None
-                        
-                        base_name = field
-                        if field.endswith(f"_{SOURCE_LANGUAGE}"):
-                            base_name = field[:-len(SOURCE_LANGUAGE)-1]
-                            
-                        target_col_name = f"{base_name}_{lang}"
-                            
-                        # Check if this column exists in the row and is empty
-                        db_val_missing = False
-                        if target_col_name in row_dict:
-                            val = row_dict[target_col_name]
-                            if val is None or str(val).strip() == "":
-                                db_val_missing = True
-                        else:
-                            # If column was not selected (maybe schema mismatch?), we assume missing
-                            # But if the column doesn't exist in DB, it will cause error later in sync?
-                            # For now, let's treat as missing if we can't find it
-                            db_val_missing = True
-                        
-                        if existing_val and not db_val_missing:
+                        # Check if the translation is actually present in JSON
+                        if existing_val and str(existing_val).strip() != "":
                             field_data[lang] = existing_val
                         else:
-                            # If DB value is missing, we treat it as missing translation
-                            # even if we have it in JSON (so it gets synced back to DB)
-                            field_data[lang] = None
-                            field_has_missing = True
-                            table_missing += 1
-                            total_missing += 1
+                            # If not in JSON, check if it's already in the DB (for newly added columns)
+                            db_col = f"{logical_field}_{lang}"
+                            if lang == 'en': # English can be the base field
+                                db_col = logical_field
+                                
+                            db_val = row_dict.get(db_col) if db_col in cols else None
+                            
+                            if db_val and str(db_val).strip() != "" and db_val != source_value:
+                                # Data exists in DB and is different from source, so it's likely a valid translation
+                                field_data[lang] = db_val
+                            else:
+                                if lang == SOURCE_LANGUAGE:
+                                    field_data[lang] = source_value
+                                else:
+                                    field_data[lang] = None
+                                    field_has_missing = True
+                                    table_missing += 1
+                                    total_missing += 1
                     
-                    # NEW: Check if source language itself needs translation (correction)
-                    # This happens if we detected that source text is NOT in source language (e.g. EN text in RU field)
-                    # We only do this if the field hasn't already been marked as missing
+                    # Check if source language itself needs a "correction" or re-translation
                     skip_fields = SKIP_TRANSLATION_FIELDS.get(table_name, [])
-                    if not field_has_missing and field not in skip_fields:
-                        # Lazy instantiation
-                        if 'translator' not in locals():
-                            from translator import Translator
-                            translator = Translator(use_cache=True)
-                        
+                    if not field_has_missing and logical_field not in skip_fields:
                         try:
+                            # Use mass translator if available, else standard
                             detected = translator.detect_language(source_value)
-                            # Only flag if detected language differs from SOURCE_LANGUAGE (specifically English in RU field)
-                            if detected == 'en' and SOURCE_LANGUAGE == 'ru':
-                                 print(f"    ⚠️  Language mismatch for {key}: detected '{detected}', expected '{SOURCE_LANGUAGE}'")
+                            # If detected language is clearly different from SOURCE_LANGUAGE (e.g. EN in RU column)
+                            # We only flag if content is long enough to be sure (>10 chars)
+                            if detected == 'en' and SOURCE_LANGUAGE == 'ru' and len(str(source_value)) > 10:
+                                 print(f"    ⚠️  Correction detected for {key}: '{detected}' instead of '{SOURCE_LANGUAGE}'")
                                  field_has_missing = True
-                        except Exception as e:
-                            pass
+                        except: pass
                     
-                    # Only include field if it has missing translations
                     if field_has_missing:
-                        record_data["fields"][field] = field_data
+                        record_data["fields"][logical_field] = field_data
                 
                 # Only include record if it has fields needing translation
                 if record_data["fields"]:

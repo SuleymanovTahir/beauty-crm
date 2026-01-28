@@ -1,7 +1,7 @@
 {
-  "account_pending": "Тіркелгіңіз әкімшінің мақұлдауын күтуде",
+  "account_pending": "Есептік жазбаңыз әкімшінің мақұлдауын күтуде",
   "authorization_error": "Authorization failed",
-  "email_not_verified_redirect": "Электрондық пошта расталмады. Тексеру бетіне қайта бағытталуда...",
+  "email_not_verified_redirect": "Электрондық пошта расталмаған. Тексеру бетіне қайта бағытталуда...",
   "enter_login": "Enter username",
   "fill_both_fields": "Please fill in both fields",
   "login": "Кіру",
@@ -9,7 +9,7 @@
   "login_title": "Login to your account",
   "network_error": "Желі қатесі. Интернет қосылымыңызды тексеріңіз немесе әрекетті кейінірек қайталаңыз.",
   "password": "Password",
-  "registration_pending_toast": "Тіркелуіңіз әкімшінің мақұлдауын күтуде. Есептік жазбаңыз белсендірілгенде, сізге электрондық хат келеді.",
+  "registration_pending_toast": "Тіркелуіңіз әкімшінің мақұлдауын күтуде. Есептік жазбаңыз белсендірілгенде сізге электрондық хат келеді.",
   "username": "Логин",
   "welcome": "Welcome"
 }

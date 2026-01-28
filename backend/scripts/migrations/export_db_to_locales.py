@@ -2,6 +2,7 @@
 """
 Normalized and optimized export script.
 Exports services, FAQ, banners, pipeline stages, and invoice stages from DB to JSON.
+Loads translations from dynamic.json to keep DB schema clean.
 """
 
 import sys
@@ -21,32 +22,48 @@ FRONTEND_DIR = backend_dir.parent / 'frontend'
 LOCALES_DIR = FRONTEND_DIR / 'src' / 'locales'
 LANGUAGES = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']
 
-def should_skip_export(output_file, force=False):
-    if force: return False
-    return output_file.exists()
+def load_dynamic_translations(lang):
+    """Load translations from dynamic.json for a specific language"""
+    file_path = LOCALES_DIR / lang / 'dynamic.json'
+    if file_path.exists():
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
 
-def export_services(cursor, force=False):
+def get_translation(translations, table, id, field, fallback_value):
+    """Find translation in dynamic.json context"""
+    # Keys look like: table.id.field.hash
+    # Since we don't know the hash here easily, we search for prefix: table.id.field.
+    prefix = f"{table}.{id}.{field}."
+    for key, value in translations.items():
+        if key.startswith(prefix) and value:
+            return value
+    return fallback_value
+
+def export_services(cursor, all_translations):
     print("📦 Exporting services...")
     cursor.execute("""
-        SELECT service_key, 
-               name_ru, name_en, name_ar, name_es, name_de, name_fr, name_pt, name_hi, name_kk,
-               description_ru, description_en, description_ar, description_es, description_de, 
-               description_fr, description_pt, description_hi, description_kk,
-               price, min_price, max_price, currency, category, duration
+        SELECT id, service_key, name_ru, description_ru, price, min_price, max_price, currency, category, duration
         FROM services WHERE is_active = TRUE ORDER BY category, name_ru
     """)
     services = cursor.fetchall()
     if not services: return
     
-    for idx, lang in enumerate(LANGUAGES):
+    for lang in LANGUAGES:
+        translations = all_translations.get(lang, {})
         output_file = LOCALES_DIR / lang / 'public_landing' / 'services.json'
-        if should_skip_export(output_file, force): continue
         
         categories, items = {}, {}
         for row in services:
-            key = row[0]
-            name, desc = row[1+idx] or row[1], row[10+idx] or row[10] or ""
-            p, min_p, max_p, curr, cat, dur = row[19:25]
+            id_db, key, name_ru, desc_ru, p, min_p, max_p, curr, cat, dur = row
+            
+            # Lookup translations
+            name = get_translation(translations, "services", id_db, "name_ru", name_ru)
+            desc = get_translation(translations, "services", id_db, "description_ru", desc_ru) or ""
+            
             if cat: categories[cat.lower().replace(' ', '_')] = cat
             items[key] = {
                 "name": name, "description": desc, "price": float(p) if p else None,
@@ -60,108 +77,109 @@ def export_services(cursor, force=False):
             json.dump({"categories": categories, "items": items}, f, ensure_ascii=False, indent=2)
         print(f"   ✅ {lang}: {len(items)} services")
 
-def export_faq(cursor, force=False):
+def export_faq(cursor, all_translations):
     print("\n❓ Exporting FAQ...")
     cursor.execute("""
-        SELECT question_ru, question_en, question_ar, question_es, question_de, 
-               question_fr, question_pt, question_hi, question_kk,
-               answer_ru, answer_en, answer_ar, answer_es, answer_de,
-               answer_fr, answer_pt, answer_hi, answer_kk
-        FROM public_faq WHERE is_active = TRUE ORDER BY display_order
+        SELECT id, question_ru, answer_ru FROM public_faq WHERE is_active = TRUE ORDER BY display_order
     """)
     faqs = cursor.fetchall()
     if not faqs: return
     
-    for idx, lang in enumerate(LANGUAGES):
+    for lang in LANGUAGES:
+        translations = all_translations.get(lang, {})
         output_file = LOCALES_DIR / lang / 'public_landing' / 'faq.json'
-        if should_skip_export(output_file, force): continue
-        items = [{"question": r[idx] or r[0], "answer": r[9+idx] or r[9] or ""} for r in faqs]
+        
+        items = []
+        for r in faqs:
+            id_db, q_ru, a_ru = r
+            question = get_translation(translations, "public_faq", id_db, "question_ru", q_ru)
+            answer = get_translation(translations, "public_faq", id_db, "answer_ru", a_ru)
+            items.append({"question": question, "answer": answer or ""})
+            
         output_file.parent.mkdir(parents=True, exist_ok=True)
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump({"items": items}, f, ensure_ascii=False, indent=2)
         print(f"   ✅ {lang}: {len(items)} FAQ items")
 
-def export_banners(cursor, force=False):
+def export_banners(cursor, all_translations):
     print("\n🖼  Exporting banners...")
     cursor.execute("""
-        SELECT title_ru, title_en, title_ar, title_es, title_de, title_fr, title_pt, title_hi, title_kk,
-               subtitle_ru, subtitle_en, subtitle_ar, subtitle_es, subtitle_de, subtitle_fr, subtitle_pt, subtitle_hi, subtitle_kk,
-               image_url, link_url, bg_pos_desktop_x, bg_pos_desktop_y, bg_pos_mobile_x, bg_pos_mobile_y,
-               is_flipped_horizontal, is_flipped_vertical
+        SELECT id, title_ru, subtitle_ru, image_url, link_url, bg_pos_desktop_x, bg_pos_desktop_y, 
+               bg_pos_mobile_x, bg_pos_mobile_y, is_flipped_horizontal, is_flipped_vertical
         FROM public_banners WHERE is_active = TRUE ORDER BY display_order
     """)
     banners = cursor.fetchall()
     if not banners: return
     
-    for idx, lang in enumerate(LANGUAGES):
+    for lang in LANGUAGES:
+        translations = all_translations.get(lang, {})
         output_file = LOCALES_DIR / lang / 'public_landing' / 'banners.json'
-        if should_skip_export(output_file, force): continue
-        items = [{
-            "title": r[idx] or r[0], "subtitle": r[9+idx] or r[9] or "",
-            "image_url": r[18] or "", "link_url": r[19] or "",
-            "bg_pos_desktop_x": r[20], "bg_pos_desktop_y": r[21],
-            "bg_pos_mobile_x": r[22], "bg_pos_mobile_y": r[23],
-            "is_flipped_horizontal": r[24], "is_flipped_vertical": r[25]
-        } for r in banners]
+        
+        items = []
+        for r in banners:
+            id_db, t_ru, s_ru = r[:3]
+            title = get_translation(translations, "public_banners", id_db, "title_ru", t_ru)
+            subtitle = get_translation(translations, "public_banners", id_db, "subtitle_ru", s_ru)
+            
+            items.append({
+                "title": title, "subtitle": subtitle or "",
+                "image_url": r[3] or "", "link_url": r[4] or "",
+                "bg_pos_desktop_x": r[5], "bg_pos_desktop_y": r[6],
+                "bg_pos_mobile_x": r[7], "bg_pos_mobile_y": r[8],
+                "is_flipped_horizontal": r[9], "is_flipped_vertical": r[10]
+            })
         output_file.parent.mkdir(parents=True, exist_ok=True)
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump({"items": items}, f, ensure_ascii=False, indent=2)
         print(f"   ✅ {lang}: {len(items)} banners")
 
-def export_pipeline_stages(cursor, force=False):
-    print("\n📊 Exporting pipeline stages...")
+def export_stages(cursor, all_translations, entity_type):
+    print(f"\n📊 Exporting {entity_type} stages...")
     cursor.execute("""
-        SELECT name, name_en, name_ar, name_es, name_de, name_fr, name_pt, name_hi, name_kk, key
-        FROM pipeline_stages WHERE is_active = TRUE ORDER BY order_index
-    """)
+        SELECT id, name, name_ru FROM workflow_stages 
+        WHERE entity_type = %s ORDER BY sort_order
+    """, (entity_type,))
     stages = cursor.fetchall()
-    for idx, lang in enumerate(LANGUAGES):
-        output_file = LOCALES_DIR / lang / 'admin' / 'funnel.json'
+    if not stages: return
+    
+    file_map = {'pipeline': 'funnel.json', 'invoice': 'invoices.json'}
+    target_key = {'pipeline': 'stages', 'invoice': 'statuses'}
+    
+    for lang in LANGUAGES:
+        translations = all_translations.get(lang, {})
+        output_file = LOCALES_DIR / lang / 'admin' / file_map[entity_type]
+        
         data = {}
         if output_file.exists():
             try:
                 with open(output_file, 'r', encoding='utf-8') as f: data = json.load(f)
             except: pass
-        if "stages" not in data: data["stages"] = {}
-        for r in stages: data["stages"][r[9] or r[0].lower().replace(' ', '_')] = r[idx] or r[0]
+            
+        if target_key[entity_type] not in data: data[target_key[entity_type]] = {}
+        
+        for r in stages:
+            id_db, name_en, name_ru = r
+            translated_name = get_translation(translations, "workflow_stages", id_db, "name_ru", name_ru)
+            key = name_en.lower().replace(' ', '_')
+            data[target_key[entity_type]][key] = translated_name
+            
         output_file.parent.mkdir(parents=True, exist_ok=True)
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        print(f"   ✅ {lang}: {len(stages)} pipeline stages")
-
-def export_invoice_stages(cursor, force=False):
-    print("\n🧾 Exporting invoice stages...")
-    cursor.execute("""
-        SELECT name, name_en, name_ar, name_es, name_de, name_fr, name_pt, name_hi, name_kk, key
-        FROM invoice_stages WHERE is_active = TRUE ORDER BY order_index
-    """)
-    stages = cursor.fetchall()
-    for idx, lang in enumerate(LANGUAGES):
-        output_file = LOCALES_DIR / lang / 'admin' / 'invoices.json'
-        data = {}
-        if output_file.exists():
-            try:
-                with open(output_file, 'r', encoding='utf-8') as f: data = json.load(f)
-            except: pass
-        if "statuses" not in data: data["statuses"] = {}
-        for r in stages: data["statuses"][r[9] or r[0].lower().replace(' ', '_')] = r[idx] or r[0]
-        output_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        print(f"   ✅ {lang}: {len(stages)} invoice stages")
+        print(f"   ✅ {lang}: {len(stages)} {entity_type} stages")
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--force', action='store_true')
-    args = parser.parse_args()
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        export_services(cur, args.force)
-        export_faq(cur, args.force)
-        export_banners(cur, args.force)
-        export_pipeline_stages(cur, args.force)
-        export_invoice_stages(cur, args.force)
+        # Load all translations first
+        all_translations = {lang: load_dynamic_translations(lang) for lang in LANGUAGES}
+        
+        export_services(cur, all_translations)
+        export_faq(cur, all_translations)
+        export_banners(cur, all_translations)
+        export_stages(cur, all_translations, 'pipeline')
+        export_stages(cur, all_translations, 'invoice')
         print("\n✅ Export complete!")
     finally:
         cur.close(); conn.close()

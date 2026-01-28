@@ -1,13 +1,13 @@
 {
-  "all": "Все",
+  "all": "Барлығы",
   "booking": "жазба",
   "my_bookings": "Менің тапсырыстарым",
   "no_bookings": "Брондаулар жоқ",
   "no_bookings_description": "Брондау сипаттамасы жоқ",
   "no_name": "Аты жоқ",
-  "no_phone": "Телефон жоқ",
+  "no_phone": "Телефон нөмірі жоқ",
   "notes": "Ескертпелер",
   "past": "Өткен",
-  "upcoming": "Предстоящие",
+  "upcoming": "Алдағы",
   "view_and_manage_bookings": "Брондауларды көру және басқару"
 }

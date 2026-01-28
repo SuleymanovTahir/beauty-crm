@@ -14,7 +14,7 @@ import { useSalonInfo } from "../hooks/useSalonInfo";
 import { useAuth } from "../../src/contexts/AuthContext";
 
 export function FAQ() {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
   const { phone: salonPhone } = useSalonInfo();
   const { user } = useAuth();
 
@@ -35,7 +35,11 @@ export function FAQ() {
         const faqData = dataFaq.faqItems || dataFaq.faq || [];
 
         if (faqData && faqData.length > 0) {
-          setFaqs(faqData);
+          setFaqs(faqData.map((item: any) => ({
+            id: item.id,
+            question: t(`dynamic:public_faq.${item.id}.question`, { defaultValue: item.question || '' }),
+            answer: t(`dynamic:public_faq.${item.id}.answer`, { defaultValue: item.answer || '' })
+          })));
         } else {
           // Fallback to translations if DB is empty
           const tFaqs = t('faqItems', { returnObjects: true, ns: 'public_landing' }) as Array<any>;
@@ -64,6 +68,16 @@ export function FAQ() {
     fetchData();
   }, [i18n.language, user?.id]);
 
+  const [displayCount, setDisplayCount] = useState<number>(0);
+
+  useEffect(() => {
+    if (faqs.length > 0 && displayCount === 0) {
+      setDisplayCount(Math.ceil(faqs.length / 2));
+    }
+  }, [faqs, displayCount]);
+
+  const displayedFaqs = displayCount > 0 ? faqs.slice(0, displayCount) : faqs;
+
   return (
     <section id="faq" className="py-12 sm:py-16 lg:py-20 bg-background">
       <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6">
@@ -80,23 +94,37 @@ export function FAQ() {
         </div>
 
         {faqs.length > 0 ? (
-          <Accordion type="single" collapsible defaultValue="item-0" className="w-full space-y-3 sm:space-y-4">
-            {faqs.map((faq, index) => (
-              <AccordionItem
-                key={faq.id}
-                value={`item-${index}`}
-                className="faq-accordion-item"
-              >
-                <AccordionTrigger className="text-left hover:no-underline py-3 sm:py-4 lg:py-6">
-                  <span className="text-sm sm:text-base text-[var(--heading)] pr-4">{faq.question}</span>
-                </AccordionTrigger>
-                <AccordionContent className="pb-3 sm:pb-4 lg:pb-6 text-xs sm:text-sm text-foreground/70">
-                  <div className="faq-divider" />
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <>
+            <Accordion type="single" collapsible defaultValue="item-0" className="w-full space-y-3 sm:space-y-4">
+              {displayedFaqs.map((faq, index) => (
+                <AccordionItem
+                  key={faq.id}
+                  value={`item-${index}`}
+                  className="faq-accordion-item"
+                >
+                  <AccordionTrigger className="text-left hover:no-underline py-3 sm:py-4 lg:py-6">
+                    <span className="text-sm sm:text-base text-[var(--heading)] pr-4">{faq.question}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-3 sm:pb-4 lg:pb-6 text-xs sm:text-sm text-foreground/70">
+                    <div className="faq-divider" />
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+
+            {displayCount < faqs.length && (
+              <div className="text-center mt-8">
+                <Button
+                  variant="outline"
+                  onClick={() => setDisplayCount(faqs.length)}
+                  className="service-show-more-btn"
+                >
+                  {t('showMore')} ({faqs.length - displayCount})
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center text-muted-foreground py-8">
             {t('noFaqAvailable')}

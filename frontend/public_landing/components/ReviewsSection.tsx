@@ -15,7 +15,7 @@ interface Review {
 }
 
 export function ReviewsSection() {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -31,11 +31,11 @@ export function ReviewsSection() {
           // Backend returns: id, name (or author_name), avatar_url, rating, employee_position, text (or text_xx), created_at
           const mappedReviews = data.reviews.map((review: any) => ({
             id: review.id,
-            name: review.name || review.author_name || t('common:client'),
+            name: t(`dynamic:public_reviews.${review.id}.author_name`, { defaultValue: review.name || review.author_name || t('common:client') }),
             avatar_url: review.avatar_url || "",
             rating: review.rating || 5,
-            employee_position: review.employee_position || t('common:service'),
-            text: review.text || review.text_ru || "",
+            employee_position: t(`dynamic:public_reviews.${review.id}.employee_position`, { defaultValue: review.employee_position || t('common:service') }),
+            text: t(`dynamic:public_reviews.${review.id}.text`, { defaultValue: review.text || "" }),
             created_at: review.created_at || ""
           }));
           setReviews(mappedReviews);
@@ -77,6 +77,8 @@ export function ReviewsSection() {
 
   const getVisibleReviews = () => {
     if (reviews.length === 0) return [];
+    if (reviews.length <= itemsPerSlide) return reviews;
+
     const visible = [];
     for (let i = 0; i < itemsPerSlide; i++) {
       visible.push(reviews[(currentIndex + i) % reviews.length]);

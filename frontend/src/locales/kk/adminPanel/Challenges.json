@@ -1,39 +1,39 @@
 {
   "buttons": {
-    "cancel": "Болдырмау",
+    "cancel": "Бас тарту",
     "create_challenge": "Мақсат жасау",
-    "update_challenge": "Сохранить изменения"
+    "update_challenge": "Өзгерістерді сақтау"
   },
   "card": {
     "check_progress": "Check Progress",
-    "completed": "орындалды",
+    "completed": "аяқталды",
     "progress": "Прогресс",
     "pts": "ұпайлар",
-    "reward": "Награда",
+    "reward": "Сыйақы",
     "target": "Мақсат"
   },
-  "create_challenge": "Жаңа мақсат жасаңыз",
+  "create_challenge": "Жаңа мақсат жасау",
   "dialogs": {
     "create": {
-      "description": "Әрекет параметрлерін және аяқтау бонусын орнатыңыз",
+      "description": "Әрекет параметрлерін және аяқтау бонусын орнату",
       "form": {
         "challenge_type": "Әрекет түрі",
-        "description": "Тапсырма сипаттамасы",
-        "description_placeholder": "Мысалы: салонға осы айда {{count}} рет бару",
+        "description": "Тапсырманың сипаттамасы",
+        "description_placeholder": "Мысалы: осы айда салонға {{count}} рет барыңыз",
         "end_date": "Аяқтау күні",
         "reward_placeholder": "{{points}}",
         "reward_points": "бонус ұпайлары",
         "start_date": "Бастау күні",
         "target_placeholder": "{{count}}",
-        "target_value": "Мақсатты мөлшер",
+        "target_value": "Мақсатты сан",
         "title": "Мақсат атауы",
-        "title_placeholder": "Мысалы: Жазғы өзгерту"
+        "title_placeholder": "Мысалы: Жазғы макияж"
       },
-      "title": "Мақсат жасау",
+      "title": "Мақсат құру",
       "title_edit": "Мақсатты өңдеу"
     },
     "delete": {
-      "confirm": "Бұл әрекетті шынымен жойғыңыз келе ме? Қатысушылардың барлық үлгерімі жоғалады."
+      "confirm": "Бұл әрекетті шынымен жойғыңыз келе ме? Қатысушылардың барлық үлгерімі жойылады."
     }
   },
   "stats": {
@@ -46,24 +46,24 @@
     "completed": "Аяқталды",
     "upcoming": "Алдағы"
   },
-  "subtitle": "Клиенттер",
+  "subtitle": "Клиенттердің адалдығын арттыру үшін ойын механикасы мен мақсаттарын басқарыңыз",
   "title": "Мақсаттар мен жетістіктер",
   "toasts": {
     "created": "Әрекет сәтті жасалды",
     "deleted": "Әрекет жойылды",
     "failed_check_progress": "Failed to check progress",
     "failed_create": "Әрекетті жасау кезіндегі қате",
-    "failed_delete": "Жою",
-    "failed_load": "Деректерді жүктеп алу мүмкін болмады",
+    "failed_delete": "Жою кезіндегі қате",
+    "failed_load": "Деректерді жүктеу мүмкін болмады",
+    "progress_checked_few": "{{count}} мүшелері үшін орындалу барысы жаңартылды",
+    "progress_checked_many": "{{count}} мүшелері үшін орындалу барысы жаңартылды",
     "progress_checked_one": "{{count}} мүшесі үшін орындалу барысы жаңартылды",
-    "progress_checked_few": "{{count}} қатысушылары үшін орындалу барысы жаңартылды",
-    "progress_checked_many": "{{count}} қатысушылары үшін орындалу барысы жаңартылды",
-    "progress_checked_other": "{{count}} қатысушылары үшін орындалу барысы жаңартылды"
+    "progress_checked_other": "{{count}} мүшелері үшін орындалу барысы жаңартылды"
   },
   "types": {
     "referrals": "Референциялар",
-    "services": "Қызметтер",
-    "spending": "Жұмсалу",
+    "services": "Услуги",
+    "spending": "Шығын жасау",
     "visits": "Кіру"
   }
 }

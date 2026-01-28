@@ -159,7 +159,8 @@ function checkTranslations() {
                     totalMissing++;
                 }
                 // Проверка пустого значения
-                else if (value === '' || value === null) {
+                // КРИТИЧЕСКОЕ ИЗМЕНЕНИЕ: Не считаем ошибкой пустое значение, если в эталоне (RU) оно тоже пустое
+                else if ((value === '' || value === null) && (refValue !== '' && refValue !== null)) {
                     if (!emptyByFile[file]) {
                         emptyByFile[file] = {};
                     }

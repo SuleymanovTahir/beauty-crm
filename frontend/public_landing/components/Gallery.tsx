@@ -10,7 +10,7 @@ interface GalleryImage {
 }
 
 export function Gallery() {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [displayCount, setDisplayCount] = useState(12);
   const [loading, setLoading] = useState(true);
@@ -24,11 +24,10 @@ export function Gallery() {
         const data = await res.json();
 
         if (data.images && data.images.length > 0) {
-          const currentLang = i18n.language;
           const mapped = data.images.map((item: any) => ({
             id: item.id,
             image_path: item.image_path,
-            title: item[`title_${currentLang}`] || item.title_ru || item.title || ""
+            title: t(`dynamic:public_gallery.${item.id}.title`, { defaultValue: item.title || "" })
           }));
           setImages(mapped);
         } else {
@@ -72,10 +71,12 @@ export function Gallery() {
               className="group relative aspect-square overflow-hidden rounded-lg sm:rounded-xl bg-muted"
             >
               <img
-                src={item.image_path}
+                src={item.image_path && !item.image_path.startsWith('http') ? `${getApiUrl()}${item.image_path.startsWith('/') ? '' : '/'}${item.image_path}` : item.image_path}
                 alt={item.title}
                 loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                onLoad={(e) => console.log(`[Gallery] Image loaded successfully: ${(e.target as HTMLImageElement).src}`)}
+                onError={(e) => console.error(`[Gallery] Image failed to load: ${(e.target as HTMLImageElement).src}`)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3">

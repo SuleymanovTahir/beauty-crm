@@ -15,22 +15,22 @@
     "configSuccess": "Einstellungen gespeichert",
     "configure": "Konfigurieren",
     "configureProvider": "Einstellungen",
-    "daysAgo_one": "Vor {{count}} Tagen",
     "daysAgo_few": "Vor {{count}} Tagen",
     "daysAgo_many": "Vor {{count}} Tagen",
+    "daysAgo_one": "Vor {{count}} Tagen",
     "daysAgo_other": "Vor {{count}} Tagen",
     "enableProvider": "Integration aktivieren",
-    "hoursAgo_one": "Vor {{count}} Stunden",
     "hoursAgo_few": "Vor {{count}} Stunden",
     "hoursAgo_many": "Vor {{count}} Stunden",
+    "hoursAgo_one": "Vor {{count}} Stunden",
     "hoursAgo_other": "Vor {{count}} Stunden",
     "inactive": "Nicht konfiguriert",
     "justNow": "Gerade gerade",
     "lastSync": "Letzte Synchronisierung",
     "mappingHint": "Geben Sie die Dienst-ID vom Marktplatz für die Synchronisierung an.",
-    "minutesAgo_one": "Vor {{count}} Min.",
     "minutesAgo_few": "{{count}} Min. Vor",
     "minutesAgo_many": "{{count}} Min vor",
+    "minutesAgo_one": "Vor {{count}} Min.",
     "minutesAgo_other": "vor {{count}} Min.",
     "neverSynced": "Nie",
     "providers": {
@@ -56,7 +56,7 @@
       },
       "wildberries": {
         "description": "Marketplace WB",
-        "name": "Wildberries"
+        "name": "Wildberry"
       },
       "yandex_maps": {
         "description": "Aufzeichnungen und Rezensionen datum bis Yandex.Maps",
@@ -64,7 +64,7 @@
       },
       "yclients": {
         "description": "Online-Aufzeichnungsplattform",
-        "name": "YCLIENTS"
+        "name": "KUNDEN"
       }
     },
     "reviews": "Bewertungen",
@@ -73,8 +73,8 @@
     "status": "Status",
     "subtitle": "Integration mit Online-Buchungs- und Bewertungsdiensten",
     "sync": "Synchronisieren",
-    "syncing": "Synchronisierung...",
     "syncStarted": "Synchronisierung gestartet",
+    "syncing": "Synchronisierung...",
     "title": "Buchungsplattformen",
     "totalBookings": "Gesamtdatensätze",
     "urlCopied": "URL kopiert",

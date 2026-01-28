@@ -13,7 +13,7 @@ interface PortfolioItem {
 }
 
 export function Portfolio() {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
+  const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
   const [selectedCategory, setSelectedCategory] = useState('all'); // Показываем все
   const [displayCount, setDisplayCount] = useState(12);
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
@@ -34,13 +34,12 @@ export function Portfolio() {
         const data = await res.json();
 
         if (data.images && data.images.length > 0) {
-          const currentLang = i18n.language;
           const mappedImages = data.images.map((img: any) => ({
             id: img.id,
             category: 'portfolio', // Все изображения из portfolio
             image_path: img.image_path,
-            title: img[`title_${currentLang}`] || img.title_ru || img.title || "",
-            description: img[`description_${currentLang}`] || img.description_ru || img.description || ""
+            title: t(`dynamic:public_gallery.${img.id}.title`, { defaultValue: img.title || "" }),
+            description: t(`dynamic:public_gallery.${img.id}.description`, { defaultValue: img.description || "" })
           }));
           setPortfolio(mappedImages);
         } else {
@@ -131,10 +130,12 @@ export function Portfolio() {
                 className="portfolio-item"
               >
                 <img
-                  src={item.image_path}
+                  src={item.image_path && !item.image_path.startsWith('http') ? `${getApiUrl()}${item.image_path.startsWith('/') ? '' : '/'}${item.image_path}` : item.image_path}
                   alt={item.title}
                   loading="lazy"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  onLoad={(e) => console.log(`[Portfolio] Image loaded successfully: ${(e.target as HTMLImageElement).src}`)}
+                  onError={(e) => console.error(`[Portfolio] Image failed to load: ${(e.target as HTMLImageElement).src}`)}
                 />
                 <div className="portfolio-overlay">
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 lg:p-4">

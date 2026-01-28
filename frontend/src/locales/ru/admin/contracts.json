@@ -23,8 +23,8 @@
     "selectClient": "Выберите клиента"
   },
   "internalContracts": "Внутренние",
-  "manage_stages": "Колонки",
   "manageTypes": "Типы договоров",
+  "manage_stages": "Колонки",
   "messages": {
     "confirmDelete": "Вы уверены, что хотите удалить этот договор?",
     "contractCreated": "Договор создан",

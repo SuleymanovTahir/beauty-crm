@@ -70,7 +70,7 @@ def run_test():
         "service": target_service['name'], # Backend expects Name, not ID currently based on previous analysis
         "date": tomorrow,
         "time": time_slot,
-        "phone": "+971501234567",
+        "phone": "971526961100",
         "name": "Integration Test User",
         "instagram_id": auth_data['user'].get('username', 'test_user') # ID linking
     }

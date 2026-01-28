@@ -397,3 +397,35 @@ textarea::placeholder {
 .dark textarea::placeholder {
   color: #9ca3af;
 }
+/* Promo Timer Styles */
+.promo-timer-container {
+  @apply max-w-md;
+}
+
+.promo-timer-card {
+  @apply bg-background/50 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 border border-primary/10 shadow-lg;
+}
+
+.promo-timer-label {
+  @apply text-foreground text-[10px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] mb-2 sm:mb-3 text-center font-semibold opacity-70;
+}
+
+.promo-timer-grid {
+  @apply flex items-center justify-center gap-1 sm:gap-3 md:gap-4;
+}
+
+.promo-timer-unit {
+  @apply flex flex-col items-center min-w-[40px] sm:min-w-[60px];
+}
+
+.promo-timer-value {
+  @apply text-xl sm:text-3xl md:text-4xl text-foreground tabular-nums tracking-tight font-bold;
+}
+
+.promo-timer-unit-label {
+  @apply text-[9px] sm:text-[10px] text-foreground opacity-60 uppercase tracking-wider mt-1 sm:mt-1.5 font-medium;
+}
+
+.promo-timer-separator {
+  @apply text-lg sm:text-2xl text-foreground opacity-30 pb-3 sm:pb-4;
+}
