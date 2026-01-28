@@ -20,11 +20,11 @@
   "question_6": "Нужна ли предварительная подготовка к процедуре?",
   "questions": {
     "booking": {
-      "answer": "Записаться на процедуру можно через форму {{phone, phone}} на нашем сайте, позвонив по телефону {{phone}}{{/phone}}{{instagram, instagram}} или написав нам в Instagram {{instagram}}{{/instagram}}. Мы свяжемся с вами для подтверждения записи.",
-      "question": "Как записаться на процедуру?"
+      "answer": "Puedes apuntarte al trámite a través del formulario {{phone, phone}} de nuestra web, llamando a {{phone}}{{/phone}}{{instagram, instagram}} o escribiéndonos hasta fecha Instagram {{instagram}}{{/instagram}}. Nos pondremos en contacto contigo para confirmar tu cita.",
+      "question": "¿Cómo inscribirte al trámite?"
     },
     "cancellation": {
-      "answer": "Да, вы можете отменить или перенести встречу не позднее, чем за {{hours}} часа до назначенного времени. При отмене менее чем за {{hours}} часа может взиматься штраф в размере {{percent}}% от стоимости услуги.",
+      "answer": "Sí, puedes cancelar o reprogramar tu cita hasta {{hours}} horas antes de la hora programada. Si se cancela en menos de {{hours}} horas, se podrá cobrar una penalización del {{percent}}% del coste del servicio.",
       "question": "Могу ли я отменить или перенести встречу?"
     },
     "certificates": {
@@ -40,11 +40,11 @@
       "question": "Могу ли я предоставить сертификат на услуги?"
     },
     "guarantee": {
-      "answer": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение {{count}} дней и мы найдем решение.",
+      "answer": "Sí, garantizamos la calidad de todos nuestros servicios. Si no está satisfecho con el resultado, contáctenos dentro de los {{count}} días y encontraremos una solución.",
       "question": "Вы гарантируете услуги?"
     },
     "location": {
-      "answer": "Наш адрес: {{address}}. Подробности о том, как добраться, можно найти на странице Контакты.",
+      "answer": "Nuestra dirección: {{address}}. Los detalles sobre cómo llegar se pueden encontrar en la página de Contacto.",
       "question": "Где находится ваш салон?"
     },
     "loyalty": {
@@ -53,7 +53,7 @@
     },
     "materials": {
       "answer": "Мы используем только сертифицированные материалы премиум-класса от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.",
-      "question": "Какие материалы вы используете?"
+      "question": "¿Qué materiales utiliza?"
     },
     "payment": {
       "answer": "Aceptamos pago en efectivo y tarjetas (Visa, MasterCard, American Express). El pago se realiza después de la prestación del servicio.",
@@ -64,7 +64,7 @@
       "question": "Нужно ли готовиться перед процедурой?"
     },
     "weekends": {
-      "answer": "Да, мы открыты {{count}} дней в неделю. {{будние дни, будние дни}}Будние дни {{weekdays}}{{/weekdays}}{{выходные, выходные}}, выходные {{weekends}}{{/weekends}}.",
+      "answer": "Sí, estamos abiertos {{count}} días a la semana. {{будние дни, будние дни}}Días laborables {{weekdays}}{{/weekdays}}{{выходные, выходные}}, fines de semana {{weekends}}{{/weekends}}.",
       "question": "Вы работаете по выходным?"
     }
   },

@@ -1,16 +1,84 @@
 {
   "items": [
     {
-      "question": "¿Cómo concertar una cita?",
-      "answer": "Puedes concertar una cita a través de la web o WhatsApp."
+      "answer": "Puedes apuntarte al trámite a través del formulario de nuestra web, llamándonos o escribiéndonos hasta fecha Instagram. Nos pondremos en contacto contigo para confirmar tu cita.",
+      "question": "Cómo inscribirse en el trámite"
     },
     {
-      "question": "¿Hay aparcamiento?",
-      "answer": "Sí, tenemos aparcamiento gratuito para clientes."
+      "answer": "Aceptamos pago en efectivo y tarjetas (Visa, MasterCard, American Express). El pago se realiza después de la prestación del servicio.",
+      "question": "¿Qué métodos de pago aceptan?"
     },
     {
-      "question": "¿Qué marcas usáis?",
-      "answer": "Usamos Luxio, Fedua y otras premium. marcas."
+      "answer": "Puedes concertar una cita a través de la web o WhatsApp.",
+      "question": "¿Cómo concertar una cita?"
+    },
+    {
+      "answer": "Sí, puede cancelar o reprogramar una cita hasta 24 horas antes de la hora programada. Si cancela con menos de 24 horas de antelación, se podrá cobrar una penalidad del 50% del coste del servicio.",
+      "question": "¿Puedo cancelar o reprogramar una cita?"
+    },
+    {
+      "answer": "Мы используем только сертифицированные премиальные материалы от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.",
+      "question": "Какие материалы вы используете"
+    },
+    {
+      "answer": "Sí, todos nuestros másteres cuentan con certificados internacionales y realizan periódicamente cursos de formación avanzada.",
+      "question": "¿Tienen sus artesanos certificados?"
+    },
+    {
+      "answer": "Sí, algunos procedimientos requieren preparación. Proporcionamos recomendaciones detalladas al registrarse.",
+      "question": "¿Es necesaria preparación antes del procedimiento?"
+    },
+    {
+      "answer": "Sí, tenemos aparcamiento gratuito para clientes.",
+      "question": "¿Hay aparcamiento?"
+    },
+    {
+      "answer": "Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером.",
+      "question": "Есть ли противопоказания к процедурам"
+    },
+    {
+      "answer": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение 7 дней, и мы найдем решение.",
+      "question": "Предоставляете ли вы гарантию на услуги"
+    },
+    {
+      "answer": "Usamos Luxio, Fedua y otras premium. marcas.",
+      "question": "¿Qué marcas usáis?"
+    },
+    {
+      "answer": "Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов.",
+      "question": "Есть ли у вас программа лояльности"
+    },
+    {
+      "answer": "Sí, trabajamos los 7 días de la semana.",
+      "question": "Работаете ли вы в выходные"
+    },
+    {
+      "answer": "Sí, ofrecemos certificados de regalo hasta fecha cualquier monto o hasta fecha servicios específicos. Contáctanos para emitir un certificado.",
+      "question": "¿Puedo dar un certificado hasta fecha servicios?"
+    },
+    {
+      "answer": "Estamos ubicados en el centro de Dubai. Puede encontrar información detallada sobre cómo llegar en la página de Contactos.",
+      "question": "¿Dónde está su sala de exposición?"
+    },
+    {
+      "answer": "Puedes inscribirte en línea a través del formulario de nuestra página web, llamándonos o escribiéndonos hasta fecha WhatsApp, Instagram.",
+      "question": "¿Cómo inscribirte al trámite?"
+    },
+    {
+      "answer": "Sí, puedes cancelar o reprogramar tu cita avisándonos con al menos 24 horas de anticipación. Notifíquenos los cambios con antelación.",
+      "question": "¿Puedes cancelar o reprogramar tu cita?"
+    },
+    {
+      "answer": "Solo utilizamos materiales profesionales de primera calidad. Todos los instrumentos se someten a esterilización médica.",
+      "question": "¿Qué materiales utiliza?"
+    },
+    {
+      "answer": "Sí, valoramos su tiempo y podemos organizar la realización de varios procedimientos simultáneamente.",
+      "question": "¿Realizan procedimientos con 4 manos?"
+    },
+    {
+      "answer": "Nuestro salón está ubicado en una ubicación conveniente con una hermosa vista y un ambiente acogedor. Encontrarás la dirección exacta en la sección de contactos.",
+      "question": "¿Dónde te encuentras?"
     }
   ]
 }

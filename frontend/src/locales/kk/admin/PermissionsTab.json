@@ -2,7 +2,7 @@
   "can_manage_roles_title": "Рөлдерді басқара алады",
   "change_role_button": "Рөлді өзгерту",
   "change_role_to": "Рөлді өзгертуге",
-  "current_role": "Ағымдағы рөлге",
+  "current_role": "Ағымдағы рөл",
   "error_loading_permissions": "Құқықтар деректерін жүктеу мүмкін болмады",
   "error_saving_permissions": "Құқықтарды сақтау қатесі",
   "full_access_message": "Жүйенің барлық функцияларына толық қол жеткізу (Директор рөлі)",

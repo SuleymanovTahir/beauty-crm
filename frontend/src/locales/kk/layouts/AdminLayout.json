@@ -1,13 +1,13 @@
 {
   "admin": "Әкімші",
-  "admin_panel": "Әкімші панелі",
-  "crm": "CRM панелі",
+  "admin_panel": "Әкімші тақтасы",
+  "crm": "CRM тақтасы",
   "logout": "Шығу",
   "logout_success": "Сіз жүйеден сәтті шықтыңыз",
   "menu": {
     "analytics": "Analytics",
     "audit_log": "Тексеру журналдары",
-    "bookings": "Посттар",
+    "bookings": "Жазбалар",
     "bot_settings": "Бот параметрлері",
     "calendar": "Күнтізбе",
     "chat": "Чат",
@@ -23,6 +23,6 @@
     "telephony": "Телефония",
     "trash": "Себет",
     "users": "Пайдаланушылар",
-    "visitors": "Посетители"
+    "visitors": "Келушілер"
   }
 }

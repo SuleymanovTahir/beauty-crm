@@ -1,15 +1,15 @@
 {
   "buttons": {
-    "cancel": "Бас тарту",
+    "cancel": "Болдырмау",
     "create_challenge": "Мақсат жасау",
     "update_challenge": "Өзгерістерді сақтау"
   },
   "card": {
     "check_progress": "Check Progress",
     "completed": "аяқталды",
-    "progress": "Прогресс",
+    "progress": "Орындалу барысы",
     "pts": "ұпайлар",
-    "reward": "Сыйақы",
+    "reward": "Марапат",
     "target": "Мақсат"
   },
   "create_challenge": "Жаңа мақсат жасау",
@@ -53,16 +53,16 @@
     "deleted": "Әрекет жойылды",
     "failed_check_progress": "Failed to check progress",
     "failed_create": "Әрекетті жасау кезіндегі қате",
-    "failed_delete": "Жою кезіндегі қате",
+    "failed_delete": "Пайдаланушыларды жою кезіндегі қате",
     "failed_load": "Деректерді жүктеу мүмкін болмады",
+    "progress_checked_one": "{{count}} мүшесі үшін орындалу барысы жаңартылды",
     "progress_checked_few": "{{count}} мүшелері үшін орындалу барысы жаңартылды",
     "progress_checked_many": "{{count}} мүшелері үшін орындалу барысы жаңартылды",
-    "progress_checked_one": "{{count}} мүшесі үшін орындалу барысы жаңартылды",
     "progress_checked_other": "{{count}} мүшелері үшін орындалу барысы жаңартылды"
   },
   "types": {
     "referrals": "Референциялар",
-    "services": "Услуги",
+    "services": "Қызметтер",
     "spending": "Шығын жасау",
     "visits": "Кіру"
   }

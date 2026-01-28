@@ -1,12 +1,12 @@
 {
   "clear_all": "Барлығын өшіру",
   "clear_confirm": "Тексеру журналын толығымен өшіргіңіз келетініне сенімдісіз бе? Бұл әрекет қайтымсыз.",
+  "delete_batch_confirm_one": "Таңдалған {{count}} жазбаларды жою керек пе?",
   "delete_batch_confirm_few": "Таңдалған {{count}} жазбаларды жою керек пе?",
   "delete_batch_confirm_many": "Таңдалған {{count}} жазбаларды жою керек пе?",
-  "delete_batch_confirm_one": "Таңдалған {{count}} жазбаларды жою керек пе?",
-  "delete_batch_confirm_other": "[[VAR0]]] жазбаларды жою керек пе?",
+  "delete_batch_confirm_other": "{{count}} жазбаларды жою керек пе?",
   "delete_confirm": "Осы жазбаны жою біржола қалпына келтірілді ме?",
-  "delete_selected": "Таңдалған жою",
+  "delete_selected": "Таңдалған элементтерді жою",
   "details": {
     "ip": "IP",
     "new_data": "Жаңа деректер",
@@ -19,7 +19,7 @@
   "filter_create": "Жасау",
   "filter_delete": "Жою",
   "filter_delete_all": "Журналды тазалау",
-  "filter_login": "Жазу",
+  "filter_login": "Енгізу",
   "filter_restore": "Қалпына келтіру",
   "filter_update": "Өзгерту",
   "search_placeholder": "Пайдаланушы, нысан немесе пайдаланушылар бойынша іздеу",
@@ -43,7 +43,7 @@
   "toast": {
     "clear_error": "Журналды тазалау қатесі",
     "clear_success": "Тексеру журналы сәтті тазартылды",
-    "delete_error": "Жою кезіндегі қате",
+    "delete_error": "Пайдаланушыларды жою кезіндегі қате",
     "delete_success": "Жазбалар жойылды",
     "load_error": "Аудит журналын жүктеу кезіндегі қате"
   }

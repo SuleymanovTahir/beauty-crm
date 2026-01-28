@@ -5,7 +5,7 @@
   "basic_information": "Негізгі ақпарат",
   "change_password": "Құпия сөзді өзгерту",
   "changing": "Өзгерту",
-  "confirm_password": "Пайдаланушы құпия сөзін өңдеу</z60> <z61>Пайдаланушы құпия сөзін өңдеу",
+  "confirm_password": "Құпия сөзді растау",
   "edit_user": "Пайдаланушыны өңдеу",
   "email": "Электрондық пошта",
   "email_for_password_recovery": "Құпия сөзді қалпына келтіру үшін",
@@ -16,10 +16,10 @@
   "full_name": "Толық аты-жөні",
   "full_name_placeholder": "Иван Иванов",
   "important": "Маңызды",
-  "name_must_be_at_least_2_characters_few": "Аты кемінде {{count}} таңбадан тұруы керек",
+  "name_must_be_at_least_2_characters_few": "Аты кемінде {{count}} таңбасын қамтуы керек",
   "name_must_be_at_least_2_characters_many": "Аты кемінде {{count}} таңбаны қамтуы керек",
   "name_must_be_at_least_2_characters_one": "Аты кемінде {{count}} таңбаны қамтуы керек",
-  "name_must_be_at_least_2_characters_other": "Атауда кемінде {{count}} таңба болуы керек",
+  "name_must_be_at_least_2_characters_other": "Аты кемінде {{count}} таңбаны қамтуы керек",
   "new_password": "Жаңа құпия сөз",
   "password": "Құпия сөз",
   "password_changed": "Құпия сөз өзгертілді",
@@ -27,7 +27,7 @@
   "password_must_be_at_least_6_characters_many": "Құпия сөзде кемінде {{count}} таңба болуы керек",
   "password_must_be_at_least_6_characters_one": "Құпия сөзде кемінде {{count}} таңба болуы керек",
   "password_must_be_at_least_6_characters_other": "Құпия сөзде кемінде {{count}} таңба болуы керек",
-  "passwords_do_not_match": "Құпиясөздер сәйкес емес",
+  "passwords_do_not_match": "Құпиясөздер сәйкес келмейді",
   "permissions_label": "Кіру құқықтары",
   "profile": "Профиль",
   "profile_updated": "Профиль жаңартылды",
@@ -37,5 +37,5 @@
   "username_must_be_at_least_3_characters_few": "Кіруде кемінде {{count}} таңба болуы керек",
   "username_must_be_at_least_3_characters_many": "Кіруде кемінде {{count}} таңба болуы керек",
   "username_must_be_at_least_3_characters_one": "Кіруде кемінде {{count}} таңба болуы керек",
-  "username_must_be_at_least_3_characters_other": "Жүйеге кіруде кемінде {{count}} таңба болуы керек"
+  "username_must_be_at_least_3_characters_other": "Кіруде кемінде {{count}} таңба болуы керек"
 }

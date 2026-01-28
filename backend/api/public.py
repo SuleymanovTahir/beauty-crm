@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, BackgroundTasks, Query
 from pydantic import BaseModel, validator
 from typing import Optional, List, Dict
 import time
+import urllib.parse
 from datetime import datetime, timedelta, date
 
 from db.settings import get_salon_settings
@@ -10,6 +11,37 @@ from db.connection import get_db_connection
 from utils.utils import sanitize_url
 from utils.cache import cache
 from utils.logger import log_info, log_error
+from core.config import is_localhost
+
+def _add_v(url: str) -> str:
+    """Добавить параметр версии для обхода кеша браузера (всегда свежее)"""
+    if not url: return url
+    ts = int(time.time()) # Секундная точность для мгновенного обновления
+    sep = '&' if '?' in url else '?'
+    return f"{url}{sep}v={ts}"
+
+import re
+
+def _get_google_maps_embed_url(address: str, raw_url: str = None) -> str:
+    """Генерация надежного URL для вставки карты (iFrame)"""
+    import urllib.parse
+    
+    # Самый надежный способ показать ПИН с названием без API ключа - 
+    # это использовать полное имя бизнеса, которое Google уже знает.
+    business_name = "M Le Diamant - Best Beauty Salon in Jumeirah Beach Dubai"
+    
+    # Если адрес содержит JBR или Diamant, используем полное имя для точности пина и заголовка
+    query = business_name
+    
+    # Если передан специфический адрес, но в нем нет названия, добавляем его
+    if address and "Diamant" not in address:
+        query = f"M Le Diamant Beauty Salon {address}"
+    elif not address and not query:
+        query = business_name
+
+    encoded_q = urllib.parse.quote(query)
+    # iwloc=A заставляет гугл открыть инфо-окно с названием
+    return f"https://maps.google.com/maps?q={encoded_q}&t=&z=17&ie=UTF8&iwloc=A&output=embed"
 
 # Import DB functions for public content
 from db.public_content import (
@@ -87,11 +119,8 @@ def get_public_salon_settings(language: str = "ru"):
     
     try:
         lang_key = validate_language(language)
-        cache_key = f"public:salon_info:{lang_key}"
-        cached = cache.get(cache_key)
-        if cached:
-            return cached
-
+        # Мы отключили кеширование для обеспечения максимальной свежести данных везде
+        
         settings = get_salon_settings()
         if not settings:
             raise HTTPException(status_code=404, detail="Settings not found")
@@ -107,31 +136,24 @@ def get_public_salon_settings(language: str = "ru"):
             he = settings.get("hours_weekends")
             localized_hours = f"{hw} / {he}" if hw != he else hw
 
+        from utils.language_utils import get_dynamic_translation
+
         faq_items = get_active_faq(language=lang_key)
+        # Enrich FAQ with dynamic translations
+        for item in faq_items:
+             item['question'] = get_dynamic_translation('public_faq', item['id'], 'question', lang_key, item['question'])
+             item['answer'] = get_dynamic_translation('public_faq', item['id'], 'answer', lang_key, item['answer'])
+
         reviews = get_active_reviews(language=lang_key, limit=10)
+        # Enrich Reviews with dynamic translations
+        for item in reviews:
+             item['text'] = get_dynamic_translation('public_reviews', item['id'], 'text', lang_key, item['text'])
+             item['position'] = get_dynamic_translation('public_reviews', item['id'], 'employee_position', lang_key, item.get('position', ''))
 
         # Google Maps Embed logic
         gm_raw = settings.get("google_maps", "")
-        gm_embed = ""
-        
-        # 1. Если уже есть ссылка для вставки (embed), используем её как есть
-        if gm_raw and "google.com/maps/embed" in gm_raw:
-            gm_embed = gm_raw
-        
-        # 2. Попытка конвертировать обычную ссылку в embed
-        if not gm_embed and gm_raw:
-            import re
-            # Проверка на google.ru, google.com, google.ae и т.д.
-            if re.search(r'google\.[a-z.]+/maps', gm_raw) or "maps.google" in gm_raw:
-                # Прямая генерация embed ссылки по адресу через официальный (но иногда платный) API
-                # или через проверенный хак с /maps?q={address}&output=embed
-                gm_embed = f"https://maps.google.com/maps?q={localized_address or gm_raw}&output=embed"
-            elif gm_raw.startswith("http") and ("google" in gm_raw or "maps" in gm_raw):
-                gm_embed = f"https://maps.google.com/maps?q={localized_address or gm_raw}&output=embed"
-        
-        # 3. Резервный вариант по адресу, если ссылка в настройках некорректная
-        if not gm_embed:
-            gm_embed = f"https://maps.google.com/maps?q={localized_address}&output=embed"
+        gm_embed = _get_google_maps_embed_url(localized_address, gm_raw)
+
 
         result = {
             "name": localized_name,
@@ -143,7 +165,7 @@ def get_public_salon_settings(language: str = "ru"):
             "hours_weekends": settings.get("hours_weekends"),
             "instagram": settings.get("instagram"),
             "whatsapp": settings.get("whatsapp"),
-            "logo_url": settings.get("logo_url"),
+            "logo_url": _add_v(settings.get("logo_url")),
             "google_maps": gm_raw,
             "google_maps_embed_url": gm_embed,
             "map_url": gm_raw,
@@ -153,8 +175,6 @@ def get_public_salon_settings(language: str = "ru"):
             "reviews": reviews,
             "custom_settings": settings.get("custom_settings", {})
         }
-
-        cache.set(cache_key, result, expire=300)  # 5 min cache
         return result
     except Exception as e:
         log_error(f"Error in get_public_salon_settings: {e}", "public_api")
@@ -170,32 +190,24 @@ def get_public_employees(
     language: str = Query('ru', description="Language code")
 ) -> List[Dict]:
     """Список активных сотрудников для лендинга"""
-    from utils.language_utils import validate_language, build_coalesce_query, get_language_field_name
+    from utils.language_utils import validate_language, get_localized_name, translate_position, get_dynamic_translation
     
     conn = None
     try:
         lang_key = validate_language(language)
-        cache_key = f"public:employees:{lang_key}"
-        cached = cache.get(cache_key)
-        if cached:
-            return cached
+        # Кеш отключен для мгновенного обновления данных
 
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # Оптимизированный запрос с COALESCE на все 9 языков через универсальную функцию
-        name_coalesce = build_coalesce_query('full_name', lang_key)
-        pos_coalesce = build_coalesce_query('position', lang_key)
-        bio_coalesce = build_coalesce_query('bio', lang_key, include_base=False)
-        spec_coalesce = build_coalesce_query('specialization', lang_key, include_base=False)
-
-        query = f"""
+        # Базовые поля
+        query = """
             SELECT
                 u.id,
-                {name_coalesce} as full_name,
-                {pos_coalesce} as position,
-                {bio_coalesce} as bio,
-                {spec_coalesce} as specialization,
+                u.full_name,
+                u.position,
+                u.bio,
+                u.specialization,
                 u.photo,
                 u.experience,
                 u.years_of_experience,
@@ -223,35 +235,53 @@ def get_public_employees(
             row_dict = dict(zip(columns, row))
             emp_id = row_dict["id"]
             
+            # Experience labels by language
+            EXPERIENCE_LABELS = {
+                'ru': lambda y: f"{y} {get_russian_plural(y, 'год', 'года', 'лет')} опыта",
+                'en': lambda y: f"{y} years experience",
+                'ar': lambda y: f"{y} سنوات خبرة",
+                'es': lambda y: f"{y} años de experiencia",
+                'de': lambda y: f"{y} Jahre Erfahrung",
+                'fr': lambda y: f"{y} ans d'expérience",
+                'pt': lambda y: f"{y} anos de experiência",
+                'hi': lambda y: f"{y} साल का अनुभव",
+                'kk': lambda y: f"{y} жыл тәжірибе"
+            }
+            
             years = row_dict.get("years_of_experience")
             if years:
-                if lang_key == 'ru':
-                    plural = get_russian_plural(years, "год", "года", "лет")
-                    exp_text = f"{years} {plural} опыта"
-                else:
-                    exp_text = f"{years} years experience"
+                exp_formatter = EXPERIENCE_LABELS.get(lang_key, EXPERIENCE_LABELS['en'])
+                exp_text = exp_formatter(years)
             else:
                 exp_text = row_dict.get("experience") or ""
 
             photo_url = sanitize_url(row_dict.get("photo")) or "/static/avatars/default_female.webp"
-            ts = int(row_dict["updated_at"].timestamp()) if row_dict["updated_at"] else int(time.time())
-            final_photo = f"{photo_url}{'?' if '?' not in photo_url else '&'}v={ts}"
+            final_photo = _add_v(photo_url)
+
+            # Transliterate name based on language
+            final_name = get_localized_name(emp_id, row_dict["full_name"], language=lang_key)
+            
+            # Translate position
+            raw_position = row_dict["position"] or "Specialist"
+            final_position = translate_position(raw_position, lang_key)
+
+            # Translate bio/specialty
+            bio = get_dynamic_translation('users', emp_id, 'bio', lang_key, row_dict["bio"])
+            specialization = get_dynamic_translation('users', emp_id, 'specialization', lang_key, row_dict["specialization"])
 
             employees.append({
                 "id": emp_id,
-                "name": row_dict["full_name"],
-                "full_name": row_dict["full_name"],
-                "role": row_dict["position"] or "Specialist",
-                "position": row_dict["position"] or "Specialist",
-                "specialty": row_dict["specialization"] or row_dict["bio"] or "",
+                "name": final_name,
+                "full_name": final_name,
+                "role": final_position,
+                "position": final_position,
+                "specialty": specialization or bio or "",
                 "image": final_photo,
                 "photo": final_photo,
                 "experience": exp_text.strip(),
                 "age": calculate_age(row_dict.get("birthday")),
                 "service_ids": services_map.get(emp_id, [])
             })
-        
-        cache.set(cache_key, employees, CACHE_TTL_MEDIUM)
         return employees
     except Exception as e:
         log_error(f"Error fetching employees: {e}", "public_api")
@@ -264,21 +294,33 @@ def get_public_employees(
 # SERVICES
 # ============================================================================
 
+@router.api_route("/services", methods=["GET", "HEAD"])
+def get_public_services_endpoint(language: str = "ru"):
+    """API endpoint для получения списка услуг"""
+    services = get_public_services(language=language)
+    return {"success": True, "services": services}
+
 def get_public_services(language: str = "ru"):
     """Все услуги локализованные (внутренняя функция)"""
-    from utils.language_utils import validate_language
+    from utils.language_utils import validate_language, get_dynamic_translation
     lang_key = validate_language(language)
     services = get_all_services(active_only=True, include_positions=True)
     
     results = []
     for s in services:
+        s_id = s.get("id")
+        # Dynamic translation
+        name = get_dynamic_translation('services', s_id, 'name', lang_key, s.get("name"))
+        cat = s.get("category")
+        localized_cat = get_dynamic_translation('categories', cat, '', lang_key, cat)
+        
         item = {
-            "id": s.get("id"),
-            "name": s.get("name"),
+            "id": s_id,
+            "name": name,
             "description": s.get("description"),
             "price": s.get("price"),
             "currency": s.get("currency"),
-            "category": s.get("category"),
+            "category": localized_cat,
             "duration": s.get("duration"),
             "service_key": s.get("service_key"),
             "positions": s.get("positions", [])
@@ -286,11 +328,7 @@ def get_public_services(language: str = "ru"):
         results.append(item)
     return results
 
-@router.api_route("/services", methods=["GET", "HEAD"])
-def get_public_services_endpoint(language: str = "ru"):
-    """API endpoint для получения списка услуг"""
-    services = get_public_services(language=language)
-    return {"success": True, "services": services}
+
 
 # ============================================================================
 # CONTENT (REVIEWS, FAQ, GALLERY)
@@ -299,17 +337,28 @@ def get_public_services_endpoint(language: str = "ru"):
 @router.api_route("/reviews", methods=["GET", "HEAD"])
 def get_public_reviews_list(language: str = "ru", limit: int = 10):
     """Список отзывов локализованные"""
-    from utils.language_utils import validate_language
+    from utils.language_utils import validate_language, get_dynamic_translation
     lang_key = validate_language(language)
     reviews = get_active_reviews(language=lang_key, limit=limit)
+    
+    # Enrich with translations
+    for item in reviews:
+         item['text'] = get_dynamic_translation('public_reviews', item['id'], 'text', lang_key, item['text'])
+         item['position'] = get_dynamic_translation('public_reviews', item['id'], 'employee_position', lang_key, item.get('position', ''))
+         
     return {"success": True, "reviews": reviews}
 
 @router.api_route("/faq", methods=["GET", "HEAD"])
 def get_public_faq_list(language: str = "ru"):
     """Список FAQ локализованные"""
-    from utils.language_utils import validate_language
+    from utils.language_utils import validate_language, get_dynamic_translation
     lang_key = validate_language(language)
     faqs = get_active_faq(language=lang_key)
+    
+    # Enrich with translations
+    for item in faqs:
+         item['question'] = get_dynamic_translation('public_faq', item['id'], 'question', lang_key, item['question'])
+         item['answer'] = get_dynamic_translation('public_faq', item['id'], 'answer', lang_key, item['answer'])
     
     try:
         from services.loyalty import LoyaltyService
@@ -337,7 +386,25 @@ def get_public_gallery(category: Optional[str] = None, language: str = "ru"):
     """Получить изображения галереи"""
     from utils.language_utils import validate_language
     lang_key = validate_language(language)
-    images = get_active_gallery(language=lang_key, category=category)
+    
+    # Special case: 'portfolio' on frontend means EVERYTHING except 'salon' interior
+    # 'salon' means ONLY interior
+    
+    db_category = category
+    if category == 'portfolio':
+        db_category = None # Fetch all, then filter below
+        
+    images = get_active_gallery(language=lang_key, category=db_category)
+    
+    # Кеш отключен для мгновенного обновления
+    
+    # Filter manually if category was portfolio
+    if category == 'portfolio':
+        # Portfolio means everything except explicit 'salon' interior photos
+        images = [img for img in images if img.get('category') != 'salon']
+    elif category == 'salon':
+        # Salon means ONLY explicit 'salon' interior photos
+        images = [img for img in images if img.get('category') == 'salon']
     
     # Map for frontend compatibility
     results = []
@@ -345,28 +412,24 @@ def get_public_gallery(category: Optional[str] = None, language: str = "ru"):
         results.append({
             "id": img.get("id"),
             "category": img.get("category"),
-            "image_path": sanitize_url(img.get("image_url")),
+            "image_path": _add_v(sanitize_url(img.get("image_url"))),
             "title": img.get("title") or "",
             "description": img.get("description") or ""
         })
+    
     return {"success": True, "images": results}
 
 @router.api_route("/banners", methods=["GET", "HEAD"])
 def get_public_banners(language: str = "ru"):
     """Загрузить баннеры для лендинга с локализацией"""
-    from utils.language_utils import validate_language, build_coalesce_query
+    from utils.language_utils import validate_language, build_coalesce_query, get_dynamic_translation
     lang_key = validate_language(language)
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        title_expr = build_coalesce_query('title', lang_key, include_base=False)
-        subtitle_expr = build_coalesce_query('subtitle', lang_key, include_base=False)
-        
-        query = f"""
+        query = """
             SELECT 
-                id, 
-                {title_expr} as title, 
-                {subtitle_expr} as subtitle, 
+                id, title, subtitle, 
                 image_url, link_url,
                 bg_pos_desktop_x, bg_pos_desktop_y,
                 bg_pos_mobile_x, bg_pos_mobile_y,
@@ -382,6 +445,12 @@ def get_public_banners(language: str = "ru"):
         for row in c.fetchall():
             banner = dict(zip(columns, row))
             banner['image_url'] = sanitize_url(banner.get('image_url'))
+            
+            # Dynamic translation from JSON
+            b_id = banner['id']
+            banner['title'] = get_dynamic_translation('public_banners', b_id, 'title', lang_key, banner['title'])
+            banner['subtitle'] = get_dynamic_translation('public_banners', b_id, 'subtitle', lang_key, banner['subtitle'])
+            
             banners.append(banner)
         return {"success": True, "banners": banners}
     except Exception as e:
@@ -399,7 +468,7 @@ def get_public_banners(language: str = "ru"):
 def get_initial_load(language: str = "ru"):
     """Объединенный endpoint для быстрой загрузки лендинга"""
     from api.seo_metadata import get_seo_metadata
-    from utils.language_utils import validate_language, get_language_field_name
+    from utils.language_utils import validate_language
     
     lang_key = validate_language(language)
     settings = get_salon_settings()
@@ -407,13 +476,24 @@ def get_initial_load(language: str = "ru"):
     # Banners
     banners_data = get_public_banners(language=lang_key)
     banners = banners_data.get("banners", [])
+    for b in banners:
+        b['image_url'] = _add_v(b['image_url'])
     
     # Services
     services = get_public_services(language=lang_key)
     
     # FAQ & Reviews
+    from utils.language_utils import get_dynamic_translation
+    
     faqs = get_active_faq(language=lang_key)
+    for item in faqs:
+         item['question'] = get_dynamic_translation('public_faq', item['id'], 'question', lang_key, item['question'])
+         item['answer'] = get_dynamic_translation('public_faq', item['id'], 'answer', lang_key, item['answer'])
+
     reviews = get_active_reviews(language=lang_key, limit=10)
+    for item in reviews:
+         item['text'] = get_dynamic_translation('public_reviews', item['id'], 'text', lang_key, item['text'])
+         item['position'] = get_dynamic_translation('public_reviews', item['id'], 'employee_position', lang_key, item.get('position', ''))
     
     # SEO
     try:
@@ -422,12 +502,11 @@ def get_initial_load(language: str = "ru"):
     except:
         seo = {}
         
-    localized_name = settings.get(get_language_field_name("name", lang_key)) or settings.get("name")
-    localized_address = settings.get(get_language_field_name("address", lang_key)) or settings.get("address")
+    localized_name = settings.get("name")
+    localized_address = settings.get("address")
     
-    # Локализованные часы из БД
-    hours_field = get_language_field_name("hours", lang_key)
-    localized_hours = settings.get(hours_field)
+    # Результирующие часы из БД (теперь только базовое поле)
+    localized_hours = settings.get("hours")
     if not localized_hours:
         hw = settings.get('hours_weekdays')
         he = settings.get('hours_weekends')
@@ -441,11 +520,11 @@ def get_initial_load(language: str = "ru"):
             "address": localized_address,
             "instagram": settings.get("instagram"),
             "whatsapp": settings.get("whatsapp"),
-            "logo_url": settings.get("logo_url"),
+            "logo_url": _add_v(settings.get("logo_url")),
             "currency": settings.get("currency", "AED"),
             "google_maps": settings.get("google_maps"),
             "map_url": settings.get("google_maps"),
-            "google_maps_embed_url": settings.get("google_maps"),
+            "google_maps_embed_url": _get_google_maps_embed_url(localized_address, settings.get("google_maps")),
             "hours": localized_hours,
             "custom_settings": settings.get("custom_settings", {})
         },

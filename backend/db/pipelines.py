@@ -9,7 +9,7 @@ def get_pipeline_stages() -> List[Dict]:
     c = conn.cursor()
     try:
         c.execute("""
-            SELECT id, name, name_ru, sort_order, color 
+            SELECT id, name, sort_order, color 
             FROM workflow_stages 
             WHERE entity_type = 'pipeline' 
             ORDER BY sort_order ASC
@@ -18,10 +18,10 @@ def get_pipeline_stages() -> List[Dict]:
         return [
             {
                 "id": row[0],
-                "name": row[2] or row[1], # Use Russian if available
+                "name": row[1],
                 "key": row[1].lower().replace(" ", "_"),
-                "order_index": row[3],
-                "color": row[4]
+                "order_index": row[2],
+                "color": row[3]
             }
             for row in rows
         ]
@@ -86,12 +86,12 @@ def get_funnel_stats(user_id: int = None) -> List[Dict]:
     c = conn.cursor()
     try:
         sql = """
-            SELECT ws.id, ws.name, ws.name_ru, COUNT(c.instagram_id), SUM(NULLIF(c.total_spend, 0))
+            SELECT ws.id, ws.name, COUNT(c.instagram_id), SUM(NULLIF(c.total_spend, 0))
             FROM workflow_stages ws
             LEFT JOIN clients c ON c.pipeline_stage_id = ws.id
                 {user_filter}
             WHERE ws.entity_type = 'pipeline'
-            GROUP BY ws.id, ws.name, ws.name_ru, ws.sort_order
+            GROUP BY ws.id, ws.name, ws.sort_order
             ORDER BY ws.sort_order ASC
         """
         user_filter = "AND (c.assigned_employee_id = %s OR c.assigned_employee_id IS NULL)" if user_id else ""
@@ -99,8 +99,8 @@ def get_funnel_stats(user_id: int = None) -> List[Dict]:
         rows = c.fetchall()
         return [
             {
-                "stage_id": row[0], "stage_name": row[2] or row[1],
-                "count": row[3], "total_value": row[4] or 0, "key": row[1].lower().replace(" ", "_")
+                "stage_id": row[0], "stage_name": row[1],
+                "count": row[2], "total_value": row[3] or 0, "key": row[1].lower().replace(" ", "_")
             }
             for row in rows
         ]

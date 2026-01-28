@@ -150,31 +150,7 @@ def init_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
         
-        # --- BASE COLUMNS ONLY (Translations are in locales/*.json) ---
-        # We no longer create title_ru, title_en, etc. columns here.
-        # Frontend uses t('dynamic:TABLE.ID.FIELD') to get translations.
-        
-        # Ensure base columns exist for tables that might not have them
-        add_column_if_not_exists('salon_settings', 'hours', 'TEXT')
-        add_column_if_not_exists('salon_settings', 'address', 'TEXT')
-        add_column_if_not_exists('services', 'name', 'TEXT')
-        add_column_if_not_exists('services', 'description', 'TEXT')
-        add_column_if_not_exists('public_gallery', 'title', 'TEXT')
-        add_column_if_not_exists('public_gallery', 'description', 'TEXT')
-        add_column_if_not_exists('public_banners', 'title', 'TEXT')
-        add_column_if_not_exists('public_banners', 'subtitle', 'TEXT')
-        add_column_if_not_exists('public_faq', 'question', 'TEXT')
-        add_column_if_not_exists('public_faq', 'answer', 'TEXT')
-        add_column_if_not_exists('public_reviews', 'author_name', 'TEXT')
-        add_column_if_not_exists('public_reviews', 'text', 'TEXT')
-        add_column_if_not_exists('public_reviews', 'employee_name', 'TEXT')
-        add_column_if_not_exists('public_reviews', 'employee_position', 'TEXT')
-        add_column_if_not_exists('users', 'full_name', 'TEXT')
-        add_column_if_not_exists('users', 'position', 'TEXT')
-        add_column_if_not_exists('users', 'bio', 'TEXT')
-        add_column_if_not_exists('users', 'specialization', 'TEXT')
-        
-        # --- END BASE COLUMNS ---
+        # --- END BASE COLUMNS (MOVED TO END) ---
         
         # Schema initialization for salon_settings
         c.execute('''CREATE TABLE IF NOT EXISTS salon_settings (
@@ -647,6 +623,29 @@ def init_database():
             booking_id INTEGER REFERENCES bookings(id),
             type TEXT,
             status TEXT DEFAULT 'sent',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # NEW: Public Website Content tables (FAQ, Reviews, etc.)
+        c.execute('''CREATE TABLE IF NOT EXISTS public_faq (
+            id SERIAL PRIMARY KEY,
+            question TEXT NOT NULL,
+            answer TEXT NOT NULL,
+            display_order INTEGER DEFAULT 0,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS public_reviews (
+            id SERIAL PRIMARY KEY,
+            author_name TEXT NOT NULL,
+            author_photo TEXT,
+            employee_name TEXT,
+            employee_position TEXT,
+            rating INTEGER DEFAULT 5,
+            text TEXT NOT NULL,
+            is_active BOOLEAN DEFAULT TRUE,
+            display_order INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
 
@@ -1441,6 +1440,27 @@ def init_database():
         ]
         for tbl, col in client_dep_tables:
             ensure_fk_cascade(tbl, col, 'clients', 'instagram_id')
+
+        # --- 8. POST-INITIALIZATION MIGRATIONS ---
+        # Ensure base columns exist for tables that might not have them (for backward compatibility)
+        add_column_if_not_exists('salon_settings', 'hours', 'TEXT')
+        add_column_if_not_exists('salon_settings', 'address', 'TEXT')
+        add_column_if_not_exists('services', 'name', 'TEXT')
+        add_column_if_not_exists('services', 'description', 'TEXT')
+        add_column_if_not_exists('public_gallery', 'title', 'TEXT')
+        add_column_if_not_exists('public_gallery', 'description', 'TEXT')
+        add_column_if_not_exists('public_banners', 'title', 'TEXT')
+        add_column_if_not_exists('public_banners', 'subtitle', 'TEXT')
+        add_column_if_not_exists('public_faq', 'question', 'TEXT')
+        add_column_if_not_exists('public_faq', 'answer', 'TEXT')
+        add_column_if_not_exists('public_reviews', 'author_name', 'TEXT')
+        add_column_if_not_exists('public_reviews', 'text', 'TEXT')
+        add_column_if_not_exists('public_reviews', 'employee_name', 'TEXT')
+        add_column_if_not_exists('public_reviews', 'employee_position', 'TEXT')
+        add_column_if_not_exists('users', 'full_name', 'TEXT')
+        add_column_if_not_exists('users', 'position', 'TEXT')
+        add_column_if_not_exists('users', 'bio', 'TEXT')
+        add_column_if_not_exists('users', 'specialization', 'TEXT')
 
         conn.commit()
         log_info("✅ Unified schema initialized successfully", "db")

@@ -13,30 +13,6 @@ from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from scripts.testing.data.seed_test_data import SERVICES_DATA
 
-def validate_service_translations(service):
-    """Validate service has proper translations to avoid auto-translation errors"""
-    warnings = []
-    
-    # Check Russian translation exists
-    if not service.get('name_ru'):
-        warnings.append(f"⚠️  {service['name']}: missing name_ru (will auto-translate)")
-    
-    # Check for suspicious patterns that indicate bad auto-translation
-    suspicious_patterns = {
-        'под оружием': 'under arms mistranslation',
-        'руководитель': 'head mistranslation', 
-        'стоун': 'stone mistranslation',
-        'бразильский$': 'brazilian without context',
-    }
-    
-    if service.get('name_ru'):
-        import re
-        for pattern, issue in suspicious_patterns.items():
-            if re.search(pattern, service['name_ru'].lower()):
-                warnings.append(f"⚠️  {service['name']}: suspicious '{service['name_ru']}' ({issue})")
-    
-    return warnings
-
 def seed_production_data():
     conn = get_db_connection()
     c = conn.cursor()
@@ -48,105 +24,74 @@ def seed_production_data():
         log_info("   📦 Seeding Services...", "seeding")
         
         added_services = 0
-        validation_warnings = []
+        
+        # Delete existing to ensure clean seed
+        c.execute("DELETE FROM services")
         
         for s in SERVICES_DATA:
-            # Validate translations
-            warnings = validate_service_translations(s)
-            validation_warnings.extend(warnings)
+            # Prepare columns (Single base field per Rule 15)
+            cols = [
+                'service_key', 'name', 'price', 
+                'min_price', 'max_price', 'currency', 'category', 
+                'description', 'benefits', 'duration'
+            ]
             
-            # Check if exists
-            c.execute("SELECT id FROM services WHERE service_key = %s", (s['key'],))
-            if not c.fetchone():
-                # Prepare columns
-                cols = [
-                    'service_key', 'name', 'name_ru', 'name_ar', 'price', 
-                    'min_price', 'max_price', 'currency', 'category', 
-                    'description', 'description_ru', 'benefits', 'duration'
-                ]
-                
-                vals = [
-                    s['key'], s['name'], s.get('name_ru'), s.get('name_ar'), s['price'],
-                    s.get('min_price'), s.get('max_price'), s.get('currency', 'AED'), s['category'],
-                    s.get('description'), s.get('description_ru'), 
-                    ','.join(s.get('benefits', [])) if s.get('benefits') else None,
-                    s.get('duration')
-                ]
-                
-                placeholders = ', '.join(['%s'] * len(cols))
-                columns_str = ', '.join(cols)
-                
-                c.execute(f"""
-                    INSERT INTO services ({columns_str}, is_active) 
-                    VALUES ({placeholders}, TRUE)
-                """, vals)
-                added_services += 1
-        
-        log_info(f"   ✅ Added {added_services} new services", "seeding")
-        
-        # Show validation warnings
-        if validation_warnings:
-            log_info(f"\n   ⚠️  Translation warnings ({len(validation_warnings)}):", "seeding")
-            for warning in validation_warnings[:10]:  # Show first 10
-                log_info(f"      {warning}", "seeding")
-            if len(validation_warnings) > 10:
-                log_info(f"      ... and {len(validation_warnings) - 10} more", "seeding")
+            vals = [
+                s['key'], s['name'], s['price'],
+                s.get('min_price'), s.get('max_price'), s.get('currency', 'AED'), s['category'],
+                s.get('description'), 
+                ','.join(s.get('benefits', [])) if s.get('benefits') else None,
+                s.get('duration')
+            ]
 
+            placeholders = ', '.join(['%s'] * len(cols))
+            columns_str = ', '.join(cols)
+            
+            c.execute(f"""
+                INSERT INTO services ({columns_str}, is_active) 
+                VALUES ({placeholders}, TRUE)
+            """, vals)
+            added_services += 1
+        
+        log_info(f"   ✅ Added {added_services} services", "seeding")
+        
         # 2. Seed Banners
         log_info("   🖼 Seeding Banners...", "seeding")
         
-        # Check if any active banner exists
-        c.execute("SELECT COUNT(*) FROM public_banners WHERE is_active = TRUE")
-        count = c.fetchone()[0]
+        c.execute("DELETE FROM public_banners")
         
-        if count == 0:
-            # Create default banners
-            banners = [
-                {
-                    'title_ru': 'Красота и Элегантность',
-                    'title_en': 'Beauty and Elegance',
-                    'title_ar': 'الجمال والأناقة',
-                    'subtitle_ru': 'Профессиональные услуги красоты',
-                    'subtitle_en': 'Professional Beauty Services',
-                    'subtitle_ar': 'خدمات تجميل احترافية',
-                    'image_url': '/static/uploads/faces/banner2.webp', # Ensure this file exists or use external URL
-                    'link_url': '/services',
-                    'display_order': 1,
-                    'is_active': True
-                },
-                {
-                    'title_ru': 'Скидки до 50%',
-                    'title_en': 'Discounts up to 50%',
-                    'title_ar': 'خصومات تصل إلى 50٪',
-                    'subtitle_ru': 'На все услуги салона',
-                    'subtitle_en': 'On all salon services',
-                    'subtitle_ar': 'على جميع خدمات الصالون',
-                    'image_url': '/static/uploads/faces/Мароканская баня.webp',
-                    'link_url': '/services',
-                    'display_order': 2,
-                    'is_active': True # Set to False if you don't want it active by default
-                }
-            ]
-            
-            for b in banners:
-                # Check if image exists locally, if not use placeholder or warn
-                # For now, we assume migration put them there or they exist.
-                # If local file path, check existence?
-                # Let's just insert.
-                
-                cols = list(b.keys())
-                vals = list(b.values())
-                placeholders = ', '.join(['%s'] * len(cols))
-                columns_str = ', '.join(cols)
-                
-                c.execute(f"""
-                    INSERT INTO public_banners ({columns_str})
-                    VALUES ({placeholders})
-                """, vals)
-            
-            log_info("   ✅ Created default banners", "seeding")
-        else:
-            log_info(f"   ℹ️  {count} active banners already exist", "seeding")
+        # Create default banners (Only base fields per Rule 15)
+        banners = [
+            ("Luxury Hair Styling", "Premium hair care and transformations", "/static/uploads/images/faces/banner1.webp", "/booking", 1),
+            ("Elegant Nail Art", "Perfect manicure and pedicure services", "/static/uploads/images/faces/banner2.webp", "/booking", 2)
+        ]
+        
+        for title, subtitle, img, link, order in banners:
+            c.execute("""
+                INSERT INTO public_banners (title, subtitle, image_url, link_url, display_order, is_active)
+                VALUES (%s, %s, %s, %s, %s, TRUE)
+            """, (title, subtitle, img, link, order))
+        log_info("   ✅ Created default banners", "seeding")
+
+        # 3. Seed Gallery
+        log_info("   📸 Seeding Gallery...", "seeding")
+        c.execute("DELETE FROM public_gallery")
+        
+        gallery_items = [
+            ("/static/images/portfolio/hair1.jpg", "Стильная укладка", "Работа нашего топ-стилиста", "hair", 1),
+            ("/static/images/portfolio/волосы.webp", "Окрашивание блонд", "Идеальный платиновый блонд", "hair", 2),
+            ("/static/images/portfolio/маникюр.webp", "Классический маникюр", "Чистота и идеальная форма", "nails", 3),
+            ("/static/images/portfolio/ногти2.webp", "Дизайн ногтей", "Аккуратное покрытие и стильный дизайн", "nails", 4),
+            ("/static/images/portfolio/спа2.webp", "SPA-процедуры", "Релакс и уход за кожей", "spa", 5),
+            ("/static/images/portfolio/спа3.webp", "Марокканская баня", "Традиционный восточный уход", "spa", 6)
+        ]
+        
+        for img, title, desc, cat, order in gallery_items:
+            c.execute("""
+                INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
+                VALUES (%s, %s, %s, %s, %s, TRUE)
+            """, (img, title, desc, cat, order))
+        log_info("   ✅ Seeded gallery items", "seeding")
 
         conn.commit()
         log_info("🎉 Seeding completed successfully!", "seeding")

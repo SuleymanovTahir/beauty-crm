@@ -74,11 +74,11 @@ def find_service_by_keywords(
     best_score = 0
     
     for service_row in db_services:
-        service_name_en = (service_row[4] or "").lower() if len(service_row) > 4 else ""
-        service_name_ru = (service_row[3] or "").lower() if len(service_row) > 3 else ""
-        service_name_ar = (service_row[5] or "").lower() if len(service_row) > 5 else ""
-        service_category = (service_row[6] or "").lower() if len(service_row) > 6 else ""
-        service_name_base = (service_row[2] or "").lower() if len(service_row) > 2 else ""
+        service_name_en = str(service_row[4] or "").lower() if len(service_row) > 4 else ""
+        service_name_ru = str(service_row[3] or "").lower() if len(service_row) > 3 else ""
+        service_name_ar = str(service_row[5] or "").lower() if len(service_row) > 5 else ""
+        service_category = str(service_row[6] or "").lower() if len(service_row) > 6 else ""
+        service_name_base = str(service_row[2] or "").lower() if len(service_row) > 2 else ""
         
         # Извлекаем ключевые слова из названия услуги
         keywords_en = extract_service_keywords(service_name_en or service_name_base)

@@ -1,16 +1,84 @@
 {
   "items": [
     {
-      "question": "How to sign up?",
-      "answer": "You can sign up via the website or WhatsApp."
+      "answer": "You can sign up for the procedure through the form on our website, by calling, or writing to us on Instagram. ",
+      "question": "How to sign up for the procedure"
     },
     {
-      "question": "Is there parking?",
-      "answer": "Yes, we have free parking for customers."
+      "answer": "We accept payment in cash and cards (Visa, MasterCard, American Express). ",
+      "question": "What payment methods do you accept?"
     },
     {
-      "question": "What brands do you use?",
-      "answer": "We use Luxio, Fedua and other premium brands."
+      "answer": "You can sign up via the website or WhatsApp.",
+      "question": "How to sign up?"
+    },
+    {
+      "answer": "Yes, you can cancel or reschedule your appointment up to 24 hours before your scheduled time. ",
+      "question": "Can I cancel or reschedule an appointment?"
+    },
+    {
+      "answer": "Мы используем только сертифицированные премиальные материалы от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.",
+      "question": "Какие материалы вы используете"
+    },
+    {
+      "answer": "Yes, all our masters have international certificates and regularly take advanced training courses.",
+      "question": "Do your craftsmen have certificates?"
+    },
+    {
+      "answer": "Yes, some procedures require preparation. ",
+      "question": "Is preparation necessary before the procedure?"
+    },
+    {
+      "answer": "Yes, we have free parking for customers.",
+      "question": "Is there parking?"
+    },
+    {
+      "answer": "Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером.",
+      "question": "Есть ли противопоказания к процедурам"
+    },
+    {
+      "answer": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение 7 дней, и мы найдем решение.",
+      "question": "Предоставляете ли вы гарантию на услуги"
+    },
+    {
+      "answer": "We use Luxio, Fedua and other premium brands.",
+      "question": "What brands do you use?"
+    },
+    {
+      "answer": "Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов.",
+      "question": "Есть ли у вас программа лояльности"
+    },
+    {
+      "answer": "Да, мы работаем 7 дней в неделю.",
+      "question": "Работаете ли вы в выходные"
+    },
+    {
+      "answer": "Да, мы предлагаем подарочные сертификаты на любую сумму или на конкретные услуги. Свяжитесь с нами для оформления сертификата.",
+      "question": "Можно ли подарить сертификат на услуги"
+    },
+    {
+      "answer": "We are located in the center of Dubai. ",
+      "question": "Where is your showroom"
+    },
+    {
+      "answer": "Вы можете записаться онлайн через форму на нашем сайте, позвонив по телефону или написав нам в WhatsApp, Instagram.",
+      "question": "Как записаться на процедуру?"
+    },
+    {
+      "answer": "Да, вы можете отменить или перенести запись, предупредив нас не менее чем за 24 часа. Просьба сообщать об изменениях заранее.",
+      "question": "Can I cancel or reschedule an appointment?"
+    },
+    {
+      "answer": "Мы используем только профессиональные материалы премиум-класса. Все инструменты проходят медицинскую стерилизацию.",
+      "question": "Какие материалы вы используете?"
+    },
+    {
+      "answer": "Да, мы ценим ваше время и можем организовать одновременное выполнение нескольких процедур.",
+      "question": "Делаете ли вы процедуры в 4 руки?"
+    },
+    {
+      "answer": "Our salon is located in a convenient location with a beautiful view and a cozy atmosphere. You will find the exact address in the contacts section.",
+      "question": "Where are you located?"
     }
   ]
 }
