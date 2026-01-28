@@ -1,9 +1,7 @@
 {
   "actions": "Actions",
   "all_good": "Everything is fine! ",
-  "client": {
-    "name": "Name"
-  },
+  "client": "Client",
   "client_added": "Client added",
   "client_deleted": "Client deleted",
   "client_updated": "Client details updated",

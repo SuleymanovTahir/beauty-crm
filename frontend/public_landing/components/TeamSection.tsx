@@ -48,17 +48,16 @@ export function TeamSection() {
           const teamMembers = data.map((emp: any) => ({
             id: emp.id,
             name: capitalizeName(emp.name),
-            role: emp.role || "",
-            specialty: emp.specialty || "",
+            role: t(`dynamic:users.${emp.id}.position`, { defaultValue: emp.role || "" }),
+            specialty: t(`dynamic:users.${emp.id}.specialization`, { defaultValue: emp.specialty || "" }),
             // Experience from backend might be number or string. 
             experience: emp.experience || 0,
             age: emp.age,
             // Check if image is full URL or needs prefix. Usually backend sends filename.
             image: emp.image ? (
               emp.image.startsWith('http') ? emp.image :
-                emp.image.startsWith('/') ? `${API_URL}${emp.image}` :
-                  `${API_URL}/uploads/${emp.image}`
-            ) : `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=ec4899&color=fff&size=400`
+                `${API_URL}${emp.image.startsWith('/') ? '' : '/'}${emp.image}`
+            ) : `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name || 'Staff')}&background=ec4899&color=fff&size=400`
           }));
           setTeam(teamMembers);
         } else {
@@ -100,6 +99,8 @@ export function TeamSection() {
                   alt={member.name}
                   loading="lazy"
                   className="w-full h-full object-cover object-top"
+                  onLoad={() => console.log(`[Team] Image loaded successfully: ${member.image}`)}
+                  onError={() => console.error(`[Team] Image failed to load: ${member.image}`)}
                 />
                 <div className="team-card-overlay">
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3">

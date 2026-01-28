@@ -31,11 +31,15 @@ export function LandingPage() {
 
   // SEO: Dynamic meta tags
   useEffect(() => {
-    const salonName = initialData?.salon?.name || 'ML Ediamant';
-    const description = t('seo.description', 'Профессиональный салон красоты в Дубае. Маникюр, педикюр, микроблейдинг, косметология.');
-    const keywords = t('seo.keywords', 'салон красоты дубай, маникюр, педикюр, микроблейдинг, косметология, beauty salon dubai');
+    const salonName = initialData?.salon?.name || '';
+    const description = t('seo.description', 'Professional beauty salon. Manicure, pedicure, hair services, cosmetology.');
+    const keywords = t('seo.keywords', 'beauty salon, manicure, pedicure, hair, cosmetology');
 
-    document.title = `${salonName} - ${t('seo.title', 'Салон красоты в Дубае')}`;
+    if (salonName) {
+      document.title = `${salonName} - ${t('seo.title', 'Luxury Beauty Salon')}`;
+    } else {
+      document.title = t('seo.title', 'Luxury Beauty Salon');
+    }
 
     const updateMeta = (name: string, content: string) => {
       let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
@@ -102,7 +106,10 @@ export function LandingPage() {
     <div className="min-h-screen bg-background">
       <Header salonInfo={initialData?.salon} />
       <main>
-        <Hero initialBanner={initialData?.banners?.[0]} />
+        <Hero
+          initialBanner={initialData?.banners?.[0]}
+          salonInfo={initialData?.salon}
+        />
 
         {/* SEO-оптимизированная секция с ключевыми словами из H1 */}
         <IntroSection />

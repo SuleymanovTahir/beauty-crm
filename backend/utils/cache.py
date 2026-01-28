@@ -7,6 +7,7 @@ except ImportError:
 
 import json
 import os
+from datetime import datetime
 from utils.logger import log_info, log_error
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
@@ -63,7 +64,14 @@ class Cache:
         if not self.enabled or self.client is None:
             return False
         try:
-            self.client.set(key, json.dumps(value), ex=expire)
+            # Handle datetime objects in JSON serialization
+            def datetime_handler(obj):
+                if isinstance(obj, datetime):
+                    return obj.isoformat()
+                raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+
+            json_data = json.dumps(value, default=datetime_handler)
+            self.client.set(key, json_data, ex=expire)
             return True
         except (redis.ConnectionError, redis.TimeoutError) as e:
             # Connection lost - disable Redis for this session

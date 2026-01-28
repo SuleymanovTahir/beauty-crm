@@ -477,25 +477,19 @@ Google Maps: {self.salon.get('google_maps', '')}
         return category
     
     def _get_service_name_by_language(self, service: tuple, language: str) -> str:
-        """Получить название услуги на указанном языке из БД"""
-        from utils.language_utils import validate_language, get_service_name_index
+        """Получить название услуги на указанном языке из locales/dynamic.json"""
+        from utils.language_utils import get_dynamic_translation
         
-        language = validate_language(language)
-        index = get_service_name_index(language)
+        # New schema: id(0), key(1), name(2)
+        base_name = service[2] if len(service) > 2 else f"Service {service[0]}"
         
-        if len(service) > index and service[index]:
-            return service[index]
-        
-        # Fallback: пробуем русский, потом английский
-        ru_index = get_service_name_index('ru')
-        en_index = get_service_name_index('en')
-        
-        if len(service) > ru_index and service[ru_index]:
-            return service[ru_index]
-        if len(service) > en_index and service[en_index]:
-            return service[en_index]
-        
-        return f"Service ID: {service[0]}"
+        return get_dynamic_translation(
+            table='services',
+            item_id=service[0],
+            field='name',
+            language=language,
+            default_value=base_name
+        )
     
     def _get_duration_display(self, duration: str, language: str) -> str:
         """Получить отображение длительности с учетом языка"""
@@ -535,7 +529,8 @@ Google Maps: {self.salon.get('google_maps', '')}
         services_by_category = {}
         for service in services:
             # Schema index 6 is category
-            category = service[6] if not isinstance(service, dict) else service.get('category', 'other')
+            # New schema from db/services.py: id(0), key(1), name(2), category(3), price(4), min(5), max(6), curr(7), dur(8), desc(9)
+            category = service[3] if len(service) > 3 else 'general'
             if category not in services_by_category:
                 services_by_category[category] = []
             services_by_category[category].append(service)
@@ -556,7 +551,8 @@ Google Maps: {self.salon.get('google_maps', '')}
                 price_str = format_service_price_for_bot(service, currency_fallback=currency)
                 # Получаем название услуги на языке клиента
                 name = self._get_service_name_by_language(service, client_language)
-                duration = service[15] if len(service) > 15 else ''
+                # New schema dur is 8
+                duration = service[8] if len(service) > 8 else ''
                 
                 # Получаем отображение длительности на языке клиента
                 duration_display = self._get_duration_display(duration, client_language)
@@ -582,8 +578,7 @@ Google Maps: {self.salon.get('google_maps', '')}
         c = conn.cursor()
         
         c.execute("""
-            SELECT id, full_name, full_name_ru, full_name_en, 
-                   position, position_ru, position_en, 
+            SELECT id, full_name, position, 
                    experience, years_of_experience
             FROM users 
             WHERE is_service_provider = TRUE AND is_active = TRUE
@@ -606,27 +601,27 @@ Google Maps: {self.salon.get('google_maps', '')}
         for emp in employees:
             emp_id = emp[0]
             
-            # Localized fields (based on SELECT id, full_name, full_name_ru, full_name_en, position, position_ru, position_en, experience, years_of_experience)
-            from utils.language_utils import validate_language, build_coalesce_query
+            from utils.language_utils import validate_language, build_coalesce_query, get_dynamic_translation
             client_language = validate_language(client_language)
             
-            # Name
-            if client_language == 'ru' and emp[2]: # full_name_ru
-                emp_name_display = emp[2]
-            elif client_language == 'en' and emp[3]: # full_name_en
-                emp_name_display = emp[3]
-            else:
-                emp_name_display = emp[1] # full_name
+            # Name and Position via dynamic translations
+            emp_name_display = get_dynamic_translation(
+                table='users',
+                item_id=emp_id,
+                field='full_name',
+                language=client_language,
+                default_value=emp[1] # base full_name
+            )
             
-            # Position
-            if client_language == 'ru' and emp[5]: # position_ru
-                emp_position_display = emp[5]
-            elif client_language == 'en' and emp[6]: # position_en
-                emp_position_display = emp[6]
-            else:
-                emp_position_display = emp[4] # position
+            emp_position_display = get_dynamic_translation(
+                table='users',
+                item_id=emp_id,
+                field='position',
+                language=client_language,
+                default_value=emp[2] # base position
+            )
             
-            experience = emp[7] or emp[8] # experience or years_of_experience
+            experience = emp[3] or emp[4] # experience or years_of_experience
             
 
             # ✅ ПОЛУЧАЕМ УСЛУГИ ЭТОГО МАСТЕРА ИЗ БД С ЦЕНАМИ
@@ -1607,18 +1602,22 @@ def format_service_price_for_bot(service, currency_fallback: str = 'AED') -> str
         p_max = service.get('max_price')
         curr = service.get('currency', currency_fallback)
     else:
-        # Schema: id(0), key(1), name(2), ru(3), en(4), ar(5), cat(6), price(7), min(8), max(9), dur(10), curr(11)
-        price = service[7] if len(service) > 7 else 0
-        p_min = service[8] if len(service) > 8 else None
-        p_max = service[9] if len(service) > 9 else None
-        curr = service[11] if len(service) > 11 else currency_fallback
+        # New schema from db/services.py: id(0), key(1), name(2), cat(3), price(4), min(5), max(6), curr(7), dur(8)
+        price = service[4] if len(service) > 4 else 0
+        p_min = service[5] if len(service) > 5 else None
+        p_max = service[6] if len(service) > 6 else None
+        curr = service[7] if len(service) > 7 else currency_fallback
     
     currency = curr or currency_fallback
     
-    if p_min is not None and p_max is not None and p_min != p_max:
-        return f"{int(p_min)}-{int(p_max)} {currency}"
-    elif price is not None:
-        return f"{int(price)} {currency}"
+    try:
+        if p_min is not None and p_max is not None and str(p_min).strip() != "" and str(p_max).strip() != "" and p_min != p_max:
+            return f"{int(float(p_min))}-{int(float(p_max))} {currency}"
+        elif price is not None and str(price).strip() != "":
+            return f"{int(float(price))} {currency}"
+    except (ValueError, TypeError):
+        pass
+        
     return "price upon request"
 
 def get_last_service_date(instagram_id: str, service_name_part: str) -> Optional[str]:

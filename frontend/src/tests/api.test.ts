@@ -62,7 +62,7 @@ describe('APIClient', () => {
       const mockSalonInfo = {
         name: 'Test Salon',
         address: 'Test Address',
-        phone: '+971501234567',
+        phone: '971526961100',
         email: 'test@salon.com',
         google_maps: 'https://maps.google.com/test',
         booking_url: '/public/booking'
@@ -207,7 +207,7 @@ describe('APIClient', () => {
         date: '2026-01-15',
         time: '14:00',
         name: 'John Doe',
-        phone: '+971501234567',
+        phone: '971526961100',
       };
 
       const result = await apiClient.createPublicBooking(bookingData);

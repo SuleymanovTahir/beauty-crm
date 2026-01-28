@@ -8,51 +8,36 @@ from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
 def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> List[Dict]:
-    """
-    Получить активные отзывы на указанном языке БЕЗ ДУБЛИКАТОВ
+    """Получить активные отзывы на указанном языке"""
+    from utils.language_utils import validate_language, build_coalesce_query
     
-    Args:
-        language: Код языка (ru, en, ar, es, de, fr, hi, kk, pt)
-        limit: Максимальное количество отзывов (None = все)
-    
-    Returns:
-        List[Dict]: Список отзывов
-    """
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        # Sanitize language to prevent SQL injection and errors
-        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
-        if language not in valid_languages:
-            language = 'en'
-
-        # Determine text column based on language
-        text_field = f'text_{language}'
+        lang_key = validate_language(language)
         
-        # CRITICAL FIX: Use DISTINCT ON to prevent duplicates
-        # Same person in different languages (Fatima/Фатима) should show only once
+        # Используем универсальные COALESCE для всех локализуемых полей
+        name_coalesce = build_coalesce_query('author_name', lang_key, include_base=False)
+        text_coalesce = build_coalesce_query('text', lang_key, include_base=False)
+        emp_name_coalesce = build_coalesce_query('employee_name', lang_key, include_base=False)
+        emp_pos_coalesce = build_coalesce_query('employee_position', lang_key, include_base=False)
+        
+        # DISTINCT ON для предотвращения дублей по тексту и автору (с TRIM для надежности)
         query = f"""
-            SELECT DISTINCT ON (
-                LOWER(COALESCE(author_name_{language}, author_name_en, author_name_ru, author_name)),
-                LOWER(COALESCE({text_field}, text_ru, text_en))
-            )
+            SELECT DISTINCT ON (TRIM(LOWER({name_coalesce})), TRIM(LOWER({text_coalesce})))
                 id,
-                COALESCE(author_name_{language}, author_name_en, author_name_ru, author_name) as name,
+                {name_coalesce} as name,
+                {text_coalesce} as text,
                 rating,
-                COALESCE({text_field}, text_ru, text_en) as text,
                 avatar_url,
                 display_order,
-                COALESCE(employee_name_{language}, employee_name_en, employee_name_ru, employee_name) as employee_name,
-                COALESCE(employee_position_{language}, employee_position_en, employee_position_ru, employee_position) as employee_position,
+                {emp_name_coalesce} as employee_name,
+                {emp_pos_coalesce} as employee_position,
                 created_at
             FROM public_reviews
             WHERE is_active = TRUE
-            ORDER BY 
-                LOWER(COALESCE(author_name_{language}, author_name_en, author_name_ru, author_name)),
-                LOWER(COALESCE({text_field}, text_ru, text_en)),
-                display_order DESC, 
-                created_at DESC
+            ORDER BY TRIM(LOWER({name_coalesce})), TRIM(LOWER({text_coalesce})), display_order DESC, created_at DESC
         """
         
         if limit:
@@ -62,10 +47,7 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
         reviews = [dict(zip(columns, row)) for row in rows]
-        
-        log_info(f"Получено {len(reviews)} уникальных отзывов на языке {language}", "db")
         return reviews
-        
     except Exception as e:
         log_error(f"Ошибка получения отзывов: {e}", "db")
         return []
@@ -73,33 +55,22 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
         conn.close()
 
 def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List[Dict]:
-    """
-    Получить активные FAQ на указанном языке
+    """Получить активные FAQ на указанном языке"""
+    from utils.language_utils import validate_language, build_coalesce_query
     
-    Args:
-        language: Код языка
-        category: Категория (опционально)
-    
-    Returns:
-        List[Dict]: Список вопросов и ответов
-    """
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        # Sanitize language
-        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
-        if language not in valid_languages:
-            language = 'ru'
-
-        question_field = f'question_{language}'
-        answer_field = f'answer_{language}'
+        lang_key = validate_language(language)
+        q_coalesce = build_coalesce_query('question', lang_key, include_base=False)
+        a_coalesce = build_coalesce_query('answer', lang_key, include_base=False)
         
         query = f"""
             SELECT 
                 id,
-                COALESCE({question_field}, question_ru, question_en) as question,
-                COALESCE({answer_field}, answer_ru, answer_en) as answer,
+                {q_coalesce} as question,
+                {a_coalesce} as answer,
                 category,
                 display_order
             FROM public_faq
@@ -107,16 +78,14 @@ def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List
         """
         
         if category:
-            query += f" AND category = '{category}'"
-        
-        query += " ORDER BY display_order DESC, created_at DESC"
-        
-        cursor.execute(query)
+            query += " AND category = %s"
+            cursor.execute(query + " ORDER BY display_order DESC, created_at DESC", (category,))
+        else:
+            cursor.execute(query + " ORDER BY display_order DESC, created_at DESC")
+            
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
         faq = [dict(zip(columns, row)) for row in rows]
-        
-        log_info(f"Получено {len(faq)} FAQ на языке {language}", "db")
         return faq
         
     except Exception as e:
@@ -125,26 +94,31 @@ def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List
     finally:
         conn.close()
 
-def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = None) -> List[Dict]:
+def get_active_gallery(language: str = 'ru', category: Optional[str] = None, limit: Optional[int] = None) -> List[Dict]:
     """
-    Получить активные элементы галереи из media_library
+    Получить активные элементы галереи с локализацией
     """
+    from utils.language_utils import validate_language, build_coalesce_query
+    
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        # Use media_library with context='gallery'
-        query = """
+        lang_key = validate_language(language)
+        title_coalesce = build_coalesce_query('title', lang_key, include_base=False)
+        desc_coalesce = build_coalesce_query('description', lang_key, include_base=False)
+        
+        query = f"""
             SELECT 
                 id, 
-                url as image_url, 
-                title as title_ru, 
-                description as description_ru, 
+                image_url, 
+                {title_coalesce} as title, 
+                {desc_coalesce} as description, 
                 category, 
-                sort_order, 
+                display_order, 
                 created_at
-            FROM media_library
-            WHERE context = 'gallery' AND is_public = TRUE
+            FROM public_gallery
+            WHERE is_active = TRUE
         """
         params = []
         
@@ -152,7 +126,7 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
             query += " AND category = %s"
             params.append(category)
             
-        query += " ORDER BY sort_order ASC, created_at DESC"
+        query += " ORDER BY display_order ASC, created_at DESC"
         
         if limit:
             query += f" LIMIT {limit}"
@@ -162,7 +136,7 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
         columns = [desc[0] for desc in cursor.description]
         gallery = [dict(zip(columns, row)) for row in rows]
 
-        log_info(f"📸 [Gallery DB] Получено {len(gallery)} элементов из media_library (category: {category})", "db")
+        log_info(f"📸 [Gallery DB] Получено {len(gallery)} элементов из public_gallery (lang: {lang_key})", "db")
         return gallery
         
     except Exception as e:
@@ -172,70 +146,20 @@ def get_active_gallery(category: Optional[str] = None, limit: Optional[int] = No
         conn.close()
 
 def add_review(data: Dict) -> Optional[int]:
-    """
-    Добавить новый отзыв
-    
-    Args:
-        data: Данные отзыва (author_name, rating, text_ru, text_en, etc.)
-    
-    Returns:
-        int: ID созданного отзыва или None при ошибке
-    """
+    """Добавить новый отзыв (динамический INSERT)"""
     conn = get_db_connection()
     cursor = conn.cursor()
-    
     try:
-        cursor.execute("""
-            INSERT INTO public_reviews (
-                author_name, rating, text_ru, text_en, text_ar, text_de, text_es, 
-                text_fr, text_hi, text_kk, text_pt, avatar_url, is_active, display_order,
-                employee_name, employee_name_ru, employee_name_en, employee_name_ar,
-                employee_position, employee_position_ru, employee_position_en, employee_position_ar,
-                employee_position_es, employee_position_de, employee_position_fr, employee_position_hi,
-                employee_position_kk, employee_position_pt
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            data.get('author_name'),
-            data.get('rating', 5),
-            data.get('text_ru'),
-            data.get('text_en'),
-            data.get('text_ar'),
-            data.get('text_de'),
-            data.get('text_es'),
-            data.get('text_fr'),
-            data.get('text_hi'),
-            data.get('text_kk'),
-            data.get('text_pt'),
-            data.get('avatar_url'),
-            data.get('is_active', 1),
-            data.get('display_order', 0),
-            data.get('employee_name'),
-            data.get('employee_name_ru'),
-            data.get('employee_name_en'),
-            data.get('employee_name_ar'),
-            data.get('employee_name_es'),
-            data.get('employee_name_de'),
-            data.get('employee_name_fr'),
-            data.get('employee_name_hi'),
-            data.get('employee_name_kk'),
-            data.get('employee_name_pt'),
-            data.get('employee_position'),
-            data.get('employee_position_ru'),
-            data.get('employee_position_en'),
-            data.get('employee_position_ar'),
-            data.get('employee_position_es'),
-            data.get('employee_position_de'),
-            data.get('employee_position_fr'),
-            data.get('employee_position_hi'),
-            data.get('employee_position_kk'),
-            data.get('employee_position_pt')
-        ))
+        # Автоматическое определение колонок из переданных данных
+        columns = [k for k in data.keys() if k != 'id']
+        placeholders = ["%s"] * len(columns)
+        values = [data[k] for k in columns]
         
+        query = f"INSERT INTO public_reviews ({', '.join(columns)}) VALUES ({', '.join(placeholders)}) RETURNING id"
+        cursor.execute(query, values)
+        review_id = cursor.fetchone()[0]
         conn.commit()
-        review_id = cursor.lastrowid
-        log_info(f"Добавлен отзыв ID {review_id} от {data.get('author_name')}", "db")
         return review_id
-        
     except Exception as e:
         log_error(f"Ошибка добавления отзыва: {e}", "db")
         conn.rollback()
@@ -244,54 +168,19 @@ def add_review(data: Dict) -> Optional[int]:
         conn.close()
 
 def add_faq(data: Dict) -> Optional[int]:
-    """
-    Добавить новый FAQ
-    
-    Args:
-        data: Данные FAQ (question_ru, answer_ru, question_en, answer_en, etc.)
-    
-    Returns:
-        int: ID созданного FAQ или None при ошибке
-    """
+    """Добавить новый FAQ (динамический INSERT)"""
     conn = get_db_connection()
     cursor = conn.cursor()
-    
     try:
-        cursor.execute("""
-            INSERT INTO public_faq (
-                question_ru, question_en, question_ar, question_de, question_es, question_fr, question_hi, question_kk, question_pt,
-                answer_ru, answer_en, answer_ar, answer_de, answer_es, answer_fr, answer_hi, answer_kk, answer_pt,
-                category, is_active, display_order
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            data.get('question_ru'),
-            data.get('question_en'),
-            data.get('question_ar'),
-            data.get('question_de'),
-            data.get('question_es'),
-            data.get('question_fr'),
-            data.get('question_hi'),
-            data.get('question_kk'),
-            data.get('question_pt'),
-            data.get('answer_ru'),
-            data.get('answer_en'),
-            data.get('answer_ar'),
-            data.get('answer_de'),
-            data.get('answer_es'),
-            data.get('answer_fr'),
-            data.get('answer_hi'),
-            data.get('answer_kk'),
-            data.get('answer_pt'),
-            data.get('category', 'general'),
-            data.get('is_active', 1),
-            data.get('display_order', 0)
-        ))
+        columns = [k for k in data.keys() if k != 'id']
+        placeholders = ["%s"] * len(columns)
+        values = [data[k] for k in columns]
         
+        query = f"INSERT INTO public_faq ({', '.join(columns)}) VALUES ({', '.join(placeholders)}) RETURNING id"
+        cursor.execute(query, values)
+        faq_id = cursor.fetchone()[0]
         conn.commit()
-        faq_id = cursor.lastrowid
-        log_info(f"Добавлен FAQ ID {faq_id}", "db")
         return faq_id
-        
     except Exception as e:
         log_error(f"Ошибка добавления FAQ: {e}", "db")
         conn.rollback()

@@ -135,8 +135,9 @@ async def test_email_verification_flow():
     c = conn.cursor()
     
     # Создаем тестового пользователя
-    test_email = f"test_{datetime.now().timestamp()}@test.com"
-    test_username = f"testuser_{int(datetime.now().timestamp())}"
+    import uuid
+    test_email = f"test_{int(datetime.now().timestamp())}_{uuid.uuid4().hex[:6]}@test.com"
+    test_username = f"testuser_{int(datetime.now().timestamp())}_{uuid.uuid4().hex[:6]}"
     verification_code = generate_verification_code()
     code_expires = get_code_expiry()
     
@@ -214,8 +215,9 @@ async def test_admin_approval_flow():
     c = conn.cursor()
     
     # Создаем тестового пользователя (email verified, но неактивного)
-    test_email = f"test_{datetime.now().timestamp()}@test.com"
-    test_username = f"testuser_{int(datetime.now().timestamp())}"
+    import uuid
+    test_email = f"test_{int(datetime.now().timestamp())}_{uuid.uuid4().hex[:6]}@test.com"
+    test_username = f"testuser_{int(datetime.now().timestamp())}_{uuid.uuid4().hex[:6]}"
     
     print(f"Creating test user waiting for approval: {test_username}")
     

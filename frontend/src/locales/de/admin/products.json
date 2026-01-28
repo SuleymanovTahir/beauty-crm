@@ -4,9 +4,9 @@
   "analytics": {
     "avgPrice": "Durchschn. Preis",
     "last30Days": "Für {{count}} Tage",
+    "last30Days_one": "",
     "last30Days_few": "",
     "last30Days_many": "",
-    "last30Days_one": "",
     "last30Days_other": "",
     "revenue": "Umsatz",
     "totalSold": "Gesamtverkauft"
@@ -15,9 +15,9 @@
   "delete": "Löschen",
   "detail": {
     "costPriceLabel": "Kosten: {{price}} {{currency}}",
+    "inStock_one": "Auf Lager {{count}} Stk.",
     "inStock_few": "Auf Lager {{count}} Stk.",
     "inStock_many": "Auf Lager {{count}} Stk.",
-    "inStock_one": "Auf Lager {{count}} Stk.",
     "inStock_other": "Auf Lager {{count}} Stk.",
     "loadingData": "Daten werden geladen...",
     "movementAdjustment": "Anpassung",

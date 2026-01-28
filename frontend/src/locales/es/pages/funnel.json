@@ -1,9 +1,7 @@
 {
   "actions": "Acciones",
   "all_good": "¡Todo es genial! Su embudo está mostrando buenos resultados.",
-  "client": {
-    "name": "Nombre"
-  },
+  "client": "Cliente",
   "client_added": "Cliente agregado",
   "client_deleted": "Cliente eliminado",
   "client_updated": "Detalles del cliente actualizados",

@@ -21,7 +21,7 @@ interface ServicesProps {
 }
 
 export function Services({ initialServices }: ServicesProps) {
-  const { t, i18n } = useTranslation(['public_landing', 'booking', 'common']);
+  const { t, i18n } = useTranslation(['public_landing', 'booking', 'common', 'dynamic']);
   const { formatCurrency } = useCurrency();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -108,8 +108,7 @@ export function Services({ initialServices }: ServicesProps) {
 
   const filteredServices = services.filter((service) => {
     const matchesCategory = activeCategory === "all" || service.category === activeCategory;
-    const serviceName = (service[`name_${i18n.language}` as keyof Service] || service.name_ru || service.name || "") as string;
-    const matchesSearch = serviceName.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (service?.name ?? "").toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -139,7 +138,7 @@ export function Services({ initialServices }: ServicesProps) {
               placeholder={t('searchServices')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 pl-11 pr-4 rounded-full border border-primary/20 bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              className="service-search-input"
             />
             {searchQuery && (
               <button
@@ -155,7 +154,7 @@ export function Services({ initialServices }: ServicesProps) {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
-              className="flex items-center justify-between gap-2 h-12 px-5 rounded-full border border-primary bg-background text-primary font-medium text-sm min-w-[180px] hover:bg-primary/5 transition-colors"
+              className="service-category-btn"
             >
               <span className="truncate">{activeCategoryLabel}</span>
               <ChevronDown className={`w-4 h-4 transition-transform ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
@@ -206,7 +205,7 @@ export function Services({ initialServices }: ServicesProps) {
               >
                 <div className="flex justify-between items-start mb-3 sm:mb-4">
                   <h3 className="text-[13px] sm:text-base font-medium group-hover:text-primary transition-colors">
-                    {service[`name_${i18n.language}` as keyof Service] || service.name_ru || service.name}
+                    {t(`dynamic:services.${service.id}.name`, { defaultValue: service.name || "" })}
                   </h3>
                   <div className="service-badge">
                     {formatCurrency(service.price)}
@@ -219,7 +218,7 @@ export function Services({ initialServices }: ServicesProps) {
                   </div>
                   <Button
                     size="sm"
-                    className="rounded-full bg-transparent border border-primary/30 text-primary group-hover:bg-primary group-hover:text-primary-foreground h-7 text-xs px-4 transition-all duration-300"
+                    className="service-book-btn"
                     onClick={() => {
                       const serviceId = service.id;
                       window.location.hash = `booking?service=${serviceId}`;
@@ -246,7 +245,7 @@ export function Services({ initialServices }: ServicesProps) {
             <Button
               variant="outline"
               onClick={() => setDisplayCount((prev) => prev + LIMITS.DISPLAY_SERVICES_COUNT)}
-              className="rounded-full px-8 border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground"
+              className="service-show-more-btn"
             >
               {t('showMore')} ({filteredServices.length - displayCount})
             </Button>

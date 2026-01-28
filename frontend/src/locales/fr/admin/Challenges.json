@@ -25,13 +25,13 @@
     "type": "Méthode de l'objectif"
   },
   "placeholders": {
-    "description": "Comment le client verra-t-il cette tâche\u00a0?",
-    "title": "à la date exemple\u00a0: Statut Or"
+    "description": "Comment le client verra-t-il cette tâche ?",
+    "title": "à la date exemple : Statut Or"
   },
   "stats": {
     "active_challenges": "TÂCHES ACTIVES",
-    "completed_today": "TERMINÉE AUJOURD'HUI",
-    "total_participants": "TOTAL DES PARTICIPANTS"
+    "completed_today": "TERMINÉES AUJOURD'HUI",
+    "total_participants": "TOTAL PARTICIPANTS"
   },
   "status": {
     "active": "ACTIF",

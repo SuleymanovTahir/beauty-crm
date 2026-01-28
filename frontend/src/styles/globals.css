@@ -516,3 +516,24 @@ html {
 .trash-empty-button {
   @apply text-red-500 border-red-200 hover:bg-red-50;
 }
+
+/* Service Component Classes */
+.service-search-container {
+  @apply relative flex-1;
+}
+
+.service-search-input {
+  @apply w-full h-12 pl-11 pr-4 rounded-full border border-primary/20 bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all;
+}
+
+.service-category-btn {
+  @apply flex items-center justify-between gap-2 h-12 px-5 rounded-full border border-primary bg-background text-primary font-medium text-sm min-w-[180px] hover:bg-primary/5 transition-colors;
+}
+
+.service-book-btn {
+  @apply rounded-full bg-transparent border border-primary/30 text-primary group-hover:bg-primary group-hover:text-primary-foreground h-7 text-xs px-4 transition-all duration-300;
+}
+
+.service-show-more-btn {
+  @apply rounded-full px-8 border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground;
+}

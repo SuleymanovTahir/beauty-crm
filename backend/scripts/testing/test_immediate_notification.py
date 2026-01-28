@@ -44,7 +44,7 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
             'test_immediate_notification',
             '@test_notification',
             'Test Notification Client',
-            '+971501234567',
+            '971526961100',
             email,
             'customer',
             datetime.now().isoformat(),
@@ -66,7 +66,7 @@ def create_immediate_test_booking(email: str = "ii3391609@gmail.com", hours_ahea
         """, (
             booking_time.isoformat(),
             'Test Notification Client',
-            '+971501234567',
+            '971526961100',
             'Тестовая услуга (напоминание)',
             'Тестовый мастер',
             'pending',

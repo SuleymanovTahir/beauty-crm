@@ -14,7 +14,7 @@
   "error_loading_profile": "حدث خطأ أثناء تحميل الملف الشخصي",
   "error_updating_profile": "حدث خطأ أثناء تحديث الملف الشخصي",
   "full_name": "الاسم الكامل",
-  "full_name_placeholder": "Ivan Ivanov",
+  "full_name_placeholder": "إيفان إيفانوف",
   "important": "هام",
   "name_must_be_at_least_2_characters_few": "يجب أن يحتوي الاسم على {{count}} حرف على الأقل",
   "name_must_be_at_least_2_characters_many": "يجب أن يحتوي الاسم على {{count}} حرف على الأقل",

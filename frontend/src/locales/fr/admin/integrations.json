@@ -15,22 +15,22 @@
     "configSuccess": "Paramètres enregistrés",
     "configure": "Configurer",
     "configureProvider": "Paramètres",
-    "daysAgo_one": "{{count}} jours il y a",
     "daysAgo_few": "{{count}} jours il y a",
     "daysAgo_many": "{{count}} jours il y a",
+    "daysAgo_one": "{{count}} jours il y a",
     "daysAgo_other": "{{count}} jours il y a",
     "enableProvider": "Activer l'intégration",
-    "hoursAgo_one": "Il y a {{count}} heures",
     "hoursAgo_few": "{{count}} heures il y a",
     "hoursAgo_many": "{{count}} heures il y a",
+    "hoursAgo_one": "Il y a {{count}} heures",
     "hoursAgo_other": "{{count}} heures il y a",
     "inactive": "Non configuré",
     "justNow": "Tout à l'heure",
     "lastSync": "Dernière synchronisation",
     "mappingHint": "Spécifiez l'ID de service du marché pour la synchronisation.",
-    "minutesAgo_one": "{{count}} il y a min",
     "minutesAgo_few": "{{count}} il y a min",
     "minutesAgo_many": "{{count}} il y a min",
+    "minutesAgo_one": "{{count}} il y a min",
     "minutesAgo_other": "{{count}} il y a min",
     "neverSynced": "Jamais",
     "providers": {
@@ -56,7 +56,7 @@
       },
       "wildberries": {
         "description": "Marketplace WB",
-        "name": "Wildberries"
+        "name": "Wildberry"
       },
       "yandex_maps": {
         "description": "Réservations et critiques de Yandex.Maps",
@@ -64,7 +64,7 @@
       },
       "yclients": {
         "description": "Plateforme d'réservation en ligne",
-        "name": "YCLIENTS"
+        "name": "CLIENTS"
       }
     },
     "reviews": "Avis",
@@ -73,8 +73,8 @@
     "status": "Statut",
     "subtitle": "Intégration avec les services d'réservation et de révision en ligne",
     "sync": "Synchroniser",
-    "syncing": "Synchronisation...",
     "syncStarted": "Synchronisation lancée",
+    "syncing": "Synchronisation...",
     "title": "Plateformes de réservation",
     "totalBookings": "Total des réservations",
     "urlCopied": "URL copiée",
@@ -92,7 +92,7 @@
     "createLink": "Créer un lien",
     "createLinkTitle": "Créer un lien de paiement",
     "currency": "Devise",
-    "descriptionPlaceholder": "à la date exemple\u00a0: Paiement anticipé pour manucure",
+    "descriptionPlaceholder": "à la date exemple : Paiement anticipé pour manucure",
     "enableProvider": "Activer le fournisseur",
     "inactive": "Non configuré",
     "linkCreated": "Lien créé avec succès",

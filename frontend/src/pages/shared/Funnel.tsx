@@ -574,7 +574,7 @@ export default function UniversalFunnel() {
                                 <table className="w-full text-sm text-left">
                                     <thead className="text-xs text-gray-500 uppercase bg-gray-50 sticky top-0 z-10 shadow-sm">
                                         <tr>
-                                            <th className="px-6 py-3 font-medium">{t('client.name')}</th>
+                                            <th className="px-6 py-3 font-medium">{t('name')}</th>
                                             <th className="px-6 py-3 font-medium">{t('stage')}</th>
                                             <th className="px-6 py-3 font-medium">{t('temperature')}</th>
                                             <th className="px-6 py-3 font-medium">{t('last_contact')}</th>

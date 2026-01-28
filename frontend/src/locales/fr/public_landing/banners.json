@@ -1,10 +1,10 @@
 {
   "items": [
     {
-      "title": "Beauté et élégance",
-      "subtitle": "Services de beauté professionnels",
-      "image_url": "/static/uploads/images/faces/banner2.webp",
-      "link_url": "/services",
+      "title": "20 % de réduction sur votre première visite",
+      "subtitle": "Uniquement ce mois-ci",
+      "image_url": "/static/images/banners/banner1.jpg",
+      "link_url": "",
       "bg_pos_desktop_x": 50,
       "bg_pos_desktop_y": 50,
       "bg_pos_mobile_x": 50,
@@ -13,10 +13,10 @@
       "is_flipped_vertical": false
     },
     {
-      "title": "Réductions jusqu'à 50%",
-      "subtitle": "Pour tous les services du salon",
-      "image_url": "/static/uploads/images/faces/Мароканская баня.webp",
-      "link_url": "/services",
+      "title": "Nouveau service : Smart Pedicure",
+      "subtitle": "Essayez l'innovation",
+      "image_url": "/static/images/banners/banner2.jpg",
+      "link_url": "",
       "bg_pos_desktop_x": 50,
       "bg_pos_desktop_y": 50,
       "bg_pos_mobile_x": 50,

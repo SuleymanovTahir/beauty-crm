@@ -344,7 +344,7 @@ async def download_booking_template(format: str = 'csv'):
             'Service': ['Manicure', 'Hair Coloring'],
             'Date': ['2026-01-15', '2026-01-16'],
             'Time': ['14:00', '10:00'],
-            'Phone': ['971501234567', '971509876543'],
+            'Phone': ['971526961100', '971509876543'],
             'Master': ['Olga Masterova', 'Victoria Stylist'],
             'Status': ['pending', 'confirmed'],
             'Revenue': ['200', '450'],

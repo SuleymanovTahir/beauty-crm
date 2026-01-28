@@ -1,24 +1,24 @@
 {
   "buttons": {
-    "cancel": "Болдырмау",
-    "save_changes": "Сохранить изменения"
+    "cancel": "Бас тарту",
+    "save_changes": "Өзгерістерді сақтау"
   },
   "current_settings": {
     "edit": "Өңдеу",
-    "min_purchase": "Ең төменгі сатып алу бағасы: <strong>{{amount}} {{currency}}</strong>",
-    "referred_bonus": "Досына бонус: <strong>{{points}} ұпайлары</strong>",
+    "min_purchase": "Ең аз сатып алу бағасы: <strong>{{amount}} [[VAR1]]]</strong>",
+    "referred_bonus": "Досына бонус: <strong>[[V0]]] ұпай</strong>",
     "referrer_bonus": "Шақырушы бонусы: <strong>{{points}} ұпай</strong>",
     "title": "Ағымдағы бонус конфигурациясы"
   },
   "dialogs": {
     "settings": {
-      "description": "Бонустық ұпайлар мен талаптарды орнату",
+      "description": "Бонустық ұпайлар мен талаптарды орнатыңыз",
       "min_purchase_amount": "Ең төменгі сатып алу құны ({{currency}})",
       "min_purchase_help": "Жіберу бонусын белсендіру үшін дос жұмсауы керек ең аз сома ({{min}} = ең аз емес)",
-      "referred_bonus": "Досқа ұсынылған бонустық ұпайлар",
+      "referred_bonus": "Жіберілген достық бонус ұпайлары",
       "referred_bonus_help": "Тіркелген кезде досыңызға ұпай беріледі",
-      "referrer_bonus": "Сілтеме берушінің бонустық ұпайлары",
-      "referrer_bonus_help": "Дос алғашқы сатып алуды жасаған кезде сілтеме берушіге берілетін ұпайлар",
+      "referrer_bonus": "Реферер бонустық ұпайлары",
+      "referrer_bonus_help": "Дос бірінші сатып алған кезде сілтеме берушіге берілетін ұпайлар",
       "title": "Жолдау бағдарламасының параметрлері"
     }
   },
@@ -28,14 +28,14 @@
     "points_distributed": "Таратылған ұпайлар",
     "total_referrals": "Жалпы сілтемелер"
   },
-  "subtitle": "Жіберулерді басқару және бағдарламаның тиімділігін қадағалау",
+  "subtitle": "Рефералдарды басқару және бағдарламаның тиімділігін қадағалау",
   "table": {
     "columns": {
       "date": "Күні",
       "points_awarded": "Берілген ұпайлар",
       "referred_friend": "Шақырылған дос",
       "referrer": "Референт",
-      "status": "Статус"
+      "status": "Мәртебе"
     },
     "description": "Жолдамалардың күйін қадағалау және ұпайларды бөлу",
     "filters": {
@@ -48,15 +48,15 @@
       "status": "Sort by Status"
     },
     "statuses": {
-      "cancelled": "Болдырмады",
+      "cancelled": "Бас тартылды",
       "completed": "Аяқталды",
       "pending": "Күтуде"
     },
     "title": "Барлық сілтемелер"
   },
-  "title": "Реферальная программа",
+  "title": "Жолданбалы бағдарлама",
   "toasts": {
-    "failed_load": "Сілтемелер жүктелмеді",
+    "failed_load": "Жіберулер жүктелмеді",
     "failed_save": "Сақталмады",
     "settings_saved": "Параметрлер сәтті сақталды"
   }

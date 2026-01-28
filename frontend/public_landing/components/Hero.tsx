@@ -3,16 +3,15 @@ import { Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PromoTimer } from "./PromoTimer";
-import { getApiUrl } from "../utils/apiUtils";
-import { safeFetch } from "../utils/errorHandler";
+import { fetchPublicApi, getApiUrl } from "../utils/apiUtils";
 
 interface HeroProps {
   initialBanner?: any;
+  salonInfo?: any;
 }
 
-export function Hero({ initialBanner }: HeroProps) {
-  const { t, i18n } = useTranslation(['public_landing', 'common']);
-  const language = i18n.language;
+export function Hero({ initialBanner, salonInfo }: HeroProps) {
+  const { t } = useTranslation(['public_landing', 'common', 'dynamic']);
   const [heroBanner, setHeroBanner] = useState<any>(initialBanner || null);
 
   useEffect(() => {
@@ -20,28 +19,37 @@ export function Hero({ initialBanner }: HeroProps) {
       setHeroBanner(initialBanner);
       return;
     }
-    const api_url = getApiUrl();
-    safeFetch(`${api_url}/api/public/banners`)
-      .then(res => res.json())
-      .then(data => {
+    const fetchBanner = async () => {
+      try {
+        const data = await fetchPublicApi('banners');
         if (data.banners && data.banners.length > 0) {
           setHeroBanner(data.banners[0]);
         }
-      })
-      .catch(err => console.error('Error loading hero banner:', err));
+      } catch (err) {
+        console.error('Error loading hero banner:', err);
+      }
+    };
+    fetchBanner();
   }, [initialBanner]);
 
 
-  const getTranslatedText = (banner: any, field: 'title' | 'subtitle') => {
+  const getTranslatedText = (banner: any, field: 'title' | 'subtitle'): string => {
     if (!banner) return '';
-    return banner[`${field}_${language}`] || banner[`${field}_en`] || banner[`${field}_ru`] || '';
+    const translation = t(`dynamic:public_banners.${banner.id}.${field}`, {
+      defaultValue: banner[field] || ''
+    });
+    return typeof translation === 'string' ? translation : (banner[field] || '');
   };
 
   const API_URL_VAR = getApiUrl();
-  const rawImageUrl = heroBanner?.image_url;
-  const backgroundImage = rawImageUrl && !rawImageUrl.startsWith('http')
-    ? `${API_URL_VAR}${rawImageUrl}`
-    : rawImageUrl;
+  const getFullImageUrl = (path: string) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    const separator = path.startsWith('/') ? '' : '/';
+    return `${API_URL_VAR}${separator}${path}`;
+  };
+
+  const backgroundImage = heroBanner?.image_url ? getFullImageUrl(heroBanner.image_url) : '';
 
   // Invert coordinates when image is flipped
   const isFlippedH = heroBanner?.is_flipped_horizontal === 1 || heroBanner?.is_flipped_horizontal === true;
@@ -51,6 +59,9 @@ export function Hero({ initialBanner }: HeroProps) {
   const desktopY = isFlippedV ? (100 - (Number(heroBanner?.bg_pos_desktop_y) ?? 50)) : (Number(heroBanner?.bg_pos_desktop_y) ?? 50);
   const mobileX = isFlippedH ? (100 - (Number(heroBanner?.bg_pos_mobile_x) ?? 50)) : (Number(heroBanner?.bg_pos_mobile_x) ?? 50);
   const mobileY = isFlippedV ? (100 - (Number(heroBanner?.bg_pos_mobile_y) ?? 50)) : (Number(heroBanner?.bg_pos_mobile_y) ?? 50);
+
+  // Stats from custom_settings
+  const stats = salonInfo?.custom_settings?.stats;
 
   return (
     <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
@@ -81,6 +92,8 @@ export function Hero({ initialBanner }: HeroProps) {
                 (heroBanner?.is_flipped_vertical === 1 || heroBanner?.is_flipped_vertical === true) ? 'scaleY(-1)' : ''
               ].filter(Boolean).join(' ')
             }}
+            onLoad={() => console.log(`[Hero] Banner image loaded successfully: ${backgroundImage}`)}
+            onError={() => console.error(`[Hero] Banner image failed to load: ${backgroundImage}`)}
           />
 
         )}
@@ -130,20 +143,28 @@ export function Hero({ initialBanner }: HeroProps) {
           {/* Promo Timer */}
           <PromoTimer />
 
-          <div className="flex flex-wrap justify-start gap-6 sm:gap-8 lg:gap-12 pt-4 sm:pt-6 border-t border-border/30 animate-fade-in">
-            <div className="flex flex-col items-start">
-              <span className="hero-stat-value">10+</span>
-              <span className="text-xs sm:text-sm text-muted-foreground">{t('common:yearsExperience')}</span>
+          {stats && (
+            <div className="flex flex-wrap justify-start gap-6 sm:gap-8 lg:gap-12 pt-4 sm:pt-6 border-t border-border/30 animate-fade-in">
+              {stats.years_experience && (
+                <div className="flex flex-col items-start">
+                  <span className="hero-stat-value">{stats.years_experience}</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">{t('common:yearsExperience')}</span>
+                </div>
+              )}
+              {stats.happy_clients && (
+                <div className="flex flex-col items-start">
+                  <span className="hero-stat-value">{stats.happy_clients}</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">{t('common:happyClients')}</span>
+                </div>
+              )}
+              {stats.quality_guarantee && (
+                <div className="flex flex-col items-start">
+                  <span className="hero-stat-value">{stats.quality_guarantee}</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">{t('common:qualityGuarantee')}</span>
+                </div>
+              )}
             </div>
-            <div className="flex flex-col items-start">
-              <span className="hero-stat-value">5000+</span>
-              <span className="text-xs sm:text-sm text-muted-foreground">{t('common:happyClients')}</span>
-            </div>
-            <div className="flex flex-col items-start">
-              <span className="hero-stat-value">100%</span>
-              <span className="text-xs sm:text-sm text-muted-foreground">{t('common:qualityGuarantee')}</span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </section>

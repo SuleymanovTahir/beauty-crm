@@ -9,7 +9,7 @@
   "enter_new_password": "أدخل كلمة المرور الجديدة (الحد الأدنى {{count}} الأحرف)",
   "fill_all_password_fields": "املأ جميع الحقول لتغيير كلمة المرور",
   "full_name": "الاسم الكامل",
-  "full_name_placeholder": "Ivan Ivanov",
+  "full_name_placeholder": "إيفان إيفانوف",
   "full_name_validation": "يجب أن يحتوي الاسم على {{count}} حرف على الأقل",
   "manage_account_settings": "إدارة إعدادات الحساب",
   "my_settings": "إعداداتي",
