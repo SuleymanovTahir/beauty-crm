@@ -62,32 +62,29 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <div className="relative w-full" ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen(!open)}
         type="button"
-        className="w-full flex items-center justify-between gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg hover:bg-gray-50 transition-colors shadow-md border border-gray-200"
       >
-        <div className="flex items-center gap-2">
-          <Globe className="w-5 h-5 text-gray-600" />
-          <span className="text-xl">{currentLang.flag}</span>
-        </div>
+        <Globe className="w-4 h-4 text-gray-600" />
+        <span className="text-lg">{currentLang.flag}</span>
         <ChevronUp className={`w-4 h-4 text-gray-600 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* Dropdown menu - opens upward */}
+      {/* Dropdown menu - opens downward */}
       {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50 max-h-[300px] overflow-y-auto">
+        <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50 min-w-[200px] max-h-[300px] overflow-y-auto">
           {sortedLanguages.map(lang => (
             <button
               key={lang.code}
               onClick={() => handleLanguageChange(lang.code)}
               type="button"
-              className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between gap-3 transition-all ${
-                i18n.language === lang.code
+              className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between gap-3 transition-all ${i18n.language === lang.code
                   ? 'bg-blue-50 text-blue-700 font-medium'
                   : ''
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <span className="text-xl flex-shrink-0">{lang.flag}</span>
