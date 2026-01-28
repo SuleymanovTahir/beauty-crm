@@ -55,9 +55,9 @@
     "failed_create": "Error al crear la actividad",
     "failed_delete": "Error al eliminar",
     "failed_load": "Error al cargar datos",
-    "progress_checked_one": "Progreso actualizado para {{count}} participante",
     "progress_checked_few": "Progreso actualizado para {{count}} participantes",
     "progress_checked_many": "Progreso actualizado para {{count}} participantes",
+    "progress_checked_one": "Progreso actualizado para {{count}} participante",
     "progress_checked_other": "Progreso actualizado para {{count}} participantes"
   },
   "types": {

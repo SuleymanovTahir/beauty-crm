@@ -22,7 +22,7 @@
   "full_name_must_be_at_least_2_characters_many": "يجب أن يحتوي الاسم الكامل على {{count}} حرف على الأقل",
   "full_name_must_be_at_least_2_characters_one": "يجب أن يحتوي الاسم الكامل على {{count}} حرف على الأقل",
   "full_name_must_be_at_least_2_characters_other": "يجب أن يحتوي الاسم الكامل على {{count}} حرف على الأقل",
-  "full_name_placeholder": "Ivan Ivanov",
+  "full_name_placeholder": "إيفان إيفانوف",
   "in_system_since": "في النظام من تاريخ",
   "loading_profile": "تحميل الملف الشخصي",
   "manage_personal_data_and_security_settings": "إدارة البيانات الشخصية وإعدادات الأمان",

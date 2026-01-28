@@ -112,6 +112,8 @@ SALON_TERMINOLOGY = {
         'коррекция ногтей': 'коррекция ногтей',
         'укрепление ногтей': 'укрепление ногтей',
         'гель-лак': 'гель-лак',
+        'гель-лаками': 'гель-лак',
+        'гель-лаком': 'гель-лак',
     },
     # Corrections for English (when EN is the target language)
     'en': {
@@ -146,6 +148,9 @@ SALON_TERMINOLOGY = {
         'nail infill': 'nail refill',
         'nail overlay': 'nail overlay',
         'vaxing': 'waxing',
+        'gel-lakami': 'gel polish',
+        'gel-lacs': 'gel polish',
+        'gel-lak': 'gel polish',
         'fix': 'repair',
         'иванов иван иванович': 'John Doe',
         'ivanov ivan ivanovich': 'John Doe',

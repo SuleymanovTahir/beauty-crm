@@ -3,8 +3,8 @@
   "admin_panel": "لوحة الإدارة",
   "all_notifications_cleared": "تم حذف جميع الإشعارات",
   "calls": {
-    "click_to_answer": "Нажмите, чтобы ответить",
-    "incoming_call": "Входящий звонок!"
+    "click_to_answer": "انقر للرد",
+    "incoming_call": "مكالمة واردة!"
   },
   "clear_all": "مسح الكل",
   "close": "إغلاق",
@@ -42,7 +42,7 @@
     "payment_integrations": "أنظمة الدفع",
     "products": "المنتجات",
     "public_content": "المحتوى العام",
-    "service_requests": "Запросы услуг",
+    "service_requests": "يطلب الخدمات",
     "services": "الخدمات",
     "settings": "الإعدادات",
     "tasks": "المهام",

@@ -1,51 +1,51 @@
 {
-  "actions": "Действия",
+  "actions": "Әрекеттер",
   "addInvoice": "Шот-фактура жасау",
-  "addPayment": "Төлем қосу",
+  "addPayment": "Төлем қосыңыз",
   "allInvoices": "Барлық тіркелгілер",
   "allStatuses": "Барлық күйлер",
   "board": "Тақта",
   "client": "Клиент",
   "delete": "Жою",
-  "dueDate": "Төлем мерзімі",
+  "dueDate": "Төлемнің аяқталу күні",
   "errors": {
     "createError": "Шот-фактураны жасау қатесі.",
     "deleteError": "Есептік жазбаны жою қатесі.",
     "paymentError": "Төлемді қосу қатесі",
     "sendError": "Шот-фактураны жіберу қатесі",
-    "updateError": "Күйді жаңарту орындалмады"
+    "updateError": "Күйін жаңарту мүмкін болмады"
   },
   "form": {
     "addItem": "Элемент қосу",
-    "cancel": "Болдырмау",
-    "dueDate": "Төлем мерзімі",
+    "cancel": "Бас тарту",
+    "dueDate": "Төлемнің аяқталу күні",
     "itemName": "Аты",
-    "itemPrice": "Цена",
+    "itemPrice": "Бағасы",
     "itemQuantity": "Саны",
-    "items": "Тіркелгі элементтері",
+    "items": "Элемент тіркелгілері",
     "notes": "Ескертпелер",
     "save": "Сақтау",
-    "selectClient": "Клиент таңдау"
+    "selectClient": "Тұтынушыны таңдау"
   },
-  "invoiceNumber": "Шот-фактураның нөмірі",
+  "invoiceNumber": "Тіркелгі нөмірі",
   "manage_stages": "Бағандар",
   "messages": {
-    "confirmDelete": "Осы шот-фактураны шынымен жойғыңыз келе ме?",
-    "invoiceCreated": "Шот-фактура жасалды",
-    "invoiceDeleted": "Шот-фактура жойылды",
+    "confirmDelete": "Бұл есептік жазбаны шынымен жойғыңыз келе ме?",
+    "invoiceCreated": "Тіркелгі жасалды",
+    "invoiceDeleted": "Тіркелгі жойылды",
     "invoiceSent": "Шот-фактура жіберілді",
-    "invoiceUpdated": "Есептік жазба жаңартылды",
+    "invoiceUpdated": "Шот-фактура жаңартылды",
     "paymentAdded": "Төлем қосылды"
   },
-  "noInvoices": "Шот-фактуралар әлі жоқ",
+  "noInvoices": "Әлі шот-фактуралар жоқ",
   "paidAmount": "Төленді",
   "payment": {
     "add": "Қосу",
     "amount": "Сома",
     "method": "Төлем әдісі",
     "methods": {
-      "card": "Карта",
-      "cash": "Онлайн ақша",
+      "card": "C",
+      "cash": "Қолма-қол ақша",
       "online": "Онлайн",
       "transfer": "Аударма"
     },
@@ -55,25 +55,25 @@
   "search_placeholder": "Нөмір немесе клиент бойынша іздеу...",
   "sendButton": "Жіберу",
   "sendDialog": {
-    "email": "Электронная почта",
-    "method": "Жіберу әдісі",
+    "email": "Электрондық пошта",
+    "method": "Жеткізу әдісі",
     "recipient": "Алушы",
     "sendButton": "Жіберу",
     "telegram": "Telegram",
     "title": "Шот-фактураны жіберу",
     "whatsapp": "WhatsApp"
   },
-  "status": "Статус",
+  "status": "Күйі",
   "statuses": {
-    "cancelled": "Бас тартылды",
-    "draft": "Нойыз",
+    "cancelled": "Болдырмады",
+    "draft": "Жоба",
     "overdue": "Мерзімі өткен",
     "paid": "Төленді",
     "partial": "Ішінара төленген",
-    "partially_paid": "Ішінара төленген",
-    "sent": "Жіберілген"
+    "partially_paid": "Ішінара төленді",
+    "sent": "Жіберілді"
   },
   "subtitle": "Шот-фактуралар мен төлемдерді басқару",
-  "title": "Тіркелгілер",
+  "title": "Шот-фактуралар",
   "totalAmount": "Сома"
 }

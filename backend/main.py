@@ -27,6 +27,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 # Основные утилиты
 from utils.logger import log_info, log_error
+from core.config import is_localhost
 from db.connection import init_connection_pool, get_db_connection
 from scripts.maintenance.recreate_database import drop_database, recreate_database
 from db.settings import get_salon_settings
@@ -131,10 +132,10 @@ async def lifespan(app: FastAPI):
     # from scripts.maintenance.fix_data import run_all_fixes
     # run_all_fixes()
 
+    # [ТЕСТИРОВАНИЕ] - Запуск тестов при старте (можно выключить для ускорения запуска)
     from tests.run_all_tests import run_all_tests
     from tests.run_all_test2 import run_all_tests2
     from tests.run_all_test3 import run_all_tests3
-    
     log_info("🧪 Запуск всех тестов (V1, V2, V3)...", "startup")
     run_all_tests()
     run_all_tests2()
@@ -259,13 +260,7 @@ app.include_router(seo_metadata_router)
 # Публичный доступ
 if is_module_enabled('public'):
     from api.public import router as public_api
-    from api.public_content import router as content_api
-    from api.public_employees import router as employees_api
-    from api.gallery import router as gallery_api
     app.include_router(public_api, prefix="/api/public", tags=["public"])
-    app.include_router(content_api, prefix="/api")
-    app.include_router(employees_api, prefix="/api")
-    app.include_router(gallery_api, prefix="/api")
 
 @app.get("/")
 async def root():

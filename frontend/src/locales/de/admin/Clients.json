@@ -71,7 +71,7 @@
   "import_errors_count_many": "{{count}}-Fehler gefunden",
   "import_errors_count_other": "{{count}}-Fehler gefunden",
   "import_example_columns": "Name, Telefon, E-Mail",
-  "import_example_row_1": "Anna, +971501234567, anna@example.com",
+  "import_example_row_1": "Anna, 971526961100, anna@example.com",
   "import_example_row_2": "Elena, +971507654321,",
   "import_example_structure": "Beispieldateistruktur",
   "import_important_info": "Wichtige Informationen",

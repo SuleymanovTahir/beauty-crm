@@ -3,8 +3,8 @@
   "admin_panel": "Panneau d'administration",
   "all_notifications_cleared": "Toutes les notifications supprimées",
   "calls": {
-    "click_to_answer": "Нажмите, чтобы ответить",
-    "incoming_call": "Входящий звонок!"
+    "click_to_answer": "Cliquez pour répondre",
+    "incoming_call": "Appel entrant\u00a0!"
   },
   "clear_all": "Effacer tout",
   "close": "Fermer",
@@ -42,7 +42,7 @@
     "payment_integrations": "Systèmes de paiement",
     "products": "Produits",
     "public_content": "Contenu public",
-    "service_requests": "Запросы услуг",
+    "service_requests": "Demandes de services",
     "services": "Services",
     "settings": "Paramètres",
     "tasks": "Tâches",

@@ -20,7 +20,7 @@ def get_all_services(active_only=True, include_positions=False):
     c = conn.cursor()
 
     # Явный список полей для стабильности индексов
-    fields = "id, service_key, name, name_ru, name_en, name_ar, category, price, min_price, max_price, currency, duration"
+    fields = "id, service_key, name, category, price, min_price, max_price, currency, duration, description"
     
     query = f"SELECT {fields} FROM services"
     if active_only:
@@ -55,15 +55,13 @@ def get_all_services(active_only=True, include_positions=False):
             "id": service[0],
             "service_key": service[1],
             "name": service[2],
-            "name_ru": service[3],
-            "name_en": service[4],
-            "name_ar": service[5],
-            "category": service[6],
-            "price": service[7],
-            "min_price": service[8],
-            "max_price": service[9],
-            "currency": service[10],
-            "duration": service[11],
+            "category": service[3],
+            "price": service[4],
+            "min_price": service[5],
+            "max_price": service[6],
+            "currency": service[7],
+            "duration": service[8],
+            "description": service[9],
             "positions": positions
         }
         result.append(service_dict)
@@ -99,9 +97,8 @@ def get_service(service_id):
     conn.close()
     return None
 
-def create_service(service_key, name, name_ru, price, currency, category,
-                   description=None, description_ru=None, benefits=None, position_id=None,
-                   name_ar=None, description_ar=None):
+def create_service(service_key, name, price, currency, category,
+                   description=None, benefits=None, position_id=None):
     """Создать новую услугу"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -111,11 +108,11 @@ def create_service(service_key, name, name_ru, price, currency, category,
 
     try:
         c.execute("""INSERT INTO services
-                     (service_key, name, name_ru, name_ar, price, currency, category,
-                      description, description_ru, description_ar, benefits, position_id, created_at, updated_at)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                  (service_key, name, name_ru, name_ar, price, currency, category,
-                   description, description_ru, description_ar, benefits_str, position_id, now, now))
+                     (service_key, name, price, currency, category,
+                      description, benefits, position_id, created_at, updated_at)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                  (service_key, name, price, currency, category,
+                   description, benefits_str, position_id, now, now))
         conn.commit()
         conn.close()
         return True

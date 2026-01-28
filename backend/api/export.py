@@ -10,7 +10,7 @@ import io
 
 from db import get_all_bookings, get_analytics_data
 from db.settings import get_salon_settings
-from core.config import DATABASE_NAME
+from core.config import DATABASE_NAME, SALON_PHONE_DEFAULT
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_warning
@@ -888,8 +888,8 @@ async def download_import_template(
     try:
         if format == "csv":
             template = "instagram_id,name,phone,service,datetime,status,revenue\n"
-            template += "example_user_1,Анна Иванова,+971501234567,Маникюр,2026-01-15 14:00,pending,150\n"
-            template += "example_user_2,Мария Петрова,+971507654321,Педикюр,2026-01-16 15:30,confirmed,200\n"
+            template += f"example_user_1,Анна Иванова,{SALON_PHONE_DEFAULT},Маникюр,2026-01-15 14:00,pending,150\n"
+            template += "example_user_2,Мария Петрова,971507654321,Педикюр,2026-01-16 15:30,confirmed,200\n"
             
             return StreamingResponse(
                 iter([template.encode('utf-8')]),
@@ -910,7 +910,7 @@ async def download_import_template(
                       'status', 'revenue']
             ws.append(headers)
             
-            ws.append(['example_user_1', 'Анна Иванова', '+971501234567', 
+            ws.append(['example_user_1', 'Анна Иванова', SALON_PHONE_DEFAULT, 
                       'Маникюр', '2026-01-15 14:00', 'pending', 150])
             ws.append(['example_user_2', 'Мария Петрова', '+971507654321', 
                       'Педикюр', '2026-01-16 15:30', 'confirmed', 200])

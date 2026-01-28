@@ -3,8 +3,8 @@
   "admin_panel": "एडमिन पैनल",
   "all_notifications_cleared": "सभी सूचनाएं हटा दी गईं",
   "calls": {
-    "click_to_answer": "Нажмите, чтобы ответить",
-    "incoming_call": "Входящий звонок!"
+    "click_to_answer": "उत्तर देने के लिए क्लिक करें",
+    "incoming_call": "इनकमिंग कॉल!"
   },
   "clear_all": "साफ़ करें सभी",
   "close": "बंद करें",
@@ -42,7 +42,7 @@
     "payment_integrations": "भुगतान प्रणाली",
     "products": "उत्पाद",
     "public_content": "सार्वजनिक सामग्री",
-    "service_requests": "Запросы услуг",
+    "service_requests": "अनुरोध सेवाएं",
     "services": "सेवाएं",
     "settings": "सेटिंग्स",
     "tasks": "कार्य",

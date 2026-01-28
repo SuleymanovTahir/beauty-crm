@@ -217,45 +217,32 @@ def seed_data():
         for day in range(6): # Mon-Sat
             c.execute("INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active) VALUES (%s, %s, '10:30', '21:00', TRUE)", (mid, day))
 
-    # 5. Public Content (Reviews & FAQ)
-    print("📢 Seeding Public Reviews...")
-    c.execute("DELETE FROM public_reviews")
-    c.execute("""
-        INSERT INTO public_reviews (author_name, rating, text_ru, text_en, is_active, display_order)
-        VALUES 
-        ('Anna K.', 5, 'Лучший салон в Дубае! Мастера супер.', 'Best salon in Dubai! Masters are super.', TRUE, 1),
-        ('Sarah M.', 5, 'Очень понравился маникюр. Рекомендую!', 'Loved the manicure. Highly recommend!', TRUE, 2),
-        ('Elena V.', 5, 'Перманентный макияж сделали идеально.', 'Permanent makeup was done perfectly.', TRUE, 3)
-    """)
+    # 5. Public Content (Reviews & FAQ) - MOVED TO restore_full_content.py
+    print("📢 Skipping Public Reviews/FAQ/Banners (managed by restore_full_content.py)")
+    
+    # Keep Gallery for now as it doesn't have a full restored source yet
+    # But ensure we don't wipe it if it has data
+    c.execute("SELECT count(*) FROM public_gallery")
+    if c.fetchone()['count'] == 0:
+        print("🖼️ Seeding Public Gallery (minimal)...")
+        c.execute("""
+            INSERT INTO public_gallery (image_url, title_ru, title_en, category, display_order)
+            VALUES 
+            ('/static/images/portfolio/nail1.jpg', 'Классический маникюр', 'Classic Manicure', 'nails', 1),
+            ('/static/images/portfolio/nail2.jpg', 'Дизайн ногтей', 'Nail Art', 'nails', 2),
+            ('/static/images/portfolio/hair1.jpg', 'Окрашивание', 'Hair Coloring', 'hair', 3)
+        """)
 
-    print("❓ Seeding FAQ...")
-    c.execute("DELETE FROM public_faq")
+    print("🏢 Seeding Salon Settings...")
+    salon_name = os.getenv('SALON_NAME', 'Test Beauty Salon')
     c.execute("""
-        INSERT INTO public_faq (question_ru, question_en, answer_ru, answer_en, category, is_active, display_order)
-        VALUES 
-        ('Как записаться?', 'How to book?', 'Вы можете записаться через сайт или WhatsApp.', 'You can book via website or WhatsApp.', 'general', TRUE, 1),
-        ('Есть ли парковка?', 'Is there parking?', 'Да, у нас есть бесплатная парковка для клиентов.', 'Yes, we have free parking for clients.', 'general', TRUE, 2),
-        ('Какие бренды используете?', 'What brands do you use?', 'Мы используем Luxio, Fedua и другие премиум бренды.', 'We use Luxio, Fedua and other premium brands.', 'products', TRUE, 3)
-    """)
-
-    print("🖼️ Seeding Public Gallery...")
-    c.execute("DELETE FROM public_gallery")
-    c.execute("""
-        INSERT INTO public_gallery (image_url, title_ru, title_en, category, display_order)
-        VALUES 
-        ('/static/images/portfolio/nail1.jpg', 'Классический маникюр', 'Classic Manicure', 'nails', 1),
-        ('/static/images/portfolio/nail2.jpg', 'Дизайн ногтей', 'Nail Art', 'nails', 2),
-        ('/static/images/portfolio/hair1.jpg', 'Окрашивание', 'Hair Coloring', 'hair', 3)
-    """)
-
-    print("🎉 Seeding Public Banners...")
-    c.execute("DELETE FROM public_banners")
-    c.execute("""
-        INSERT INTO public_banners (title_ru, title_en, subtitle_ru, subtitle_en, image_url, is_active, display_order)
-        VALUES 
-        ('Скидка 20% на первое посещение', '20% OFF First Visit', 'Только в этом месяце', 'Only this month', '/static/images/banners/banner1.jpg', TRUE, 1),
-        ('Новая услуга: Smart Педикюр', 'New: Smart Pedicure', 'Попробуйте инновацию', 'Try the innovation', '/static/images/banners/banner2.jpg', TRUE, 2)
-    """)
+        INSERT INTO salon_settings (
+            id, name, city, country, address, address_ru, 
+            phone, whatsapp, instagram, hours_weekdays, hours_weekends, currency
+        )
+        VALUES (1, %s, 'Dubai', 'UAE', 'JBR, Dubai', 'Дубай, JBR', '+971500000000', '+971500000000', 'salon_test', '10:30 - 21:00', '10:30 - 21:00', 'AED')
+        ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name
+    """, (salon_name,))
 
     conn.commit()
     conn.close()

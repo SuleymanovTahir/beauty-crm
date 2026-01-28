@@ -71,7 +71,7 @@
   "import_errors_count_many": "{{count}} erros encontrados",
   "import_errors_count_other": "Erros {{count}} encontrados",
   "import_example_columns": "Nome, Telefone, E-mail",
-  "import_example_row_1": "Anna, +971501234567, anna@example.com",
+  "import_example_row_1": "Anna, 971526961100, anna@example.com",
   "import_example_row_2": "Elena, +971507654321,",
   "import_example_structure": "Exemplo de estrutura de arquivo",
   "import_important_info": "Informações importantes",

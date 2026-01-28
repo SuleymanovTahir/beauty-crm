@@ -1,9 +1,7 @@
 {
   "actions": "Aktionen",
   "all_good": "Alles super! Ihr Trichter zeigt gute Ergebnisse.",
-  "client": {
-    "name": "Name"
-  },
+  "client": "Kunde",
   "client_added": "Kunde hinzugefügt",
   "client_deleted": "Kunde gelöscht",
   "client_updated": "Kundendetails aktualisiert",

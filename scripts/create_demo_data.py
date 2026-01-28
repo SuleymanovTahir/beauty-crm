@@ -20,7 +20,7 @@ async def create_demo_data():
     email = "client@demo.com"
     password = "password123"
     name = "Demo Client"
-    phone = "+971501234567"
+    phone = "971526961100"
     
     existing = get_user_by_email(email)
     if existing:

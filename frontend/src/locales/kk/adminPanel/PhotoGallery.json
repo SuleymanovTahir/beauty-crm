@@ -10,8 +10,8 @@
   },
   "card": {
     "featured": "Таңдаулылар",
-    "toggle_featured": "Таңдаулыларды қосу/өшіру",
-    "uploaded_by": "Жүктеп салынды {{name}}",
+    "toggle_featured": "Таңдаулылар</z41> <z42>Таңдаулылар",
+    "uploaded_by": "{{name}} жүктеген",
     "views": "көрулер"
   },
   "dialogs": {
@@ -19,21 +19,21 @@
       "confirm": "Осы фотосуретті шынымен жойғыңыз келе ме?"
     },
     "upload": {
-      "description": "Галереяға жаңа фотосурет қосу",
+      "description": "Галереяға жаңа фотосурет қосыңыз",
       "form": {
         "after_photo": "Фотосуреттен кейін",
-        "before_after": "Фотосуретке дейін/кейін",
+        "before_after": "Бұрын/Кейін",
         "before_photo": "«Бұрын» фотосы",
-        "category": "Категория",
+        "category": "Санаты",
         "client": "Клиент",
         "client_hint": "Фотосурет клиент галереясында қолжетімді болады",
-        "description": "Описание",
+        "description": "Сипаттамасы",
         "description_placeholder": "Фото сипаттамасы",
         "photo": "Фото",
-        "select_client": "Клиент таңдау",
-        "single_photo": "Бір фотосурет",
-        "title": "Аты",
-        "title_placeholder": "Фото атауы",
+        "select_client": "Клиентті таңдаңыз",
+        "single_photo": "Бір фото",
+        "title": "Тақырып",
+        "title_placeholder": "Тақырып суреті",
         "upload_type": "Жүктеп салу түрі"
       },
       "title": "Фотосуретті жүктеп салу"
@@ -41,17 +41,17 @@
   },
   "empty": {
     "description": "Алғашқы фотосуреттерді галереяға жүктеп салу",
-    "title": "Әлі ешқандай фотосуреттер жоқ"
+    "title": "Әлі фотосуреттер жоқ"
   },
   "filters": {
     "all_categories": "Барлық санаттар",
-    "search_placeholder": "Фотосуреттерді іздеу..."
+    "search_placeholder": "Фотосуреттер ізделуде..."
   },
   "stats": {
     "featured_photos": "Таңдаулы фотосуреттер",
-    "recent_uploads": "Соңғы жүктеп алулар",
-    "total_photos": "Жалпы фотосурет",
-    "total_views": "Жалпы көрулер"
+    "recent_uploads": "Соңғы жүктеп алынғандар",
+    "total_photos": "Жалпы фотосуреттер",
+    "total_views": "Жалпы көрілгендер"
   },
   "subtitle": "Клиент фотосуреттері мен портфолиосын басқару",
   "title": "Фото галереясы",
@@ -59,12 +59,12 @@
     "deleted": "Фотосурет сәтті жойылды",
     "failed_delete": "Фотосурет жойылмады",
     "failed_featured": "Таңдаулы күйді жаңарту мүмкін болмады",
-    "failed_load": "Фотосуреттерді жүктеп салу сәтсіз аяқталды",
-    "failed_upload": "Фотосуретті жүктеп салу орындалмады",
+    "failed_load": "Фотосуреттерді жүктеп салу орындалмады",
+    "failed_upload": "Фотосуреттерді жүктеп салу мүмкін болмады",
     "failed_visibility": "Failed to update visibility",
     "featured_updated": "Таңдаулы күй жаңартылды",
     "select_both_photos": "Please select both before and after photos",
-    "uploaded": "Фотосурет жүктеп салынды",
+    "uploaded": "Фотосурет сәтті жүктеп салынды",
     "visibility_updated": "Visibility updated"
   },
   "upload_photo": "Фотосуретті жүктеп салу"
