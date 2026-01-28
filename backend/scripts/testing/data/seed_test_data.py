@@ -140,6 +140,7 @@ def seed_data():
 
     # 1. Masters & Users (Ensure they exist)
     required_users = [
+        {'username': 'admin', 'full_name': 'Admin', 'role': 'director', 'is_service_provider': False},
         {'username': 'sabri', 'full_name': 'Mohamed Sabri', 'role': 'admin', 'is_service_provider': True},
         {'username': 'mestan', 'full_name': 'Amandurdyyeva Mestan', 'role': 'admin', 'is_service_provider': True},
         {'username': 'jennifer', 'full_name': 'Peradilla Jennifer', 'role': 'admin', 'is_service_provider': True},
