@@ -56,13 +56,8 @@ export function LandingPage() {
   }, [initialData, t, i18n.language]);
 
   useEffect(() => {
-    // 1. Check if we have cached data to show immediately
-    const cached = localStorage.getItem('landing_initial_data');
-    if (cached) {
-      try {
-        setInitialData(JSON.parse(cached));
-      } catch (e) { }
-    }
+    // We no longer use localStorage for initial data to avoid showing stale content
+    // during development or after updates.
 
     // 2. Fetch fresh data from unified endpoint
     const fetchInitialData = async () => {
@@ -73,7 +68,6 @@ export function LandingPage() {
 
         if (data && !data.error) {
           setInitialData(data);
-          localStorage.setItem('landing_initial_data', JSON.stringify(data));
         }
       } catch (error) {
         console.error('Error loading initial data:', error);

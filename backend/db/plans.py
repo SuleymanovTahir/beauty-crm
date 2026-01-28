@@ -596,7 +596,7 @@ def get_all_plan_metrics(active_only: bool = True) -> List[Dict[str, Any]]:
         conn = get_db_connection()
         c = conn.cursor()
         
-        query = "SELECT id, key, name, name_ru, name_en, unit, description FROM plan_metrics"
+        query = "SELECT id, key, name, unit, description FROM plan_metrics"
         if active_only:
             query += " WHERE is_active = TRUE"
         
@@ -609,10 +609,8 @@ def get_all_plan_metrics(active_only: bool = True) -> List[Dict[str, Any]]:
                 "id": row[0],
                 "key": row[1],
                 "name": row[2],
-                "name_ru": row[3],
-                "name_en": row[4],
-                "unit": row[5],
-                "description": row[6]
+                "unit": row[3],
+                "description": row[4]
             })
         
         conn.close()
@@ -621,27 +619,21 @@ def get_all_plan_metrics(active_only: bool = True) -> List[Dict[str, Any]]:
         log_error(f"Error getting plan metrics: {e}", "plans")
         return []
 
-def create_plan_metric(key: str, name: str, unit: str = None, description: str = None, name_ru: str = None, name_en: str = None) -> Optional[int]:
+def create_plan_metric(key: str, name: str, unit: str = None, description: str = None) -> Optional[int]:
     """Create or update a plan metric"""
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        
-        # Use provided name for all fields if localized ones aren't provided
-        n_ru = name_ru or name
-        n_en = name_en or name
 
         c.execute("""
-            INSERT INTO plan_metrics (key, name, name_ru, name_en, unit, description)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO plan_metrics (key, name, unit, description)
+            VALUES (%s, %s, %s, %s)
             ON CONFLICT (key) DO UPDATE SET
                 name = EXCLUDED.name,
-                name_ru = EXCLUDED.name_ru,
-                name_en = EXCLUDED.name_en,
                 unit = EXCLUDED.unit,
                 description = EXCLUDED.description,
                 is_active = TRUE
-        """, (key, name, n_ru, n_en, unit, description))
+        """, (key, name, unit, description))
         
         c.execute("SELECT id FROM plan_metrics WHERE key = %s", (key,))
         row = c.fetchone()

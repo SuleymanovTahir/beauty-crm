@@ -9,35 +9,25 @@ from utils.logger import log_info, log_error
 
 def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> List[Dict]:
     """Получить активные отзывы на указанном языке"""
-    from utils.language_utils import validate_language, build_coalesce_query
-    
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        lang_key = validate_language(language)
-        
-        # Используем универсальные COALESCE для всех локализуемых полей
-        name_coalesce = build_coalesce_query('author_name', lang_key, include_base=False)
-        text_coalesce = build_coalesce_query('text', lang_key, include_base=False)
-        emp_name_coalesce = build_coalesce_query('employee_name', lang_key, include_base=False)
-        emp_pos_coalesce = build_coalesce_query('employee_position', lang_key, include_base=False)
-        
-        # DISTINCT ON для предотвращения дублей по тексту и автору (с TRIM для надежности)
-        query = f"""
-            SELECT DISTINCT ON (TRIM(LOWER({name_coalesce})), TRIM(LOWER({text_coalesce})))
+        # Базовый запрос без локализованных колонок
+        query = """
+            SELECT DISTINCT ON (TRIM(LOWER(author_name)))
                 id,
-                {name_coalesce} as name,
-                {text_coalesce} as text,
+                author_name as name,
+                text,
                 rating,
                 avatar_url,
                 display_order,
-                {emp_name_coalesce} as employee_name,
-                {emp_pos_coalesce} as employee_position,
+                employee_name,
+                employee_position,
                 created_at
             FROM public_reviews
             WHERE is_active = TRUE
-            ORDER BY TRIM(LOWER({name_coalesce})), TRIM(LOWER({text_coalesce})), display_order DESC, created_at DESC
+            ORDER BY TRIM(LOWER(author_name)), display_order DESC, created_at DESC
         """
         
         if limit:
@@ -56,21 +46,15 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
 
 def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List[Dict]:
     """Получить активные FAQ на указанном языке"""
-    from utils.language_utils import validate_language, build_coalesce_query
-    
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        lang_key = validate_language(language)
-        q_coalesce = build_coalesce_query('question', lang_key, include_base=False)
-        a_coalesce = build_coalesce_query('answer', lang_key, include_base=False)
-        
-        query = f"""
+        query = """
             SELECT 
                 id,
-                {q_coalesce} as question,
-                {a_coalesce} as answer,
+                question,
+                answer,
                 category,
                 display_order
             FROM public_faq
@@ -96,24 +80,18 @@ def get_active_faq(language: str = 'ru', category: Optional[str] = None) -> List
 
 def get_active_gallery(language: str = 'ru', category: Optional[str] = None, limit: Optional[int] = None) -> List[Dict]:
     """
-    Получить активные элементы галереи с локализацией
+    Получить активные элементы галереи
     """
-    from utils.language_utils import validate_language, build_coalesce_query
-    
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        lang_key = validate_language(language)
-        title_coalesce = build_coalesce_query('title', lang_key, include_base=False)
-        desc_coalesce = build_coalesce_query('description', lang_key, include_base=False)
-        
-        query = f"""
+        query = """
             SELECT 
                 id, 
                 image_url, 
-                {title_coalesce} as title, 
-                {desc_coalesce} as description, 
+                title, 
+                description, 
                 category, 
                 display_order, 
                 created_at
@@ -136,7 +114,7 @@ def get_active_gallery(language: str = 'ru', category: Optional[str] = None, lim
         columns = [desc[0] for desc in cursor.description]
         gallery = [dict(zip(columns, row)) for row in rows]
 
-        log_info(f"📸 [Gallery DB] Получено {len(gallery)} элементов из public_gallery (lang: {lang_key})", "db")
+        log_info(f"📸 [Gallery DB] Получено {len(gallery)} элементов из public_gallery", "db")
         return gallery
         
     except Exception as e:
@@ -203,8 +181,8 @@ def add_gallery_item(data: Dict) -> Optional[int]:
             RETURNING id
         """, (
             data.get('image_url'),
-            data.get('title_ru'),
-            data.get('description_ru'),
+            data.get('title'),
+            data.get('description'),
             data.get('category', 'works'),
             data.get('display_order', 0)
         ))

@@ -55,9 +55,9 @@
     "failed_create": "गतिविधि बनाते समय त्रुटि",
     "failed_delete": "हटाते समय त्रुटि",
     "failed_load": "डेटा लोड करने में विफल",
+    "progress_checked_one": "प्रगति के लिए अद्यतन किया गया {{count}} सदस्य",
     "progress_checked_few": "{{count}} सदस्यों के लिए प्रगति अपडेट की गई",
     "progress_checked_many": "{{count}} सदस्यों के लिए प्रगति अपडेट की गई",
-    "progress_checked_one": "प्रगति के लिए अद्यतन किया गया {{count}} सदस्य",
     "progress_checked_other": "[[V0]]] सदस्यों के लिए प्रगति अपडेट की गई"
   },
   "types": {

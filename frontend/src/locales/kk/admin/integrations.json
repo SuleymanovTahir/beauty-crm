@@ -1,7 +1,7 @@
 {
   "errors": {
     "createLinkFailed": "Сілтеме жасау қатесі",
-    "loadFailed": "Деректерді жүктеу қатесі",
+    "loadFailed": "Ошибка загрузки данных",
     "loadServicesFailed": "Қызметтерді жүктеу қатесі",
     "saveFailed": "Сақтау қатесі",
     "syncFailed": "Синхрондау қатесі"
@@ -13,24 +13,24 @@
     "apiSecret": "API Secret",
     "bookings": "Жазбалар",
     "configSuccess": "Параметрлер сақталды",
-    "configure": "Реттеу",
+    "configure": "Конфигурациялау",
     "configureProvider": "Параметрлер",
-    "daysAgo_few": "{{count}} күн бұрын",
-    "daysAgo_many": "[[VAR0]]] күн бұрын",
     "daysAgo_one": "{{count}} күн бұрын",
+    "daysAgo_few": "{{count}} күн бұрын",
+    "daysAgo_many": "{{count}} күн бұрын",
     "daysAgo_other": "{{count}} күн бұрын",
     "enableProvider": "Интеграцияны қосу",
+    "hoursAgo_one": "{{count}} сағат бұрын",
     "hoursAgo_few": "{{count}} сағат бұрын",
     "hoursAgo_many": "{{count}} сағат бұрын",
-    "hoursAgo_one": "{{count}} сағат бұрын",
     "hoursAgo_other": "{{count}} сағат бұрын",
-    "inactive": "Конфигурацияланбады",
+    "inactive": "Конфигурацияланбаған",
     "justNow": "Дәл қазір",
     "lastSync": "Соңғы синхрондау",
     "mappingHint": "Синхрондау үшін нарықтан қызмет идентификаторын көрсетіңіз.",
-    "minutesAgo_few": "[[VAR0]]] мин бұрын",
-    "minutesAgo_many": "{{count}} мин бұрын",
     "minutesAgo_one": "{{count}} мин бұрын",
+    "minutesAgo_few": "{{count}} мин бұрын",
+    "minutesAgo_many": "{{count}} мин бұрын",
     "minutesAgo_other": "{{count}} мин бұрын",
     "neverSynced": "Ешқашан",
     "providers": {
@@ -43,7 +43,7 @@
         "name": "Amazon"
       },
       "booksy": {
-        "description": "Онлайн брондау платформасы",
+        "description": "Онлайн тіркеу платформасы",
         "name": "Booksy"
       },
       "google_business": {
@@ -73,14 +73,14 @@
     "status": "Күйі",
     "subtitle": "Онлайн брондау және шолу қызметтерімен интеграция",
     "sync": "Синхрондау",
-    "syncStarted": "Синхрондау басталды",
     "syncing": "Синхрондау...",
+    "syncStarted": "Синхрондау басталды",
     "title": "Брондау платформалары",
-    "totalBookings": "Жалпы жазбалар",
+    "totalBookings": "Всего записей",
     "urlCopied": "URL көшірілді",
     "viewBookings": "Хабарламаларға өтіңіз",
     "webhookHint": "Платформада вебхуктарды қамтамасыз ету үшін осы URL мекенжайын көрсетіңіз",
-    "webhookUrl": "Веб-хукқа арналған URL"
+    "webhookUrl": "Webhook үшін URL <z6>"
   },
   "payment": {
     "active": "Белсенді",

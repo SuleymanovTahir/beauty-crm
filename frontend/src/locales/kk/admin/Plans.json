@@ -29,7 +29,7 @@
     "custom": "Теңшелетін кезең",
     "month": "Ай",
     "quarter": "Тоқсан",
-    "two_weeks": "[[VAR0]]] апта",
+    "two_weeks": "{{count}} апта",
     "week": "Апта",
     "year": "Жыл"
   },

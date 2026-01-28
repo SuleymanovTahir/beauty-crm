@@ -549,6 +549,20 @@ class Translator:
             text = re.sub(pattern, correct_term, text, flags=re.IGNORECASE)
         return text
 
+    def _is_valid_translation(self, text: str, target_lang: str) -> bool:
+        if not text: return False
+        if target_lang in ['ru', 'kk', 'mk', 'bg', 'sr', 'mn', 'be', 'uk']: return True # Cyrillic allowed
+        # Check for Cyrillic chars
+        cyr_chars = [c for c in text if '\u0400' <= c <= '\u04FF']
+        if not cyr_chars: return True
+        
+        # If text is mostly Cyrillic, it's invalid
+        alpha_count = sum(1 for c in text if c.isalpha())
+        if alpha_count > 0:
+            ratio = len(cyr_chars) / alpha_count
+            if ratio > 0.4: return False # More than 40% Cyrillic -> Fail
+        return True
+
     def translate_batch(self, texts: List[str], source: str, target: str, use_context: bool = False, key_paths: List[Optional[str]] = None) -> List[str]:
         if not texts: return []
         if source == target: return texts
@@ -568,10 +582,20 @@ class Translator:
                     continue
                     
             cached = self._get_cached_translation(text + ("|ctx" if use_context else ""), source, target)
-            if cached: results[i] = self._apply_terminology_corrections(cached, target); continue
+            if cached and self._is_valid_translation(cached, target): 
+                results[i] = self._apply_terminology_corrections(cached, target); continue
             to_translate_indices.append(i); to_translate_texts.append(text)
         if not to_translate_texts: return results
-        batch_size = 80
+        
+        # Adaptive batch size based on text length
+        avg_length = sum(len(t) for t in to_translate_texts) / len(to_translate_texts)
+        if avg_length > 100:  # Long texts (reviews, bios)
+            batch_size = 20
+        elif avg_length > 50:  # Medium texts
+            batch_size = 40
+        else:  # Short texts (labels, buttons)
+            batch_size = 80
+            
         variable_pattern = r'\{\{([^}]+)\}\}'
         for i in range(0, len(to_translate_texts), batch_size):
             if len(to_translate_texts) > batch_size:
@@ -583,9 +607,11 @@ class Translator:
                 for idx, var in enumerate(variables): placeholder = f"[[[V{idx}]]]"; var_map[placeholder] = f"{{{{{var}}}}}" ; t2t = t2t.replace(f"{{{{{var}}}}}", placeholder)
                 protected_batch.append(t2t); batch_variable_maps.append(var_map)
             batch_with_tags = "".join([f"<z{j}>{t}</z{j}> " for j, t in enumerate(protected_batch)])
+            
             try:
                 raw = self._translate_via_http(batch_with_tags, source, target, use_context=use_context)
-                time.sleep(0.1) # Anti-rate-limit (decreased from 0.3)
+                time.sleep(0.2) # Anti-rate-limit
+                
                 for j in range(len(batch)):
                     tag_start, tag_end = f"<z{j}>", f"</z{j}>"
                     s_idx = raw.find(tag_start)
@@ -598,12 +624,25 @@ class Translator:
                             for ph, orig in batch_variable_maps[j].items():
                                 txt = txt.replace(ph, orig).replace(ph.replace("[", "[ ").replace("]", " ]"), orig)
                             txt = self._apply_terminology_corrections(txt, target)
-                            results[batch_indices[j]] = txt
-                            self._save_to_cache(batch[j] + ("|ctx" if use_context else ""), source, target, txt)
-                        else: results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, key_paths[batch_indices[j]] if key_paths else None)
-                    else: results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, key_paths[batch_indices[j]] if key_paths else None)
+                            
+                            if self._is_valid_translation(txt, target):
+                                results[batch_indices[j]] = txt
+                                self._save_to_cache(batch[j] + ("|ctx" if use_context else ""), source, target, txt)
+                            else:
+                                # Fallback to single translation if invalid
+                                print(f"        ⚠️  Invalid batch result for item {j}, retrying individually...")
+                                single = self.translate(batch[j], source, target, use_context, key_paths[batch_indices[j]] if key_paths else None)
+                                results[batch_indices[j]] = single
+                        else: 
+                            # Tag end not found - fallback
+                            results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, key_paths[batch_indices[j]] if key_paths else None)
+                    else: 
+                        # Tag start not found - fallback
+                        results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, key_paths[batch_indices[j]] if key_paths else None)
             except Exception as e:
-                for j in range(len(batch)): results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, key_paths[batch_indices[j]] if key_paths else None)
+                print(f"        ❌ Batch translation failed: {e}, falling back to individual...")
+                for j in range(len(batch)): 
+                    results[batch_indices[j]] = self.translate(batch[j], source, target, use_context, key_paths[batch_indices[j]] if key_paths else None)
         return results
 
     def _handle_months(self, text: str, source: str, target: str) -> Optional[str]:

@@ -68,15 +68,10 @@ export function FAQ() {
     fetchData();
   }, [i18n.language, user?.id]);
 
-  const [displayCount, setDisplayCount] = useState<number>(0);
+  const INITIAL_FAQ_COUNT = 6;
+  const [displayCount, setDisplayCount] = useState<number>(INITIAL_FAQ_COUNT);
 
-  useEffect(() => {
-    if (faqs.length > 0 && displayCount === 0) {
-      setDisplayCount(Math.ceil(faqs.length / 2));
-    }
-  }, [faqs, displayCount]);
-
-  const displayedFaqs = displayCount > 0 ? faqs.slice(0, displayCount) : faqs;
+  const displayedFaqs = faqs.slice(0, displayCount);
 
   return (
     <section id="faq" className="py-12 sm:py-16 lg:py-20 bg-background">

@@ -10,7 +10,7 @@
   "dissatisfaction_policy": "Если результат не устраивает, клиент должен обратиться в салон в течение 7 дней для обсуждения возможных решений.",
   "general_provisions": "Общие правила",
   "general_provisions_text": "Настоящие Условия использования регулируют использование вами Услуг M Le Diamant. Используя наши услуги, вы соглашаетесь с этими условиями.",
-  "lastUpdated": "Дата последнего обновления: {{date}}",
+  "lastUpdated": "Date de dernière mise à jour : {{date}}",
   "last_update_date": "Дата последнего обновления",
   "late_arrival": "В случае опоздания клиента более чем на 15 минут салон имеет право отменить запись или сократить время процедуры.",
   "medical_contraindications": "Медицинские противопоказания",
@@ -38,7 +38,7 @@
       "title": "8. Контакты"
     },
     "general": {
-      "content": "Настоящие Условия использования регулируют использование вами Услуг {{salonName}}. Используя наши услуги, вы соглашаетесь с этими условиями.",
+      "content": "Les présentes conditions d'utilisation régissent votre utilisation des services {{salonName}}. En utilisant nos services, vous acceptez ces conditions.",
       "title": "1. Общие правила"
     },
     "medical": {

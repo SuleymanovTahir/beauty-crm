@@ -147,12 +147,7 @@ export const BookingSection = () => {
     const fetchServices = async () => {
       try {
         const res = await api.getPublicServices();
-        const data = res; // api.getPublicServices() usually returns data directly
-
-        let servicesList: any[] = [];
-        if (Array.isArray(data)) {
-          servicesList = data;
-        }
+        const servicesList = res.services || (Array.isArray(res) ? res : []);
 
         setServices(servicesList);
 
@@ -161,8 +156,8 @@ export const BookingSection = () => {
           .map((s: any) => s.category)
           .filter((cat: any) => cat && typeof cat === 'string' && cat.trim() !== '');
 
-        const uniqueCategories = Array.from(new Set(categories)).sort();
-        setAvailableCategories(uniqueCategories);
+        const uniqueCategories = Array.from(new Set(categories)) as string[];
+        setAvailableCategories(uniqueCategories.sort());
       } catch (err) {
         console.error('Error fetching services for booking:', err);
       }
@@ -308,7 +303,7 @@ export const BookingSection = () => {
                       formData.selectedServices.map(id => {
                         const s = services.find(srv => srv.id === id);
                         if (!s) return null;
-                        const serviceName = s[`name_${i18n.language}`] || s.name;
+                        const serviceName = t(`dynamic:services.${id}.name`, { defaultValue: s.name || "" });
                         return (
                           <span key={id} className="bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded-full border border-primary/20">
                             {serviceName}
@@ -332,7 +327,7 @@ export const BookingSection = () => {
                         {services
                           .filter((s: any) => s.category === category)
                           .map((service: any) => {
-                            const serviceName = service[`name_${i18n.language}`] || service.name;
+                            const serviceName = t(`dynamic:services.${service.id}.name`, { defaultValue: service.name || "" });
                             return (
                               <CommandItem
                                 key={service.id}
@@ -405,7 +400,7 @@ export const BookingSection = () => {
                                     ru
                   }
                   placeholderText={t('formDatePlaceholder', { defaultValue: 'Выберите дату' })}
-                  className="w-full h-10 sm:h-11 pl-10 pr-3 rounded-md border border-primary/20 bg-slate-50 focus:ring-primary/20 focus:border-primary focus:outline-none focus:ring-2 text-base md:text-sm"
+                  className="w-full h-10 sm:h-11 pl-10 form-input-custom !bg-muted/20"
                   required
                 />
               </div>

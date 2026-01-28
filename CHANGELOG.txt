@@ -1,4 +1,40 @@
-## [2026-01-27] Critical Stability Fixes & Content Seeding
+## [2026-01-28] Public Content Restoration & Photo Management
+- 🎨 **Full Public Content Restoration**:
+  - **FAQ**: Восстановлено 20 вопросов из locale файлов (было только 3)
+  - **Reviews**: Восстановлено 38 отзывов с аватарами клиентов
+  - **Banners**: Восстановлено 8 баннеров с изображениями
+  - **Gallery**: Добавлено 13 фото портфолио + 5 фото салона (интерьер)
+  - **Employee Photos**: Добавлены фотографии для всех 6 мастеров
+- 🔧 **Automation Integration (SSOT)**:
+  - **fix_data.py**: Интегрировано автоматическое восстановление всего публичного контента
+  - Теперь выполняется автоматически при каждом запуске миграций через `run_all_migrations()`
+  - Удален дублирующий скрипт `restore_all_public_data.py`
+  - **restore_full_content.py**: Обновлен для корректной работы с Rule 15 (базовые поля без языковых суффиксов)
+  - **seed_test_data.py**: Обновлен чтобы не трогать публичный контент (управляется через fix_data.py)
+- 📸 **Photo Path Standardization**:
+  - **Organization**: Файлы распределены по тематическим папкам (`backend/static/uploads/images/`)
+  - **Employees**: `/static/uploads/images/employees/*.webp` (из исходников: Гуля, Дженнифер, и т.д.)
+  - **Salon**: `/static/uploads/images/salon/*.webp` (Интерьер, SPA, Массаж)
+  - **Banners**: `/static/uploads/images/banners/*.webp`
+  - **Portfolio**: `/static/images/portfolio/*.webp` (без изменений)
+- ✏️ **Data Quality**:
+  - Автоматическое исправление "пилинг" -> "Пилинг"
+  - Капитализация всех услуг в базе
+- ⚠️ **ВАЖНО ПОМНИТЬ**:
+  - Публичный контент восстанавливается автоматически при запуске `run_all_migrations()`
+  - Все тексты хранятся в `frontend/src/locales/ru/dynamic.json` и автоматически переводятся
+  - Фотографии добавляются автоматически в `fix_data.py` (SSOT для фиксов данных)
+
+## [2026-01-28] Professional Terminology & Translation Alignment
+- 🌍 **Translation Standardization**:
+  - **Service Names Fix**: Conducted a full audit of the services list. Capitalized all service names (e.g., "пилинг" → "Пилинг").
+  - **Professional Terminology**: Replaced informal abbreviations and unclear terms (e.g., "Мед. чистка" → "Медицинская чистка", "Челка" → "Стрижка челки").
+  - **Action Verbs**: Added "Эпиляция:" prefix to body area services to ensure professional clarity.
+  - **Dictionary Synchronization**: Updated `beauty_translator.py` and `translation_errors.json` with new professional mappings to prevent future regressions.
+- ⚡ **Instant Freshness**:
+  - Disabled all server-side and client-side caching for public content.
+  - Implemented second-precision cache-busting for all images in development and production.
+  - Removed `localStorage` persistence from the landing page.
 - 🚀 **Critical Startup Fixes**:
   - **Import Order**: Resolved `ModuleNotFoundError` and `NameError` in test scripts (`startup_tests.py`, `check_*.py`) by fixing `sys.path` modification order.
   - **Database Seeding**: Fixed `AttributeError: 'NoneType' object has no attribute 'commit'` in `seed_test_data.py` to ensure reliable data population.

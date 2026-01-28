@@ -28,7 +28,7 @@ DIGRAPHS_RU = {
 
 # Одиночные буквы
 SINGLE_RU = {
-    'a': 'а', 'b': 'б', 'c': 'к', 'd': 'д', 'e': 'е',
+    'a': 'а', 'b': 'б', 'c': 'ч', 'd': 'д', 'e': 'е',
     'f': 'ф', 'g': 'г', 'h': 'х', 'i': 'и', 'j': 'дж',
     'k': 'к', 'l': 'л', 'm': 'м', 'n': 'н', 'o': 'о',
     'p': 'п', 'q': 'к', 'r': 'р', 's': 'с', 't': 'т',
@@ -78,8 +78,33 @@ def transliterate_to_cyrillic(text: str) -> str:
     if is_cyrillic(text):
         return text
 
-    # Приводим к нижнему регистру для обработки
     text_lower = text.lower()
+    
+    # Реестр особых случаев (имена собственные)
+    # Ключ - нижний регистр латиницы. Значение - правильная кириллица.
+    SPECIAL_CASES_RU = {
+        'gulcehre': 'Гульчехре',
+        'lyazzat': 'Ляззат',      # Алгоритм может дать Лйаззат
+        'simo': 'Симо',
+        'jennifer': 'Дженнифер',
+        'mohamed': 'Мохамед',
+        'sabri': 'Сабри',
+        'mestan': 'Местан',
+        'amandurdyyeva': 'Амандурдыева' # Алгоритм дает Амандурдиева (y->и)
+    }
+    
+    # Проверяем целиком (для имен состоящих из одного слова)
+    # Если на входе несколько слов, нужно будет разбивать?
+    # Функция транслитерации работает со СТРОКОЙ.
+    # Если строка содержит пробелы, лучше разбить и транслитерировать по отдельности?
+    
+    words = text_lower.split()
+    if len(words) > 1:
+        return ' '.join([SPECIAL_CASES_RU.get(w, transliterate_to_cyrillic(w)) for w in words])
+        
+    if text_lower in SPECIAL_CASES_RU:
+        return SPECIAL_CASES_RU[text_lower]
+
     result = []
     i = 0
 
@@ -115,10 +140,10 @@ def transliterate_to_cyrillic(text: str) -> str:
             result.append(char)  # Сохраняем спецсимволы
         i += 1
 
-    # Применяем правильный регистр: ТОЛЬКО первая большая, остальные маленькие
+    # Применяем правильный регистр: каждое слово с большой буквы
     result_str = ''.join(result)
     if result_str:
-        result_str = result_str[0].upper() + result_str[1:].lower()
+        result_str = result_str.title()
 
     return result_str
 
@@ -214,6 +239,10 @@ def transliterate_name(name: str, target_language: str) -> str:
     elif target_language == 'ar':
         return transliterate_to_arabic(name)
     else:  # 'en' или любой другой
+        # Если текст на кириллице, транслитерируем в латиницу
+        if is_cyrillic(name):
+            return transliterate_to_latin(name)
+            
         # Для английского: приводим к правильному регистру
         if name.isupper():
             return name[0].upper() + name[1:].lower()

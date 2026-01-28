@@ -1,10 +1,10 @@
 {
   "actions": "Әрекеттер",
   "addInvoice": "Шот-фактура жасау",
-  "addPayment": "Төлем қосыңыз",
+  "addPayment": "Төлем қосу",
   "allInvoices": "Барлық тіркелгілер",
   "allStatuses": "Барлық күйлер",
-  "board": "Тақта",
+  "board": "Басқарма",
   "client": "Клиент",
   "delete": "Жою",
   "dueDate": "Төлемнің аяқталу күні",
@@ -13,19 +13,19 @@
     "deleteError": "Есептік жазбаны жою қатесі.",
     "paymentError": "Төлемді қосу қатесі",
     "sendError": "Шот-фактураны жіберу қатесі",
-    "updateError": "Күйін жаңарту мүмкін болмады"
+    "updateError": "Күйді жаңарту орындалмады"
   },
   "form": {
     "addItem": "Элемент қосу",
-    "cancel": "Бас тарту",
+    "cancel": "Болдырмау",
     "dueDate": "Төлемнің аяқталу күні",
     "itemName": "Аты",
-    "itemPrice": "Бағасы",
+    "itemPrice": "Баға",
     "itemQuantity": "Саны",
     "items": "Элемент тіркелгілері",
     "notes": "Ескертпелер",
     "save": "Сақтау",
-    "selectClient": "Тұтынушыны таңдау"
+    "selectClient": "Клиент таңдау"
   },
   "invoiceNumber": "Тіркелгі нөмірі",
   "manage_stages": "Бағандар",
@@ -56,7 +56,7 @@
   "sendButton": "Жіберу",
   "sendDialog": {
     "email": "Электрондық пошта",
-    "method": "Жеткізу әдісі",
+    "method": "Жіберу әдісі",
     "recipient": "Алушы",
     "sendButton": "Жіберу",
     "telegram": "Telegram",
@@ -65,15 +65,15 @@
   },
   "status": "Күйі",
   "statuses": {
-    "cancelled": "Болдырмады",
+    "cancelled": "Бас тартылды",
     "draft": "Жоба",
     "overdue": "Мерзімі өткен",
     "paid": "Төленді",
-    "partial": "Ішінара төленген",
+    "partial": "Ішінара төленді",
     "partially_paid": "Ішінара төленді",
     "sent": "Жіберілді"
   },
   "subtitle": "Шот-фактуралар мен төлемдерді басқару",
-  "title": "Шот-фактуралар",
+  "title": "Тіркелгілер",
   "totalAmount": "Сома"
 }
