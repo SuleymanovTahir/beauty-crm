@@ -19,7 +19,7 @@ router = APIRouter(tags=["Analytics"])
 
 # Simple in-memory cache for dashboard data (fallback when Redis is unavailable)
 _dashboard_cache = {}
-_cache_ttl = 300  # 5 minutes - increased to reduce DB load
+_cache_ttl = 0  # Disabled for CRM - always fetch fresh data
 
 @router.get("/cookies/check")
 async def check_cookies(request: Request):

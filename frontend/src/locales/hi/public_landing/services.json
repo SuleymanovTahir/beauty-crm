@@ -1,6 +1,6 @@
 {
   "categories": {
-    "brows": "ब्राउज",
+    "brows": "भौहें",
     "combo": "कॉम्बो",
     "cosmetology": "कॉस्मेटोलॉजी",
     "hair_care": "बालों की देखभाल",
@@ -13,12 +13,12 @@
     "pedicure": "पेडीक्योर",
     "permanent_makeup": "स्थायी मेकअप",
     "spa": "SPA",
-    "waxing": "वैक्सिंग"
+    "waxing": "डिपिलेशन वैक्स"
   },
   "haircutsStyling": "",
   "items": {
     "bangs_cut": {
-      "category": "हेयर_कट",
+      "category": "बाल कटवाने",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -28,7 +28,7 @@
       "price": 100
     },
     "bikini_line": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -118,7 +118,7 @@
       "price": 100
     },
     "cheeks_wax": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -128,7 +128,7 @@
       "price": 40
     },
     "chin_wax": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -188,7 +188,7 @@
       "price": 625
     },
     "express_hair_form": {
-      "category": "हेयर_कट",
+      "category": "बाल कटवाने",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -228,7 +228,7 @@
       "price": 190
     },
     "full_arms": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -238,7 +238,7 @@
       "price": 80
     },
     "full_bikini": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -248,7 +248,7 @@
       "price": 150
     },
     "full_body_wax": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -258,7 +258,7 @@
       "price": 400
     },
     "full_face_wax": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -268,7 +268,7 @@
       "price": 90
     },
     "full_legs": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -288,7 +288,7 @@
       "price": 100
     },
     "hair_cut_full": {
-      "category": "हेयर_कट",
+      "category": "बाल कटवाने",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -298,7 +298,7 @@
       "price": 350
     },
     "hair_cut_wash": {
-      "category": "हेयर_कट",
+      "category": "बाल कटवाने",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -308,7 +308,7 @@
       "price": 200
     },
     "hair_trim": {
-      "category": "हेयर_कट",
+      "category": "बाल कटवाने",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -328,7 +328,7 @@
       "price": 70
     },
     "half_arms": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -338,7 +338,7 @@
       "price": 50
     },
     "half_legs": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -358,7 +358,7 @@
       "price": 150
     },
     "kids_cut": {
-      "category": "हेयर_कट",
+      "category": "बाल कटवाने",
       "currency": "AED",
       "description": "",
       "duration": "40",
@@ -368,7 +368,7 @@
       "price": 100
     },
     "kim_style_effect": {
-      "category": "लैशेस",
+      "category": "पलकें",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -378,7 +378,7 @@
       "price": 30
     },
     "lash_lami": {
-      "category": "लैशेस",
+      "category": "पलकें",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -388,7 +388,7 @@
       "price": 200
     },
     "lashes_2d": {
-      "category": "लैशेस",
+      "category": "पलकें",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -398,7 +398,7 @@
       "price": 250
     },
     "lashes_3d": {
-      "category": "लैशेस",
+      "category": "पलकें",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -408,7 +408,7 @@
       "price": 300
     },
     "lashes_classic": {
-      "category": "लैशेस",
+      "category": "पलकें",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -418,7 +418,7 @@
       "price": 200
     },
     "lashes_mega": {
-      "category": "लैशेस",
+      "category": "पलकें",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -718,7 +718,7 @@
       "price": 30
     },
     "remove_lashes": {
-      "category": "लैशेस",
+      "category": "पलकें",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -808,7 +808,7 @@
       "price": 1250
     },
     "underarms": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -818,7 +818,7 @@
       "price": 50
     },
     "upper_lip_wax": {
-      "category": "वैक्सिंग",
+      "category": "डिपिलेशन वैक्स",
       "currency": "AED",
       "description": "",
       "duration": "60",

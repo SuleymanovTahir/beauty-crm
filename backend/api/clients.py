@@ -443,7 +443,7 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     top_masters = []
     for name, count in Counter(booking_masters).most_common(3):
         # Look up translated name in users
-        c.execute("SELECT full_name_ru FROM users WHERE full_name = %s OR full_name_ru = %s OR username = %s LIMIT 1", (name, name, name))
+        c.execute("SELECT full_name FROM users WHERE full_name = %s OR username = %s LIMIT 1", (name, name))
         row = c.fetchone()
         top_masters.append({"name": row[0] if row and row[0] else name, "count": count})
     

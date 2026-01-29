@@ -854,8 +854,8 @@ async def sync_yclients(api_key: str, settings: dict, cursor, conn):
                     "id": "mock_yc_1",
                     "services": [{"id": "1", "title": "Мужская стрижка"}],
                     "client": {"name": "Test YClient", "phone": "79990000001", "email": "test@example.com"},
-                    "date": "2024-03-20 10:00:00",
-                    "datetime": "2024-03-20 10:00:00",
+                    "date": (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d %H:%M:%S"),
+                    "datetime": (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d %H:%M:%S"),
                     "seance_length": 3600
                 }
             ]

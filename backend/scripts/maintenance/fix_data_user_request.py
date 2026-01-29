@@ -11,20 +11,16 @@ def fix_data():
     email = "mladiamontuae@gmail.com"
     print(f"📧 Updating salon email to: {email}")
     
-    # Update base email and all translations (since it shouldn't be translated)
+    # Update base email
     c.execute("""
         UPDATE salon_settings 
-        SET email = %s,
-            email_ru = %s, email_en = %s, email_ar = %s,
-            email_de = %s, email_es = %s, email_fr = %s,
-            email_hi = %s, email_kk = %s, email_pt = %s
+        SET email = %s
         WHERE id = 1
-    """, (email, email, email, email, email, email, email, email, email, email))
+    """, (email,))
     
     print("✅ Salon email updated.")
 
-    # 2. Update Employee Positions to Russian
-    # This ensures the translation script (which uses RU as source) works correctly
+    # 2. Update Employee Positions
     employees = [
         ("Дженнифер", "Мастер маникюра / Массаж"),
         ("Ляззат", "Мастер маникюра"),
@@ -39,16 +35,12 @@ def fix_data():
         row = c.fetchone()
         if row:
             user_id = row[0]
-            # Update position (which is the source field for translations)
-            # And clear translations to force re-translation
+            # Update position
             c.execute("""
                 UPDATE users 
-                SET position = %s, position_ru = %s,
-                    position_en = NULL, position_ar = NULL, position_de = NULL,
-                    position_es = NULL, position_fr = NULL, position_hi = NULL,
-                    position_kk = NULL, position_pt = NULL
+                SET position = %s
                 WHERE id = %s
-            """, (position_ru, position_ru, user_id))
+            """, (position_ru, user_id))
             print(f"  ✅ Updated {name} -> {position_ru}")
         else:
             print(f"  ⚠️ User {name} not found")

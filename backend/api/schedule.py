@@ -262,8 +262,8 @@ async def add_time_off_api(
 
     Body:
     {
-        "start_date": "2026-11-20",
-        "end_date": "2026-11-25",
+        "start_date": (datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d"),
+        "end_date": (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d"),
         "type": "vacation",  // vacation, sick_leave, day_off
         "reason": "Отпуск"
     }

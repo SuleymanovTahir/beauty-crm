@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 # Simple cache for menu settings (fallback when Redis is unavailable)
 _menu_cache = {}
-_cache_ttl = 300  # seconds - increased from 60 to reduce DB queries
+_cache_ttl = 0  # Disabled for CRM - always fetch fresh data
 
 class MenuSettings(BaseModel):
     menu_order: Optional[List[str]] = None

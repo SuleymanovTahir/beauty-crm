@@ -1,19 +1,19 @@
 {
   "categories": {
-    "brows": "Brows",
+    "brows": "Eyebrows",
     "combo": "Combo",
     "cosmetology": "Cosmetology",
-    "hair_care": "Hair Care",
+    "hair_care": "Hair care",
     "hair_color": "Hair Color",
-    "hair_cut": "Hair Cut",
-    "hair_styling": "Hair Styling",
-    "lashes": "Lashes",
+    "hair_cut": "Hair cutting",
+    "hair_styling": "Hair styling",
+    "lashes": "Ресницы",
     "manicure": "Manicure",
     "massage": "Massage",
     "pedicure": "Pedicure",
-    "permanent_makeup": "Permanent Makeup",
+    "permanent_makeup": "Перманентный макияж",
     "spa": "SPA",
-    "waxing": "Waxing"
+    "waxing": "waxing"
   },
   "haircutsStyling": "",
   "items": {
@@ -318,7 +318,7 @@
       "price": 150
     },
     "hair_wash": {
-      "category": "hair_care",
+      "category": "hair care",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -368,7 +368,7 @@
       "price": 100
     },
     "kim_style_effect": {
-      "category": "lashes",
+      "category": "eyelashes",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -378,7 +378,7 @@
       "price": 30
     },
     "lash_lami": {
-      "category": "lashes",
+      "category": "eyelashes",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -388,7 +388,7 @@
       "price": 200
     },
     "lashes_2d": {
-      "category": "lashes",
+      "category": "eyelashes",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -398,7 +398,7 @@
       "price": 250
     },
     "lashes_3d": {
-      "category": "lashes",
+      "category": "eyelashes",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -408,7 +408,7 @@
       "price": 300
     },
     "lashes_classic": {
-      "category": "lashes",
+      "category": "eyelashes",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -418,7 +418,7 @@
       "price": 200
     },
     "lashes_mega": {
-      "category": "lashes",
+      "category": "eyelashes",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -504,7 +504,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Массаж головы (60 мин)",
+      "name": "Head massage (60 min)",
       "price": 100
     },
     "massage_sculptural": {
@@ -514,7 +514,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Скульптурный массаж тела",
+      "name": "Sculptural body massage",
       "price": 370
     },
     "medical_facial": {
@@ -718,7 +718,7 @@
       "price": 30
     },
     "remove_lashes": {
-      "category": "lashes",
+      "category": "eyelashes",
       "currency": "AED",
       "description": "",
       "duration": "60",

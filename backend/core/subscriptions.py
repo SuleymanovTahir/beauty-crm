@@ -56,7 +56,7 @@ def get_subscription_types_for_role(role: str) -> dict:
         target_role = 'client' if role not in ['employee', 'manager', 'admin', 'director'] else 'employee'
         
         c.execute("""
-            SELECT key, name_ru, description_ru 
+            SELECT key, name, description 
             FROM broadcast_subscription_types 
             WHERE (target_role = %s OR target_role = 'all') AND is_active = TRUE
         """, (target_role,))
@@ -79,7 +79,7 @@ def get_all_subscription_types() -> dict:
         conn = get_db_connection()
         c = conn.cursor()
         
-        c.execute("SELECT key, name_ru, description_ru FROM broadcast_subscription_types WHERE is_active = TRUE")
+        c.execute("SELECT key, name, description FROM broadcast_subscription_types WHERE is_active = TRUE")
         rows = c.fetchall()
         conn.close()
         

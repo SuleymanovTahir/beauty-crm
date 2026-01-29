@@ -1,24 +1,24 @@
 {
   "categories": {
-    "brows": "Brows",
+    "brows": "Augenbrauen",
     "combo": "Combo",
-    "cosmetology": "Cosmetology",
-    "hair_care": "Hair Care",
-    "hair_color": "Hair Color",
-    "hair_cut": "Hair Cut",
-    "hair_styling": "Hair Styling",
-    "lashes": "Lashes",
-    "manicure": "Manicure",
+    "cosmetology": "Kosmetologie",
+    "hair_care": "Haarpflege",
+    "hair_color": "Haarfarbe",
+    "hair_cut": "Haarschnitt",
+    "hair_styling": "Haarstyling",
+    "lashes": "Wimpern",
+    "manicure": "Maniküre",
     "massage": "Massage",
-    "pedicure": "Pedicure",
-    "permanent_makeup": "Permanent Makeup",
+    "pedicure": "Pediküre",
+    "permanent_makeup": "Permanent Make-up",
     "spa": "SPA",
-    "waxing": "Waxing"
+    "waxing": "waxing"
   },
   "haircutsStyling": "",
   "items": {
     "bangs_cut": {
-      "category": "hair_cut",
+      "category": "haarschnitt",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -38,7 +38,7 @@
       "price": 100
     },
     "blowdry_long": {
-      "category": "Haarstyling",
+      "category": "haarstyling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -48,7 +48,7 @@
       "price": 280
     },
     "blowdry_medium": {
-      "category": "Haarstyling",
+      "category": "haarstyling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -58,7 +58,7 @@
       "price": 250
     },
     "blowdry_short": {
-      "category": "Haarstyling",
+      "category": "haarstyling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -68,7 +68,7 @@
       "price": 200
     },
     "brow_coloring": {
-      "category": "brows",
+      "category": "augenbrauen",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -78,7 +78,7 @@
       "price": 40
     },
     "brow_correction": {
-      "category": "brows",
+      "category": "augenbrauen",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -88,7 +88,7 @@
       "price": 40
     },
     "brow_lami": {
-      "category": "brows",
+      "category": "augenbrauen",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -98,7 +98,7 @@
       "price": 200
     },
     "change_classic_pedicure": {
-      "category": "pedicure",
+      "category": "pediküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -108,7 +108,7 @@
       "price": 50
     },
     "change_gel_pedicure": {
-      "category": "pedicure",
+      "category": "pediküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -138,7 +138,7 @@
       "price": 30
     },
     "combo_lami": {
-      "category": "combo",
+      "category": "kombination",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -148,7 +148,7 @@
       "price": 300
     },
     "combo_mani_pedi_gel": {
-      "category": "combo",
+      "category": "kombination",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -158,7 +158,7 @@
       "price": 350
     },
     "complex_color": {
-      "category": "hair_color",
+      "category": "haarfarbe",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -168,7 +168,7 @@
       "price": 1250
     },
     "deep_facial_cleaning": {
-      "category": "cosmetology",
+      "category": "kosmetologie",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -178,7 +178,7 @@
       "price": 400
     },
     "evening_hairstyle": {
-      "category": "Haarstyling",
+      "category": "haarstyling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -188,7 +188,7 @@
       "price": 625
     },
     "express_hair_form": {
-      "category": "hair_cut",
+      "category": "haarschnitt",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -198,7 +198,7 @@
       "price": 150
     },
     "eyeliner": {
-      "category": "permanent_makeup",
+      "category": "permanent_Makeup",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -208,7 +208,7 @@
       "price": 800
     },
     "face_lift_massage": {
-      "category": "cosmetology",
+      "category": "kosmetologie",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -218,7 +218,7 @@
       "price": 250
     },
     "french_polish": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -278,7 +278,7 @@
       "price": 150
     },
     "gel_polish_only": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -288,7 +288,7 @@
       "price": 100
     },
     "hair_cut_full": {
-      "category": "hair_cut",
+      "category": "haarschnitt",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -298,7 +298,7 @@
       "price": 350
     },
     "hair_cut_wash": {
-      "category": "hair_cut",
+      "category": "haarschnitt",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -308,7 +308,7 @@
       "price": 200
     },
     "hair_trim": {
-      "category": "hair_cut",
+      "category": "haarschnitt",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -318,7 +318,7 @@
       "price": 150
     },
     "hair_wash": {
-      "category": "hair_care",
+      "category": "haarpflege",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -348,7 +348,7 @@
       "price": 80
     },
     "japanese_manicure": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "90",
@@ -358,7 +358,7 @@
       "price": 150
     },
     "kids_cut": {
-      "category": "hair_cut",
+      "category": "haarschnitt",
       "currency": "AED",
       "description": "",
       "duration": "40",
@@ -368,7 +368,7 @@
       "price": 100
     },
     "kim_style_effect": {
-      "category": "lashes",
+      "category": "wimpern",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -378,7 +378,7 @@
       "price": 30
     },
     "lash_lami": {
-      "category": "lashes",
+      "category": "wimpern",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -388,7 +388,7 @@
       "price": 200
     },
     "lashes_2d": {
-      "category": "lashes",
+      "category": "wimpern",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -398,7 +398,7 @@
       "price": 250
     },
     "lashes_3d": {
-      "category": "lashes",
+      "category": "wimpern",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -408,7 +408,7 @@
       "price": 300
     },
     "lashes_classic": {
-      "category": "lashes",
+      "category": "wimpern",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -418,7 +418,7 @@
       "price": 200
     },
     "lashes_mega": {
-      "category": "lashes",
+      "category": "wimpern",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -428,7 +428,7 @@
       "price": 350
     },
     "lashliner": {
-      "category": "permanent_makeup",
+      "category": "permanent_Makeup",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -438,7 +438,7 @@
       "price": 800
     },
     "manicure_combined": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -448,7 +448,7 @@
       "price": 110
     },
     "manicure_gel_polish": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -458,7 +458,7 @@
       "price": 160
     },
     "manicure_pil_classic": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -518,7 +518,7 @@
       "price": 370
     },
     "medical_facial": {
-      "category": "cosmetology",
+      "category": "kosmetologie",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -538,7 +538,7 @@
       "price": 250
     },
     "nail_correction": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -548,7 +548,7 @@
       "price": 400
     },
     "nail_extensions": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -558,7 +558,7 @@
       "price": 400
     },
     "nail_shaping": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -568,7 +568,7 @@
       "price": 45
     },
     "one_tone_long": {
-      "category": "hair_color",
+      "category": "haarfarbe",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -578,7 +578,7 @@
       "price": 675
     },
     "one_tone_medium": {
-      "category": "hair_color",
+      "category": "haarfarbe",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -588,7 +588,7 @@
       "price": 400
     },
     "one_tone_short": {
-      "category": "hair_color",
+      "category": "haarfarbe",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -598,7 +598,7 @@
       "price": 350
     },
     "overlay_biogel": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -608,7 +608,7 @@
       "price": 50
     },
     "pedicure_gel": {
-      "category": "pedicure",
+      "category": "pediküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -618,7 +618,7 @@
       "price": 190
     },
     "pedicure_smart": {
-      "category": "pedicure",
+      "category": "pediküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -628,7 +628,7 @@
       "price": 130
     },
     "pedicure_smart_polish": {
-      "category": "pedicure",
+      "category": "pediküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -638,7 +638,7 @@
       "price": 150
     },
     "peeling": {
-      "category": "cosmetology",
+      "category": "kosmetologie",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -648,7 +648,7 @@
       "price": 350
     },
     "permanent_brows": {
-      "category": "permanent_makeup",
+      "category": "permanent_Makeup",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -658,7 +658,7 @@
       "price": 800
     },
     "permanent_correction": {
-      "category": "permanent_makeup",
+      "category": "permanent_Makeup",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -668,7 +668,7 @@
       "price": 800
     },
     "permanent_lips": {
-      "category": "permanent_makeup",
+      "category": "permanent_Makeup",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -678,7 +678,7 @@
       "price": 800
     },
     "polish_classic": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -688,7 +688,7 @@
       "price": 50
     },
     "remove_classic": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -698,7 +698,7 @@
       "price": 20
     },
     "remove_extensions": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -708,7 +708,7 @@
       "price": 70
     },
     "remove_gel": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -718,7 +718,7 @@
       "price": 30
     },
     "remove_lashes": {
-      "category": "lashes",
+      "category": "wimpern",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -728,7 +728,7 @@
       "price": 50
     },
     "repair_extension": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -738,7 +738,7 @@
       "price": 40
     },
     "repair_gel": {
-      "category": "manicure",
+      "category": "maniküre",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -748,7 +748,7 @@
       "price": 20
     },
     "roots_color": {
-      "category": "hair_color",
+      "category": "haarfarbe",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -758,7 +758,7 @@
       "price": 250
     },
     "styling_long": {
-      "category": "Haarstyling",
+      "category": "haarstyling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -768,7 +768,7 @@
       "price": 300
     },
     "styling_medium": {
-      "category": "Haarstyling",
+      "category": "haarstyling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -778,7 +778,7 @@
       "price": 260
     },
     "styling_short": {
-      "category": "Haarstyling",
+      "category": "haarstyling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -788,7 +788,7 @@
       "price": 230
     },
     "toning": {
-      "category": "hair_color",
+      "category": "haarfarbe",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -798,7 +798,7 @@
       "price": 300
     },
     "total_blonde": {
-      "category": "hair_color",
+      "category": "haarfarbe",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -808,7 +808,7 @@
       "price": 1250
     },
     "underarms": {
-      "category": "waxing",
+      "category": "wimpern",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -818,7 +818,7 @@
       "price": 50
     },
     "upper_lip_wax": {
-      "category": "waxing",
+      "category": "wimpern",
       "currency": "AED",
       "description": "",
       "duration": "60",

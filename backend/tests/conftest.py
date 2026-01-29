@@ -119,18 +119,17 @@ def sample_service(db_connection):
 
     cursor = db_connection.cursor()
     cursor.execute("""
-        INSERT INTO services (name, name_en, category, price, duration, is_active, created_at)
+        INSERT INTO services (service_key, name, category, price, duration, is_active, created_at)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         RETURNING id
-    """, ("Стрижка", "Haircut", "Hair", 150.0, 60, 1, now))
+    """, ("haircut", "Haircut", "Hair", 150.0, 60, 1, now))
 
     service_id = cursor.fetchone()[0]
     db_connection.commit()
 
     return {
         "id": service_id,
-        "name": "Стрижка",
-        "name_en": "Haircut",
+        "name": "Haircut",
         "category": "Hair",
         "price": 150.0,
         "duration": 60
@@ -143,10 +142,10 @@ def sample_position(db_connection):
 
     cursor = db_connection.cursor()
     cursor.execute("""
-        INSERT INTO positions (name, name_en, description, is_active, sort_order, created_at, updated_at)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO positions (name, description, is_active, sort_order, created_at, updated_at)
+        VALUES (%s, %s, %s, %s, %s, %s)
         RETURNING id
-    """, ("Hair Stylist", "Hair Stylist", "Hair specialist", 1, 1, now, now))
+    """, ("Hair Stylist", "Hair specialist", 1, 1, now, now))
 
     position_id = cursor.fetchone()[0]
     db_connection.commit()
@@ -154,7 +153,6 @@ def sample_position(db_connection):
     return {
         "id": position_id,
         "name": "Hair Stylist",
-        "name_en": "Hair Stylist",
         "description": "Hair specialist"
     }
 
