@@ -39,20 +39,28 @@ def check_database():
         
         # 2. Проверяем SALON_SETTINGS и BOT_CONFIG
         print("🏪 SALON_SETTINGS & BOT_CONFIG:")
-        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'salon_settings\'")
+        c.execute("SELECT column_name FROM information_schema.columns WHERE table_name='salon_settings'")
         cols = [row[0] for row in c.fetchall()]
         print(f"   Колонок в salon_settings: {len(cols)}")
-        
+        has_bot_config = 'bot_config' in cols
+
         c.execute("SELECT COUNT(*) FROM salon_settings")
         count = c.fetchone()[0]
         print(f"   Записей: {count}")
-        
+
         if count > 0:
-            c.execute("SELECT name, bot_config FROM salon_settings LIMIT 1")
-            row = c.fetchone()
-            name, bot_config = row
+            if has_bot_config:
+                c.execute("SELECT name, bot_config FROM salon_settings LIMIT 1")
+                row = c.fetchone()
+                name, bot_config = row
+            else:
+                c.execute("SELECT name FROM salon_settings LIMIT 1")
+                row = c.fetchone()
+                name = row[0]
+                bot_config = None
+                print("   ⚠️  bot_config колонка отсутствует")
             print(f"   ✅ Салон: {name}")
-            
+
             if bot_config:
                 if isinstance(bot_config, str):
                     bot_data = json.loads(bot_config)

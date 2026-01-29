@@ -192,7 +192,6 @@ if HAS_DOTENV and not is_running_migrations:
 
 print("✅ Config загружен успешно!")
 print(f"   Database: {os.getenv('POSTGRES_DB', 'beauty_crm')} ({DATABASE_TYPE})")
-print(f"   ℹ️  Для настроек салона используйте: from database import get_salon_settings")
 # Перед строкой if __name__ == "__main__":
 
 # ===== СИСТЕМА РОЛЕЙ И ПРАВ =====

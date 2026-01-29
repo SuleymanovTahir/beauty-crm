@@ -19,7 +19,7 @@
       "form": {
         "challenge_type": "Type d'activité",
         "description": "Description de la tâche",
-        "description_placeholder": "Ex : Visiter le salon {{count}} fois ce mois-ci",
+        "description_placeholder": "Ex\u00a0: Visiter le salon {{count}} fois ce mois-ci",
         "end_date": "Date de fin",
         "reward_placeholder": "{{points}}",
         "reward_points": "points bonus",
@@ -27,13 +27,13 @@
         "target_placeholder": "{{count}}",
         "target_value": "Montant cible",
         "title": "Nom de l'objectif",
-        "title_placeholder": "Ex : Relooking d'été"
+        "title_placeholder": "Ex\u00a0: Relooking d'été"
       },
       "title": "Créer un objectif",
       "title_edit": "Modifier un objectif"
     },
     "delete": {
-      "confirm": "Êtes-vous sûr de vouloir supprimer cette activité ? Toute progression des participants sera perdue."
+      "confirm": "Êtes-vous sûr de vouloir supprimer cette activité\u00a0? Toute progression des participants sera perdue."
     }
   },
   "stats": {
@@ -55,9 +55,9 @@
     "failed_create": "Erreur lors de la création de l'activité",
     "failed_delete": "Erreur lors de la suppression",
     "failed_load": "Échec du chargement des données",
+    "progress_checked_one": "Progrès mis à jour pour le participant {{count}}",
     "progress_checked_few": "Progrès mis à jour pour {{count}} membres",
     "progress_checked_many": "Progrès mis à jour pour les membres {{count}}",
-    "progress_checked_one": "Progrès mis à jour pour le participant {{count}}",
     "progress_checked_other": "Progrès mis à jour pour les membres {{count}}"
   },
   "types": {

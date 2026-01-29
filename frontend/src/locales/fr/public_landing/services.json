@@ -7,11 +7,11 @@
     "hair_color": "Couleur des cheveux",
     "hair_cut": "Coupe de cheveux",
     "hair_styling": "Coiffure",
-    "lashes": "Ресницы",
+    "lashes": "Cils",
     "manicure": "Manucure",
     "massage": "Massage",
     "pedicure": "Pédicure",
-    "permanent_makeup": "Перманентный макияж",
+    "permanent_makeup": "Maquillage permanent",
     "spa": "SPA",
     "waxing": "fartage"
   },
@@ -144,7 +144,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Combo : Stratification des cils + sourcils",
+      "name": "Combo\u00a0: Stratification des cils + sourcils",
       "price": 300
     },
     "combo_mani_pedi_gel": {
@@ -154,7 +154,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Combo : Manucure + Pédicure (vernis en gel)",
+      "name": "Combo\u00a0: Manucure + Pédicure (vernis en gel)",
       "price": 350
     },
     "complex_color": {

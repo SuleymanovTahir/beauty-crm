@@ -4,65 +4,65 @@
   "cancellation_policy": "Politique d'annulation",
   "cancellation_policy_text": "Le client peut annuler le rendez-vous jusqu'à 24 heures avant l'heure prévue. En cas d'annulation moins de 24 heures à l'avance, une pénalité de 50 % du coût de la prestation pourra être facturée.",
   "client_obligations": "Avant l'intervention, le client doit informer le spécialiste des contre-indications médicales, allergies ou problèmes de santé.",
-  "confidentiality": "Конфиденциальность",
-  "contact_info": "Вы можете связаться с нами по любым вопросам, касающимся настоящих Условий.",
+  "confidentiality": "Confidentialité",
+  "contact_info": "Vous pouvez nous contacter pour toute question concernant les présentes Conditions.",
   "contacts": "Contacts",
-  "dissatisfaction_policy": "Если результат не устраивает, клиент должен обратиться в салон в течение 7 дней для обсуждения возможных решений.",
-  "general_provisions": "Общие правила",
-  "general_provisions_text": "Настоящие Условия использования регулируют использование вами Услуг M Le Diamant. Используя наши услуги, вы соглашаетесь с этими условиями.",
+  "dissatisfaction_policy": "Si le résultat n'est pas satisfaisant, le client doit contacter le salon dans les 7 jours pour discuter des solutions possibles.",
+  "general_provisions": "Règles générales",
+  "general_provisions_text": "Les présentes Conditions d'utilisation régissent votre utilisation des Services M Le Diamant. En utilisant nos services, vous acceptez ces conditions.",
   "lastUpdated": "Date de dernière mise à jour : {{date}}",
-  "last_update_date": "Дата последнего обновления",
-  "late_arrival": "В случае опоздания клиента более чем на 15 минут салон имеет право отменить запись или сократить время процедуры.",
-  "medical_contraindications": "Медицинские противопоказания",
-  "payment_details": "Оплата производится наличными или картой после оказания услуги. Стоимость услуг указана в прайс-листе и может быть изменена без предварительного уведомления.",
-  "payment_for_services": "Оплата услуг",
-  "privacy_commitment": "Мы уважаем вашу конфиденциальность и обязуемся защищать вашу личную информацию в соответствии с нашей политикой конфиденциальности.",
-  "quality_guarantee": "Мы гарантируем качество используемых материалов и профессионализм наших мастеров. Результаты процедуры могут различаться в зависимости от индивидуальных особенностей клиента.",
-  "salon_liability": "Если клиент скрывает информацию о медицинских противопоказаниях, салон не несет ответственности за последствия процедур.",
+  "last_update_date": "Date de dernière mise à jour",
+  "late_arrival": "Si le client est en retard de plus de 15 minutes, le salon a le droit d'annuler le rendez-vous ou de réduire la durée de l'intervention.",
+  "medical_contraindications": "Contre-indications médicales",
+  "payment_details": "Le paiement s'effectue en espèces ou à la date carte après la prestation de la prestation. Le coût des prestations est indiqué dans la grille tarifaire et est sujet à changement sans préavis.",
+  "payment_for_services": "Paiement des prestations",
+  "privacy_commitment": "Nous respectons votre vie privée et nous engageons à protéger vos informations personnelles conformément à notre politique de confidentialité.",
+  "quality_guarantee": "Nous garantissons la qualité des matériaux utilisés et le professionnalisme de nos artisans. Les résultats de la procédure peuvent varier en fonction des caractéristiques individuelles du client.",
+  "salon_liability": "Si le client cache des informations sur des contre-indications médicales, le salon n'est pas responsable des conséquences des procédures.",
   "sections": {
     "booking": {
-      "booking_requirements": "Для регистрации на Процедуры вы должны предоставить действительную контактную информацию. Мы оставляем за собой право подтвердить или отклонить ваше бронирование.",
-      "cancellationText": "Клиент может отменить запись не позднее, чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги.",
-      "cancellationTitle": "Отписаться:",
-      "title": "2. Бронирование и отмена"
+      "booking_requirements": "Pour vous inscrire aux procédures, vous devez fournir des coordonnées valides. Nous nous réservons le droit de confirmer ou de refuser votre réservation.",
+      "cancellationText": "Le client peut annuler le rendez-vous jusqu'à 24 heures avant l'heure prévue. En cas d'annulation moins de 24 heures à l'avance, une pénalité de 50% du coût de la prestation pourra être facturée.",
+      "cancellationTitle": "Désinscription :",
+      "title": "2. Réservations et annulations"
     },
     "changes": {
-      "content": "Мы оставляем за собой право изменить настоящие Условия использования в любое время. Изменения вступают в силу с момента их размещения на сайте.",
-      "title": "7. Изменение Условий использования"
+      "content": "Nous nous réservons le droit de modifier ces conditions d'utilisation à tout moment. Les modifications entrent en vigueur dès leur mise en ligne sur le site Internet.",
+      "title": "7. Modifications des conditions d'utilisation"
     },
     "contact": {
       "address": "Adresse",
-      "description": "Вы можете связаться с нами по любым вопросам, касающимся настоящих Условий:",
+      "description": "Vous pouvez nous contacter pour toute question concernant ces conditions :",
       "email": "Adresse e-mail",
       "phone": "Téléphone",
-      "title": "8. Контакты"
+      "title": "8. Contacts"
     },
     "general": {
       "content": "Les présentes conditions d'utilisation régissent votre utilisation des services {{salonName}}. En utilisant nos services, vous acceptez ces conditions.",
-      "title": "1. Общие правила"
+      "title": "1. Règles générales"
     },
     "medical": {
-      "paragraph1": "Перед процедурой клиент должен сообщить специалисту о медицинских противопоказаниях, аллергии или состоянии здоровья.",
-      "paragraph2": "Если клиент скрывает информацию о медицинских противопоказаниях, салон не несет ответственности за последствия процедур.",
-      "title": "4. Медицинские противопоказания."
+      "paragraph1": "Avant l'intervention, le client doit informer le spécialiste des contre-indications médicales, des allergies ou des problèmes de santé.",
+      "paragraph2": "Si le client cache des informations sur des contre-indications médicales, le salon n'est pas responsable des conséquences des interventions.",
+      "title": "4. Contre-indications médicales."
     },
     "payment": {
-      "paragraph1": "Оплата производится наличными или картой после оказания услуги. Стоимость услуг указана в прайс-листе и может быть изменена без предварительного уведомления.",
-      "paragraph2": "В случае опоздания клиента более чем на 15 минут салон имеет право отменить запись или сократить время процедуры.",
-      "title": "3. Оплата услуг"
+      "paragraph1": "Le paiement s'effectue en espèces ou à la date carte après prestation de la prestation. Le coût des prestations est indiqué dans la grille tarifaire et peut être modifié sans préavis.",
+      "paragraph2": "Si le client est en retard de plus de 15 minutes, le salon a le droit d'annuler le rendez-vous ou de raccourcir la durée de l'intervention.",
+      "title": "3. Paiement des services"
     },
     "privacy": {
-      "content": "Мы уважаем вашу конфиденциальность и обязуемся защищать вашу личную информацию в соответствии с нашей <link>Политикой конфиденциальности</link>.",
-      "title": "6. Конфиденциальность"
+      "content": "Nous respectons votre vie privée et nous nous engageons à protéger vos informations personnelles conformément à notre <link>Politique de confidentialité</link>.",
+      "title": "6. Confidentialité"
     },
     "warranty": {
-      "paragraph1": "Мы гарантируем качество используемых материалов и профессионализм наших мастеров. Результаты процедуры могут различаться в зависимости от индивидуальных особенностей клиента.",
-      "paragraph2": "Если результат не устраивает, клиент должен обратиться в салон в течение 7 дней для обсуждения возможных решений.",
-      "title": "5. Гарантии и ответственность"
+      "paragraph1": "Nous garantissons la qualité des matériaux utilisés et le professionnalisme de nos artisans. Les résultats de la procédure peuvent varier en fonction des caractéristiques individuelles du client.",
+      "paragraph2": "Si le résultat n'est pas satisfaisant, le client doit contacter le salon dans les 7 jours pour discuter des solutions possibles.",
+      "title": "5. Garanties et responsabilité"
     }
   },
-  "terms_changes": "Изменения в Условиях использования",
-  "terms_changes_text": "Мы оставляем за собой право изменить настоящие Условия использования в любое время. Изменения вступают в силу с момента их размещения на сайте.",
+  "terms_changes": "Modifications des conditions d'utilisation",
+  "terms_changes_text": "Nous nous réservons le droit de modifier ces conditions d'utilisation à tout moment. Les modifications prennent effet à partir du moment où elles sont publiées sur le site.",
   "terms_of_use": "Conditions d'utilisation",
   "title": "Conditions d'utilisation",
   "warranties_and_liability": "Garanties et responsabilité"

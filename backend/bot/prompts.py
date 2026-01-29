@@ -570,15 +570,32 @@ Google Maps: {self.salon.get('google_maps', '')}
         # Получаем всех сотрудников (провайдеров услуг)
         conn = get_db_connection()
         c = conn.cursor()
-        
+
+        # Check if secondary_role column exists
         c.execute("""
-            SELECT id, full_name, position, 
-                   experience, years_of_experience
-            FROM users 
-            WHERE is_service_provider = TRUE AND is_active = TRUE
-            AND (role = 'employee' OR secondary_role = 'employee')
-            ORDER BY full_name ASC
+            SELECT COUNT(*) FROM information_schema.columns
+            WHERE table_name = 'users' AND column_name = 'secondary_role'
         """)
+        has_secondary_role = c.fetchone()[0] > 0
+
+        if has_secondary_role:
+            c.execute("""
+                SELECT id, full_name, position,
+                       experience, years_of_experience
+                FROM users
+                WHERE is_service_provider = TRUE AND is_active = TRUE
+                AND (role = 'employee' OR secondary_role = 'employee')
+                ORDER BY full_name ASC
+            """)
+        else:
+            c.execute("""
+                SELECT id, full_name, position,
+                       experience, years_of_experience
+                FROM users
+                WHERE is_service_provider = TRUE AND is_active = TRUE
+                AND role = 'employee'
+                ORDER BY full_name ASC
+            """)
         
         employees = c.fetchall()
 
