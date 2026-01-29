@@ -159,7 +159,17 @@ def grant_permissions_to_user(db_name, db_host, db_port, superuser, superuser_pa
 
 def recreate_database():
     """Создать базу данных beauty_crm если её не существует"""
-    
+    import fcntl
+
+    # File lock to prevent multiple workers from running simultaneously
+    lock_file = Path(__file__).parent / '.recreate_db.lock'
+    try:
+        lock_fd = open(lock_file, 'w')
+        fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except (IOError, OSError):
+        print("⏳ Другой процесс уже выполняет recreate_database, пропускаем...")
+        return
+
     # 1. Определяем окружение и загружаем правильный .env файл
     env = os.getenv('ENVIRONMENT', 'development')
     env_file = '.env.production' if env == 'production' else '.env.local'
@@ -262,7 +272,17 @@ def recreate_database():
 
 def drop_database():
     """Удалить базу данных beauty_crm (использовать с осторожностью!)"""
-    
+    import fcntl
+
+    # File lock to prevent multiple workers from running simultaneously
+    lock_file = Path(__file__).parent / '.drop_db.lock'
+    try:
+        lock_fd = open(lock_file, 'w')
+        fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except (IOError, OSError):
+        print("⏳ Другой процесс уже выполняет drop_database, пропускаем...")
+        return
+
     # 1. Определяем окружение и загружаем правильный .env файл
     env = os.getenv('ENVIRONMENT', 'development')
     env_file = '.env.production' if env == 'production' else '.env.local'

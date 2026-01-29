@@ -17,7 +17,16 @@ def init_database():
     """Создать всю схему системы с нуля или синхронизировать существующие таблицы."""
     conn = get_db_connection()
     c = conn.cursor()
-    
+
+    # Advisory lock to prevent multiple workers from running migrations simultaneously
+    # Lock ID 12345 is arbitrary but must be unique for this operation
+    c.execute("SELECT pg_try_advisory_lock(12345)")
+    got_lock = c.fetchone()[0]
+    if not got_lock:
+        log_info("⏳ Другой процесс уже выполняет миграции, пропускаем...", "db")
+        conn.close()
+        return
+
     def add_column_if_not_exists(table, column, definition):
         """Add column using separate autocommit connection to avoid transaction issues"""
         migration_conn = None
@@ -674,6 +683,7 @@ def init_database():
             id SERIAL PRIMARY KEY,
             question TEXT NOT NULL,
             answer TEXT NOT NULL,
+            category TEXT DEFAULT 'general',
             display_order INTEGER DEFAULT 0,
             is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -1718,6 +1728,11 @@ def init_database():
         log_error(f"❌ Failed to initialize schema: {e}", "db")
         raise
     finally:
+        # Release advisory lock
+        try:
+            c.execute("SELECT pg_advisory_unlock(12345)")
+        except:
+            pass
         conn.close()
 
 if __name__ == "__main__":
