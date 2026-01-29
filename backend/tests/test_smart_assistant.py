@@ -6,6 +6,7 @@ import asyncio
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from services.smart_assistant import SmartAssistant, get_smart_greeting, get_smart_suggestion
+from tests.test_date_utils import get_test_datetime
 
 async def test_smart_assistant():
     """Тест SmartAssistant"""
@@ -104,7 +105,7 @@ async def test_smart_assistant():
         test_booking = {
             'service': 'Маникюр',
             'master': 'Jennifer',
-            'datetime': '2026-11-20 15:00',
+            'datetime': get_test_datetime(days_offset=2, hour=15, minute=0),
             'phone': '+1234567890',
             'name': 'Анна'
         }

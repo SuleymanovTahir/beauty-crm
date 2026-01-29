@@ -4,12 +4,16 @@
   "email_not_verified_redirect": "El correo electrónico no ha sido verificado. Redirigiendo a la página de verificación...",
   "enter_login": "Enter username",
   "fill_both_fields": "Please fill in both fields",
+  "forgot_password": "¿Olvidaste tu contraseña?",
+  "invalid_credentials": "Inicio de sesión o contraseña no válidos",
+  "logging_in": "Reserva...",
   "login": "Entrar",
   "login_error": "Login error",
   "login_title": "Login to your account",
   "network_error": "Error de red. Verifique su conexión a Internet o vuelva a intentarlo más tarde.",
   "password": "Password",
   "registration_pending_toast": "Su registro está pendiente de aprobación del administrador. Recibirás un correo electrónico cuando tu cuenta esté activada.",
+  "submit": "Acceso",
   "username": "Nombre de usuario",
   "welcome": "Welcome"
 }

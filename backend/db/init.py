@@ -20,8 +20,18 @@ def init_database():
     
     def add_column_if_not_exists(table, column, definition):
         try:
+            # Check if table exists first
+            c.execute("""
+                SELECT EXISTS (
+                    SELECT FROM information_schema.tables
+                    WHERE table_name = %s
+                )
+            """, (table,))
+            if not c.fetchone()[0]:
+                return  # Table doesn't exist yet, skip
             c.execute(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {definition}")
         except Exception as e:
+            conn.rollback()  # Reset transaction state
             log_error(f"Ошибка при добавлении колонки {column} в {table}: {e}", "db")
 
     def ensure_fk_cascade(table, column, ref_table, ref_column):
@@ -48,6 +58,7 @@ def init_database():
                 FOREIGN KEY ({column}) REFERENCES {ref_table}({ref_column}) ON DELETE CASCADE
             """)
         except Exception as e:
+            conn.rollback()  # Reset transaction state
             # log_error(f"Error ensuring cascade for {table}.{column}: {e}", "db")
             pass
 
@@ -1600,6 +1611,8 @@ def init_database():
         add_column_if_not_exists('public_reviews', 'text', 'TEXT')
         add_column_if_not_exists('public_reviews', 'employee_name', 'TEXT')
         add_column_if_not_exists('public_reviews', 'employee_position', 'TEXT')
+        add_column_if_not_exists('public_reviews', 'avatar_url', 'TEXT')
+        add_column_if_not_exists('public_faq', 'category', "TEXT DEFAULT 'general'")
         add_column_if_not_exists('users', 'full_name', 'TEXT')
         add_column_if_not_exists('users', 'position', 'TEXT')
         add_column_if_not_exists('users', 'bio', 'TEXT')
@@ -1617,6 +1630,36 @@ def init_database():
         # Migrations for marketplace_providers
         add_column_if_not_exists('marketplace_providers', 'webhook_url', 'TEXT')
         add_column_if_not_exists('marketplace_providers', 'sync_enabled', 'BOOLEAN DEFAULT FALSE')
+
+        # Critical migrations for users table
+        add_column_if_not_exists('users', 'secondary_role', 'TEXT')
+
+        # Critical migrations for salon_settings
+        add_column_if_not_exists('salon_settings', 'bot_config', "JSONB DEFAULT '{}'")
+        add_column_if_not_exists('salon_settings', 'messenger_config', "JSONB DEFAULT '[]'")
+
+        # Ensure workflow_stages table exists (critical for tasks)
+        c.execute('''CREATE TABLE IF NOT EXISTS workflow_stages (
+            id SERIAL PRIMARY KEY,
+            entity_type TEXT NOT NULL DEFAULT 'task',
+            name TEXT NOT NULL,
+            color TEXT DEFAULT '#6366f1',
+            sort_order INTEGER DEFAULT 0,
+            is_default BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Ensure unified_communication_log table exists (critical for reminders)
+        c.execute('''CREATE TABLE IF NOT EXISTS unified_communication_log (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT,
+            channel TEXT,
+            message_type TEXT,
+            message_preview TEXT,
+            sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            status TEXT DEFAULT 'sent',
+            metadata JSONB DEFAULT '{}'
+        )''')
 
         # Default broadcast subscription types
         default_sub_types = [

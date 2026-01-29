@@ -93,7 +93,7 @@ def check_services_without_masters():
         c = conn.cursor()
         
         c.execute("""
-            SELECT s.id, s.name_ru, s.name, s.category
+            SELECT s.id, s.name, s.category
             FROM services s
             WHERE s.is_active = TRUE
             AND s.id NOT IN (
@@ -106,7 +106,7 @@ def check_services_without_masters():
                 AND (us.is_online_booking_enabled = TRUE OR us.is_online_booking_enabled IS NULL)
             )
             AND s.service_key NOT IN ('underarms', 'hair_wash')
-            ORDER BY s.category, s.name_ru
+            ORDER BY s.category, s.name
         """)
         
         services_without_masters = c.fetchall()

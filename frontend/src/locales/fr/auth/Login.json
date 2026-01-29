@@ -4,12 +4,16 @@
   "email_not_verified_redirect": "L'adresse e-mail n'a pas été vérifiée. Redirection vers la page de vérification...",
   "enter_login": "Enter username",
   "fill_both_fields": "Please fill in both fields",
+  "forgot_password": "Vous avez oublié votre mot de passe ?",
+  "invalid_credentials": "Identifiant ou mot de passe invalide",
+  "logging_in": "Réservation...",
   "login": "Connexion",
   "login_error": "Login error",
   "login_title": "Login to your account",
   "network_error": "Erreur réseau. Veuillez vérifier votre connexion Internet ou réessayer plus tard.",
   "password": "Password",
   "registration_pending_toast": "Votre inscription est en attente de l'approbation de l'administrateur. Vous recevrez un e-mail lorsque votre compte sera activé.",
+  "submit": "Se connecter",
   "username": "Nom d'utilisateur",
   "welcome": "Welcome"
 }

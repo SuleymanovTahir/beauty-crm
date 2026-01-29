@@ -74,29 +74,23 @@ def find_service_by_keywords(
     best_score = 0
     
     for service_row in db_services:
-        service_name_en = str(service_row[4] or "").lower() if len(service_row) > 4 else ""
-        service_name_ru = str(service_row[3] or "").lower() if len(service_row) > 3 else ""
-        service_name_ar = str(service_row[5] or "").lower() if len(service_row) > 5 else ""
-        service_category = str(service_row[6] or "").lower() if len(service_row) > 6 else ""
+        # Schema: 0:id, 1:key, 2:name, 3:category, 4:price, 5:min, 6:max, 7:curr, 8:dur
         service_name_base = str(service_row[2] or "").lower() if len(service_row) > 2 else ""
+        service_category = str(service_row[3] or "").lower() if len(service_row) > 3 else ""
         
-        # Извлекаем ключевые слова из названия услуги
-        keywords_en = extract_service_keywords(service_name_en or service_name_base)
-        keywords_ru = extract_service_keywords(service_name_ru)
-        all_keywords = keywords_en + keywords_ru
+        # Извлекаем ключевые слова из базового названия
+        keywords = extract_service_keywords(service_name_base)
         
         # Подсчитываем совпадения
         score = 0
         
-        # 1. Точное совпадение названия (высокий приоритет)
-        if (service_name_ru and service_name_ru in user_msg_lower) or \
-           (service_name_en and service_name_en in user_msg_lower) or \
-           (service_name_base and service_name_base in user_msg_lower):
+        # 1. Точное совпадение названия
+        if service_name_base and service_name_base in user_msg_lower:
             score += 100
         
         # 2. Совпадение ключевых слов
         matched_keywords = []
-        for keyword in all_keywords:
+        for keyword in keywords:
             if keyword in user_msg_lower:
                 score += 10
                 matched_keywords.append(keyword)
@@ -106,7 +100,7 @@ def find_service_by_keywords(
             score += 5
         
         # 4. Бонус если все ключевые слова совпали
-        if matched_keywords and len(matched_keywords) == len(all_keywords):
+        if matched_keywords and len(matched_keywords) == len(keywords):
             score += 20
         
         if score > best_score:
@@ -418,7 +412,7 @@ See you soon! 😊
 
 Пример ({client_language}):
 "Отлично! Записала вас на [название] к мастеру [имя] на [дата] в [время]. 💅
-Адрес: {self.salon.get('address_ru', self.salon.get('address', ''))}
+Адрес: {self.salon.get('address', '')}
 Режим работы: {self.salon.get('hours_weekdays', '')}
 До встречи! 😊
 
@@ -451,7 +445,7 @@ See you soon! 😊
         prep_val = ("Required" if prepayment_required else "Not required") if language != 'ru' else ("Требуется" if prepayment_required else "Не требуется")
         wifi_val = ("Yes, free" if wifi_available else "No") if language != 'ru' else ("Да, бесплатный" if wifi_available else "Нет")
 
-        address = self.salon.get('address_ru' if language == 'ru' else 'address', self.salon.get('address', ''))
+        address = self.salon.get('address', '')
         hours = self.salon.get('hours_weekdays', self.salon.get('hours', ''))
 
         return f"""{self.prompt_headers.get('SALON_INFO', PROMPT_HEADERS['SALON_INFO'])}
@@ -890,9 +884,8 @@ Google Maps: {self.salon.get('google_maps', '')}
         # ✅ #NEW - ДИНАМИЧЕСКОЕ ОПРЕДЕЛЕНИЕ УСЛУГИ ИЗ БД
         # 1. Получаем все активные услуги
         db_services = fetch_services_db(active_only=True)
-        # db_services row structure: id, code, name, name_ru, description... 
-        # (check fetch_services_db implementation for indices)
-        # Assuming: 0:id, 1:code, 2:name_en, 3:name_ru, ... 9:category
+        # db_services row structure: 0:id, 1:service_key, 2:name, 3:category, 4:price, 5:min_price, 6:max_price, 7:currency, 8:duration
+        # (Translations are handled via locales, not stored in DB columns)
         
         detected_service = None
         
@@ -931,7 +924,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                 for s in db_services:
                     if isinstance(s, dict):
                          # If s is a dict, use keys
-                         for key in ['name', 'name_ru', 'name_en', 'name_ar', 'category']:
+                         for key in ['name', 'category']:
                              val = s.get(key)
                              if val and isinstance(val, str):
                                  search_candidates.append((val.lower(), s))
@@ -1089,24 +1082,21 @@ Google Maps: {self.salon.get('google_maps', '')}
                 service_name_coalesce = build_coalesce_query('name', client_language)
                 
                 if context_category:
-                    # Поиск по всем языкам, но SELECT на языке клиента
-                    c.execute(f"""
-                        SELECT {service_name_coalesce} as name, category
-                        FROM services 
-                        WHERE is_active = TRUE 
-                        AND (LOWER(category) LIKE %s OR LOWER(name_ru) LIKE %s OR LOWER(name) LIKE %s 
-                             OR LOWER(name_ar) LIKE %s OR LOWER(name_es) LIKE %s OR LOWER(name_de) LIKE %s
-                             OR LOWER(name_fr) LIKE %s OR LOWER(name_pt) LIKE %s OR LOWER(name_hi) LIKE %s 
-                             OR LOWER(name_kk) LIKE %s)
+                    # Поиск по name и category (переводы хранятся в locales)
+                    c.execute("""
+                        SELECT name, category
+                        FROM services
+                        WHERE is_active = TRUE
+                        AND (LOWER(category) LIKE %s OR LOWER(name) LIKE %s)
                         ORDER BY id
                         LIMIT 5
-                    """, (f"%{context_category}%",) * 10)
+                    """, (f"%{context_category}%", f"%{context_category}%"))
                 else:
                     # Если категория не определена, берем услуги из разных категорий
-                    c.execute(f"""
-                        SELECT DISTINCT ON (category) {service_name_coalesce} as name, category
-                        FROM services 
-                        WHERE is_active = TRUE 
+                    c.execute("""
+                        SELECT DISTINCT ON (category) name, category
+                        FROM services
+                        WHERE is_active = TRUE
                         ORDER BY category, id
                         LIMIT 6
                     """)
@@ -1146,20 +1136,14 @@ Google Maps: {self.salon.get('google_maps', '')}
                 logger.info(f"🔍 [PromptBuilder] Detected category from context: '{context_category}'. Providing options.")
                 print(f"🔍 [PromptBuilder] Detected category from context: '{context_category}'. Providing options.")
                 
-                from utils.language_utils import build_coalesce_query
-                service_name_coalesce = build_coalesce_query('name', client_language)
-                
-                c.execute(f"""
-                    SELECT {service_name_coalesce} as name
-                    FROM services 
-                    WHERE is_active = TRUE 
-                    AND (LOWER(category) LIKE %s OR LOWER(name_ru) LIKE %s OR LOWER(name) LIKE %s
-                         OR LOWER(name_ar) LIKE %s OR LOWER(name_es) LIKE %s OR LOWER(name_de) LIKE %s
-                         OR LOWER(name_fr) LIKE %s OR LOWER(name_pt) LIKE %s OR LOWER(name_hi) LIKE %s
-                         OR LOWER(name_kk) LIKE %s)
+                c.execute("""
+                    SELECT name
+                    FROM services
+                    WHERE is_active = TRUE
+                    AND (LOWER(category) LIKE %s OR LOWER(name) LIKE %s)
                     ORDER BY id
                     LIMIT 4
-                """, (f"%{context_category}%",) * 10)
+                """, (f"%{context_category}%", f"%{context_category}%"))
                 
                 category_services = c.fetchall()
                 conn.close()
@@ -1204,19 +1188,15 @@ Google Maps: {self.salon.get('google_maps', '')}
         # Ищем услугу в БД по названию (точному или похожему)
         # service_name мы определили выше или оно пришло аргументом
         logger.debug(f"🔍 [PromptBuilder] Searching for service in DB: '{service_name}'")
-        from utils.language_utils import build_coalesce_query
-        service_name_coalesce = build_coalesce_query('name', client_language)
-        
-        # Поиск по всем языкам, но SELECT на языке клиента
-        c.execute(f"""
-            SELECT id, {service_name_coalesce} as name, price, currency, duration, category 
-            FROM services 
-            WHERE (LOWER(name) LIKE %s OR LOWER(name_ru) LIKE %s OR LOWER(name_ar) LIKE %s
-                   OR LOWER(name_es) LIKE %s OR LOWER(name_de) LIKE %s OR LOWER(name_fr) LIKE %s
-                   OR LOWER(name_pt) LIKE %s OR LOWER(name_hi) LIKE %s OR LOWER(name_kk) LIKE %s)
+
+        # Поиск по name (переводы хранятся в locales)
+        c.execute("""
+            SELECT id, name, price, currency, duration, category
+            FROM services
+            WHERE LOWER(name) LIKE %s
             AND is_active = TRUE
             LIMIT 1
-        """, (f"%{service_name.lower()}%",) * 9)
+        """, (f"%{service_name.lower()}%",))
         service_row = c.fetchone()
 
         if not service_row:
@@ -1257,7 +1237,7 @@ Google Maps: {self.salon.get('google_maps', '')}
             print(f"❌ ERROR: No employees found for service_id={service_id}, service_name='{service_name}'")
             
             # ✅ УЛУЧШЕНИЕ: Ищем альтернативные услуги в той же категории, у которых ЕСТЬ мастера
-            # service_row structure: 0:id, 1:name_ru, 2:name, 3:price, 4:currency, 5:duration, 6:category
+            # service_row structure: 0:id, 1:service_key, 2:name, 3:category, 4:price, 5:min_price, 6:max_price, 7:currency, 8:duration
             service_category = service_row[6] if len(service_row) > 6 else None
             alternative_services = []
             

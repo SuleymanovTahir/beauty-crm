@@ -92,6 +92,15 @@ def run_all_migrations():
         except Exception as e:
             log_error(f"⚠️  Seeding skipped: {e}", "migrations")
 
+        # 4. User Data Seeding (Admin & Employees)
+        print_header("USER DATA SEEDING")
+        try:
+            from scripts.testing.data.seed_test_data import seed_data
+            seed_data()
+            log_info("✅ User data seeded (including admin)", "migrations")
+        except Exception as e:
+            log_error(f"⚠️  User seeding skipped: {e}", "migrations")
+
         print_header("SYNC COMPLETED SUCCESSFULLY")
         return True
 

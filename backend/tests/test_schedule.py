@@ -103,10 +103,12 @@ def test_time_off(data):
     print("   Testing Time Off CRUD...", end=" ")
     user_id = data['user_id']
     
+    from tests.test_date_utils import get_test_datetime
+    
     # Create
     time_off_data = {
-        "start_datetime": "2026-12-01 00:00:00",
-        "end_datetime": "2026-12-05 23:59:59",
+        "start_datetime": get_test_datetime(days_offset=2, hour=0, minute=0),
+        "end_datetime": get_test_datetime(days_offset=6, hour=23, minute=59),
         "type": "vacation",
         "reason": "Winter break"
     }

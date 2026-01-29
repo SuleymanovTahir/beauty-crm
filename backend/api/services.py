@@ -13,6 +13,7 @@ from db import (
 )
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
+from utils.currency import get_salon_currency
 import core.config as config
 from db.connection import get_db_connection
 
@@ -55,7 +56,7 @@ async def list_services(
                 "price": s[4] or 0,
                 "min_price": s[5],
                 "max_price": s[6],
-                "currency": s[7] or "AED",
+                "currency": s[7] or get_salon_currency(),
                 "duration": s[8],
                 "description": s[9] or "",
                 "benefits": s[10].split('|') if s[10] else [],
@@ -91,7 +92,7 @@ async def get_service_price(
         "service_key": service[1],
         "name": service[2],
         "price": service[4] if len(service) > 4 else 0,
-        "currency": service[7] if len(service) > 7 else "AED"
+        "currency": service[7] if len(service) > 7 else get_salon_currency()
     }
 
 @router.post("/services")
@@ -112,7 +113,7 @@ async def create_service_api(
             service_key=data.get('key'),
             name=data.get('name'),
             price=float(data.get('price', 0)),
-            currency=data.get('currency', 'AED'),
+            currency=data.get('currency', get_salon_currency()),
             category=data.get('category'),
             description=data.get('description'),
             benefits=data.get('benefits', []),
@@ -320,7 +321,7 @@ async def create_special_package_api(
             name=data.get('name'),
             original_price=float(data.get('original_price')),
             special_price=float(data.get('special_price')),
-            currency=data.get('currency', 'AED'),
+            currency=data.get('currency', get_salon_currency()),
             keywords=data.get('keywords', []),
             valid_from=data.get('valid_from'),
             valid_until=data.get('valid_until'),
@@ -467,18 +468,10 @@ async def get_service_employees(
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        # Determine localized fields
-        lang = language.lower()[:2] if language else 'ru'
-        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
-        if lang not in valid_languages:
-            lang = 'ru'
-        
-        name_field = f'full_name_{lang}'
-        position_field = f'position_{lang}'
 
-        c.execute(f"""
-            SELECT u.id, COALESCE(u.{name_field}, u.full_name) as full_name, u.full_name_ru, 
-                   COALESCE(u.{position_field}, u.position) as position, u.position_id
+        c.execute("""
+            SELECT u.id, u.full_name, u.full_name, 
+                   u.position, u.position_id
             FROM users u
             JOIN user_services us ON u.id = us.user_id
             WHERE us.service_id = %s
@@ -489,7 +482,6 @@ async def get_service_employees(
             employees.append({
                 "id": row[0],
                 "full_name": row[1],
-                "full_name_ru": row[2],
                 "position": row[3],
                 "position_id": row[4]
             })

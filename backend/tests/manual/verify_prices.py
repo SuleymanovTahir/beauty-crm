@@ -1,7 +1,7 @@
 import sys
 import os
 from db.connection import get_db_connection
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Add backend to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -37,7 +37,7 @@ def verify_prices():
     text = prompts._build_booking_availability(
         instagram_id="test_user",
         service_name=s_name,
-        preferred_date=datetime.now().strftime("%Y-%m-%d")
+        preferred_date=(datetime.now() + timedelta(days=2)).strftime("%Y-%m-%d")
     )
     
     print("-" * 40)

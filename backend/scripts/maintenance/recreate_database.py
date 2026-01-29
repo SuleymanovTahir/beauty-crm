@@ -11,8 +11,69 @@ import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from dotenv import load_dotenv
 
+import shutil
+
 # Добавляем путь к корню проекта для импорта модулей
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+
+def clean_static_uploads():
+    """
+    Очистить папку static/uploads, сохраняя структуру каталогов.
+    Вызывается при пересоздании базы данных для удаления старых медиа-файлов.
+    """
+    root_dir = Path(__file__).parent.parent.parent
+    static_uploads_dir = root_dir / 'static' / 'uploads'
+    
+    print(f"🧹 Очистка папки {static_uploads_dir}...")
+    
+    if static_uploads_dir.exists():
+        try:
+            # Удаляем все содержимое
+            for item in static_uploads_dir.iterdir():
+                if item.name.startswith('.'): continue # Пропускаем скрытые файлы (.gitkeep)
+                
+                if item.is_dir():
+                    shutil.rmtree(item)
+                else:
+                    item.unlink()
+            
+            print("✅ Содержимое static/uploads удалено")
+            
+            # Восстанавливаем структуру папок
+            folders = [
+                'audio', 
+                'files', 
+                'images', 
+                'videos', 
+                'voice',
+                'images/banners',
+                'images/clients',
+                'images/employees',
+                'images/faces',
+                'images/other',
+                'images/portfolio',
+                'images/salon',
+                'images/services'
+            ]
+            
+            for folder in folders:
+                (static_uploads_dir / folder).mkdir(parents=True, exist_ok=True)
+                
+            print("✅ Структура папок восстановлена")
+            
+        except Exception as e:
+            print(f"❌ Ошибка при очистке static/uploads: {e}")
+    else:
+        print("⚠️ Папка static/uploads не найдена, создаем новую с подкаталогами...")
+        static_uploads_dir.mkdir(parents=True, exist_ok=True)
+        # Создаем структуру, если папки вообще не было
+        folders = ['audio', 'files', 'images', 'videos', 'voice', 
+                   'images/banners', 'images/clients', 'images/employees', 
+                   'images/faces', 'images/other', 'images/portfolio', 
+                   'images/salon', 'images/services']
+        for folder in folders:
+            (static_uploads_dir / folder).mkdir(parents=True, exist_ok=True)
 
 
 def grant_permissions_to_user(db_name, db_host, db_port, superuser, superuser_password, target_user, grant_superuser=True):
@@ -279,4 +340,6 @@ def drop_database():
 
 
 if __name__ == '__main__':
+    # Очищаем статику перед пересозданием базы
+    clean_static_uploads()
     recreate_database()

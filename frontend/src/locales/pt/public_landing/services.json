@@ -1,19 +1,19 @@
 {
   "categories": {
-    "brows": "Brows",
+    "brows": "Sobrancelhas",
     "combo": "Combo",
-    "cosmetology": "Cosmetology",
-    "hair_care": "Hair Care",
-    "hair_color": "Hair Color",
-    "hair_cut": "Hair Cut",
-    "hair_styling": "Hair Styling",
-    "lashes": "Lashes",
+    "cosmetology": "Cosmetologia",
+    "hair_care": "Cuidados com os cabelos",
+    "hair_color": "Cor do cabelo",
+    "hair_cut": "Corte de cabelo",
+    "hair_styling": "Estilização de cabelo",
+    "lashes": "Cílios",
     "manicure": "Manicure",
-    "massage": "Massage",
+    "massage": "Massagem",
     "pedicure": "Pedicure",
-    "permanent_makeup": "Permanent Makeup",
+    "permanent_makeup": "Maquiagem permanente",
     "spa": "SPA",
-    "waxing": "Waxing"
+    "waxing": "depilação"
   },
   "haircutsStyling": "",
   "items": {
@@ -28,7 +28,7 @@
       "price": 100
     },
     "bikini_line": {
-      "category": "waxing",
+      "category": "depilação",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -68,7 +68,7 @@
       "price": 200
     },
     "brow_coloring": {
-      "category": "brows",
+      "category": "sobrancelhas",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -78,7 +78,7 @@
       "price": 40
     },
     "brow_correction": {
-      "category": "brows",
+      "category": "sobrancelhas",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -88,7 +88,7 @@
       "price": 40
     },
     "brow_lami": {
-      "category": "brows",
+      "category": "sobrancelhas",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -118,7 +118,7 @@
       "price": 100
     },
     "cheeks_wax": {
-      "category": "waxing",
+      "category": "depilação com cera",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -128,7 +128,7 @@
       "price": 40
     },
     "chin_wax": {
-      "category": "waxing",
+      "category": "depilação",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -168,7 +168,7 @@
       "price": 1250
     },
     "deep_facial_cleaning": {
-      "category": "cosmetology",
+      "category": "cosmetologia",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -208,7 +208,7 @@
       "price": 800
     },
     "face_lift_massage": {
-      "category": "cosmetology",
+      "category": "cosmetologia",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -228,7 +228,7 @@
       "price": 190
     },
     "full_arms": {
-      "category": "waxing",
+      "category": "depilação",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -238,7 +238,7 @@
       "price": 80
     },
     "full_bikini": {
-      "category": "waxing",
+      "category": "depilação",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -248,7 +248,7 @@
       "price": 150
     },
     "full_body_wax": {
-      "category": "waxing",
+      "category": "depilação",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -258,7 +258,7 @@
       "price": 400
     },
     "full_face_wax": {
-      "category": "waxing",
+      "category": "depilação",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -268,7 +268,7 @@
       "price": 90
     },
     "full_legs": {
-      "category": "waxing",
+      "category": "depilação",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -328,7 +328,7 @@
       "price": 70
     },
     "half_arms": {
-      "category": "waxing",
+      "category": "depilação",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -338,7 +338,7 @@
       "price": 50
     },
     "half_legs": {
-      "category": "waxing",
+      "category": "depilação",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -368,7 +368,7 @@
       "price": 100
     },
     "kim_style_effect": {
-      "category": "lashes",
+      "category": "cílios",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -378,7 +378,7 @@
       "price": 30
     },
     "lash_lami": {
-      "category": "lashes",
+      "category": "cílios",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -388,7 +388,7 @@
       "price": 200
     },
     "lashes_2d": {
-      "category": "lashes",
+      "category": "cílios",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -398,7 +398,7 @@
       "price": 250
     },
     "lashes_3d": {
-      "category": "lashes",
+      "category": "cílios",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -408,7 +408,7 @@
       "price": 300
     },
     "lashes_classic": {
-      "category": "lashes",
+      "category": "cílios",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -418,7 +418,7 @@
       "price": 200
     },
     "lashes_mega": {
-      "category": "lashes",
+      "category": "cílios",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -468,7 +468,7 @@
       "price": 130
     },
     "massage_anticellulite": {
-      "category": "massage",
+      "category": "massagem",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -478,7 +478,7 @@
       "price": 300
     },
     "massage_body": {
-      "category": "massage",
+      "category": "massagem",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -488,7 +488,7 @@
       "price": 250
     },
     "massage_extremities": {
-      "category": "massage",
+      "category": "massagem",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -498,7 +498,7 @@
       "price": 150
     },
     "massage_head": {
-      "category": "massage",
+      "category": "massagem",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -508,7 +508,7 @@
       "price": 100
     },
     "massage_sculptural": {
-      "category": "massage",
+      "category": "massagem",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -518,7 +518,7 @@
       "price": 370
     },
     "medical_facial": {
-      "category": "cosmetology",
+      "category": "cosmetologia",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -638,7 +638,7 @@
       "price": 150
     },
     "peeling": {
-      "category": "cosmetology",
+      "category": "cosmetologia",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -718,7 +718,7 @@
       "price": 30
     },
     "remove_lashes": {
-      "category": "lashes",
+      "category": "cílios",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -808,7 +808,7 @@
       "price": 1250
     },
     "underarms": {
-      "category": "waxing",
+      "category": "depilação",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -818,7 +818,7 @@
       "price": 50
     },
     "upper_lip_wax": {
-      "category": "waxing",
+      "category": "depilação",
       "currency": "AED",
       "description": "",
       "duration": "60",

@@ -23,7 +23,7 @@ def get_services_with_masters():
     c = conn.cursor()
     
     c.execute("""
-        SELECT DISTINCT s.id, s.name_ru, s.name, s.category
+        SELECT DISTINCT s.id, s.name, s.name, s.category
         FROM services s
         JOIN user_services us ON s.id = us.service_id
         JOIN users u ON u.id = us.user_id
@@ -32,7 +32,7 @@ def get_services_with_masters():
         AND u.is_service_provider = TRUE
         AND u.role NOT IN ('director', 'admin', 'manager')
         AND (us.is_online_booking_enabled = TRUE OR us.is_online_booking_enabled IS NULL)
-        ORDER BY s.category, s.name_ru
+        ORDER BY s.category, s.name
     """)
     
     services = c.fetchall()
@@ -45,7 +45,7 @@ def get_services_without_masters():
     c = conn.cursor()
     
     c.execute("""
-        SELECT s.id, s.name_ru, s.name, s.category, s.price, s.duration
+        SELECT s.id, s.name, s.name, s.category, s.price, s.duration
         FROM services s
         WHERE s.is_active = TRUE
         AND s.id NOT IN (
@@ -57,7 +57,7 @@ def get_services_without_masters():
             AND u.role NOT IN ('director', 'admin', 'manager')
             AND (us.is_online_booking_enabled = TRUE OR us.is_online_booking_enabled IS NULL)
         )
-        ORDER BY s.category, s.name_ru
+        ORDER BY s.category, s.name
     """)
     
     services = c.fetchall()
@@ -128,8 +128,8 @@ def print_services_report():
     
     for category in sorted(by_category_with.keys()):
         print(f"\n📂 {category}: {len(by_category_with[category])} услуг")
-        for service in sorted(by_category_with[category], key=lambda x: x[1] or x[2]):
-            name = service[1] if service[1] else service[2]
+        for service in sorted(by_category_with[category], key=lambda x: x[1]):
+            name = service[1] 
             print(f"   • ID: {service[0]:4d} | {name}")
     
     print()
@@ -150,8 +150,8 @@ def print_services_report():
     
     for category in sorted(by_category_without.keys()):
         print(f"\n📂 {category}: {len(by_category_without[category])} услуг")
-        for service in sorted(by_category_without[category], key=lambda x: x[1] or x[2]):
-            name = service[1] if service[1] else service[2]
+        for service in sorted(by_category_without[category], key=lambda x: x[1]):
+            name = service[1]
             print(f"   • ID: {service[0]:4d} | {name}")
     
     print()
@@ -220,7 +220,7 @@ def assign_masters_to_services(dry_run=True):
         # Назначаем всех мастеров на все услуги категории
         for service in by_category[category]:
             service_id = service[0]
-            service_name = service[1] if service[1] else service[2]
+            service_name = service[1]
             service_price = service[4] if len(service) > 4 else None
             service_duration = service[5] if len(service) > 5 else None
             

@@ -47,7 +47,7 @@ async def check_appointment_reminders():
                    b.master as master_name
             FROM bookings b
             LEFT JOIN clients c ON b.instagram_id = c.instagram_id
-            WHERE b.datetime LIKE %s
+            WHERE b.datetime::text LIKE %s
               AND b.status IN ('confirmed', 'pending')
               AND b.instagram_id IS NOT NULL
               AND (b.reminder_sent_24h IS FALSE OR b.reminder_sent_24h IS NULL)

@@ -24,7 +24,7 @@ def get_services_without_masters():
     c = conn.cursor()
     
     c.execute("""
-        SELECT s.id, s.name_ru, s.name, s.category, s.price, s.duration
+        SELECT s.id, s.name, s.name, s.category, s.price, s.duration
         FROM services s
         WHERE s.is_active = TRUE
         AND s.id NOT IN (
@@ -36,7 +36,7 @@ def get_services_without_masters():
             AND u.role NOT IN ('director', 'admin', 'manager')
             AND (us.is_online_booking_enabled = TRUE OR us.is_online_booking_enabled IS NULL)
         )
-        ORDER BY s.category, s.name_ru
+        ORDER BY s.category, s.name
     """)
     
     services = c.fetchall()
@@ -113,10 +113,10 @@ def remove_services_from_masters():
         
         mestan_removed = 0
         for service_id in services_to_remove_mestan:
-            c.execute("SELECT name_ru, name FROM services WHERE id = %s", (service_id,))
+            c.execute("SELECT name FROM services WHERE id = %s", (service_id,))
             service = c.fetchone()
             if service:
-                service_name = service[0] or service[1]
+                service_name = service[0]
                 try:
                     success = remove_employee_service(employee_id=mestan_id, service_id=service_id)
                     if success:
@@ -146,10 +146,10 @@ def remove_services_from_masters():
         jennifer_removed = 0
         for category, service_ids in services_to_remove_jennifer.items():
             for service_id in service_ids:
-                c.execute("SELECT name_ru, name FROM services WHERE id = %s", (service_id,))
+                c.execute("SELECT name FROM services WHERE id = %s", (service_id,))
                 service = c.fetchone()
                 if service:
-                    service_name = service[0] or service[1]
+                    service_name = service[0]
                     try:
                         success = remove_employee_service(employee_id=jennifer_id, service_id=service_id)
                         if success:
@@ -275,7 +275,7 @@ def check_services_without_masters():
     c = conn.cursor()
     
     c.execute("""
-        SELECT s.id, s.name_ru, s.name, s.category
+        SELECT s.id, s.name, s.name, s.category
         FROM services s
         WHERE s.is_active = TRUE
         AND s.id NOT IN (
@@ -287,7 +287,7 @@ def check_services_without_masters():
             AND u.role NOT IN ('director', 'admin', 'manager')
             AND (us.is_online_booking_enabled = TRUE OR us.is_online_booking_enabled IS NULL)
         )
-        ORDER BY s.category, s.name_ru
+        ORDER BY s.category, s.name
     """)
     
     services_without = c.fetchall()
@@ -309,11 +309,9 @@ def check_services_without_masters():
         
         for category in sorted(by_category.keys()):
             print(f"📂 {category}:")
-            for service in sorted(by_category[category], key=lambda x: x[1] or x[2]):
+            for service in sorted(by_category[category], key=lambda x: x[1]):
                 service_id = service[0]
-                service_name_ru = service[1] if service[1] else None
-                service_name_en = service[2] if service[2] else None
-                service_name = service_name_ru or service_name_en or f'ID: {service_id}'
+                service_name = service[1] or f'ID: {service_id}'
                 print(f"   • {service_name} (ID: {service_id})")
             print()
         

@@ -359,7 +359,7 @@ async def download_backup(session_token: Optional[str] = Cookie(None)):
 # Simple cache for salon settings (fallback when Redis is unavailable)
 _salon_settings_cache = None
 _salon_settings_cache_time = None
-_salon_settings_cache_ttl = 300  # 5 minutes
+_salon_settings_cache_ttl = 0  # Disabled for CRM - always fetch fresh data
 
 @router.get("/salon-settings")
 async def get_salon_settings_api():
