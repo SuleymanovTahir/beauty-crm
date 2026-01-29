@@ -239,6 +239,7 @@ def init_database():
             employee_id TEXT,
             photo TEXT, photo_url TEXT,
             birthday TEXT,
+            gender TEXT DEFAULT 'female',
             bio TEXT, experience TEXT, years_of_experience INTEGER,
             specialization TEXT,
             base_salary REAL DEFAULT 0, commission_rate REAL DEFAULT 0,
