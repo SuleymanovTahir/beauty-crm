@@ -17,53 +17,53 @@
   "payment_details": "El pago es Realizado en efectivo o con tarjeta después de la prestación de los servicios. El costo de los servicios se indica en la lista de precios y está sujeto a cambios sin previo aviso.",
   "payment_for_services": "Pago de los servicios",
   "privacy_commitment": "Respetamos su privacidad y nos comprometemos a proteger su información personal cuenta con nuestra política de privacidad.",
-  "quality_guarantee": "Мы гарантируем качество используемых материалов и профессионализм наших мастеров. Результаты процедуры могут различаться в зависимости от индивидуальных особенностей клиента.",
-  "salon_liability": "Если клиент скрывает информацию о медицинских противопоказаниях, салон не несет ответственности за последствия процедур.",
+  "quality_guarantee": "Garantizamos la calidad de los materiales utilizados y la profesionalidad de nuestros artesanos. Los resultados del procedimiento pueden variar dependiendo de las características individuales del cliente.",
+  "salon_liability": "Si el cliente oculta información sobre contraindicaciones médicas, el salón no es responsable de las consecuencias de los procedimientos.",
   "sections": {
     "booking": {
-      "booking_requirements": "Для регистрации на Процедуры вы должны предоставить действительную контактную информацию. Мы оставляем за собой право подтвердить или отклонить ваше бронирование.",
-      "cancellationText": "Клиент может отменить запись не позднее, чем за 24 часа до назначенного времени. При отмене менее чем за 24 часа может взиматься штраф в размере 50% от стоимости услуги.",
-      "cancellationTitle": "Отписаться:",
-      "title": "2. Бронирование и отмена"
+      "booking_requirements": "Para registrarse para los Procedimientos, debe proporcionar información de contacto válida. Nos reservamos el derecho de confirmar o rechazar su reserva.",
+      "cancellationText": "El cliente podrá cancelar la cita hasta 24 horas antes de la hora prevista. Si cancela con menos de 24 horas de antelación, se podrá cobrar una penalización del 50% del coste del servicio.",
+      "cancellationTitle": "Cancelar suscripción:",
+      "title": "2. Reservas y cancelaciones"
     },
     "changes": {
-      "content": "Мы оставляем за собой право изменить настоящие Условия использования в любое время. Изменения вступают в силу с момента их размещения на сайте.",
-      "title": "7. Изменение Условий использования"
+      "content": "Nos reservamos el derecho de cambiar estos Términos de uso en cualquier momento. Los cambios entran en vigor desde el momento de su reserva en el sitio web.",
+      "title": "7. Cambios en los Términos de uso"
     },
     "contact": {
       "address": "Dirección",
-      "description": "Вы можете связаться с нами по любым вопросам, касающимся настоящих Условий:",
+      "description": "Puede contactarnos si tiene alguna pregunta sobre estos Términos:",
       "email": "Dirección de correo electrónico",
       "phone": "Teléfono",
-      "title": "8. Контакты"
+      "title": "8. Contactos"
     },
     "general": {
       "content": "Estos Términos de uso rigen su uso de los Servicios {{salonName}}. Al utilizar nuestros servicios, usted acepta estos términos.",
-      "title": "1. Общие правила"
+      "title": "1. Reglas generales"
     },
     "medical": {
-      "paragraph1": "Перед процедурой клиент должен сообщить специалисту о медицинских противопоказаниях, аллергии или состоянии здоровья.",
-      "paragraph2": "Если клиент скрывает информацию о медицинских противопоказаниях, салон не несет ответственности за последствия процедур.",
-      "title": "4. Медицинские противопоказания."
+      "paragraph1": "Antes del procedimiento, el cliente debe informar al especialista sobre contraindicaciones médicas, alergias o condiciones de salud.",
+      "paragraph2": "Si el cliente oculta información sobre contraindicaciones médicas, el salón no se hace responsable de las consecuencias de los procedimientos.",
+      "title": "4. Contraindicaciones médicas."
     },
     "payment": {
-      "paragraph1": "Оплата производится наличными или картой после оказания услуги. Стоимость услуг указана в прайс-листе и может быть изменена без предварительного уведомления.",
-      "paragraph2": "В случае опоздания клиента более чем на 15 минут салон имеет право отменить запись или сократить время процедуры.",
-      "title": "3. Оплата услуг"
+      "paragraph1": "El pago se realiza en efectivo o con tarjeta una vez prestado el servicio. El costo de los servicios está indicado en la lista de precios y puede modificarse sin previo aviso.",
+      "paragraph2": "Si el cliente llega más de 15 minutos tarde, el salón tiene derecho a cancelar la cita o acortar el tiempo del procedimiento.",
+      "title": "3. Pago de servicios"
     },
     "privacy": {
-      "content": "Мы уважаем вашу конфиденциальность и обязуемся защищать вашу личную информацию в соответствии с нашей <link>Политикой конфиденциальности</link>.",
-      "title": "6. Конфиденциальность"
+      "content": "Respetamos su privacidad y nos comprometemos a proteger su información personal cuenta con nuestra <link>Política de Privacidad</link>.",
+      "title": "6. Confidencialidad"
     },
     "warranty": {
-      "paragraph1": "Мы гарантируем качество используемых материалов и профессионализм наших мастеров. Результаты процедуры могут различаться в зависимости от индивидуальных особенностей клиента.",
-      "paragraph2": "Если результат не устраивает, клиент должен обратиться в салон в течение 7 дней для обсуждения возможных решений.",
-      "title": "5. Гарантии и ответственность"
+      "paragraph1": "Garantizamos la calidad de los materiales utilizados y la profesionalidad de nuestros artesanos. Los resultados del procedimiento pueden variar dependiendo de las características individuales del cliente.",
+      "paragraph2": "Si el resultado no es satisfactorio, el cliente debe comunicarse con el salón dentro de los 7 días para discutir posibles soluciones.",
+      "title": "5. Garantías y responsabilidad"
     }
   },
-  "terms_changes": "Изменения в Условиях использования",
-  "terms_changes_text": "Мы оставляем за собой право изменить настоящие Условия использования в любое время. Изменения вступают в силу с момента их размещения на сайте.",
-  "terms_of_use": "Условия эксплуатации",
-  "title": "Условия эксплуатации",
-  "warranties_and_liability": "Гарантии и ответственность"
+  "terms_changes": "Cambios en los Términos de uso",
+  "terms_changes_text": "Nos reservamos el derecho de cambiar estos Términos de uso en cualquier momento. Los cambios entran en vigor desde el momento de su reserva en el sitio web.",
+  "terms_of_use": "Condiciones de uso",
+  "title": "Condiciones de uso",
+  "warranties_and_liability": "Garantías y responsabilidad"
 }

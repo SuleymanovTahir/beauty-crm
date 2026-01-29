@@ -86,16 +86,36 @@ def check_if_reminder_sent(booking_id: int, reminder_setting_id: int) -> bool:
     c = conn.cursor()
 
     try:
-        # Check in unified log
+        # Check if unified_communication_log table exists
         c.execute("""
-            SELECT COUNT(*) FROM unified_communication_log
-            WHERE booking_id = %s 
-              AND trigger_type = %s 
-              AND status = 'sent'
-        """, (booking_id, f"booking_reminder_{reminder_setting_id}"))
+            SELECT EXISTS (
+                SELECT FROM information_schema.tables
+                WHERE table_name = 'unified_communication_log'
+            )
+        """)
+        table_exists = c.fetchone()[0]
+
+        if not table_exists:
+            # Fallback: check reminder_logs table
+            c.execute("""
+                SELECT COUNT(*) FROM reminder_logs
+                WHERE booking_id = %s AND reminder_type = %s AND status = 'sent'
+            """, (booking_id, f"reminder_{reminder_setting_id}"))
+        else:
+            # Check in unified log
+            c.execute("""
+                SELECT COUNT(*) FROM unified_communication_log
+                WHERE booking_id = %s
+                  AND trigger_type = %s
+                  AND status = 'sent'
+            """, (booking_id, f"booking_reminder_{reminder_setting_id}"))
 
         count = c.fetchone()[0]
         return count > 0
+
+    except Exception as e:
+        log_error(f"Error checking if reminder sent: {e}", "booking_reminders")
+        return False
 
     finally:
         conn.close()
@@ -106,21 +126,41 @@ def mark_reminder_sent(booking_id: int, reminder_setting_id: int, status: str = 
     c = conn.cursor()
 
     try:
-        # Log to unified communication log
+        # Check if unified_communication_log table exists
         c.execute("""
-            INSERT INTO unified_communication_log
-            (booking_id, trigger_type, medium, status, error_message, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (
-            booking_id, 
-            f"booking_reminder_{reminder_setting_id}", 
-            "email",
-            status, 
-            error_message,
-            datetime.now().isoformat()
-        ))
+            SELECT EXISTS (
+                SELECT FROM information_schema.tables
+                WHERE table_name = 'unified_communication_log'
+            )
+        """)
+        table_exists = c.fetchone()[0]
+
+        if table_exists:
+            # Log to unified communication log
+            c.execute("""
+                INSERT INTO unified_communication_log
+                (booking_id, trigger_type, medium, status, error_message, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (
+                booking_id,
+                f"booking_reminder_{reminder_setting_id}",
+                "email",
+                status,
+                error_message,
+                datetime.now().isoformat()
+            ))
+        else:
+            # Fallback: use reminder_logs table
+            c.execute("""
+                INSERT INTO reminder_logs (booking_id, reminder_type, status, sent_at)
+                VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
+            """, (booking_id, f"reminder_{reminder_setting_id}", status))
 
         conn.commit()
+
+    except Exception as e:
+        conn.rollback()
+        log_error(f"Error marking reminder sent: {e}", "booking_reminders")
 
     finally:
         conn.close()

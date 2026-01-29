@@ -278,7 +278,8 @@ def drop_database():
     db_name = os.getenv('POSTGRES_DB', 'beauty_crm')
     db_host = os.getenv('POSTGRES_HOST', 'localhost')
     db_port = os.getenv('POSTGRES_PORT', '5432')
-    superuser = os.getenv('POSTGRES_SUPERUSER', os.getenv('USER', 'postgres'))
+    # ВАЖНО: Не использовать os.getenv('USER') - на сервере это вернет 'ubuntu' без доступа к PostgreSQL
+    superuser = os.getenv('POSTGRES_SUPERUSER', 'postgres')
     superuser_password = os.getenv('POSTGRES_SUPERUSER_PASSWORD', os.getenv('POSTGRES_PASSWORD', ''))
     
     print(f"⚠️  ВНИМАНИЕ: Удаление базы данных '{db_name}'...")

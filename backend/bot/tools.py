@@ -48,29 +48,58 @@ def get_available_time_slots(
         # 2. Получаем мастеров
         # Если услуга известна - берем тех кто её делает И у кого включен онлайн-букинг
         # Если нет - берем всех активных
+
+        # Check if secondary_role column exists
+        c.execute("""
+            SELECT COUNT(*) FROM information_schema.columns
+            WHERE table_name = 'users' AND column_name = 'secondary_role'
+        """)
+        has_secondary_role = c.fetchone()[0] > 0
+
         if service_id:
             # Get only masters who provide this service AND have online booking enabled
             # Только те у кого role='employee' или secondary_role='employee'
-            c.execute("""
-                SELECT DISTINCT u.id, u.full_name
-                FROM users u
-                JOIN user_services us ON u.id = us.user_id
-                WHERE u.is_active = TRUE
-                  AND u.is_service_provider = TRUE
-                  AND (u.role = 'employee' OR u.secondary_role = 'employee')
-                  AND us.service_id = %s
-                  AND us.is_online_booking_enabled = TRUE
-            """, (service_id,))
+            if has_secondary_role:
+                c.execute("""
+                    SELECT DISTINCT u.id, u.full_name
+                    FROM users u
+                    JOIN user_services us ON u.id = us.user_id
+                    WHERE u.is_active = TRUE
+                      AND u.is_service_provider = TRUE
+                      AND (u.role = 'employee' OR u.secondary_role = 'employee')
+                      AND us.service_id = %s
+                      AND us.is_online_booking_enabled = TRUE
+                """, (service_id,))
+            else:
+                c.execute("""
+                    SELECT DISTINCT u.id, u.full_name
+                    FROM users u
+                    JOIN user_services us ON u.id = us.user_id
+                    WHERE u.is_active = TRUE
+                      AND u.is_service_provider = TRUE
+                      AND u.role = 'employee'
+                      AND us.service_id = %s
+                      AND us.is_online_booking_enabled = TRUE
+                """, (service_id,))
             potential_masters = c.fetchall()
         else:
             # Fallback: мастера с role='employee' или secondary_role='employee'
-            c.execute("""
-                SELECT id, full_name
-                FROM users
-                WHERE is_active = TRUE
-                  AND is_service_provider = TRUE
-                  AND (role = 'employee' OR secondary_role = 'employee')
-            """)
+            if has_secondary_role:
+                c.execute("""
+                    SELECT id, full_name
+                    FROM users
+                    WHERE is_active = TRUE
+                      AND is_service_provider = TRUE
+                      AND (role = 'employee' OR secondary_role = 'employee')
+                """)
+            else:
+                c.execute("""
+                    SELECT id, full_name
+                    FROM users
+                    WHERE is_active = TRUE
+                      AND is_service_provider = TRUE
+                      AND role = 'employee'
+                """)
             potential_masters = c.fetchall()
 
         # Фильтр по имени если указано

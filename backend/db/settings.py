@@ -184,32 +184,38 @@ def get_bot_settings() -> dict:
     c = conn.cursor()
 
     try:
-        # Теперь читаем из salon_settings
-        c.execute("SELECT bot_config FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
+        # Check if bot_config column exists
+        c.execute("""
+            SELECT COUNT(*) FROM information_schema.columns
+            WHERE table_name = 'salon_settings' AND column_name = 'bot_config'
+        """)
+        has_bot_config = c.fetchone()[0] > 0
 
-        if row and row[0]:
-            bot_data = row[0]
-            if isinstance(bot_data, str):
-                bot_data = json.loads(bot_data)
+        if has_bot_config:
+            c.execute("SELECT bot_config FROM salon_settings WHERE id = 1")
+            row = c.fetchone()
 
-            log_info("✅ Loaded bot settings from salon_settings.bot_config", "database")
+            if row and row[0]:
+                bot_data = row[0]
+                if isinstance(bot_data, str):
+                    bot_data = json.loads(bot_data)
 
-            # Дефолты для отсутствующих полей
-            defaults = _get_default_bot_settings()
-            
-            # Накладываем данные из БД на дефолты
-            result_dict = {**defaults, **bot_data}
-            
-            # Заменяем плейсхолдеры
-            salon_settings = get_salon_settings()
-            result_dict = _replace_bot_placeholders(result_dict, salon_settings)
+                log_info("✅ Loaded bot settings from salon_settings.bot_config", "database")
 
-            return result_dict
+                # Дефолты для отсутствующих полей
+                defaults = _get_default_bot_settings()
 
-        else:
-            log_warning("⚠️ Настройки бота в salon_settings пусты, используются дефолты", "database")
-            return _get_default_bot_settings()
+                # Накладываем данные из БД на дефолты
+                result_dict = {**defaults, **bot_data}
+
+                # Заменяем плейсхолдеры
+                salon_settings = get_salon_settings()
+                result_dict = _replace_bot_placeholders(result_dict, salon_settings)
+
+                return result_dict
+
+        log_warning("⚠️ Настройки бота в salon_settings пусты или колонка отсутствует, используются дефолты", "database")
+        return _get_default_bot_settings()
 
     except Exception as e:
         log_error(f"❌ Ошибка в get_bot_settings: {e}", "database")
@@ -323,11 +329,23 @@ def update_bot_settings(data: dict) -> bool:
     c = conn.cursor()
 
     try:
+        # Check if bot_config column exists
+        c.execute("""
+            SELECT COUNT(*) FROM information_schema.columns
+            WHERE table_name = 'salon_settings' AND column_name = 'bot_config'
+        """)
+        has_bot_config = c.fetchone()[0] > 0
+
+        if not has_bot_config:
+            # Add bot_config column if it doesn't exist
+            c.execute("ALTER TABLE salon_settings ADD COLUMN IF NOT EXISTS bot_config JSONB DEFAULT '{}'")
+            conn.commit()
+
         # 1. Получаем текущий конфиг
         c.execute("SELECT bot_config FROM salon_settings WHERE id = 1")
         row = c.fetchone()
         current_config = row[0] if row and row[0] else {}
-        
+
         if isinstance(current_config, str):
             current_config = json.loads(current_config)
 
@@ -336,11 +354,11 @@ def update_bot_settings(data: dict) -> bool:
 
         # 3. Сохраняем обратно
         c.execute("""
-            UPDATE salon_settings 
-            SET bot_config = %s, updated_at = CURRENT_TIMESTAMP 
+            UPDATE salon_settings
+            SET bot_config = %s, updated_at = CURRENT_TIMESTAMP
             WHERE id = 1
         """, (json.dumps(updated_config, cls=DateTimeEncoder),))
-        
+
         conn.commit()
         log_info(f"✅ Настройки бота обновлены в salon_settings.bot_config", "database")
         return True
@@ -699,6 +717,18 @@ def update_bot_globally_enabled(enabled: bool):
     c = conn.cursor()
 
     try:
+        # Check if bot_config column exists
+        c.execute("""
+            SELECT COUNT(*) FROM information_schema.columns
+            WHERE table_name = 'salon_settings' AND column_name = 'bot_config'
+        """)
+        has_bot_config = c.fetchone()[0] > 0
+
+        if not has_bot_config:
+            # Add bot_config column if it doesn't exist
+            c.execute("ALTER TABLE salon_settings ADD COLUMN IF NOT EXISTS bot_config JSONB DEFAULT '{}'")
+            conn.commit()
+
         # 1. Get current config
         c.execute("SELECT bot_config FROM salon_settings WHERE id = 1")
         row = c.fetchone()
@@ -708,13 +738,13 @@ def update_bot_globally_enabled(enabled: bool):
                 current_config = json.loads(row[0])
             else:
                 current_config = row[0]
-        
+
         # 2. Update field
         current_config['enabled'] = enabled
-        
+
         # 3. Save back
         c.execute("""
-            UPDATE salon_settings 
+            UPDATE salon_settings
             SET bot_config = %s, updated_at = CURRENT_TIMESTAMP
             WHERE id = 1
         """, (json.dumps(current_config, cls=DateTimeEncoder),))

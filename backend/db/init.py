@@ -19,48 +19,62 @@ def init_database():
     c = conn.cursor()
     
     def add_column_if_not_exists(table, column, definition):
+        """Add column using separate autocommit connection to avoid transaction issues"""
+        migration_conn = None
         try:
+            # Use separate connection with autocommit for DDL
+            migration_conn = get_db_connection()
+            migration_conn._conn.autocommit = True
+            mc = migration_conn.cursor()
             # Check if table exists first
-            c.execute("""
+            mc.execute("""
                 SELECT EXISTS (
                     SELECT FROM information_schema.tables
                     WHERE table_name = %s
                 )
             """, (table,))
-            if not c.fetchone()[0]:
+            if not mc.fetchone()[0]:
                 return  # Table doesn't exist yet, skip
-            c.execute(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {definition}")
+            mc.execute(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {definition}")
         except Exception as e:
-            conn.rollback()  # Reset transaction state
             log_error(f"Ошибка при добавлении колонки {column} в {table}: {e}", "db")
+        finally:
+            if migration_conn:
+                migration_conn.close()
 
     def ensure_fk_cascade(table, column, ref_table, ref_column):
-        """Гарантирует, что внешний ключ имеет ON DELETE CASCADE"""
+        """Гарантирует, что внешний ключ имеет ON DELETE CASCADE (uses separate connection)"""
+        migration_conn = None
         try:
+            migration_conn = get_db_connection()
+            migration_conn._conn.autocommit = True
+            mc = migration_conn.cursor()
             # Ищем имя существующего ограничения
-            c.execute(f"""
-                SELECT conname 
-                FROM pg_constraint 
-                WHERE conrelid = '{table}'::regclass 
-                AND confrelid = '{ref_table}'::regclass 
+            mc.execute(f"""
+                SELECT conname
+                FROM pg_constraint
+                WHERE conrelid = '{table}'::regclass
+                AND confrelid = '{ref_table}'::regclass
                 AND contype = 'f'
             """)
-            constraints = c.fetchall()
+            constraints = mc.fetchall()
             for con in constraints:
                 con_name = con[0]
-                c.execute(f"ALTER TABLE {table} DROP CONSTRAINT {con_name}")
-            
+                mc.execute(f"ALTER TABLE {table} DROP CONSTRAINT {con_name}")
+
             # Создаем новое со стандартным именем
             new_con_name = f"{table}_{column}_fkey"
-            c.execute(f"""
-                ALTER TABLE {table} 
-                ADD CONSTRAINT {new_con_name} 
+            mc.execute(f"""
+                ALTER TABLE {table}
+                ADD CONSTRAINT {new_con_name}
                 FOREIGN KEY ({column}) REFERENCES {ref_table}({ref_column}) ON DELETE CASCADE
             """)
         except Exception as e:
-            conn.rollback()  # Reset transaction state
-            # log_error(f"Error ensuring cascade for {table}.{column}: {e}", "db")
+            # Silently ignore FK cascade errors - not critical
             pass
+        finally:
+            if migration_conn:
+                migration_conn.close()
 
     log_info("🔌 Инициализация единой схемы базы данных...", "db")
     
@@ -78,6 +92,12 @@ def init_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             UNIQUE(entity_type, name)
         )''')
+        # Migrations for workflow_stages
+        add_column_if_not_exists('workflow_stages', 'entity_type', "TEXT NOT NULL DEFAULT 'task'")
+        add_column_if_not_exists('workflow_stages', 'color', "TEXT DEFAULT '#3b82f6'")
+        add_column_if_not_exists('workflow_stages', 'sort_order', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('workflow_stages', 'is_system', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('workflow_stages', 'is_default', 'BOOLEAN DEFAULT FALSE')
 
         # Unified Media & Asset Library
         c.execute('''CREATE TABLE IF NOT EXISTS media_library (
@@ -112,6 +132,13 @@ def init_database():
             error_message TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        # Migrations for unified_communication_log
+        add_column_if_not_exists('unified_communication_log', 'trigger_type', 'TEXT')
+        add_column_if_not_exists('unified_communication_log', 'title', 'TEXT')
+        add_column_if_not_exists('unified_communication_log', 'content', 'TEXT')
+        add_column_if_not_exists('unified_communication_log', 'is_read', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('unified_communication_log', 'action_url', 'TEXT')
+        add_column_if_not_exists('unified_communication_log', 'error_message', 'TEXT')
 
         # Broadcast History (Batches)
         c.execute('''CREATE TABLE IF NOT EXISTS broadcast_history (
@@ -499,19 +526,21 @@ def init_database():
         add_column_if_not_exists('visitor_tracking', 'is_local', 'BOOLEAN')
         add_column_if_not_exists('visitor_tracking', 'visited_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
         
-        # Rename created_at to visited_at if it exists
-        c.execute("""
-            SELECT count(*) 
-            FROM information_schema.columns 
-            WHERE table_name = 'visitor_tracking' AND column_name = 'created_at'
-        """)
-        if c.fetchone()[0] > 0:
-            try:
-                c.execute("ALTER TABLE visitor_tracking RENAME COLUMN created_at TO visited_at")
-                conn.commit() # Commit rename immediately to avoid locking issues if needed
-            except Exception as e:
-                print(f"⚠️ Could not rename created_at: {e}")
-                conn.rollback()
+        # Rename created_at to visited_at if it exists (use separate connection)
+        try:
+            rename_conn = get_db_connection()
+            rename_conn._conn.autocommit = True
+            rc = rename_conn.cursor()
+            rc.execute("""
+                SELECT count(*)
+                FROM information_schema.columns
+                WHERE table_name = 'visitor_tracking' AND column_name = 'created_at'
+            """)
+            if rc.fetchone()[0] > 0:
+                rc.execute("ALTER TABLE visitor_tracking RENAME COLUMN created_at TO visited_at")
+            rename_conn.close()
+        except Exception as e:
+            print(f"⚠️ Could not rename created_at: {e}")
 
         # Bot Analytics
         c.execute('''CREATE TABLE IF NOT EXISTS bot_analytics (
@@ -648,6 +677,11 @@ def init_database():
             is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        # Migrations for public_faq
+        add_column_if_not_exists('public_faq', 'question', 'TEXT')
+        add_column_if_not_exists('public_faq', 'answer', 'TEXT')
+        add_column_if_not_exists('public_faq', 'category', "TEXT DEFAULT 'general'")
+        add_column_if_not_exists('public_faq', 'display_order', 'INTEGER DEFAULT 0')
 
         c.execute('''CREATE TABLE IF NOT EXISTS public_reviews (
             id SERIAL PRIMARY KEY,

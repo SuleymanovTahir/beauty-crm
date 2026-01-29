@@ -1,23 +1,23 @@
 {
-  "answer_1": "Подписаться можно через наш сайт, позвонив или написав в WhatsApp/Instagram.",
-  "answer_2": "Принимаем оплату наличными и банковскими картами.",
+  "answer_1": "Você pode se inscrever através do nosso site, ligando ou escrevendo para o WhatsApp/Instagram.",
+  "answer_2": "Aceitamos pagamentos em dinheiro e cartões bancários.",
   "answer_3": "Sim, você pode cancelar ou remarcar seu agendamento até {{hours}} horas antes do horário agendado.",
-  "answer_4": "Да, некоторые процедуры имеют медицинские противопоказания. Прежде чем писать, проконсультируйтесь с нашим специалистом.",
+  "answer_4": "Sim, alguns procedimentos têm contraindicações médicas. Antes de escrever, consulte nosso especialista.",
   "answer_5": "O tempo do procedimento depende do serviço escolhido. Normalmente de {{min}} minutos a {{max}} horas.",
-  "answer_6": "Некоторые процедуры требуют специальной подготовки. Об этом специалист сообщит вам при регистрации.",
+  "answer_6": "Alguns procedimentos requerem preparação especial. O especialista irá informá-lo sobre isso durante o reserva.",
   "cta": {
     "bookButton": "Inscreva-se para um procedimento",
-    "contactButton": "Связаться с нами",
-    "description": "Свяжитесь с нами, мы будем рады ответить на все ваши вопросы",
-    "title": "Не нашли ответ на свой вопрос?"
+    "contactButton": "Entre em contato conosco",
+    "description": "Entre em contato conosco, teremos prazer em responder a todas as suas perguntas",
+    "title": "Não encontrou a resposta para sua pergunta?"
   },
   "faq_title": "Perguntas frequentes Perguntas",
   "question_1": "Como se inscrever no procedimento?",
-  "question_2": "Какие способы оплаты вы принимаете?",
-  "question_3": "Могу ли я отменить или перенести встречу?",
-  "question_4": "Есть ли у вас противопоказания к процедурам?",
-  "question_5": "Сколько времени занимает процедура?",
-  "question_6": "Нужна ли предварительная подготовка к процедуре?",
+  "question_2": "Quais formas de pagamento você aceita?",
+  "question_3": "Posso cancelar ou remarcar uma consulta?",
+  "question_4": "Você tem alguma contra-indicação para os procedimentos?",
+  "question_5": "Quanto tempo leva o procedimento?",
+  "question_6": "Você precisa de preparação preliminar para o procedimento?",
   "questions": {
     "booking": {
       "answer": "Você pode se inscrever no procedimento através do formulário {{phone, phone}} em nosso site, ligando para {{phone}}{{/phone}}{{instagram, instagram}} ou escrevendo para nós no Instagram {{instagram}}{{/instagram}}. Entraremos em contato para confirmar seu agendamento.",
@@ -25,47 +25,47 @@
     },
     "cancellation": {
       "answer": "Sim, você pode cancelar ou remarcar seu agendamento até {{hours}} horas antes do horário agendado. Se cancelado em menos de {{hours}} horas, poderá ser cobrada uma multa de {{percent}}% do custo do serviço.",
-      "question": "Могу ли я отменить или перенести встречу?"
+      "question": "Posso cancelar ou remarcar a consulta?"
     },
     "certificates": {
       "answer": "Sim, todos os nossos mestres possuem certificados internacionais e realizam regularmente cursos de formação avançada.",
-      "question": "Сертифицированы ли ваши мастера?"
+      "question": "Seus especialistas são certificados?"
     },
     "contraindications": {
-      "answer": "Да, каждая процедура имеет свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой необходима консультация специалиста.",
-      "question": "Есть ли противопоказания к процедуре?"
+      "answer": "Sim, cada procedimento tem suas próprias contra-indicações. Principal: gravidez, lactação, processos inflamatórios agudos, doenças do sangue, oncologia. Antes do procedimento é necessária a consulta com um especialista.",
+      "question": "Há alguma contra-indicação para o procedimento?"
     },
     "gift": {
-      "answer": "Да, мы предлагаем подарочные сертификаты на любую сумму или на определенные услуги. Свяжитесь с нами для получения сертификата.",
-      "question": "Могу ли я предоставить сертификат на услуги?"
+      "answer": "Sim, oferecemos vale-presente de qualquer valor ou para determinados serviços. Entre em contato conosco para receber um certificado.",
+      "question": "Posso fornecer um certificado pelos serviços?"
     },
     "guarantee": {
       "answer": "Sim, garantimos a qualidade de todos os nossos serviços. Se você não estiver satisfeito com o resultado, entre em contato conosco dentro de {{count}} dias e encontraremos uma solução.",
-      "question": "Вы гарантируете услуги?"
+      "question": "Vocês garantem os serviços?"
     },
     "location": {
       "answer": "Nosso endereço: {{address}}. Detalhes sobre como chegar podem ser encontrados na página Contato.",
-      "question": "Где находится ваш салон?"
+      "question": "Onde está localizado o seu salão?"
     },
     "loyalty": {
-      "answer": "Да, у нас есть комплексная программа лояльности. После каждого визита вы будете получать бонусы, которые можно использовать для оплаты будущих визитов.",
-      "question": "Есть ли у вас программа лояльности?"
+      "answer": "Sim, temos um programa de fidelidade abrangente. Após cada visita, você receberá bônus que poderão ser usados ​​para pagar visitas futuras.",
+      "question": "Você tem um programa de fidelidade?"
     },
     "materials": {
-      "answer": "Мы используем только сертифицированные материалы премиум-класса от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.",
+      "answer": "Usamos apenas materiais premium certificados das marcas líderes mundiais. Todos os pigmentos são hipoalergênicos e seguros para a saúde.",
       "question": "Quais materiais você usa?"
     },
     "payment": {
       "answer": "Aceitamos pagamento em dinheiro e cartões (Visa, MasterCard, American Express). O pagamento é feito após a prestação do serviço.",
-      "question": "Какие способы оплаты вы принимаете?"
+      "question": "Quais métodos de pagamento você aceita?"
     },
     "preparation": {
-      "answer": "Да, некоторые процедуры требуют подготовки. Подробные рекомендации мы предоставим при записи.",
-      "question": "Нужно ли готовиться перед процедурой?"
+      "answer": "Sim, alguns procedimentos requerem preparação. Forneceremos recomendações detalhadas no momento da inscrição.",
+      "question": "Você precisa se preparar antes do procedimento?"
     },
     "weekends": {
       "answer": "Sim, estamos abertos {{count}} dias até data semana. {{будние дни, будние дни}}Dias de semana {{weekdays}}{{/weekdays}}{{выходные, выходные}}, fins de semana {{weekends}}{{/weekends}}.",
-      "question": "Вы работаете по выходным?"
+      "question": "Você trabalha nos finais de semana?"
     }
   },
   "subtitle": "Respostas a perguntas populares sobre nossos serviços",

@@ -49,7 +49,10 @@ def get_all_employees(active_only=True, service_providers_only=False):
     
     if 'is_service_provider' in columns:
         # Для бронирования: только те у кого role='employee' или secondary_role='employee'
-        query = "SELECT * FROM users WHERE is_service_provider = TRUE AND (role = 'employee' OR secondary_role = 'employee')"
+        if 'secondary_role' in columns:
+            query = "SELECT * FROM users WHERE is_service_provider = TRUE AND (role = 'employee' OR secondary_role = 'employee')"
+        else:
+            query = "SELECT * FROM users WHERE is_service_provider = TRUE AND role = 'employee'"
     else:
         # Fallback: filter by role
         query = "SELECT * FROM users WHERE role IN ('employee', 'master')"
@@ -304,34 +307,42 @@ def get_employees_by_service(service_id: int):
     """
     conn = get_db_connection()
     c = conn.cursor()
-    
-    # Check if new columns exist
+
+    # Check if new columns exist in user_services
     c.execute("""
-        SELECT column_name 
-        FROM information_schema.columns 
+        SELECT column_name
+        FROM information_schema.columns
         WHERE table_name='user_services'
     """)
     us_columns = [row[0] for row in c.fetchall()]
-    
+
+    # Check if secondary_role column exists in users
+    c.execute("""
+        SELECT COUNT(*) FROM information_schema.columns
+        WHERE table_name = 'users' AND column_name = 'secondary_role'
+    """)
+    has_secondary_role = c.fetchone()[0] > 0
+
     has_settings = 'price' in us_columns
-    
+    role_condition = "(u.role = 'employee' OR u.secondary_role = 'employee')" if has_secondary_role else "u.role = 'employee'"
+
     if has_settings:
-        c.execute("""SELECT u.*, us.price, us.duration, us.price_min, us.price_max
+        c.execute(f"""SELECT u.*, us.price, us.duration, us.price_min, us.price_max
                      FROM users u
                      JOIN user_services us ON u.id = us.user_id
                      WHERE us.service_id = %s AND u.is_active = TRUE AND u.is_service_provider = TRUE
-                     AND (u.role = 'employee' OR u.secondary_role = 'employee')
+                     AND {role_condition}
                      AND (us.is_online_booking_enabled = TRUE OR us.is_online_booking_enabled IS NULL)""",
                   (service_id,))
     else:
         # Fallback for old schema
-        c.execute("""SELECT u.*, NULL as price, NULL as duration, NULL as price_min, NULL as price_max
+        c.execute(f"""SELECT u.*, NULL as price, NULL as duration, NULL as price_min, NULL as price_max
                      FROM users u
                      JOIN user_services us ON u.id = us.user_id
                      WHERE us.service_id = %s AND u.is_active = TRUE AND u.is_service_provider = TRUE
-                     AND (u.role = 'employee' OR u.secondary_role = 'employee')""",
+                     AND {role_condition}""",
                   (service_id,))
-    
+
     employees = c.fetchall()
     conn.close()
     return employees

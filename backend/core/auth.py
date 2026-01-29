@@ -482,12 +482,12 @@ async def api_register(
         c.execute("SELECT id FROM users WHERE LOWER(username) = LOWER(%s)", (username,))
         if c.fetchone():
             conn.close()
-            raise ValueError(f"Пользователь с логином '{username}' уже существует")
+            raise ValueError("error_username_exists")
 
         c.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(%s)", (email,))
         if c.fetchone():
             conn.close()
-            raise ValueError(f"Пользователь с email '{email}' уже зарегистрирован")
+            raise ValueError("error_email_exists")
 
         current_stage = "Подготовка данных"
         # Генерируем токены

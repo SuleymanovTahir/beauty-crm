@@ -238,7 +238,7 @@
       "price": 80
     },
     "full_bikini": {
-      "category": "депиляциялық балауыз",
+      "category": "балауыз",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -408,7 +408,7 @@
       "price": 300
     },
     "lashes_classic": {
-      "category": "кірпіктер</z59> <z60>кірпіктер",
+      "category": "кірпіктер",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -418,7 +418,7 @@
       "price": 200
     },
     "lashes_mega": {
-      "category": "кірпіктер</z59> <z60>кірпіктер",
+      "category": "кірпіктер",
       "currency": "AED",
       "description": "",
       "duration": "120",
