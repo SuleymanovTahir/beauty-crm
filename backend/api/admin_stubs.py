@@ -138,28 +138,6 @@ async def get_marketplace_stats(current_user: dict = Depends(get_current_user)):
     }
 
 
-@router.get("/admin/audit-log")
-async def get_audit_log(
-    limit: int = 100,
-    current_user: dict = Depends(get_current_user)
-):
-    """Получить лог аудита"""
-    return {
-        "logs": [],
-        "total": 0
-    }
-
-
-@router.get("/admin/audit-log/summary")
-async def get_audit_log_summary(current_user: dict = Depends(get_current_user)):
-    """Получить сводку по логам аудита"""
-    return {
-        "total_events": 0,
-        "by_type": {},
-        "recent_activities": []
-    }
-
-
 @router.get("/admin/trash")
 async def get_trash(current_user: dict = Depends(get_current_user)):
     """Получить удаленные элементы (корзина)"""
@@ -179,16 +157,62 @@ async def get_subscription_types(current_user: dict = Depends(get_current_user))
 
 @router.get("/settings/currencies")
 async def get_currencies(current_user: dict = Depends(get_current_user)):
-    """Получить список валют"""
-    return {
-        "currencies": [
-            {"code": "USD", "symbol": "$", "name": "US Dollar"},
-            {"code": "EUR", "symbol": "€", "name": "Euro"},
-            {"code": "RUB", "symbol": "₽", "name": "Russian Ruble"},
-            {"code": "KZT", "symbol": "₸", "name": "Kazakhstani Tenge"}
-        ],
-        "default": "USD"
-    }
+    """Получить список валют из БД или настроек салона"""
+    from db.connection import get_db_connection
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        # Получаем валюту из настроек салона
+        c.execute("SELECT currency FROM salon_settings WHERE id = 1")
+        salon_row = c.fetchone()
+        default_currency = salon_row[0] if salon_row and salon_row[0] else "USD"
+
+        # Пробуем получить валюты из таблицы currencies
+        c.execute("""
+            SELECT code, name, symbol, exchange_rate, is_default
+            FROM currencies
+            WHERE is_active = TRUE
+            ORDER BY is_default DESC, code
+        """)
+        rows = c.fetchall()
+
+        if rows:
+            currencies = []
+            for row in rows:
+                currencies.append({
+                    "code": row[0],
+                    "name": row[1],
+                    "symbol": row[2],
+                    "exchange_rate": row[3],
+                    "is_default": row[4]
+                })
+            return {"currencies": currencies, "default": default_currency}
+
+        # Если таблица пуста - возвращаем базовые валюты
+        return {
+            "currencies": [
+                {"code": "USD", "symbol": "$", "name": "US Dollar"},
+                {"code": "EUR", "symbol": "€", "name": "Euro"},
+                {"code": "RUB", "symbol": "₽", "name": "Russian Ruble"},
+                {"code": "AED", "symbol": "د.إ", "name": "UAE Dirham"},
+                {"code": "KZT", "symbol": "₸", "name": "Kazakhstani Tenge"}
+            ],
+            "default": default_currency
+        }
+    except Exception as e:
+        # Fallback если таблица не существует
+        return {
+            "currencies": [
+                {"code": "USD", "symbol": "$", "name": "US Dollar"},
+                {"code": "EUR", "symbol": "€", "name": "Euro"},
+                {"code": "RUB", "symbol": "₽", "name": "Russian Ruble"},
+                {"code": "AED", "symbol": "د.إ", "name": "UAE Dirham"}
+            ],
+            "default": "USD"
+        }
+    finally:
+        conn.close()
 
 
 @router.get("/admin/features")

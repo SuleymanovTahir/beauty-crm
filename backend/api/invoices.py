@@ -57,19 +57,19 @@ async def get_invoice_stages(current_user: dict = Depends(get_current_user)):
     c = conn.cursor()
     try:
         c.execute("""
-            SELECT id, name, name_ru, color, sort_order 
-            FROM workflow_stages 
-            WHERE entity_type = 'invoice' 
+            SELECT id, name, color, sort_order
+            FROM workflow_stages
+            WHERE entity_type = 'invoice'
             ORDER BY sort_order
         """)
         stages = []
         for row in c.fetchall():
             stages.append({
                 "id": row[0],
-                "name": row[2] or row[1],
+                "name": row[1],
                 "key": row[1],
-                "color": row[3],
-                "order_index": row[4]
+                "color": row[2],
+                "order_index": row[3]
             })
         return stages
     finally:
@@ -85,10 +85,10 @@ async def create_invoice_stage(
     c = conn.cursor()
     try:
         c.execute("""
-            INSERT INTO workflow_stages (entity_type, name, name_ru, color, sort_order)
-            VALUES ('invoice', %s, %s, %s, %s)
+            INSERT INTO workflow_stages (entity_type, name, color, sort_order)
+            VALUES ('invoice', %s, %s, %s)
             RETURNING id
-        """, (stage.name, stage.name, stage.color, stage.order_index))
+        """, (stage.name, stage.color, stage.order_index))
         stage_id = c.fetchone()[0]
         conn.commit()
         return {"id": stage_id, "success": True}
@@ -108,7 +108,7 @@ async def update_invoice_stage(
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("UPDATE workflow_stages SET name = %s, name_ru = %s, color = %s WHERE id = %s", (stage.name, stage.name, stage.color, stage_id))
+        c.execute("UPDATE workflow_stages SET name = %s, color = %s WHERE id = %s", (stage.name, stage.color, stage_id))
         conn.commit()
         return {"success": True}
     except Exception as e:

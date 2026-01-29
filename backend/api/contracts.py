@@ -54,19 +54,19 @@ async def get_contract_stages(current_user: dict = Depends(get_current_user)):
     c = conn.cursor()
     try:
         c.execute("""
-            SELECT id, name, name_ru, color, sort_order 
-            FROM workflow_stages 
-            WHERE entity_type = 'contract' 
+            SELECT id, name, color, sort_order
+            FROM workflow_stages
+            WHERE entity_type = 'contract'
             ORDER BY sort_order
         """)
         stages = []
         for row in c.fetchall():
             stages.append({
                 "id": row[0],
-                "name": row[2] or row[1],
+                "name": row[1],
                 "key": row[1],
-                "color": row[3],
-                "order_index": row[4]
+                "color": row[2],
+                "order_index": row[3]
             })
         return stages
     finally:
@@ -78,9 +78,9 @@ async def create_contract_stage(stage: StageCreate, current_user: dict = Depends
     c = conn.cursor()
     try:
         c.execute("""
-            INSERT INTO workflow_stages (entity_type, name, name_ru, color, sort_order)
-            VALUES ('contract', %s, %s, %s, %s) RETURNING id
-        """, (stage.name, stage.name, stage.color, stage.order_index))
+            INSERT INTO workflow_stages (entity_type, name, color, sort_order)
+            VALUES ('contract', %s, %s, %s) RETURNING id
+        """, (stage.name, stage.color, stage.order_index))
         sid = c.fetchone()[0]
         conn.commit()
         return {"id": sid, "success": True}

@@ -5,12 +5,57 @@ Executes core initialization and data maintenance.
 import sys
 from datetime import datetime
 from db.init import init_database
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
 def print_header(text):
     print("\n" + "="*80)
     print(f"  {text}")
     print("="*80)
+
+def create_sessions_table():
+    """Create sessions table for user authentication."""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute('''CREATE TABLE IF NOT EXISTS sessions (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            session_token TEXT UNIQUE NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP NOT NULL
+        )''')
+        conn.commit()
+        log_info("✅ Sessions table created/verified", "migrations")
+    except Exception as e:
+        conn.rollback()
+        log_error(f"❌ Failed to create sessions table: {e}", "migrations")
+        raise
+    finally:
+        conn.close()
+
+def create_chat_history_table():
+    """Create chat_history table for messenger conversations."""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute('''CREATE TABLE IF NOT EXISTS chat_history (
+            id SERIAL PRIMARY KEY,
+            instagram_id TEXT REFERENCES clients(instagram_id) ON DELETE CASCADE,
+            message TEXT,
+            sender TEXT,
+            message_type TEXT DEFAULT 'text',
+            is_read BOOLEAN DEFAULT FALSE,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        conn.commit()
+        log_info("✅ Chat history table created/verified", "migrations")
+    except Exception as e:
+        conn.rollback()
+        log_error(f"❌ Failed to create chat_history table: {e}", "migrations")
+        raise
+    finally:
+        conn.close()
 
 def run_all_migrations():
     """Main entry point for database health and setup."""
@@ -22,6 +67,12 @@ def run_all_migrations():
         # 1. Core Schema Sync
         print_header("CORE SCHEMA INITIALIZATION")
         init_database()
+
+        # 1.5 Create sessions table (auth)
+        create_sessions_table()
+
+        # 1.6 Create chat_history table (messaging)
+        create_chat_history_table()
         
         # 2. Data Maintenance & Fixed
         print_header("DATA MAINTENANCE")

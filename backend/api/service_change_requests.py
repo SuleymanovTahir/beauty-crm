@@ -31,8 +31,8 @@ async def get_my_services(
         # Получить назначенные услуги
         c.execute("""
             SELECT
-                s.id, s.name, s.name_ru, s.name_en,
-                s.category, s.price as default_price, s.duration as default_duration,
+                s.id, s.name, s.category,
+                s.price as default_price, s.duration as default_duration,
                 COALESCE(us.price, s.price) as price,
                 us.price_min, us.price_max,
                 COALESCE(us.duration, s.duration) as duration,
@@ -49,17 +49,15 @@ async def get_my_services(
             services.append({
                 "id": row[0],
                 "name": row[1],
-                "name_ru": row[2],
-                "name_en": row[3],
-                "category": row[4],
-                "default_price": row[5],
-                "default_duration": row[6],
-                "price": row[7],
-                "price_min": row[8],
-                "price_max": row[9],
-                "duration": row[10],
-                "is_online_booking_enabled": bool(row[11]) if row[11] is not None else True,
-                "is_calendar_enabled": bool(row[12]) if row[12] is not None else True
+                "category": row[2],
+                "default_price": row[3],
+                "default_duration": row[4],
+                "price": row[5],
+                "price_min": row[6],
+                "price_max": row[7],
+                "duration": row[8],
+                "is_online_booking_enabled": bool(row[9]) if row[9] is not None else True,
+                "is_calendar_enabled": bool(row[10]) if row[10] is not None else True
             })
 
         # Получить pending запросы
@@ -224,7 +222,7 @@ async def get_my_change_requests(
 
         c.execute("""
             SELECT
-                scr.id, scr.service_id, s.name, s.name_ru,
+                scr.id, scr.service_id, s.name,
                 scr.request_type, scr.status,
                 scr.requested_price, scr.requested_duration,
                 scr.employee_comment, scr.admin_comment,
@@ -242,15 +240,14 @@ async def get_my_change_requests(
                 "id": row[0],
                 "service_id": row[1],
                 "service_name": row[2],
-                "service_name_ru": row[3],
-                "request_type": row[4],
-                "status": row[5],
-                "requested_price": row[6],
-                "requested_duration": row[7],
-                "employee_comment": row[8],
-                "admin_comment": row[9],
-                "created_at": row[10].isoformat() if row[10] else None,
-                "resolved_at": row[11].isoformat() if row[11] else None
+                "request_type": row[3],
+                "status": row[4],
+                "requested_price": row[5],
+                "requested_duration": row[6],
+                "employee_comment": row[7],
+                "admin_comment": row[8],
+                "created_at": row[9].isoformat() if row[9] else None,
+                "resolved_at": row[10].isoformat() if row[10] else None
             })
 
         conn.close()
@@ -280,8 +277,8 @@ async def get_pending_requests(
 
         c.execute("""
             SELECT
-                scr.id, scr.user_id, u.full_name, u.full_name_ru,
-                scr.service_id, s.name, s.name_ru,
+                scr.id, scr.user_id, u.full_name,
+                scr.service_id, s.name,
                 scr.request_type, scr.status,
                 scr.requested_price, scr.requested_price_min, scr.requested_price_max,
                 scr.requested_duration,
@@ -304,22 +301,20 @@ async def get_pending_requests(
                 "id": row[0],
                 "user_id": row[1],
                 "employee_name": row[2],
-                "employee_name_ru": row[3],
-                "service_id": row[4],
-                "service_name": row[5],
-                "service_name_ru": row[6],
-                "request_type": row[7],
-                "status": row[8],
-                "requested_price": row[9],
-                "requested_price_min": row[10],
-                "requested_price_max": row[11],
-                "requested_duration": row[12],
-                "requested_is_online_booking_enabled": row[13],
-                "requested_is_calendar_enabled": row[14],
-                "employee_comment": row[15],
-                "created_at": row[16].isoformat() if row[16] else None,
-                "current_price": row[17],
-                "current_duration": row[18]
+                "service_id": row[3],
+                "service_name": row[4],
+                "request_type": row[5],
+                "status": row[6],
+                "requested_price": row[7],
+                "requested_price_min": row[8],
+                "requested_price_max": row[9],
+                "requested_duration": row[10],
+                "requested_is_online_booking_enabled": row[11],
+                "requested_is_calendar_enabled": row[12],
+                "employee_comment": row[13],
+                "created_at": row[14].isoformat() if row[14] else None,
+                "current_price": row[15],
+                "current_duration": row[16]
             })
 
         conn.close()

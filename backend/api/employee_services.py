@@ -25,10 +25,10 @@ async def get_user_services(
         
         # Get assigned services
         c.execute("""
-            SELECT 
-                s.id, s.name, s.name_ru, s.name_ar, s.category,
-                COALESCE(us.price, s.price) as price, 
-                us.price_min, us.price_max, 
+            SELECT
+                s.id, s.name, s.category,
+                COALESCE(us.price, s.price) as price,
+                us.price_min, us.price_max,
                 COALESCE(us.duration, s.duration) as duration,
                 us.is_online_booking_enabled, us.is_calendar_enabled
             FROM services s
@@ -36,43 +36,39 @@ async def get_user_services(
             WHERE us.user_id = %s
             ORDER BY s.category, s.name
         """, (user_id,))
-        
+
         assigned_services = []
         for row in c.fetchall():
             assigned_services.append({
                 "id": row[0],
                 "name": row[1],
-                "name_ru": row[2],
-                "name_ar": row[3],
-                "category": row[4],
-                "price": row[5],
-                "price_min": row[6],
-                "price_max": row[7],
-                "duration": row[8],
-                "is_online_booking_enabled": bool(row[9]),
-                "is_calendar_enabled": bool(row[10])
+                "category": row[2],
+                "price": row[3],
+                "price_min": row[4],
+                "price_max": row[5],
+                "duration": row[6],
+                "is_online_booking_enabled": bool(row[7]) if row[7] is not None else True,
+                "is_calendar_enabled": bool(row[8]) if row[8] is not None else True
             })
-        
+
         # Get all available services (entire catalog)
         c.execute("""
-            SELECT id, name, name_ru, name_ar, category, price, duration
+            SELECT id, name, category, price, duration
             FROM services
             WHERE is_active = TRUE
             ORDER BY category, name
         """)
-        
+
         all_services = []
         assigned_ids = {s["id"] for s in assigned_services}
-        
+
         for row in c.fetchall():
             all_services.append({
                 "id": row[0],
                 "name": row[1],
-                "name_ru": row[2],
-                "name_ar": row[3],
-                "category": row[4],
-                "default_price": row[5],
-                "default_duration": row[6],
+                "category": row[2],
+                "default_price": row[3],
+                "default_duration": row[4],
                 "is_assigned": row[0] in assigned_ids
             })
         

@@ -1,5 +1,6 @@
 import apiClient from './client';
-import { Service, Employee, EmployeeSchedule } from '../types';
+import { API_ENDPOINTS } from '@beauty-crm/shared/api';
+import type { Service, Employee, EmployeeSchedule } from '@beauty-crm/shared/types';
 
 interface ServicesResponse {
   services: Service[];
@@ -12,7 +13,7 @@ interface EmployeesResponse {
 export const servicesApi = {
   getAll: async (language?: string): Promise<Service[]> => {
     const params = language ? { language } : undefined;
-    const response = await apiClient.get<ServicesResponse>('/api/public/services', params);
+    const response = await apiClient.get<ServicesResponse>(API_ENDPOINTS.SERVICES.PUBLIC, params);
     return response.data.services || [];
   },
 
@@ -20,13 +21,18 @@ export const servicesApi = {
     const params: Record<string, unknown> = { category };
     if (language) params.language = language;
 
-    const response = await apiClient.get<ServicesResponse>('/api/public/services', params);
+    const response = await apiClient.get<ServicesResponse>(API_ENDPOINTS.SERVICES.PUBLIC, params);
     return response.data.services || [];
+  },
+
+  getByKey: async (key: string): Promise<Service> => {
+    const response = await apiClient.get<Service>(API_ENDPOINTS.SERVICES.BY_KEY(key));
+    return response.data;
   },
 
   getPrice: async (serviceKey: string): Promise<{ price: number; currency: string }> => {
     const response = await apiClient.get<{ price: number; currency: string }>(
-      `/api/services/${serviceKey}/price`
+      `${API_ENDPOINTS.SERVICES.BY_KEY(serviceKey)}/price`
     );
     return response.data;
   },
@@ -34,18 +40,18 @@ export const servicesApi = {
 
 export const employeesApi = {
   getAll: async (): Promise<Employee[]> => {
-    const response = await apiClient.get<EmployeesResponse>('/api/public/employees');
+    const response = await apiClient.get<EmployeesResponse>(API_ENDPOINTS.EMPLOYEES.LIST);
     return response.data.employees || [];
   },
 
   getById: async (id: number): Promise<Employee> => {
-    const response = await apiClient.get<Employee>(`/api/public/employees/${id}`);
+    const response = await apiClient.get<Employee>(API_ENDPOINTS.EMPLOYEES.DETAIL(id));
     return response.data;
   },
 
   getByService: async (serviceKey: string): Promise<Employee[]> => {
     const response = await apiClient.get<EmployeesResponse>(
-      '/api/public/employees',
+      API_ENDPOINTS.EMPLOYEES.LIST,
       { service_key: serviceKey }
     );
     return response.data.employees || [];
@@ -53,9 +59,16 @@ export const employeesApi = {
 
   getSchedule: async (employeeId: number, date: string): Promise<EmployeeSchedule> => {
     const response = await apiClient.get<EmployeeSchedule>(
-      `/api/public/employees/${employeeId}/schedule`,
+      API_ENDPOINTS.EMPLOYEES.SCHEDULE(employeeId),
       { date }
     );
     return response.data;
+  },
+
+  getServices: async (employeeId: number): Promise<Service[]> => {
+    const response = await apiClient.get<{ services: Service[] }>(
+      API_ENDPOINTS.EMPLOYEES.SERVICES(employeeId)
+    );
+    return response.data.services || [];
   },
 };
