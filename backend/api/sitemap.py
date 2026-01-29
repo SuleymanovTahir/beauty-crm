@@ -55,15 +55,13 @@ async def generate_sitemap():
             )
 
         # Add procedure pages: /service/<category>/<id>-<slug>
-        # Use EN name if present; fallback to RU; fallback to "service-<id>".
+        # Use service name for slug; fallback to "service-<id>".
         for s in services:
             try:
                 service_id = s[0]
-                category = str(s[9]).strip() if len(s) > 9 and s[9] else "other"
-                name_en = s[20] if len(s) > 20 and s[20] else None
-                name_ru = s[3] if len(s) > 3 and s[3] else None
-                name_base = s[2] if len(s) > 2 and s[2] else None
-                name_for_slug = name_en or name_base or name_ru or ""
+                category = str(s[3]).strip() if len(s) > 3 and s[3] else "other"
+                name = s[2] if len(s) > 2 and s[2] else None
+                name_for_slug = name or ""
                 slug = _slugify(name_for_slug)
                 if not slug:
                     slug = f"service-{service_id}"

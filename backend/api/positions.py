@@ -20,22 +20,14 @@ router = APIRouter()
 
 class PositionCreate(BaseModel):
     name: str
-    name_en: Optional[str] = None
-    name_ar: Optional[str] = None
-    name_fr: Optional[str] = None
-    name_de: Optional[str] = None
     description: Optional[str] = None
     sort_order: int = 0
 
 class PositionUpdate(BaseModel):
     name: Optional[str] = None
-    name_en: Optional[str] = None
-    name_ar: Optional[str] = None
-    name_fr: Optional[str] = None
-    name_de: Optional[str] = None
     description: Optional[str] = None
     sort_order: Optional[int] = None
-    is_active: Optional[int] = None
+    is_active: Optional[bool] = None
 
 @router.get("/positions")
 async def list_positions(
@@ -85,10 +77,6 @@ async def create_new_position(
 
         position_id = create_position(
             name=position_data.name,
-            name_en=position_data.name_en,
-            name_ar=position_data.name_ar,
-            name_fr=position_data.name_fr,
-            name_de=position_data.name_de,
             description=position_data.description,
             sort_order=position_data.sort_order
         )

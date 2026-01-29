@@ -70,7 +70,7 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
         active_links = c.fetchone()[0]
         
         c.execute("""
-            SELECT u.full_name, s.name, s.name_ru
+            SELECT u.full_name, s.name
             FROM user_services us
             JOIN users u ON us.user_id = u.id
             JOIN services s ON us.service_id = s.id
@@ -78,14 +78,13 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
             LIMIT 10
         """)
         sample_links = c.fetchall()
-        
+
         result["database"]["user_services"] = {
             "total_links": active_links,
             "sample": [
                 {
                     "employee": link[0],
-                    "service": link[1],
-                    "service_ru": link[2]
+                    "service": link[1]
                 }
                 for link in sample_links
             ]
@@ -96,23 +95,22 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
         active_services = c.fetchone()[0]
         
         c.execute("""
-            SELECT id, name, name_ru, category, price
+            SELECT id, name, category, price
             FROM services
             WHERE is_active = TRUE
             ORDER BY category
             LIMIT 10
         """)
         sample_services = c.fetchall()
-        
+
         result["database"]["services"] = {
             "total_active": active_services,
             "sample": [
                 {
                     "id": svc[0],
                     "name": svc[1],
-                    "name_ru": svc[2],
-                    "category": svc[3],
-                    "price": svc[4]
+                    "category": svc[2],
+                    "price": svc[3]
                 }
                 for svc in sample_services
             ]
@@ -174,24 +172,23 @@ async def full_diagnostics(session_token: Optional[str] = Cookie(None)):
         
         # Находим услугу "Manicure"
         c.execute("""
-            SELECT id, name, name_ru 
-            FROM services 
-            WHERE (name LIKE '%Manicure%' OR name_ru LIKE '%маникюр%')
+            SELECT id, name
+            FROM services
+            WHERE name ILIKE '%Manicure%' OR name ILIKE '%маникюр%'
             AND is_active = TRUE
             LIMIT 1
         """)
         manicure_service = c.fetchone()
-        
+
         if manicure_service:
-            service_id, service_name, service_name_ru = manicure_service
-            
+            service_id, service_name = manicure_service
+
             # Получаем мастеров для этой услуги
             masters_for_service = get_employees_by_service(service_id)
-            
+
             result["sample_request"] = {
                 "service_id": service_id,
                 "service_name": service_name,
-                "service_name_ru": service_name_ru,
                 "masters_found": len(masters_for_service),
                 "masters": [
                     {

@@ -65,6 +65,21 @@ from api.push_tokens import router as push_tokens_router
 from api.sitemap import router as sitemap_router
 from api.seo_metadata import router as seo_metadata_router
 from api.database_explorer import router as db_explorer_router
+from api.menu_settings import router as menu_settings_router
+from api.service_change_requests import router as service_change_requests_router
+from api.positions import router as positions_router
+from api.products import router as products_router
+from api.subscriptions import router as subscriptions_router
+from api.broadcasts import router as broadcasts_router
+from api.trash import router as trash_router
+from api.messengers import router as messengers_router
+from api.marketplace_integrations import router as marketplace_router
+from api.payment_integrations import router as payment_integrations_router
+from api.admin_stubs import router as admin_stubs_router
+from api.internal_chat import router as internal_chat_router
+from api.statuses import router as statuses_router
+from api.gallery import router as gallery_router
+from api.public_admin import router as public_admin_router
 
 from scheduler import (
     start_birthday_checker, 
@@ -119,8 +134,8 @@ async def lifespan(app: FastAPI):
 
     # 3. Синхронизация системы (Создание таблиц и миграции)
     # ОБЯЗАТЕЛЬНО раскомментируйте после пересоздания базы данных или обновления кода
-    # from db.migrations.run_all_migrations import run_all_migrations
-    # run_all_migrations()
+    from db.migrations.run_all_migrations import run_all_migrations
+    run_all_migrations()
     
     # 4. Конфигурация
     global salon_config
@@ -129,8 +144,8 @@ async def lifespan(app: FastAPI):
 
     # [РУЧНОЕ АДМИНИСТРИРОВАНИЕ] - Раскомментируйте при необходимости
     # log_info("🔧 Выполнение задач ручного администрирования...", "boot")
-    # from scripts.maintenance.fix_data import run_all_fixes
-    # run_all_fixes()
+    from scripts.maintenance.fix_data import run_all_fixes
+    run_all_fixes()
 
     # [ТЕСТИРОВАНИЕ] - Запуск тестов при старте (можно выключить для ускорения запуска)
     # from tests.run_all_tests import run_all_tests
@@ -253,6 +268,21 @@ app.include_router(visitor_analytics_router, prefix="/api")
 app.include_router(audit_router, prefix="/api")
 app.include_router(db_explorer_router)
 app.include_router(push_tokens_router)
+app.include_router(menu_settings_router, prefix="/api")
+app.include_router(service_change_requests_router, prefix="/api")
+app.include_router(positions_router, prefix="/api")
+app.include_router(products_router, prefix="/api")
+app.include_router(subscriptions_router, prefix="/api")
+app.include_router(broadcasts_router, prefix="/api")
+app.include_router(trash_router, prefix="/api")
+app.include_router(messengers_router, prefix="/api")
+app.include_router(marketplace_router, prefix="/api")
+app.include_router(payment_integrations_router, prefix="/api")
+app.include_router(admin_stubs_router, prefix="/api")
+app.include_router(internal_chat_router)  # already has /api/internal-chat prefix
+app.include_router(statuses_router, prefix="/api")
+app.include_router(gallery_router, prefix="/api")
+app.include_router(public_admin_router, prefix="/api")  # already has /public-admin prefix
 app.include_router(proxy_router, prefix="/api")
 app.include_router(sitemap_router)
 app.include_router(seo_metadata_router)

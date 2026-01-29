@@ -99,6 +99,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@beauty-crm/shared": path.resolve(__dirname, "../shared/src"),
     },
   },
   server: {

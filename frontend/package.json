@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@beauty-crm/shared": "*",
     "@radix-ui/react-accordion": "*",
     "@radix-ui/react-alert-dialog": "*",
     "@radix-ui/react-aspect-ratio": "*",

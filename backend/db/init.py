@@ -374,8 +374,10 @@ def init_database():
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             deleted_at TIMESTAMP NULL
         )''')
-        
+
         add_column_if_not_exists('bookings', 'source', "TEXT DEFAULT 'manual'")
+        add_column_if_not_exists('bookings', 'phone', 'TEXT')
+        add_column_if_not_exists('bookings', 'name', 'TEXT')
 
         # Tasks and Project Management
         c.execute('''CREATE TABLE IF NOT EXISTS tasks (
@@ -1209,12 +1211,29 @@ def init_database():
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id),
             service_id INTEGER REFERENCES services(id),
-            requested_changes JSONB,
+            request_type TEXT DEFAULT 'update',
+            requested_price REAL,
+            requested_price_min REAL,
+            requested_price_max REAL,
+            requested_duration TEXT,
+            requested_is_online_booking_enabled BOOLEAN,
+            requested_is_calendar_enabled BOOLEAN,
+            employee_comment TEXT,
             status TEXT DEFAULT 'pending',
             admin_comment TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+
+        # Migrations for service_change_requests
+        add_column_if_not_exists('service_change_requests', 'request_type', "TEXT DEFAULT 'update'")
+        add_column_if_not_exists('service_change_requests', 'requested_price', 'REAL')
+        add_column_if_not_exists('service_change_requests', 'requested_price_min', 'REAL')
+        add_column_if_not_exists('service_change_requests', 'requested_price_max', 'REAL')
+        add_column_if_not_exists('service_change_requests', 'requested_duration', 'TEXT')
+        add_column_if_not_exists('service_change_requests', 'requested_is_online_booking_enabled', 'BOOLEAN')
+        add_column_if_not_exists('service_change_requests', 'requested_is_calendar_enabled', 'BOOLEAN')
+        add_column_if_not_exists('service_change_requests', 'employee_comment', 'TEXT')
 
         # Advanced Loyalty
         c.execute('''CREATE TABLE IF NOT EXISTS referral_campaigns (
@@ -1272,8 +1291,91 @@ def init_database():
             UNIQUE(challenge_id, client_id)
         )''')
 
+        # Telephony & Call Logs
+        c.execute('''CREATE TABLE IF NOT EXISTS call_logs (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT REFERENCES clients(instagram_id),
+            booking_id INTEGER REFERENCES bookings(id),
+            phone TEXT NOT NULL,
+            direction TEXT DEFAULT 'outbound',
+            status TEXT DEFAULT 'completed',
+            duration INTEGER DEFAULT 0,
+            recording_url TEXT,
+            recording_file TEXT,
+            transcription TEXT,
+            notes TEXT,
+            external_id TEXT,
+            manual_client_name TEXT,
+            manual_manager_name TEXT,
+            manual_service_name TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Currencies
+        c.execute('''CREATE TABLE IF NOT EXISTS currencies (
+            id SERIAL PRIMARY KEY,
+            code TEXT UNIQUE NOT NULL,
+            name TEXT,
+            symbol TEXT,
+            exchange_rate REAL DEFAULT 1.0,
+            is_default BOOLEAN DEFAULT FALSE,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Broadcast Subscription Types
+        c.execute('''CREATE TABLE IF NOT EXISTS broadcast_subscription_types (
+            id SERIAL PRIMARY KEY,
+            key TEXT UNIQUE NOT NULL,
+            target_role TEXT DEFAULT 'all',
+            name TEXT,
+            description TEXT,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Messenger Settings & Messages
+        c.execute('''CREATE TABLE IF NOT EXISTS messenger_settings (
+            id SERIAL PRIMARY KEY,
+            messenger_type TEXT UNIQUE NOT NULL,
+            is_enabled BOOLEAN DEFAULT FALSE,
+            api_token TEXT,
+            webhook_url TEXT,
+            config_json TEXT,
+            display_name TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS messenger_messages (
+            id SERIAL PRIMARY KEY,
+            messenger_type TEXT NOT NULL,
+            client_id TEXT REFERENCES clients(instagram_id),
+            sender_type TEXT DEFAULT 'client',
+            message_text TEXT,
+            message_type TEXT DEFAULT 'text',
+            attachments_json TEXT,
+            external_message_id TEXT,
+            is_read BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Temporary booking storage for bot conversation
+        c.execute('''CREATE TABLE IF NOT EXISTS booking_temp (
+            id SERIAL PRIMARY KEY,
+            instagram_id TEXT NOT NULL,
+            service_id INTEGER,
+            service_name TEXT,
+            master_id INTEGER,
+            master_name TEXT,
+            booking_date DATE,
+            booking_time TIME,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
         # --- 7. DEFAULT DATA SYNC ---
-        
+
         # Stages
         default_stages = [
             ('pipeline', 'new', 'Новый лид', '#3b82f6', 0),
@@ -1331,17 +1433,57 @@ def init_database():
             "booking_availability_instructions": "Please strictly adhere to the 'AVAILABLE MASTERS' section. Do not suggest times not explicitly listed as available."
         }
 
+        # Default messenger integrations configuration
+        messenger_config = [
+            {
+                "messenger_type": "instagram",
+                "display_name": "Instagram Direct",
+                "is_enabled": False,
+                "is_visible_in_chat": True,
+                "api_token": "",
+                "webhook_url": "",
+                "config_json": "{}"
+            },
+            {
+                "messenger_type": "whatsapp",
+                "display_name": "WhatsApp Business",
+                "is_enabled": False,
+                "is_visible_in_chat": True,
+                "api_token": "",
+                "webhook_url": "",
+                "config_json": "{}"
+            },
+            {
+                "messenger_type": "telegram",
+                "display_name": "Telegram",
+                "is_enabled": False,
+                "is_visible_in_chat": True,
+                "api_token": "",
+                "webhook_url": "",
+                "config_json": "{}"
+            },
+            {
+                "messenger_type": "tiktok",
+                "display_name": "TikTok",
+                "is_enabled": False,
+                "is_visible_in_chat": True,
+                "api_token": "",
+                "webhook_url": "",
+                "config_json": "{}"
+            }
+        ]
+
         c.execute("""
             INSERT INTO salon_settings (
-                id, name, address, 
+                id, name, address,
                 phone, whatsapp, instagram, email, booking_url, google_maps,
-                hours_weekdays, hours_weekends, hours, bot_name, base_url, 
-                currency, bot_config, custom_settings
+                hours_weekdays, hours_weekends, hours, bot_name, base_url,
+                currency, bot_config, custom_settings, messenger_config
             )
             VALUES (
-                1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             )
-            ON CONFLICT (id) DO UPDATE SET 
+            ON CONFLICT (id) DO UPDATE SET
                 name = EXCLUDED.name,
                 address = EXCLUDED.address,
                 phone = EXCLUDED.phone,
@@ -1355,15 +1497,16 @@ def init_database():
                 currency = EXCLUDED.currency,
                 bot_config = EXCLUDED.bot_config,
                 custom_settings = EXCLUDED.custom_settings,
+                messenger_config = COALESCE(NULLIF(salon_settings.messenger_config::text, '[]'), EXCLUDED.messenger_config::text)::jsonb,
                 updated_at = CURRENT_TIMESTAMP
         """, (
-            salon_name, salon_address, 
+            salon_name, salon_address,
             salon_phone, salon_phone, salon_instagram, salon_email, f"{salon_base_url}/booking",
             salon_google_maps,
             salon_hours_weekdays, salon_hours_weekends,
             f"Ежедневно: {salon_hours_weekdays}",
             bot_config['bot_name'], salon_base_url,
-            salon_currency, json.dumps(bot_config), json.dumps(custom_settings)
+            salon_currency, json.dumps(bot_config), json.dumps(custom_settings), json.dumps(messenger_config)
         ))
 
         # Продуктовые сотрудники
@@ -1461,6 +1604,33 @@ def init_database():
         add_column_if_not_exists('users', 'position', 'TEXT')
         add_column_if_not_exists('users', 'bio', 'TEXT')
         add_column_if_not_exists('users', 'specialization', 'TEXT')
+
+        # Migrations for payment_transactions
+        add_column_if_not_exists('payment_transactions', 'provider_transaction_id', 'TEXT')
+        add_column_if_not_exists('payment_transactions', 'completed_at', 'TIMESTAMP')
+        add_column_if_not_exists('payment_transactions', 'metadata', 'JSONB')
+
+        # Migrations for payment_providers
+        add_column_if_not_exists('payment_providers', 'webhook_secret', 'TEXT')
+        add_column_if_not_exists('payment_providers', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+
+        # Migrations for marketplace_providers
+        add_column_if_not_exists('marketplace_providers', 'webhook_url', 'TEXT')
+        add_column_if_not_exists('marketplace_providers', 'sync_enabled', 'BOOLEAN DEFAULT FALSE')
+
+        # Default broadcast subscription types
+        default_sub_types = [
+            ('promotions', 'all', 'Акции и скидки', 'Информация о специальных предложениях'),
+            ('news', 'all', 'Новости', 'Новости салона и индустрии'),
+            ('appointments', 'all', 'Напоминания', 'Напоминания о записях'),
+            ('loyalty', 'client', 'Программа лояльности', 'Обновления бонусной программы')
+        ]
+        for key, role, name, desc in default_sub_types:
+            c.execute("""
+                INSERT INTO broadcast_subscription_types (key, target_role, name, description, is_active)
+                VALUES (%s, %s, %s, %s, TRUE)
+                ON CONFLICT (key) DO NOTHING
+            """, (key, role, name, desc))
 
         conn.commit()
         log_info("✅ Unified schema initialized successfully", "db")

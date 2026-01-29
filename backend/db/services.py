@@ -12,21 +12,25 @@ import psycopg2
 
 def get_all_services(active_only=True, include_positions=False):
     """Получить все услуги из БД
-    
+
     Returns:
-        List: List of service tuples or dicts
+        List of dicts with service data
+
+    Note: Translations are handled dynamically by the frontend/translator,
+          not stored as separate columns.
     """
     conn = get_db_connection()
     c = conn.cursor()
 
-    # Явный список полей для стабильности индексов
-    fields = "id, service_key, name, category, price, min_price, max_price, currency, duration, description"
-    
-    query = f"SELECT {fields} FROM services"
+    query = """
+        SELECT id, service_key, name, category, price, min_price, max_price,
+               currency, duration, description, benefits, is_active, position_id
+        FROM services
+    """
     if active_only:
         query += " WHERE is_active = TRUE"
     query += " ORDER BY category, name"
-    
+
     c.execute(query)
     services = c.fetchall()
 

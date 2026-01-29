@@ -16,9 +16,6 @@ router = APIRouter()
 
 class ProductCreate(BaseModel):
     name: str
-    name_ru: Optional[str] = None
-    name_en: Optional[str] = None
-    name_ar: Optional[str] = None
     category: Optional[str] = None
     price: float = 0
     cost_price: Optional[float] = 0
@@ -39,9 +36,6 @@ class ProductCreate(BaseModel):
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
-    name_ru: Optional[str] = None
-    name_en: Optional[str] = None
-    name_ar: Optional[str] = None
     category: Optional[str] = None
     price: Optional[float] = None
     cost_price: Optional[float] = None
@@ -82,7 +76,7 @@ async def get_products(
     
     try:
         query = """
-            SELECT id, name, name_ru, name_en, name_ar, category, price, cost_price,
+            SELECT id, name, category, price, cost_price,
                    weight, weight_unit, volume, volume_unit, expiry_date,
                    stock_quantity, min_stock_level, sku, barcode, supplier,
                    notes, is_active, photos, created_at, updated_at
@@ -90,49 +84,46 @@ async def get_products(
             WHERE 1=1
         """
         params = []
-        
+
         if category:
             query += " AND category = %s"
             params.append(category)
-        
+
         if is_active is not None:
             query += " AND is_active = %s"
             params.append(is_active)
-        
+
         if search:
-            query += " AND (name ILIKE %s OR name_ru ILIKE %s OR sku ILIKE %s OR barcode ILIKE %s)"
+            query += " AND (name ILIKE %s OR sku ILIKE %s OR barcode ILIKE %s)"
             search_pattern = f"%{search}%"
-            params.extend([search_pattern, search_pattern, search_pattern, search_pattern])
-        
+            params.extend([search_pattern, search_pattern, search_pattern])
+
         query += " ORDER BY name"
-        
+
         c.execute(query, params)
         products = []
         for row in c.fetchall():
             products.append({
                 "id": row[0],
                 "name": row[1],
-                "name_ru": row[2],
-                "name_en": row[3],
-                "name_ar": row[4],
-                "category": row[5],
-                "price": row[6],
-                "cost_price": row[7],
-                "weight": row[8],
-                "weight_unit": row[9],
-                "volume": row[10],
-                "volume_unit": row[11],
-                "expiry_date": str(row[12]) if row[12] else None,
-                "stock_quantity": row[13],
-                "min_stock_level": row[14],
-                "sku": row[15],
-                "barcode": row[16],
-                "supplier": row[17],
-                "notes": row[18],
-                "is_active": row[19],
-                "photos": row[20],
-                "created_at": row[21],
-                "updated_at": row[22]
+                "category": row[2],
+                "price": row[3],
+                "cost_price": row[4],
+                "weight": row[5],
+                "weight_unit": row[6],
+                "volume": row[7],
+                "volume_unit": row[8],
+                "expiry_date": str(row[9]) if row[9] else None,
+                "stock_quantity": row[10],
+                "min_stock_level": row[11],
+                "sku": row[12],
+                "barcode": row[13],
+                "supplier": row[14],
+                "notes": row[15],
+                "is_active": row[16],
+                "photos": row[17],
+                "created_at": row[18],
+                "updated_at": row[19]
             })
         
         return {"products": products}
@@ -182,42 +173,39 @@ async def get_product(
     
     try:
         c.execute("""
-            SELECT id, name, name_ru, name_en, name_ar, category, price, cost_price,
+            SELECT id, name, category, price, cost_price,
                    weight, weight_unit, volume, volume_unit, expiry_date,
                    stock_quantity, min_stock_level, sku, barcode, supplier,
                    notes, is_active, photos, created_at, updated_at
             FROM products
             WHERE id = %s
         """, (product_id,))
-        
+
         row = c.fetchone()
         if not row:
             raise HTTPException(status_code=404, detail="Товар не найден")
-        
+
         return {
             "id": row[0],
             "name": row[1],
-            "name_ru": row[2],
-            "name_en": row[3],
-            "name_ar": row[4],
-            "category": row[5],
-            "price": row[6],
-            "cost_price": row[7],
-            "weight": row[8],
-            "weight_unit": row[9],
-            "volume": row[10],
-            "volume_unit": row[11],
-            "expiry_date": str(row[12]) if row[12] else None,
-            "stock_quantity": row[13],
-            "min_stock_level": row[14],
-            "sku": row[15],
-            "barcode": row[16],
-            "supplier": row[17],
-            "notes": row[18],
-            "is_active": row[19],
-            "photos": row[20],
-            "created_at": row[21],
-            "updated_at": row[22]
+            "category": row[2],
+            "price": row[3],
+            "cost_price": row[4],
+            "weight": row[5],
+            "weight_unit": row[6],
+            "volume": row[7],
+            "volume_unit": row[8],
+            "expiry_date": str(row[9]) if row[9] else None,
+            "stock_quantity": row[10],
+            "min_stock_level": row[11],
+            "sku": row[12],
+            "barcode": row[13],
+            "supplier": row[14],
+            "notes": row[15],
+            "is_active": row[16],
+            "photos": row[17],
+            "created_at": row[18],
+            "updated_at": row[19]
         }
         
     except HTTPException:
@@ -240,18 +228,15 @@ async def create_product(
     
     try:
         c.execute("""
-            INSERT INTO products 
-            (name, name_ru, name_en, name_ar, category, price, cost_price,
+            INSERT INTO products
+            (name, category, price, cost_price,
              weight, weight_unit, volume, volume_unit, expiry_date,
              stock_quantity, min_stock_level, sku, barcode, supplier,
              notes, is_active, photos, created_by, created_at, updated_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             RETURNING id
         """, (
             product.name,
-            product.name_ru,
-            product.name_en,
-            product.name_ar,
             product.category,
             product.price,
             product.cost_price,

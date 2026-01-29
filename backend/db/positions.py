@@ -46,9 +46,7 @@ def get_position(position_id: int):
     conn.close()
     return position
 
-def create_position(name: str, name_en: str = None, name_ar: str = None, 
-                   name_fr: str = None, name_de: str = None,
-                   description: str = None, sort_order: int = 0):
+def create_position(name: str, description: str = None, sort_order: int = 0):
     """Создать должность"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -57,10 +55,10 @@ def create_position(name: str, name_en: str = None, name_ar: str = None,
 
     try:
         c.execute("""INSERT INTO positions
-                     (name, name_en, name_ar, name_fr, name_de, description, sort_order, is_active, created_at, updated_at)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE, %s, %s)
+                     (name, description, sort_order, is_active, created_at, updated_at)
+                     VALUES (%s, %s, %s, TRUE, %s, %s)
                      RETURNING id""",
-                  (name, name_en, name_ar, name_fr, name_de, description, sort_order, now, now))
+                  (name, description, sort_order, now, now))
 
         position_id = c.fetchone()[0]
         conn.commit()
@@ -79,7 +77,7 @@ def update_position(position_id: int, **kwargs):
     updates = []
     params = []
 
-    allowed_fields = ['name', 'name_en', 'name_ar', 'name_fr', 'name_de', 'description', 'sort_order', 'is_active']
+    allowed_fields = ['name', 'description', 'sort_order', 'is_active']
 
     for key, value in kwargs.items():
         if key in allowed_fields:

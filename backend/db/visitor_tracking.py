@@ -629,9 +629,9 @@ def get_funnel_stats(start_date, end_date):
     
     # 4. Completed Booking (From bookings table)
     c.execute("""
-        SELECT COUNT(*) 
-        FROM bookings 
-        WHERE created_at >= %s::text AND created_at <= %s::text
+        SELECT COUNT(*)
+        FROM bookings
+        WHERE created_at >= %s AND created_at <= %s
     """, (start_date, end_date))
     completed = c.fetchone()[0] or 0
     

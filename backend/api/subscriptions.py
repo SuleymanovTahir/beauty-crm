@@ -18,10 +18,8 @@ router = APIRouter()
 class SubscriptionTypeModel(BaseModel):
     key: str
     target_role: str = 'all'
-    name_ru: Optional[str] = None
-    name_en: Optional[str] = None
-    description_ru: Optional[str] = None
-    description_en: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
     is_active: bool = True
 
 class SubscriptionUpdate(BaseModel):
@@ -318,14 +316,13 @@ async def create_subscription_type(
         c = conn.cursor()
         
         c.execute("""
-            INSERT INTO broadcast_subscription_types 
-            (key, target_role, name_ru, name_en, description_ru, description_en, is_active)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO broadcast_subscription_types
+            (key, target_role, name, description, is_active)
+            VALUES (%s, %s, %s, %s, %s)
             RETURNING id
         """, (
-            sub_type.key, sub_type.target_role, 
-            sub_type.name_ru, sub_type.name_en,
-            sub_type.description_ru, sub_type.description_en,
+            sub_type.key, sub_type.target_role,
+            sub_type.name, sub_type.description,
             sub_type.is_active
         ))
         
@@ -353,14 +350,12 @@ async def update_subscription_type(
         c = conn.cursor()
         
         c.execute("""
-            UPDATE broadcast_subscription_types 
-            SET key = %s, target_role = %s, name_ru = %s, name_en = %s, 
-                description_ru = %s, description_en = %s, is_active = %s
+            UPDATE broadcast_subscription_types
+            SET key = %s, target_role = %s, name = %s, description = %s, is_active = %s
             WHERE id = %s
         """, (
-            sub_type.key, sub_type.target_role, 
-            sub_type.name_ru, sub_type.name_en,
-            sub_type.description_ru, sub_type.description_en,
+            sub_type.key, sub_type.target_role,
+            sub_type.name, sub_type.description,
             sub_type.is_active,
             type_id
         ))
