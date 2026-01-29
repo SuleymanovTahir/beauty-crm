@@ -15,29 +15,29 @@
     "configSuccess": "تم حفظ الإعدادات",
     "configure": "تهيئة",
     "configureProvider": "الإعدادات",
+    "daysAgo_zero": "{{count}} дн назад",
+    "daysAgo_one": "{{count}} قبل أيام",
+    "daysAgo_two": "{{count}} дн назад",
     "daysAgo_few": "{{count}} قبل أيام",
     "daysAgo_many": "{{count}} قبل أيام",
-    "daysAgo_one": "{{count}} قبل أيام",
     "daysAgo_other": "{{count}} قبل أيام",
-    "daysAgo_two": "{{count}} дн назад",
-    "daysAgo_zero": "{{count}} дн назад",
     "enableProvider": "تمكين التكامل",
+    "hoursAgo_zero": "{{count}} ч назад",
+    "hoursAgo_one": "{{count}} قبل ساعات",
+    "hoursAgo_two": "{{count}} ч назад",
     "hoursAgo_few": "{{count}} قبل ساعات",
     "hoursAgo_many": "{{count}} قبل ساعات",
-    "hoursAgo_one": "{{count}} قبل ساعات",
     "hoursAgo_other": "{{count}} قبل ساعات",
-    "hoursAgo_two": "{{count}} ч назад",
-    "hoursAgo_zero": "{{count}} ч назад",
     "inactive": "لم تتم التهيئة",
     "justNow": "الآن",
     "lastSync": "آخر مزامنة",
     "mappingHint": "حدد معرف الخدمة من السوق للمزامنة.",
+    "minutesAgo_zero": "{{count}} мин назад",
+    "minutesAgo_one": "{{count}} قبل دقيقة",
+    "minutesAgo_two": "{{count}} мин назад",
     "minutesAgo_few": "{{count}} قبل دقيقة",
     "minutesAgo_many": "{{count}} قبل دقيقة",
-    "minutesAgo_one": "{{count}} قبل دقيقة",
     "minutesAgo_other": "{{count}} قبل دقيقة",
-    "minutesAgo_two": "{{count}} мин назад",
-    "minutesAgo_zero": "{{count}} мин назад",
     "neverSynced": "أبدًا",
     "providers": {
       "2gis": {
@@ -57,16 +57,16 @@
         "name": "Google Business"
       },
       "ozon": {
-        "description": "Маркетплейс Ozon",
+        "description": "Ozon Marketplace",
         "name": "الأوزون"
       },
       "wildberries": {
-        "description": "Маркетплейс WB",
+        "description": "WB Marketplace",
         "name": "Wildberry"
       },
       "yandex_maps": {
         "description": "السجلات والمراجعات من Yandex.Maps",
-        "name": "Яндекс.Карты"
+        "name": "Yandex.Maps"
       },
       "yclients": {
         "description": "منصة التسجيل عبر الإنترنت",
@@ -79,8 +79,8 @@
     "status": "الحالة",
     "subtitle": "التكامل من تاريخ الحجز عبر الإنترنت و مراجعة الخدمات",
     "sync": "مزامنة",
-    "syncStarted": "بدأت المزامنة",
     "syncing": "المزامنة...",
+    "syncStarted": "بدأت المزامنة",
     "title": "منصات الحجز",
     "totalBookings": "إجمالي الإدخالات",
     "urlCopied": "تم نسخ عنوان URL",

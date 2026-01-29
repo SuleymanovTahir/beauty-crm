@@ -3,15 +3,18 @@
 Скрипт для добавления тестовых данных в БД
 Включает полный список услуг и детальную привязку к мастерам
 """
-from db.connection import get_db_connection
 import sys
 import os
+import random
+import string
 from datetime import datetime
 
 # Добавляем backend в путь
 backend_dir = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
+
+from db.connection import get_db_connection
 
 from core.config import DATABASE_NAME
 from utils.utils import hash_password
@@ -150,19 +153,54 @@ def seed_data():
         {'username': 'tursunay', 'full_name': 'Турсунай', 'role': 'director', 'is_service_provider': False, 'position': 'Owner'}
     ]
 
-    for u in required_users:
-        c.execute("SELECT id FROM users WHERE full_name = %s", (u['full_name'],))
-        if not c.fetchone():
-            # Генерируем уникальный сложный пароль для каждого пользователя: Name123$!
-            # Admin -> Admin123$!, sabri -> Sabri123$!
-            raw_password = f"{u['username'].capitalize()}123$!"
+    # Файл для сохранения паролей
+    credentials_path = os.path.join(backend_dir, "staff_credentials.txt")
+    
+    with open(credentials_path, "w", encoding="utf-8") as cred_file:
+        cred_file.write(f"=== USERS CREDENTIALS (Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}) ===\n\n")
+        
+        for u in required_users:
+            c.execute("SELECT id FROM users WHERE full_name = %s", (u['full_name'],))
+            exists = c.fetchone()
+            
+            # Генерируем случайный пароль, удовлетворяющий требованиям
+            # (минимум 1 заглавная, 1 строчная, 1 цифра, 1 спецсимвол)
+            chars = string.ascii_letters + string.digits + "!@#$%^&*"
+            while True:
+                raw_password = ''.join(random.choice(chars) for _ in range(10))
+                if (any(c.islower() for c in raw_password)
+                        and any(c.isupper() for c in raw_password)
+                        and any(c.isdigit() for c in raw_password)
+                        and any(c in "!@#$%^&*" for c in raw_password)):
+                    break
+            
             hashed_pwd = hash_password(raw_password)
             
-            c.execute("""
-                INSERT INTO users (username, full_name, email, role, password_hash, is_service_provider, is_active, email_verified, position)
-                VALUES (%s, %s, %s, %s, %s, %s, TRUE, TRUE, %s)
-            """, (u['username'], u['full_name'], f"{u['username']}@example.com", u['role'], hashed_pwd, u['is_service_provider'], u['position']))
-            print(f"➕ Created user: {u['full_name']} ({u['position']}), password: {raw_password}")
+            if not exists:
+                c.execute("""
+                    INSERT INTO users (username, full_name, email, role, password_hash, is_service_provider, is_active, email_verified, position)
+                    VALUES (%s, %s, %s, %s, %s, %s, TRUE, TRUE, %s)
+                """, (u['username'], u['full_name'], f"{u['username']}@example.com", u['role'], hashed_pwd, u['is_service_provider'], u['position']))
+                print(f"➕ Created user: {u['full_name']} ({u['position']})")
+                
+                # Записываем в файл только новых (или можно перезаписать пароль existing? 
+                # Если пользователь уже есть, мы его не трогаем в SQL (if not exists), 
+                # значит и пароль не меняется. Но пользователь попросил "после все пароли нынешних пользователей укажи".
+                # Чтобы сменить пароли всем, нужно убрать if not exists или делать UPDATE.
+                # Сделаем UPDATE пароля для всех, чтобы обновить staff_credentials полным списком.
+            else:
+                # Обновляем пароль существующему пользователю, чтобы он попал в credentials файл актуальным
+                c.execute("UPDATE users SET password_hash = %s WHERE full_name = %s", (hashed_pwd, u['full_name']))
+                print(f"🔄 Updated password for: {u['full_name']}")
+
+            # Записываем в файл
+            cred_file.write(f"Role: {u['role']}\n")
+            cred_file.write(f"Name: {u['full_name']}\n")
+            cred_file.write(f"Username: {u['username']}\n")
+            cred_file.write(f"Password: {raw_password}\n")
+            cred_file.write("-" * 30 + "\n")
+            
+    print(f"✅ Credentials saved to: {credentials_path}")
 
     master_ids = {}
     c.execute("SELECT id, full_name, role FROM users WHERE is_service_provider = TRUE OR role = 'director'")

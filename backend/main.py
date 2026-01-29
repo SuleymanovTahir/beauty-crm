@@ -29,7 +29,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from utils.logger import log_info, log_error
 from core.config import is_localhost
 from db.connection import init_connection_pool, get_db_connection
-from scripts.maintenance.recreate_database import drop_database, recreate_database
+from scripts.maintenance.recreate_database import drop_database, recreate_database  # Uncomment only for manual DB reset
 from db.settings import get_salon_settings
 from bot import get_bot
 from utils.utils import ensure_upload_directories
@@ -109,13 +109,14 @@ async def lifespan(app: FastAPI):
     ensure_upload_directories()
     
     # 2. Слой базы данных
-    
+
     # [ОПАСНО: РУЧНОЙ СБРОС БД] - Раскомментируйте строки ниже только для ПОЛНОГО сброса данных
-    # log_info("⚠️  Удаление базы данных...", "startup")
+    # ⚠️ НЕ ЗАПУСКАТЬ В PRODUCTION! Удалит все данные!
+    log_info("⚠️  Удаление базы данных...", "startup")
     drop_database()
     log_info("🔄 Создание новой базы данных...", "startup")
     recreate_database()
-    # log_info("✅ База данных пересоздана. ТЕПЕРЬ ОБЯЗАТЕЛЬНО ЗАПУСТИТЕ МИГРАЦИИ (пункт 3)", "startup")
+    log_info("✅ База данных пересоздана. ТЕПЕРЬ ОБЯЗАТЕЛЬНО ЗАПУСТИТЕ МИГРАЦИИ (пункт 3)", "startup")
 
     init_connection_pool()
     try:

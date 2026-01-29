@@ -647,14 +647,30 @@ class MasterScheduleService:
         try:
             # Получаем мастеров для бронирования:
             # - is_service_provider = TRUE
-            # - role='employee' ИЛИ secondary_role='employee'
+            # - role='employee' ИЛИ secondary_role='employee' (если колонка существует)
+            # Check if secondary_role column exists
             c.execute("""
-                SELECT DISTINCT u.full_name
-                FROM users u
-                WHERE u.is_active = TRUE
-                  AND u.is_service_provider = TRUE
-                  AND (u.role = 'employee' OR u.secondary_role = 'employee')
+                SELECT COUNT(*) FROM information_schema.columns
+                WHERE table_name = 'users' AND column_name = 'secondary_role'
             """)
+            has_secondary_role = c.fetchone()[0] > 0
+
+            if has_secondary_role:
+                c.execute("""
+                    SELECT DISTINCT u.full_name
+                    FROM users u
+                    WHERE u.is_active = TRUE
+                      AND u.is_service_provider = TRUE
+                      AND (u.role = 'employee' OR u.secondary_role = 'employee')
+                """)
+            else:
+                c.execute("""
+                    SELECT DISTINCT u.full_name
+                    FROM users u
+                    WHERE u.is_active = TRUE
+                      AND u.is_service_provider = TRUE
+                      AND u.role = 'employee'
+                """)
 
             active_masters = [row[0] for row in c.fetchall()]
             
@@ -713,11 +729,25 @@ class MasterScheduleService:
                     masters_to_check.append({"id": user_id, "name": master_name})
             else:
                 # Global Availability: мастера с role='employee' или secondary_role='employee'
+                # Check if secondary_role column exists
                 c.execute("""
-                    SELECT id, full_name FROM users
-                    WHERE is_service_provider = TRUE AND is_active = TRUE
-                    AND (role = 'employee' OR secondary_role = 'employee')
+                    SELECT COUNT(*) FROM information_schema.columns
+                    WHERE table_name = 'users' AND column_name = 'secondary_role'
                 """)
+                has_secondary_role = c.fetchone()[0] > 0
+
+                if has_secondary_role:
+                    c.execute("""
+                        SELECT id, full_name FROM users
+                        WHERE is_service_provider = TRUE AND is_active = TRUE
+                        AND (role = 'employee' OR secondary_role = 'employee')
+                    """)
+                else:
+                    c.execute("""
+                        SELECT id, full_name FROM users
+                        WHERE is_service_provider = TRUE AND is_active = TRUE
+                        AND role = 'employee'
+                    """)
                 for row in c.fetchall():
                     masters_to_check.append({"id": row[0], "name": row[1]})
 

@@ -16,8 +16,8 @@
   "question_2": "¿Qué métodos de pago aceptan?",
   "question_3": "¿Puedo? ¿Cancelar o reprogramar una cita?",
   "question_4": "¿Tiene alguna contraindicación para los procedimientos?",
-  "question_5": "Сколько времени занимает процедура?",
-  "question_6": "Нужна ли предварительная подготовка к процедуре?",
+  "question_5": "¿Cuánto dura el procedimiento? tomar?",
+  "question_6": "¿Es necesaria una preparación preliminar para el procedimiento?",
   "questions": {
     "booking": {
       "answer": "Puedes apuntarte al trámite a través del formulario {{phone, phone}} de nuestra web, llamando a {{phone}}{{/phone}}{{instagram, instagram}} o escribiéndonos hasta fecha Instagram {{instagram}}{{/instagram}}. Nos pondremos en contacto contigo para confirmar tu cita.",
@@ -25,49 +25,49 @@
     },
     "cancellation": {
       "answer": "Sí, puedes cancelar o reprogramar tu cita hasta {{hours}} horas antes de la hora programada. Si se cancela en menos de {{hours}} horas, se podrá cobrar una penalización del {{percent}}% del coste del servicio.",
-      "question": "Могу ли я отменить или перенести встречу?"
+      "question": "¿Puedo cancelar o reprogramar una cita?"
     },
     "certificates": {
       "answer": "Sí, todos nuestros másteres cuentan con certificados internacionales y realizan periódicamente cursos de formación avanzada.",
-      "question": "Сертифицированы ли ваши мастера?"
+      "question": "¿Están certificados sus especialistas?"
     },
     "contraindications": {
-      "answer": "Да, каждая процедура имеет свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой необходима консультация специалиста.",
-      "question": "Есть ли противопоказания к процедуре?"
+      "answer": "Sí, cada procedimiento tiene sus propias contraindicaciones. Principal: embarazo, lactancia, procesos inflamatorios agudos, enfermedades de la sangre, oncología. Antes del procedimiento, se requiere consulta con un especialista.",
+      "question": "¿Existe alguna contraindicación para el procedimiento?"
     },
     "gift": {
-      "answer": "Да, мы предлагаем подарочные сертификаты на любую сумму или на определенные услуги. Свяжитесь с нами для получения сертификата.",
-      "question": "Могу ли я предоставить сертификат на услуги?"
+      "answer": "Sí, ofrecemos certificados de regalo hasta fecha cualquier monto o para ciertos servicios. Contáctenos para recibir un certificado.",
+      "question": "¿Puedo proporcionar un certificado para los servicios?"
     },
     "guarantee": {
       "answer": "Sí, garantizamos la calidad de todos nuestros servicios. Si no está satisfecho con el resultado, contáctenos dentro de los {{count}} días y encontraremos una solución.",
-      "question": "Вы гарантируете услуги?"
+      "question": "¿Garantizan los servicios?"
     },
     "location": {
       "answer": "Nuestra dirección: {{address}}. Los detalles sobre cómo llegar se pueden encontrar en la página de Contacto.",
-      "question": "Где находится ваш салон?"
+      "question": "¿Dónde está ubicado su salón?"
     },
     "loyalty": {
-      "answer": "Да, у нас есть комплексная программа лояльности. После каждого визита вы будете получать бонусы, которые можно использовать для оплаты будущих визитов.",
-      "question": "Есть ли у вас программа лояльности?"
+      "answer": "Sí, tenemos un programa de fidelización integral. Después de cada visita, recibirá bonificaciones que podrá utilizar para pagar visitas futuras.",
+      "question": "¿Tiene un programa de fidelización?"
     },
     "materials": {
-      "answer": "Мы используем только сертифицированные материалы премиум-класса от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.",
+      "answer": "Utilizamos únicamente materiales premium certificados de las marcas líderes del mundo. Todos los pigmentos son hipoalergénicos y seguros para la salud.",
       "question": "¿Qué materiales utiliza?"
     },
     "payment": {
       "answer": "Aceptamos pago en efectivo y tarjetas (Visa, MasterCard, American Express). El pago se realiza después de la prestación del servicio.",
-      "question": "Какие способы оплаты вы принимаете?"
+      "question": "¿Qué métodos de pago aceptan?"
     },
     "preparation": {
-      "answer": "Да, некоторые процедуры требуют подготовки. Подробные рекомендации мы предоставим при записи.",
-      "question": "Нужно ли готовиться перед процедурой?"
+      "answer": "Sí, algunos procedimientos requieren preparación. Le proporcionaremos recomendaciones detalladas al registrarse.",
+      "question": "¿Necesita prepararse antes del procedimiento?"
     },
     "weekends": {
       "answer": "Sí, estamos abiertos {{count}} días a la semana. {{будние дни, будние дни}}Días laborables {{weekdays}}{{/weekdays}}{{выходные, выходные}}, fines de semana {{weekends}}{{/weekends}}.",
-      "question": "Вы работаете по выходным?"
+      "question": "¿Trabaja los fines de semana?"
     }
   },
-  "subtitle": "Ответы на популярные вопросы о наших услугах",
+  "subtitle": "Respuestas a preguntas populares sobre nuestros servicios",
   "title": "Preguntas frecuentes"
 }
