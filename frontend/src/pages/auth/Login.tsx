@@ -79,55 +79,46 @@ export default function Login() {
       }
     } catch (err: any) {
       console.log("Login error caught:", err);
-      console.log("Error type:", err.error_type);
-      console.log("Error email:", err.email);
-      console.log("Error status:", err.status);
 
       // Проверяем, есть ли информация о неподтвержденном email в ошибке
       if (err.error_type === "email_not_verified" && err.email) {
-        console.log("Email not verified, redirecting to verification page with email:", err.email);
         toast.error(t('login:email_not_verified_redirect', "Email не подтвержден. Перенаправление на страницу верификации..."));
         setTimeout(() => {
-          console.log("Navigating to /verify-email with email:", err.email);
           navigate("/verify-email", { state: { email: err.email } });
         }, 1500);
         return;
       }
 
       // Проверяем, ожидает ли пользователь одобрения админа
-      if (err.error_type === "not_approved") {
-        console.log("User not approved yet");
+      if (err.error_type === "not_approved" || err.error === "account_not_activated") {
         setError(t('login:account_pending', "Ваш аккаунт ожидает одобрения администратора"));
-        toast.error(t('login:registration_pending_toast', "Ваша регистрация ожидает одобрения администратора. Вы получите email когда ваш аккаунт будет активирован."));
         return;
       }
 
-      // Проверяем на сетевые ошибки (Failed to fetch, Network error, etc.)
+      // Неверный логин/пароль
+      if (err.error === 'invalid_credentials' || err.error === 'user_not_found') {
+        setError(t('login:invalid_credentials', 'Неверный логин или пароль'));
+        toast.error(t('login:invalid_credentials', 'Неверный логин или пароль'));
+        return;
+      }
+
+      // Проверяем на сетевые ошибки
       const errorMessage = err instanceof Error ? err.message : (err.error || '');
       const isNetworkError = errorMessage.toLowerCase().includes('failed to fetch') ||
-                            errorMessage.toLowerCase().includes('network') ||
-                            errorMessage.toLowerCase().includes('timeout') ||
-                            errorMessage === 'Load failed';
+        errorMessage.toLowerCase().includes('network') ||
+        errorMessage.toLowerCase().includes('timeout') ||
+        errorMessage === 'Load failed';
 
       if (isNetworkError) {
-        const networkErrorMsg = t('login:network_error', 'Ошибка сети. Проверьте подключение к интернету или попробуйте позже.');
+        const networkErrorMsg = t('login:network_error', 'Ошибка сети. Проверьте подключение');
         setError(networkErrorMsg);
         toast.error(networkErrorMsg);
-        console.error('Network error during login:', err);
         return;
       }
 
-      const messageKey = err.error || (err instanceof Error ? err.message : 'login_error');
-
-      // Try to translate using auth_errors from common
-      const translatedError = t(`common:auth_errors.${messageKey}`);
-      const finalMessage = translatedError && translatedError !== `common:auth_errors.${messageKey}`
-        ? translatedError
-        : (typeof err.error === 'string' ? err.error : t('login:authorization_error'));
-
-      setError(finalMessage);
-      toast.error(finalMessage);
-      console.error(t('login:login_error'), err);
+      // Прочие ошибки
+      setError(err.error || t('login:authorization_error'));
+      toast.error(err.error || t('login:authorization_error'));
     } finally {
       setLoading(false);
     }
@@ -279,6 +270,6 @@ export default function Login() {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

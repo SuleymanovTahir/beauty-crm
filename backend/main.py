@@ -112,9 +112,9 @@ async def lifespan(app: FastAPI):
     
     # [ОПАСНО: РУЧНОЙ СБРОС БД] - Раскомментируйте строки ниже только для ПОЛНОГО сброса данных
     # log_info("⚠️  Удаление базы данных...", "startup")
-    # drop_database()
-    # log_info("🔄 Создание новой базы данных...", "startup")
-    # recreate_database()
+    drop_database()
+    log_info("🔄 Создание новой базы данных...", "startup")
+    recreate_database()
     # log_info("✅ База данных пересоздана. ТЕПЕРЬ ОБЯЗАТЕЛЬНО ЗАПУСТИТЕ МИГРАЦИИ (пункт 3)", "startup")
 
     init_connection_pool()
@@ -148,13 +148,13 @@ async def lifespan(app: FastAPI):
     run_all_fixes()
 
     # [ТЕСТИРОВАНИЕ] - Запуск тестов при старте (можно выключить для ускорения запуска)
-    # from tests.run_all_tests import run_all_tests
-    # from tests.run_all_test2 import run_all_tests2
-    # from tests.run_all_test3 import run_all_tests3
-    # log_info("🧪 Запуск всех тестов (V1, V2, V3)...", "startup")
-    # run_all_tests()
-    # run_all_tests2()
-    # run_all_tests3()
+    from tests.run_all_tests import run_all_tests
+    from tests.run_all_test2 import run_all_tests2
+    from tests.run_all_test3 import run_all_tests3
+    log_info("🧪 Запуск всех тестов (V1, V2, V3)...", "startup")
+    run_all_tests()
+    run_all_tests2()
+    run_all_tests3()
 
     # 5. Сервисы
     get_bot()
@@ -291,6 +291,26 @@ app.include_router(seo_metadata_router)
 if is_module_enabled('public'):
     from api.public import router as public_api
     app.include_router(public_api, prefix="/api/public", tags=["public"])
+
+@app.get("/health")
+async def health_check():
+    """Проверка состояния сервера"""
+    try:
+        # Проверка подключения к БД
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT 1")
+        conn.close()
+        db_status = "ok"
+    except Exception as e:
+        log_error(f"Health check DB error: {e}", "health")
+        db_status = "error"
+    
+    return {
+        "status": "ok" if db_status == "ok" else "degraded",
+        "database": db_status,
+        "version": "2.0"
+    }
 
 @app.get("/")
 async def root():

@@ -159,26 +159,16 @@ async def get_user_by_id(
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Determine localized fields
-        lang = language.lower()[:2] if language else 'ru'
-        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
-        if lang not in valid_languages:
-            lang = 'ru'
-        
-        name_field = f'full_name_{lang}'
-        position_field = f'position_{lang}'
-        bio_field = f'bio_{lang}'
-
-        c.execute(f"""
+        c.execute("""
             SELECT
                 id, username, 
-                COALESCE({name_field}, full_name) as full_name,
-                full_name_ru, email, role, 
-                COALESCE({position_field}, position) as position, 
+                full_name,
+                email, role, 
+                position, 
                 phone, 
-                COALESCE({bio_field}, bio) as bio,
+                bio,
                 photo, is_active, is_service_provider,
-                position_ru, position_ar, created_at,
+                created_at,
                 years_of_experience, specialization, telegram_username,
                 base_salary, commission_rate
             FROM users
@@ -195,23 +185,20 @@ async def get_user_by_id(
             "id": row[0],
             "username": row[1],
             "full_name": row[2],
-            "full_name_ru": row[3],
-            "email": row[4],
-            "role": row[5],
-            "position": row[6],
-            "phone": row[7],
-            "bio": row[8],
-            "photo": sanitize_url(row[9]),
-            "is_active": bool(row[10]),
-            "is_service_provider": bool(row[11]),
-            "position_ru": row[12],
-            "position_ar": row[13],
-            "created_at": row[14],
-            "years_of_experience": row[15],
-            "specialization": row[16],
-            "telegram": row[17],
-            "base_salary": row[18],
-            "commission_rate": row[19]
+            "email": row[3],
+            "role": row[4],
+            "position": row[5],
+            "phone": row[6],
+            "bio": row[7],
+            "photo": sanitize_url(row[8]),
+            "is_active": bool(row[9]),
+            "is_service_provider": bool(row[10]),
+            "created_at": row[11],
+            "years_of_experience": row[12],
+            "specialization": row[13],
+            "telegram": row[14],
+            "base_salary": row[15],
+            "commission_rate": row[16]
         }
 
         return user_data
@@ -226,6 +213,9 @@ async def get_users(
     current_user: dict = Depends(get_current_user)
 ):
     """Получить всех пользователей"""
+    if not current_user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+        
     # RBAC: Only staff can see all users
     if current_user["role"] == "client":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
@@ -235,29 +225,17 @@ async def get_users(
         c = conn.cursor()
 
         start_time = time.time()
-        # Determine localized fields
-        lang = language.lower()[:2] if language else 'ru'
-        valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
-        if lang not in valid_languages:
-            lang = 'ru'
-        
-        name_field = f'full_name_{lang}'
-        position_field = f'position_{lang}'
-
-        c.execute(f"""
+        c.execute("""
             SELECT
                 u.id, u.username, 
-                COALESCE(u.{name_field}, u.full_name) as full_name,
-                u.full_name_ru, u.email, u.role,
-                COALESCE(u.{position_field}, u.position) as position,
+                u.full_name,
+                u.email, u.role,
+                u.position,
                 u.created_at, u.is_active,
                 u.employee_id,
-                u.position_ru,
-                u.position_ar,
                 COALESCE(u.photo, u.photo_url) as photo,
                 u.position_id,
                 u.is_public_visible,
-                u.is_public_visible, -- redundant in original query but kept for stability
                 u.sort_order
             FROM users u
             WHERE u.deleted_at IS NULL
@@ -273,19 +251,16 @@ async def get_users(
                 "id": row[0],
                 "username": row[1],
                 "full_name": row[2],
-                "full_name_ru": row[3],
-                "email": row[4],
-                "role": row[5],
-                "position": row[6],
-                "position_id": row[13],
-                "employee_id": row[9],
-                "created_at": row[7],
-                "is_active": row[8],
-                "position_ru": row[10],
-                "position_ar": row[11],
+                "email": row[3],
+                "role": row[4],
+                "position": row[5],
+                "created_at": row[6],
+                "is_active": bool(row[7]),
+                "employee_id": row[8],
                 "photo": photo_url,
-                "is_public_visible": bool(row[14]),
-                "sort_order": row[15]
+                "position_id": row[10],
+                "is_public_visible": bool(row[11]),
+                "sort_order": row[12]
             }
 
             users.append(user_data)

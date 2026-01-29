@@ -51,14 +51,10 @@ def get_salon_settings() -> dict:
             return {
                 "id": row.get("id", 1),
                 "name": row.get("name"),
-                "name_ar": row.get("name_ar"),
                 "address": row.get("address", ""),
-                "address_ar": row.get("address_ar"),
                 "google_maps": row.get("google_maps", ""),
                 "hours_weekdays": row.get("hours_weekdays", DEFAULT_HOURS_WEEKDAYS),
                 "hours_weekends": row.get("hours_weekends", DEFAULT_HOURS_WEEKENDS),
-                "hours_ru": row.get("hours_ru"),
-                "hours_ar": row.get("hours_ar"),
                 "lunch_start": row.get("lunch_start"),
                 "lunch_end": row.get("lunch_end"),
                 "phone": row.get("phone", ""),
@@ -75,8 +71,6 @@ def get_salon_settings() -> dict:
                 "logo_url": row.get("logo_url", "/static/uploads/images/salon/logo.webp"),
                 "base_url": row.get("base_url", "https://mlediamant.com"),
                 "bot_name": row.get("bot_name"),
-                "bot_name_en": row.get("bot_name_en"),
-                "bot_name_ar": row.get("bot_name_ar"),
                 # Display settings from custom_settings
                 "gallery_display_count": custom.get("gallery_display_count", 6),
                 "portfolio_display_count": custom.get("portfolio_display_count", 6),
@@ -96,6 +90,7 @@ def get_salon_settings() -> dict:
 
 def _get_default_salon_settings() -> dict:
     """Дефолтные настройки салона"""
+    from utils.currency import get_salon_currency
     return {
         "id": 1,
         "name": os.getenv('SALON_NAME', 'Beauty Salon'),
@@ -107,7 +102,7 @@ def _get_default_salon_settings() -> dict:
         "email": os.getenv('SALON_EMAIL', ''),
         "bot_name": os.getenv('BOT_NAME', 'Assistant'),
         "timezone": "Asia/Dubai",
-        "currency": "AED",
+        "currency": get_salon_currency(),
         "gallery_display_count": 6,
         "portfolio_display_count": 6,
         "services_display_count": 6,
@@ -132,12 +127,10 @@ def update_salon_settings(data: dict) -> bool:
 
         # 2. Map fields
         direct_fields = [
-            'name', 'name_en', 'name_ar', 'address', 'address_ru', 'address_ar',
-            'google_maps', 'hours_weekdays', 'hours_weekends', 'hours_ru', 'hours_ar',
+            'name', 'address', 'google_maps', 'hours_weekdays', 'hours_weekends',
             'lunch_start', 'lunch_end', 'phone', 'email', 'instagram', 'whatsapp',
             'booking_url', 'timezone', 'currency', 'city', 'country',
-            'latitude', 'longitude', 'logo_url', 'base_url',
-            'bot_name', 'bot_name_en', 'bot_name_ar'
+            'latitude', 'longitude', 'logo_url', 'base_url', 'bot_name'
         ]
         
         custom_fields = [

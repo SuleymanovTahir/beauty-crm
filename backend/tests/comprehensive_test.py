@@ -659,7 +659,7 @@ class ComprehensiveTest:
                 ])
             else:
                 cursor.execute("""
-                    SELECT id, name, name_en, name_ar
+                    SELECT id, name, description
                     FROM positions
                     WHERE is_active = TRUE
                     ORDER BY sort_order
@@ -668,7 +668,7 @@ class ComprehensiveTest:
 
                 details = []
                 for pos in positions:
-                    details.append(f"  • {pos['name']:<30} | EN: {pos['name_en']:<30}")
+                    details.append(f"  • {pos['name']:<30}")
 
                 result.success(f"Найдено {count} активных должностей")
                 result.details.extend(details)
@@ -722,7 +722,7 @@ class ComprehensiveTest:
             else:
                 details = []
                 for pos in found_positions:
-                    details.append(f"  [OK] {pos['name']:<30} | EN: {pos['name_en']:<30}")
+                    details.append(f"  [OK] {pos['name']:<30}")
 
                 result.success(f"Все {len(required_positions)} стандартных должностей присутствуют")
                 result.details.extend(details)

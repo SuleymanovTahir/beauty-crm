@@ -65,7 +65,7 @@ async def get_messenger_settings(
 
 # Simple cache for enabled messengers (fallback when Redis is unavailable)
 _messengers_cache = {}
-_messengers_cache_ttl = 300  # 5 minutes
+_messengers_cache_ttl = 0  # Disabled for CRM - always fetch fresh data
 
 @router.get("/messengers/enabled")
 async def get_enabled_messengers(

@@ -25,8 +25,8 @@ def get_available_time_slots(
         # 1. Определяем ID услуги и длительность если передано название
         service_id = None
         if service_name:
-            c.execute("SELECT id, duration FROM services WHERE name_ru ILIKE %s OR name ILIKE %s", 
-                     (f"%{service_name}%", f"%{service_name}%"))
+            c.execute("SELECT id, duration FROM services WHERE name ILIKE %s",
+                     (f"%{service_name}%",))
             service_row = c.fetchone()
             if service_row:
                 service_id = service_row[0]

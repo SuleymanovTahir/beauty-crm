@@ -15,6 +15,8 @@ import json
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
+from tests.test_date_utils import get_test_date, get_test_datetime
+
 from db.connection import get_db_connection
 from api.marketplace_integrations import (
     normalize_booking_data,
@@ -132,17 +134,17 @@ def test_service_mapping():
         print_subsection("Создание тестовых услуг")
         
         c.execute("""
-            INSERT INTO services (service_key, name, name_ru, category, price, duration, is_active, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO services (service_key, name, category, price, duration, is_active, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             RETURNING id
-        """, ('test_manicure', 'Test Service Manicure', 'Тестовый маникюр', 'Nails', 150, 60, True, datetime.now().isoformat()))
+        """, ('test_manicure', 'Test Service Manicure', 'Nails', 150, 60, True, datetime.now().isoformat()))
         service_id_1 = c.fetchone()[0]
-        
+
         c.execute("""
-            INSERT INTO services (service_key, name, name_ru, category, price, duration, is_active, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO services (service_key, name, category, price, duration, is_active, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             RETURNING id
-        """, ('test_haircut', 'Test Service Haircut', 'Тестовая стрижка', 'Hair', 200, 90, True, datetime.now().isoformat()))
+        """, ('test_haircut', 'Test Service Haircut', 'Hair', 200, 90, True, datetime.now().isoformat()))
         service_id_2 = c.fetchone()[0]
         
         conn.commit()
@@ -251,8 +253,8 @@ def test_booking_creation():
                 "phone": "+79991234567",
                 "email": "test@marketplace.com"
             },
-            "date": "2024-03-20",
-            "datetime": "2024-03-20 14:00:00",
+            "date": get_test_date(2),
+            "datetime": get_test_datetime(2, 14, 0),
             "seance_length": 3600
         }
         
@@ -326,8 +328,8 @@ def test_booking_update():
                 "name": "Test Client Marketplace",
                 "phone": "+79991234567"
             },
-            "date": "2024-03-21",  # Новая дата
-            "datetime": "2024-03-21 15:00:00",  # Новое время
+            "date": get_test_date(3),  # Новая дата
+            "datetime": get_test_datetime(3, 15, 0),  # Новое время
             "seance_length": 5400  # 90 минут
         }
         
@@ -358,7 +360,7 @@ def test_booking_update():
             print(f"   DateTime: {booking_datetime}")
             
             # Проверяем, что данные обновились
-            if service_name == "Test Service Haircut" and "2024-03-21" in str(booking_datetime):
+            if service_name == "Test Service Haircut" and get_test_date(3) in str(booking_datetime):
                 print(f"✅ Обновление работает корректно!")
             else:
                 print(f"⚠️  Обновление не полностью применилось")
@@ -387,8 +389,8 @@ def test_normalization():
             "id": "yc_123",
             "services": [{"id": "100", "title": "Маникюр"}],
             "client": {"name": "Иван Иванов", "phone": "+79991234567"},
-            "date": "2024-03-20",
-            "datetime": "2024-03-20 10:00:00",
+            "date": get_test_date(2),
+            "datetime": get_test_datetime(2, 10, 0),
             "seance_length": 3600
         }
         
@@ -404,7 +406,7 @@ def test_normalization():
             "id": "booksy_456",
             "services": [{"id": "200", "name": "Стрижка"}],
             "client": {"first_name": "Петр", "last_name": "Петров", "phone": "+79997654321"},
-            "start_date": "2024-03-21",
+            "start_date": get_test_date(3),
             "start_time": "14:00",
             "duration": 90
         }
@@ -423,7 +425,7 @@ def test_normalization():
             "customer_name": "Мария Сидорова",
             "customer_phone": "+79995556677",
             "service_name": "Массаж",
-            "date": "2024-03-22",
+            "date": get_test_date(4),
             "time": "16:00",
             "duration": 60
         }

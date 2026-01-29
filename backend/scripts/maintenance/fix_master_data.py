@@ -202,7 +202,6 @@ def fix_master_data(csv_file_path=None):
 
 
     # Cleanup Director
-    c.execute("UPDATE users SET full_name_ru = 'Турсунай' WHERE full_name = 'Турсунай'")
     c.execute("DELETE FROM user_services WHERE user_id = (SELECT id FROM users WHERE full_name = 'Турсунай')")
 
     # conn.commit()

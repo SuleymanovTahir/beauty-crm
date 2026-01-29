@@ -25,7 +25,7 @@ _processing_suggestions = set()
 
 # Simple cache for unread count (fallback when Redis is unavailable)
 _unread_cache = {}
-_unread_cache_ttl = 300  # 5 minutes - increased to reduce DB queries significantly
+_unread_cache_ttl = 0  # Disabled for CRM - always fetch fresh data
 
 def get_messenger_chat_history(client_id: str, messenger_type: str = 'instagram', limit: int = 50):
     """Получить историю чата по типу мессенджера"""

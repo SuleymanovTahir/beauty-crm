@@ -716,12 +716,10 @@ class SalonBot:
                     try:
                         conn = get_db_connection()
                         c = conn.cursor()
-                        c.execute("SELECT full_name, full_name_ru FROM users WHERE is_active=TRUE AND is_service_provider=TRUE")
+                        c.execute("SELECT full_name FROM users WHERE is_active=TRUE AND is_service_provider=TRUE")
                         masters_rows = c.fetchall()
                         for m_row in masters_rows:
-                            orig_name = m_row[0]
-                            ru_name = m_row[1] or m_row[0]
-                            masters_mapping.append(f"- {orig_name} → {ru_name}")
+                            masters_mapping.append(f"- {m_row[0]}")
                         conn.close()
                     except Exception as e:
                         print(f"⚠️ Error building masters mapping: {e}")

@@ -4,12 +4,16 @@
   "email_not_verified_redirect": "E-Mail wurde nicht bestätigt. Weiterleitung zur Bestätigungsseite...",
   "enter_login": "Enter username",
   "fill_both_fields": "Please fill in both fields",
+  "forgot_password": "Passwort vergessen?",
+  "invalid_credentials": "Ungültiger Benutzername oder Passwort",
+  "logging_in": "Anmelden...",
   "login": "Anmelden",
   "login_error": "Login error",
   "login_title": "Login to your account",
   "network_error": "Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung oder versuchen Sie es später noch einmal.",
   "password": "Password",
   "registration_pending_toast": "Ihre Registrierung wartet auf die Genehmigung durch den Administrator. Sie erhalten eine E-Mail, wenn Ihr Konto aktiviert ist.",
+  "submit": "Anmelden",
   "username": "Benutzername",
   "welcome": "Welcome"
 }

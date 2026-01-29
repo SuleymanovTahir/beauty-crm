@@ -888,8 +888,8 @@ async def download_import_template(
     try:
         if format == "csv":
             template = "instagram_id,name,phone,service,datetime,status,revenue\n"
-            template += f"example_user_1,Анна Иванова,{SALON_PHONE_DEFAULT},Маникюр,2026-01-15 14:00,pending,150\n"
-            template += "example_user_2,Мария Петрова,971507654321,Педикюр,2026-01-16 15:30,confirmed,200\n"
+            template += f"example_user_1,Анна Иванова,{SALON_PHONE_DEFAULT},Маникюр,2026-01-31 14:00,pending,150\n"
+            template += "example_user_2,Мария Петрова,971507654321,Педикюр,2026-02-01 15:30,confirmed,200\n"
             
             return StreamingResponse(
                 iter([template.encode('utf-8')]),
@@ -911,9 +911,9 @@ async def download_import_template(
             ws.append(headers)
             
             ws.append(['example_user_1', 'Анна Иванова', SALON_PHONE_DEFAULT, 
-                      'Маникюр', '2026-01-15 14:00', 'pending', 150])
+                      'Маникюр', '2026-01-31 14:00', 'pending', 150])
             ws.append(['example_user_2', 'Мария Петрова', '+971507654321', 
-                      'Педикюр', '2026-01-16 15:30', 'confirmed', 200])
+                      'Педикюр', '2026-02-01 15:30', 'confirmed', 200])
             
             header_fill = PatternFill(start_color="EC4899", end_color="EC4899", 
                                      fill_type="solid")

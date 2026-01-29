@@ -62,8 +62,8 @@ def seed_production_data():
         
         # Create default banners (Only base fields per Rule 15)
         banners = [
-            ("Luxury Hair Styling", "Premium hair care and transformations", "/static/uploads/images/faces/banner1.webp", "/booking", 1),
-            ("Elegant Nail Art", "Perfect manicure and pedicure services", "/static/uploads/images/faces/banner2.webp", "/booking", 2)
+            ("Luxury Hair Styling", "Premium hair care and transformations", "/static/images/banners/banner_main.webp", "/booking", 1),
+            ("Elegant Nail Art", "Perfect manicure and pedicure services", "/static/images/banners/banner_premium.webp", "/booking", 2)
         ]
         
         for title, subtitle, img, link, order in banners:

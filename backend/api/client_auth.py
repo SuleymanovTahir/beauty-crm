@@ -11,6 +11,7 @@ from typing import Optional
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
+from utils.currency import get_salon_currency
 from services.features import FeatureService
 from core.config import BASE_URL
 
@@ -242,7 +243,7 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         # Fetch currency
         c.execute("SELECT currency FROM salon_settings LIMIT 1")
         currency_row = c.fetchone()
-        currency = currency_row[0] if currency_row else "AED"
+        currency = currency_row[0] if currency_row else get_salon_currency()
 
         c.execute("SELECT COUNT(*) FROM client_achievements WHERE client_id = %s AND unlocked_at IS NOT NULL", (client_id,))
         unlocked = c.fetchone()[0]
@@ -719,7 +720,7 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
         # Fetch currency
         c.execute("SELECT currency FROM salon_settings LIMIT 1")
         currency_row = c.fetchone()
-        currency = currency_row[0] if currency_row else "AED"
+        currency = currency_row[0] if currency_row else get_salon_currency()
 
         return {"success": True, "bookings": items, "currency": currency}
     except Exception as e:
@@ -789,7 +790,7 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
         # 4. Fetch currency
         c.execute("SELECT currency FROM salon_settings LIMIT 1")
         currency_row = c.fetchone()
-        currency = currency_row[0] if currency_row else "AED"
+        currency = currency_row[0] if currency_row else get_salon_currency()
 
         return {
             "success": True,

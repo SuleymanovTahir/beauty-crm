@@ -12,16 +12,16 @@ from backend.services.master_schedule import MasterScheduleService
 from datetime import datetime
 
 def debug_availability():
-    print(f"Checking availability for 2026-11-26 (Wednesday)")
+    print(f"Checking availability for 2026-01-31 (Wednesday)")
     conn = get_db_connection()
     c = conn.cursor()
 
     print("\n--- Service Check ---")
-    c.execute("SELECT id, name, name_ru FROM services WHERE name LIKE '%manicure%' OR name_ru LIKE '%маникюр%'")
+    c.execute("SELECT id, name FROM services WHERE name LIKE '%manicure%' OR name LIKE '%маникюр%'")
     services_found = c.fetchall()
     print(f"Services found: {services_found}")
-    
-    for s_id, s_name, s_name_ru in services_found:
+
+    for s_id, s_name in services_found:
         print(f"Checking masters for service: {s_name} ({s_id})")
         c.execute("SELECT user_id, is_online_booking_enabled FROM user_services WHERE service_id = %s", (s_id,))
         links = c.fetchall()
@@ -35,12 +35,12 @@ def debug_availability():
         print(f"ID: {m[0]}, Name: {m[1]}, Active: {m[2]}, Provider: {m[3]}")
         
         # Check User Services
-        c.execute("SELECT s.name, s.name_ru, us.is_online_booking_enabled FROM user_services us JOIN services s ON us.service_id = s.id WHERE us.user_id = %s", (m[0],))
+        c.execute("SELECT s.name, us.is_online_booking_enabled FROM user_services us JOIN services s ON us.service_id = s.id WHERE us.user_id = %s", (m[0],))
         services = c.fetchall()
         print(f"  Services: {services}")
         for s in services:
-            if 'manicure' in s[0].lower() or (s[1] and 'маникюр' in s[1].lower()):
-                print(f"  !!! FOUND MANICURE: {s[0]} ({s[1]}), Enabled: {s[2]}")
+            if 'manicure' in s[0].lower() or 'маникюр' in s[0].lower():
+                print(f"  !!! FOUND MANICURE: {s[0]}, Enabled: {s[1]}")
 
         # Check Schedule for Wednesday (2)
         c.execute("SELECT start_time, end_time, is_active FROM user_schedule WHERE user_id = %s AND day_of_week = 2", (m[0],))
@@ -57,17 +57,17 @@ def debug_availability():
             print(f"  Time Offs: {time_offs}")
 
         # Check Bookings
-        c.execute("SELECT datetime, status FROM bookings WHERE master = %s AND datetime LIKE '2026-11-26%'", (m[1],))
+        c.execute("SELECT datetime, status FROM bookings WHERE master = %s AND datetime::text LIKE '2026-01-31%'", (m[1],))
         bookings = c.fetchall()
         if bookings:
-            print(f"  Bookings on 2026-11-26: {bookings}")
+            print(f"  Bookings on 2026-01-31: {bookings}")
 
     # 2. Run Tool
     print("\n--- Tool Result ---")
     
     # Debug Service Selection
     print("Debugging Service Selection for 'маникюр':")
-    c.execute("SELECT id, name, duration FROM services WHERE name_ru LIKE '%маникюр%' OR name LIKE '%маникюр%' LIMIT 1")
+    c.execute("SELECT id, name, duration FROM services WHERE name LIKE '%маникюр%' OR name LIKE '%manicure%' LIMIT 1")
     s_row = c.fetchone()
     if s_row:
         print(f"  Selected Service: ID={s_row[0]}, Name={s_row[1]}, Duration={s_row[2]}")
@@ -78,14 +78,14 @@ def debug_availability():
     else:
         print("  No service found for 'маникюр'")
 
-    print("\nCalling get_available_time_slots('2026-11-26', service_name='маникюр')...")
-    slots = get_available_time_slots("2026-11-26", service_name="маникюр")
+    print("\nCalling get_available_time_slots('2026-01-31', service_name='маникюр')...")
+    slots = get_available_time_slots("2026-01-31", service_name="маникюр")
     print(f"Slots found: {len(slots)}")
     for s in slots:
         print(s)
 
-    print("\nCalling get_available_time_slots('2026-11-26', service_name=None) (ANY SERVICE)...")
-    slots_any = get_available_time_slots("2026-11-26", service_name=None)
+    print("\nCalling get_available_time_slots('2026-01-31', service_name=None) (ANY SERVICE)...")
+    slots_any = get_available_time_slots("2026-01-31", service_name=None)
     print(f"Slots found (any): {len(slots_any)}")
     for s in slots_any[:5]:
         print(s)
@@ -100,7 +100,7 @@ def debug_availability():
     user_id = service._get_user_id(m_name)
     print(f"  _get_user_id('{m_name}') -> {user_id}")
     
-    slots = service.get_available_slots(m_name, "2026-11-26", duration_minutes=60)
+    slots = service.get_available_slots(m_name, "2026-01-31", duration_minutes=60)
     print(f"  get_available_slots -> {len(slots)} slots")
     print(f"  Slots: {slots}")
 

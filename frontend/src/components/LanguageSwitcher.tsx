@@ -44,7 +44,7 @@ export default function LanguageSwitcher() {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const dropdownHeight = 300; // max-h-[300px]
-      const dropdownWidth = 200;
+      const dropdownWidth = 160; // Approximate width
 
       // Check if there's enough space above
       const spaceAbove = rect.top;
@@ -54,6 +54,8 @@ export default function LanguageSwitcher() {
       if (spaceAbove >= dropdownHeight || spaceAbove > spaceBelow) {
         // Open upward
         top = rect.top - Math.min(dropdownHeight, spaceAbove - 8);
+        // If opening upward, we need to adjust calculating max-height based on available space
+        // if not enough space for full height
       } else {
         // Open downward
         top = rect.bottom + 8;
@@ -64,6 +66,9 @@ export default function LanguageSwitcher() {
       if (left + dropdownWidth > window.innerWidth) {
         left = window.innerWidth - dropdownWidth - 8;
       }
+
+      // Also ensure it doesn't go off screen to the left
+      if (left < 0) left = 8;
 
       setDropdownPosition({ top, left });
     }
@@ -106,7 +111,7 @@ export default function LanguageSwitcher() {
   const dropdown = open ? createPortal(
     <div
       ref={dropdownRef}
-      className="fixed bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden min-w-[200px] max-h-[300px] overflow-y-auto"
+      className="fixed bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden w-max min-w-[140px] max-h-[300px] overflow-y-auto"
       style={{
         top: dropdownPosition.top,
         left: dropdownPosition.left,
@@ -119,8 +124,8 @@ export default function LanguageSwitcher() {
           onClick={() => handleLanguageChange(lang.code)}
           type="button"
           className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between gap-3 transition-all ${i18n.language === lang.code
-              ? 'bg-blue-50 text-blue-700 font-medium'
-              : ''
+            ? 'bg-blue-50 text-blue-700 font-medium'
+            : ''
             }`}
         >
           <div className="flex items-center gap-3 flex-1 min-w-0">

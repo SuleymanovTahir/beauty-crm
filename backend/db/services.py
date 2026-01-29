@@ -407,10 +407,12 @@ def format_service_price_for_bot(service) -> str:
     """
     Форматировать цену услуги для бота (правильный порядок)
     """
-    price = service[5] if len(service) > 5 else 0
-    min_price = service[6] if len(service) > 6 and service[6] else None
-    max_price = service[7] if len(service) > 7 and service[7] else None
-    currency = service[8] if len(service) > 8 else "AED"
+    from utils.currency import get_salon_currency
+    
+    price = service[4] if len(service) > 4 else 0
+    min_price = service[5] if len(service) > 5 and service[5] else None
+    max_price = service[6] if len(service) > 6 and service[6] else None
+    currency = service[7] if len(service) > 7 else get_salon_currency()
 
     # Убираем .0 у целых чисел
     def format_number(num):

@@ -446,27 +446,34 @@ def is_valid_instagram_username(username: str) -> bool:
     pattern = r'^[a-zA-Z0-9._]{1,30}$'
     return bool(re.match(pattern, username))
 
-def validate_password(password: str, min_length: int = 6) -> tuple:
+def validate_password(password: str, min_length: int = 8) -> tuple:
     """
-    Валидировать пароль
+    Валидировать пароль (усиленная проверка)
     
     Args:
         password: пароль для проверки
-        min_length: минимальная длина
+        min_length: минимальная длина (по умолчанию 8)
         
     Returns:
         tuple: (is_valid: bool, error_message: str or None)
     """
     if not password:
-        return False, "Пароль не может быть пустым"
+        return False, "password_empty"
     
     if len(password) < min_length:
-        return False, f"Пароль должен быть минимум {min_length} символов"
+        return False, "password_too_short"
     
-    # Можно добавить дополнительные проверки:
-    # - наличие цифр
-    # - наличие заглавных букв
-    # - наличие спецсимволов
+    if not re.search(r"[A-Z]", password):
+        return False, "password_no_upper"
+
+    if not re.search(r"[a-z]", password):
+        return False, "password_no_lower"
+        
+    if not re.search(r"[\d]", password):
+        return False, "password_no_digit"
+        
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return False, "password_no_special"
     
     return True, None
 

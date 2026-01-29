@@ -6,6 +6,7 @@ from datetime import datetime
 import json
 from db.connection import get_db_connection
 from utils.logger import log_error, log_info
+from utils.currency import get_salon_currency
 
 def get_invoices(client_id: Optional[str] = None, status: Optional[str] = None) -> List[Dict]:
     conn = get_db_connection()
@@ -41,7 +42,7 @@ def create_invoice(data: Dict) -> Optional[int]:
         
         # Get defaults
         c.execute("SELECT currency FROM salon_settings WHERE id = 1")
-        currency = (c.fetchone() or ["AED"])[0]
+        currency = (c.fetchone() or [get_salon_currency()])[0]
         
         c.execute("SELECT id FROM workflow_stages WHERE entity_type = 'invoice' AND name = 'draft' LIMIT 1")
         stage_id = (c.fetchone() or [None])[0]

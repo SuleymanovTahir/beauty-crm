@@ -14,7 +14,7 @@ from db import (
 from core.config import DATABASE_NAME, PUBLIC_URL
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
-from utils.utils import require_auth
+from utils.utils import require_auth, validate_password
 import httpx
 from db.users import verify_user, create_session, delete_session
 import os
@@ -464,8 +464,9 @@ async def api_register(
         if len(username) < 3:
             raise ValueError("error_login_too_short")
 
-        if len(password) < 6:
-            raise ValueError("error_password_too_short")
+        is_valid_pwd, pwd_error = validate_password(password)
+        if not is_valid_pwd:
+           raise ValueError(pwd_error)
 
         if not full_name or len(full_name) < 2:
             raise ValueError("error_name_too_short")

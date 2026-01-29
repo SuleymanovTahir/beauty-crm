@@ -90,13 +90,7 @@ async def get_internal_messages(
     conn = get_db_connection()
     c = conn.cursor()
 
-    # Determine localized name field
-    lang = language.lower()[:2] if language else 'ru'
-    valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
-    if lang not in valid_languages:
-        lang = 'ru'
-    
-    name_field = f'full_name_{lang}'
+    languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
 
     # Если указан конкретный пользователь, получаем только переписку с ним
     if with_user_id:
@@ -104,8 +98,8 @@ async def get_internal_messages(
             SELECT
                 ic.id, ic.sender_id, ic.receiver_id, ic.message,
                 ic.is_read, ic.timestamp, ic.type,
-                COALESCE(u1.{name_field}, u1.full_name) as sender_name,
-                COALESCE(u2.{name_field}, u2.full_name) as recipient_name,
+                u1.full_name as sender_name,
+                u2.full_name as recipient_name,
                 ic.edited, ic.edited_at, ic.deleted_for_sender, ic.deleted_for_receiver, ic.reactions
             FROM internal_chat ic
             LEFT JOIN users u1 ON ic.sender_id = u1.id
@@ -121,8 +115,8 @@ async def get_internal_messages(
             SELECT
                 ic.id, ic.sender_id, ic.receiver_id, ic.message,
                 ic.is_read, ic.timestamp, ic.type,
-                COALESCE(u1.{name_field}, u1.full_name) as sender_name,
-                COALESCE(u2.{name_field}, u2.full_name) as recipient_name,
+                u1.full_name as sender_name,
+                u2.full_name as recipient_name,
                 ic.edited, ic.edited_at, ic.deleted_for_sender, ic.deleted_for_receiver, ic.reactions
             FROM internal_chat ic
             LEFT JOIN users u1 ON ic.sender_id = u1.id
@@ -259,22 +253,16 @@ async def get_chat_users(
     import time
     start_time = time.time()
 
-    # Determine localized name field
-    lang = language.lower()[:2] if language else 'ru'
-    valid_languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
-    if lang not in valid_languages:
-        lang = 'ru'
-    
-    name_field = f'full_name_{lang}'
+    languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
 
     c.execute(f"""
-        SELECT u.id, u.username, COALESCE(u.{name_field}, u.full_name) as full_name, 
+        SELECT u.id, u.username, u.full_name, 
                u.role, u.email, u.photo,
                us.is_online, us.last_seen
         FROM users u
         LEFT JOIN user_status us ON u.id = us.user_id
         WHERE u.id != %s AND u.is_active = TRUE AND u.deleted_at IS NULL
-        ORDER BY COALESCE(u.{name_field}, u.full_name)
+        ORDER BY u.full_name
     """, (user['id'],))
     
     db_duration = time.time() - start_time
