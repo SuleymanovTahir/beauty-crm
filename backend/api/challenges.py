@@ -13,17 +13,15 @@ async def get_challenges():
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute("SELECT id, title_ru, title_en, description_ru, description_en, bonus_points, is_active FROM active_challenges ORDER BY created_at DESC")
+        c.execute("SELECT id, title, description, bonus_points, is_active FROM active_challenges ORDER BY created_at DESC")
         challenges = []
         for row in c.fetchall():
             challenges.append({
                 "id": row[0],
-                "title_ru": row[1],
-                "title_en": row[2],
-                "description_ru": row[3],
-                "description_en": row[4],
-                "bonus_points": row[5],
-                "is_active": row[6]
+                "title": row[1],
+                "description": row[2],
+                "bonus_points": row[3],
+                "is_active": row[4]
             })
         conn.close()
         return {"success": True, "challenges": challenges}
@@ -37,20 +35,18 @@ async def create_challenge(request: Request, session_token: Optional[str] = Cook
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         raise HTTPException(status_code=403, detail="Forbidden")
-    
+
     try:
         data = await request.json()
         conn = get_db_connection()
         c = conn.cursor()
         c.execute("""
-            INSERT INTO active_challenges (title_ru, title_en, description_ru, description_en, bonus_points, is_active)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO active_challenges (title, description, bonus_points, is_active)
+            VALUES (%s, %s, %s, %s)
             RETURNING id
         """, (
-            data.get("title_ru"),
-            data.get("title_en"),
-            data.get("description_ru"),
-            data.get("description_en"),
+            data.get("title"),
+            data.get("description"),
             data.get("bonus_points", 0),
             data.get("is_active", True)
         ))
@@ -68,24 +64,24 @@ async def update_challenge(challenge_id: int, request: Request, session_token: O
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         raise HTTPException(status_code=403, detail="Forbidden")
-    
+
     try:
         data = await request.json()
         conn = get_db_connection()
         c = conn.cursor()
-        
+
         updates = []
         params = []
-        for key in ["title_ru", "title_en", "description_ru", "description_en", "bonus_points", "is_active"]:
+        for key in ["title", "description", "bonus_points", "is_active"]:
             if key in data:
                 updates.append(f"{key} = %s")
                 params.append(data[key])
-        
+
         if updates:
             params.append(challenge_id)
             c.execute(f"UPDATE active_challenges SET {', '.join(updates)}, updated_at = CURRENT_TIMESTAMP WHERE id = %s", params)
             conn.commit()
-        
+
         conn.close()
         return {"success": True}
     except Exception as e:
@@ -97,7 +93,7 @@ async def delete_challenge(challenge_id: int, session_token: Optional[str] = Coo
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         raise HTTPException(status_code=403, detail="Forbidden")
-    
+
     try:
         conn = get_db_connection()
         c = conn.cursor()

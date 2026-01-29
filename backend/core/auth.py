@@ -809,54 +809,9 @@ async def get_positions():
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Создаем таблицу если её нет
-        c.execute('''CREATE TABLE IF NOT EXISTS positions (
-            id SERIAL PRIMARY KEY,
-            name TEXT NOT NULL UNIQUE,
-            name_en TEXT,
-            name_ar TEXT,
-            description TEXT,
-            is_active BOOLEAN DEFAULT TRUE,
-            sort_order INTEGER DEFAULT 0,
-            created_at TEXT,
-            updated_at TEXT
-        )''')
-
-        # Проверяем есть ли данные
-        c.execute("SELECT COUNT(*) FROM positions")
-        count = c.fetchone()[0]
-
-        if count == 0:
-            from datetime import datetime
-            now = datetime.now().isoformat()
-
-            # Добавляем дефолтные должности
-            default_positions = [
-                ("Мастер маникюра", "Manicure Master", "خبير مانيكير", "Специалист по маникюру", 1),
-                ("Мастер педикюра", "Pedicure Master", "خبير باديكير", "Специалист по педикюру", 2),
-                ("Мастер бровист", "Brow Master", "خبير الحواجب", "Специалист по оформлению бровей", 3),
-                ("Косметолог", "Cosmetologist", "خبير التجميل", "Специалист по косметологии", 4),
-                ("Визажист", "Makeup Artist", "فنان مكياج", "Специалист по макияжу", 5),
-                ("Парикмахер", "Hairdresser", "مصفف شعر", "Специалист по прическам", 6),
-                ("Менеджер по продажам", "Sales Manager", "مدير المبيعات", "Ответственный за продажи услуг", 7),
-                ("Таргетолог", "Targeting Specialist", "أخصائي الاستهداف", "Специалист по таргетированной рекламе", 8),
-                ("SMM-менеджер", "SMM Manager", "مدير وسائل التواصل", "Менеджер социальных сетей", 9),
-                ("Администратор", "Administrator", "مسؤول", "Администратор салона", 10),
-                ("Старший администратор", "Senior Administrator", "مسؤول أول", "Старший администратор", 11),
-                ("Директор", "Director", "مدير", "Директор салона", 12),
-            ]
-
-            for position in default_positions:
-                c.execute("""INSERT INTO positions
-                             (name, name_en, name_ar, description, sort_order, is_active, created_at, updated_at)
-                             VALUES (%s, %s, %s, %s, %s, TRUE, %s, %s)""",
-                          (position[0], position[1], position[2], position[3], position[4], now, now))
-
-            conn.commit()
-
-        # Получаем активные должности
+        # Получаем активные должности (без translation columns)
         c.execute("""
-            SELECT id, name, name_en, name_ar, description
+            SELECT id, name, description, sort_order
             FROM positions
             WHERE is_active = TRUE
             ORDER BY sort_order, name
@@ -867,9 +822,8 @@ async def get_positions():
             positions.append({
                 "id": row[0],
                 "name": row[1],
-                "name_en": row[2],
-                "name_ar": row[3],
-                "description": row[4]
+                "description": row[2],
+                "sort_order": row[3]
             })
 
         conn.close()

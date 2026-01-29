@@ -11,6 +11,7 @@ import { api } from '../../src/services/api';
 import { useSalonSettings } from '../hooks/useSalonSettings';
 import { DEFAULT_VALUES } from '../utils/constants';
 import logo from '../styles/img/logo.png';
+import PublicLanguageSwitcher from '../../src/components/PublicLanguageSwitcher';
 
 interface LoginPageProps {
   initialView?: 'login' | 'register';
@@ -131,7 +132,12 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
+      {/* Language Switcher - top right */}
+      <div className="absolute top-4 right-4">
+        <PublicLanguageSwitcher />
+      </div>
+
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <img
@@ -242,13 +248,13 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
                   className="mt-1"
                 />
                 <label htmlFor="terms" className="text-xs text-muted-foreground">
-                  Я согласен с{' '}
+                  {t('auth/register:agree_with', 'I agree to the')}{' '}
                   <a href="/terms" className="text-primary hover:underline">
-                    условиями использования
+                    {t('auth/register:terms_of_use', 'Terms of Use')}
                   </a>{' '}
-                  и{' '}
+                  {t('common:and', 'and')}{' '}
                   <a href="/privacy-policy" className="text-primary hover:underline">
-                    политикой конфиденциальности
+                    {t('auth/register:privacy_policy', 'Privacy Policy')}
                   </a>
                 </label>
               </div>
@@ -257,7 +263,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
             {isLogin && (
               <div className="text-right">
                 <a href="/forgot-password" className="text-sm text-primary hover:underline">
-                  Забыли пароль?
+                  {t('auth/Login:forgot_password', 'Forgot password?')}
                 </a>
               </div>
             )}
@@ -266,29 +272,29 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
               {loading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>{isLogin ? 'Вход...' : 'Регистрация...'}</span>
+                  <span>{isLogin ? t('auth/Login:logging_in', 'Logging in...') : t('auth/register:registering', 'Registering...')}</span>
                 </div>
               ) : (
-                isLogin ? 'Войти' : 'Зарегистрироваться'
+                isLogin ? t('auth/Login:submit', 'Sign In') : t('auth/register:submit', 'Sign Up')
               )}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <a href="/" className="text-sm text-muted-foreground hover:text-primary">
-              ← Вернуться на главную
+              ← {t('common:back_to_home', 'Back to home')}
             </a>
           </div>
         </div>
 
         {!isLogin && (
           <div className="mt-6 p-4 bg-card rounded-lg border border-border">
-            <h3 className="font-semibold mb-2 text-sm">Условия использования</h3>
+            <h3 className="font-semibold mb-2 text-sm">{t('auth/register:terms_title', 'Terms of Use')}</h3>
             <div className="text-xs text-muted-foreground space-y-2 max-h-40 overflow-y-auto">
-              <p>1. Вы обязуетесь предоставлять только достоверную информацию.</p>
-              <p>2. Мы гарантируем конфиденциальность ваших данных.</p>
-              <p>3. Вы можете отменить запись за 24 часа до приема.</p>
-              <p>4. При неявке без предупреждения может быть применена комиссия.</p>
+              <p>1. {t('auth/register:terms_1', 'You agree to provide only accurate information.')}</p>
+              <p>2. {t('auth/register:terms_2', 'We guarantee the confidentiality of your data.')}</p>
+              <p>3. {t('auth/register:terms_3', 'You can cancel a booking up to 24 hours before the appointment.')}</p>
+              <p>4. {t('auth/register:terms_4', 'A commission may be applied for no-shows without notice.')}</p>
             </div>
           </div>
         )}

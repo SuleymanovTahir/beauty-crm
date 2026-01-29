@@ -42,50 +42,25 @@ async def list_services(
     duration = time.time() - start_time
     log_info(f"⏱️ get_all_services took {duration:.4f}s returning {len(services)} items", "perf")
     
+    # Column indexes: 0:id, 1:service_key, 2:name, 3:category, 4:price,
+    # 5:min_price, 6:max_price, 7:currency, 8:duration, 9:description,
+    # 10:benefits, 11:is_active, 12:position_id
     result = {
         "services": [
             {
                 "id": s[0],
                 "key": s[1],
-                "name": s[20] if language == 'en' and len(s) > 20 and s[20] else \
-                        s[4] if language == 'ar' and len(s) > 4 and s[4] else \
-                        s[21] if language == 'de' and len(s) > 21 and s[21] else \
-                        s[22] if language == 'es' and len(s) > 22 and s[22] else \
-                        s[23] if language == 'fr' and len(s) > 23 and s[23] else \
-                        s[24] if language == 'hi' and len(s) > 24 and s[24] else \
-                        s[25] if language == 'kk' and len(s) > 25 and s[25] else \
-                        s[26] if language == 'pt' and len(s) > 26 and s[26] else \
-                        s[3] if language == 'ru' and len(s) > 3 and s[3] else s[2],
-                "name_ru": s[3] if len(s) > 3 else s[2],
-                "name_ar": s[4] if len(s) > 4 else None,
-                "price": s[5] if len(s) > 5 else 0,
-                "min_price": s[6] if len(s) > 6 else None,
-                "max_price": s[7] if len(s) > 7 else None,
-                "currency": s[8] if len(s) > 8 else "AED",
-                "category": s[9] if len(s) > 9 else "other",
-                "description": s[27] if language == 'en' and len(s) > 27 and s[27] else \
-                                s[12] if language == 'ar' and len(s) > 12 and s[12] else \
-                                s[28] if language == 'de' and len(s) > 28 and s[28] else \
-                                s[29] if language == 'es' and len(s) > 29 and s[29] else \
-                                s[30] if language == 'fr' and len(s) > 30 and s[30] else \
-                                s[31] if language == 'hi' and len(s) > 31 and s[31] else \
-                                s[32] if language == 'kk' and len(s) > 32 and s[32] else \
-                                s[33] if language == 'pt' and len(s) > 33 and s[33] else \
-                                s[11] if language == 'ru' and len(s) > 11 and s[11] else s[10],
-                "description_ru": s[11] if len(s) > 11 else "",
-                "description_ar": s[12] if len(s) > 12 else "",
-                "benefits": s[13].split('|') if len(s) > 13 and s[13] else [],
-                "is_active": bool(s[14]) if len(s) > 14 and s[14] is not None else True,
-                "duration": s[15] if len(s) > 15 else None,
-                "position_id": s[16] if len(s) > 16 else None,
-                # Additional language fields
-                "name_en": s[20] if len(s) > 20 else None,
-                "name_de": s[21] if len(s) > 21 else None,
-                "name_es": s[22] if len(s) > 22 else None,
-                "name_fr": s[23] if len(s) > 23 else None,
-                "name_hi": s[24] if len(s) > 24 else None,
-                "name_kk": s[25] if len(s) > 25 else None,
-                "name_pt": s[26] if len(s) > 26 else None,
+                "name": s[2],
+                "category": s[3],
+                "price": s[4] or 0,
+                "min_price": s[5],
+                "max_price": s[6],
+                "currency": s[7] or "AED",
+                "duration": s[8],
+                "description": s[9] or "",
+                "benefits": s[10].split('|') if s[10] else [],
+                "is_active": bool(s[11]) if s[11] is not None else True,
+                "position_id": s[12],
             }
             for s in services
         ],
@@ -115,9 +90,8 @@ async def get_service_price(
     return {
         "service_key": service[1],
         "name": service[2],
-        "name_ru": service[3] if len(service) > 3 else service[2],
-        "price": service[5] if len(service) > 5 else 0,
-        "currency": service[6] if len(service) > 6 else "AED"
+        "price": service[4] if len(service) > 4 else 0,
+        "currency": service[7] if len(service) > 7 else "AED"
     }
 
 @router.post("/services")
@@ -137,14 +111,10 @@ async def create_service_api(
         success = create_service(
             service_key=data.get('key'),
             name=data.get('name'),
-            name_ru=data.get('name_ru'),
-            name_ar=data.get('name_ar'),
             price=float(data.get('price', 0)),
             currency=data.get('currency', 'AED'),
             category=data.get('category'),
             description=data.get('description'),
-            description_ru=data.get('description_ru'),
-            description_ar=data.get('description_ar'),
             benefits=data.get('benefits', []),
             position_id=data.get('position_id')
         )
@@ -314,21 +284,19 @@ async def list_special_packages(
             {
                 "id": p[0],
                 "name": p[1],
-                "name_ru": p[2],
-                "description": p[3],
-                "description_ru": p[4],
-                "original_price": p[5],
-                "special_price": p[6],
-                "currency": p[7],
-                "discount_percent": p[8],
-                "services_included": p[9].split(',') if p[9] else [],
-                "promo_code": p[10],
-                "keywords": p[11].split(',') if p[11] else [],
-                "valid_from": p[12],
-                "valid_until": p[13],
-                "is_active": p[14],
-                "usage_count": p[15],
-                "max_usage": p[16]
+                "description": p[2],
+                "original_price": p[3],
+                "special_price": p[4],
+                "currency": p[5],
+                "discount_percent": p[6],
+                "services_included": p[7].split(',') if p[7] else [],
+                "promo_code": p[8],
+                "keywords": p[9].split(',') if p[9] else [],
+                "valid_from": p[10],
+                "valid_until": p[11],
+                "is_active": p[12],
+                "usage_count": p[13],
+                "max_usage": p[14]
             }
             for p in packages
         ],
@@ -350,7 +318,6 @@ async def create_special_package_api(
     try:
         package_id = create_special_package(
             name=data.get('name'),
-            name_ru=data.get('name_ru'),
             original_price=float(data.get('original_price')),
             special_price=float(data.get('special_price')),
             currency=data.get('currency', 'AED'),
@@ -358,7 +325,6 @@ async def create_special_package_api(
             valid_from=data.get('valid_from'),
             valid_until=data.get('valid_until'),
             description=data.get('description'),
-            description_ru=data.get('description_ru'),
             services_included=data.get('services_included', []),
             promo_code=data.get('promo_code'),
             max_usage=data.get('max_usage'),
@@ -435,19 +401,17 @@ async def get_service_positions(
         conn = get_db_connection()
         c = conn.cursor()
         c.execute("""
-            SELECT p.id, p.name, p.name_ru, p.name_ar 
+            SELECT p.id, p.name
             FROM positions p
             JOIN service_positions sp ON p.id = sp.position_id
             WHERE sp.service_id = %s
         """, (service_id,))
-        
+
         positions = []
         for row in c.fetchall():
             positions.append({
                 "id": row[0],
-                "name": row[1],
-                "name_ru": row[2],
-                "name_ar": row[3]
+                "name": row[1]
             })
         conn.close()
         return {"positions": positions}

@@ -33,42 +33,53 @@ async def get_audit_summary(
     current_user: dict = Depends(get_current_user)
 ):
     """API: Статистика действий для дашборда аудита"""
-    if current_user["role"] != "director":
+    if current_user["role"] not in ["director", "admin"]:
         raise HTTPException(status_code=403, detail="Forbidden")
-        
+
     from db.connection import get_db_connection
-    conn = get_db_connection()
-    c = conn.cursor()
-    
-    # Сводная статистика за 24 часа
-    c.execute("""
-        SELECT 
-            COUNT(*) as total,
-            SUM(CASE WHEN success = FALSE THEN 1 ELSE 0 END) as failures,
-            COUNT(DISTINCT user_id) as active_users
-        FROM audit_log 
-        WHERE created_at >= CURRENT_TIMESTAMP - INTERVAL '24 hours'
-    """)
-    totals = c.fetchone()
-    
-    # По типам действий
-    c.execute("""
-        SELECT action, COUNT(*) as count 
-        FROM audit_log 
-        WHERE created_at >= CURRENT_TIMESTAMP - INTERVAL '24 hours'
-        GROUP BY action
-    """)
-    actions = {row[0]: row[1] for row in c.fetchall()}
-    
-    conn.close()
-    return {
-        "summary": {
-            "total_24h": totals[0],
-            "failures_24h": totals[1] or 0,
-            "active_users_24h": totals[2],
-            "actions_breakdown": actions
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        # Сводная статистика за 24 часа (без колонки success)
+        c.execute("""
+            SELECT
+                COUNT(*) as total,
+                COUNT(DISTINCT user_id) as active_users
+            FROM audit_log
+            WHERE created_at >= CURRENT_TIMESTAMP - INTERVAL '24 hours'
+        """)
+        totals = c.fetchone()
+
+        # По типам действий
+        c.execute("""
+            SELECT action, COUNT(*) as count
+            FROM audit_log
+            WHERE created_at >= CURRENT_TIMESTAMP - INTERVAL '24 hours'
+            GROUP BY action
+        """)
+        actions = {row[0]: row[1] for row in c.fetchall()}
+
+        conn.close()
+        return {
+            "summary": {
+                "total_24h": totals[0] or 0,
+                "failures_24h": 0,
+                "active_users_24h": totals[1] or 0,
+                "actions_breakdown": actions
+            }
         }
-    }
+    except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error getting audit summary: {e}", "audit")
+        return {
+            "summary": {
+                "total_24h": 0,
+                "failures_24h": 0,
+                "active_users_24h": 0,
+                "actions_breakdown": {}
+            }
+        }
 
 @router.delete("/admin/audit-log/clear")
 async def clear_audit_log(

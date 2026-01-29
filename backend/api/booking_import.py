@@ -183,8 +183,7 @@ def find_service(service_name: str) -> str:
     c = conn.cursor()
     
     try:
-        c.execute("SELECT name_ru FROM services WHERE LOWER(name_ru) = LOWER(%s) OR LOWER(name) = LOWER(%s)", 
-                  (service_name, service_name))
+        c.execute("SELECT name FROM services WHERE LOWER(name) = LOWER(%s)", (service_name,))
         result = c.fetchone()
         if result:
             return result[0]

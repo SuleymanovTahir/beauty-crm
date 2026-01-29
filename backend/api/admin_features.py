@@ -79,8 +79,8 @@ async def get_admin_challenges(session_token: Optional[str] = Cookie(None)):
         c.execute("""
             SELECT
                 c.id,
-                c.title_ru as title,
-                c.description_ru as description,
+                c.title,
+                c.description,
                 c.challenge_type as type,
                 c.target_value,
                 c.bonus_points as reward_points,
@@ -149,15 +149,13 @@ async def create_admin_challenge(request: Request, session_token: Optional[str] 
 
         c.execute("""
             INSERT INTO active_challenges (
-                title_ru, title_en, description_ru, description_en,
+                title, description,
                 challenge_type, target_value, bonus_points,
                 start_date, end_date, is_active
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
             data.get("title", ""),
-            data.get("title", ""),
-            data.get("description", ""),
             data.get("description", ""),
             data.get("type", "visits"),
             data.get("target_value", 0),
@@ -190,10 +188,8 @@ async def update_admin_challenge(challenge_id: int, request: Request, session_to
 
         c.execute("""
             UPDATE active_challenges SET
-                title_ru = %s,
-                title_en = %s,
-                description_ru = %s,
-                description_en = %s,
+                title = %s,
+                description = %s,
                 challenge_type = %s,
                 target_value = %s,
                 bonus_points = %s,
@@ -203,8 +199,6 @@ async def update_admin_challenge(challenge_id: int, request: Request, session_to
             WHERE id = %s
         """, (
             data.get("title", ""),
-            data.get("title", ""),
-            data.get("description", ""),
             data.get("description", ""),
             data.get("type", "visits"),
             data.get("target_value", 0),

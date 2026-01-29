@@ -195,6 +195,19 @@ async def update_messenger_setting(
         conn.commit()
         log_info(f"Messenger settings updated in salon_settings: {messenger_type}", "messengers")
 
+        # Очищаем кэш enabled messengers
+        cache_key = "enabled_messengers"
+        if cache_key in _messengers_cache:
+            del _messengers_cache[cache_key]
+
+        # Очищаем Redis кэш если доступен
+        try:
+            from utils.cache import cache
+            if cache.enabled:
+                cache.delete(cache_key)
+        except:
+            pass
+
         return {
             "success": True,
             "message": f"{messenger_type.capitalize()} settings updated successfully"

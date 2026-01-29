@@ -4,12 +4,15 @@
   "email_not_verified_redirect": "Email not verified. Redirecting to verification page...",
   "enter_login": "Enter your login",
   "fill_both_fields": "Please fill in both fields",
+  "forgot_password": "Forgot password?",
   "login": "Login",
   "login_error": "Login error",
   "login_title": "Login to your account",
+  "logging_in": "Logging in...",
   "network_error": "Network error. Check your internet connection or try again later.",
   "password": "Password",
   "registration_pending_toast": "Your registration is pending administrator approval. You will receive an email when your account is activated.",
+  "submit": "Sign In",
   "username": "Username",
   "welcome": "Welcome"
 }

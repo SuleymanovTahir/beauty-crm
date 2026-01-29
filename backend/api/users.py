@@ -292,11 +292,11 @@ async def get_users(
 
         conn.close()
 
-        # Fetch services for all users efficienty
+        # Fetch services for all users efficiently
         conn = get_db_connection()
         c = conn.cursor()
         c.execute("""
-            SELECT us.user_id, s.id, s.name, s.name_ru, s.name_ar
+            SELECT us.user_id, s.id, s.name
             FROM user_services us
             JOIN services s ON us.service_id = s.id
             WHERE us.is_online_booking_enabled = TRUE
@@ -308,9 +308,7 @@ async def get_users(
                 services_map[uid] = []
             services_map[uid].append({
                 "id": row[1],
-                "name": row[2],
-                "name_ru": row[3],
-                "name_ar": row[4]
+                "name": row[2]
             })
         conn.close()
 

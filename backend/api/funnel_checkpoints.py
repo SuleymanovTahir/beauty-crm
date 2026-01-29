@@ -17,9 +17,6 @@ router = APIRouter()
 class CheckpointCreate(BaseModel):
     stage_id: int
     name: str
-    name_ru: Optional[str] = None
-    name_en: Optional[str] = None
-    name_ar: Optional[str] = None
     description: Optional[str] = None
     sort_order: int = 0
     is_required: bool = False
@@ -30,9 +27,6 @@ class CheckpointCreate(BaseModel):
 
 class CheckpointUpdate(BaseModel):
     name: Optional[str] = None
-    name_ru: Optional[str] = None
-    name_en: Optional[str] = None
-    name_ar: Optional[str] = None
     description: Optional[str] = None
     sort_order: Optional[int] = None
     is_required: Optional[bool] = None
@@ -76,25 +70,11 @@ async def get_checkpoints(
         query += " ORDER BY fc.stage_id, fc.sort_order"
         
         c.execute(query, params)
+        columns = [desc[0] for desc in c.description]
         checkpoints = []
         for row in c.fetchall():
-            checkpoints.append({
-                "id": row[0],
-                "stage_id": row[1],
-                "name": row[2],
-                "name_ru": row[3],
-                "name_en": row[4],
-                "name_ar": row[5],
-                "description": row[6],
-                "sort_order": row[7],
-                "is_required": row[8],
-                "auto_complete_conditions": row[9],
-                "notification_settings": row[10],
-                "is_active": row[11],
-                "created_at": row[12],
-                "updated_at": row[13],
-                "stage_name": row[14]
-            })
+            checkpoint = dict(zip(columns, row))
+            checkpoints.append(checkpoint)
         
         return {"checkpoints": checkpoints}
         
@@ -117,17 +97,14 @@ async def create_checkpoint(
     try:
         c.execute("""
             INSERT INTO funnel_checkpoints
-            (stage_id, name, name_ru, name_en, name_ar, description, sort_order,
+            (stage_id, name, description, sort_order,
              is_required, auto_complete_conditions, notification_settings, is_active,
              created_at, updated_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             RETURNING id
         """, (
             checkpoint.stage_id,
             checkpoint.name,
-            checkpoint.name_ru,
-            checkpoint.name_en,
-            checkpoint.name_ar,
             checkpoint.description,
             checkpoint.sort_order,
             checkpoint.is_required,

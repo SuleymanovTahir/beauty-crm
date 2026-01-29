@@ -1,37 +1,38 @@
 import apiClient from './client';
-import { Client, ClientDashboard, LoyaltyInfo } from '../types';
+import { API_ENDPOINTS } from '@beauty-crm/shared/api';
+import type { Client, ClientDashboard, LoyaltyInfo } from '@beauty-crm/shared/types';
 
 export const clientPortalApi = {
   getDashboard: async (): Promise<ClientDashboard> => {
-    const response = await apiClient.get<ClientDashboard>('/api/client/dashboard');
+    const response = await apiClient.get<ClientDashboard>(API_ENDPOINTS.CLIENT_PORTAL.DASHBOARD);
     return response.data;
   },
 
   getProfile: async (): Promise<Client> => {
-    const response = await apiClient.get<{ client: Client }>('/api/client/profile');
+    const response = await apiClient.get<{ client: Client }>(API_ENDPOINTS.CLIENT_PORTAL.PROFILE);
     return response.data.client;
   },
 
   updateProfile: async (data: Partial<Client>): Promise<Client> => {
-    const response = await apiClient.post<{ client: Client }>('/api/client/profile', data);
+    const response = await apiClient.post<{ client: Client }>(API_ENDPOINTS.CLIENT_PORTAL.PROFILE, data);
     return response.data.client;
   },
 
   getLoyalty: async (): Promise<LoyaltyInfo> => {
-    const response = await apiClient.get<LoyaltyInfo>('/api/client/loyalty');
+    const response = await apiClient.get<LoyaltyInfo>(API_ENDPOINTS.CLIENT_PORTAL.LOYALTY);
     return response.data;
   },
 
   getReferralCode: async (): Promise<{ code: string; bonus: number }> => {
     const response = await apiClient.get<{ code: string; bonus: number }>(
-      '/api/client/referral-code'
+      `${API_ENDPOINTS.CLIENT_PORTAL.LOYALTY}/referral-code`
     );
     return response.data;
   },
 
   applyReferralCode: async (code: string): Promise<{ success: boolean; bonus?: number }> => {
     const response = await apiClient.post<{ success: boolean; bonus?: number }>(
-      '/api/client/apply-referral',
+      `${API_ENDPOINTS.CLIENT_PORTAL.LOYALTY}/apply-referral`,
       { code }
     );
     return response.data;

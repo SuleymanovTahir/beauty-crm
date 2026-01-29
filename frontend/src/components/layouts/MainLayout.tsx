@@ -225,9 +225,13 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const loadEnabledMessengers = async () => {
         try {
             const response = await api.getEnabledMessengers();
-            setEnabledMessengers(response.enabled_messengers);
+            console.log('Enabled messengers response:', response);
+            const messengers = response?.enabled_messengers || [];
+            console.log('Setting enabled messengers:', messengers);
+            setEnabledMessengers(messengers);
         } catch (err) {
             console.error('Failed to load enabled messengers:', err);
+            setEnabledMessengers([]);
         }
     };
 
@@ -481,16 +485,18 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         ];
 
         // Рекурсивная фильтрация с "выравниванием" (flattening)
+        // Но группа 'chat' никогда не схлопывается - всегда показывается как группа
         const filterItems = (items: any[]) => {
             return items.reduce((acc, item) => {
                 if (item.requirePermission && !item.requirePermission()) return acc;
 
                 if (item.items) {
                     const filteredChildren = filterItems(item.items);
-                    if (filteredChildren.length === 1) {
+                    // Группа 'chat' всегда остаётся группой (не схлопывается)
+                    if (filteredChildren.length === 1 && item.id !== 'chat') {
                         // Если доступен только один подпункт, выводим его как родительский
                         acc.push(filteredChildren[0]);
-                    } else if (filteredChildren.length > 1) {
+                    } else if (filteredChildren.length >= 1) {
                         acc.push({ ...item, items: filteredChildren });
                     }
                 } else {

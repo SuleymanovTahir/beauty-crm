@@ -175,7 +175,7 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
                    COALESCE(u.photo, u.photo_url), u.full_name, s.id, b.revenue
             FROM bookings b
             LEFT JOIN users u ON (LOWER(b.master) = LOWER(u.full_name) OR LOWER(b.master) = LOWER(u.username))
-            LEFT JOIN services s ON (LOWER(b.service_name) = LOWER(s.name) OR LOWER(b.service_name) = LOWER(s.name_ru))
+            LEFT JOIN services s ON LOWER(b.service_name) = LOWER(s.name)
             WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
             AND b.status = 'completed'
             ORDER BY b.datetime DESC LIMIT 10
@@ -289,7 +289,7 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
 
         # Get existing achievements for this client
         c.execute("""
-            SELECT achievement_type, title_ru, icon, points_awarded, unlocked_at, progress, max_progress, description_ru
+            SELECT achievement_type, title, icon, points_awarded, unlocked_at, progress, max_progress, description
             FROM client_achievements
             WHERE client_id = %s
         """, (client_id,))
@@ -381,10 +381,10 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
                     try:
                         unlocked_at = datetime.now()
                         c.execute("""
-                            INSERT INTO client_achievements 
-                            (client_id, achievement_type, title_ru, icon, points_awarded, unlocked_at, progress, max_progress, description_ru)
+                            INSERT INTO client_achievements
+                            (client_id, achievement_type, title, icon, points_awarded, unlocked_at, progress, max_progress, description)
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                        """, (client_id, default["type"], default["title"], default["icon"], default["points"], 
+                        """, (client_id, default["type"], default["title"], default["icon"], default["points"],
                               unlocked_at, default["progress"], default["maxProgress"], default["description"]))
                         
                         # Award points
@@ -427,16 +427,16 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
                     })
                 achievement_id += 1
 
-        # Get active challenges with localized fields
+        # Get active challenges
         c.execute("""
-            SELECT id, title_ru, title_en, description_ru, description_en, bonus_points, start_date, end_date, target_value
+            SELECT id, title, description, bonus_points, start_date, end_date, target_value
             FROM active_challenges
             WHERE is_active = true
         """)
 
         challenges = []
         for row in c.fetchall():
-            challenge_id, title_ru, title_en, desc_ru, desc_en, bonus_points, start_date, end_date, target_value = row
+            challenge_id, title, description, bonus_points, start_date, end_date, target_value = row
 
             # Get user's progress for this challenge
             c.execute("""
@@ -448,10 +448,8 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
 
             challenges.append({
                 "id": challenge_id,
-                "title_ru": title_ru,
-                "title_en": title_en or title_ru,
-                "description_ru": desc_ru,
-                "description_en": desc_en or desc_ru,
+                "title": title,
+                "description": description,
                 "reward": bonus_points,
                 "progress": progress,
                 "maxProgress": target_value,
@@ -517,7 +515,7 @@ async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None))
         c.execute("""
             SELECT s.category, COUNT(*) 
             FROM bookings b
-            JOIN services s ON (LOWER(b.service_name) = LOWER(s.name) OR LOWER(b.service_name) = LOWER(s.name_ru))
+            JOIN services s ON LOWER(b.service_name) = LOWER(s.name)
             WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
             AND b.status = 'completed'
             GROUP BY s.category
@@ -528,7 +526,7 @@ async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None))
         c.execute("""
             SELECT s.category, COUNT(*)
             FROM bookings b
-            JOIN services s ON (LOWER(b.service_name) = LOWER(s.name) OR LOWER(b.service_name) = LOWER(s.name_ru))
+            JOIN services s ON LOWER(b.service_name) = LOWER(s.name)
             WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
             AND b.status = 'completed'
             AND b.datetime::timestamp < (CURRENT_DATE - INTERVAL '30 days')
@@ -697,7 +695,7 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
                    u.id as master_id, u.full_name
             FROM bookings b
             LEFT JOIN users u ON (LOWER(b.master) = LOWER(u.full_name) OR LOWER(b.master) = LOWER(u.username))
-            LEFT JOIN services s ON (LOWER(b.service_name) = LOWER(s.name) OR LOWER(b.service_name) = LOWER(s.name_ru))
+            LEFT JOIN services s ON LOWER(b.service_name) = LOWER(s.name)
             WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
             ORDER BY b.datetime DESC
         """, (client_id, user_phone, user_id))

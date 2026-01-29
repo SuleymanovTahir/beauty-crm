@@ -435,8 +435,8 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     
     top_procedures = []
     for name, count in Counter(booking_services).most_common(3):
-        # Look up translated name in services
-        c.execute("SELECT name_ru FROM services WHERE name = %s OR name_ru = %s LIMIT 1", (name, name))
+        # Look up name in services
+        c.execute("SELECT name FROM services WHERE name = %s LIMIT 1", (name,))
         row = c.fetchone()
         top_procedures.append({"name": row[0] if row and row[0] else name, "count": count})
         
