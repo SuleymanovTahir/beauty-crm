@@ -1559,7 +1559,7 @@ export default function Services() {
                                     })
                                     .map((employee) => {
                                       const isSelected = serviceFormData.employee_ids.includes(employee.id);
-                                      const employeeName = i18n.language.startsWith('ru') ? employee.full_name_ru : employee.full_name;
+                                      const employeeName = employee.full_name;
                                       if (!employeeName || employeeName.trim() === '') return null;
 
                                       return (
@@ -1655,33 +1655,22 @@ export default function Services() {
 
           <div className="crm-form-content px-6 py-4">
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="pkgName">{t('services:name')} (EN) *</Label>
-                  <Input
-                    id="pkgName"
-                    value={packageFormData.name}
-                    onChange={(e) => setPackageFormData({ ...packageFormData, name: e.target.value })}
-                    placeholder={t('services:summer_special_package')}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="pkgNameRu">{t('services:name')} (RU) *</Label>
-                  <Input
-                    id="pkgNameRu"
-                    value={packageFormData.name_ru}
-                    onChange={(e) => setPackageFormData({ ...packageFormData, name_ru: e.target.value })}
-                    placeholder={t('services:summer_special_package')}
-                  />
-                </div>
+              <div>
+                <Label htmlFor="pkgName">{t('services:name')} *</Label>
+                <Input
+                  id="pkgName"
+                  value={packageFormData.name}
+                  onChange={(e) => setPackageFormData({ ...packageFormData, name: e.target.value })}
+                  placeholder={t('services:summer_special_package')}
+                />
               </div>
 
               <div>
-                <Label htmlFor="pkgDescRu">{t('services:description')} (RU)</Label>
+                <Label htmlFor="pkgDesc">{t('services:description')}</Label>
                 <Textarea
-                  id="pkgDescRu"
-                  value={packageFormData.description_ru}
-                  onChange={(e) => setPackageFormData({ ...packageFormData, description_ru: e.target.value })}
+                  id="pkgDesc"
+                  value={packageFormData.description}
+                  onChange={(e) => setPackageFormData({ ...packageFormData, description: e.target.value })}
                   placeholder={t('services:includes_manicure_pedicure_at_special_price')}
                   rows={2}
                 />
