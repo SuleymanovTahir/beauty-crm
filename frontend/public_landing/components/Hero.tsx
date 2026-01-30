@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PromoTimer } from "./PromoTimer";
 import { fetchPublicApi, getApiUrl } from "../utils/apiUtils";
+import { useCurrency } from "../../src/hooks/useSalonSettings";
 
 interface HeroProps {
   initialBanner?: any;
@@ -12,6 +13,7 @@ interface HeroProps {
 
 export function Hero({ initialBanner, salonInfo }: HeroProps) {
   const { t } = useTranslation(['public_landing', 'common', 'dynamic']);
+  const { currency } = useCurrency();
   const [heroBanner, setHeroBanner] = useState<any>(initialBanner || null);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export function Hero({ initialBanner, salonInfo }: HeroProps) {
       // Pass interpolation variables for placeholders
       percent: banner.percent || 50,
       max: banner.max || 5,
-      currency: 'AED'
+      currency: currency || 'AED'
     });
     return typeof translation === 'string' ? translation : (banner[field] || '');
   };
