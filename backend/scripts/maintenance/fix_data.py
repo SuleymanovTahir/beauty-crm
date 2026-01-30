@@ -7,9 +7,17 @@ def run_all_fixes():
 
 def run_fix():
     print("🚀 Running system data maintenance...")
-    
+
     conn = get_db_connection()
     c = conn.cursor()
+
+    # Advisory lock to prevent multiple workers from running maintenance simultaneously
+    c.execute("SELECT pg_try_advisory_lock(12346)")  # Different lock ID from init_database (12345)
+    got_lock = c.fetchone()[0]
+    if not got_lock:
+        log_info("⏳ Another process is running maintenance, skipping...", "maintenance")
+        conn.close()
+        return True  # Return success - maintenance is being done by another worker
 
     try:
         # 1. Restore Public Content from locales (Rule 15 compliance)
@@ -290,10 +298,21 @@ def run_fix():
 
     except Exception as e:
         log_error(f"❌ Maintenance failed: {e}", "maintenance")
-        conn.rollback()
+        try:
+            conn.rollback()
+        except:
+            pass
         return False
     finally:
-        conn.close()
+        # Release advisory lock
+        try:
+            c.execute("SELECT pg_advisory_unlock(12346)")
+        except:
+            pass
+        try:
+            conn.close()
+        except:
+            pass
 
 if __name__ == "__main__":
     run_fix()

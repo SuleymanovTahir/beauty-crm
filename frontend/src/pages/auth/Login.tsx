@@ -43,7 +43,7 @@ export default function Login() {
     e.preventDefault();
 
     if (!credentials.username || !credentials.password) {
-      setError(t('login:fill_both_fields'));
+      setError(t('fill_both_fields'));
       return;
     }
 
@@ -60,29 +60,29 @@ export default function Login() {
         login(response.user, response.token);
 
         toast.success(
-          `${t('login:welcome')} ${response.user.full_name || response.user.username
+          `${t('welcome')} ${response.user.full_name || response.user.username
           }!`
         );
         navigate("/crm/dashboard");
       } else {
         // Проверяем, не подтвержден ли email
         if (response.error_type === "email_not_verified" && response.email) {
-          toast.error(t('login:email_not_verified_redirect', "Email не подтвержден. Перенаправление на страницу верификации..."));
+          toast.error(t('email_not_verified_redirect', "Email не подтвержден. Перенаправление на страницу верификации..."));
           setTimeout(() => {
             navigate("/verify-email", { state: { email: response.email } });
           }, 1500);
           return;
         }
 
-        setError(t('login:authorization_error'));
-        toast.error(t('login:authorization_error'));
+        setError(t('authorization_error'));
+        toast.error(t('authorization_error'));
       }
     } catch (err: any) {
       console.log("Login error caught:", err);
 
       // Проверяем, есть ли информация о неподтвержденном email в ошибке
       if (err.error_type === "email_not_verified" && err.email) {
-        toast.error(t('login:email_not_verified_redirect', "Email не подтвержден. Перенаправление на страницу верификации..."));
+        toast.error(t('email_not_verified_redirect', "Email не подтвержден. Перенаправление на страницу верификации..."));
         setTimeout(() => {
           navigate("/verify-email", { state: { email: err.email } });
         }, 1500);
@@ -91,14 +91,14 @@ export default function Login() {
 
       // Проверяем, ожидает ли пользователь одобрения админа
       if (err.error_type === "not_approved" || err.error === "account_not_activated") {
-        setError(t('login:account_pending', "Ваш аккаунт ожидает одобрения администратора"));
+        setError(t('account_pending', "Ваш аккаунт ожидает одобрения администратора"));
         return;
       }
 
       // Неверный логин/пароль
       if (err.error === 'invalid_credentials' || err.error === 'user_not_found') {
-        setError(t('login:invalid_credentials', 'Неверный логин или пароль'));
-        toast.error(t('login:invalid_credentials', 'Неверный логин или пароль'));
+        setError(t('invalid_credentials', 'Неверный логин или пароль'));
+        toast.error(t('invalid_credentials', 'Неверный логин или пароль'));
         return;
       }
 
@@ -110,15 +110,15 @@ export default function Login() {
         errorMessage === 'Load failed';
 
       if (isNetworkError) {
-        const networkErrorMsg = t('login:network_error', 'Ошибка сети. Проверьте подключение');
+        const networkErrorMsg = t('network_error', 'Ошибка сети. Проверьте подключение');
         setError(networkErrorMsg);
         toast.error(networkErrorMsg);
         return;
       }
 
       // Прочие ошибки
-      setError(err.error || t('login:authorization_error'));
-      toast.error(err.error || t('login:authorization_error'));
+      setError(err.error || t('authorization_error'));
+      toast.error(err.error || t('authorization_error'));
     } finally {
       setLoading(false);
     }
@@ -153,10 +153,10 @@ export default function Login() {
           {/* Header */}
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-bold text-gray-900">
-              {salonSettings?.name || t('login:login_title')}
+              {salonSettings?.name || t('login_title')}
             </h1>
             <p className="text-sm text-gray-600">
-              {salonSettings?.name ? t('login:management_system') : t('login:crm_system_management')}
+              {salonSettings?.name ? t('management_system') : t('crm_system_management')}
             </p>
           </div>
 
@@ -175,7 +175,7 @@ export default function Login() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-white px-2 text-gray-500">
-                  {t('login:or_email', 'Или через email')}
+                  {t('or_email', 'Или через email')}
                 </span>
               </div>
             </div>
@@ -183,7 +183,7 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-sm font-medium">{t('login:username')}</Label>
+              <Label htmlFor="username" className="text-sm font-medium">{t('username')}</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input
@@ -194,14 +194,14 @@ export default function Login() {
                   onChange={(e) =>
                     setCredentials({ ...credentials, username: e.target.value })
                   }
-                  placeholder={t('login:enter_login')}
+                  placeholder={t('enter_login')}
                   className="pl-10 pr-3 h-11"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">{t('login:password')}</Label>
+              <Label htmlFor="password" className="text-sm font-medium">{t('password')}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input
@@ -213,7 +213,7 @@ export default function Login() {
                   onChange={(e) =>
                     setCredentials({ ...credentials, password: e.target.value })
                   }
-                  placeholder={t('login:enter_password')}
+                  placeholder={t('enter_password')}
                   className="pl-10 pr-3 h-11"
                 />
               </div>
@@ -226,7 +226,7 @@ export default function Login() {
                 onClick={() => navigate("/forgot-password")}
                 className="text-sm text-gray-600 hover:text-pink-600 font-medium transition-colors"
               >
-                {t('login:forgot_password')}
+                {t('forgot_password')}
               </button>
             </div>
 
@@ -240,10 +240,10 @@ export default function Login() {
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
                   <Loader className="w-4 h-4 animate-spin" />
-                  <span>{t('login:loading')}</span>
+                  <span>{t('loading')}</span>
                 </div>
               ) : (
-                t('login:login')
+                t('login')
               )}
             </Button>
           </form>
@@ -256,7 +256,7 @@ export default function Login() {
               className="w-full h-11 font-medium"
               onClick={() => navigate("/register")}
             >
-              {t('login:no_account_register')}
+              {t('no_account_register')}
             </Button>
 
             <Button
@@ -265,7 +265,7 @@ export default function Login() {
               className="w-full h-11 font-medium text-gray-600 hover:text-gray-900"
               onClick={() => navigate("/")}
             >
-              {t('login:return_to_home')}
+              {t('return_to_home')}
             </Button>
           </div>
         </div>

@@ -2,11 +2,16 @@
 Утилиты для работы с языками - универсальные функции без хардкода
 """
 from typing import List, Optional
+import time
 
 # Поддерживаемые языки - единый источник истины
 SUPPORTED_LANGUAGES = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
 DEFAULT_LANGUAGE = 'ru'
 FALLBACK_LANGUAGE = 'en'
+
+# Cache for dynamic translations (language -> {translations dict, load_time})
+_translations_cache = {}
+_CACHE_TTL_SECONDS = 300  # 5 minutes
 
 def validate_language(language: str) -> str:
     """Валидировать и нормализовать код языка"""
@@ -60,74 +65,92 @@ def translate_position(position: str, language: str) -> str:
     
     return position
 
+def _load_translations(language: str) -> dict:
+    """Load translations from file with caching"""
+    import json
+    from pathlib import Path
+
+    global _translations_cache
+
+    now = time.time()
+    cached = _translations_cache.get(language)
+
+    # Return cached if still valid
+    if cached and (now - cached['time']) < _CACHE_TTL_SECONDS:
+        return cached['data']
+
+    # Load from file
+    base_dir = Path(__file__).parent.parent.parent
+    locales_file = base_dir / 'frontend' / 'src' / 'locales' / language / 'dynamic.json'
+
+    if not locales_file.exists():
+        _translations_cache[language] = {'data': {}, 'time': now}
+        return {}
+
+    try:
+        with open(locales_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        _translations_cache[language] = {'data': data, 'time': now}
+        return data
+    except Exception:
+        _translations_cache[language] = {'data': {}, 'time': now}
+        return {}
+
+
 def get_dynamic_translation(table: str, item_id: int, field: str, language: str, default_value: str = "") -> str:
     """
     Получить перевод динамического контента из locales/*.json
     Служит заменой локализованным колонкам в БД.
+    Uses in-memory cache for performance.
     """
-    import json
-    from pathlib import Path
-    
     language = validate_language(language)
-    
-    # Путь к файлу локализации (относительно корня проекта)
-    base_dir = Path(__file__).parent.parent.parent
-    locales_file = base_dir / 'frontend' / 'src' / 'locales' / language / 'dynamic.json'
-    
-    if not locales_file.exists():
+    translations = _load_translations(language)
+
+    if not translations:
         return default_value
-        
-    try:
-        with open(locales_file, 'r', encoding='utf-8') as f:
-            translations = json.load(f)
-            
-        # Ищем ключ: table.item_id.field (может быть с хешем в конце)
-        if field:
-            prefix = f"{table}.{item_id}.{field}"
-        else:
-            prefix = f"{table}.{item_id}"
-        
-        # Ищем все подходящие ключи
-        matches = []
-        
-        # 1. Точное совпадение
-        if prefix in translations:
-            matches.append((prefix, translations[prefix]))
-            
-        # 2. Совпадение по префиксу (с хешем)
-        for key, value in translations.items():
-            if key != prefix and key.startswith(prefix + "_ru."): # Format: field_ru.hash
-                matches.append((key, value))
-            elif key != prefix and key.startswith(prefix + "."): # Format: field.hash
-                matches.append((key, value))
-        
-        # Эвристика выбора: приоритет ключам с хешем (длинным), так как они содержат нормальные переводы
-        for key, value in matches:
-            if "_ru." in key:
-                return value
-        
-        # Если нет ключей с хешем, возвращаем точное совпадение или первое попавшееся
-        result = default_value
-        if matches:
-            result = matches[0][1]
-            
-        # Fallback: Dictionary check for EN if result contains Cyrillic
-        if language == 'en' and _has_cyrillic(result):
-            try:
-                from utils.beauty_translator import RU_TO_EN_TERMS
-                val_lower = result.lower().strip()
-                if val_lower in RU_TO_EN_TERMS:
-                    tr = RU_TO_EN_TERMS[val_lower]
-                    return tr[0].upper() + tr[1:]
-            except ImportError:
-                pass
-                
-        return result
-            
-    except Exception:
-        pass
-        
-    return default_value
+
+    # Ищем ключ: table.item_id.field (может быть с хешем в конце)
+    if field:
+        prefix = f"{table}.{item_id}.{field}"
+    else:
+        prefix = f"{table}.{item_id}"
+
+    # Ищем все подходящие ключи
+    matches = []
+
+    # 1. Точное совпадение
+    if prefix in translations:
+        matches.append((prefix, translations[prefix]))
+
+    # 2. Совпадение по префиксу (с хешем)
+    for key, value in translations.items():
+        if key != prefix and key.startswith(prefix + "_ru."): # Format: field_ru.hash
+            matches.append((key, value))
+        elif key != prefix and key.startswith(prefix + "."): # Format: field.hash
+            matches.append((key, value))
+
+    # Эвристика выбора: приоритет ключам с хешем (длинным), так как они содержат нормальные переводы
+    for key, value in matches:
+        if "_ru." in key:
+            return value
+
+    # Если нет ключей с хешем, возвращаем точное совпадение или первое попавшееся
+    result = default_value
+    if matches:
+        result = matches[0][1]
+
+    # Fallback: Dictionary check for EN if result contains Cyrillic
+    if language == 'en' and _has_cyrillic(result):
+        try:
+            from utils.beauty_translator import RU_TO_EN_TERMS
+            val_lower = result.lower().strip()
+            if val_lower in RU_TO_EN_TERMS:
+                tr = RU_TO_EN_TERMS[val_lower]
+                return tr[0].upper() + tr[1:]
+        except ImportError:
+            pass
+
+    return result
 
 def _has_cyrillic(text: str) -> bool:
     """Проверка на наличие кириллицы"""
