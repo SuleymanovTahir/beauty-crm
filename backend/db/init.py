@@ -315,6 +315,17 @@ def init_database():
             UNIQUE(user_id)
         )''')
 
+        # Activity Log for user actions
+        c.execute('''CREATE TABLE IF NOT EXISTS activity_log (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            action TEXT NOT NULL,
+            entity_type TEXT,
+            entity_id TEXT,
+            details TEXT,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
         # Services and Pricing
         c.execute('''CREATE TABLE IF NOT EXISTS services (
             id SERIAL PRIMARY KEY,
