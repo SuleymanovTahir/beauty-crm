@@ -18,814 +18,814 @@
   "haircutsStyling": "",
   "items": {
     "bangs_cut": {
-      "category": "hair_cut",
+      "category": "Coupe de cheveux",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Franges",
-      "price": 100
+      "name": "coupe de frange",
+      "price": 100.0
     },
     "bikini_line": {
-      "category": "fartage",
+      "category": "Épilation",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Ligne bikini",
-      "price": 100
+      "name": "ligne bikini",
+      "price": 100.0
     },
     "blowdry_long": {
-      "category": "coiffure",
+      "category": "Coiffage",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Brushing (Long)",
-      "price": 280
+      "name": "Blow-dry (long)",
+      "price": 280.0
     },
     "blowdry_medium": {
-      "category": "coiffure",
+      "category": "Coiffage",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Brushing (Medium)",
-      "price": 250
+      "name": "Blow-dry (moyen)",
+      "price": 250.0
     },
     "blowdry_short": {
-      "category": "coiffure",
+      "category": "Coiffage",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Brushing (Short)",
-      "price": 200
+      "name": "Blow-dry (court)",
+      "price": 200.0
     },
     "brow_coloring": {
-      "category": "les sourcils",
+      "category": "Sourcils",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Teinture des sourcils",
-      "price": 40
+      "name": "Coloration des sourcils",
+      "price": 40.0
     },
     "brow_correction": {
-      "category": "les sourcils",
+      "category": "Sourcils",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Correction de la forme des sourcils",
-      "price": 40
+      "name": "Correction des sourcils",
+      "price": 40.0
     },
     "brow_lami": {
-      "category": "les sourcils",
+      "category": "Sourcils",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Laminage des sourcils",
-      "price": 200
+      "name": "Stratification des sourcils",
+      "price": 200.0
     },
     "change_classic_pedicure": {
-      "category": "pédicure",
+      "category": "Pédicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Changement de vernis régulier (pédicure)",
-      "price": 50
+      "name": "Changement de vernis (Pedi)",
+      "price": 50.0
     },
     "change_gel_pedicure": {
-      "category": "pédicure",
+      "category": "Pédicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Changement de vernis gel (pédicure)",
-      "price": 100
+      "name": "Changement de vernis gel (Pedi)",
+      "price": 100.0
     },
     "cheeks_wax": {
-      "category": "fartage",
+      "category": "Épilation",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Joues",
-      "price": 40
+      "name": "Épilation du visage joues",
+      "price": 40.0
     },
     "chin_wax": {
-      "category": "fartage",
+      "category": "Épilation",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Menton",
-      "price": 30
+      "name": "Épilation du menton",
+      "price": 30.0
     },
     "combo_lami": {
-      "category": "combo",
+      "category": "Combo",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Combo\u00a0: Stratification des cils + sourcils",
-      "price": 300
+      "name": "Cils combinés + Sourcils Lami",
+      "price": 300.0
     },
     "combo_mani_pedi_gel": {
-      "category": "combo",
+      "category": "Combo",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Combo\u00a0: Manucure + Pédicure (vernis en gel)",
-      "price": 350
+      "name": "Combo Mani+Pedi (Gel)",
+      "price": 350.0
     },
     "complex_color": {
-      "category": "hair_color",
+      "category": "Couleur des cheveux",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 1500,
-      "min_price": 1000,
-      "name": "Complexe (Ombre/Balayage/Mèche)",
-      "price": 1250
+      "max_price": 1500.0,
+      "min_price": 1000.0,
+      "name": "Couleur complexe (Ombre/balayage)",
+      "price": 1250.0
     },
     "deep_facial_cleaning": {
-      "category": "cosmétologie",
+      "category": "Cosmétologie",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Nettoyage du visage en profondeur",
-      "price": 400
+      "price": 400.0
     },
     "evening_hairstyle": {
-      "category": "coiffure",
+      "category": "Coiffage",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 800,
-      "min_price": 450,
-      "name": "Coiffure du soir",
-      "price": 625
+      "max_price": 800.0,
+      "min_price": 450.0,
+      "name": "Coiffure de soirée",
+      "price": 625.0
     },
     "express_hair_form": {
-      "category": "hair_cut",
+      "category": "Coupe de cheveux",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Forme express (sans lavage)",
-      "price": 150
+      "name": "Formulaire express (sans lavage)",
+      "price": 150.0
     },
     "eyeliner": {
-      "category": "maquillage_permanent",
+      "category": "Maquillage permanent",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Eyeliner",
-      "price": 800
+      "name": "Eye-liner",
+      "price": 800.0
     },
     "face_lift_massage": {
-      "category": "cosmétologie",
+      "category": "Cosmétologie",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Massage facial liftant + masque",
-      "price": 250
+      "name": "Massage liftant + masque",
+      "price": 250.0
     },
     "french_polish": {
-      "category": "manucure",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "French revêtement (French)",
-      "price": 190
+      "name": "Vernis français",
+      "price": 190.0
     },
     "full_arms": {
-      "category": "épilation",
+      "category": "Épilation",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Bras complets",
-      "price": 80
+      "price": 80.0
     },
     "full_bikini": {
-      "category": "épilation",
+      "category": "Épilation",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Bikini profond",
-      "price": 150
+      "name": "bikini intégral",
+      "price": 150.0
     },
     "full_body_wax": {
-      "category": "épilation",
+      "category": "Épilation",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Corps entier",
-      "price": 400
+      "name": "Épilation complète du corps",
+      "price": 400.0
     },
     "full_face_wax": {
-      "category": "épilation",
+      "category": "Épilation des aisselles",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Visage complet",
-      "price": 90
+      "name": "Épilation complète du visage",
+      "price": 90.0
     },
     "full_legs": {
-      "category": "épilation",
+      "category": "Épilation",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Jambes complètes",
-      "price": 150
+      "name": "Jambes entières",
+      "price": 150.0
     },
     "gel_polish_only": {
-      "category": "manucure",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Enduction avec vernis gel",
-      "price": 100
+      "name": "Vernis gel uniquement",
+      "price": 100.0
     },
     "hair_cut_full": {
-      "category": "hair_cut",
+      "category": "Coupe de cheveux",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Coupe + Lavage + Coiffage",
-      "price": 350
+      "name": "Coupe + lavage + style",
+      "price": 350.0
     },
     "hair_cut_wash": {
-      "category": "hair_cut",
+      "category": "Coupe de cheveux",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Coupe + Lavage",
-      "price": 200
+      "name": "Coupe + rinçage",
+      "price": 200.0
     },
     "hair_trim": {
-      "category": "hair_cut",
+      "category": "Coupe de cheveux",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Coupe (coupe uniquement)",
-      "price": 150
+      "name": "Coupe de cheveux uniquement",
+      "price": 150.0
     },
     "hair_wash": {
-      "category": "soins capillaires",
+      "category": "Soins des cheveux",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Lavez vos cheveux",
-      "price": 70
+      "name": "Lavage des cheveux",
+      "price": 70.0
     },
     "half_arms": {
-      "category": "épilation",
+      "category": "Épilation",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Mains jusqu'au coude",
-      "price": 50
+      "name": "Demi-pistolet",
+      "price": 50.0
     },
     "half_legs": {
-      "category": "épilation",
+      "category": "Épilation",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Jambes (tibias)",
-      "price": 80
+      "name": "Demi-jambes (bas)",
+      "price": 80.0
     },
     "japanese_manicure": {
-      "category": "manucure",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "90",
       "max_price": null,
       "min_price": null,
       "name": "Manucure japonaise",
-      "price": 150
+      "price": 150.0
     },
     "kids_cut": {
-      "category": "hair_cut",
+      "category": "Coupe de cheveux",
       "currency": "AED",
       "description": "",
       "duration": "40",
       "max_price": null,
       "min_price": null,
-      "name": "Coupe de cheveux pour enfants",
-      "price": 100
+      "name": "Coupe Enfants",
+      "price": 100.0
     },
     "kim_style_effect": {
-      "category": "cils",
+      "category": "Cils",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Effet Kim Style / Courbes L, M",
-      "price": 30
+      "name": "Effet style Kim / Courbes L, M",
+      "price": 30.0
     },
     "lash_lami": {
-      "category": "cils",
+      "category": "Cils",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Laminage des cils",
-      "price": 200
+      "name": "Stratification des cils",
+      "price": 200.0
     },
     "lashes_2d": {
-      "category": "cils",
+      "category": "Cils",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Extensions (volume 2D)",
-      "price": 250
+      "name": "Extensions de cils 2D",
+      "price": 250.0
     },
     "lashes_3d": {
-      "category": "cils",
+      "category": "Cils",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Extensions (volume 3D)",
-      "price": 300
+      "name": "Extensions de cils 3D",
+      "price": 300.0
     },
     "lashes_classic": {
-      "category": "cils",
+      "category": "Cils",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Extensions (Classique)",
-      "price": 200
+      "name": "Extensions de cils classiques",
+      "price": 200.0
     },
     "lashes_mega": {
-      "category": "cils",
+      "category": "Cils",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Extensions (volume 4-5D)",
-      "price": 350
+      "name": "Extensions de cils 4-5D (Mega)",
+      "price": 350.0
     },
     "lashliner": {
-      "category": "maquillage_permanent",
+      "category": "Maquillage permanent",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Flèche interlash",
-      "price": 800
+      "name": "Lashliner",
+      "price": 800.0
     },
     "manicure_combined": {
-      "category": "manucure",
+      "category": "Manucure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Manucure classique (combi/appareil)",
-      "price": 110
+      "name": "Manucure combinée",
+      "price": 110.0
     },
     "manicure_gel_polish": {
-      "category": "manucure",
+      "category": "Manucure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Manucure classique + vernis gel",
-      "price": 160
+      "name": "Manucure combinée + gel",
+      "price": 160.0
     },
     "manicure_pil_classic": {
-      "category": "manucure",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Manucure lime + revêtement régulier",
-      "price": 130
+      "name": "Manucure classique + vernis",
+      "price": 130.0
     },
     "massage_anticellulite": {
-      "category": "massage",
+      "category": "Massage",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Anti-cellulite massage (60 min)",
-      "price": 300
+      "name": "Massage Anti-cellulite (60 min)",
+      "price": 300.0
     },
     "massage_body": {
-      "category": "massage",
+      "category": "Massage",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Massage du corps (60 min)",
-      "price": 250
+      "name": "Massage corporel (60 min)",
+      "price": 250.0
     },
     "massage_extremities": {
-      "category": "massage",
+      "category": "Massage",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Massage (jambes/pieds/bras) (60 min)",
-      "price": 150
+      "name": "Massage des membres (60 min)",
+      "price": 150.0
     },
     "massage_head": {
-      "category": "massage",
+      "category": "Massage",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Massage de la tête (60 min)",
-      "price": 100
+      "price": 100.0
     },
     "massage_sculptural": {
-      "category": "massage",
+      "category": "Massage",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Massage sculptural du corps",
-      "price": 370
+      "name": "Massage corporel sculptural",
+      "price": 370.0
     },
     "medical_facial": {
-      "category": "cosmétologie",
+      "category": "Cosmétologie",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Med. nettoyage du visage (peau à problèmes)",
-      "price": 450
+      "name": "Soins médicaux du visage (peaux à problèmes)",
+      "price": 450.0
     },
     "moroccan_bath": {
-      "category": "spa",
+      "category": "SPA",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Bain marocain (Time of Relax SPA)",
-      "price": 250
+      "name": "Bain marocain SPA",
+      "price": 250.0
     },
     "nail_correction": {
-      "category": "manucure",
+      "category": "Manucure",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Correction d'extension",
-      "price": 400
+      "name": "Correction des extensions",
+      "price": 400.0
     },
     "nail_extensions": {
-      "category": "manucure",
+      "category": "Manucure",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Extension d'ongle (gel)",
-      "price": 400
+      "name": "extension d'ongle (gel)",
+      "price": 400.0
     },
     "nail_shaping": {
-      "category": "manucure",
+      "category": "Manucure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Façonner les ongles",
-      "price": 45
+      "name": "Mise en forme des ongles",
+      "price": 45.0
     },
     "one_tone_long": {
-      "category": "hair_color",
+      "category": "Couleur des cheveux",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 800,
-      "min_price": 550,
+      "max_price": 800.0,
+      "min_price": 550.0,
       "name": "Un ton (long)",
-      "price": 675
+      "price": 675.0
     },
     "one_tone_medium": {
-      "category": "hair_color",
+      "category": "Couleur des cheveux",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
       "name": "Un ton (moyen)",
-      "price": 400
+      "price": 400.0
     },
     "one_tone_short": {
-      "category": "hair_color",
+      "category": "Couleur de cheveux",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
       "name": "Un ton (court)",
-      "price": 350
+      "price": 350.0
     },
     "overlay_biogel": {
-      "category": "manucure",
+      "category": "Manucure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Renforcement avec biogel (Overlay)",
-      "price": 50
+      "name": "Application du biogel",
+      "price": 50.0
     },
     "pedicure_gel": {
-      "category": "pédicure",
+      "category": "Pédicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Pédicure avec vernis gel",
-      "price": 190
+      "name": "Pédicure + vernis gel",
+      "price": 190.0
     },
     "pedicure_smart": {
-      "category": "pédicure",
+      "category": "Pédicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Pédicure de base (Smart-technique)",
-      "price": 130
+      "name": "Pédicure intelligente Basic",
+      "price": 130.0
     },
     "pedicure_smart_polish": {
-      "category": "pédicure",
+      "category": "Pédicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Classique pédicure + vernis régulier (Smart)",
-      "price": 150
+      "name": "Pédicure intelligente + vernis",
+      "price": 150.0
     },
     "peeling": {
-      "category": "cosmétologie",
+      "category": "Cosmétologie",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 400,
-      "min_price": 300,
-      "name": "peeling",
-      "price": 350
+      "max_price": 400.0,
+      "min_price": 300.0,
+      "name": "Peeling",
+      "price": 350.0
     },
     "permanent_brows": {
-      "category": "maquillage_permanent",
+      "category": "Maquillage permanent",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Maquillage permanent des sourcils",
-      "price": 800
+      "name": "Sourcils permanents",
+      "price": 800.0
     },
     "permanent_correction": {
-      "category": "maquillage_permanent",
+      "category": "Maquillage permanent",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Maquillage correcteur permanent",
-      "price": 800
+      "name": "Correction permanente du maquillage",
+      "price": 800.0
     },
     "permanent_lips": {
-      "category": "maquillage_permanent",
+      "category": "Maquillage permanent",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Maquillage permanent des lèvres",
-      "price": 800
+      "name": "Lèvres permanentes",
+      "price": 800.0
     },
     "polish_classic": {
-      "category": "manucure",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Enduction avec vernis régulier vernis",
-      "price": 50
+      "name": "Uniquement du vernis classique",
+      "price": 50.0
     },
     "remove_classic": {
-      "category": "manucure",
+      "category": "Manucure",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Enlever le vernis ordinaire",
-      "price": 20
+      "name": "Enlever le vernis classique",
+      "price": 20.0
     },
     "remove_extensions": {
-      "category": "manucure",
+      "category": "Manucure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Enlever les extensions",
-      "price": 70
+      "price": 70.0
     },
     "remove_gel": {
-      "category": "manucure",
+      "category": "Manucure",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
       "name": "Enlever le vernis gel",
-      "price": 30
+      "price": 30.0
     },
     "remove_lashes": {
-      "category": "cils",
+      "category": "Cils",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Épilation des cils",
-      "price": 50
+      "name": "Supprimer cils",
+      "price": 50.0
     },
     "repair_extension": {
-      "category": "manucure",
+      "category": "Manucure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Réparer 1 ongle (extension)",
-      "price": 40
+      "name": "Restaurer 1 extension",
+      "price": 40.0
     },
     "repair_gel": {
-      "category": "manucure",
+      "category": "Manucure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Réparer 1 ongle (vernis gel)",
-      "price": 20
+      "name": "Réparer 1 ongle en gel",
+      "price": 20.0
     },
     "roots_color": {
-      "category": "hair_color",
+      "category": "Couleur de cheveux",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Coloration des racines",
-      "price": 250
+      "price": 250.0
     },
     "styling_long": {
-      "category": "coiffure",
+      "category": "Coiffage",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Coiffage plat/onde (Long)",
-      "price": 300
+      "name": "Coiffage/Fer à onduler (long)",
+      "price": 300.0
     },
     "styling_medium": {
-      "category": "coiffure",
+      "category": "Coiffage",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Coiffage plat/vague (Moyen)",
-      "price": 260
+      "name": "Coiffage/Fer à onduler (moyen)",
+      "price": 260.0
     },
     "styling_short": {
-      "category": "coiffure",
+      "category": "Coiffage",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Fer à coiffer/ondes (Court)",
-      "price": 230
+      "name": "Coiffage/Fer à vagues (court)",
+      "price": 230.0
     },
     "toning": {
-      "category": "hair_color",
+      "category": "Couleur de cheveux",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 350,
-      "min_price": 250,
-      "name": "Tonification",
-      "price": 300
+      "max_price": 350.0,
+      "min_price": 250.0,
+      "name": "Tonifiant",
+      "price": 300.0
     },
     "total_blonde": {
-      "category": "hair_color",
+      "category": "Couleur des cheveux",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 1500,
-      "min_price": 1000,
+      "max_price": 1500.0,
+      "min_price": 1000.0,
       "name": "Blond total",
-      "price": 1250
+      "price": 1250.0
     },
     "underarms": {
-      "category": "épilation",
+      "category": "Épilation",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Aiselles",
-      "price": 50
+      "name": "Épilation des aisselles",
+      "price": 50.0
     },
     "upper_lip_wax": {
-      "category": "épilation",
+      "category": "Épilation",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Lèvre supérieure",
-      "price": 30
+      "name": "Épilation de la lèvre supérieure",
+      "price": 30.0
     }
   },
   "manicurePedicure": "",

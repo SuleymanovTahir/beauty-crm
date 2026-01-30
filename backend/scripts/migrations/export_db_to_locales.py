@@ -67,10 +67,10 @@ def export_services():
         # Get all active services with their service_key
         cursor.execute("""
             SELECT id, service_key, name, description, price, duration,
-                   min_price, max_price, currency
+                   min_price, max_price, currency, category
             FROM services
             WHERE is_active = TRUE AND service_key IS NOT NULL
-            ORDER BY display_order, id
+            ORDER BY id
         """)
         services = cursor.fetchall()
 
@@ -104,16 +104,11 @@ def export_services():
             # Build items dict
             items = {}
             for row in services:
-                svc_id, service_key, name, description, price, duration, min_price, max_price, currency = row
+                svc_id, service_key, name, description, price, duration, min_price, max_price, currency, category = row
 
                 # Get translated name and description
                 translated_name = get_translation(translations, "services", svc_id, "name", lang, name or "")
                 translated_desc = get_translation(translations, "services", svc_id, "description", lang, description or "")
-
-                # Get category translation from existing data
-                cursor.execute("SELECT category FROM services WHERE id = %s", (svc_id,))
-                cat_row = cursor.fetchone()
-                category = cat_row[0] if cat_row else ""
 
                 items[service_key] = {
                     "name": translated_name,

@@ -1,0 +1,270 @@
+{
+  "items": [
+    {
+      "author_name": "Anna Petrová",
+      "employee_name": "",
+      "employee_position": "Permanente maquillaje",
+      "rating": 5,
+      "text": "¡Salón increíble! Los maestros son verdaderos profesionales. Me maquillé las cejas permanentemente, el resultado superó todas las expectativas. Muy natural y bonito."
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubai!"
+    },
+    {
+      "author_name": "Elena Smirnova",
+      "employee_name": "",
+      "employee_position": "Manicura y pedicura",
+      "rating": 5,
+      "text": "Llevo un año yendo aquí para hacerme manicuras y pedicuras. Siempre perfectamente limpio, esterilizado y de gran calidad. ¡Se lo recomiendo a todos mis amigos!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Tratamiento facial",
+      "rating": 5,
+      "text": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!"
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Excelente servicio y personal profesional."
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubái!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Tratamiento facial",
+      "rating": 5,
+      "text": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!"
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Excelente servicio y personal profesional."
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubái!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Tratamiento facial",
+      "rating": 5,
+      "text": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!"
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Excelente servicio y personal profesional."
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubái!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Tratamiento facial",
+      "rating": 5,
+      "text": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!"
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Excelente servicio y personal profesional."
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubái!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Tratamiento facial",
+      "rating": 5,
+      "text": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!"
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Excelente servicio y personal profesional."
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubái!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Tratamiento facial",
+      "rating": 5,
+      "text": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!"
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Excelente servicio y personal profesional."
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubái!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Tratamiento facial",
+      "rating": 5,
+      "text": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!"
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Excelente servicio y personal profesional."
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubái!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Tratamiento facial",
+      "rating": 5,
+      "text": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!"
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Excelente servicio y personal profesional."
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubái!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Tratamiento facial",
+      "rating": 5,
+      "text": "¡Salón increíble! Los maestros son verdaderos profesionales. La manicura dura más de 3 semanas y el resultado supera todas las expectativas. ¡Definitivamente regresaré!"
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Me teñí el cabello, ¡el resultado es simplemente maravilloso! El color resultó exactamente como quería. ¡Gracias hasta fecha su profesionalismo!"
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubái!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Tratamiento facial",
+      "rating": 5,
+      "text": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!"
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "¡Excelente servicio! Pedí cita online en un par de minutos, llegué puntual, sin esperas. El maestro hizo todo de forma rápida y eficiente. ¡Muy contento!"
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubái!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Cuidado facial",
+      "rating": 5,
+      "text": "¡El mejor salón de Dubái! Los maestros son geniales."
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Excelente servicio y personal profesional."
+    },
+    {
+      "author_name": "Sara Jenkins",
+      "employee_name": "",
+      "employee_position": "Pestañas",
+      "rating": 5,
+      "text": "¡El mejor salón de belleza de Dubái!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Tratamiento facial",
+      "rating": 5,
+      "text": "Servicio increíble. Me hice un tratamiento facial y mi piel está radiante. ¡Definitivamente regresaré!"
+    },
+    {
+      "author_name": "Fátima Al Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Excelente servicio y personal profesional."
+    }
+  ]
+}
