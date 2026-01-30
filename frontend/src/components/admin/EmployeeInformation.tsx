@@ -13,7 +13,7 @@ interface Employee {
     id: number;
     username: string;
     full_name: string;
-    full_name_ru?: string;
+    full_name?: string;
     email: string;
     phone?: string;
     phone_number?: string;
@@ -43,7 +43,6 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
     const [form, setForm] = useState({
         username: '',
         full_name: '',
-        full_name_ru: '',
         email: '',
         phone_number: '',
         birth_date: '',
@@ -64,7 +63,6 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
         setForm({
             username: employee.username || '',
             full_name: employee.full_name || '',
-            full_name_ru: employee.full_name_ru || '',
             email: employee.email || '',
             phone_number: employee.phone_number || employee.phone || '',
             birth_date: employee.birth_date || employee.birthday || '',
@@ -156,7 +154,6 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
             const updateData: any = {
                 username: form.username,
                 full_name: form.full_name,
-                full_name_ru: form.full_name_ru,
                 email: form.email,
                 phone_number: form.phone_number,
                 birth_date: form.birth_date,
@@ -248,7 +245,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                         <h2 className="text-3xl font-bold text-gray-900 mb-2">
                             {(() => {
                                 const { i18n } = useTranslation();
-                                return (i18n.language === 'ru' && employee.full_name_ru) ? employee.full_name_ru : (employee.full_name || employee.username);
+                                return (i18n.language === 'ru' && employee.full_name) ? employee.full_name : (employee.full_name || employee.username);
                             })()}
                         </h2>
                         <p className="text-gray-600 mb-4">@{employee.username}</p>
@@ -305,15 +302,15 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                     </div>
 
                     <div>
-                        <Label htmlFor="full_name_ru" className="text-sm font-medium text-gray-700 mb-2">
+                        <Label htmlFor="full_name" className="text-sm font-medium text-gray-700 mb-2">
                             {t('full_name', 'Full Name')} (RU)
                         </Label>
                         <div className="relative">
                             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <Input
-                                id="full_name_ru"
-                                value={form.full_name_ru}
-                                onChange={(e) => setForm({ ...form, full_name_ru: e.target.value })}
+                                id="full_name"
+                                value={form.full_name}
+                                onChange={(e) => setForm({ ...form, full_name: e.target.value })}
                                 className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                                 placeholder="Иван Иванов"
                             />

@@ -200,10 +200,8 @@ export default function Services() {
   const [isChallengeModalOpen, setIsChallengeModalOpen] = useState(false);
   const [editingChallenge, setEditingChallenge] = useState<any>(null);
   const [challengeFormData, setChallengeFormData] = useState({
-    title_ru: '',
-    title_en: '',
-    description_ru: '',
-    description_en: '',
+    title: '',
+    description: '',
     bonus_points: 50,
     is_active: true,
     target_type: 'all' as 'all' | 'specific_users' | 'by_master' | 'by_service' | 'by_inactivity',
@@ -292,8 +290,7 @@ export default function Services() {
       const excludedPositions = ['Директор', 'Администратор', 'SMM-менеджер', 'Таргетолог', 'Менеджер по продажам', 'Старший администратор'];
       const activeEmployees = (data.users || []).filter((u: any) =>
         u.role === 'employee' && u.is_active &&
-        !excludedPositions.includes(u.position) &&
-        !excludedPositions.includes(u.position_ru)
+        !excludedPositions.includes(u.position)
       );
       setEmployees(activeEmployees);
     } catch (err) {
@@ -702,10 +699,8 @@ export default function Services() {
       setIsChallengeModalOpen(false);
       setEditingChallenge(null);
       setChallengeFormData({
-        title_ru: '',
-        title_en: '',
-        description_ru: '',
-        description_en: '',
+        title: '',
+        description: '',
         bonus_points: 50,
         is_active: true,
         target_type: 'all',
@@ -1075,7 +1070,7 @@ export default function Services() {
 
                   {/* Description */}
                   <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                    {pkg.description_ru || pkg.description}
+                    {pkg.description}
                   </p>
 
                   {/* Keywords */}
@@ -1280,10 +1275,9 @@ export default function Services() {
                     </Label>
                     <Textarea
                       className="min-h-[100px] bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/20"
-                      value={serviceFormData.description_ru}
+                      value={serviceFormData.description}
                       onChange={(e) => setServiceFormData({
                         ...serviceFormData,
-                        description_ru: e.target.value,
                         description: e.target.value
                       })}
                       placeholder={t('services:description')}
@@ -2340,23 +2334,13 @@ export default function Services() {
           </DialogHeader>
           <div className="crm-form-content px-6 py-4">
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>{t('services:title_ru')}</Label>
-                  <Input value={challengeFormData.title_ru} onChange={e => setChallengeFormData({ ...challengeFormData, title_ru: e.target.value })} />
-                </div>
-                <div>
-                  <Label>{t('services:title_en')}</Label>
-                  <Input value={challengeFormData.title_en} onChange={e => setChallengeFormData({ ...challengeFormData, title_en: e.target.value })} />
-                </div>
+              <div>
+                <Label>{t('services:title')}</Label>
+                <Input value={challengeFormData.title} onChange={e => setChallengeFormData({ ...challengeFormData, title: e.target.value })} />
               </div>
               <div>
-                <Label>{t('services:description_ru')}</Label>
-                <Textarea value={challengeFormData.description_ru} onChange={e => setChallengeFormData({ ...challengeFormData, description_ru: e.target.value })} />
-              </div>
-              <div>
-                <Label>{t('services:description_en')}</Label>
-                <Textarea value={challengeFormData.description_en} onChange={e => setChallengeFormData({ ...challengeFormData, description_en: e.target.value })} />
+                <Label>{t('services:description')}</Label>
+                <Textarea value={challengeFormData.description} onChange={e => setChallengeFormData({ ...challengeFormData, description: e.target.value })} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

@@ -64,7 +64,7 @@
       "question": "Você precisa se preparar antes do procedimento?"
     },
     "weekends": {
-      "answer": "Sim, estamos abertos {{count}} dias até data semana. {{будние дни, будние дни}}Dias de semana {{weekdays}}{{/weekdays}}{{выходные, выходные}}, fins de semana {{weekends}}{{/weekends}}.",
+      "answer": "Sim, estamos abertos {{count}} dias até data semana. {{будние дни, будние дни}}Dias da semana {{weekdays}}{{/weekdays}}{{выходные, выходные}}, fins de semana {{weekends}}{{/weekends}}.",
       "question": "Você trabalha nos finais de semana?"
     }
   },

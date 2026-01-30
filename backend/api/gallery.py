@@ -15,6 +15,35 @@ import time
 
 router = APIRouter(tags=["Gallery"])
 
+def _map_gallery_path(url: str, category: str) -> str:
+    """Преобразовать пути галереи на frontend папку"""
+    if not url:
+        return url
+
+    # Маппинг категорий на папки в frontend/public_landing/styles/img/
+    category_mappings = {
+        'salon': 'Фото салона',
+        'portfolio': 'Портфолио',
+        'services': 'Услуги',
+        'faces': 'Красивые лица',
+        'banners': 'Баннер',
+    }
+
+    # Старые пути к новым
+    old_prefixes = [
+        f'/static/images/{category}/',
+        f'/static/uploads/images/{category}/',
+    ]
+
+    folder_name = category_mappings.get(category, category)
+
+    for old_prefix in old_prefixes:
+        if url.startswith(old_prefix):
+            filename = url[len(old_prefix):]
+            return f'/landing-images/{folder_name}/{filename}'
+
+    return url
+
 @router.get("/gallery/{category}")
 async def get_gallery_images(
     category: str,
@@ -48,9 +77,11 @@ async def get_gallery_images(
 
         images = []
         for row in rows:
+            raw_path = sanitize_url(row[1]) if row[1] else ''
+            mapped_path = _map_gallery_path(raw_path, category)
             images.append({
                 "id": row[0],
-                "image_path": sanitize_url(row[1]) if row[1] else '',
+                "image_path": mapped_path,
                 "title": row[2],
                 "description": row[3],
                 "sort_order": row[4] or 0,

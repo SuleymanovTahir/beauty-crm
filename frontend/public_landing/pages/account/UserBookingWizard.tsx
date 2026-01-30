@@ -32,9 +32,9 @@ const STATE_EXPIRY_TIME = TIMEOUTS.STATE_EXPIRY; // 1 hour
 export interface Service {
   id: number;
   name: string;
-  name_ru?: string;
-  name_en?: string;
-  name_ar?: string;
+  name?: string;
+  name?: string;
+  name?: string;
   description?: string;
   price: number;
   duration: string;

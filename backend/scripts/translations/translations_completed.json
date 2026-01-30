@@ -413,908 +413,6 @@
       }
     },
     {
-      "id": 6,
-      "fields": {
-        "text": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "en": "Лучший салон красоты в Дубае!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubái!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Лучший салон красоты в Дубае!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Сара Дженкинс",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins",
-          "detected_language": "bg"
-        },
-        "employee_position": {
-          "ru": "Ресницы",
-          "en": "Ресницы",
-          "ar": "الرموش",
-          "es": "Ресницы",
-          "de": "Wimpern",
-          "fr": "Ресницы",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Ресницы",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 7,
-      "fields": {
-        "text": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "en": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "ar": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "es": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "hi": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "kk": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "pt": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Мария Гонсалес",
-          "en": "Mariya Gonsales",
-          "ar": "ماريا جونزاليس",
-          "es": "Mariya Gonsales",
-          "de": "Mariya Gonsales",
-          "fr": "Mariya Gonsales",
-          "hi": "मारिया गोंजालेज",
-          "kk": "Мария Гонсалес",
-          "pt": "Mariya Gonsales",
-          "detected_language": "ru"
-        },
-        "employee_position": {
-          "ru": "Уход за лицом",
-          "en": "Уход за лицом",
-          "ar": "Уход за лицом",
-          "es": "Уход за лицом",
-          "de": "Gesichtsbehandlung",
-          "fr": "Уход за лицом",
-          "hi": "Уход за лицом",
-          "kk": "Бет күтімі",
-          "pt": "Уход за лицом",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 8,
-      "fields": {
-        "text": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "en": "Отличный сервис и профессиональный персонал.",
-          "ar": "خدمة ممتازة وطاقم عمل محترف.",
-          "es": "Excelente servicio y personal profesional.",
-          "de": "Ausgezeichneter Service und professionelles Personal.",
-          "fr": "Excellent service et personnel professionnel.",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
-          "kk": "Отличный сервис и профессиональный персонал.",
-          "pt": "Excelente serviço e equipe profissional.",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Фатима Аль-Сайед",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Әл-Сайед",
-          "pt": "Fátima Al-Sayed",
-          "detected_language": "mn"
-        },
-        "employee_position": {
-          "ru": "Микроблейдинг",
-          "en": "Microblading",
-          "ar": "مايكروبلادينج",
-          "es": "Microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Microblading",
-          "pt": "Microblading",
-          "detected_language": "bg"
-        }
-      }
-    },
-    {
-      "id": 9,
-      "fields": {
-        "text": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "en": "Лучший салон красоты в Дубае!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubái!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Лучший салон красоты в Дубае!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Сара Дженкинс",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins",
-          "detected_language": "bg"
-        },
-        "employee_position": {
-          "ru": "Ресницы",
-          "en": "Ресницы",
-          "ar": "الرموش",
-          "es": "Ресницы",
-          "de": "Wimpern",
-          "fr": "Ресницы",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Ресницы",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 10,
-      "fields": {
-        "text": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "en": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "ar": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "es": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "hi": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "kk": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "pt": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Мария Гонсалес",
-          "en": "Mariya Gonsales",
-          "ar": "ماريا جونزاليس",
-          "es": "Mariya Gonsales",
-          "de": "Mariya Gonsales",
-          "fr": "Mariya Gonsales",
-          "hi": "मारिया गोंजालेज",
-          "kk": "Мария Гонсалес",
-          "pt": "Mariya Gonsales",
-          "detected_language": "ru"
-        },
-        "employee_position": {
-          "ru": "Уход за лицом",
-          "en": "Уход за лицом",
-          "ar": "Уход за лицом",
-          "es": "Уход за лицом",
-          "de": "Gesichtsbehandlung",
-          "fr": "Уход за лицом",
-          "hi": "Уход за лицом",
-          "kk": "Бет күтімі",
-          "pt": "Уход за лицом",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 11,
-      "fields": {
-        "text": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "en": "Отличный сервис и профессиональный персонал.",
-          "ar": "خدمة ممتازة وفريق عمل محترف.",
-          "es": "Excelente servicio y personal profesional.",
-          "de": "Ausgezeichneter Service und professionelles Personal.",
-          "fr": "Excellent service et personnel professionnel.",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
-          "kk": "Отличный сервис и профессиональный персонал.",
-          "pt": "Excelente serviço e equipe profissional.",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Фатима Аль-Сайед",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Әл-Сайед",
-          "pt": "Fátima Al-Sayed",
-          "detected_language": "mn"
-        },
-        "employee_position": {
-          "ru": "Микроблейдинг",
-          "en": "Microblading",
-          "ar": "مايكروبلادينج",
-          "es": "Microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Microblading",
-          "pt": "Microblading",
-          "detected_language": "bg"
-        }
-      }
-    },
-    {
-      "id": 12,
-      "fields": {
-        "text": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "en": "Лучший салон красоты в Дубае!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubái!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Лучший салон красоты в Дубае!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Сара Дженкинс",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins",
-          "detected_language": "bg"
-        },
-        "employee_position": {
-          "ru": "Ресницы",
-          "en": "Ресницы",
-          "ar": "الرموش",
-          "es": "Ресницы",
-          "de": "Wimpern",
-          "fr": "Ресницы",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Ресницы",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 13,
-      "fields": {
-        "text": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "en": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "ar": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "es": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "hi": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "kk": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "pt": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Мария Гонсалес",
-          "en": "Mariya Gonsales",
-          "ar": "ماريا جونزاليس",
-          "es": "Mariya Gonsales",
-          "de": "Mariya Gonsales",
-          "fr": "Mariya Gonsales",
-          "hi": "मारिया गोंजालेज",
-          "kk": "Мария Гонсалес",
-          "pt": "Mariya Gonsales",
-          "detected_language": "ru"
-        },
-        "employee_position": {
-          "ru": "Уход за лицом",
-          "en": "Уход за лицом",
-          "ar": "Уход за лицом",
-          "es": "Уход за лицом",
-          "de": "Gesichtsbehandlung",
-          "fr": "Уход за лицом",
-          "hi": "Уход за лицом",
-          "kk": "Бет күтімі",
-          "pt": "Уход за лицом",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 14,
-      "fields": {
-        "text": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "en": "Отличный сервис и профессиональный персонал.",
-          "ar": "خدمة ممتازة وطاقم عمل محترف.",
-          "es": "Excelente servicio y personal profesional.",
-          "de": "Ausgezeichneter Service und professionelles Personal.",
-          "fr": "Excellent service et personnel professionnel.",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
-          "kk": "Отличный сервис и профессиональный персонал.",
-          "pt": "Excelente serviço e equipe profissional.",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Фатима Аль-Сайед",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Әл-Сайед",
-          "pt": "Fátima Al-Sayed",
-          "detected_language": "mn"
-        },
-        "employee_position": {
-          "ru": "Микроблейдинг",
-          "en": "Microblading",
-          "ar": "مايكروبلادينج",
-          "es": "Microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Microblading",
-          "pt": "Microblading",
-          "detected_language": "bg"
-        }
-      }
-    },
-    {
-      "id": 15,
-      "fields": {
-        "text": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "en": "Лучший салон красоты в Дубае!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubái!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Лучший салон красоты в Дубае!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Сара Дженкинс",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins",
-          "detected_language": "bg"
-        },
-        "employee_position": {
-          "ru": "Ресницы",
-          "en": "Ресницы",
-          "ar": "الرموش",
-          "es": "Ресницы",
-          "de": "Wimpern",
-          "fr": "Ресницы",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Ресницы",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 16,
-      "fields": {
-        "text": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "en": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "ar": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "es": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "hi": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "kk": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "pt": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Мария Гонсалес",
-          "en": "Mariya Gonsales",
-          "ar": "ماريا جونزاليس",
-          "es": "Mariya Gonsales",
-          "de": "Mariya Gonsales",
-          "fr": "Mariya Gonsales",
-          "hi": "मारिया गोंजालेज",
-          "kk": "Мария Гонсалес",
-          "pt": "Mariya Gonsales",
-          "detected_language": "ru"
-        },
-        "employee_position": {
-          "ru": "Уход за лицом",
-          "en": "Уход за лицом",
-          "ar": "Уход за лицом",
-          "es": "Уход за лицом",
-          "de": "Gesichtsbehandlung",
-          "fr": "Уход за лицом",
-          "hi": "Уход за лицом",
-          "kk": "Бет күтімі",
-          "pt": "Уход за лицом",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 17,
-      "fields": {
-        "text": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "en": "Отличный сервис и профессиональный персонал.",
-          "ar": "خدمة ممتازة وطاقم عمل محترف.",
-          "es": "Excelente servicio y personal profesional.",
-          "de": "Ausgezeichneter Service und professionelles Personal.",
-          "fr": "Excellent service et personnel professionnel.",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
-          "kk": "Отличный сервис и профессиональный персонал.",
-          "pt": "Excelente serviço e equipe profissional.",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Фатима Аль-Сайед",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Әл-Сайед",
-          "pt": "Fátima Al-Sayed",
-          "detected_language": "mn"
-        },
-        "employee_position": {
-          "ru": "Микроблейдинг",
-          "en": "Microblading",
-          "ar": "مايكروبلادينج",
-          "es": "Microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Microblading",
-          "pt": "Microblading",
-          "detected_language": "bg"
-        }
-      }
-    },
-    {
-      "id": 18,
-      "fields": {
-        "text": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "en": "Лучший салон красоты в Дубае!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubái!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Лучший салон красоты в Дубае!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Сара Дженкинс",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins",
-          "detected_language": "bg"
-        },
-        "employee_position": {
-          "ru": "Ресницы",
-          "en": "Ресницы",
-          "ar": "الرموش",
-          "es": "Ресницы",
-          "de": "Wimpern",
-          "fr": "Ресницы",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Ресницы",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 19,
-      "fields": {
-        "text": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "en": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "ar": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "es": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "hi": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "kk": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "pt": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Мария Гонсалес",
-          "en": "Mariya Gonsales",
-          "ar": "ماريا جونزاليس",
-          "es": "Mariya Gonsales",
-          "de": "Mariya Gonsales",
-          "fr": "Mariya Gonsales",
-          "hi": "मारिया गोंजालेज",
-          "kk": "Мария Гонсалес",
-          "pt": "Mariya Gonsales",
-          "detected_language": "ru"
-        },
-        "employee_position": {
-          "ru": "Уход за лицом",
-          "en": "Уход за лицом",
-          "ar": "Уход за лицом",
-          "es": "Уход за лицом",
-          "de": "Gesichtsbehandlung",
-          "fr": "Уход за лицом",
-          "hi": "Уход за лицом",
-          "kk": "Бет күтімі",
-          "pt": "Уход за лицом",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 20,
-      "fields": {
-        "text": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "en": "Отличный сервис и профессиональный персонал.",
-          "ar": "خدمة ممتازة وطاقم عمل محترف.",
-          "es": "Excelente servicio y personal profesional.",
-          "de": "Ausgezeichneter Service und professionelles Personal.",
-          "fr": "Excellent service et personnel professionnel.",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
-          "kk": "Отличный сервис и профессиональный персонал.",
-          "pt": "Excelente serviço e equipe profissional.",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Фатима Аль-Сайед",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Әл-Сайед",
-          "pt": "Fátima Al-Sayed",
-          "detected_language": "mn"
-        },
-        "employee_position": {
-          "ru": "Микроблейдинг",
-          "en": "Microblading",
-          "ar": "مايكروبلادينج",
-          "es": "Microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Microblading",
-          "pt": "Microblading",
-          "detected_language": "bg"
-        }
-      }
-    },
-    {
-      "id": 21,
-      "fields": {
-        "text": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "en": "Лучший салон красоты в Дубае!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubái!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Лучший салон красоты в Дубае!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Сара Дженкинс",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins",
-          "detected_language": "bg"
-        },
-        "employee_position": {
-          "ru": "Ресницы",
-          "en": "Ресницы",
-          "ar": "الرموش",
-          "es": "Ресницы",
-          "de": "Wimpern",
-          "fr": "Ресницы",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Ресницы",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 22,
-      "fields": {
-        "text": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "en": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "ar": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "es": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "hi": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "kk": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "pt": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Мария Гонсалес",
-          "en": "Mariya Gonsales",
-          "ar": "ماريا جونزاليس",
-          "es": "Mariya Gonsales",
-          "de": "Mariya Gonsales",
-          "fr": "Mariya Gonsales",
-          "hi": "मारिया गोंजालेज",
-          "kk": "Мария Гонсалес",
-          "pt": "Mariya Gonsales",
-          "detected_language": "ru"
-        },
-        "employee_position": {
-          "ru": "Уход за лицом",
-          "en": "Уход за лицом",
-          "ar": "Уход за лицом",
-          "es": "Уход за лицом",
-          "de": "Gesichtsbehandlung",
-          "fr": "Уход за лицом",
-          "hi": "Уход за лицом",
-          "kk": "Бет күтімі",
-          "pt": "Уход за лицом",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 23,
-      "fields": {
-        "text": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "en": "Отличный сервис и профессиональный персонал.",
-          "ar": "خدمة ممتازة وطاقم عمل محترف.",
-          "es": "Excelente servicio y personal profesional.",
-          "de": "Ausgezeichneter Service und professionelles Personal.",
-          "fr": "Excellent service et personnel professionnel.",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
-          "kk": "Отличный сервис и профессиональный персонал.",
-          "pt": "Excelente serviço e equipe profissional.",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Фатима Аль-Сайед",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Әл-Сайед",
-          "pt": "Fátima Al-Sayed",
-          "detected_language": "mn"
-        },
-        "employee_position": {
-          "ru": "Микроблейдинг",
-          "en": "Microblading",
-          "ar": "مايكروبلادينج",
-          "es": "Microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Microblading",
-          "pt": "Microblading",
-          "detected_language": "bg"
-        }
-      }
-    },
-    {
-      "id": 24,
-      "fields": {
-        "text": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "en": "Лучший салон красоты в Дубае!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubái!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Лучший салон красоты в Дубае!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Сара Дженкинс",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins",
-          "detected_language": "bg"
-        },
-        "employee_position": {
-          "ru": "Ресницы",
-          "en": "Ресницы",
-          "ar": "الرموش",
-          "es": "Ресницы",
-          "de": "Wimpern",
-          "fr": "Ресницы",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Ресницы",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 25,
-      "fields": {
-        "text": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "en": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "ar": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "es": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "hi": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "kk": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "pt": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Мария Гонсалес",
-          "en": "Mariya Gonsales",
-          "ar": "ماريا جونزاليس",
-          "es": "Mariya Gonsales",
-          "de": "Mariya Gonsales",
-          "fr": "Mariya Gonsales",
-          "hi": "मारिया गोंजालेज",
-          "kk": "Мария Гонсалес",
-          "pt": "Mariya Gonsales",
-          "detected_language": "ru"
-        },
-        "employee_position": {
-          "ru": "Уход за лицом",
-          "en": "Уход за лицом",
-          "ar": "Уход за лицом",
-          "es": "Уход за лицом",
-          "de": "Gesichtsbehandlung",
-          "fr": "Уход за лицом",
-          "hi": "Уход за лицом",
-          "kk": "Бет күтімі",
-          "pt": "Уход за лицом",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 26,
-      "fields": {
-        "text": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "en": "Отличный сервис и профессиональный персонал.",
-          "ar": "خدمة ممتازة وطاقم عمل محترف.",
-          "es": "Excelente servicio y personal profesional.",
-          "de": "Ausgezeichneter Service und professionelles Personal.",
-          "fr": "Excellent service et personnel professionnel.",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
-          "kk": "Отличный сервис и профессиональный персонал.",
-          "pt": "Excelente serviço e equipe profissional.",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Фатима Аль-Сайед",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Әл-Сайед",
-          "pt": "Fátima Al-Sayed",
-          "detected_language": "mn"
-        },
-        "employee_position": {
-          "ru": "Микроблейдинг",
-          "en": "Microblading",
-          "ar": "مايكروبلادينج",
-          "es": "Microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Microblading",
-          "pt": "Microblading",
-          "detected_language": "bg"
-        }
-      }
-    },
-    {
-      "id": 27,
-      "fields": {
-        "text": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "en": "Лучший салон красоты в Дубае!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubái!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Лучший салон красоты в Дубае!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Сара Дженкинс",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins",
-          "detected_language": "bg"
-        },
-        "employee_position": {
-          "ru": "Ресницы",
-          "en": "Ресницы",
-          "ar": "الرموش",
-          "es": "Ресницы",
-          "de": "Wimpern",
-          "fr": "Ресницы",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Ресницы",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
       "id": 28,
       "fields": {
         "text": {
@@ -1397,88 +495,6 @@
       }
     },
     {
-      "id": 30,
-      "fields": {
-        "text": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "en": "Лучший салон красоты в Дубае!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubái!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Лучший салон красоты в Дубае!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Сара Дженкинс",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins",
-          "detected_language": "bg"
-        },
-        "employee_position": {
-          "ru": "Ресницы",
-          "en": "Ресницы",
-          "ar": "الرموش",
-          "es": "Ресницы",
-          "de": "Wimpern",
-          "fr": "Ресницы",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Ресницы",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 31,
-      "fields": {
-        "text": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "en": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "ar": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "es": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "hi": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "kk": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "pt": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Мария Гонсалес",
-          "en": "Mariya Gonsales",
-          "ar": "ماريا جونزاليس",
-          "es": "Mariya Gonsales",
-          "de": "Mariya Gonsales",
-          "fr": "Mariya Gonsales",
-          "hi": "मारिया गोंजालेज",
-          "kk": "Мария Гонсалес",
-          "pt": "Mariya Gonsales",
-          "detected_language": "ru"
-        },
-        "employee_position": {
-          "ru": "Уход за лицом",
-          "en": "Уход за лицом",
-          "ar": "Уход за лицом",
-          "es": "Уход за лицом",
-          "de": "Gesichtsbehandlung",
-          "fr": "Уход за лицом",
-          "hi": "Уход за лицом",
-          "kk": "Бет күтімі",
-          "pt": "Уход за лицом",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
       "id": 32,
       "fields": {
         "text": {
@@ -1520,47 +536,6 @@
       }
     },
     {
-      "id": 33,
-      "fields": {
-        "text": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "en": "Лучший салон красоты в Дубае!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubái!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Лучший салон красоты в Дубае!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Сара Дженкинс",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins",
-          "detected_language": "bg"
-        },
-        "employee_position": {
-          "ru": "Ресницы",
-          "en": "Ресницы",
-          "ar": "الرموش",
-          "es": "Ресницы",
-          "de": "Wimpern",
-          "fr": "Ресницы",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Ресницы",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
       "id": 34,
       "fields": {
         "text": {
@@ -1598,170 +573,6 @@
           "kk": "Бет күтімі",
           "pt": "Уход за лицом",
           "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 35,
-      "fields": {
-        "text": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "en": "Отличный сервис и профессиональный персонал.",
-          "ar": "خدمة ممتازة وطاقم عمل محترف.",
-          "es": "Excelente servicio y personal profesional.",
-          "de": "Ausgezeichneter Service und professionelles Personal.",
-          "fr": "Excellent service et personnel professionnel.",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
-          "kk": "Отличный сервис и профессиональный персонал.",
-          "pt": "Excelente serviço e equipe profissional.",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Фатима Аль-Сайед",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Әл-Сайед",
-          "pt": "Fátima Al-Sayed",
-          "detected_language": "mn"
-        },
-        "employee_position": {
-          "ru": "Микроблейдинг",
-          "en": "Microblading",
-          "ar": "مايكروبلادينج",
-          "es": "Microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Microblading",
-          "pt": "Microblading",
-          "detected_language": "bg"
-        }
-      }
-    },
-    {
-      "id": 36,
-      "fields": {
-        "text": {
-          "ru": "Лучший салон красоты в Дубае! ",
-          "en": "Лучший салон красоты в Дубае!",
-          "ar": "أفضل صالون تجميل في دبي!",
-          "es": "¡El mejor salón de belleza de Dubái!",
-          "de": "Der beste Schönheitssalon in Dubai!",
-          "fr": "Le meilleur salon de beauté de Dubaï !",
-          "hi": "दुबई में सबसे अच्छा ब्यूटी सैलून!",
-          "kk": "Лучший салон красоты в Дубае!",
-          "pt": "O melhor salão de beleza de Dubai!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Сара Дженкинс",
-          "en": "Sarah Jenkins",
-          "ar": "سارة جنكينز",
-          "es": "Sara Jenkins",
-          "de": "Sarah Jenkins",
-          "fr": "Sarah Jenkins",
-          "hi": "सारा जेनकिंस",
-          "kk": "Сара Дженкинс",
-          "pt": "Sarah Jenkins",
-          "detected_language": "bg"
-        },
-        "employee_position": {
-          "ru": "Ресницы",
-          "en": "Ресницы",
-          "ar": "الرموش",
-          "es": "Ресницы",
-          "de": "Wimpern",
-          "fr": "Ресницы",
-          "hi": "पलकें",
-          "kk": "Ресницы",
-          "pt": "Ресницы",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 37,
-      "fields": {
-        "text": {
-          "ru": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "en": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "ar": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "es": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "de": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
-          "fr": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "hi": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "kk": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "pt": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Мария Гонсалес",
-          "en": "Mariya Gonsales",
-          "ar": "ماريا جونزاليس",
-          "es": "Mariya Gonsales",
-          "de": "Mariya Gonsales",
-          "fr": "Mariya Gonsales",
-          "hi": "मारिया गोंजालेज",
-          "kk": "Мария Гонсалес",
-          "pt": "Mariya Gonsales",
-          "detected_language": "ru"
-        },
-        "employee_position": {
-          "ru": "Уход за лицом",
-          "en": "Уход за лицом",
-          "ar": "Уход за лицом",
-          "es": "Уход за лицом",
-          "de": "Gesichtspflege",
-          "fr": "Уход за лицом",
-          "hi": "Уход за лицом",
-          "kk": "Бет күтімі",
-          "pt": "Уход за лицом",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 38,
-      "fields": {
-        "text": {
-          "ru": "Отличный сервис и профессиональный персонал. ",
-          "en": "Отличный сервис и профессиональный персонал.",
-          "ar": "خدمة ممتازة وطاقم عمل محترف.",
-          "es": "Excelente servicio y personal profesional.",
-          "de": "Ausgezeichneter Service und professionelles Personal.",
-          "fr": "Excellent service et personnel professionnel.",
-          "hi": "उत्कृष्ट सेवा और पेशेवर कर्मचारी।",
-          "kk": "Отличный сервис и профессиональный персонал.",
-          "pt": "Excelente serviço e equipe profissional.",
-          "detected_language": "ru"
-        },
-        "author_name": {
-          "ru": "Фатима Аль-Сайед",
-          "en": "Fatima Al-Sayed",
-          "ar": "فاطمة السيد",
-          "es": "Fátima Al Sayed",
-          "de": "Fatima Al-Sayed",
-          "fr": "Fatima Al-Sayed",
-          "hi": "फातिमा अल-सईद",
-          "kk": "Фатима Әл-Сайед",
-          "pt": "Fátima Al-Sayed",
-          "detected_language": "mn"
-        },
-        "employee_position": {
-          "ru": "Микроблейдинг",
-          "en": "Microblading",
-          "ar": "مايكروبلادينج",
-          "es": "Microblading",
-          "de": "Microblading",
-          "fr": "Microblading",
-          "hi": "माइक्रोब्लैडिंग",
-          "kk": "Microblading",
-          "pt": "Microblading",
-          "detected_language": "bg"
         }
       }
     }
@@ -2350,7 +1161,7 @@
   ],
   "services": [
     {
-      "id": 3519,
+      "id": 10485,
       "fields": {
         "name": {
           "ru": "Классический маникюр + лак",
@@ -2367,7 +1178,7 @@
       }
     },
     {
-      "id": 3520,
+      "id": 10486,
       "fields": {
         "name": {
           "ru": "Только классический лак",
@@ -2384,7 +1195,7 @@
       }
     },
     {
-      "id": 3521,
+      "id": 10487,
       "fields": {
         "name": {
           "ru": "Только гель-лак",
@@ -2401,7 +1212,7 @@
       }
     },
     {
-      "id": 3522,
+      "id": 10488,
       "fields": {
         "name": {
           "ru": "Французский лак",
@@ -2418,7 +1229,7 @@
       }
     },
     {
-      "id": 3523,
+      "id": 10489,
       "fields": {
         "name": {
           "ru": "Японский маникюр",
@@ -2435,7 +1246,7 @@
       }
     },
     {
-      "id": 3524,
+      "id": 10490,
       "fields": {
         "name": {
           "ru": "Наложение биогеля",
@@ -2452,7 +1263,7 @@
       }
     },
     {
-      "id": 3525,
+      "id": 10491,
       "fields": {
         "name": {
           "ru": "Удаление гель-лака",
@@ -2469,7 +1280,7 @@
       }
     },
     {
-      "id": 3526,
+      "id": 10492,
       "fields": {
         "name": {
           "ru": "Удаление классического лака",
@@ -2486,7 +1297,7 @@
       }
     },
     {
-      "id": 3527,
+      "id": 10493,
       "fields": {
         "name": {
           "ru": "Удаление наращивания",
@@ -2503,7 +1314,7 @@
       }
     },
     {
-      "id": 3528,
+      "id": 10494,
       "fields": {
         "name": {
           "ru": "наращивание ногтей (гель)",
@@ -2520,7 +1331,7 @@
       }
     },
     {
-      "id": 3529,
+      "id": 10495,
       "fields": {
         "name": {
           "ru": "Исправление расширений",
@@ -2537,7 +1348,7 @@
       }
     },
     {
-      "id": 3530,
+      "id": 10496,
       "fields": {
         "name": {
           "ru": "Восстановить 1 расширение",
@@ -2554,7 +1365,7 @@
       }
     },
     {
-      "id": 3531,
+      "id": 10497,
       "fields": {
         "name": {
           "ru": "Ремонт 1 гелевого ногтей",
@@ -2571,7 +1382,7 @@
       }
     },
     {
-      "id": 3532,
+      "id": 10498,
       "fields": {
         "name": {
           "ru": "Комбинированный маникюр",
@@ -2588,7 +1399,7 @@
       }
     },
     {
-      "id": 3533,
+      "id": 10499,
       "fields": {
         "name": {
           "ru": "Комбинированный маникюр + гель",
@@ -2605,7 +1416,7 @@
       }
     },
     {
-      "id": 3534,
+      "id": 10500,
       "fields": {
         "name": {
           "ru": "Формирование ногтей",
@@ -2622,7 +1433,7 @@
       }
     },
     {
-      "id": 3535,
+      "id": 10501,
       "fields": {
         "name": {
           "ru": "Умный педикюр Базовый",
@@ -2639,7 +1450,7 @@
       }
     },
     {
-      "id": 3536,
+      "id": 10502,
       "fields": {
         "name": {
           "ru": "Смарт-педикюр + лак",
@@ -2656,7 +1467,7 @@
       }
     },
     {
-      "id": 3537,
+      "id": 10503,
       "fields": {
         "name": {
           "ru": "Педикюр + гель-лак",
@@ -2673,7 +1484,7 @@
       }
     },
     {
-      "id": 3538,
+      "id": 10504,
       "fields": {
         "name": {
           "ru": "Смена гель-лака (Педи)",
@@ -2690,7 +1501,7 @@
       }
     },
     {
-      "id": 3539,
+      "id": 10505,
       "fields": {
         "name": {
           "ru": "Смена лака (Педи)",
@@ -2707,7 +1518,7 @@
       }
     },
     {
-      "id": 3540,
+      "id": 10506,
       "fields": {
         "name": {
           "ru": "Комбо Мани+Педи (Гель)",
@@ -2724,7 +1535,7 @@
       }
     },
     {
-      "id": 3541,
+      "id": 10507,
       "fields": {
         "name": {
           "ru": "Укладка феном (короткометражка)",
@@ -2741,7 +1552,7 @@
       }
     },
     {
-      "id": 3542,
+      "id": 10508,
       "fields": {
         "name": {
           "ru": "Укладка феном (средняя)",
@@ -2758,7 +1569,7 @@
       }
     },
     {
-      "id": 3543,
+      "id": 10509,
       "fields": {
         "name": {
           "ru": "Укладка феном (длинная)",
@@ -2775,7 +1586,7 @@
       }
     },
     {
-      "id": 3544,
+      "id": 10510,
       "fields": {
         "name": {
           "ru": "Утюжок для укладки/волны (короткий)",
@@ -2792,7 +1603,7 @@
       }
     },
     {
-      "id": 3545,
+      "id": 10511,
       "fields": {
         "name": {
           "ru": "Утюжок для укладки/волны (средний)",
@@ -2809,7 +1620,7 @@
       }
     },
     {
-      "id": 3546,
+      "id": 10512,
       "fields": {
         "name": {
           "ru": "Утюжок для укладки/волны (длинный)",
@@ -2826,7 +1637,7 @@
       }
     },
     {
-      "id": 3547,
+      "id": 10513,
       "fields": {
         "name": {
           "ru": "Вечерняя прическа",
@@ -2843,7 +1654,7 @@
       }
     },
     {
-      "id": 3548,
+      "id": 10514,
       "fields": {
         "name": {
           "ru": "Мытье волос",
@@ -2860,7 +1671,7 @@
       }
     },
     {
-      "id": 3549,
+      "id": 10515,
       "fields": {
         "name": {
           "ru": "Только стрижка волос",
@@ -2877,7 +1688,7 @@
       }
     },
     {
-      "id": 3550,
+      "id": 10516,
       "fields": {
         "name": {
           "ru": "Стрижка + мытье + укладка",
@@ -2894,7 +1705,7 @@
       }
     },
     {
-      "id": 3551,
+      "id": 10517,
       "fields": {
         "name": {
           "ru": "Вырезать + промыть",
@@ -2911,7 +1722,7 @@
       }
     },
     {
-      "id": 3552,
+      "id": 10518,
       "fields": {
         "name": {
           "ru": "Экспресс-форма (без стирки)",
@@ -2928,7 +1739,7 @@
       }
     },
     {
-      "id": 3553,
+      "id": 10519,
       "fields": {
         "name": {
           "ru": "стрижка челки",
@@ -2945,7 +1756,7 @@
       }
     },
     {
-      "id": 3554,
+      "id": 10520,
       "fields": {
         "name": {
           "ru": "Детская стрижка",
@@ -2962,7 +1773,7 @@
       }
     },
     {
-      "id": 3555,
+      "id": 10521,
       "fields": {
         "name": {
           "ru": "Окрашивание корней",
@@ -2979,7 +1790,7 @@
       }
     },
     {
-      "id": 3556,
+      "id": 10522,
       "fields": {
         "name": {
           "ru": "Тонирование",
@@ -2996,7 +1807,7 @@
       }
     },
     {
-      "id": 3557,
+      "id": 10523,
       "fields": {
         "name": {
           "ru": "Один тон (короткометражный)",
@@ -3013,7 +1824,7 @@
       }
     },
     {
-      "id": 3558,
+      "id": 10524,
       "fields": {
         "name": {
           "ru": "Один тон (средний)",
@@ -3030,7 +1841,7 @@
       }
     },
     {
-      "id": 3559,
+      "id": 10525,
       "fields": {
         "name": {
           "ru": "Один тон (длинный)",
@@ -3047,7 +1858,7 @@
       }
     },
     {
-      "id": 3560,
+      "id": 10526,
       "fields": {
         "name": {
           "ru": "Тотальная блондинка",
@@ -3064,7 +1875,7 @@
       }
     },
     {
-      "id": 3561,
+      "id": 10527,
       "fields": {
         "name": {
           "ru": "Сложный цвет (Омбре/балаяж)",
@@ -3081,7 +1892,7 @@
       }
     },
     {
-      "id": 3562,
+      "id": 10528,
       "fields": {
         "name": {
           "ru": "Массаж головы (60 мин)",
@@ -3098,7 +1909,7 @@
       }
     },
     {
-      "id": 3563,
+      "id": 10529,
       "fields": {
         "name": {
           "ru": "Массаж конечностей (60 мин)",
@@ -3115,7 +1926,7 @@
       }
     },
     {
-      "id": 3564,
+      "id": 10530,
       "fields": {
         "name": {
           "ru": "Массаж тела (60 мин)",
@@ -3132,7 +1943,7 @@
       }
     },
     {
-      "id": 3565,
+      "id": 10531,
       "fields": {
         "name": {
           "ru": "Скульптурный массаж тела",
@@ -3149,7 +1960,7 @@
       }
     },
     {
-      "id": 3566,
+      "id": 10532,
       "fields": {
         "name": {
           "ru": "Антицеллюлитный массаж (60 мин)",
@@ -3166,7 +1977,7 @@
       }
     },
     {
-      "id": 3567,
+      "id": 10533,
       "fields": {
         "name": {
           "ru": "Марокканская баня СПА",
@@ -3183,7 +1994,7 @@
       }
     },
     {
-      "id": 3568,
+      "id": 10534,
       "fields": {
         "name": {
           "ru": "полное бикини",
@@ -3200,7 +2011,7 @@
       }
     },
     {
-      "id": 3569,
+      "id": 10535,
       "fields": {
         "name": {
           "ru": "линия бикини",
@@ -3217,7 +2028,7 @@
       }
     },
     {
-      "id": 3570,
+      "id": 10536,
       "fields": {
         "name": {
           "ru": "Полные ноги",
@@ -3234,7 +2045,7 @@
       }
     },
     {
-      "id": 3571,
+      "id": 10537,
       "fields": {
         "name": {
           "ru": "Полуноги (нижние)",
@@ -3251,7 +2062,7 @@
       }
     },
     {
-      "id": 3572,
+      "id": 10538,
       "fields": {
         "name": {
           "ru": "Полное оружие",
@@ -3268,7 +2079,7 @@
       }
     },
     {
-      "id": 3573,
+      "id": 10539,
       "fields": {
         "name": {
           "ru": "Половина оружия",
@@ -3285,7 +2096,7 @@
       }
     },
     {
-      "id": 3574,
+      "id": 10540,
       "fields": {
         "name": {
           "ru": "Полная депиляция тела воском",
@@ -3302,7 +2113,7 @@
       }
     },
     {
-      "id": 3575,
+      "id": 10541,
       "fields": {
         "name": {
           "ru": "Эпиляция подмышек",
@@ -3319,7 +2130,7 @@
       }
     },
     {
-      "id": 3576,
+      "id": 10542,
       "fields": {
         "name": {
           "ru": "Полная депиляция лица",
@@ -3336,7 +2147,7 @@
       }
     },
     {
-      "id": 3577,
+      "id": 10543,
       "fields": {
         "name": {
           "ru": "Щеки воском",
@@ -3353,7 +2164,7 @@
       }
     },
     {
-      "id": 3578,
+      "id": 10544,
       "fields": {
         "name": {
           "ru": "Депиляция верхней губы воском",
@@ -3370,7 +2181,7 @@
       }
     },
     {
-      "id": 3579,
+      "id": 10545,
       "fields": {
         "name": {
           "ru": "Эпиляция подбородка",
@@ -3387,7 +2198,7 @@
       }
     },
     {
-      "id": 3580,
+      "id": 10546,
       "fields": {
         "name": {
           "ru": "Глубокая чистка лица",
@@ -3404,7 +2215,7 @@
       }
     },
     {
-      "id": 3581,
+      "id": 10547,
       "fields": {
         "name": {
           "ru": "Медицинский уход за лицом (проблемная кожа)",
@@ -3421,7 +2232,7 @@
       }
     },
     {
-      "id": 3582,
+      "id": 10548,
       "fields": {
         "name": {
           "ru": "Лифтинг-массаж + маска",
@@ -3438,7 +2249,7 @@
       }
     },
     {
-      "id": 3583,
+      "id": 10549,
       "fields": {
         "name": {
           "ru": "Пилинг",
@@ -3455,7 +2266,7 @@
       }
     },
     {
-      "id": 3584,
+      "id": 10550,
       "fields": {
         "name": {
           "ru": "Классическое наращивание ресниц",
@@ -3472,7 +2283,7 @@
       }
     },
     {
-      "id": 3585,
+      "id": 10551,
       "fields": {
         "name": {
           "ru": "2D наращивание ресниц",
@@ -3489,7 +2300,7 @@
       }
     },
     {
-      "id": 3586,
+      "id": 10552,
       "fields": {
         "name": {
           "ru": "3D наращивание ресниц",
@@ -3506,7 +2317,7 @@
       }
     },
     {
-      "id": 3587,
+      "id": 10553,
       "fields": {
         "name": {
           "ru": "Наращивание ресниц 4-5D (Мега)",
@@ -3523,7 +2334,7 @@
       }
     },
     {
-      "id": 3588,
+      "id": 10554,
       "fields": {
         "name": {
           "ru": "Эффект стиля Кима / Кривые L, M",
@@ -3540,7 +2351,7 @@
       }
     },
     {
-      "id": 3589,
+      "id": 10555,
       "fields": {
         "name": {
           "ru": "Удалить ресницы",
@@ -3557,7 +2368,7 @@
       }
     },
     {
-      "id": 3590,
+      "id": 10556,
       "fields": {
         "name": {
           "ru": "Ламинирование бровей",
@@ -3574,7 +2385,7 @@
       }
     },
     {
-      "id": 3591,
+      "id": 10557,
       "fields": {
         "name": {
           "ru": "Ламинирование ресниц",
@@ -3591,7 +2402,7 @@
       }
     },
     {
-      "id": 3592,
+      "id": 10558,
       "fields": {
         "name": {
           "ru": "Комбинированные ресницы + брови Лами",
@@ -3608,7 +2419,7 @@
       }
     },
     {
-      "id": 3593,
+      "id": 10559,
       "fields": {
         "name": {
           "ru": "Окрашивание бровей",
@@ -3625,7 +2436,7 @@
       }
     },
     {
-      "id": 3594,
+      "id": 10560,
       "fields": {
         "name": {
           "ru": "Коррекция бровей",
@@ -3642,7 +2453,7 @@
       }
     },
     {
-      "id": 3595,
+      "id": 10561,
       "fields": {
         "name": {
           "ru": "Перманент губ",
@@ -3659,7 +2470,7 @@
       }
     },
     {
-      "id": 3596,
+      "id": 10562,
       "fields": {
         "name": {
           "ru": "Перманентные брови",
@@ -3676,7 +2487,7 @@
       }
     },
     {
-      "id": 3597,
+      "id": 10563,
       "fields": {
         "name": {
           "ru": "Лашлайнер",
@@ -3693,7 +2504,7 @@
       }
     },
     {
-      "id": 3598,
+      "id": 10564,
       "fields": {
         "name": {
           "ru": "Подводка для глаз",
@@ -3710,7 +2521,7 @@
       }
     },
     {
-      "id": 3599,
+      "id": 10565,
       "fields": {
         "name": {
           "ru": "Коррекция перманентного макияжа",
@@ -3782,243 +2593,9 @@
       }
     }
   ],
-  "public_banners": [
-    {
-      "id": 1,
-      "fields": {
-        "title": {
-          "ru": "Красота и Элегантность",
-          "en": "Beauty and Elegance",
-          "ar": "الجمال والأناقة",
-          "es": "Belleza y Elegancia",
-          "de": "Schönheit und Eleganz",
-          "fr": "Beauté et élégance",
-          "hi": "सौंदर्य और सुंदरता",
-          "kk": "Красота и Элегантность",
-          "pt": "Beleza e Elegância",
-          "detected_language": "ru"
-        },
-        "subtitle": {
-          "ru": "Профессиональные услуги красоты",
-          "en": "Professional beauty services",
-          "ar": "خدمات التجميل الاحترافية",
-          "es": "Servicios de belleza profesionales",
-          "de": "Professionelle Schönheitsdienstleistungen",
-          "fr": "Services de beauté professionnels",
-          "hi": "पेशेवर सौंदर्य सेवाएं",
-          "kk": "Профессиональные услуги красоты",
-          "pt": "Serviços de beleza profissionais",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 2,
-      "fields": {
-        "title": {
-          "ru": "Скидки до 50%",
-          "en": "Discounts up to 50%",
-          "ar": "خصومات تصل إلى 50%",
-          "es": "Descuentos de hasta el 50%",
-          "de": "Rabatte bis zu 50 %",
-          "fr": "Réductions jusqu'à 50%",
-          "hi": "50% तक की छूट",
-          "kk": "Скидки до 50%",
-          "pt": "Descontos de até 50%",
-          "detected_language": "ru"
-        },
-        "subtitle": {
-          "ru": "На все услуги салона",
-          "en": "For all salon services",
-          "ar": "على جميع خدمات الصالون",
-          "es": "Para todos los servicios del salón",
-          "de": "Für alle Salondienstleistungen",
-          "fr": "Pour tous les services du salon",
-          "hi": "सभी सैलून सेवाओं पर",
-          "kk": "На все услуги салона",
-          "pt": "Para todos os serviços de salão",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 3,
-      "fields": {
-        "title": {
-          "ru": "Скидки до {{percent}}%",
-          "en": "Discounts up to {{percent}}%",
-          "ar": "خصومات تصل إلى {{percent}}%",
-          "es": "Descuentos de hasta el {{percent}}%",
-          "de": "Rabatte bis zu {{percent}} %",
-          "fr": "Remises jusqu'à {{percent}}%",
-          "hi": "{{percent}}% तक की छूट",
-          "kk": "Скидки до {{percent}}%",
-          "pt": "Descontos de até {{percent}}%",
-          "detected_language": "ru"
-        },
-        "subtitle": {
-          "ru": "На все услуги салона",
-          "en": "For all salon services",
-          "ar": "على جميع خدمات الصالون",
-          "es": "Para todos los servicios del salón",
-          "de": "Für alle Salondienstleistungen",
-          "fr": "Pour tous les services du salon",
-          "hi": "सभी सैलून सेवाओं पर",
-          "kk": "На все услуги салона",
-          "pt": "Para todos os serviços de salão",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 14,
-      "fields": {
-        "title": {
-          "ru": "Красота и Элегантность",
-          "en": "Beauty and Elegance",
-          "ar": "الجمال والأناقة",
-          "es": "Belleza y Elegancia",
-          "de": "Schönheit und Eleganz",
-          "fr": "Beauté et élégance",
-          "hi": "सौंदर्य और सुंदरता",
-          "kk": "Красота и Элегантность",
-          "pt": "Beleza e Elegância",
-          "detected_language": "ru"
-        },
-        "subtitle": {
-          "ru": "Профессиональные услуги красоты высшего класса",
-          "en": "Professional beauty services of the highest class",
-          "ar": "خدمات تجميل احترافية رفيعة المستوى",
-          "es": "Servicios de belleza profesionales de primer nivel",
-          "de": "Hochklassige professionelle Schönheitsdienstleistungen",
-          "fr": "Services de beauté professionnels haut de gamme",
-          "hi": "उच्च श्रेणी की पेशेवर सौंदर्य सेवाएं",
-          "kk": "Профессиональные услуги красоты высшего класса",
-          "pt": "Serviços de beleza profissionais de primeira classe",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 15,
-      "fields": {
-        "title": {
-          "ru": "Премиальный сервис",
-          "en": "Premium service",
-          "ar": "خدمة متميزة",
-          "es": "Servicio premium",
-          "de": "Premium-Service",
-          "fr": "Service premium",
-          "hi": "प्रीमियम सेवा",
-          "kk": "Премиальный сервис",
-          "pt": "Serviço Premium",
-          "detected_language": "ru"
-        },
-        "subtitle": {
-          "ru": "Забота о вашем стиле и здоровье",
-          "en": "Taking care of your style and health",
-          "ar": "العناية أسلوبك وصحتك",
-          "es": "Cuida tu estilo y salud",
-          "de": "Pflege für Ihren Stil und Ihre Gesundheit",
-          "fr": "Prenez soin de votre style et de votre santé",
-          "hi": "ध्यान रखना अपनी शैली और स्वास्थ्य का",
-          "kk": "Забота о вашем стиле и здоровье",
-          "pt": "Cuide do seu estilo e saúde",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 16,
-      "fields": {
-        "title": {
-          "ru": "Марокканская Баня",
-          "en": "Moroccan Bath",
-          "ar": "الحمام المغربي",
-          "es": "Baño Marroquí",
-          "de": "Marokkanisches Bad",
-          "fr": "Bain marocain",
-          "hi": "मोरक्कन स्नान",
-          "kk": "Марокканская Баня",
-          "pt": "Banho Marroquino",
-          "detected_language": "ru"
-        },
-        "subtitle": {
-          "ru": "Ощутите полное расслабление и ритуал очищения",
-          "en": "Experience complete relaxation and a cleansing ritual",
-          "ar": "استمتع بالاسترخاء التام وطقوس التنظيف",
-          "es": "Siente una relajación completa y un ritual de limpieza",
-          "de": "Erleben Sie völlige Entspannung und ein Reinigungsritual",
-          "fr": "Expérimentez une relaxation complète et un rituel de nettoyage",
-          "hi": "पूर्ण विश्राम और सफाई अनुष्ठान का अनुभव करें",
-          "kk": "Ощутите полное расслабление и ритуал очищения",
-          "pt": "Sinta um relaxamento completo e um ritual de limpeza",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 17,
-      "fields": {
-        "title": {
-          "ru": "Скидка 20% на первое посещение",
-          "en": "20% discount on first visit",
-          "ar": "خصم 20% على زيارتك الأولى",
-          "es": "20% de descuento en tu primera visita",
-          "de": "20 % Rabatt auf Ihren ersten Besuch",
-          "fr": "20 % de réduction sur votre première visite",
-          "hi": "आपके पहले पर 20% की छूट जाएँ",
-          "kk": "Алғашқы барғанда 20% жеңілдік",
-          "pt": "20% de desconto na primeira visita",
-          "detected_language": "ru"
-        },
-        "subtitle": {
-          "ru": "Только в этом месяце",
-          "en": "Only this month",
-          "ar": "هذا الشهر فقط",
-          "es": "Solo este mes",
-          "de": "Diesen Monat nur",
-          "fr": "Ce mois-ci seulement",
-          "hi": "केवल इस महीने",
-          "kk": "Тек осы айда",
-          "pt": "Apenas este mês",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 18,
-      "fields": {
-        "title": {
-          "ru": "Новая услуга: Smart Педикюр",
-          "en": "New service: Smart Pedicure",
-          "ar": "خدمة جديدة: باديكير ذكي",
-          "es": "Nuevo servicio: Smart Pedicure",
-          "de": "Neuer Service: Smart Pedicure",
-          "fr": "Nouveau service : Smart Pedicure",
-          "hi": "नई सेवा: स्मार्ट पेडीक्योर",
-          "kk": "Жаңа қызмет: Смарт педикюр",
-          "pt": "Novo serviço: Smart Pedicure",
-          "detected_language": "ru"
-        },
-        "subtitle": {
-          "ru": "Попробуйте инновацию",
-          "en": "Try innovation",
-          "ar": "جرب الابتكار",
-          "es": "Pruebe la innovación",
-          "de": "Probieren Sie Innovation aus",
-          "fr": "Essayez l'innovation",
-          "hi": "नवीनता आज़माएँ",
-          "kk": "Инновацияны қолданып көріңіз",
-          "pt": "Experimente a inovação",
-          "detected_language": "ru"
-        }
-      }
-    }
-  ],
   "public_gallery": [
     {
-      "id": 316,
+      "id": 569,
       "fields": {
         "title": {
           "ru": "Стильная укладка",
@@ -4047,36 +2624,7 @@
       }
     },
     {
-      "id": 317,
-      "fields": {
-        "title": {
-          "ru": "Окрашивание блонд",
-          "detected_language": "ru",
-          "en": "Blonde dyeing",
-          "ar": "التلوين الأشقر",
-          "es": "Coloración rubia",
-          "de": "Blondfärbung",
-          "fr": "Coloration blonde",
-          "hi": "गोरा रंग",
-          "kk": "Аққұбаларды бояу",
-          "pt": "Coloração loira"
-        },
-        "description": {
-          "ru": "Идеальный платиновый блонд",
-          "detected_language": "ru",
-          "en": "Perfect platinum blonde",
-          "ar": "الأشقر البلاتيني المثالي",
-          "es": "Rubio platino perfecto",
-          "de": "Perfektes Platinblond",
-          "fr": "Blond platine parfait",
-          "hi": "परफेक्ट प्लैटिनम गोरा",
-          "kk": "Керемет платина аққұба",
-          "pt": "Loiro platinado perfeito"
-        }
-      }
-    },
-    {
-      "id": 318,
+      "id": 570,
       "fields": {
         "title": {
           "ru": "Классический маникюр",
@@ -4105,36 +2653,36 @@
       }
     },
     {
-      "id": 319,
+      "id": 571,
       "fields": {
         "title": {
-          "ru": "Дизайн ногтей",
+          "ru": "Перманентный макияж губ",
           "detected_language": "ru",
-          "en": "Nail design",
-          "ar": "تصميم الأظافر",
-          "es": "Diseño de uñas",
-          "de": "Nageldesign",
-          "fr": "Design d'ongles",
-          "hi": "नाखून डिजाइन",
-          "kk": "Тырнақ дизайны",
-          "pt": "Design de unhas"
+          "en": "Permanent lip makeup",
+          "ar": "مكياج الشفاه الدائم",
+          "es": "Maquillaje de labios permanente",
+          "de": "Permanentes Lippen-Make-up",
+          "fr": "Maquillage permanent des lèvres",
+          "hi": "स्थायी होंठ मेकअप",
+          "kk": "Тұрақты ерін макияжы",
+          "pt": "Maquiagem permanente para lábios"
         },
         "description": {
-          "ru": "Аккуратное покрытие и стильный дизайн",
+          "ru": "Естественный контур и цвет",
           "detected_language": "ru",
-          "en": "Neat coverage and stylish design",
-          "ar": "طلاء أنيق وتصميم أنيق",
-          "es": "Recubrimiento limpio y diseño elegante",
-          "de": "Saubere Beschichtung und stilvolles Design",
-          "fr": "Revêtement soigné et design élégant",
-          "hi": "साफ कोटिंग और स्टाइलिश डिजाइन",
-          "kk": "Ұқыпты жабын және стильді дизайн",
-          "pt": "Revestimento elegante e design elegante"
+          "en": "Natural contour and color",
+          "ar": "الكونتور واللون الطبيعي",
+          "es": "Contorno y color natural",
+          "de": "Natürliche Kontur und Farbe",
+          "fr": "Contour et couleur naturels",
+          "hi": "प्राकृतिक रूपरेखा और रंग",
+          "kk": "Табиғи контур және түс",
+          "pt": "Contorno e cor naturais"
         }
       }
     },
     {
-      "id": 320,
+      "id": 572,
       "fields": {
         "title": {
           "ru": "SPA-процедуры",
@@ -4163,36 +2711,7 @@
       }
     },
     {
-      "id": 321,
-      "fields": {
-        "title": {
-          "ru": "Марокканская баня",
-          "detected_language": "ru",
-          "en": "Moroccan bath",
-          "ar": "الحمام المغربي",
-          "es": "Marroquí baño",
-          "de": "Marokkanisches Bad",
-          "fr": "Bain marocain",
-          "hi": "मोरक्कन स्नान",
-          "kk": "Марокко моншасы",
-          "pt": "Marroquino banho"
-        },
-        "description": {
-          "ru": "Традиционный восточный уход",
-          "detected_language": "ru",
-          "en": "Traditional oriental care",
-          "ar": "التقليدي العناية الشرقية",
-          "es": "Cuidado oriental tradicional",
-          "de": "Traditionelle orientalische Pflege",
-          "fr": "Soins traditionnels orientaux",
-          "hi": "पारंपरिक प्राच्य देखभाल",
-          "kk": "Дәстүрлі шығыс күтімі",
-          "pt": "Cuidados orientais tradicionais"
-        }
-      }
-    },
-    {
-      "id": 322,
+      "id": 573,
       "fields": {
         "title": {
           "ru": "Интерьер салона",
@@ -4221,7 +2740,7 @@
       }
     },
     {
-      "id": 323,
+      "id": 574,
       "fields": {
         "title": {
           "ru": "SPA зона",
@@ -4250,7 +2769,7 @@
       }
     },
     {
-      "id": 324,
+      "id": 575,
       "fields": {
         "title": {
           "ru": "Парикмахерский зал",
@@ -4279,7 +2798,7 @@
       }
     },
     {
-      "id": 325,
+      "id": 576,
       "fields": {
         "title": {
           "ru": "Зона маникюра",
@@ -4294,21 +2813,21 @@
           "pt": "Área de manicure"
         },
         "description": {
-          "ru": "Комфортные рабочие места",
+          "ru": "Комфорт и стерильность",
           "detected_language": "ru",
-          "en": "Comfortable workplaces",
-          "ar": "أماكن عمل مريحة",
-          "es": "Cómodos asientos para trabajadores",
-          "de": "Bequeme Arbeitssitze",
-          "fr": "Sièges de travail confortables",
-          "hi": "आरामदायक कार्यस्थल",
-          "kk": "Ыңғайлы жұмыс орындары",
-          "pt": "Assentos confortáveis para trabalhadores"
+          "en": "Comfort and sterility",
+          "ar": "الراحة والعقم",
+          "es": "Comodidad y esterilidad",
+          "de": "Komfort und Sterilität",
+          "fr": "Confort et stérilité",
+          "hi": "आराम और बाँझपन",
+          "kk": "Ыңғайлылық және стерильділік",
+          "pt": "Conforto e esterilidade"
         }
       }
     },
     {
-      "id": 326,
+      "id": 577,
       "fields": {
         "title": {
           "ru": "Кабинет массажа",
@@ -4323,132 +2842,131 @@
           "pt": "Sala de massagem"
         },
         "description": {
-          "ru": "Расслабляющая обстановка",
+          "ru": "Расслабляющая атмосфера",
           "detected_language": "ru",
-          "en": "Relaxing environment",
-          "ar": "بيئة مريحة",
+          "en": "Relaxing atmosphere",
+          "ar": "أجواء مريحة",
           "es": "Ambiente relajante",
-          "de": "Entspannende Umgebung",
-          "fr": "Environnement relaxant",
+          "de": "Entspannende Atmosphäre",
+          "fr": "Atmosphère relaxante",
           "hi": "आरामदायक वातावरण",
-          "kk": "Тыныштандыратын орта",
-          "pt": "Ambiente relaxante"
+          "kk": "Тыныштандыратын атмосфера",
+          "pt": "Atmosfera relaxante"
         }
       }
     },
     {
-      "id": 327,
+      "id": 578,
       "fields": {
         "title": {
-          "ru": "Детали интерьера",
-          "detected_language": "ru",
-          "en": "Interior details",
-          "ar": "التفاصيل الداخلية",
-          "es": "Detalles interiores",
-          "de": "Innendetails",
-          "fr": "Détails intérieurs",
-          "hi": "आंतरिक विवरण",
-          "kk": "Интерьер бөлшектері",
-          "pt": "Detalhes do interior"
+          "ru": "Маникюр",
+          "detected_language": "bg",
+          "en": "Manicure",
+          "ar": "مانيكير",
+          "es": "Manicura",
+          "de": "Maniküre",
+          "fr": "Manucure",
+          "hi": "मैनीक्योर",
+          "kk": "Маникюр",
+          "pt": "Manicure"
         },
         "description": {
-          "ru": "Элементы декора",
+          "ru": "Профессиональный маникюр",
           "detected_language": "ru",
-          "en": "Decor elements",
-          "ar": "عناصر الديكور",
-          "es": "Elementos decorativos",
-          "de": "Dekorativ Elemente",
-          "fr": "Décoratif éléments",
-          "hi": "सजावटी तत्व",
-          "kk": "мәліметтер. элементтер",
-          "pt": "Elementos decorativos"
+          "en": "Professional manicure",
+          "ar": "مانيكير احترافي",
+          "es": "Manicura profesional",
+          "de": "Professionelle Maniküre",
+          "fr": "Manucure professionnelle",
+          "hi": "पेशेवर मैनीक्योर",
+          "kk": "Кәсіби маникюр",
+          "pt": "Manicure profissional"
         }
       }
     },
     {
-      "id": 328,
+      "id": 579,
       "fields": {
         "title": {
-          "ru": "Зона ожидания",
+          "ru": "Массаж лица",
           "detected_language": "ru",
-          "en": "Waiting area",
-          "ar": "الانتظار المنطقة",
-          "es": "Zona de espera",
-          "de": "Wartebereich",
-          "fr": "Espace d'attente",
-          "hi": "प्रतीक्षा क्षेत्र",
-          "kk": "Күту алаңы",
-          "pt": "Área de espera"
+          "en": "Facial massage",
+          "ar": "تدليك للوجه",
+          "es": "Masaje facial",
+          "de": "Gesichtsmassage",
+          "fr": "Massage du visage",
+          "hi": "चेहरे की मालिश",
+          "kk": "Бет массажы",
+          "pt": "Massagem facial"
         },
         "description": {
-          "ru": "Комфорт для клиентов",
+          "ru": "Омолаживающий массаж",
           "detected_language": "ru",
-          "en": "Comfort for clients",
-          "ar": "راحة العملاء",
-          "es": "Comodidad para los clientes",
-          "de": "Komfort für Kunden",
-          "fr": "Confort des clients",
-          "hi": "ग्राहकों के लिए आराम",
-          "kk": "Клиенттерге ыңғайлылық",
-          "pt": "Conforto para clientes"
+          "en": "Rejuvenating massage",
+          "ar": "تدليك مجدد",
+          "es": "Masaje rejuvenecedor",
+          "de": "Verjüngungsmassage",
+          "fr": "Massage rajeunissant",
+          "hi": "कायाकल्प करने वाली मालिश",
+          "kk": "Жасартатын массаж",
+          "pt": "Massagem rejuvenescedora"
         }
       }
     },
     {
-      "id": 329,
+      "id": 580,
       "fields": {
         "title": {
-          "ru": "Оборудование",
-          "detected_language": "ru",
-          "en": "Equipment",
-          "ar": "المعدات",
-          "es": "Equipamiento",
-          "de": "Ausstattung",
-          "fr": "Équipements",
-          "hi": "उपकरण",
-          "kk": "Жабдық",
-          "pt": "Equipamentos"
+          "ru": "SPA",
+          "en": "SPA",
+          "ar": "SPA",
+          "es": "SPA",
+          "de": "SPA",
+          "fr": "SPA",
+          "hi": "SPA",
+          "kk": "SPA",
+          "pt": "SPA"
         },
         "description": {
-          "ru": "Современное оснащение",
+          "ru": "Релакс процедуры",
           "detected_language": "ru",
-          "en": "Modern equipment",
-          "ar": "المعدات الحديثة",
-          "es": "Equipamiento moderno",
-          "de": "Moderne Ausstattung",
-          "fr": "Équipements modernes",
-          "hi": "आधुनिक उपकरण",
-          "kk": "Заманауи жабдық",
-          "pt": "Equipamentos modernos"
+          "en": "Relaxing procedures",
+          "ar": "إجراءات الاسترخاء",
+          "es": "Procedimientos relajantes",
+          "de": "Entspannende Behandlungen",
+          "fr": "Procédures relaxantes",
+          "hi": "आरामदायक प्रक्रियाएं",
+          "kk": "Босаңсыту процедуралары",
+          "pt": "Procedimentos relaxantes"
         }
       }
     },
     {
-      "id": 330,
+      "id": 581,
       "fields": {
         "title": {
-          "ru": "Атмосфера",
-          "detected_language": "ru",
-          "en": "Atmosphere",
-          "ar": "الجو",
-          "es": "Ambiente",
-          "de": "Atmosphäre",
-          "fr": "Ambiance",
-          "hi": "वातावरण",
-          "kk": "Атмосфера",
-          "pt": "Atmosfera"
+          "ru": "Прическа",
+          "detected_language": "uk",
+          "en": "Haircut",
+          "ar": "قص الشعر",
+          "es": "Corte de pelo",
+          "de": "Haarschnitt",
+          "fr": "Coupe de cheveux",
+          "hi": "बाल कटवाना",
+          "kk": "Шаш қию",
+          "pt": "Corte de cabelo"
         },
         "description": {
-          "ru": "Уют и спокойствие",
+          "ru": "Профессиональная стрижка",
           "detected_language": "ru",
-          "en": "Comfort and tranquility",
-          "ar": "الراحة والهدوء",
-          "es": "Comodidad y tranquilidad",
-          "de": "Komfort und Ruhe",
-          "fr": "Confort et tranquillité",
-          "hi": "आराम और शांति",
-          "kk": "Ыңғайлылық пен тыныштық",
-          "pt": "Conforto e tranquilidade"
+          "en": "Professional haircut",
+          "ar": "قصة شعر احترافية",
+          "es": "Corte de pelo profesional",
+          "de": "Professioneller Haarschnitt",
+          "fr": "Coupe de cheveux professionnelle",
+          "hi": "पेशेवर बाल कटवाने",
+          "kk": "Кәсіби шаш қию",
+          "pt": "Corte de cabelo profissional"
         }
       }
     }

@@ -86,6 +86,39 @@ def sanitize_url(url: str) -> Optional[str]:
     # Кириллица в путях допустима и работает корректно
     return url
 
+def map_image_path(url: str) -> str:
+    """
+    Преобразовать старые пути к изображениям на новые из frontend папки
+
+    Args:
+        url: Исходный путь к изображению
+
+    Returns:
+        Преобразованный путь или исходный если маппинг не найден
+    """
+    if not url:
+        return url
+
+    # Маппинг старых путей на новые (frontend/public_landing/styles/img/)
+    path_mappings = {
+        '/static/images/salon/': '/landing-images/Фото салона/',
+        '/static/uploads/images/salon/': '/landing-images/Фото салона/',
+        '/static/images/portfolio/': '/landing-images/Портфолио/',
+        '/static/uploads/images/portfolio/': '/landing-images/Портфолио/',
+        '/static/images/banners/': '/landing-images/Баннер/',
+        '/static/uploads/images/banners/': '/landing-images/Баннер/',
+        '/static/uploads/images/services/': '/landing-images/Услуги/',
+        '/static/uploads/images/faces/': '/landing-images/Красивые лица/',
+        '/static/uploads/images/staff/': '/landing-images/Сотрудники/',
+        '/static/images/staff/': '/landing-images/Сотрудники/',
+    }
+
+    for old_path, new_path in path_mappings.items():
+        if url.startswith(old_path):
+            return url.replace(old_path, new_path, 1)
+
+    return url
+
 def validate_file_upload(file, max_size_mb: int = 10, allowed_extensions: list = None):
     """
     Валидировать загружаемый файл

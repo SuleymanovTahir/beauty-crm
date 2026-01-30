@@ -26,15 +26,15 @@ export function getLocalizedServiceName(
     }
   }
 
-  if (service.name_en && typeof service.name_en === "string") {
-    const trimmed = service.name_en.trim();
+  if (service.name && typeof service.name === "string") {
+    const trimmed = service.name.trim();
     if (trimmed.length > 0) {
       return trimmed;
     }
   }
 
-  if (service.name_ru && typeof service.name_ru === "string") {
-    const trimmed = service.name_ru.trim();
+  if (service.name && typeof service.name === "string") {
+    const trimmed = service.name.trim();
     if (trimmed.length > 0) {
       return trimmed;
     }
@@ -74,15 +74,15 @@ export function getLocalizedServiceDescription(
     }
   }
 
-  if (service.description_en && typeof service.description_en === "string") {
-    const trimmed = service.description_en.trim();
+  if (service.description && typeof service.description === "string") {
+    const trimmed = service.description.trim();
     if (trimmed.length > 0) {
       return trimmed;
     }
   }
 
-  if (service.description_ru && typeof service.description_ru === "string") {
-    const trimmed = service.description_ru.trim();
+  if (service.description && typeof service.description === "string") {
+    const trimmed = service.description.trim();
     if (trimmed.length > 0) {
       return trimmed;
     }

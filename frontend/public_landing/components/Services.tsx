@@ -9,8 +9,8 @@ import { LIMITS } from "../utils/constants";
 interface Service {
   id: number;
   name: string;
-  name_ru?: string;
-  name_en?: string;
+  name?: string;
+  name?: string;
   price: number;
   duration: number;
   category: string;

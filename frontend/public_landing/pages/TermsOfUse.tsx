@@ -62,7 +62,7 @@ export function TermsOfUse() {
                             <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
                                 {services.length > 0 ? (
                                     services.map((service) => (
-                                        <li key={service.id}>{service.name_ru || service.name}</li>
+                                        <li key={service.id}>{service.name}</li>
                                     ))
                                 ) : (
                                     <>

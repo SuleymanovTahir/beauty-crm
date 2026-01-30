@@ -236,7 +236,15 @@ app.add_middleware(UserActivityMiddleware)
 
 # Подключение ресурсов
 BASE_DIR = Path(__file__).resolve().parent
+FRONTEND_DIR = BASE_DIR.parent / "frontend"
+
+# Mount backend static files
 app.mount("/static", ModernStaticFiles(directory=str(BASE_DIR / "static")), name="static")
+
+# Mount frontend images for public landing (Портфолио, Фото салона, etc.)
+frontend_img_dir = FRONTEND_DIR / "public_landing" / "styles" / "img"
+if frontend_img_dir.exists():
+    app.mount("/landing-images", ModernStaticFiles(directory=str(frontend_img_dir)), name="landing_images")
 
 # Интеграция эндпоинтов (сгруппированы по доменам)
 # Сокеты

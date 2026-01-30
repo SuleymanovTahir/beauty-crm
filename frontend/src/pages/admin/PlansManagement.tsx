@@ -34,8 +34,8 @@ interface Metric {
     id: number;
     key: string;
     name: string;
-    name_ru: string;
-    name_en: string;
+    name: string;
+    name: string;
     unit?: string;
     description?: string;
 }
@@ -274,7 +274,7 @@ export default function PlansManagement() {
     const startEditingMetric = (metric: Metric) => {
         setMetricFormData({
             key: metric.key,
-            name: i18n.language === 'ru' ? metric.name_ru || metric.name : metric.name_en || metric.name,
+            name: i18n.language === 'ru' ? metric.name || metric.name : metric.name || metric.name,
             unit: metric.unit || '',
             description: metric.description || ''
         });
@@ -308,7 +308,7 @@ export default function PlansManagement() {
     const getMetricLabel = (type: string) => {
         const metric = metrics.find(m => m.key === type);
         if (!metric) return type;
-        return i18n.language === 'ru' ? metric.name_ru : metric.name_en;
+        return i18n.language === 'ru' ? metric.name : metric.name;
     };
 
     const getMetricUnit = (type: string) => {
@@ -516,7 +516,7 @@ export default function PlansManagement() {
                                     </SelectTrigger>
                                     <SelectContent>
                                         {metrics.map(m => (
-                                            <SelectItem key={m.key} value={m.key}>{i18n.language === 'ru' ? m.name_ru : m.name_en}</SelectItem>
+                                            <SelectItem key={m.key} value={m.key}>{i18n.language === 'ru' ? m.name : m.name}</SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
@@ -663,7 +663,7 @@ export default function PlansManagement() {
                                     {metrics.map(m => (
                                         <tr key={m.id} className="border-b border-gray-50 last:border-0 hover:bg-pink-50/30 transition-colors group">
                                             <td className="p-3 font-mono text-gray-500">{m.key}</td>
-                                            <td className="p-3 font-medium text-gray-900">{i18n.language === 'ru' ? m.name_ru || m.name : m.name_en || m.name}</td>
+                                            <td className="p-3 font-medium text-gray-900">{i18n.language === 'ru' ? m.name || m.name : m.name || m.name}</td>
                                             <td className="p-3 text-gray-600">{m.unit}</td>
                                             <td className="p-3 text-right flex justify-end gap-1">
                                                 <Button variant="ghost" size="sm" onClick={() => startEditingMetric(m)} className="text-blue-600 h-9 w-9 p-0 hover:bg-blue-50 transition-colors">
