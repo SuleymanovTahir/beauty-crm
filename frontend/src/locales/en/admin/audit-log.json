@@ -1,9 +1,9 @@
 {
   "clear_all": "Clear all",
   "clear_confirm": "Are you sure you want to completely clear the audit log? ",
+  "delete_batch_confirm_one": "Delete {{count}} selected booking?",
   "delete_batch_confirm_few": "Delete {{count}} selected bookings?",
   "delete_batch_confirm_many": "Delete {{count}} selected bookings?",
-  "delete_batch_confirm_one": "Delete {{count}} selected booking?",
   "delete_batch_confirm_other": "Delete {{count}} bookings?",
   "delete_confirm": "Should I permanently delete this booking?",
   "delete_selected": "Remove selected",
