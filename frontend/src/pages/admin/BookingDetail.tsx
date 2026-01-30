@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
 import { toast } from 'sonner';
 import { apiClient } from '../../api/client';
+import { useCurrency } from '../../hooks/useSalonSettings';
 import {
   BarChart,
   Bar,
@@ -40,7 +41,7 @@ interface User {
   id: number;
   username: string;
   full_name?: string;
-  full_name_ru?: string;
+  full_name?: string;
   role: string;
   position?: string;
   position_ru?: string;
@@ -49,7 +50,7 @@ interface User {
 interface Service {
   id: number;
   name: string;
-  name_ru?: string;
+  name?: string;
   service_key: string;
   price?: number;
 }
@@ -63,6 +64,7 @@ export default function BookingDetail() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const { t, i18n } = useTranslation(['admin/bookingdetail', 'common', 'bookings', 'admin/services']);
+  const { formatCurrency } = useCurrency();
   const [updating, setUpdating] = useState(false);
   const [newStatus, setNewStatus] = useState('');
   const [chartPeriod, setChartPeriod] = useState('30');
@@ -155,11 +157,11 @@ export default function BookingDetail() {
     ? masters.find(m =>
       (m.username && booking.master && m.username.toLowerCase() === booking.master.toLowerCase()) ||
       (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase()) ||
-      (m.full_name_ru && booking.master && m.full_name_ru.toLowerCase() === booking.master.toLowerCase())
+      (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase())
     )
     : null;
 
-  const masterName = (i18n.language.startsWith('ru') && masterInfo?.full_name_ru) ? masterInfo.full_name_ru : (masterInfo?.full_name || booking?.master || t('common:not_specified'));
+  const masterName = (i18n.language.startsWith('ru') && masterInfo?.full_name) ? masterInfo.full_name : (masterInfo?.full_name || booking?.master || t('common:not_specified'));
 
   const getChartData = (type: 'service' | 'master') => {
     if (!booking || !allBookings.length) return [];
@@ -202,7 +204,7 @@ export default function BookingDetail() {
 
         return bMaster === targetMaster ||
           (bMasterInfo && targetMasterInfo && bMasterInfo.username === targetMasterInfo.username) ||
-          (bMasterInfo && targetMasterInfo && bMasterInfo.full_name_ru === targetMasterInfo.full_name_ru && bMasterInfo.full_name_ru);
+          (bMasterInfo && targetMasterInfo && bMasterInfo.full_name === targetMasterInfo.full_name && bMasterInfo.full_name);
       }
     });
 
@@ -412,7 +414,7 @@ export default function BookingDetail() {
                       <SelectContent>
                         {services.map(s => (
                           <SelectItem key={s.id} value={s.name}>
-                            {i18n.language.startsWith('ru') && s.name_ru ? s.name_ru : s.name} ({s.price} {t('currency')})
+                            {i18n.language.startsWith('ru') && s.name ? s.name : s.name} ({formatCurrency(s.price)})
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -426,9 +428,9 @@ export default function BookingDetail() {
                     >
                       {(() => {
                         const serviceName = (booking.service || '').trim();
-                        const s = services.find(serv => serv.name === serviceName || serv.service_key === serviceName || serv.name_ru === serviceName);
-                        if (i18n.language.startsWith('ru') && s?.name_ru) {
-                          return s.name_ru;
+                        const s = services.find(serv => serv.name === serviceName || serv.service_key === serviceName || serv.name === serviceName);
+                        if (i18n.language.startsWith('ru') && s?.name) {
+                          return s.name;
                         }
 
                         // Try translating with explicit namespace alias 'services'

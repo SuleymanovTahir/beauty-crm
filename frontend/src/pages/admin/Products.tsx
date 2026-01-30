@@ -11,7 +11,7 @@ import '../../styles/crm-pages.css';
 interface Product {
     id: number;
     name: string;
-    name_ru?: string;
+    name?: string;
     category?: string;
     price: number;
     stock_quantity: number;
@@ -100,7 +100,7 @@ const Products = () => {
 
     const filteredAndSortedProducts = useMemo(() => {
         return products.filter(p => {
-            const name = (p.name_ru || p.name || '').toLowerCase();
+            const name = (p.name || p.name || '').toLowerCase();
             const category = (p.category || '').toLowerCase();
             const search = searchQuery.toLowerCase();
             return name.includes(search) || category.includes(search);
@@ -223,7 +223,7 @@ const Products = () => {
                                             setShowDetailDialog(true);
                                         }}
                                     >
-                                        {product.name_ru || product.name}
+                                        {product.name || product.name}
                                     </h3>
 
                                     <div className="mt-auto flex items-end justify-between">
@@ -351,9 +351,6 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
     const { t } = useTranslation('admin/products');
     const [formData, setFormData] = useState({
         name: product?.name || '',
-        name_ru: product?.name_ru || '',
-        name_en: product?.name_en || '',
-        name_ar: product?.name_ar || '',
         category: product?.category || '',
         price: product?.price || 0,
         cost_price: product?.cost_price || 0,
@@ -716,7 +713,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                     <div className="space-y-6">
                         <div>
                             <span className="text-xs font-bold text-pink-500 uppercase tracking-wider">{product.category || t('detail.noCategory')}</span>
-                            <h2 className="text-3xl font-black text-gray-900 leading-tight">{product.name_ru || product.name}</h2>
+                            <h2 className="text-3xl font-black text-gray-900 leading-tight">{product.name || product.name}</h2>
                             {product.sku && <p className="text-sm text-gray-500 mt-1 font-mono">SKU: {product.sku}</p>}
                         </div>
 

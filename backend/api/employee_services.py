@@ -29,7 +29,7 @@ async def get_user_services(
                 s.id, s.name, s.category,
                 COALESCE(us.price, s.price) as price,
                 us.price_min, us.price_max,
-                COALESCE(us.duration, s.duration) as duration,
+                COALESCE(us.duration, s.duration::INTEGER) as duration,
                 us.is_online_booking_enabled, us.is_calendar_enabled
             FROM services s
             JOIN user_services us ON s.id = us.service_id

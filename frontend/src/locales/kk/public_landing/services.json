@@ -18,17 +18,17 @@
   "haircutsStyling": "",
   "items": {
     "bangs_cut": {
-      "category": "Шаш қию",
+      "category": "Hair Cut",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "кесілген шаш қию",
+      "name": "Bangs Cut",
       "price": 100.0
     },
     "bikini_line": {
-      "category": "Балауыз бояу",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -38,7 +38,7 @@
       "price": 100.0
     },
     "blowdry_long": {
-      "category": "Шаш сәндеу",
+      "category": "Hair Styling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -48,7 +48,7 @@
       "price": 280.0
     },
     "blowdry_medium": {
-      "category": "Шаш сәндеу",
+      "category": "Hair Styling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -58,7 +58,7 @@
       "price": 250.0
     },
     "blowdry_short": {
-      "category": "Шаш сәндеу",
+      "category": "Hair Styling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -68,7 +68,7 @@
       "price": 200.0
     },
     "brow_coloring": {
-      "category": "Қастар",
+      "category": "Brows",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -78,7 +78,7 @@
       "price": 40.0
     },
     "brow_correction": {
-      "category": "Қастарды",
+      "category": "Brows",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -88,7 +88,7 @@
       "price": 40.0
     },
     "brow_lami": {
-      "category": "Қастар",
+      "category": "Brows",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -98,7 +98,7 @@
       "price": 200.0
     },
     "change_classic_pedicure": {
-      "category": "Педикюр",
+      "category": "Pedicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -108,7 +108,7 @@
       "price": 50.0
     },
     "change_gel_pedicure": {
-      "category": "Педикюр",
+      "category": "Pedicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -118,7 +118,7 @@
       "price": 100.0
     },
     "cheeks_wax": {
-      "category": "Балауыз бояу",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -128,7 +128,7 @@
       "price": 40.0
     },
     "chin_wax": {
-      "category": "Балауыз бояу",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -158,7 +158,7 @@
       "price": 350.0
     },
     "complex_color": {
-      "category": "Шаш түсі",
+      "category": "Hair Color",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -168,7 +168,7 @@
       "price": 1250.0
     },
     "deep_facial_cleaning": {
-      "category": "Косметология",
+      "category": "Cosmetology",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -178,7 +178,7 @@
       "price": 400.0
     },
     "evening_hairstyle": {
-      "category": "Шаш үлгісі",
+      "category": "Hair Styling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -188,7 +188,7 @@
       "price": 625.0
     },
     "express_hair_form": {
-      "category": "Шаш қию",
+      "category": "Hair Cut",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -198,7 +198,7 @@
       "price": 150.0
     },
     "eyeliner": {
-      "category": "Тұрақты макияж",
+      "category": "Permanent Makeup",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -208,7 +208,7 @@
       "price": 800.0
     },
     "face_lift_massage": {
-      "category": "Косметология",
+      "category": "Cosmetology",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -218,7 +218,7 @@
       "price": 250.0
     },
     "french_polish": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -228,7 +228,7 @@
       "price": 190.0
     },
     "full_arms": {
-      "category": "Балауыз бояу",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -238,7 +238,7 @@
       "price": 80.0
     },
     "full_bikini": {
-      "category": "Балауыз бояу",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -248,7 +248,7 @@
       "price": 150.0
     },
     "full_body_wax": {
-      "category": "Балауыз бояу",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -258,7 +258,7 @@
       "price": 400.0
     },
     "full_face_wax": {
-      "category": "Балауыз бояу",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -268,7 +268,7 @@
       "price": 90.0
     },
     "full_legs": {
-      "category": "Балауыз бояу",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -278,7 +278,7 @@
       "price": 150.0
     },
     "gel_polish_only": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -288,7 +288,7 @@
       "price": 100.0
     },
     "hair_cut_full": {
-      "category": "Шаш қию",
+      "category": "Hair Cut",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -298,7 +298,7 @@
       "price": 350.0
     },
     "hair_cut_wash": {
-      "category": "Шаш қию",
+      "category": "Hair Cut",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -308,7 +308,7 @@
       "price": 200.0
     },
     "hair_trim": {
-      "category": "Шаш қию",
+      "category": "Hair Cut",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -318,7 +318,7 @@
       "price": 150.0
     },
     "hair_wash": {
-      "category": "Шаш күтімі",
+      "category": "Hair Care",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -328,7 +328,7 @@
       "price": 70.0
     },
     "half_arms": {
-      "category": "Балауыз бояу",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -338,7 +338,7 @@
       "price": 50.0
     },
     "half_legs": {
-      "category": "Балауыз бояу",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -348,7 +348,7 @@
       "price": 80.0
     },
     "japanese_manicure": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "90",
@@ -358,7 +358,7 @@
       "price": 150.0
     },
     "kids_cut": {
-      "category": "Шаш қию",
+      "category": "Hair Cut",
       "currency": "AED",
       "description": "",
       "duration": "40",
@@ -368,7 +368,7 @@
       "price": 100.0
     },
     "kim_style_effect": {
-      "category": "Кірпіктер",
+      "category": "Lashes",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -378,7 +378,7 @@
       "price": 30.0
     },
     "lash_lami": {
-      "category": "Кірпіктер",
+      "category": "Lashes",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -388,7 +388,7 @@
       "price": 200.0
     },
     "lashes_2d": {
-      "category": "Кірпіктер",
+      "category": "Lashes",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -398,7 +398,7 @@
       "price": 250.0
     },
     "lashes_3d": {
-      "category": "Кірпіктер",
+      "category": "Lashes",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -408,7 +408,7 @@
       "price": 300.0
     },
     "lashes_classic": {
-      "category": "Кірпіктер",
+      "category": "Lashes",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -418,7 +418,7 @@
       "price": 200.0
     },
     "lashes_mega": {
-      "category": "Кірпіктер",
+      "category": "Lashes",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -428,7 +428,7 @@
       "price": 350.0
     },
     "lashliner": {
-      "category": "Тұрақты макияж",
+      "category": "Permanent Makeup",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -438,7 +438,7 @@
       "price": 800.0
     },
     "manicure_combined": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -448,7 +448,7 @@
       "price": 110.0
     },
     "manicure_gel_polish": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -458,7 +458,7 @@
       "price": 160.0
     },
     "manicure_pil_classic": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -468,7 +468,7 @@
       "price": 130.0
     },
     "massage_anticellulite": {
-      "category": "Массаж",
+      "category": "Massage",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -478,7 +478,7 @@
       "price": 300.0
     },
     "massage_body": {
-      "category": "Массаж",
+      "category": "Massage",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -488,7 +488,7 @@
       "price": 250.0
     },
     "massage_extremities": {
-      "category": "Массаж",
+      "category": "Massage",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -498,7 +498,7 @@
       "price": 150.0
     },
     "massage_head": {
-      "category": "Массаж",
+      "category": "Massage",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -508,7 +508,7 @@
       "price": 100.0
     },
     "massage_sculptural": {
-      "category": "Массаж",
+      "category": "Massage",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -518,7 +518,7 @@
       "price": 370.0
     },
     "medical_facial": {
-      "category": "Косметология",
+      "category": "Cosmetology",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -538,7 +538,7 @@
       "price": 250.0
     },
     "nail_correction": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -548,7 +548,7 @@
       "price": 400.0
     },
     "nail_extensions": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -558,7 +558,7 @@
       "price": 400.0
     },
     "nail_shaping": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -568,7 +568,7 @@
       "price": 45.0
     },
     "one_tone_long": {
-      "category": "Шаш түсі",
+      "category": "Hair Color",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -578,7 +578,7 @@
       "price": 675.0
     },
     "one_tone_medium": {
-      "category": "Шаш түсі",
+      "category": "Hair Color",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -588,7 +588,7 @@
       "price": 400.0
     },
     "one_tone_short": {
-      "category": "Шаш түсі",
+      "category": "Hair Color",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -598,7 +598,7 @@
       "price": 350.0
     },
     "overlay_biogel": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -608,7 +608,7 @@
       "price": 50.0
     },
     "pedicure_gel": {
-      "category": "Педикюр",
+      "category": "Pedicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -618,17 +618,17 @@
       "price": 190.0
     },
     "pedicure_smart": {
-      "category": "Педикюр",
+      "category": "Pedicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Негізгі смарт педикюр",
+      "name": "Smart Pedicure Basic",
       "price": 130.0
     },
     "pedicure_smart_polish": {
-      "category": "Педикюр",
+      "category": "Pedicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -638,7 +638,7 @@
       "price": 150.0
     },
     "peeling": {
-      "category": "Косметология",
+      "category": "Cosmetology",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -648,7 +648,7 @@
       "price": 350.0
     },
     "permanent_brows": {
-      "category": "Тұрақты макияж",
+      "category": "Permanent Makeup",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -658,7 +658,7 @@
       "price": 800.0
     },
     "permanent_correction": {
-      "category": "Тұрақты макияж",
+      "category": "Permanent Makeup",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -668,7 +668,7 @@
       "price": 800.0
     },
     "permanent_lips": {
-      "category": "Тұрақты макияж",
+      "category": "Permanent Makeup",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -678,7 +678,7 @@
       "price": 800.0
     },
     "polish_classic": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -688,7 +688,7 @@
       "price": 50.0
     },
     "remove_classic": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -698,7 +698,7 @@
       "price": 20.0
     },
     "remove_extensions": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -708,7 +708,7 @@
       "price": 70.0
     },
     "remove_gel": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "30",
@@ -718,7 +718,7 @@
       "price": 30.0
     },
     "remove_lashes": {
-      "category": "Кірпіктер",
+      "category": "Lashes",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -728,7 +728,7 @@
       "price": 50.0
     },
     "repair_extension": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -738,7 +738,7 @@
       "price": 40.0
     },
     "repair_gel": {
-      "category": "Маникюр",
+      "category": "Manicure",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -748,7 +748,7 @@
       "price": 20.0
     },
     "roots_color": {
-      "category": "Шаш түсі",
+      "category": "Hair Color",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -758,7 +758,7 @@
       "price": 250.0
     },
     "styling_long": {
-      "category": "Шаш үлгісі",
+      "category": "Hair Styling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -768,7 +768,7 @@
       "price": 300.0
     },
     "styling_medium": {
-      "category": "Шаш сәндеу",
+      "category": "Hair Styling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -778,7 +778,7 @@
       "price": 260.0
     },
     "styling_short": {
-      "category": "Шаш сәндеу",
+      "category": "Hair Styling",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -788,7 +788,7 @@
       "price": 230.0
     },
     "toning": {
-      "category": "Шаш түсі",
+      "category": "Hair Color",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -798,7 +798,7 @@
       "price": 300.0
     },
     "total_blonde": {
-      "category": "Шаш түсі",
+      "category": "Hair Color",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -808,7 +808,7 @@
       "price": 1250.0
     },
     "underarms": {
-      "category": "Балауыз",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -818,7 +818,7 @@
       "price": 50.0
     },
     "upper_lip_wax": {
-      "category": "Балауыз бояу",
+      "category": "Waxing",
       "currency": "AED",
       "description": "",
       "duration": "60",

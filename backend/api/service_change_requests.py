@@ -35,7 +35,7 @@ async def get_my_services(
                 s.price as default_price, s.duration as default_duration,
                 COALESCE(us.price, s.price) as price,
                 us.price_min, us.price_max,
-                COALESCE(us.duration, s.duration) as duration,
+                COALESCE(us.duration, s.duration::INTEGER) as duration,
                 us.is_online_booking_enabled,
                 us.is_calendar_enabled
             FROM services s

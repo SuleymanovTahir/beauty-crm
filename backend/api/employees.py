@@ -12,7 +12,7 @@ from db.employees import (
     get_employee_schedule, set_employee_schedule, get_available_employees,
     get_employee_busy_slots
 )
-from utils.utils import require_auth
+from utils.utils import require_auth, sanitize_url, map_image_path
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -35,7 +35,7 @@ async def list_employees(
                 "full_name": e[3],    # full_name
                 "position": e[9],     # position
                 "experience": e[13],  # experience
-                "photo": e[10],       # photo
+                "photo": map_image_path(sanitize_url(e[10])),  # photo
                 "bio": e[12],         # bio
                 "phone": e[4] if len(e) > 4 else None,  # email used as phone fallback
                 "email": e[4],        # email
@@ -99,8 +99,8 @@ async def get_my_employee_profile(
             "years_of_experience": row[9],
             "bio": row[10],
             "specialization": row[11],
-            "photo": row[12],
-            "photo_url": row[13]
+            "photo": map_image_path(sanitize_url(row[12])),
+            "photo_url": map_image_path(sanitize_url(row[13]))
         }
         
         return {
@@ -181,7 +181,7 @@ async def get_employee_detail(employee_id: int):
         "full_name": employee[1],
         "position": employee[2],
         "experience": employee[3],
-        "photo": employee[4],
+        "photo": map_image_path(sanitize_url(employee[4])),
         "bio": employee[5],
         "phone": employee[6],
         "email": employee[7],
@@ -392,7 +392,7 @@ async def get_available(
                 "id": e[0],
                 "full_name": e[1],
                 "position": e[2],
-                "photo": e[4]
+                "photo": map_image_path(sanitize_url(e[4]))
             } for e in employees
         ]
     }
@@ -444,7 +444,7 @@ async def get_employees_for_service(service_id: int):
                 "id": e[0],
                 "full_name": e[1],
                 "position": e[2],
-                "photo": e[4],
+                "photo": map_image_path(sanitize_url(e[4])),
                 "is_active": bool(e[9])
             } for e in employees
         ]

@@ -5,54 +5,61 @@
 import logging
 import sys
 from pathlib import Path
+from logging.handlers import RotatingFileHandler
+
+# Максимальный размер лога ~200 строк (примерно 20KB)
+MAX_LOG_BYTES = 20 * 1024  # 20KB
+MAX_BACKUP_COUNT = 1  # Хранить только 1 бэкап
 
 def setup_logger(name: str = "crm", log_file: str = "app.log") -> logging.Logger:
     """
     Настраивает и возвращает централизованный logger
-    
+
     Args:
         name: Имя логгера (по умолчанию "crm")
         log_file: Имя файла для логов
-        
+
     Returns:
         Настроенный logger
     """
     # Создаём директорию для логов если её нет
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)
-    
+
     # Создаём logger
     logger = logging.getLogger(name)
-    
+
     # Если уже настроен - возвращаем
     if logger.handlers:
         return logger
-    
+
     logger.setLevel(logging.INFO)
-    
+
     # Формат логов
     formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
-    
+
     # Handler для консоли
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(formatter)
-    
-    # Handler для файла
-    file_handler = logging.FileHandler(
-        log_dir / log_file, 
-        encoding='utf-8'
+
+    # Handler для файла с ротацией (максимум ~200 строк)
+    file_handler = RotatingFileHandler(
+        log_dir / log_file,
+        encoding='utf-8',
+        maxBytes=MAX_LOG_BYTES,
+        backupCount=MAX_BACKUP_COUNT
     )
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(formatter)
-    
+
     # Добавляем handlers
     logger.addHandler(console_handler)
     logger.addHandler(file_handler)
-    
+
     return logger
 
 # Создаём глобальный экземпляр логгера

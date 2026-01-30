@@ -33,8 +33,8 @@ import { cn } from '../ui/utils';
 interface Service {
     id: number;
     name: string;
-    name_ru: string;
-    name_ar: string;
+    name: string;
+    name: string;
     category: string;
     default_price?: number;
     default_duration?: number;
@@ -44,7 +44,7 @@ interface Service {
 interface AssignedService {
     id: number;
     name: string;
-    name_ru: string;
+    name: string;
     category: string;
     price?: number;
     price_min?: number;
@@ -188,7 +188,7 @@ export function EmployeeServices({ employeeId, onServicesChange }: EmployeeServi
                                             return (
                                                 <TableRow key={service.id} className="hover:bg-gray-50">
                                                     <TableCell className="font-medium whitespace-normal break-words">
-                                                        {service.name_ru || service.name}
+                                                        {service.name || service.name}
                                                     </TableCell>
 
                                                     <TableCell>

@@ -22,7 +22,7 @@ interface Employee {
     id: number;
     username: string;
     full_name: string;
-    full_name_ru?: string;
+    full_name?: string;
     email: string;
     role: string;
     position?: string;
@@ -195,7 +195,7 @@ export default function EmployeeDetail() {
                             />
                             <div className="flex-1 text-left">
                                 <p className="text-sm font-medium text-gray-900">
-                                    {(i18n.language === 'ru' && emp.full_name_ru) ? emp.full_name_ru : emp.full_name}
+                                    {(i18n.language === 'ru' && emp.full_name) ? emp.full_name : emp.full_name}
                                 </p>
                                 <p className="text-xs text-gray-500 uppercase">
                                     {(i18n.language === 'ru' && emp.position_ru) ? emp.position_ru : (emp.position || emp.role)}

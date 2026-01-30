@@ -11,8 +11,7 @@ import { api } from '../../services/api';
 interface EmployeeProfile {
   id: number;
   full_name: string;
-  name_ru?: string;
-  name_ar?: string;
+  name?: string;
   position: string;
   position_ru?: string;
   position_ar?: string;

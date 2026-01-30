@@ -111,8 +111,8 @@ export default function Broadcasts() {
       types.forEach((t: any) => {
         if (t.is_active) {
           formatted[t.key] = {
-            name: t.name_ru || t.name_en || t.key,
-            description: t.description_ru || t.description_en || ''
+            name: t.name || t.name || t.key,
+            description: t.description || t.description || ''
           };
         }
       });
@@ -1148,10 +1148,10 @@ const ManageSubscriptionTypesDialog = ({ onClose, roles }: { onClose: () => void
 
 
               <div className="crm-form-group mt-4">
-                <Label className="mb-3 block">{t('name_ru')}</Label>
+                <Label className="mb-3 block">{t('name')}</Label>
                 <Input
-                  value={editingType.name_ru || ''}
-                  onChange={e => setEditingType({ ...editingType, name_ru: e.target.value })}
+                  value={editingType.name || ''}
+                  onChange={e => setEditingType({ ...editingType, name: e.target.value })}
                   required
                 />
               </div>
@@ -1160,8 +1160,8 @@ const ManageSubscriptionTypesDialog = ({ onClose, roles }: { onClose: () => void
                 <Label className="mb-3 block">{t('desc_ru')}</Label>
                 <textarea
                   className="crm-textarea min-h-[100px]"
-                  value={editingType.description_ru || ''}
-                  onChange={e => setEditingType({ ...editingType, description_ru: e.target.value })}
+                  value={editingType.description || ''}
+                  onChange={e => setEditingType({ ...editingType, description: e.target.value })}
                   rows={2}
                 />
               </div>
@@ -1187,7 +1187,7 @@ const ManageSubscriptionTypesDialog = ({ onClose, roles }: { onClose: () => void
               <div className="flex justify-end mb-6">
                 <button
                   onClick={() => {
-                    setEditingType({ key: '', target_role: 'all', name_ru: '', description_ru: '', is_active: true });
+                    setEditingType({ key: '', target_role: 'all', name: '', description: '', is_active: true });
                     setIsNew(true);
                   }}
                   className="crm-btn-primary flex items-center gap-2"
@@ -1223,7 +1223,7 @@ const ManageSubscriptionTypesDialog = ({ onClose, roles }: { onClose: () => void
                                 String(t(`common:role_${type.target_role}`, type.target_role))}
                           </span>
                         </td>
-                        <td className="font-medium">{t(type.name_ru || type.key)}</td>
+                        <td className="font-medium">{t(type.name || type.key)}</td>
                         <td className="text-right">
                           <div className="flex gap-2 justify-end">
                             <button
@@ -1231,8 +1231,8 @@ const ManageSubscriptionTypesDialog = ({ onClose, roles }: { onClose: () => void
                               onClick={() => {
                                 setEditingType({
                                   ...type,
-                                  name_ru: t(type.name_ru || type.key),
-                                  description_ru: t(type.description_ru || `${type.key}_desc`),
+                                  name: t(type.name || type.key),
+                                  description: t(type.description || `${type.key}_desc`),
                                 });
                                 setIsNew(false);
                               }}

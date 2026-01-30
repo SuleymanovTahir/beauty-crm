@@ -19,9 +19,9 @@ import { useCurrency } from '../../hooks/useSalonSettings';
 interface SpecialPackage {
   id: number;
   name: string;
-  name_ru: string;
+  name: string;
   description: string;
-  description_ru: string;
+  description: string;
   original_price: number;
   special_price: number;
   currency: string;
@@ -87,9 +87,9 @@ export default function SpecialPackages() {
 
   const [formData, setFormData] = useState({
     name: '',
-    name_ru: '',
+    name: '',
     description: '',
-    description_ru: '',
+    description: '',
     original_price: 0,
     special_price: 0,
     currency: currency,
@@ -119,7 +119,7 @@ export default function SpecialPackages() {
   useEffect(() => {
     const filtered = packages.filter(pkg => {
       const matchesSearch = pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        pkg.name_ru.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         pkg.promo_code?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' ||
         (statusFilter === 'active' && pkg.is_active) ||
@@ -146,9 +146,9 @@ export default function SpecialPackages() {
     setEditingPackage(null);
     setFormData({
       name: '',
-      name_ru: '',
+      name: '',
       description: '',
-      description_ru: '',
+      description: '',
       original_price: 0,
       special_price: 0,
       currency: currency,
@@ -167,9 +167,9 @@ export default function SpecialPackages() {
     setEditingPackage(pkg);
     setFormData({
       name: pkg.name,
-      name_ru: pkg.name_ru,
+      name: pkg.name,
       description: pkg.description,
-      description_ru: pkg.description_ru,
+      description: pkg.description,
       original_price: pkg.original_price,
       special_price: pkg.special_price,
       currency: pkg.currency,
@@ -194,7 +194,7 @@ export default function SpecialPackages() {
 
   const handleSavePackage = async () => {
     try {
-      if (!formData.name || !formData.name_ru) {
+      if (!formData.name || !formData.name) {
         toast.error(t('specialpackages:fill_package_name'));
         return;
       }
@@ -208,9 +208,9 @@ export default function SpecialPackages() {
 
       const packageData = {
         name: formData.name,
-        name_ru: formData.name_ru,
+        name: formData.name,
         description: formData.description,
-        description_ru: formData.description_ru,
+        description: formData.description,
         original_price: formData.original_price,
         special_price: formData.special_price,
         currency: formData.currency,
@@ -388,7 +388,7 @@ export default function SpecialPackages() {
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-1">{pkg.name_ru}</h3>
+                    <h3 className="font-semibold text-gray-900 mb-1">{pkg.name}</h3>
                     <p className="text-sm text-gray-500">{pkg.name}</p>
                   </div>
                   <Badge className={pkg.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
@@ -421,7 +421,7 @@ export default function SpecialPackages() {
 
                 {/* Description */}
                 <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                  {pkg.description_ru || pkg.description}
+                  {pkg.description || pkg.description}
                 </p>
 
                 {/* Keywords */}
@@ -520,11 +520,11 @@ export default function SpecialPackages() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="nameRu">{t('specialpackages:name_ru')} *</Label>
+                    <Label htmlFor="nameRu">{t('specialpackages:name')} *</Label>
                     <Input
                       id="nameRu"
-                      value={formData.name_ru}
-                      onChange={(e) => setFormData({ ...formData, name_ru: e.target.value })}
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder={t('specialpackages:summer_special_package_ru')}
                     />
                   </div>
@@ -532,11 +532,11 @@ export default function SpecialPackages() {
 
                 {/* Descriptions */}
                 <div>
-                  <Label htmlFor="descriptionRu">{t('specialpackages:description_ru')}</Label>
+                  <Label htmlFor="descriptionRu">{t('specialpackages:description')}</Label>
                   <Textarea
                     id="descriptionRu"
-                    value={formData.description_ru}
-                    onChange={(e) => setFormData({ ...formData, description_ru: e.target.value })}
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder={t('specialpackages:includes_manicure_and_pedicure_at_special_price')}
                     rows={2}
                   />
