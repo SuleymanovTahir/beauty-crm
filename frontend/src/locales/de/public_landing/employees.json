@@ -1,0 +1,39 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Kasymova Gulcehre",
+      "position": "Nail & Waxing Master",
+      "bio": "Erfahrener Meister für Maniküre, Pediküre und Haarentfernung",
+      "photo": ""
+    },
+    {
+      "id": 2,
+      "name": "Peradilla Jennifer",
+      "position": "Universal Beauty Master",
+      "bio": "Meister für Nagelpflege und SPA-Behandlungen",
+      "photo": ""
+    },
+    {
+      "id": 3,
+      "name": "Amandurdyyeva Mestan",
+      "position": "Friseur und Permanent Makeup Artist",
+      "bio": "Spezialist für komplexe Färbung und Haarpflege",
+      "photo": ""
+    },
+    {
+      "id": 4,
+      "name": "Mohamed Sabri",
+      "position": "Friseur",
+      "bio": "Professioneller Friseur",
+      "photo": ""
+    },
+    {
+      "id": 5,
+      "name": "Kozhabay Lyazat",
+      "position": "Nail Master",
+      "bio": "Ein ordentlicher und aufmerksamer Manikürist",
+      "photo": ""
+    }
+  ]
+}

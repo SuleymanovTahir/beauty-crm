@@ -1,16 +1,12 @@
 {
   "items": [
     {
-      "answer": "Puedes apuntarte al trámite a través del formulario de nuestra web, llamándonos o escribiéndonos hasta fecha Instagram. Nos pondremos en contacto contigo para confirmar tu cita.",
-      "question": "Cómo inscribirse en el trámite"
+      "answer": "Puede registrarse para un trámite a través del formulario de nuestro sitio web, llamándonos o escribiéndonos hasta fecha Instagram. Nos pondremos en contacto contigo para confirmar tu cita.",
+      "question": "Cómo registrarse para un trámite"
     },
     {
-      "answer": "Aceptamos pago en efectivo y tarjetas (Visa, MasterCard, American Express). El pago se realiza después de la prestación del servicio.",
-      "question": "¿Qué métodos de pago aceptan?"
-    },
-    {
-      "answer": "Puedes concertar una cita a través de la web o WhatsApp.",
-      "question": "¿Cómo concertar una cita?"
+      "answer": "Aceptamos pago en efectivo y con tarjetas (Visa, MasterCard, American Express). El pago vence al momento del servicio.",
+      "question": "Qué métodos de pago aceptas"
     },
     {
       "answer": "Sí, puede cancelar o reprogramar una cita hasta 24 horas antes de la hora programada. Si cancela con menos de 24 horas de antelación, se podrá cobrar una penalidad del 50% del coste del servicio.",
@@ -21,16 +17,12 @@
       "question": "Qué materiales utiliza"
     },
     {
-      "answer": "Sí, todos nuestros másteres cuentan con certificados internacionales y realizan periódicamente cursos de formación avanzada.",
-      "question": "¿Tienen sus artesanos certificados?"
+      "answer": "Sí, todos nuestros maestros tienen certificados internacionales y toman regularmente cursos de capacitación avanzada.",
+      "question": "¿Sus maestros tienen certificados?"
     },
     {
       "answer": "Sí, algunos procedimientos requieren preparación. Proporcionamos recomendaciones detalladas al registrarse.",
-      "question": "¿Es necesaria preparación antes del procedimiento?"
-    },
-    {
-      "answer": "Sí, tenemos aparcamiento gratuito para clientes.",
-      "question": "¿Hay aparcamiento?"
+      "question": "Se requiere preparación antes del procedimiento"
     },
     {
       "answer": "Sí, cada procedimiento tiene sus propias contraindicaciones. Principal: embarazo, lactancia, procesos inflamatorios agudos, enfermedades de la sangre, oncología. Antes del procedimiento, se requiere consulta con un especialista.",
@@ -39,10 +31,6 @@
     {
       "answer": "Sí, garantizamos la calidad de todos nuestros servicios. Si no está satisfecho con el resultado, contáctenos dentro de los 7 días y encontraremos una solución.",
       "question": "¿Ofrecen garantía hasta fecha los servicios?"
-    },
-    {
-      "answer": "Usamos Luxio, Fedua y otras premium. marcas.",
-      "question": "¿Qué marcas usáis?"
     },
     {
       "answer": "Sí, tenemos un programa de fidelización acumulativo. Después de cada visita, recibe bonificaciones que puede utilizar para pagar visitas posteriores.",
@@ -77,8 +65,20 @@
       "question": "¿Realizan procedimientos con 4 manos?"
     },
     {
-      "answer": "Nuestro salón está ubicado en una ubicación conveniente con una hermosa vista y un ambiente acogedor. Encontrarás la dirección exacta en la sección de contactos.",
-      "question": "¿Dónde te encuentras?"
+      "answer": "Nuestro salón está ubicado en una ubicación conveniente con una hermosa vista y un ambiente acogedor. Encontrarás la dirección exacta en el apartado de contactos.",
+      "question": "¿Dónde se encuentra?"
+    },
+    {
+      "answer": "Puedes concertar una cita a través de la web o WhatsApp.",
+      "question": "¿Cómo concertar una cita?"
+    },
+    {
+      "answer": "Sí, tenemos aparcamiento gratuito para clientes.",
+      "question": "¿Hay aparcamiento?"
+    },
+    {
+      "answer": "Usamos Luxio, Fedua y otras premium. marcas.",
+      "question": "¿Qué marcas usáis?"
     }
   ]
 }

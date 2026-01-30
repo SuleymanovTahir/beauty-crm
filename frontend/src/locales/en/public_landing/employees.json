@@ -1,0 +1,39 @@
+{
+  "items": [
+    {
+      "bio": "Experienced nail technician. ",
+      "id": 1,
+      "name": "Kasymova Gulcehre",
+      "photo": "",
+      "position": "Nail & Waxing Master"
+    },
+    {
+      "bio": "Master all-rounder of the highest category. ",
+      "id": 2,
+      "name": "Peradilla Jennifer",
+      "photo": "",
+      "position": "Universal Beauty Master"
+    },
+    {
+      "bio": "Top stylist with international experience. ",
+      "id": 3,
+      "name": "Amandurdyyeva Mestan",
+      "photo": "",
+      "position": "Hair Stylist & Permanent Makeup Artist"
+    },
+    {
+      "bio": "A talented stylist who creates unique images. ",
+      "id": 4,
+      "name": "Mohamed Sabri",
+      "photo": "",
+      "position": "Hair Stylist"
+    },
+    {
+      "bio": "A neat and attentive master. ",
+      "id": 5,
+      "name": "Kozhabay Lyazat",
+      "photo": "",
+      "position": "Nail Master"
+    }
+  ]
+}

@@ -1,99 +1,51 @@
 {
   "items": [
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/banners/banner_main.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "Servicios de belleza profesionales.",
-      "title": "Belleza y elegancia"
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "Servicios de belleza profesionales",
+      "title": "Belleza y Elegancia"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/banners/banner_main.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "Profesional servicios de cosmética.",
-      "title": "Belleza y elegancia"
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "Para todos los servicios del salón",
+      "title": "Descuentos de hasta el 50%"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/salon/moroccan_bath.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "Para todos los servicios de salón",
-      "title": "Descuentos hasta el {{percent}}%"
+      "image": "/static/uploads/images/salon/moroccan_bath.webp",
+      "link": "",
+      "subtitle": "Para todos los servicios del salón",
+      "title": "Descuentos de hasta el {{percent}}%"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/salon/salon_main.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "Servicios de belleza profesionales de la más alta clase.",
-      "title": "Belleza y elegancia"
+      "image": "/static/uploads/images/salon/salon_main.webp",
+      "link": "",
+      "subtitle": "Servicios de belleza profesionales de primer nivel",
+      "title": "Belleza y Elegancia"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/simo.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "Cuidando tu estilo y tu salud",
-      "title": "servicio premium"
+      "image": "/static/uploads/images/employees/simo.webp",
+      "link": "",
+      "subtitle": "Cuida tu estilo y salud",
+      "title": "Servicio premium"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/jennifer.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "Experimenta una relajación completa y un ritual de limpieza.",
-      "title": "Baño marroquí"
+      "image": "/static/uploads/images/employees/jennifer.webp",
+      "link": "",
+      "subtitle": "Siente una relajación completa y un ritual de limpieza",
+      "title": "Baño Marroquí"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/mestan.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
+      "image": "/static/uploads/images/employees/mestan.webp",
+      "link": "",
       "subtitle": "Solo este mes",
       "title": "20% de descuento en tu primera visita"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/lyazzat.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "Prueba la innovación",
+      "image": "/static/uploads/images/employees/lyazzat.webp",
+      "link": "",
+      "subtitle": "Pruebe la innovación",
       "title": "Nuevo servicio: Smart Pedicure"
     }
   ]

@@ -18,84 +18,84 @@
   "haircutsStyling": "",
   "items": {
     "bangs_cut": {
-      "category": "बाल कटवाने",
+      "category": "बाल काटना",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "बैंग्स",
-      "price": 100
+      "name": "कटिंग बैंग्स",
+      "price": 100.0
     },
     "bikini_line": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "बिकनी लाइन",
-      "price": 100
+      "name": "बिकिनी लाइन",
+      "price": 100.0
     },
     "blowdry_long": {
-      "category": "हेयर_स्टाइलिंग",
+      "category": "हेयर स्टाइलिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "ब्रशिंग स्टाइलिंग (लंबा)",
-      "price": 280
+      "name": "ब्लो-ड्राई (लंबा)",
+      "price": 280.0
     },
     "blowdry_medium": {
-      "category": "हेयर_स्टाइलिंग",
+      "category": "हेयर स्टाइलिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "ब्रशिंग स्टाइलिंग (मध्यम)",
-      "price": 250
+      "name": "ब्लो-ड्राई (मध्यम)",
+      "price": 250.0
     },
     "blowdry_short": {
-      "category": "हेयर_स्टाइलिंग",
+      "category": "हेयर स्टाइलिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "ब्रशिंग स्टाइलिंग (छोटा)",
-      "price": 200
+      "name": "ब्लो-ड्राई (छोटा)",
+      "price": 200.0
     },
     "brow_coloring": {
-      "category": "भौहें",
+      "category": "ब्राउज",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "भौहें रंगना",
-      "price": 40
+      "name": "भौंहों का रंग",
+      "price": 40.0
     },
     "brow_correction": {
-      "category": "भौहें",
+      "category": "ब्राउज",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "भौहें आकार सुधार",
-      "price": 40
+      "name": "भौं सुधार",
+      "price": 40.0
     },
     "brow_lami": {
-      "category": "भौहें",
+      "category": "ब्राउज",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "भौहों का लेमिनेशन",
-      "price": 200
+      "name": "भौंह लेमिनेशन",
+      "price": 200.0
     },
     "change_classic_pedicure": {
       "category": "पेडीक्योर",
@@ -104,8 +104,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "नियमित नेल पॉलिश बदलना (पेडीक्योर)",
-      "price": 50
+      "name": "पॉलिश बदलना (पेडी)",
+      "price": 50.0
     },
     "change_gel_pedicure": {
       "category": "पेडीक्योर",
@@ -114,28 +114,28 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "जेल पॉलिश बदलना (पेडीक्योर)",
-      "price": 100
+      "name": "जेल पॉलिश (पेडी) बदलना",
+      "price": 100.0
     },
     "cheeks_wax": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "गाल",
-      "price": 40
+      "name": "गालों का वैक्सिंग",
+      "price": 40.0
     },
     "chin_wax": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "ठोड़ी",
-      "price": 30
+      "name": "ठोड़ी का बालों को हटाना",
+      "price": 30.0
     },
     "combo_lami": {
       "category": "कॉम्बो",
@@ -144,8 +144,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "कॉम्बो: पलकों + भौंहों का लेमिनेशन",
-      "price": 300
+      "name": "संयुक्त पलकें + लामी भौहें",
+      "price": 300.0
     },
     "combo_mani_pedi_gel": {
       "category": "कॉम्बो",
@@ -154,18 +154,18 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "कॉम्बो: मैनीक्योर + पेडीक्योर (जेल पॉलिश)",
-      "price": 350
+      "name": "कॉम्बो मणि+पेडी (जेल)",
+      "price": 350.0
     },
     "complex_color": {
-      "category": "हेयर_कलर",
+      "category": "बालों का रंग",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 1500,
-      "min_price": 1000,
-      "name": "कॉम्प्लेक्स (ओम्ब्रे/बालायेज/हाइलाइटिंग)",
-      "price": 1250
+      "max_price": 1500.0,
+      "min_price": 1000.0,
+      "name": "जटिल रंग (ओम्ब्रे/बैलेज)",
+      "price": 1250.0
     },
     "deep_facial_cleaning": {
       "category": "कॉस्मेटोलॉजी",
@@ -175,37 +175,37 @@
       "max_price": null,
       "min_price": null,
       "name": "चेहरे की गहरी सफाई",
-      "price": 400
+      "price": 400.0
     },
     "evening_hairstyle": {
-      "category": "हेयर_स्टाइलिंग",
+      "category": "हेयर स्टाइलिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 800,
-      "min_price": 450,
-      "name": "इवनिंग हेयरस्टाइल",
-      "price": 625
+      "max_price": 800.0,
+      "min_price": 450.0,
+      "name": "शाम का हेयरस्टाइल",
+      "price": 625.0
     },
     "express_hair_form": {
-      "category": "बाल कटवाने",
+      "category": "बाल काटना",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "एक्सप्रेस फॉर्म (बिना धोए)",
-      "price": 150
+      "price": 150.0
     },
     "eyeliner": {
-      "category": "स्थायी_मेकअप",
+      "category": "स्थायी मेकअप",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
       "name": "आईलाइनर",
-      "price": 800
+      "price": 800.0
     },
     "face_lift_massage": {
       "category": "कॉस्मेटोलॉजी",
@@ -214,8 +214,8 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "चेहरे की मालिश + मास्क",
-      "price": 250
+      "name": "उठाने वाली मालिश + मास्क",
+      "price": 250.0
     },
     "french_polish": {
       "category": "मैनीक्योर",
@@ -224,58 +224,58 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "फ्रेंच कोटिंग (फ्रेंच)",
-      "price": 190
+      "name": "फ़्रेंच वार्निश",
+      "price": 190.0
     },
     "full_arms": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "पूरी भुजाएं",
-      "price": 80
+      "name": "पूरे हाथ",
+      "price": 80.0
     },
     "full_bikini": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "गहरी बिकनी",
-      "price": 150
+      "name": "पूरी बिकिनी",
+      "price": 150.0
     },
     "full_body_wax": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "पूर्ण शरीर",
-      "price": 400
+      "name": "पूरे शरीर का वैक्सिंग",
+      "price": 400.0
     },
     "full_face_wax": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "पूरा चेहरा",
-      "price": 90
+      "name": "पूरे चेहरे का चित्रण",
+      "price": 90.0
     },
     "full_legs": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "पूरे पैर",
-      "price": 150
+      "price": 150.0
     },
     "gel_polish_only": {
       "category": "मैनीक्योर",
@@ -284,38 +284,38 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "कोटिंग जेल पॉलिश",
-      "price": 100
+      "name": "केवल जेल पॉलिश",
+      "price": 100.0
     },
     "hair_cut_full": {
-      "category": "बाल कटवाने",
+      "category": "बाल काटना",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "कट + वॉश + स्टाइलिंग",
-      "price": 350
+      "name": "काटना + धोना + स्टाइल करना",
+      "price": 350.0
     },
     "hair_cut_wash": {
-      "category": "बाल कटवाने",
+      "category": "बाल काटना",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "कट + वॉश",
-      "price": 200
+      "name": "काटना + धोना",
+      "price": 200.0
     },
     "hair_trim": {
-      "category": "बाल कटवाने",
+      "category": "बाल काटना",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "हेयरकट (केवल कट)",
-      "price": 150
+      "name": "केवल बाल काटना",
+      "price": 150.0
     },
     "hair_wash": {
       "category": "बालों की देखभाल",
@@ -324,28 +324,28 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "अपने बाल धोना",
-      "price": 70
+      "name": "बाल धोना",
+      "price": 70.0
     },
     "half_arms": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "हाथ कोहनी",
-      "price": 50
+      "name": "आधे हाथ",
+      "price": 50.0
     },
     "half_legs": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "पैर (पिंडली)",
-      "price": 80
+      "name": "आधे पैर (निचले)",
+      "price": 80.0
     },
     "japanese_manicure": {
       "category": "मैनीक्योर",
@@ -355,17 +355,17 @@
       "max_price": null,
       "min_price": null,
       "name": "जापानी मैनीक्योर",
-      "price": 150
+      "price": 150.0
     },
     "kids_cut": {
-      "category": "बाल कटवाने",
+      "category": "बाल काटना",
       "currency": "AED",
       "description": "",
       "duration": "40",
       "max_price": null,
       "min_price": null,
-      "name": "बच्चों के बाल कटवाना",
-      "price": 100
+      "name": "बच्चों का काटना",
+      "price": 100.0
     },
     "kim_style_effect": {
       "category": "पलकें",
@@ -375,7 +375,7 @@
       "max_price": null,
       "min_price": null,
       "name": "किम शैली प्रभाव / कर्व्स एल, एम",
-      "price": 30
+      "price": 30.0
     },
     "lash_lami": {
       "category": "पलकें",
@@ -384,8 +384,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "लैमिनेशन पलकें",
-      "price": 200
+      "name": "लैश लैमिनेशन",
+      "price": 200.0
     },
     "lashes_2d": {
       "category": "पलकें",
@@ -394,8 +394,8 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "एक्सटेंशन (2D वॉल्यूम)",
-      "price": 250
+      "name": "2D बरौनी एक्सटेंशन",
+      "price": 250.0
     },
     "lashes_3d": {
       "category": "पलकें",
@@ -404,8 +404,8 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "एक्सटेंशन (3D वॉल्यूम)",
-      "price": 300
+      "name": "3D बरौनी एक्सटेंशन",
+      "price": 300.0
     },
     "lashes_classic": {
       "category": "पलकें",
@@ -414,8 +414,8 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "एक्सटेंशन (क्लासिक)",
-      "price": 200
+      "name": "क्लासिक बरौनी एक्सटेंशन",
+      "price": 200.0
     },
     "lashes_mega": {
       "category": "पलकें",
@@ -424,18 +424,18 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "एक्सटेंशन (4-5D वॉल्यूम)",
-      "price": 350
+      "name": "बरौनी एक्सटेंशन 4-5D (मेगा)",
+      "price": 350.0
     },
     "lashliner": {
-      "category": "स्थायी_मेकअप",
+      "category": "स्थायी मेकअप",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "इंटरलैश तीर",
-      "price": 800
+      "name": "लैशलाइनर",
+      "price": 800.0
     },
     "manicure_combined": {
       "category": "मैनीक्योर",
@@ -444,8 +444,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "क्लासिक मैनीक्योर (कॉम्बी/डिवाइस)",
-      "price": 110
+      "name": "संयुक्त मैनीक्योर",
+      "price": 110.0
     },
     "manicure_gel_polish": {
       "category": "मैनीक्योर",
@@ -454,8 +454,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "क्लासिक मैनीक्योर + जेल पॉलिश",
-      "price": 160
+      "name": "संयुक्त मैनीक्योर + जेल",
+      "price": 160.0
     },
     "manicure_pil_classic": {
       "category": "मैनीक्योर",
@@ -464,8 +464,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "फ़ाइल मैनीक्योर + नियमित कोटिंग",
-      "price": 130
+      "name": "क्लासिक मैनीक्योर + पॉलिश",
+      "price": 130.0
     },
     "massage_anticellulite": {
       "category": "मालिश",
@@ -474,8 +474,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "एंटी-सेल्युलाईट मसाज (60 मिनट)",
-      "price": 300
+      "name": "एंटी-सेल्युलाईट मालिश (60 मिनट)",
+      "price": 300.0
     },
     "massage_body": {
       "category": "मालिश",
@@ -484,8 +484,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "शरीर की मालिश (60 मिनट)",
-      "price": 250
+      "name": "शारीरिक मालिश (60 मिनट)",
+      "price": 250.0
     },
     "massage_extremities": {
       "category": "मालिश",
@@ -494,8 +494,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "मालिश (पैर/पैर/हाथ) (60 मिनट)",
-      "price": 150
+      "name": "अंगों की मालिश (60 मिनट)",
+      "price": 150.0
     },
     "massage_head": {
       "category": "मालिश",
@@ -505,7 +505,7 @@
       "max_price": null,
       "min_price": null,
       "name": "सिर की मालिश (60 मिनट)",
-      "price": 100
+      "price": 100.0
     },
     "massage_sculptural": {
       "category": "मालिश",
@@ -514,8 +514,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "मूर्तिकला शरीर की मालिश",
-      "price": 370
+      "name": "मूर्तिकला शारीरिक मालिश",
+      "price": 370.0
     },
     "medical_facial": {
       "category": "कॉस्मेटोलॉजी",
@@ -524,18 +524,18 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "मेड। चेहरे की सफाई (समस्याग्रस्त त्वचा)",
-      "price": 450
+      "name": "चिकित्सीय चेहरे की देखभाल (समस्या) त्वचा)",
+      "price": 450.0
     },
     "moroccan_bath": {
-      "category": "spa",
+      "category": "एसपीए",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "मोरक्कन स्नान (आराम एसपीए का समय)",
-      "price": 250
+      "name": "मोरक्कन बाथ एसपीए",
+      "price": 250.0
     },
     "nail_correction": {
       "category": "मैनीक्योर",
@@ -545,7 +545,7 @@
       "max_price": null,
       "min_price": null,
       "name": "एक्सटेंशन का सुधार",
-      "price": 400
+      "price": 400.0
     },
     "nail_extensions": {
       "category": "मैनीक्योर",
@@ -555,7 +555,7 @@
       "max_price": null,
       "min_price": null,
       "name": "नेल एक्सटेंशन (जेल)",
-      "price": 400
+      "price": 400.0
     },
     "nail_shaping": {
       "category": "मैनीक्योर",
@@ -564,38 +564,38 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "शेपिंग नाखून",
-      "price": 45
+      "name": "नाखून आकार देना",
+      "price": 45.0
     },
     "one_tone_long": {
-      "category": "हेयर_कलर",
+      "category": "बालों का रंग",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 800,
-      "min_price": 550,
+      "max_price": 800.0,
+      "min_price": 550.0,
       "name": "एक टोन (लंबा)",
-      "price": 675
+      "price": 675.0
     },
     "one_tone_medium": {
-      "category": "हेयर_कलर",
+      "category": "बालों का रंग",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "वन टोन (मीडियम)",
-      "price": 400
+      "name": "एक टोन (मध्यम)",
+      "price": 400.0
     },
     "one_tone_short": {
-      "category": "हेयर_कलर",
+      "category": "बालों का रंग",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
       "name": "एक टोन (छोटा)",
-      "price": 350
+      "price": 350.0
     },
     "overlay_biogel": {
       "category": "मैनीक्योर",
@@ -604,8 +604,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "बायोगेल (ओवरले) से मजबूती",
-      "price": 50
+      "name": "बायोगेल लगाना",
+      "price": 50.0
     },
     "pedicure_gel": {
       "category": "पेडीक्योर",
@@ -614,8 +614,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "जेल पॉलिश कोटिंग के साथ पेडीक्योर",
-      "price": 190
+      "name": "पेडीक्योर + जेल पॉलिश",
+      "price": 190.0
     },
     "pedicure_smart": {
       "category": "पेडीक्योर",
@@ -624,8 +624,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "बेसिक पेडीक्योर (स्मार्ट-तकनीक)",
-      "price": 130
+      "name": "स्मार्ट पेडीक्योर बेसिक",
+      "price": 130.0
     },
     "pedicure_smart_polish": {
       "category": "पेडीक्योर",
@@ -634,48 +634,48 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "क्लासिक पेडीक्योर + नियमित पॉलिश (स्मार्ट)",
-      "price": 150
+      "name": "स्मार्ट पेडीक्योर + पॉलिश",
+      "price": 150.0
     },
     "peeling": {
       "category": "कॉस्मेटोलॉजी",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 400,
-      "min_price": 300,
+      "max_price": 400.0,
+      "min_price": 300.0,
       "name": "छीलना",
-      "price": 350
+      "price": 350.0
     },
     "permanent_brows": {
-      "category": "स्थायी_मेकअप",
+      "category": "स्थायी मेकअप",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "स्थायी भौंह मेकअप",
-      "price": 800
+      "name": "स्थायी भौहें",
+      "price": 800.0
     },
     "permanent_correction": {
-      "category": "स्थायी_मेकअप",
+      "category": "स्थायी मेकअप",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "स्थायी सुधार मेकअप",
-      "price": 800
+      "name": "स्थायी मेकअप सुधार",
+      "price": 800.0
     },
     "permanent_lips": {
-      "category": "स्थायी_मेकअप",
+      "category": "स्थायी मेकअप",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "स्थायी होंठ मेकअप",
-      "price": 800
+      "name": "स्थायी होंठ",
+      "price": 800.0
     },
     "polish_classic": {
       "category": "मैनीक्योर",
@@ -684,8 +684,8 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "नियमित वार्निश के साथ कोटिंग",
-      "price": 50
+      "name": "केवल क्लासिक वार्निश",
+      "price": 50.0
     },
     "remove_classic": {
       "category": "मैनीक्योर",
@@ -694,8 +694,8 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "नियमित पॉलिश हटाना",
-      "price": 20
+      "name": "क्लासिक पॉलिश हटाना",
+      "price": 20.0
     },
     "remove_extensions": {
       "category": "मैनीक्योर",
@@ -705,7 +705,7 @@
       "max_price": null,
       "min_price": null,
       "name": "एक्सटेंशन हटाना",
-      "price": 70
+      "price": 70.0
     },
     "remove_gel": {
       "category": "मैनीक्योर",
@@ -715,7 +715,7 @@
       "max_price": null,
       "min_price": null,
       "name": "जेल पॉलिश हटाना",
-      "price": 30
+      "price": 30.0
     },
     "remove_lashes": {
       "category": "पलकें",
@@ -724,8 +724,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "पलकों को हटाना",
-      "price": 50
+      "name": "पलकें हटाएं",
+      "price": 50.0
     },
     "repair_extension": {
       "category": "मैनीक्योर",
@@ -734,8 +734,8 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "1 नाखून (एक्सटेंशन) की मरम्मत",
-      "price": 40
+      "name": "1 एक्सटेंशन पुनर्स्थापित करना",
+      "price": 40.0
     },
     "repair_gel": {
       "category": "मैनीक्योर",
@@ -744,88 +744,88 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "1 नाखून (जेल पॉलिश) की मरम्मत",
-      "price": 20
+      "name": "1 जेल नाखून की मरम्मत करना",
+      "price": 20.0
     },
     "roots_color": {
-      "category": "हेयर_कलर",
+      "category": "बालों का रंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "रूट कलरिंग",
-      "price": 250
+      "name": "जड़ों का रंग",
+      "price": 250.0
     },
     "styling_long": {
-      "category": "हेयर_स्टाइलिंग",
+      "category": "हेयर स्टाइलिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "आयरन/वेव स्टाइलिंग (लंबा)",
-      "price": 300
+      "name": "स्टाइलिंग/वेव आयरन (लंबा)",
+      "price": 300.0
     },
     "styling_medium": {
-      "category": "हेयर_स्टाइलिंग",
+      "category": "हेयर स्टाइलिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "आयरन/वेव स्टाइलिंग (मध्यम)",
-      "price": 260
+      "name": "स्टाइलिंग/वेव आयरन (मध्यम)",
+      "price": 260.0
     },
     "styling_short": {
-      "category": "हेयर_स्टाइलिंग",
+      "category": "हेयर स्टाइलिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "आयरन/वेव स्टाइलिंग (छोटा)",
-      "price": 230
+      "name": "स्टाइलिंग/वेव आयरन (छोटा)",
+      "price": 230.0
     },
     "toning": {
-      "category": "हेयर_कलर",
+      "category": "बालों का रंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 350,
-      "min_price": 250,
+      "max_price": 350.0,
+      "min_price": 250.0,
       "name": "टोनिंग",
-      "price": 300
+      "price": 300.0
     },
     "total_blonde": {
-      "category": "हेयर_कलर",
+      "category": "बालों का रंग",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 1500,
-      "min_price": 1000,
+      "max_price": 1500.0,
+      "min_price": 1000.0,
       "name": "कुल गोरा",
-      "price": 1250
+      "price": 1250.0
     },
     "underarms": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "बगल",
-      "price": 50
+      "name": "अंडरआर्म के बालों को हटाना",
+      "price": 50.0
     },
     "upper_lip_wax": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "ऊपरी होंठ",
-      "price": 30
+      "name": "ऊपरी होंठ का वैक्सिंग",
+      "price": 30.0
     }
   },
   "manicurePedicure": "",

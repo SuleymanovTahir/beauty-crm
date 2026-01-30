@@ -1,0 +1,39 @@
+{
+  "items": [
+    {
+      "bio": "Técnica de manicure experiente. Manicure e pedicure ideais de qualquer complexidade.",
+      "id": 1,
+      "name": "Kasymova Gulcehre",
+      "photo": "",
+      "position": "Nail & Waxing Master"
+    },
+    {
+      "bio": "Mestre universal da mais alta categoria. Executa com maestria qualquer tipo de corte de cabelo e styling.",
+      "id": 2,
+      "name": "Peradilla Jennifer",
+      "photo": "",
+      "position": "Universal Beauty Master"
+    },
+    {
+      "bio": "Estilista de ponta com experiência internacional. Um especialista em técnicas complexas de coloração e restauração de cabelos.",
+      "id": 3,
+      "name": "Amandurdyyeva Mestan",
+      "photo": "",
+      "position": "Cabeleireiro e Maquiador Permanente"
+    },
+    {
+      "bio": "Um estilista talentoso que cria looks únicos. Especialista em cortes de cabelo masculino e feminino.",
+      "id": 4,
+      "name": "Mohamed Sabri",
+      "photo": "",
+      "position": "Cabeleireiro"
+    },
+    {
+      "bio": "Um mestre cuidadoso e atencioso. Especializada em manicure estética e design.",
+      "id": 5,
+      "name": "Kozhabay Lyazat",
+      "photo": "",
+      "position": "Nail Master"
+    }
+  ]
+}
