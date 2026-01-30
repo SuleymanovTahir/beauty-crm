@@ -28,52 +28,65 @@ def init_database():
         return
 
     def add_column_if_not_exists(table, column, definition):
-        """Add column using separate autocommit connection to avoid transaction issues"""
-        migration_conn = None
+        """Add column if it doesn't exist - uses main cursor to see uncommitted tables"""
         try:
-            # Use separate connection with autocommit for DDL
-            migration_conn = get_db_connection()
-            migration_conn._conn.autocommit = True
-            mc = migration_conn.cursor()
-            # Check if table exists first
-            mc.execute("""
+            # Use main cursor (c) to see tables created in current transaction
+            # Check if column already exists
+            c.execute("""
+                SELECT EXISTS (
+                    SELECT FROM information_schema.columns
+                    WHERE table_name = %s AND column_name = %s
+                )
+            """, (table, column))
+            if c.fetchone()[0]:
+                return  # Column already exists, skip
+
+            # Check if table exists
+            c.execute("""
                 SELECT EXISTS (
                     SELECT FROM information_schema.tables
                     WHERE table_name = %s
                 )
             """, (table,))
-            if not mc.fetchone()[0]:
+            if not c.fetchone()[0]:
                 return  # Table doesn't exist yet, skip
-            mc.execute(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {definition}")
+
+            # Add the column
+            c.execute(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {definition}")
         except Exception as e:
             log_error(f"Ошибка при добавлении колонки {column} в {table}: {e}", "db")
-        finally:
-            if migration_conn:
-                migration_conn.close()
 
     def ensure_fk_cascade(table, column, ref_table, ref_column):
-        """Гарантирует, что внешний ключ имеет ON DELETE CASCADE (uses separate connection)"""
-        migration_conn = None
+        """Гарантирует, что внешний ключ имеет ON DELETE CASCADE"""
         try:
-            migration_conn = get_db_connection()
-            migration_conn._conn.autocommit = True
-            mc = migration_conn.cursor()
+            # Check if tables exist first
+            c.execute("""
+                SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = %s)
+            """, (table,))
+            if not c.fetchone()[0]:
+                return
+            c.execute("""
+                SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = %s)
+            """, (ref_table,))
+            if not c.fetchone()[0]:
+                return
+
             # Ищем имя существующего ограничения
-            mc.execute(f"""
+            c.execute(f"""
                 SELECT conname
                 FROM pg_constraint
                 WHERE conrelid = '{table}'::regclass
                 AND confrelid = '{ref_table}'::regclass
                 AND contype = 'f'
             """)
-            constraints = mc.fetchall()
+            constraints = c.fetchall()
             for con in constraints:
                 con_name = con[0]
-                mc.execute(f"ALTER TABLE {table} DROP CONSTRAINT {con_name}")
+                c.execute(f"ALTER TABLE {table} DROP CONSTRAINT {con_name}")
 
             # Создаем новое со стандартным именем
             new_con_name = f"{table}_{column}_fkey"
-            mc.execute(f"""
+            c.execute(f"""
                 ALTER TABLE {table}
                 ADD CONSTRAINT {new_con_name}
                 FOREIGN KEY ({column}) REFERENCES {ref_table}({ref_column}) ON DELETE CASCADE
@@ -81,9 +94,6 @@ def init_database():
         except Exception as e:
             # Silently ignore FK cascade errors - not critical
             pass
-        finally:
-            if migration_conn:
-                migration_conn.close()
 
     log_info("🔌 Инициализация единой схемы базы данных...", "db")
     
@@ -426,6 +436,9 @@ def init_database():
         add_column_if_not_exists('bookings', 'source', "TEXT DEFAULT 'manual'")
         add_column_if_not_exists('bookings', 'phone', 'TEXT')
         add_column_if_not_exists('bookings', 'name', 'TEXT')
+        add_column_if_not_exists('bookings', 'feedback_requested', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('bookings', 'reminder_sent_24h', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('bookings', 'reminder_sent_2h', 'BOOLEAN DEFAULT FALSE')
 
         # Tasks and Project Management
         c.execute('''CREATE TABLE IF NOT EXISTS tasks (
@@ -706,6 +719,9 @@ def init_database():
             display_order INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        # Migrations for public_reviews (add missing columns)
+        add_column_if_not_exists('public_reviews', 'avatar_url', 'TEXT')
+        add_column_if_not_exists('public_reviews', 'author_photo', 'TEXT')
 
         # Challenges and Gamification
         c.execute('''CREATE TABLE IF NOT EXISTS active_challenges (
@@ -1724,7 +1740,10 @@ def init_database():
         log_info("✅ Unified schema initialized successfully", "db")
         
     except Exception as e:
-        conn.rollback()
+        try:
+            conn.rollback()
+        except:
+            pass  # Connection may already be closed
         log_error(f"❌ Failed to initialize schema: {e}", "db")
         raise
     finally:
@@ -1733,7 +1752,10 @@ def init_database():
             c.execute("SELECT pg_advisory_unlock(12345)")
         except:
             pass
-        conn.close()
+        try:
+            conn.close()
+        except:
+            pass
 
 if __name__ == "__main__":
     init_database()
