@@ -36,7 +36,11 @@ export function Hero({ initialBanner, salonInfo }: HeroProps) {
   const getTranslatedText = (banner: any, field: 'title' | 'subtitle'): string => {
     if (!banner) return '';
     const translation = t(`dynamic:public_banners.${banner.id}.${field}`, {
-      defaultValue: banner[field] || ''
+      defaultValue: banner[field] || '',
+      // Pass interpolation variables for placeholders
+      percent: banner.percent || 50,
+      max: banner.max || 5,
+      currency: 'AED'
     });
     return typeof translation === 'string' ? translation : (banner[field] || '');
   };

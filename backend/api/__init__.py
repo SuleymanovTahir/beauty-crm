@@ -14,6 +14,7 @@ from .chat import router as chat_router
 from .roles import router as roles_router
 from .uploads import router as uploads_router
 from .employees import router as employees_router
+from .employee_services import router as employee_services_router
 from api.diagnostics import router as diagnostics_router
 from .client_auth import router as client_auth_router
 from .templates import router as templates_router
@@ -36,6 +37,7 @@ router.include_router(chat_router)
 router.include_router(roles_router)
 router.include_router(uploads_router)
 router.include_router(employees_router)
+router.include_router(employee_services_router)
 router.include_router(diagnostics_router)
 router.include_router(salary_router)
 router.include_router(client_auth_router)
