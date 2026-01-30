@@ -439,6 +439,8 @@ def init_database():
         add_column_if_not_exists('bookings', 'feedback_requested', 'BOOLEAN DEFAULT FALSE')
         add_column_if_not_exists('bookings', 'reminder_sent_24h', 'BOOLEAN DEFAULT FALSE')
         add_column_if_not_exists('bookings', 'reminder_sent_2h', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('bookings', 'special_package_id', 'INTEGER')
+        add_column_if_not_exists('bookings', 'user_id', 'INTEGER')
 
         # Tasks and Project Management
         c.execute('''CREATE TABLE IF NOT EXISTS tasks (
