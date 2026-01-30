@@ -58,6 +58,14 @@ def run_fix():
         if c.rowcount > 0:
             log_info(f"   ✅ Cleared {c.rowcount} missing employee photos (upload via CRM)", "maintenance")
 
+        # 4. Ensure non-service-providers are not shown on public site
+        c.execute("""
+            UPDATE users SET is_public_visible = FALSE
+            WHERE is_service_provider = FALSE AND is_public_visible = TRUE
+        """)
+        if c.rowcount > 0:
+            log_info(f"   ✅ Fixed {c.rowcount} non-providers visibility", "maintenance")
+
         # NOTE: Public content (FAQ, Reviews, Banners) is now managed via CRM admin panel
         # DO NOT auto-restore from locales - CRM is the source of truth
         log_info("📦 Skipping public content restore (CRM is source of truth)", "maintenance")
