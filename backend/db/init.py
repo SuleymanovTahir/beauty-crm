@@ -202,11 +202,13 @@ def init_database():
             entity_id TEXT NOT NULL,
             data JSONB,
             reason TEXT,
+            deleted_by INTEGER REFERENCES users(id),
             can_restore BOOLEAN DEFAULT TRUE,
             restored_at TIMESTAMP,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
-        
+        add_column_if_not_exists('deleted_items', 'deleted_by', 'INTEGER REFERENCES users(id)')
+
         # --- END BASE COLUMNS (MOVED TO END) ---
         
         # Schema initialization for salon_settings
@@ -262,7 +264,7 @@ def init_database():
             bio TEXT, experience TEXT, years_of_experience INTEGER,
             specialization TEXT,
             base_salary REAL DEFAULT 0, commission_rate REAL DEFAULT 0,
-            telegram_id TEXT, telegram_chat_id TEXT, instagram_username TEXT,
+            telegram_id TEXT, telegram_chat_id TEXT, telegram_username TEXT, instagram_username TEXT,
             is_active BOOLEAN DEFAULT TRUE,
             is_service_provider BOOLEAN DEFAULT FALSE,
             is_public_visible BOOLEAN DEFAULT TRUE,
@@ -286,6 +288,7 @@ def init_database():
         add_column_if_not_exists('users', 'verification_code_expires', 'TIMESTAMP')
         add_column_if_not_exists('users', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
         add_column_if_not_exists('users', 'phone', 'TEXT')
+        add_column_if_not_exists('users', 'telegram_username', 'TEXT')
 
         # Registration Audit Log
         c.execute('''CREATE TABLE IF NOT EXISTS registration_audit (
