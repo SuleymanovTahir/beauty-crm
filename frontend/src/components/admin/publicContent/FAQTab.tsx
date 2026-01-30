@@ -10,32 +10,21 @@ import { Plus, Edit2, Trash2, HelpCircle } from 'lucide-react';
 
 interface FAQ {
     id: number;
-    question_ru: string;
-    question_en?: string;
-    question_ar?: string;
-    answer_ru: string;
-    answer_en?: string;
-    answer_ar?: string;
+    question: string;
+    answer: string;
     category: string;
     display_order: number;
 }
 
 export default function FAQTab() {
-    const { t, i18n } = useTranslation(['admin/publiccontent', 'common']);
-    const currentLang = i18n.language?.split('-')[0] || 'en';
-
-    // Helper to get localized text with fallback to Russian
-    const getLocalizedText = (item: any, field: string): string => {
-        const langField = `${field}_${currentLang}`;
-        return item[langField] || item[`${field}_en`] || item[`${field}_ru`] || '';
-    };
+    const { t } = useTranslation(['admin/publiccontent', 'common']);
     const [faqs, setFaqs] = useState<FAQ[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingFAQ, setEditingFAQ] = useState<FAQ | null>(null);
     const [formData, setFormData] = useState({
-        question_ru: '',
-        answer_ru: '',
+        question: '',
+        answer: '',
         category: 'general'
     });
 
@@ -67,7 +56,7 @@ export default function FAQTab() {
 
             setShowModal(false);
             setEditingFAQ(null);
-            setFormData({ question_ru: '', answer_ru: '', category: 'general' });
+            setFormData({ question: '', answer: '', category: 'general' });
             loadFAQs();
         } catch (error) {
             console.error('Error saving FAQ:', error);
@@ -78,8 +67,8 @@ export default function FAQTab() {
     const handleEdit = (faq: FAQ) => {
         setEditingFAQ(faq);
         setFormData({
-            question_ru: faq.question_ru,
-            answer_ru: faq.answer_ru,
+            question: faq.question || '',
+            answer: faq.answer || '',
             category: faq.category
         });
         setShowModal(true);
@@ -105,7 +94,7 @@ export default function FAQTab() {
                 </div>
                 <Button onClick={() => {
                     setEditingFAQ(null);
-                    setFormData({ question_ru: '', answer_ru: '', category: 'general' });
+                    setFormData({ question: '', answer: '', category: 'general' });
                     setShowModal(true);
                 }}>
                     <Plus className="w-4 h-4 mr-2" />
@@ -123,23 +112,12 @@ export default function FAQTab() {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
                                         <HelpCircle className="w-4 h-4 text-pink-500" />
-                                        <h3 className="font-semibold">{getLocalizedText(faq, 'question')}</h3>
+                                        <h3 className="font-semibold">{faq.question}</h3>
                                         <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded capitalize">
                                             {faq.category}
                                         </span>
                                     </div>
-                                    <p className="text-gray-700 mb-2">{getLocalizedText(faq, 'answer')}</p>
-                                    {(faq.question_en || faq.answer_en) && (
-                                        <details className="text-sm text-gray-500">
-                                            <summary className="cursor-pointer">{t('translations')}</summary>
-                                            <div className="mt-2 space-y-1">
-                                                <p><strong>EN Q:</strong> {faq.question_en}</p>
-                                                <p><strong>EN A:</strong> {faq.answer_en}</p>
-                                                {faq.question_ar && <p><strong>AR Q:</strong> {faq.question_ar}</p>}
-                                                {faq.answer_ar && <p><strong>AR A:</strong> {faq.answer_ar}</p>}
-                                            </div>
-                                        </details>
-                                    )}
+                                    <p className="text-gray-700 mb-2">{faq.answer}</p>
                                 </div>
                                 <div className="flex gap-2 ml-4">
                                     <Button
@@ -173,8 +151,8 @@ export default function FAQTab() {
                             <div>
                                 <label className="block text-sm font-medium mb-1">{t('question')}</label>
                                 <Input
-                                    value={formData.question_ru}
-                                    onChange={(e) => setFormData({ ...formData, question_ru: e.target.value })}
+                                    value={formData.question}
+                                    onChange={(e) => setFormData({ ...formData, question: e.target.value })}
                                     required
                                     className="px-3"
                                 />
@@ -183,8 +161,8 @@ export default function FAQTab() {
                             <div>
                                 <label className="block text-sm font-medium mb-1">{t('answer')}</label>
                                 <Textarea
-                                    value={formData.answer_ru}
-                                    onChange={(e) => setFormData({ ...formData, answer_ru: e.target.value })}
+                                    value={formData.answer}
+                                    onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
                                     rows={4}
                                     required
                                 />

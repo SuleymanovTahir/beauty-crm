@@ -15,8 +15,8 @@ def fix_pipeline_stages():
     c = conn.cursor()
     
     try:
-        # 1. Get default stage
-        c.execute("SELECT id, name FROM pipeline_stages WHERE key = 'new' OR order_index = 0 ORDER BY order_index ASC LIMIT 1")
+        # 1. Get default stage from workflow_stages
+        c.execute("SELECT id, name FROM workflow_stages WHERE entity_type = 'pipeline' AND (LOWER(name) = 'новый' OR LOWER(name) = 'new' OR sort_order = 0) ORDER BY sort_order ASC LIMIT 1")
         stage = c.fetchone()
         
         if not stage:
