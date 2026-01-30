@@ -1369,11 +1369,11 @@ export default function Telephony() {
                                                 {allServices.map((service) => (
                                                     <CommandItem
                                                         key={service.id}
-                                                        value={service.name_ru || service.name}
+                                                        value={service.name}
                                                         onSelect={() => {
                                                             setFormData({
                                                                 ...formData,
-                                                                manual_service_name: service.name_ru || service.name
+                                                                manual_service_name: service.name
                                                             });
                                                             setServiceOpen(false);
                                                         }}
@@ -1381,10 +1381,10 @@ export default function Telephony() {
                                                         <Check
                                                             className={cn(
                                                                 "mr-2 h-4 w-4",
-                                                                formData.manual_service_name === (service.name_ru || service.name) ? "opacity-100" : "opacity-0"
+                                                                formData.manual_service_name === (service.name) ? "opacity-100" : "opacity-0"
                                                             )}
                                                         />
-                                                        {service.name_ru || service.name}
+                                                        {service.name}
                                                     </CommandItem>
                                                 ))}
                                             </CommandGroup>
@@ -1642,11 +1642,11 @@ export default function Telephony() {
                                                 {allServices.map((service) => (
                                                     <CommandItem
                                                         key={service.id}
-                                                        value={service.name_ru || service.name}
+                                                        value={service.name}
                                                         onSelect={() => {
                                                             setFormData({
                                                                 ...formData,
-                                                                manual_service_name: service.name_ru || service.name
+                                                                manual_service_name: service.name
                                                             });
                                                             setServiceOpen(false);
                                                         }}
@@ -1654,10 +1654,10 @@ export default function Telephony() {
                                                         <Check
                                                             className={cn(
                                                                 "mr-2 h-4 w-4",
-                                                                formData.manual_service_name === (service.name_ru || service.name) ? "opacity-100" : "opacity-0"
+                                                                formData.manual_service_name === (service.name) ? "opacity-100" : "opacity-0"
                                                             )}
                                                         />
-                                                        {service.name_ru || service.name}
+                                                        {service.name}
                                                     </CommandItem>
                                                 ))}
                                             </CommandGroup>

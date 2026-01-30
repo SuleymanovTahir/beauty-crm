@@ -479,7 +479,7 @@ export default function Bookings() {
         instagram_id: selectedClient.instagram_id,
         name: selectedClient.display_name,
         phone: addForm.phone || selectedClient.phone || '',
-        service: selectedService.name || selectedService.name_ru, // Store base name
+        service: selectedService.name, // Store base name
         date: addForm.date,
         time: addForm.time,
         revenue: addForm.revenue || selectedService.price,
@@ -525,7 +525,7 @@ export default function Bookings() {
   const handleEditBooking = (booking: any) => {
     // Находим клиента и сервис
     const client = clients.find(c => c.instagram_id === booking.client_id);
-    const service = services.find(s => s.name_ru === booking.service || s.name === booking.service);
+    const service = services.find(s => s.name === booking.service || s.name === booking.service);
 
     // Устанавливаем состояние редактирования
     setEditingBooking(booking);
@@ -567,7 +567,7 @@ export default function Bookings() {
   );
 
   const filteredServices = services.filter((s: any) =>
-    (s.name_ru || '').toLowerCase().includes(serviceSearch.toLowerCase()) ||
+    (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase()) ||
     (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase())
   );
 
@@ -1088,9 +1088,9 @@ export default function Bookings() {
                       <td className="bookings-td">
                         {(() => {
                           const serviceName = booking.service_name || '-';
-                          const service = services.find(s => s.name === serviceName || s.service_key === serviceName || s.name_ru === serviceName);
+                          const service = services.find(s => s.name === serviceName || s.service_key === serviceName || s.name === serviceName);
                           if (service) {
-                            return (i18n.language.startsWith('ru') && service.name_ru) ? service.name_ru : service.name;
+                            return (i18n.language.startsWith('ru') && service.name) ? service.name : service.name;
                           }
                           const translated = t(`admin/services:${serviceName}`, '');
                           if (translated && translated !== serviceName) return translated;
@@ -1108,9 +1108,9 @@ export default function Bookings() {
                           const m = masters.find(m =>
                             (m.username && booking.master && m.username.toLowerCase() === booking.master.toLowerCase()) ||
                             (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase()) ||
-                            (m.full_name_ru && booking.master && m.full_name_ru.toLowerCase() === booking.master.toLowerCase())
+                            (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase())
                           );
-                          const name = (i18n.language.startsWith('ru') && m?.full_name_ru) ? m.full_name_ru : (m?.full_name || booking.master || '-');
+                          const name = m?.full_name || booking.master || '-';
                           return (
                             <div className="flex flex-col">
                               <span className="font-medium text-gray-900">{name}</span>
@@ -1133,7 +1133,7 @@ export default function Bookings() {
                           if (booking.revenue) {
                             return `${booking.revenue} ${currency}`;
                           }
-                          const service = services.find(s => s.name === booking.service || s.name_ru === booking.service);
+                          const service = services.find(s => s.name === booking.service || s.name === booking.service);
                           return service?.price ? `${service.price} ${currency}` : '-';
                         })()}
                       </td>
@@ -1462,7 +1462,7 @@ export default function Bookings() {
                   />
                   {selectedService && (
                     <div className="selected-item-pill">
-                      <span>{selectedService.name_ru} ({selectedService.price} {t('bookings:currency')})</span>
+                      <span>{selectedService.name} ({selectedService.price} {t('bookings:currency')})</span>
                       <button className="modal-close" onClick={() => { setSelectedService(null); setServiceSearch(''); }}>×</button>
                     </div>
                   )}
@@ -1480,7 +1480,7 @@ export default function Bookings() {
                             }}
                             className="search-dropdown-item"
                           >
-                            {s.name_ru} - {s.price} {t('bookings:currency')}
+                            {s.name} - {s.price} {t('bookings:currency')}
                           </div>
                         ))
                       ) : (
@@ -1549,7 +1549,7 @@ export default function Bookings() {
                   >
                     <option value="">{t('bookings:select_master')}</option>
                     {filteredMasters.map((m: any) => {
-                      const displayName = (i18n.language === 'ru' && m.full_name_ru) ? m.full_name_ru : (m.full_name || m.username);
+                      const displayName = (i18n.language === 'ru' && m.full_name) ? m.full_name : (m.full_name || m.username);
                       return (
                         <option key={m.id} value={m.full_name || m.username}>
                           {displayName}

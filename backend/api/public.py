@@ -20,6 +20,29 @@ def _add_v(url: str) -> str:
     sep = '&' if '?' in url else '?'
     return f"{url}{sep}v={ts}"
 
+def _map_image_path(url: str) -> str:
+    """Преобразовать старые пути к изображениям на новые из frontend папки"""
+    if not url:
+        return url
+
+    # Маппинг старых путей на новые (frontend/public_landing/styles/img/)
+    path_mappings = {
+        '/static/images/salon/': '/landing-images/Фото салона/',
+        '/static/uploads/images/salon/': '/landing-images/Фото салона/',
+        '/static/images/portfolio/': '/landing-images/Портфолио/',
+        '/static/uploads/images/portfolio/': '/landing-images/Портфолио/',
+        '/static/images/banners/': '/landing-images/Баннер/',
+        '/static/uploads/images/banners/': '/landing-images/Баннер/',
+        '/static/uploads/images/services/': '/landing-images/Услуги/',
+        '/static/uploads/images/faces/': '/landing-images/Красивые лица/',
+    }
+
+    for old_path, new_path in path_mappings.items():
+        if url.startswith(old_path):
+            return url.replace(old_path, new_path, 1)
+
+    return url
+
 import re
 
 def _get_google_maps_embed_url(address: str, raw_url: str = None) -> str:
@@ -255,7 +278,9 @@ def get_public_employees(
             else:
                 exp_text = row_dict.get("experience") or ""
 
-            photo_url = sanitize_url(row_dict.get("photo")) or "/static/avatars/default_female.webp"
+            photo_url = sanitize_url(row_dict.get("photo")) or "/landing-images/Сотрудники/default_female.webp"
+            # Map old paths to new frontend paths
+            photo_url = _map_image_path(photo_url)
             final_photo = _add_v(photo_url)
 
             # Transliterate name based on language
@@ -409,10 +434,12 @@ def get_public_gallery(category: Optional[str] = None, language: str = "ru"):
     # Map for frontend compatibility
     results = []
     for img in images:
+        raw_url = sanitize_url(img.get("image_url"))
+        mapped_url = _map_image_path(raw_url)
         results.append({
             "id": img.get("id"),
             "category": img.get("category"),
-            "image_path": _add_v(sanitize_url(img.get("image_url"))),
+            "image_path": _add_v(mapped_url),
             "title": img.get("title") or "",
             "description": img.get("description") or ""
         })
@@ -477,6 +504,7 @@ def get_initial_load(language: str = "ru"):
     banners_data = get_public_banners(language=lang_key)
     banners = banners_data.get("banners", [])
     for b in banners:
+        b['image_url'] = _map_image_path(b['image_url'])
         b['image_url'] = _add_v(b['image_url'])
     
     # Services

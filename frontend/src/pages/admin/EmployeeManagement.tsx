@@ -13,9 +13,7 @@ import { usePermissions } from '../../utils/permissions';
 interface Employee {
     id: number;
     full_name: string;
-    full_name_ru?: string;
     position?: string;
-    position_ru?: string;
     photo?: string;
     gender?: string;
     is_service_provider: boolean;
@@ -199,7 +197,7 @@ export default function EmployeeManagement() {
                                         />
                                         <div className="flex-1 min-w-0">
                                             <p className={`text-sm font-semibold truncate ${id === String(employee.id) ? 'text-blue-900' : 'text-gray-900'}`}>
-                                                {(i18n.language === 'ru' && employee.full_name_ru) ? employee.full_name_ru : employee.full_name}
+                                                {employee.full_name}
                                             </p>
                                             <p className="text-[10px] text-gray-500 truncate uppercase tracking-wider font-bold opacity-70">
                                                 {(i18n.language === 'ru' && employee.position_ru) ? employee.position_ru : (employee.position || t('employee'))}

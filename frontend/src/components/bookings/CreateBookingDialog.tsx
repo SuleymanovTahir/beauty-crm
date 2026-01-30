@@ -161,7 +161,7 @@ export function CreateBookingDialog({
                 instagram_id: selectedClient.instagram_id,
                 name: selectedClient.display_name || selectedClient.name || selectedClient.username,
                 phone: addForm.phone || selectedClient.phone || '',
-                service: selectedService.name || selectedService.name_ru,
+                service: selectedService.name,
                 date: addForm.date,
                 time: addForm.time,
                 revenue: addForm.revenue || selectedService.price,
@@ -195,7 +195,7 @@ export function CreateBookingDialog({
     };
 
     const filteredServices = services.filter((s: any) =>
-        (s.name_ru || '').toLowerCase().includes(serviceSearch.toLowerCase()) ||
+        (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase()) ||
         (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase())
     );
 
@@ -269,7 +269,7 @@ export function CreateBookingDialog({
                         {selectedService ? (
                             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
                                 <div>
-                                    <div className="font-medium text-gray-900">{selectedService.name_ru || selectedService.name}</div>
+                                    <div className="font-medium text-gray-900">{selectedService.name}</div>
                                     <div className="text-xs text-green-600 font-medium">{selectedService.price} {t('bookings:currency')}</div>
                                 </div>
                                 <button onClick={() => { setSelectedService(null); setFilteredMasters(masters); }} className="text-gray-400 hover:text-red-500">
@@ -299,7 +299,7 @@ export function CreateBookingDialog({
                                                     setAddForm(prev => ({ ...prev, revenue: s.price }));
                                                 }}
                                             >
-                                                <div className="font-medium text-sm text-gray-900">{s.name_ru || s.name}</div>
+                                                <div className="font-medium text-sm text-gray-900">{s.name}</div>
                                                 <div className="text-xs text-gray-500">{s.price} {t('bookings:currency')}</div>
                                             </div>
                                         )) : (
@@ -359,7 +359,7 @@ export function CreateBookingDialog({
                             <option value="">{t('common:any_master')}</option>
                             {filteredMasters.map(m => (
                                 <option key={m.id} value={m.full_name || m.username}>
-                                    {(i18n.language === 'ru' && m.full_name_ru) ? m.full_name_ru : (m.full_name || m.username)}
+                                    {m.full_name || m.username}
                                 </option>
                             ))}
                         </select>

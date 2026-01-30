@@ -6,7 +6,7 @@ import { Button } from '../ui/button';
 
 interface Service {
   id: number;
-  name_ru: string;
+  name: string;
   category: string;
 }
 
@@ -68,7 +68,7 @@ export function ServiceSelector({
                   checked={selectedServices.includes(service.id)}
                   onCheckedChange={() => handleToggle(service.id)}
                 />
-                <span className="text-sm text-gray-700">{service.name_ru}</span>
+                <span className="text-sm text-gray-700">{service.name}</span>
               </label>
             ))}
           </div>

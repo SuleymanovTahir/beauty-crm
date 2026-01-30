@@ -122,19 +122,9 @@ export default function EmployeeDashboard() {
 
   const getServiceName = (originalName: string) => {
     if (!originalName) return '';
-    // Try to find exact match by name or English name
-    const service = services.find(s =>
-      s.name === originalName ||
-      s.name_en === originalName ||
-      s.name_ru === originalName
-    );
-
-    if (service) {
-      // Return localized name if available, otherwise default name
-      // Assuming current language is Russian (based on dashboard usage)
-      return service.name_ru || service.name;
-    }
-    return originalName;
+    // Try to find exact match by name
+    const service = services.find(s => s.name === originalName);
+    return service ? service.name : originalName;
   };
 
   if (loading) {

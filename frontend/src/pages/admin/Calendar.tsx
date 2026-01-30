@@ -55,7 +55,6 @@ interface Service {
   id: number;
   key: string;
   name: string;
-  name_ru: string;
   price: number;
   currency: string;
   category: string;
@@ -321,7 +320,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const openEditModal = (booking: Booking) => {
     const bookingDate = new Date(booking.datetime);
     const client = clients.find(c => c.instagram_id === booking.client_id) || null;
-    const service = services.find(s => s.name_ru === booking.service) || null;
+    const service = services.find(s => s.name === booking.service) || null;
 
     setSelectedClient(client);
     setSelectedServiceItem(service);
@@ -365,7 +364,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
           instagram_id: selectedClient.instagram_id,
           name: selectedClient.display_name,
           phone: addForm.phone || selectedClient.phone || '',
-          service: selectedServiceItem.name_ru,
+          service: selectedServiceItem.name,
           date: addForm.date,
           time: addForm.time,
           revenue: addForm.revenue || selectedServiceItem.price,
@@ -377,7 +376,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
           instagram_id: selectedClient.instagram_id,
           name: selectedClient.display_name,
           phone: addForm.phone || selectedClient.phone || '',
-          service: selectedServiceItem.name_ru,
+          service: selectedServiceItem.name,
           date: addForm.date,
           time: addForm.time,
           revenue: addForm.revenue || selectedServiceItem.price,
@@ -432,7 +431,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   );
 
   const filteredServices = services.filter((s: Service) =>
-    (s.name_ru || '').toLowerCase().includes(serviceSearch.toLowerCase()) ||
+    (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase()) ||
     (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase())
   );
 
@@ -564,8 +563,8 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                     <SelectContent>
                       <SelectItem value="all">{t('calendar:all_services')}</SelectItem>
                       {services.map(service => (
-                        <SelectItem key={service.id} value={service.name_ru}>
-                          {service.name_ru}
+                        <SelectItem key={service.id} value={service.name}>
+                          {service.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -856,7 +855,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   <input
                     type="text"
                     placeholder={t('calendar:search_service')}
-                    value={selectedServiceItem ? selectedServiceItem.name_ru : serviceSearch}
+                    value={selectedServiceItem ? selectedServiceItem.name : serviceSearch}
                     onChange={(e) => {
                       setServiceSearch(e.target.value);
                       setSelectedServiceItem(null);
@@ -899,7 +898,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                             <div className="flex justify-between items-center">
                               <div>
                                 <div className="text-sm font-medium text-gray-900">
-                                  {service.name_ru}
+                                  {service.name}
                                 </div>
                                 <div className="text-xs text-gray-500">
                                   {service.category}

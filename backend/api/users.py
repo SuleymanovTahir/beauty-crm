@@ -10,7 +10,7 @@ import time
 from db import get_all_users, delete_user, log_activity
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
-from utils.utils import require_auth, sanitize_url
+from utils.utils import require_auth, sanitize_url, map_image_path
 from utils.logger import log_error
 from core.auth import get_current_user_or_redirect as get_current_user
 import psycopg2
@@ -50,7 +50,7 @@ async def get_current_user_api(
                 "email": result[3],
                 "role": result[4],
                 "phone": result[5],
-                "photo": sanitize_url(result[6]),
+                "photo": map_image_path(sanitize_url(result[6])),
                 "position": result[7],
                 "is_active": bool(result[8]),
                 "created_at": result[9],
@@ -190,7 +190,7 @@ async def get_user_by_id(
             "position": row[5],
             "phone": row[6],
             "bio": row[7],
-            "photo": sanitize_url(row[8]),
+            "photo": map_image_path(sanitize_url(row[8])),
             "is_active": bool(row[9]),
             "is_service_provider": bool(row[10]),
             "created_at": row[11],
@@ -245,7 +245,7 @@ async def get_users(
         users = []
         for row in c.fetchall():
             # Add cache buster to photo
-            photo_url = sanitize_url(row[12])
+            photo_url = map_image_path(sanitize_url(row[12]))
 
             user_data = {
                 "id": row[0],
@@ -524,7 +524,7 @@ async def get_user_profile(
         "role": result[4],
         "created_at": result[5],
         "last_login": result[6],
-        "photo": result[7],
+        "photo": map_image_path(sanitize_url(result[7])),
         "years_of_experience": result[8],
         "bio": result[9],
         "specialization": result[10],
@@ -572,7 +572,7 @@ async def get_user_profile_by_username(
         "role": result[4],
         "created_at": result[5],
         "last_login": result[6],
-        "photo": result[7],
+        "photo": map_image_path(sanitize_url(result[7])),
         "years_of_experience": result[8],
         "bio": result[9],
         "specialization": result[10],

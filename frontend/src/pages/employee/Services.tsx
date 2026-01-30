@@ -10,15 +10,12 @@ import { Switch } from '../../components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 interface Service {
   id: number;
   name: string;
-  name_ru?: string;
-  name_en?: string;
   description?: string;
-  description_ru?: string;
-  description_en?: string;
   price: number;
   default_price?: number;
   price_min?: number;
@@ -26,8 +23,6 @@ interface Service {
   duration: number;
   default_duration?: number;
   category: string;
-  category_ru?: string;
-  category_en?: string;
   is_online_booking_enabled?: boolean;
   is_calendar_enabled?: boolean;
   currency?: string;
@@ -47,7 +42,6 @@ interface ChangeRequest {
   id: number;
   service_id: number;
   service_name: string;
-  service_name_ru: string;
   request_type: string;
   status: string;
   requested_price?: number;
@@ -60,6 +54,7 @@ interface ChangeRequest {
 
 export default function EmployeeServices() {
   const { t } = useTranslation(['employee/services', 'common']);
+  const { currency, formatCurrency } = useCurrency();
   const [services, setServices] = useState<Service[]>([]);
   const [pendingRequests, setPendingRequests] = useState<Record<number, PendingRequest>>({});
   const [loading, setLoading] = useState(true);
@@ -124,13 +119,11 @@ export default function EmployeeServices() {
   };
 
   const getLocalizedName = (service: Service) => {
-    const lang = i18n.language?.toLowerCase()?.substring(0, 2) || 'en';
-    return (service as any)[`name_${lang}`] || service.name_en || service.name_ru || service.name || '';
+    return service.name || '';
   };
 
   const getLocalizedCategory = (service: Service) => {
-    const lang = i18n.language?.toLowerCase()?.substring(0, 2) || 'en';
-    return (service as any)[`category_${lang}`] || service.category_en || service.category_ru || service.category || '';
+    return service.category || '';
   };
 
   const filteredAndSortedServices = useMemo(() => {
@@ -365,7 +358,7 @@ export default function EmployeeServices() {
                         <p className="text-sm font-bold text-gray-900">{serviceName}</p>
                       </td>
                       <td className="px-6 py-4 font-bold text-gray-900 text-[13px]">
-                        {service.price} {service.currency || 'USD'}
+                        {formatCurrency(service.price)}
                       </td>
                       <td className="px-6 py-4">
                         {service.duration ? (
@@ -434,7 +427,7 @@ export default function EmployeeServices() {
 
           <div className="space-y-4 py-4">
             <div className="bg-gray-50 p-3 rounded-lg">
-              <p className="text-sm text-gray-600">{t('service')}: <strong>{editService?.name_ru || editService?.name}</strong></p>
+              <p className="text-sm text-gray-600">{t('service')}: <strong>{editService?.name}</strong></p>
               <p className="text-xs text-gray-500 mt-1">{t('changes_require_approval')}</p>
             </div>
 
@@ -550,7 +543,7 @@ export default function EmployeeServices() {
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="font-medium text-gray-900">
-                          {req.service_name_ru || req.service_name}
+                          {req.service_name}
                         </p>
                         <p className="text-sm text-gray-600">
                           {req.requested_price && `${t('price')}: ${req.requested_price}`}
