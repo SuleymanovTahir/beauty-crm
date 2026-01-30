@@ -7,6 +7,7 @@ import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface EmployeeProfile {
   id: number;
@@ -25,6 +26,7 @@ interface EmployeeProfile {
 }
 
 export default function EmployeeProfile() {
+  const { t } = useTranslation(['employee/profile', 'common']);
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const [profile, setProfile] = useState<EmployeeProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -71,7 +73,7 @@ export default function EmployeeProfile() {
       }
     } catch (err: any) {
       console.error('Error loading profile:', err);
-      toast.error(err.message || 'Ошибка загрузки профиля');
+      toast.error(err.message || t('error_loading_profile'));
     } finally {
       setLoading(false);
     }
@@ -83,13 +85,13 @@ export default function EmployeeProfile() {
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      toast.error('Пожалуйста, выберите изображение');
+      toast.error(t('please_select_image'));
       return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Размер файла не должен превышать 5MB');
+      toast.error(t('file_size_limit'));
       return;
     }
 
@@ -107,10 +109,10 @@ export default function EmployeeProfile() {
       const result = await api.uploadFile(file);
 
       setFormData({ ...formData, photo: result.file_url });
-      toast.success('Фото загружено успешно');
+      toast.success(t('photo_uploaded'));
     } catch (err: any) {
       console.error('Error uploading photo:', err);
-      toast.error(err.message || 'Ошибка загрузки фото');
+      toast.error(err.message || t('error_uploading_photo'));
     } finally {
       setUploadingPhoto(false);
     }
@@ -121,12 +123,12 @@ export default function EmployeeProfile() {
 
     // Validation
     if (!formData.full_name || formData.full_name.length < 2) {
-      toast.error('Имя должно содержать минимум 2 символа');
+      toast.error(t('name_min_length'));
       return;
     }
 
     if (!formData.position || formData.position.length < 2) {
-      toast.error('Должность должна содержать минимум 2 символа');
+      toast.error(t('position_min_length'));
       return;
     }
 
@@ -138,9 +140,9 @@ export default function EmployeeProfile() {
       // Reload profile
       await loadProfile();
 
-      toast.success('Профиль успешно обновлен');
+      toast.success(t('profile_updated'));
     } catch (err: any) {
-      const message = err.message || 'Ошибка обновления профиля';
+      const message = err.message || t('error_updating_profile');
       toast.error(`${message}`);
       console.error('Error updating profile:', err);
     } finally {
@@ -153,7 +155,7 @@ export default function EmployeeProfile() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">Загрузка профиля...</p>
+          <p className="text-gray-600">{t('loading_profile')}</p>
         </div>
       </div>
     );
@@ -165,9 +167,9 @@ export default function EmployeeProfile() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-red-600" />
           <div>
-            <p className="text-red-800 font-medium">Ошибка загрузки профиля</p>
+            <p className="text-red-800 font-medium">{t('error_loading_profile')}</p>
             <p className="text-red-700 text-sm mt-1">
-              Похоже, ваш аккаунт не привязан к профилю сотрудника. Обратитесь к администратору.
+              {t('profile_not_linked')}
             </p>
           </div>
         </div>
@@ -181,16 +183,16 @@ export default function EmployeeProfile() {
         <div className="mb-8">
           <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
             <User className="w-8 h-8 text-pink-600" />
-            Мой профиль
+            {t('my_profile')}
           </h1>
-          <p className="text-gray-600">Управление личными данными и информацией для клиентов</p>
+          <p className="text-gray-600">{t('manage_personal_data')}</p>
         </div>
 
         <form onSubmit={handleUpdateProfile}>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">
             {/* Photo Section */}
             <div className="mb-8 flex flex-col items-center">
-              <Label className="text-lg font-semibold mb-4">Фотография профиля</Label>
+              <Label className="text-lg font-semibold mb-4">{t('profile_photo')}</Label>
 
               <div className="relative">
                 {photoPreview ? (
@@ -226,58 +228,58 @@ export default function EmployeeProfile() {
               </div>
 
               <p className="text-sm text-gray-500 mt-3 text-center">
-                Рекомендуется: квадратное фото, минимум 300x300px
+                {t('photo_recommendation')}
               </p>
             </div>
 
             {/* Basic Info */}
-            <h2 className="text-xl text-gray-900 mb-6 font-semibold">Основная информация</h2>
+            <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('basic_info')}</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <Label htmlFor="full_name">Полное имя *</Label>
+                <Label htmlFor="full_name">{t('full_name')} *</Label>
                 <Input
                   id="full_name"
                   required
                   disabled={saving}
                   value={formData.full_name}
                   onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                  placeholder="Ваше полное имя"
+                  placeholder={t('full_name_placeholder')}
                   minLength={2}
                 />
               </div>
 
               <div>
-                <Label htmlFor="position">Должность *</Label>
+                <Label htmlFor="position">{t('position')} *</Label>
                 <Input
                   id="position"
                   required
                   disabled={saving}
                   value={formData.position}
                   onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                  placeholder="Например: HAIR STYLIST"
+                  placeholder={t('position_placeholder')}
                   minLength={2}
                 />
               </div>
             </div>
 
             <div className="mb-6">
-              <Label htmlFor="experience">Опыт работы</Label>
+              <Label htmlFor="experience">{t('experience')}</Label>
               <Input
                 id="experience"
                 disabled={saving}
                 value={formData.experience}
                 onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                placeholder="Например: 5 лет"
+                placeholder={t('experience_placeholder')}
               />
             </div>
 
             {/* Contact Info */}
-            <h2 className="text-xl text-gray-900 mb-6 font-semibold mt-8">Контактная информация</h2>
+            <h2 className="text-xl text-gray-900 mb-6 font-semibold mt-8">{t('contact_info')}</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <Label htmlFor="phone">Телефон</Label>
+                <Label htmlFor="phone">{t('phone')}</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <Input
@@ -286,14 +288,14 @@ export default function EmployeeProfile() {
                     disabled={saving}
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+971 XX XXX XXXX"
+                    placeholder={t('phone_placeholder')}
                     className="pl-10"
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('email')}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <Input
@@ -302,7 +304,7 @@ export default function EmployeeProfile() {
                     disabled={saving}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="your@email.com"
+                    placeholder={t('email_placeholder')}
                     className="pl-10"
                   />
                 </div>
@@ -310,7 +312,7 @@ export default function EmployeeProfile() {
             </div>
 
             <div className="mb-6">
-              <Label htmlFor="instagram">Instagram</Label>
+              <Label htmlFor="instagram">{t('instagram')}</Label>
               <div className="relative">
                 <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -318,28 +320,28 @@ export default function EmployeeProfile() {
                   disabled={saving}
                   value={formData.instagram}
                   onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                  placeholder="@your_instagram"
+                  placeholder={t('instagram_placeholder')}
                   className="pl-10"
                 />
               </div>
             </div>
 
             {/* Bio */}
-            <h2 className="text-xl text-gray-900 mb-6 font-semibold mt-8">О себе</h2>
+            <h2 className="text-xl text-gray-900 mb-6 font-semibold mt-8">{t('about_me')}</h2>
 
             <div className="mb-6">
-              <Label htmlFor="bio">Биография</Label>
+              <Label htmlFor="bio">{t('bio')}</Label>
               <Textarea
                 id="bio"
                 disabled={saving}
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                placeholder="Расскажите о себе, своих достижениях, сертификатах..."
+                placeholder={t('bio_placeholder')}
                 rows={6}
                 className="resize-none"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Эта информация будет видна клиентам на публичной странице
+                {t('bio_hint')}
               </p>
             </div>
 
@@ -351,12 +353,12 @@ export default function EmployeeProfile() {
               {saving ? (
                 <>
                   <Loader className="w-4 h-4 mr-2 animate-spin" />
-                  Сохранение...
+                  {t('saving')}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4 mr-2" />
-                  Сохранить изменения
+                  {t('save_changes')}
                 </>
               )}
             </Button>
@@ -366,9 +368,7 @@ export default function EmployeeProfile() {
         {/* Info Card */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-800">
-            <strong>💡 Совет:</strong> Заполните все поля для создания полного профиля.
-            Ваша информация будет отображаться на публичной странице и поможет клиентам
-            узнать о вас больше и выбрать именно вас для записи.
+            <strong>💡 {t('tip_title')}:</strong> {t('tip_message')}
           </p>
         </div>
       </div>
