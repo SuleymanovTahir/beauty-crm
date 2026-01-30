@@ -9,10 +9,6 @@
       "question": "What payment methods do you accept?"
     },
     {
-      "answer": "You can sign up via the website or WhatsApp.",
-      "question": "How to sign up?"
-    },
-    {
       "answer": "Yes, you can cancel or reschedule your appointment up to 24 hours before your scheduled time. ",
       "question": "Can I cancel or reschedule an appointment?"
     },
@@ -21,16 +17,12 @@
       "question": "What materials do you use"
     },
     {
-      "answer": "Yes, all our masters have international certificates and regularly take advanced training courses.",
-      "question": "Do your craftsmen have certificates?"
+      "answer": "Да, все наши мастера имеют международные сертификаты и регулярно проходят курсы повышения квалификации.",
+      "question": "Есть ли у ваших мастеров сертификаты"
     },
     {
-      "answer": "Yes, some procedures require preparation. ",
-      "question": "Is preparation necessary before the procedure?"
-    },
-    {
-      "answer": "Yes, we have free parking for customers.",
-      "question": "Is there parking?"
+      "answer": "Да, для некоторых процедур требуется подготовка. Детальные рекомендации мы предоставляем при записи.",
+      "question": "Нужна ли подготовка перед процедурой"
     },
     {
       "answer": "Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером.",
@@ -41,16 +33,12 @@
       "question": "Предоставляете ли вы гарантию на услуги"
     },
     {
-      "answer": "We use Luxio, Fedua and other premium brands.",
-      "question": "What brands do you use?"
-    },
-    {
       "answer": "Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов.",
       "question": "Есть ли у вас программа лояльности"
     },
     {
-      "answer": "Да, мы работаем 7 дней в неделю.",
-      "question": "Работаете ли вы в выходные"
+      "answer": "Yes, we work 7 days a week.",
+      "question": "Do you work on weekends"
     },
     {
       "answer": "Да, мы предлагаем подарочные сертификаты на любую сумму или на конкретные услуги. Свяжитесь с нами для оформления сертификата.",
@@ -77,8 +65,20 @@
       "question": "Делаете ли вы процедуры в 4 руки?"
     },
     {
-      "answer": "Our salon is located in a convenient location with a beautiful view and a cozy atmosphere. You will find the exact address in the contacts section.",
-      "question": "Where are you located?"
+      "answer": "Наш салон расположен в удобном месте с прекрасным видом и уютной атмосферой. Точный адрес вы найдете в разделе контактов.",
+      "question": "Где вы находитесь?"
+    },
+    {
+      "answer": "You can sign up via the website or WhatsApp.",
+      "question": "How to sign up?"
+    },
+    {
+      "answer": "Yes, we have free parking for customers.",
+      "question": "Is there parking?"
+    },
+    {
+      "answer": "We use Luxio, Fedua and other premium brands.",
+      "question": "What brands do you use?"
     }
   ]
 }

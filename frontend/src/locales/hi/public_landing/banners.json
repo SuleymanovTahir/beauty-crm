@@ -1,99 +1,51 @@
 {
   "items": [
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/banners/banner_main.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "व्यावसायिक सौंदर्य सेवाएँ",
-      "title": "सुंदरता और सुंदरता"
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "पेशेवर सौंदर्य सेवाएं",
+      "title": "सौंदर्य और सुंदरता"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/banners/banner_main.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "आप</z3> <z4>पेशेवर सौंदर्य सेवाएं।",
-      "title": "सौंदर्य और लालित्य"
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "सभी सैलून सेवाओं पर",
+      "title": "50% तक की छूट"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/salon/moroccan_bath.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "सभी सैलून सेवाओं के लिए",
+      "image": "/static/uploads/images/salon/moroccan_bath.webp",
+      "link": "",
+      "subtitle": "सभी सैलून सेवाओं पर",
       "title": "{{percent}}% तक की छूट"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/salon/salon_main.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "उच्चतम श्रेणी की व्यावसायिक सौंदर्य सेवाएँ",
-      "title": "सुंदरता और सुंदरता"
+      "image": "/static/uploads/images/salon/salon_main.webp",
+      "link": "",
+      "subtitle": "उच्च श्रेणी की पेशेवर सौंदर्य सेवाएं",
+      "title": "सौंदर्य और सुंदरता"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/simo.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "अपने स्टाइल और सेहत का ख्याल रखें",
+      "image": "/static/uploads/images/employees/simo.webp",
+      "link": "",
+      "subtitle": "ध्यान रखना अपनी शैली और स्वास्थ्य का",
       "title": "प्रीमियम सेवा"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/jennifer.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
+      "image": "/static/uploads/images/employees/jennifer.webp",
+      "link": "",
       "subtitle": "पूर्ण विश्राम और सफाई अनुष्ठान का अनुभव करें",
       "title": "मोरक्कन स्नान"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/mestan.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
+      "image": "/static/uploads/images/employees/mestan.webp",
+      "link": "",
       "subtitle": "केवल इस महीने",
-      "title": "आपकी पहली यात्रा पर 20% छूट"
+      "title": "आपके पहले पर 20% की छूट जाएँ"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/lyazzat.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "नवीनता का प्रयास करें",
+      "image": "/static/uploads/images/employees/lyazzat.webp",
+      "link": "",
+      "subtitle": "नवीनता आज़माएँ",
       "title": "नई सेवा: स्मार्ट पेडीक्योर"
     }
   ]

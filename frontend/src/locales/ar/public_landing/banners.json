@@ -1,98 +1,50 @@
 {
   "items": [
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/banners/banner_main.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "خدمات التجميل المهنية",
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "خدمات التجميل الاحترافية",
       "title": "الجمال والأناقة"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/banners/banner_main.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "خدمات تجميلية احترافية.",
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "على جميع خدمات الصالون",
+      "title": "خصومات تصل إلى 50%"
+    },
+    {
+      "image": "/static/uploads/images/salon/moroccan_bath.webp",
+      "link": "",
+      "subtitle": "على جميع خدمات الصالون",
+      "title": "خصومات تصل إلى {{percent}}%"
+    },
+    {
+      "image": "/static/uploads/images/salon/salon_main.webp",
+      "link": "",
+      "subtitle": "خدمات تجميل احترافية رفيعة المستوى",
       "title": "الجمال والأناقة"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/salon/moroccan_bath.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "لجميع خدمات الصالون",
-      "title": "خصومات تصل إلى 20%"
-    },
-    {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/salon/salon_main.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "خدمات تجميل احترافية على أعلى مستوى",
-      "title": "الجمال والأناقة"
-    },
-    {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/simo.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "الاهتمام بأسلوبك وصحتك",
+      "image": "/static/uploads/images/employees/simo.webp",
+      "link": "",
+      "subtitle": "العناية أسلوبك وصحتك",
       "title": "خدمة متميزة"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/jennifer.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "استمتع بالاسترخاء التام وطقوس التطهير",
-      "title": "حمام مغربي"
+      "image": "/static/uploads/images/employees/jennifer.webp",
+      "link": "",
+      "subtitle": "استمتع بالاسترخاء التام وطقوس التنظيف",
+      "title": "الحمام المغربي"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/mestan.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
-      "subtitle": "فقط هذا الشهر",
+      "image": "/static/uploads/images/employees/mestan.webp",
+      "link": "",
+      "subtitle": "هذا الشهر فقط",
       "title": "خصم 20% على زيارتك الأولى"
     },
     {
-      "bg_pos_desktop_x": 50,
-      "bg_pos_desktop_y": 50,
-      "bg_pos_mobile_x": 50,
-      "bg_pos_mobile_y": 50,
-      "image_url": "/static/uploads/images/employees/lyazzat.webp",
-      "is_flipped_horizontal": false,
-      "is_flipped_vertical": false,
-      "link_url": "",
+      "image": "/static/uploads/images/employees/lyazzat.webp",
+      "link": "",
       "subtitle": "جرب الابتكار",
       "title": "خدمة جديدة: باديكير ذكي"
     }

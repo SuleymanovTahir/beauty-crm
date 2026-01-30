@@ -18,814 +18,814 @@
   "haircutsStyling": "",
   "items": {
     "bangs_cut": {
-      "category": "шаш үлгісі_қию",
+      "category": "Шаш қию",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Тілдер",
-      "price": 100
+      "name": "кесілген шаш қию",
+      "price": 100.0
     },
     "bikini_line": {
-      "category": "балауыз",
+      "category": "Балауыз бояу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Бикини желісі",
-      "price": 100
+      "name": "бикини сызығы",
+      "price": 100.0
     },
     "blowdry_long": {
-      "category": "шаш_түсі",
+      "category": "Шаш сәндеу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Қылқалам (ұзын)",
-      "price": 280
+      "name": "Фен (ұзын)",
+      "price": 280.0
     },
     "blowdry_medium": {
-      "category": "шаш_түсі",
+      "category": "Шаш сәндеу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Қылқалам (орташа)",
-      "price": 250
+      "name": "Фенмен кептіргіш (орташа)",
+      "price": 250.0
     },
     "blowdry_short": {
-      "category": "шаш_түсі",
+      "category": "Шаш сәндеу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Шеткаға арналған орнату (Қысқа)",
-      "price": 200
+      "name": "Фен (қысқа)",
+      "price": 200.0
     },
     "brow_coloring": {
-      "category": "қастар",
+      "category": "Қастар",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Қас бояуы",
-      "price": 40
+      "price": 40.0
     },
     "brow_correction": {
-      "category": "қастар",
+      "category": "Қастарды",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Қас пішінін түзету",
-      "price": 40
+      "name": "Қастарды түзету",
+      "price": 40.0
     },
     "brow_lami": {
-      "category": "қастар",
+      "category": "Қастар",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Қастарды ламинациялау",
-      "price": 200
+      "price": 200.0
     },
     "change_classic_pedicure": {
-      "category": "педикюр",
+      "category": "Педикюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Кәдімгі жылтыратқышты (педикюр) өзгерту",
-      "price": 50
+      "name": "Лякты өзгерту (Pedi)",
+      "price": 50.0
     },
     "change_gel_pedicure": {
-      "category": "педикюр",
+      "category": "Педикюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Гель-лакты өзгерту (педикюр)",
-      "price": 100
+      "name": "Гель-лакты өзгерту (Pedi)",
+      "price": 100.0
     },
     "cheeks_wax": {
-      "category": "балауыз",
+      "category": "Балауыз бояу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Жақтар",
-      "price": 40
+      "name": "Жақтарды балауыз",
+      "price": 40.0
     },
     "chin_wax": {
-      "category": "балауыз",
+      "category": "Балауыз бояу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Иек",
-      "price": 30
+      "name": "Эпиляция подбородка",
+      "price": 30.0
     },
     "combo_lami": {
-      "category": "комбо",
+      "category": "Combo",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Комбо: Кірпіктерді ламинациялау + қастарды бояу",
-      "price": 300
+      "name": "Біріккен кірпіктер + Лами қастар",
+      "price": 300.0
     },
     "combo_mani_pedi_gel": {
-      "category": "комбо",
+      "category": "Combo",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Комбо: Маникюр + Педикюр (гельдік лактар)",
-      "price": 350
+      "name": "Combo Mani+Pedi (Гель)",
+      "price": 350.0
     },
     "complex_color": {
-      "category": "шаш_түсі",
+      "category": "Шаш түсі",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 1500,
-      "min_price": 1000,
-      "name": "Кешен (омбре/балаяж/ерекшелеу)",
-      "price": 1250
+      "max_price": 1500.0,
+      "min_price": 1000.0,
+      "name": "Күрделі түс (омбре/балайаж)",
+      "price": 1250.0
     },
     "deep_facial_cleaning": {
-      "category": "косметология",
+      "category": "Косметология",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Бетті терең тазарту",
-      "price": 400
+      "price": 400.0
     },
     "evening_hairstyle": {
-      "category": "шаш_түсі",
+      "category": "Шаш үлгісі",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 800,
-      "min_price": 450,
+      "max_price": 800.0,
+      "min_price": 450.0,
       "name": "Кешкі шаш үлгісі",
-      "price": 625
+      "price": 625.0
     },
     "express_hair_form": {
-      "category": "шаш үлгісі_қию",
+      "category": "Шаш қию",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Экспресс пішін (жуусыз)",
-      "price": 150
+      "price": 150.0
     },
     "eyeliner": {
-      "category": "тұрақты_макияж",
+      "category": "Тұрақты макияж",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
       "name": "Көз контурлағышы",
-      "price": 800
+      "price": 800.0
     },
     "face_lift_massage": {
-      "category": "косметология",
+      "category": "Косметология",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Бетті көтеру массажы + маска",
-      "price": 250
+      "name": "Лифтинг массажы + маска",
+      "price": 250.0
     },
     "french_polish": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Француздық жабын (француз)</z13>manese",
-      "price": 190
+      "name": "Француздық лак",
+      "price": 190.0
     },
     "full_arms": {
-      "category": "балауыз",
+      "category": "Балауыз бояу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Толық қолдар",
-      "price": 80
+      "name": "Толық қару",
+      "price": 80.0
     },
     "full_bikini": {
-      "category": "балауыз",
+      "category": "Балауыз бояу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Тұңғиық бикини",
-      "price": 150
+      "name": "толық бикини",
+      "price": 150.0
     },
     "full_body_wax": {
-      "category": "балауыз",
+      "category": "Балауыз бояу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Бүкіл дене",
-      "price": 400
+      "name": "Бүкіл денеге балауыз",
+      "price": 400.0
     },
     "full_face_wax": {
-      "category": "балауыз",
+      "category": "Балауыз бояу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Толық бет",
-      "price": 90
+      "name": "Бетті толық бояу",
+      "price": 90.0
     },
     "full_legs": {
-      "category": "балауыз",
+      "category": "Балауыз бояу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Толық аяқтар",
-      "price": 150
+      "price": 150.0
     },
     "gel_polish_only": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Гель лакпен жабу",
-      "price": 100
+      "name": "Тек гельдік лак",
+      "price": 100.0
     },
     "hair_cut_full": {
-      "category": "шаш үлгісі_қию",
+      "category": "Шаш қию",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Кесу + Жуу + Сәндеу",
-      "price": 350
+      "name": "Қу + жуу + сәндеу",
+      "price": 350.0
     },
     "hair_cut_wash": {
-      "category": "шаш үлгісі_қию",
+      "category": "Шаш қию",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Кесу + Жуу",
-      "price": 200
+      "name": "Шаш қию және шаю",
+      "price": 200.0
     },
     "hair_trim": {
-      "category": "шаш үлгісі_қию",
+      "category": "Шаш қию",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Шаш қию (тек қию)",
-      "price": 150
+      "name": "Тек шаш қию",
+      "price": 150.0
     },
     "hair_wash": {
-      "category": "шаш күтімі",
+      "category": "Шаш күтімі",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Шашыңызды жуу",
-      "price": 70
+      "name": "Шашты жуу",
+      "price": 70.0
     },
     "half_arms": {
-      "category": "балауыз",
+      "category": "Балауыз бояу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Қол шынтаққа дейін",
-      "price": 50
+      "name": "Жартылай қару",
+      "price": 50.0
     },
     "half_legs": {
-      "category": "балауыз",
+      "category": "Балауыз бояу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Аяқтар (жақпақ)",
-      "price": 80
+      "name": "Жарты аяқ (төменгі)",
+      "price": 80.0
     },
     "japanese_manicure": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "90",
       "max_price": null,
       "min_price": null,
       "name": "Жапондық маникюр",
-      "price": 150
+      "price": 150.0
     },
     "kids_cut": {
-      "category": "шаш үлгісі_қию",
+      "category": "Шаш қию",
       "currency": "AED",
       "description": "",
       "duration": "40",
       "max_price": null,
       "min_price": null,
       "name": "Балаларға арналған шаш қию",
-      "price": 100
+      "price": 100.0
     },
     "kim_style_effect": {
-      "category": "кірпіктер",
+      "category": "Кірпіктер",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Exten volumes (z72> Exten volume)</z72> <z74>z <z74>Ким эффект стилі / Curves L, M",
-      "price": 30
+      "name": "Kim Style Effect / L, M Curves",
+      "price": 30.0
     },
     "lash_lami": {
-      "category": "кірпіктер",
+      "category": "Кірпіктер",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Қастарды ламинациялау",
-      "price": 200
+      "price": 200.0
     },
     "lashes_2d": {
-      "category": "кірпіктер",
+      "category": "Кірпіктер",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Кеңейтімдер (2D көлемі)",
-      "price": 250
+      "name": "2D кірпік ұзартқыштары",
+      "price": 250.0
     },
     "lashes_3d": {
-      "category": "кірпіктер",
+      "category": "Кірпіктер",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Кеңейткіштер (3D көлемі)",
-      "price": 300
+      "name": "3D кірпік ұзартқыштары",
+      "price": 300.0
     },
     "lashes_classic": {
-      "category": "кірпіктер",
+      "category": "Кірпіктер",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Кеңейтімдер (Классикалық)",
-      "price": 200
+      "name": "Классикалық кірпік ұзарту",
+      "price": 200.0
     },
     "lashes_mega": {
-      "category": "кірпіктер",
+      "category": "Кірпіктер",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Кеңейтім (4-5D көлемі)",
-      "price": 350
+      "name": "Кірпік ұзартқыштары 4-5D (Мега)",
+      "price": 350.0
     },
     "lashliner": {
-      "category": "тұрақты_макияж",
+      "category": "Тұрақты макияж",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Кірпік аралық сызғыш",
-      "price": 800
+      "name": "Кірпік сызғыш",
+      "price": 800.0
     },
     "manicure_combined": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Классикалық маникюр (комби/құрылғы)",
-      "price": 110
+      "name": "Біріктірілген маникюр",
+      "price": 110.0
     },
     "manicure_gel_polish": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Классикалық маникюр + гельдік лак",
-      "price": 160
+      "name": "Біріктірілген маникюр + гель",
+      "price": 160.0
     },
     "manicure_pil_classic": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Файл маникюрі + кәдімгі жабын",
-      "price": 130
+      "name": "Классикалық маникюр + жылтыратқыш",
+      "price": 130.0
     },
     "massage_anticellulite": {
-      "category": "массаж",
+      "category": "Массаж",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Целлюлитке қарсы массаж (60 мин)",
-      "price": 300
+      "price": 300.0
     },
     "massage_body": {
-      "category": "массаж",
+      "category": "Массаж",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Дене массажы (60 мин)",
-      "price": 250
+      "price": 250.0
     },
     "massage_extremities": {
-      "category": "массаж",
+      "category": "Массаж",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Массаж (аяқ/фут/қол) (60 мин)",
-      "price": 150
+      "name": "Аяқ-қол массажы (60 мин)",
+      "price": 150.0
     },
     "massage_head": {
-      "category": "массаж",
+      "category": "Массаж",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Бас массажы (60 мин)",
-      "price": 100
+      "price": 100.0
     },
     "massage_sculptural": {
-      "category": "массаж",
+      "category": "Массаж",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Мүсіндік дене массажы",
-      "price": 370
+      "price": 370.0
     },
     "medical_facial": {
-      "category": "косметология",
+      "category": "Косметология",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Мед. бетті тазарту (проблемалы тері)",
-      "price": 450
+      "name": "Медициналық бет күтімі (проблемалы тері)",
+      "price": 450.0
     },
     "moroccan_bath": {
-      "category": "spa",
+      "category": "SPA",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Марокко моншасы (Time of Relax SPA)",
-      "price": 250
+      "name": "Марокко моншасы SPA",
+      "price": 250.0
     },
     "nail_correction": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
       "name": "Кеңейтімдерді түзету",
-      "price": 400
+      "price": 400.0
     },
     "nail_extensions": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Тырнақ ұзарту (гель)",
-      "price": 400
+      "name": "тырнақ ұзарту (гель)",
+      "price": 400.0
     },
     "nail_shaping": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Тырнақтарды пішіндеу",
-      "price": 45
+      "price": 45.0
     },
     "one_tone_long": {
-      "category": "шаш_түсі",
+      "category": "Шаш түсі",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 800,
-      "min_price": 550,
+      "max_price": 800.0,
+      "min_price": 550.0,
       "name": "Бір тон (ұзын)",
-      "price": 675
+      "price": 675.0
     },
     "one_tone_medium": {
-      "category": "шаш_түсі",
+      "category": "Шаш түсі",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
       "name": "Бір тон (орташа)",
-      "price": 400
+      "price": 400.0
     },
     "one_tone_short": {
-      "category": "шаш_түсі",
+      "category": "Шаш түсі",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
       "name": "Бір тон (қысқа)",
-      "price": 350
+      "price": 350.0
     },
     "overlay_biogel": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Биогельмен (қабаттасу) күшейту",
-      "price": 50
+      "name": "Биогельді қолдану",
+      "price": 50.0
     },
     "pedicure_gel": {
-      "category": "педикюр",
+      "category": "Педикюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Гель-лак жабыны бар педикюр",
-      "price": 190
+      "name": "Педикюр + гельдік лак",
+      "price": 190.0
     },
     "pedicure_smart": {
-      "category": "педикюр",
+      "category": "Педикюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Негізгі педикюр (ақылды технология)",
-      "price": 130
+      "name": "Негізгі смарт педикюр",
+      "price": 130.0
     },
     "pedicure_smart_polish": {
-      "category": "педикюр",
+      "category": "Педикюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Классикалық педикюр + кәдімгі жылтыратқыш (Smart)",
-      "price": 150
+      "name": "Ақылды педикюр + жылтыратқыш",
+      "price": 150.0
     },
     "peeling": {
-      "category": "косметология",
+      "category": "Косметология",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 400,
-      "min_price": 300,
-      "name": "пилинг",
-      "price": 350
+      "max_price": 400.0,
+      "min_price": 300.0,
+      "name": "Пиллинг",
+      "price": 350.0
     },
     "permanent_brows": {
-      "category": "тұрақты_макияж",
+      "category": "Тұрақты макияж",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Қасқа тұрақты макияж",
-      "price": 800
+      "name": "Тұрақты қастар",
+      "price": 800.0
     },
     "permanent_correction": {
-      "category": "тұрақты_макияж",
+      "category": "Тұрақты макияж",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
       "name": "Тұрақты макияжды түзету",
-      "price": 800
+      "price": 800.0
     },
     "permanent_lips": {
-      "category": "тұрақты_макияж",
+      "category": "Тұрақты макияж",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Тұрақты ерін макияжы",
-      "price": 800
+      "name": "Тұрақты еріндер",
+      "price": 800.0
     },
     "polish_classic": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Кәдімгі лакпен жабу",
-      "price": 50
+      "name": "Тек классикалық лак",
+      "price": 50.0
     },
     "remove_classic": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Кәдімгі жылтыратқышты кетіру",
-      "price": 20
+      "name": "Классикалық лак кетіру",
+      "price": 20.0
     },
     "remove_extensions": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Кеңейткіштерді кетіру",
-      "price": 70
+      "name": "Кеңейтімдерді жою",
+      "price": 70.0
     },
     "remove_gel": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "30",
       "max_price": null,
       "min_price": null,
       "name": "Гель-лакты кетіру",
-      "price": 30
+      "price": 30.0
     },
     "remove_lashes": {
-      "category": "кірпіктер",
+      "category": "Кірпіктер",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Кірпікті кетіру",
-      "price": 50
+      "name": "Кірпіктерді кетіру",
+      "price": 50.0
     },
     "repair_extension": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "1 тырнақты жөндеу (ұзарту)",
-      "price": 40
+      "name": "1 кеңейтімді қалпына келтіріңіз",
+      "price": 40.0
     },
     "repair_gel": {
-      "category": "маникюр",
+      "category": "Маникюр",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "1 тырнақты жөндеу (гельдік лак)",
-      "price": 20
+      "name": "1 гельді тырнақтарды жөндеу",
+      "price": 20.0
     },
     "roots_color": {
-      "category": "шаш_түсі",
+      "category": "Шаш түсі",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
       "name": "Тамырды бояу",
-      "price": 250
+      "price": 250.0
     },
     "styling_long": {
-      "category": "шаш_түсі",
+      "category": "Шаш үлгісі",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Үтікпен/толқынмен сәндеу (ұзын)",
-      "price": 300
+      "name": "Шаш үлгісі (орташа) (ұзын)",
+      "price": 300.0
     },
     "styling_medium": {
-      "category": "шаш_түсі",
+      "category": "Шаш сәндеу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Үтікпен/толқынмен сәндеу (Орташа)",
-      "price": 260
+      "name": "Фен/толқынмен үтіктеу (орташа)",
+      "price": 260.0
     },
     "styling_short": {
-      "category": "шаш_түсі",
+      "category": "Шаш сәндеу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Үтік/толқынмен сәндеу (Қысқа)",
-      "price": 230
+      "name": "Шаш сәндеу (қысқа)",
+      "price": 230.0
     },
     "toning": {
-      "category": "шаш_түсі",
+      "category": "Шаш түсі",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 350,
-      "min_price": 250,
+      "max_price": 350.0,
+      "min_price": 250.0,
       "name": "Бояу",
-      "price": 300
+      "price": 300.0
     },
     "total_blonde": {
-      "category": "шаш_түсі",
+      "category": "Шаш түсі",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 1500,
-      "min_price": 1000,
+      "max_price": 1500.0,
+      "min_price": 1000.0,
       "name": "Жалпы аққұба",
-      "price": 1250
+      "price": 1250.0
     },
     "underarms": {
-      "category": "балауыз",
+      "category": "Балауыз",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Қолтықтар",
-      "price": 50
+      "name": "Қолтық эпиляциясы",
+      "price": 50.0
     },
     "upper_lip_wax": {
-      "category": "балауыз",
+      "category": "Балауыз бояу",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Үстіңгі ерін",
-      "price": 30
+      "name": "Үстіңгі ерінді балауызбен депиляциялау",
+      "price": 30.0
     }
   },
   "manicurePedicure": "",

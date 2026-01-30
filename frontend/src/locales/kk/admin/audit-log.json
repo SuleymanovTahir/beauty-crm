@@ -1,9 +1,9 @@
 {
   "clear_all": "Барлығын өшіру",
   "clear_confirm": "Тексеру журналын толығымен өшіргіңіз келетініне сенімдісіз бе? Бұл әрекет қайтымсыз.",
-  "delete_batch_confirm_one": "Таңдалған {{count}} жазбаларды жою керек пе?",
   "delete_batch_confirm_few": "Таңдалған {{count}} жазбаларды жою керек пе?",
   "delete_batch_confirm_many": "Таңдалған {{count}} жазбаларды жою керек пе?",
+  "delete_batch_confirm_one": "Таңдалған {{count}} жазбаларды жою керек пе?",
   "delete_batch_confirm_other": "{{count}} жазбаларды жою керек пе?",
   "delete_confirm": "Осы жазбаны жою біржола қалпына келтірілді ме?",
   "delete_selected": "Таңдалған элементтерді жою",
