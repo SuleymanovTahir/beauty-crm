@@ -59,6 +59,17 @@ def create_chat_history_table():
 
 def run_all_migrations():
     """Main entry point for database health and setup."""
+    # Advisory lock to prevent multiple workers from running migrations simultaneously
+    # Lock ID 99999 covers the ENTIRE migration process (different from init_database's 12345)
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("SELECT pg_try_advisory_lock(99999)")
+    got_lock = c.fetchone()[0]
+    if not got_lock:
+        log_info("⏳ Another worker is running migrations, skipping...", "migrations")
+        conn.close()
+        return True  # Return success since another worker will handle it
+
     print_header("SYSTEM INITIALIZATION & SYNC")
     print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"Database: PostgreSQL")
@@ -102,6 +113,12 @@ def run_all_migrations():
             log_error(f"⚠️  User seeding skipped: {e}", "migrations")
 
         print_header("SYNC COMPLETED SUCCESSFULLY")
+        # Release lock before returning (also in finally as backup)
+        try:
+            c.execute("SELECT pg_advisory_unlock(99999)")
+            conn.close()
+        except:
+            pass
         return True
 
     except Exception as e:
@@ -109,6 +126,14 @@ def run_all_migrations():
         import traceback
         traceback.print_exc()
         return False
+
+    finally:
+        # Release advisory lock
+        try:
+            c.execute("SELECT pg_advisory_unlock(99999)")
+            conn.close()
+        except:
+            pass
 
 if __name__ == "__main__":
     success = run_all_migrations()
