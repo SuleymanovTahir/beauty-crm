@@ -14,15 +14,7 @@ interface Review {
     id: number;
     author_name: string;
     rating: number;
-    text_ru: string;
-    text_en?: string;
-    text_ar?: string;
-    text_es?: string;
-    text_de?: string;
-    text_fr?: string;
-    text_pt?: string;
-    text_hi?: string;
-    text_kk?: string;
+    text: string;
     avatar_url?: string;
     employee_position?: string;
     is_active: number;
@@ -30,15 +22,8 @@ interface Review {
     created_at: string;
 }
 
-// Helper to get localized text with fallback to Russian
-const getLocalizedText = (item: any, field: string, lang: string): string => {
-    const langField = `${field}_${lang}`;
-    return item[langField] || item[`${field}_en`] || item[`${field}_ru`] || '';
-};
-
 export default function ReviewsTab() {
-    const { t, i18n } = useTranslation(['admin/publiccontent', 'common']);
-    const currentLang = i18n.language?.split('-')[0] || 'en';
+    const { t } = useTranslation(['admin/publiccontent', 'common']);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -46,7 +31,7 @@ export default function ReviewsTab() {
     const [formData, setFormData] = useState({
         author_name: '',
         rating: 5,
-        text_ru: '',
+        text: '',
         avatar_url: '',
         employee_position: '',
         created_at: ''
@@ -82,7 +67,7 @@ export default function ReviewsTab() {
 
             setShowModal(false);
             setEditingReview(null);
-            setFormData({ author_name: '', rating: 5, text_ru: '', avatar_url: '', employee_position: '', created_at: '' });
+            setFormData({ author_name: '', rating: 5, text: '', avatar_url: '', employee_position: '', created_at: '' });
             loadReviews();
         } catch (error) {
             console.error('Error saving review:', error);
@@ -112,7 +97,7 @@ export default function ReviewsTab() {
         setFormData({
             author_name: review.author_name,
             rating: review.rating,
-            text_ru: review.text_ru,
+            text: review.text || '',
             avatar_url: review.avatar_url || '',
             employee_position: review.employee_position || '',
             created_at: review.created_at || ''
@@ -149,7 +134,7 @@ export default function ReviewsTab() {
                 </div>
                 <Button onClick={() => {
                     setEditingReview(null);
-                    setFormData({ author_name: '', rating: 5, text_ru: '', avatar_url: '', employee_position: '', created_at: '' });
+                    setFormData({ author_name: '', rating: 5, text: '', avatar_url: '', employee_position: '', created_at: '' });
                     setShowModal(true);
                 }}>
                     <Plus className="w-4 h-4 mr-2" />
@@ -181,16 +166,7 @@ export default function ReviewsTab() {
                                             <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">{t('hidden')}</span>
                                         )}
                                     </div>
-                                    <p className="text-gray-700 mb-2">{getLocalizedText(review, 'text', currentLang)}</p>
-                                    {review.text_en && (
-                                        <details className="text-sm text-gray-500">
-                                            <summary className="cursor-pointer">{t('translations')}</summary>
-                                            <div className="mt-2 space-y-1">
-                                                <p><strong>EN:</strong> {review.text_en}</p>
-                                                {review.text_ar && <p><strong>AR:</strong> {review.text_ar}</p>}
-                                            </div>
-                                        </details>
-                                    )}
+                                    <p className="text-gray-700 mb-2">{review.text}</p>
                                 </div>
                                 <div className="flex gap-2 ml-4">
                                     <Button
@@ -287,13 +263,10 @@ export default function ReviewsTab() {
                             <div>
                                 <label className="block text-sm font-medium mb-1">
                                     {t('review_text')}
-                                    <span className="text-xs text-gray-500 ml-2">
-                                        {t('auto_translate_hint')}
-                                    </span>
                                 </label>
                                 <Textarea
-                                    value={formData.text_ru}
-                                    onChange={(e) => setFormData({ ...formData, text_ru: e.target.value })}
+                                    value={formData.text}
+                                    onChange={(e) => setFormData({ ...formData, text: e.target.value })}
                                     rows={4}
                                     required
                                 />

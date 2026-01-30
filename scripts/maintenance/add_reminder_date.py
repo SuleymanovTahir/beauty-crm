@@ -27,18 +27,18 @@ def add_reminder_date_column():
             conn.commit()
             print("✅ Column added successfully.")
             
-        # Check/Add 'Remind Later' stage
-        c.execute("SELECT id FROM pipeline_stages WHERE key = 'remind_later' OR name ILIKE '%напомнить%'")
+        # Check/Add 'Remind Later' stage in workflow_stages
+        c.execute("SELECT id FROM workflow_stages WHERE entity_type = 'pipeline' AND (LOWER(name) LIKE '%remind%' OR name ILIKE '%напомнить%')")
         stage = c.fetchone()
         if not stage:
             print("➕ Creating 'Напомнить позже' stage...")
             # Find max order index
-            c.execute("SELECT MAX(order_index) FROM pipeline_stages")
+            c.execute("SELECT MAX(sort_order) FROM workflow_stages WHERE entity_type = 'pipeline'")
             max_idx = c.fetchone()[0] or 0
-            
+
             c.execute("""
-                INSERT INTO pipeline_stages (name, key, color, order_index, is_active)
-                VALUES ('Напомнить позже', 'remind_later', '#F59E0B', %s, TRUE)
+                INSERT INTO workflow_stages (entity_type, name, color, sort_order)
+                VALUES ('pipeline', 'Напомнить позже', '#F59E0B', %s)
             """, (max_idx + 1,))
             conn.commit()
             print("✅ Stage created.")
