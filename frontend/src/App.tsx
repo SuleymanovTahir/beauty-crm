@@ -311,6 +311,7 @@ export default function App() {
                 <Route path="users/permissions" element={<PermissionManagement />} />
                 <Route path="users/:identifier/edit" element={<EditUser />} />
                 <Route path="users/:id/:tab?" element={<EmployeeDetail />} />
+                <Route path="profile" element={<EmployeeProfile />} />
 
                 <Route path="plans" element={<PlansManagement />} />
                 <Route path="calendar" element={<Calendar />} />
