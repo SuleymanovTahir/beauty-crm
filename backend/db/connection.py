@@ -8,26 +8,50 @@ from utils.logger import log_info, log_error, log_warning
 _connection_pool = None
 
 def init_connection_pool():
-    """Initialize the connection pool if it doesn't exist"""
+    """Initialize the connection pool if it doesn't exist.
+
+    Includes retry logic to handle race conditions when database is being created
+    by another worker during startup.
+    """
+    import time
     global _connection_pool
     if _connection_pool is None:
-        try:
-            _connection_pool = pool.ThreadedConnectionPool(
-                minconn=5,  # Минимум соединений - создаются при инициализации (не блокируем старт)
-                maxconn=100,  # Максимум соединений для параллелизма
-                host=os.getenv('POSTGRES_HOST', 'localhost'),
-                port=os.getenv('POSTGRES_PORT', '5432'),
-                database=os.getenv('POSTGRES_DB', 'beauty_crm'),
-                user=os.getenv('POSTGRES_USER', 'beauty_crm_user'),
-                password=os.getenv('POSTGRES_PASSWORD', ''),
-                # Оптимизация производительности
-                connect_timeout=5,  # Таймаут подключения
-                options='-c statement_timeout=30000'  # 30 секунд на запрос
-            )
-            log_info("✅ Database connection pool initialized (5-100 connections)", "db")
-        except Exception as e:
-            log_error(f"❌ Failed to initialize connection pool: {e}", "db")
-            raise
+        max_retries = 30  # Wait up to 60 seconds (30 retries * 2 seconds)
+        retry_delay = 2
+        last_error = None
+
+        for attempt in range(max_retries):
+            try:
+                _connection_pool = pool.ThreadedConnectionPool(
+                    minconn=5,  # Минимум соединений - создаются при инициализации (не блокируем старт)
+                    maxconn=100,  # Максимум соединений для параллелизма
+                    host=os.getenv('POSTGRES_HOST', 'localhost'),
+                    port=os.getenv('POSTGRES_PORT', '5432'),
+                    database=os.getenv('POSTGRES_DB', 'beauty_crm'),
+                    user=os.getenv('POSTGRES_USER', 'beauty_crm_user'),
+                    password=os.getenv('POSTGRES_PASSWORD', ''),
+                    # Оптимизация производительности
+                    connect_timeout=5,  # Таймаут подключения
+                    options='-c statement_timeout=30000'  # 30 секунд на запрос
+                )
+                log_info("✅ Database connection pool initialized (5-100 connections)", "db")
+                return  # Success
+            except Exception as e:
+                last_error = e
+                error_str = str(e).lower()
+                # Check if error is related to database not existing (being created by another worker)
+                if "does not exist" in error_str or "connection refused" in error_str:
+                    if attempt < max_retries - 1:
+                        log_warning(f"⏳ Database not ready, waiting... (attempt {attempt + 1}/{max_retries})", "db")
+                        time.sleep(retry_delay)
+                        continue
+                # For other errors, fail immediately
+                log_error(f"❌ Failed to initialize connection pool: {e}", "db")
+                raise
+
+        # If we exhausted all retries
+        log_error(f"❌ Failed to initialize connection pool after {max_retries} attempts: {last_error}", "db")
+        raise last_error
 
 class CursorWrapper:
     """Wrapper for psycopg2 cursor to provide consistent interface."""
