@@ -19,12 +19,14 @@ class ReviewCreate(BaseModel):
     rating: int
     text: str
     avatar_url: Optional[str] = None
+    employee_position: Optional[str] = None
 
 class ReviewUpdate(BaseModel):
     author_name: Optional[str] = None
     rating: Optional[int] = None
     text: Optional[str] = None
     avatar_url: Optional[str] = None
+    employee_position: Optional[str] = None
     is_active: Optional[bool] = None
     display_order: Optional[int] = None
 
@@ -60,16 +62,16 @@ async def get_all_reviews():
     """Получить все отзывы (для админки)"""
     conn = get_db_connection()
     c = conn.cursor()
-    
+
     c.execute("""
-        SELECT * FROM public_reviews 
+        SELECT * FROM public_reviews
         ORDER BY display_order ASC, created_at DESC
     """)
-    
+
     columns = [desc[0] for desc in c.description]
     reviews = [dict(zip(columns, row)) for row in c.fetchall()]
     conn.close()
-    
+
     return {"reviews": reviews}
 
 @router.post("/reviews")
@@ -387,12 +389,12 @@ async def get_all_faq():
     """Получить все FAQ"""
     conn = get_db_connection()
     c = conn.cursor()
-    
+
     c.execute("SELECT * FROM public_faq ORDER BY category, display_order ASC")
     columns = [desc[0] for desc in c.description]
     faq = [dict(zip(columns, row)) for row in c.fetchall()]
     conn.close()
-    
+
     return {"faq": faq}
 
 @router.post("/faq")
