@@ -1,0 +1,47 @@
+{
+  "my_profile": "Мой профиль",
+  "manage_personal_data": "Управление личными данными и информацией для клиентов",
+  "loading_profile": "Загрузка профиля...",
+  "error_loading_profile": "Ошибка загрузки профиля",
+  "profile_not_linked": "Похоже, ваш аккаунт не привязан к профилю сотрудника. Обратитесь к администратору.",
+  
+  "profile_photo": "Фотография профиля",
+  "photo_recommendation": "Рекомендуется: квадратное фото, минимум 300x300px",
+  "please_select_image": "Пожалуйста, выберите изображение",
+  "file_size_limit": "Размер файла не должен превышать 5MB",
+  "photo_uploaded": "Фото загружено успешно",
+  "error_uploading_photo": "Ошибка загрузки фото",
+  
+  "basic_info": "Основная информация",
+  "full_name": "Полное имя",
+  "full_name_placeholder": "Ваше полное имя",
+  "name_min_length": "Имя должно содержать минимум 2 символа",
+  
+  "position": "Должность",
+  "position_placeholder": "Например: HAIR STYLIST",
+  "position_min_length": "Должность должна содержать минимум 2 символа",
+  
+  "experience": "Опыт работы",
+  "experience_placeholder": "Например: 5 лет",
+  
+  "contact_info": "Контактная информация",
+  "phone": "Телефон",
+  "phone_placeholder": "+971 XX XXX XXXX",
+  "email": "Email",
+  "email_placeholder": "your@email.com",
+  "instagram": "Instagram",
+  "instagram_placeholder": "@your_instagram",
+  
+  "about_me": "О себе",
+  "bio": "Биография",
+  "bio_placeholder": "Расскажите о себе, своих достижениях, сертификатах...",
+  "bio_hint": "Эта информация будет видна клиентам на публичной странице",
+  
+  "saving": "Сохранение...",
+  "save_changes": "Сохранить изменения",
+  "profile_updated": "Профиль успешно обновлен",
+  "error_updating_profile": "Ошибка обновления профиля",
+  
+  "tip_title": "Совет",
+  "tip_message": "Заполните все поля для создания полного профиля. Ваша информация будет отображаться на публичной странице и поможет клиентам узнать о вас больше и выбрать именно вас для записи."
+}

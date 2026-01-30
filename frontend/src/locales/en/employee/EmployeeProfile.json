@@ -1,0 +1,47 @@
+{
+  "my_profile": "My Profile",
+  "manage_personal_data": "Manage personal data and client information",
+  "loading_profile": "Loading profile...",
+  "error_loading_profile": "Error loading profile",
+  "profile_not_linked": "It seems your account is not linked to an employee profile. Please contact the administrator.",
+  
+  "profile_photo": "Profile Photo",
+  "photo_recommendation": "Recommended: square photo, minimum 300x300px",
+  "please_select_image": "Please select an image",
+  "file_size_limit": "File size must not exceed 5MB",
+  "photo_uploaded": "Photo uploaded successfully",
+  "error_uploading_photo": "Error uploading photo",
+  
+  "basic_info": "Basic Information",
+  "full_name": "Full Name",
+  "full_name_placeholder": "Your full name",
+  "name_min_length": "Name must contain at least 2 characters",
+  
+  "position": "Position",
+  "position_placeholder": "For example: HAIR STYLIST",
+  "position_min_length": "Position must contain at least 2 characters",
+  
+  "experience": "Work Experience",
+  "experience_placeholder": "For example: 5 years",
+  
+  "contact_info": "Contact Information",
+  "phone": "Phone",
+  "phone_placeholder": "+971 XX XXX XXXX",
+  "email": "Email",
+  "email_placeholder": "your@email.com",
+  "instagram": "Instagram",
+  "instagram_placeholder": "@your_instagram",
+  
+  "about_me": "About Me",
+  "bio": "Biography",
+  "bio_placeholder": "Tell about yourself, your achievements, certificates...",
+  "bio_hint": "This information will be visible to clients on the public page",
+  
+  "saving": "Saving...",
+  "save_changes": "Save Changes",
+  "profile_updated": "Profile updated successfully",
+  "error_updating_profile": "Error updating profile",
+  
+  "tip_title": "Tip",
+  "tip_message": "Fill in all fields to create a complete profile. Your information will be displayed on the public page and will help clients learn more about you and choose you for booking."
+}

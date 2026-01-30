@@ -1,9 +1,9 @@
 {
   "clear_all": "Tout effacer",
-  "clear_confirm": "Êtes-vous sûr de vouloir effacer complètement le journal d'audit ? Cette action est irréversible.",
+  "clear_confirm": "Êtes-vous sûr de vouloir effacer complètement le journal d'audit\u00a0? Cette action est irréversible.",
+  "delete_batch_confirm_one": "Supprimer {{count}} réservations sélectionnées ?",
   "delete_batch_confirm_few": "Supprimer {{count}} réservations sélectionnées ?",
   "delete_batch_confirm_many": "Supprimer {{count}} réservations sélectionnées ?",
-  "delete_batch_confirm_one": "Supprimer {{count}} réservations sélectionnées ?",
   "delete_batch_confirm_other": "Supprimer {{count}} réservations ?",
   "delete_confirm": "Supprimer définitivement cette réservation ?",
   "delete_selected": "Supprimer la sélection",
