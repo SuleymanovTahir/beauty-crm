@@ -52,8 +52,6 @@ interface Service {
   id: number;
   key: string;
   name: string;
-  name_ru: string;
-  name_ar?: string;
   price: number;
   min_price?: number;
   max_price?: number;
@@ -61,8 +59,6 @@ interface Service {
   currency: string;
   category: string;
   description?: string;
-  description_ru?: string;
-  description_ar?: string;
   benefits?: string[];
   is_active: boolean;
   [key: string]: any;
@@ -71,9 +67,7 @@ interface Service {
 interface SpecialPackage {
   id: number;
   name: string;
-  name_ru: string;
   description: string;
-  description_ru: string;
   original_price: number;
   special_price: number;
   currency: string;
@@ -226,14 +220,12 @@ export default function Services() {
   const [saving, setSaving] = useState(false);
 
   // Positions state
-  const [positions, setPositions] = useState<Array<{ id: number; name: string; name_en?: string }>>([]);
-  const [employees, setEmployees] = useState<Array<{ id: number; full_name: string; full_name_ru: string; position_id: number; position?: string; role?: string; is_active?: boolean }>>([]);
+  const [positions, setPositions] = useState<Array<{ id: number; name: string }>>([]);
+  const [employees, setEmployees] = useState<Array<{ id: number; full_name: string; position_id: number; position?: string; role?: string; is_active?: boolean }>>([]);
 
   const [serviceFormData, setServiceFormData] = useState({
     key: '',
     name: '',
-    name_ru: '',
-    name_ar: '',
     price: 0,
     min_price: '',
     max_price: '',
@@ -241,8 +233,6 @@ export default function Services() {
     currency: currency,
     category: '',
     description: '',
-    description_ru: '',
-    description_ar: '',
     benefits: '',
     position_ids: [] as number[],
     employee_ids: [] as number[],
@@ -252,9 +242,7 @@ export default function Services() {
 
   const [packageFormData, setPackageFormData] = useState({
     name: '',
-    name_ru: '',
     description: '',
-    description_ru: '',
     original_price: 0,
     special_price: 0,
     currency: currency,
@@ -399,8 +387,6 @@ export default function Services() {
     setServiceFormData({
       key: '',
       name: '',
-      name_ru: '',
-      name_ar: '',
       price: 0,
       min_price: '',
       max_price: '',
@@ -408,8 +394,6 @@ export default function Services() {
       currency: currency,
       category: '',
       description: '',
-      description_ru: '',
-      description_ar: '',
       benefits: '',
       position_ids: [],
       employee_ids: [],
@@ -451,8 +435,6 @@ export default function Services() {
     setServiceFormData({
       key: service.key,
       name: service.name,
-      name_ru: service.name_ru,
-      name_ar: service.name_ar || '',
       price: service.price,
       min_price: service.min_price?.toString() || '',
       max_price: service.max_price?.toString() || '',
@@ -460,8 +442,6 @@ export default function Services() {
       currency: service.currency,
       category: service.category,
       description: service.description || '',
-      description_ru: service.description_ru || '',
-      description_ar: service.description_ar || '',
       benefits: Array.isArray(service.benefits) ? service.benefits.join(' | ') : '',
       position_ids: positionIds,
       employee_ids: employeeIds,
@@ -471,7 +451,7 @@ export default function Services() {
 
   const handleSaveService = async () => {
     try {
-      if (!serviceFormData.key || !serviceFormData.name || !serviceFormData.name_ru || !serviceFormData.category) {
+      if (!serviceFormData.key || !serviceFormData.name || !serviceFormData.category) {
         toast.error(t('services:fill_required_fields'));
         return;
       }
@@ -481,8 +461,6 @@ export default function Services() {
       const serviceData = {
         key: serviceFormData.key,
         name: serviceFormData.name,
-        name_ru: serviceFormData.name_ru,
-        name_ar: serviceFormData.name_ar,
         price: serviceFormData.price,
         min_price: serviceFormData.min_price ? Number(serviceFormData.min_price) : null,
         max_price: serviceFormData.max_price ? Number(serviceFormData.max_price) : null,
@@ -490,8 +468,6 @@ export default function Services() {
         currency: serviceFormData.currency,
         category: serviceFormData.category,
         description: serviceFormData.description,
-        description_ru: serviceFormData.description_ru,
-        description_ar: serviceFormData.description_ar,
         benefits: serviceFormData.benefits.split(' | ').filter(b => b.trim()),
       };
 
@@ -582,9 +558,7 @@ export default function Services() {
     setEditingPackage(null);
     setPackageFormData({
       name: '',
-      name_ru: '',
       description: '',
-      description_ru: '',
       original_price: 0,
       special_price: 0,
       currency: currency,
@@ -609,9 +583,7 @@ export default function Services() {
     setEditingPackage(pkg);
     setPackageFormData({
       name: pkg.name,
-      name_ru: pkg.name_ru,
       description: pkg.description,
-      description_ru: pkg.description_ru,
       original_price: pkg.original_price,
       special_price: pkg.special_price,
       currency: pkg.currency,
@@ -641,7 +613,7 @@ export default function Services() {
 
   const handleSavePackage = async () => {
     try {
-      if (!packageFormData.name || !packageFormData.name_ru) {
+      if (!packageFormData.name) {
         toast.error(t('services:fill_package_name'));
         return;
       }
@@ -655,9 +627,7 @@ export default function Services() {
 
       const packageData = {
         name: packageFormData.name,
-        name_ru: packageFormData.name_ru,
         description: packageFormData.description,
-        description_ru: packageFormData.description_ru,
         original_price: packageFormData.original_price,
         special_price: packageFormData.special_price,
         currency: packageFormData.currency,
@@ -1072,7 +1042,7 @@ export default function Services() {
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 mb-1">{pkg.name_ru}</h3>
+                      <h3 className="font-semibold text-gray-900 mb-1">{pkg.name}</h3>
                       <p className="text-sm text-gray-500">{pkg.name}</p>
                     </div>
                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${pkg.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
@@ -1291,12 +1261,11 @@ export default function Services() {
                     </Label>
                     <Input
                       className="!h-12 bg-white border-gray-100 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-pink-500/20 w-full"
-                      value={serviceFormData.name_ru}
+                      value={serviceFormData.name}
                       onChange={(e) => {
                         const val = e.target.value;
                         setServiceFormData({
                           ...serviceFormData,
-                          name_ru: val,
                           name: val,
                           key: editingService ? serviceFormData.key : val.toLowerCase().replace(/\s+/g, '_').replace(/[^\w]/g, '')
                         });
@@ -1464,7 +1433,7 @@ export default function Services() {
                                 : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
                                 }`}
                             >
-                              {i18n.language.startsWith('ru') ? pos.name : (pos.name_en || pos.name)}
+                              {pos.name}
                             </button>
                           );
                         })}
@@ -1535,7 +1504,7 @@ export default function Services() {
                                           !emp.position_id ||
                                           serviceFormData.position_ids.includes(emp.position_id) ||
                                           serviceFormData.employee_ids.includes(emp.id);
-                                        const employeeName = (i18n.language.startsWith('ru') ? emp.full_name_ru : emp.full_name) || '';
+                                        const employeeName = (emp.full_name) || '';
                                         const matchesSearch = employeeName.toLowerCase().includes(employeeSearchTerm.toLowerCase());
                                         return matchesPos && matchesSearch;
                                       });
@@ -1557,7 +1526,7 @@ export default function Services() {
                                           !emp.position_id ||
                                           serviceFormData.position_ids.includes(emp.position_id) ||
                                           serviceFormData.employee_ids.includes(emp.id);
-                                        const employeeName = (i18n.language.startsWith('ru') ? emp.full_name_ru : emp.full_name) || '';
+                                        const employeeName = (emp.full_name) || '';
                                         const matchesSearch = employeeName.toLowerCase().includes(employeeSearchTerm.toLowerCase());
                                         return matchesPos && matchesSearch;
                                       });
@@ -1584,7 +1553,7 @@ export default function Services() {
                                         !emp.position_id ||
                                         serviceFormData.position_ids.includes(emp.position_id) ||
                                         serviceFormData.employee_ids.includes(emp.id);
-                                      const employeeName = (i18n.language.startsWith('ru') ? emp.full_name_ru : emp.full_name) || '';
+                                      const employeeName = (emp.full_name) || '';
                                       const matchesSearch = employeeName.toLowerCase().includes(employeeSearchTerm.toLowerCase());
                                       return matchesPos && matchesSearch;
                                     })
@@ -1614,7 +1583,7 @@ export default function Services() {
                                             <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
                                               {(() => {
                                                 const pos = positions.find(p => p.id === employee.position_id);
-                                                return pos ? (i18n.language.startsWith('ru') ? pos.name : (pos.name_en || pos.name)) : (employee.position || '');
+                                                return pos ? (pos.name) : (employee.position || '');
                                               })()}
                                             </span>
                                           </div>
@@ -1634,7 +1603,7 @@ export default function Services() {
                           {serviceFormData.employee_ids.map(eid => {
                             const emp = employees.find(e => e.id === eid);
                             if (!emp) return null;
-                            const employeeName = i18n.language.startsWith('ru') ? emp.full_name_ru : emp.full_name;
+                            const employeeName = emp.full_name;
                             return (
                               <div key={eid} className="flex items-center gap-1.5 px-3 py-1.5 bg-pink-50 border border-pink-100 rounded-lg text-xs font-semibold text-pink-700 animate-in fade-in zoom-in duration-200">
                                 <span>{employeeName}</span>
@@ -2128,7 +2097,7 @@ export default function Services() {
                       <SelectContent>
                         {services.map((service) => (
                           <SelectItem key={service.id} value={service.id.toString()}>
-                            {i18n.language === 'ru' ? service.name_ru : service.name}
+                            {service.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -2505,7 +2474,7 @@ export default function Services() {
                       }
                     }}>
                       <SelectTrigger><SelectValue placeholder={t('services:select_service', 'Выберите услугу')} /></SelectTrigger>
-                      <SelectContent>{services.map((service) => (<SelectItem key={service.id} value={service.id.toString()}>{i18n.language === 'ru' ? service.name_ru : service.name}</SelectItem>))}</SelectContent>
+                      <SelectContent>{services.map((service) => (<SelectItem key={service.id} value={service.id.toString()}>{service.name}</SelectItem>))}</SelectContent>
                     </Select>
                   </div>
                   {challengeFormData.service_id && (

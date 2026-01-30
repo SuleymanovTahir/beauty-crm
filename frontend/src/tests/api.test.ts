@@ -139,8 +139,8 @@ describe('APIClient', () => {
     it('should fetch positions list', async () => {
       const mockPositions = {
         positions: [
-          { id: 1, name: 'Hair Stylist', name_en: 'Hair Stylist' },
-          { id: 2, name: 'Nail Master', name_en: 'Nail Master' },
+          { id: 1, name: 'Hair Stylist' },
+          { id: 2, name: 'Nail Master' },
         ]
       };
 

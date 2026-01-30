@@ -18,13 +18,7 @@ export interface Service {
   id: number;
   key: string;
   name: string;
-  name_ru?: string;
-  name_en?: string;
-  name_ar?: string;
   description?: string;
-  description_ru?: string;
-  description_en?: string;
-  description_ar?: string;
   price: number;
   min_price?: number;
   max_price?: number;
@@ -55,8 +49,6 @@ export interface Employee {
   role: string;
   photo_url?: string;
   bio?: string;
-  bio_ru?: string;
-  bio_en?: string;
   specialization?: string;
   years_of_experience?: number;
   is_service_provider: boolean;
@@ -88,8 +80,6 @@ export interface ServiceCategory_DB {
   id: number;
   key: string;
   name: string;
-  name_ru?: string;
-  name_en?: string;
   description?: string;
   icon?: string;
   sort_order?: number;

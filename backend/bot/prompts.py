@@ -975,7 +975,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                 # ✅ УНИВЕРСАЛЬНЫЙ ПОИСК: Сначала пробуем точное совпадение
                 for name_key, s_obj in search_candidates:
                     if name_key in last_msg_lower:
-                        detected_service = s_obj[3] if s_obj[3] else s_obj[2]
+                        detected_service = s_obj[2]  # name (translations in frontend locales)
                         service_name = detected_service
                         found_in_last = True
                         logger.info(f"✅ [PromptBuilder] Exact match found: '{service_name}'")
@@ -992,7 +992,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                     
                     if match_result:
                         service_row, match_score = match_result
-                        detected_service = service_row[3] if service_row[3] else service_row[2]
+                        detected_service = service_row[2]  # name (translations in frontend locales)
                         service_name = detected_service
                         found_in_last = True
                         logger.info(f"✅ [PromptBuilder] Keyword match found: '{service_name}' (score: {match_score})")
@@ -1008,10 +1008,10 @@ Google Maps: {self.salon.get('google_maps', '')}
                             for target_name in target_names:
                                 target_name_lower = target_name.lower()
                                 for s in db_services:
-                                    service_name_en = (s[2] or "").lower()
-                                    service_name_ru = (s[3] or "").lower()
-                                    if target_name_lower in service_name_en or target_name_lower in service_name_ru:
-                                        detected_service = s[3] if s[3] else s[2]
+                                    # s[2] is name (translations are in frontend locales)
+                                    service_name_db = (s[2] or "").lower()
+                                    if target_name_lower in service_name_db:
+                                        detected_service = s[2]
                                         service_name = detected_service
                                         logger.info(f"✅ [PromptBuilder] Mapped synonym '{syn_key}' → service '{service_name}'")
                                         print(f"✅ [PromptBuilder] Mapped synonym '{syn_key}' → service '{service_name}'")
@@ -1034,7 +1034,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                     
                     if match_result:
                         service_row, match_score = match_result
-                        detected_service = service_row[3] if service_row[3] else service_row[2]
+                        detected_service = service_row[2]  # name (translations in frontend locales)
                         service_name = detected_service
                         logger.info(f"✅ [PromptBuilder] Service recovery from history: '{service_name}' (score: {match_score})")
                         print(f"🔎 [PromptBuilder] Service recovery from history: '{service_name}'")
@@ -1042,7 +1042,7 @@ Google Maps: {self.salon.get('google_maps', '')}
                         # Fallback на старый метод
                         for name_key, s_obj in search_candidates:
                             if name_key in combined_msg:
-                                detected_service = s_obj[3] if s_obj[3] else s_obj[2]
+                                detected_service = s_obj[2]  # name (translations in frontend locales)
                                 service_name = detected_service
                                 print(f"🔎 [PromptBuilder] Service recovery from history: '{service_name}'")
                                 break

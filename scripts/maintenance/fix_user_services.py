@@ -119,16 +119,15 @@ def load_services_by_category(cursor):
 
 def load_services(cursor):
     """Load all services from DB into a dict {name_lower: {id, name}}"""
-    cursor.execute("SELECT id, name, name_en, name_ru FROM services")
+    cursor.execute("SELECT id, name FROM services")
     db_services = {}
-    
+
     for row in cursor.fetchall():
-        sid, name, name_en, name_ru = row
-        # Index by all possible names
-        if name: db_services[name.lower().strip()] = {"id": sid, "name": name}
-        if name_en: db_services[name_en.lower().strip()] = {"id": sid, "name": name}
-        if name_ru: db_services[name_ru.lower().strip()] = {"id": sid, "name": name}
-    
+        sid, name = row
+        # Index by name (translations are in frontend locales)
+        if name:
+            db_services[name.lower().strip()] = {"id": sid, "name": name}
+
     return db_services
 
 def find_service(search_name, db_services):

@@ -424,7 +424,7 @@ export class ApiClient {
     return this.request<any>('/api/plans/metrics/all')
   }
 
-  async createPlanMetric(data: { key: string; name: string; unit?: string; description?: string; name_ru?: string; name_en?: string }) {
+  async createPlanMetric(data: { key: string; name: string; unit?: string; description?: string }) {
     return this.request('/api/plans/metrics', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -1425,11 +1425,7 @@ export class ApiClient {
 
   async updateMyEmployeeProfile(data: {
     full_name?: string;
-    name_ru?: string;
-    name_ar?: string;
     position?: string;
-    position_ru?: string;
-    position_ar?: string;
     experience?: string;
     photo?: string;
     bio?: string;
@@ -1691,8 +1687,6 @@ export class ApiClient {
       positions: Array<{
         id: number
         name: string
-        name_en?: string
-        name_ar?: string
         description?: string
         is_active: number
         sort_order: number
