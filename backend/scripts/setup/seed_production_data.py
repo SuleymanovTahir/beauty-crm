@@ -55,43 +55,43 @@ def seed_production_data():
         
         log_info(f"   ✅ Added {added_services} services", "seeding")
         
-        # 2. Seed Banners
-        log_info("   🖼 Seeding Banners...", "seeding")
-        
-        c.execute("DELETE FROM public_banners")
-        
-        # Create default banners (Only base fields per Rule 15)
-        banners = [
-            ("Luxury Hair Styling", "Premium hair care and transformations", "/static/images/banners/banner_main.webp", "/booking", 1),
-            ("Elegant Nail Art", "Perfect manicure and pedicure services", "/static/images/banners/banner_premium.webp", "/booking", 2)
-        ]
-        
-        for title, subtitle, img, link, order in banners:
-            c.execute("""
-                INSERT INTO public_banners (title, subtitle, image_url, link_url, display_order, is_active)
-                VALUES (%s, %s, %s, %s, %s, TRUE)
-            """, (title, subtitle, img, link, order))
-        log_info("   ✅ Created default banners", "seeding")
+        # 2. Banners - now managed via CRM admin panel
+        log_info("   🖼 Skipping Banners (CRM is source of truth)", "seeding")
+        # NOTE: Banners should be created/managed via CRM Public Content page
+        # DO NOT auto-seed or delete existing banners
 
-        # 3. Seed Gallery
+        # 3. Seed Gallery (only add if empty or missing items)
         log_info("   📸 Seeding Gallery...", "seeding")
-        c.execute("DELETE FROM public_gallery")
-        
-        gallery_items = [
-            ("/static/images/portfolio/hair1.jpg", "Стильная укладка", "Работа нашего топ-стилиста", "hair", 1),
-            ("/static/images/portfolio/волосы.webp", "Окрашивание блонд", "Идеальный платиновый блонд", "hair", 2),
-            ("/static/images/portfolio/маникюр.webp", "Классический маникюр", "Чистота и идеальная форма", "nails", 3),
-            ("/static/images/portfolio/ногти2.webp", "Дизайн ногтей", "Аккуратное покрытие и стильный дизайн", "nails", 4),
-            ("/static/images/portfolio/спа2.webp", "SPA-процедуры", "Релакс и уход за кожей", "spa", 5),
-            ("/static/images/portfolio/спа3.webp", "Марокканская баня", "Традиционный восточный уход", "spa", 6)
-        ]
-        
-        for img, title, desc, cat, order in gallery_items:
-            c.execute("""
-                INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
-                VALUES (%s, %s, %s, %s, %s, TRUE)
-            """, (img, title, desc, cat, order))
-        log_info("   ✅ Seeded gallery items", "seeding")
+        c.execute("SELECT COUNT(*) FROM public_gallery")
+        gallery_count = c.fetchone()[0]
+        if gallery_count > 0:
+            log_info("   ⏭️ Gallery already has data, skipping seed", "seeding")
+        else:
+            gallery_items = [
+                # Portfolio category
+                ("/static/uploads/images/portfolio/hair1.webp", "Стильная укладка", "Работа нашего топ-стилиста", "portfolio", 1),
+                ("/static/uploads/images/portfolio/nails1.webp", "Классический маникюр", "Чистота и идеальная форма", "portfolio", 2),
+                ("/static/uploads/images/portfolio/lips1.webp", "Перманентный макияж губ", "Естественный контур и цвет", "portfolio", 3),
+                ("/static/uploads/images/portfolio/spa1.webp", "SPA-процедуры", "Релакс и уход за кожей", "portfolio", 4),
+                # Salon category
+                ("/static/uploads/images/salon/salon_main.webp", "Интерьер салона", "Уютная атмосфера нашего салона", "salon", 1),
+                ("/static/uploads/images/salon/moroccan_bath.webp", "SPA зона", "Зона релаксации и отдыха", "salon", 2),
+                ("/static/uploads/images/salon/hair_studio.webp", "Парикмахерский зал", "Профессиональное оборудование", "salon", 3),
+                ("/static/uploads/images/salon/nail_salon.webp", "Зона маникюра", "Комфорт и стерильность", "salon", 4),
+                ("/static/uploads/images/salon/massage_room.webp", "Кабинет массажа", "Расслабляющая атмосфера", "salon", 5),
+                # Services category
+                ("/static/uploads/images/services/%D0%9C%D0%B0%D0%BD%D0%B8%D0%BA%D1%8E%D1%80%204.webp", "Маникюр", "Профессиональный маникюр", "services", 1),
+                ("/static/uploads/images/services/%D0%9C%D0%B0%D1%81%D1%81%D0%B0%D0%B6%20%D0%BB%D0%B8%D1%86%D0%B0.webp", "Массаж лица", "Омолаживающий массаж", "services", 2),
+                ("/static/uploads/images/services/%D0%A1%D0%BF%D0%B0.webp", "SPA", "Релакс процедуры", "services", 3),
+                ("/static/uploads/images/services/%D0%A1%D1%82%D1%80%D0%B8%D0%B6%D0%BA%D0%B0%20.webp", "Стрижка", "Профессиональная стрижка", "services", 4),
+            ]
+
+            for img, title, desc, cat, order in gallery_items:
+                c.execute("""
+                    INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
+                    VALUES (%s, %s, %s, %s, %s, TRUE)
+                """, (img, title, desc, cat, order))
+            log_info("   ✅ Seeded gallery items", "seeding")
 
         conn.commit()
         log_info("🎉 Seeding completed successfully!", "seeding")
