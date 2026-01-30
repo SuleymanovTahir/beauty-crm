@@ -495,7 +495,7 @@ def create_booking_api(
         conn = get_db_connection()
         c = conn.cursor()
         try:
-            c.execute("SELECT id FROM pipeline_stages WHERE LOWER(name) LIKE '%book%' OR LOWER(name) LIKE '%запис%' LIMIT 1")
+            c.execute("SELECT id FROM workflow_stages WHERE entity_type = 'pipeline' AND (LOWER(name) LIKE '%book%' OR LOWER(name) LIKE '%запис%') LIMIT 1")
             stage_row = c.fetchone()
             if stage_row:
                 booked_stage_id = stage_row[0]

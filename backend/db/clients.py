@@ -149,7 +149,7 @@ def get_or_create_client(instagram_id: str, username: str = None, phone: str = N
             now = datetime.now().isoformat()
             
             # Fetch default pipeline stage (usually 'new' or first order)
-            c.execute("SELECT id FROM pipeline_stages WHERE key = 'new' OR order_index = 0 ORDER BY order_index ASC LIMIT 1")
+            c.execute("SELECT id FROM workflow_stages WHERE entity_type = 'pipeline' AND (LOWER(name) = 'новый' OR LOWER(name) = 'new' OR sort_order = 0) ORDER BY sort_order ASC LIMIT 1")
             stage_row = c.fetchone()
             default_stage_id = stage_row[0] if stage_row else None
             
