@@ -22,240 +22,240 @@
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "قطع الانفجارات",
-      "price": 100
+      "price": 100.0
     },
     "bikini_line": {
       "category": "واكس",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "خط بيكيني",
-      "price": 100
+      "price": 100.0
     },
     "blowdry_long": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تجفيف بالسيشوار (طويل)",
-      "price": 280
+      "price": 280.0
     },
     "blowdry_medium": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "nu ليرة لبنانية",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تجفيف بالسيشوار (متوسط)",
-      "price": 250
+      "price": 250.0
     },
     "blowdry_short": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تجفيف بالسيشوار (قصير)",
-      "price": 200
+      "price": 200.0
     },
     "brow_coloring": {
       "category": "الحواجب",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تلوين الحاجب",
-      "price": 40
+      "price": 40.0
     },
     "brow_correction": {
       "category": "الحواجب",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
+      "max_price": null,
       "min_price": null,
       "name": "تصحيح الحاجب",
-      "price": 40
+      "price": 40.0
     },
     "brow_lami": {
       "category": "الحواجب",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تصفيح الحاجب",
-      "price": 200
+      "price": 200.0
     },
     "change_classic_pedicure": {
       "category": "باديكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تغيير البولندية (بيدي)",
-      "price": 50
+      "price": 50.0
     },
     "change_gel_pedicure": {
       "category": "باديكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
+      "max_price": null,
       "min_price": null,
       "name": "تغيير جل البولندية (بيدي)",
-      "price": 100
+      "price": 100.0
     },
     "cheeks_wax": {
       "category": "واكس",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تشميع الخدود",
-      "price": 40
+      "price": 40.0
     },
     "chin_wax": {
       "category": "واكس",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تشميع الذقن",
-      "price": 30
+      "price": 30.0
     },
     "combo_lami": {
       "category": "كومبو",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "كومبو لاش + حواجب لامي",
-      "price": 300
+      "price": 300.0
     },
     "combo_mani_pedi_gel": {
       "category": "كومبو",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "كومبو مانيكير+بيدي (جل)",
-      "price": 350
+      "price": 350.0
     },
     "complex_color": {
       "category": "لون الشعر",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 1500,
-      "min_price": 1000,
+      "max_price": 1500.0,
+      "min_price": 1000.0,
       "name": "لون معقد (أومبير/بالياج)",
-      "price": 1250
+      "price": 1250.0
     },
     "deep_facial_cleaning": {
       "category": "التجميل",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تنظيف عميق للوجه",
-      "price": 400
+      "price": 400.0
     },
     "evening_hairstyle": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 800,
-      "min_price": 450,
+      "max_price": 800.0,
+      "min_price": 450.0,
       "name": "تصفيفة الشعر المسائية",
-      "price": 625
+      "price": 625.0
     },
     "express_hair_form": {
       "category": "قص الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة l",
+      "max_price": null,
+      "min_price": null,
       "name": "النموذج السريع (بدون غسيل)",
-      "price": 150
+      "price": 150.0
     },
     "eyeliner": {
       "category": "المكياج الدائم",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "كحل",
-      "price": 800
+      "price": 800.0
     },
     "face_lift_massage": {
       "category": "التجميل",
       "currency": "AED",
       "description": "",
       "duration": "30",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "مساج رفع + قناع",
-      "price": 250
+      "price": 250.0
     },
     "french_polish": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تلميع فرنسي",
-      "price": 190
+      "price": 190.0
     },
     "full_arms": {
       "category": "واكس",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "الأسلحة الكاملة",
-      "price": 80
+      "price": 80.0
     },
     "full_bikini": {
       "category": "واكس",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "بيكيني كامل",
-      "price": 150
+      "price": 150.0
     },
     "full_body_wax": {
       "category": "واكس",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تشميع الجسم بالكامل",
-      "price": 400
+      "price": 400.0
     },
     "full_face_wax": {
       "category": "واكس",
@@ -263,29 +263,29 @@
       "description": "",
       "duration": "60",
       "max_price": null,
-      "min_price": "فارغة",
+      "min_price": null,
       "name": "واكس لكامل الوجه",
-      "price": 90
+      "price": 90.0
     },
     "full_legs": {
       "category": "واكس",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "أرجل كاملة",
-      "price": 150
+      "price": 150.0
     },
     "gel_polish_only": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "طلاء جل فقط",
-      "price": 100
+      "price": 100.0
     },
     "hair_cut_full": {
       "category": "قص الشعر",
@@ -293,149 +293,149 @@
       "description": "",
       "duration": "60",
       "max_price": null,
-      "min_price": "فارغة",
+      "min_price": null,
       "name": "قص + غسيل + تصفيف",
-      "price": 350
+      "price": 350.0
     },
     "hair_cut_wash": {
       "category": "قص الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "قطع + غسل",
-      "price": 200
+      "price": 200.0
     },
     "hair_trim": {
       "category": "قص الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "قص الشعر فقط",
-      "price": 150
+      "price": 150.0
     },
     "hair_wash": {
       "category": "العناية بالشعر",
       "currency": "AED",
       "description": "",
       "duration": "30",
-      "max_price": "فارغة",
-      "min_price": "n كامل",
+      "max_price": null,
+      "min_price": null,
       "name": "غسل الشعر",
-      "price": 70
+      "price": 70.0
     },
     "half_arms": {
       "category": "واكس",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "نصف الأسلحة",
-      "price": 50
+      "price": 50.0
     },
     "half_legs": {
       "category": "واكس",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "نصف الأرجل (سفلي)",
-      "price": 80
+      "price": 80.0
     },
     "japanese_manicure": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "90",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "مانيكير ياباني",
-      "price": 150
+      "price": 150.0
     },
     "kids_cut": {
       "category": "قص الشعر",
       "currency": "AED",
       "description": "",
       "duration": "40",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "قطع الاطفال",
-      "price": 100
+      "price": 100.0
     },
     "kim_style_effect": {
       "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تأثير أسلوب كيم / منحنيات L وM",
-      "price": 30
+      "price": 30.0
     },
     "lash_lami": {
       "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
+      "max_price": null,
       "min_price": null,
       "name": "رفع الرموش",
-      "price": 200
+      "price": 200.0
     },
     "lashes_2d": {
       "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "ملحقات رموش ثنائية الأبعاد",
-      "price": 250
+      "price": 250.0
     },
     "lashes_3d": {
       "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "ملحقات رموش ثلاثية الأبعاد",
-      "price": 300
+      "price": 300.0
     },
     "lashes_classic": {
       "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
+      "max_price": null,
       "min_price": null,
       "name": "ملحقات لاش الكلاسيكية",
-      "price": 200
+      "price": 200.0
     },
     "lashes_mega": {
       "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "وصلات رموش 4-5D (ميجا)",
-      "price": 350
+      "price": 350.0
     },
     "lashliner": {
       "category": "المكياج الدائم",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "لاشلينر",
-      "price": 800
+      "price": 800.0
     },
     "manicure_combined": {
       "category": "مانيكير",
@@ -443,29 +443,29 @@
       "description": "",
       "duration": "60",
       "max_price": null,
-      "min_price": "فارغة",
+      "min_price": null,
       "name": "مانيكير مجتمعة",
-      "price": 110
+      "price": 110.0
     },
     "manicure_gel_polish": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "مانيكير + جل مدمج",
-      "price": 160
+      "price": 160.0
     },
     "manicure_pil_classic": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "مانيكير كلاسيكي + طلاء",
-      "price": 130
+      "price": 130.0
     },
     "massage_anticellulite": {
       "category": "التدليك",
@@ -473,359 +473,359 @@
       "description": "",
       "duration": "60",
       "max_price": null,
-      "min_price": "فارغة",
+      "min_price": null,
       "name": "تدليك مضاد للسيلوليت (60 دقيقة)",
-      "price": 300
+      "price": 300.0
     },
     "massage_body": {
       "category": "التدليك",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تدليك الجسم (60 دقيقة)",
-      "price": 250
+      "price": 250.0
     },
     "massage_extremities": {
       "category": "التدليك",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تدليك الأطراف (60 دقيقة)",
-      "price": 150
+      "price": 150.0
     },
     "massage_head": {
       "category": "التدليك",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تدليك الرأس (60 دقيقة)",
-      "price": 100
+      "price": 100.0
     },
     "massage_sculptural": {
       "category": "التدليك",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تدليك الجسم النحتي",
-      "price": 370
+      "price": 370.0
     },
     "medical_facial": {
       "category": "التجميل",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "الوجه الطبي (مشكلة الجلد)",
-      "price": 450
+      "price": 450.0
     },
     "moroccan_bath": {
       "category": "SPA",
       "currency": "AED",
       "description": "",
       "duration": "30",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "سبا الحمام المغربي",
-      "price": 250
+      "price": 250.0
     },
     "nail_correction": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تصحيح الامتدادات",
-      "price": 400
+      "price": 400.0
     },
     "nail_extensions": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "وصلات الأظافر (جل)",
-      "price": 400
+      "price": 400.0
     },
     "nail_shaping": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
+      "max_price": null,
       "min_price": null,
       "name": "تشكيل الأظافر",
-      "price": 45
+      "price": 45.0
     },
     "one_tone_long": {
       "category": "لون الشعر",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 800,
-      "min_price": 550,
+      "max_price": 800.0,
+      "min_price": 550.0,
       "name": "نغمة واحدة (طويلة)",
-      "price": 675
+      "price": 675.0
     },
     "one_tone_medium": {
       "category": "لون الشعر",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "نغمة واحدة (متوسطة)",
-      "price": 400
+      "price": 400.0
     },
     "one_tone_short": {
       "category": "لون الشعر",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "نغمة واحدة (قصيرة)",
-      "price": 350
+      "price": 350.0
     },
     "overlay_biogel": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تراكب Biogel",
-      "price": 50
+      "price": 50.0
     },
     "pedicure_gel": {
       "category": "باديكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "باديكير + جل بوليش",
-      "price": 190
+      "price": 190.0
     },
     "pedicure_smart": {
       "category": "باديكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "باديكير الذكية الأساسية",
-      "price": 130
+      "price": 130.0
     },
     "pedicure_smart_polish": {
       "category": "باديكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "باديكير ذكي + بوليش",
-      "price": 150
+      "price": 150.0
     },
     "peeling": {
       "category": "التجميل",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 400,
-      "min_price": 300,
+      "max_price": 400.0,
+      "min_price": 300.0,
       "name": "تقشير",
-      "price": 350
+      "price": 350.0
     },
     "permanent_brows": {
       "category": "المكياج الدائم",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "n كامل",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "الحواجب الدائمة",
-      "price": 800
+      "price": 800.0
     },
     "permanent_correction": {
       "category": "المكياج الدائم",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تصحيح المكياج الدائم",
-      "price": 800
+      "price": 800.0
     },
     "permanent_lips": {
       "category": "المكياج الدائم",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "الشفاه الدائمة",
-      "price": 800
+      "price": 800.0
     },
     "polish_classic": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "30",
-      "max_price": "فارغة",
+      "max_price": null,
       "min_price": null,
       "name": "تلميع كلاسيكي فقط",
-      "price": 50
+      "price": 50.0
     },
     "remove_classic": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "30",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "إزالة طلاء أظافر كلاسيكي",
-      "price": 20
+      "price": 20.0
     },
     "remove_extensions": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "إزالة الامتدادات",
-      "price": 70
+      "price": 70.0
     },
     "remove_gel": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "30",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "إزالة جل البولندية",
-      "price": 30
+      "price": 30.0
     },
     "remove_lashes": {
       "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "إزالة الرموش",
-      "price": 50
+      "price": 50.0
     },
     "repair_extension": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "إصلاح 1 التمديد",
-      "price": 40
+      "price": 40.0
     },
     "repair_gel": {
       "category": "مانيكير",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "إصلاح 1 جل الأظافر",
-      "price": 20
+      "price": 20.0
     },
     "roots_color": {
       "category": "لون الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
+      "max_price": null,
       "min_price": null,
       "name": "تلوين الجذور",
-      "price": 250
+      "price": 250.0
     },
     "styling_long": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "مكواة/موجات تصفيف الشعر (طويلة)",
-      "price": 300
+      "price": 300.0
     },
     "styling_medium": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "مكواة/تموجات التصفيف (متوسطة)",
-      "price": 260
+      "price": 260.0
     },
     "styling_short": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "مكواة/موجات تصفيف (قصيرة)",
-      "price": 230
+      "price": 230.0
     },
     "toning": {
       "category": "لون الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": 350,
-      "min_price": 250,
+      "max_price": 350.0,
+      "min_price": 250.0,
       "name": "التنغيم",
-      "price": 300
+      "price": 300.0
     },
     "total_blonde": {
       "category": "لون الشعر",
       "currency": "AED",
       "description": "",
       "duration": "120",
-      "max_price": 1500,
-      "min_price": 1000,
+      "max_price": 1500.0,
+      "min_price": 1000.0,
       "name": "مجموع شقراء",
-      "price": 1250
+      "price": 1250.0
     },
     "underarms": {
       "category": "واكس",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تشميع تحت الإبطين",
-      "price": 50
+      "price": 50.0
     },
     "upper_lip_wax": {
       "category": "واكس",
       "currency": "AED",
       "description": "",
       "duration": "60",
-      "max_price": "فارغة",
-      "min_price": "فارغة",
+      "max_price": null,
+      "min_price": null,
       "name": "تشميع الشفة العليا",
-      "price": 30
+      "price": 30.0
     }
   },
   "manicurePedicure": "",

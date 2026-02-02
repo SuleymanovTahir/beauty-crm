@@ -4,9 +4,9 @@
   "analytics": {
     "avgPrice": "Wed. ",
     "last30Days": "For {{count}} days",
+    "last30Days_one": "",
     "last30Days_few": "",
     "last30Days_many": "",
-    "last30Days_one": "",
     "last30Days_other": "",
     "revenue": "Revenue",
     "totalSold": "Total sold"
@@ -15,9 +15,9 @@
   "delete": "Delete",
   "detail": {
     "costPriceLabel": "Cost: {{price}} {{currency}}",
+    "inStock_one": "In stock {{count}} pcs.",
     "inStock_few": "In stock {{count}} pcs.",
     "inStock_many": "In stock {{count}} pcs.",
-    "inStock_one": "In stock {{count}} pcs.",
     "inStock_other": "In stock {{count}} pcs.",
     "loadingData": "Loading data...",
     "movementAdjustment": "Adjustment",
