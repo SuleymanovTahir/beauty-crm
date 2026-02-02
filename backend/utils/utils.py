@@ -109,6 +109,8 @@ def map_image_path(url: str) -> str:
         '/static/uploads/images/banners/': '/landing-images/Баннер/',
         '/static/uploads/images/services/': '/landing-images/Услуги/',
         '/static/uploads/images/faces/': '/landing-images/Красивые лица/',
+        '/static/uploads/images/employees/': '/landing-images/Сотрудники/',
+        '/static/images/employees/': '/landing-images/Сотрудники/',
         '/static/uploads/images/staff/': '/landing-images/Сотрудники/',
         '/static/images/staff/': '/landing-images/Сотрудники/',
     }

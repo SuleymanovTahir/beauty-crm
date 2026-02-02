@@ -23,6 +23,7 @@ import {
   ChevronDown,
   AlertTriangle,
   CheckCircle,
+  Zap, Check, Lightbulb
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -1335,10 +1336,19 @@ export default function Clients() {
                 <p className="text-sm text-blue-900">
                   <strong>{t('export_includes')}:</strong>
                 </p>
-                <ul className="text-sm text-blue-800 mt-2 space-y-1">
-                  <li>✓ {t('all_client_data')}</li>
-                  <li>✓ {t('all_messages_with_client_links')}</li>
-                  <li>✓ {t('all_records_with_client_links')}</li>
+                <ul className="text-sm text-blue-800 mt-2 space-y-2">
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-blue-600" />
+                    <span>{t('all_client_data')}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-blue-600" />
+                    <span>{t('all_messages_with_client_links')}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-blue-600" />
+                    <span>{t('all_records_with_client_links')}</span>
+                  </li>
                 </ul>
               </div>
 
@@ -1417,21 +1427,33 @@ export default function Clients() {
 
                 {/* Важная информация */}
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <p className="text-sm text-amber-900 font-medium mb-2">
-                    ⚡ {t('import_important_info')}:
+                  <p className="text-sm text-amber-900 font-medium mb-2 flex items-center">
+                    <Zap className="w-4 h-4 mr-2 text-amber-600" /> {t('import_important_info')}:
                   </p>
                   <ul className="text-sm text-amber-800 space-y-1">
-                    <li>✓ {t('import_column_order')}</li>
-                    <li>✓ {t('import_not_all_columns')}</li>
-                    <li>✓ {t('import_empty_fields')}</li>
-                    <li>✓ {t('import_duplicates')}</li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-green-600 mt-0.5" />
+                      <span>{t('import_column_order')}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-green-600 mt-0.5" />
+                      <span>{t('import_not_all_columns')}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-green-600 mt-0.5" />
+                      <span>{t('import_empty_fields')}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-green-600 mt-0.5" />
+                      <span>{t('import_duplicates')}</span>
+                    </li>
                   </ul>
                 </div>
 
                 {/* Пример структуры */}
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                  <p className="text-sm text-gray-900 font-medium mb-2">
-                    💡 {t('import_example_structure')}:
+                  <p className="text-sm text-gray-900 font-medium mb-2 flex items-center gap-2">
+                    <Lightbulb className="w-4 h-4 text-blue-500" /> {t('import_example_structure')}:
                   </p>
                   <div className="bg-white p-2 rounded border border-gray-300 font-mono text-xs">
                     <div className="text-gray-600">{t('import_example_columns')}</div>

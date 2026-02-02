@@ -120,7 +120,7 @@ const PendingRegistrations: React.FC = () => {
 
         setActionLoading(userId);
         try {
-            const response = await fetch(`/api/admin/registrations/${userId}`, {
+            const response = await fetch(`/ api / admin / registrations / ${userId} `, {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -265,12 +265,12 @@ const PendingRegistrations: React.FC = () => {
                                                 <span className="text-sm">{formatDate(user.created_at)}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
-                                                    {t(`common:role_${user.role}`, user.role)}
+                                                <span className={`px - 3 py - 1 rounded - full text - xs font - medium ${getRoleBadgeColor(user.role)} `}>
+                                                    {t(`common:role_${user.role} `, user.role)}
                                                 </span>
                                                 {user.email_verified && (
-                                                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                        ✓ {t('status_verified')}
+                                                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex items-center gap-1">
+                                                        <Check className="w-3 h-3" /> {t('status_verified')}
                                                     </span>
                                                 )}
                                             </div>

@@ -27,12 +27,18 @@ def _map_gallery_path(url: str, category: str) -> str:
         'services': 'Услуги',
         'faces': 'Красивые лица',
         'banners': 'Баннер',
+        'staff': 'Сотрудники',
+        'employees': 'Сотрудники',
     }
 
     # Старые пути к новым
     old_prefixes = [
         f'/static/images/{category}/',
         f'/static/uploads/images/{category}/',
+        f'/static/images/staff/',
+        f'/static/uploads/images/staff/',
+        f'/static/images/employees/',
+        f'/static/uploads/images/employees/',
     ]
 
     folder_name = category_mappings.get(category, category)

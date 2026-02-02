@@ -1,5 +1,5 @@
 // /frontend/src/components/LanguageSwitcher.tsx
-import { Globe, ChevronUp } from 'lucide-react';
+import { Globe, ChevronUp, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
@@ -133,7 +133,7 @@ export default function LanguageSwitcher() {
             <span className="text-sm truncate">{lang.name}</span>
           </div>
           {i18n.language === lang.code && (
-            <span className="text-blue-600 flex-shrink-0">✓</span>
+            <Check className="w-4 h-4 text-blue-600 flex-shrink-0" />
           )}
         </button>
       ))}

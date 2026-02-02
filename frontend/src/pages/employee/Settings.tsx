@@ -1,6 +1,6 @@
 // /frontend/src/pages/employee/Settings.tsx
 import { useState, useEffect } from 'react';
-import { User, Mail, Save, AlertCircle, Loader } from 'lucide-react';
+import { User, Mail, Save, Loader, Lightbulb } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -91,7 +91,10 @@ export default function EmployeeSettings() {
 
     try {
       setSaving(true);
-      await api.changePassword(formData.current_password, formData.new_password);
+      await api.changePassword(profile.id, {
+        old_password: formData.current_password,
+        new_password: formData.new_password
+      });
       toast.success(t('common:password_changed_successfully'));
       setFormData({ ...formData, current_password: '', new_password: '', confirm_password: '' });
     } catch (err: any) {
@@ -256,8 +259,9 @@ export default function EmployeeSettings() {
 
         {/* Info Card */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-800">
-            <strong>💡 {t('common:tip')}:</strong> {t('settings:security_tip')}
+          <p className="text-sm text-blue-800 flex items-center">
+            <Lightbulb className="w-4 h-4 mr-2 text-blue-600" />
+            <strong className="mr-1">{t('common:tip')}:</strong> {t('settings:security_tip')}
           </p>
         </div>
       </div>

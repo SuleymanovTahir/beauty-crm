@@ -35,6 +35,10 @@ def _map_image_path(url: str) -> str:
         '/static/uploads/images/banners/': '/landing-images/Баннер/',
         '/static/uploads/images/services/': '/landing-images/Услуги/',
         '/static/uploads/images/faces/': '/landing-images/Красивые лица/',
+        '/static/uploads/images/employees/': '/landing-images/Сотрудники/',
+        '/static/images/employees/': '/landing-images/Сотрудники/',
+        '/static/uploads/images/staff/': '/landing-images/Сотрудники/',
+        '/static/images/staff/': '/landing-images/Сотрудники/',
     }
 
     for old_path, new_path in path_mappings.items():
@@ -142,7 +146,12 @@ def get_public_salon_settings(language: str = "ru"):
     
     try:
         lang_key = validate_language(language)
-        # Мы отключили кеширование для обеспечения максимальной свежести данных везде
+        
+        # Enable caching for performance
+        cache_key = f"public_salon_settings_{lang_key}"
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return cached_data
         
         settings = get_salon_settings()
         if not settings:
@@ -198,6 +207,8 @@ def get_public_salon_settings(language: str = "ru"):
             "reviews": reviews,
             "custom_settings": settings.get("custom_settings", {})
         }
+        
+        cache.set(cache_key, result, expire=CACHE_TTL_MEDIUM)
         return result
     except Exception as e:
         log_error(f"Error in get_public_salon_settings: {e}", "public_api")
@@ -218,7 +229,11 @@ def get_public_employees(
     conn = None
     try:
         lang_key = validate_language(language)
-        # Кеш отключен для мгновенного обновления данных
+        
+        cache_key = f"public_employees_{lang_key}"
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return cached_data
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -307,6 +322,8 @@ def get_public_employees(
                 "age": calculate_age(row_dict.get("birthday")),
                 "service_ids": services_map.get(emp_id, [])
             })
+            
+        cache.set(cache_key, employees, expire=CACHE_TTL_MEDIUM)
         return employees
     except Exception as e:
         log_error(f"Error fetching employees: {e}", "public_api")
@@ -329,6 +346,12 @@ def get_public_services(language: str = "ru"):
     """Все услуги локализованные (внутренняя функция)"""
     from utils.language_utils import validate_language, get_dynamic_translation
     lang_key = validate_language(language)
+    
+    cache_key = f"public_services_{lang_key}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+    
     services = get_all_services(active_only=True, include_positions=True)
     
     results = []
@@ -351,6 +374,8 @@ def get_public_services(language: str = "ru"):
             "positions": s.get("positions", [])
         }
         results.append(item)
+        
+    cache.set(cache_key, results, expire=CACHE_TTL_MEDIUM)
     return results
 
 
