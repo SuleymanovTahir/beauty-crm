@@ -1,6 +1,6 @@
 // /frontend/src/pages/employee/EmployeeProfile.tsx
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Save, AlertCircle, Upload, Camera, Loader, Instagram, Phone } from 'lucide-react';
+import { User, Mail, Save, AlertCircle, Camera, Loader, Instagram, Phone, Lightbulb } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -27,7 +27,6 @@ interface EmployeeProfile {
 
 export default function EmployeeProfile() {
   const { t } = useTranslation(['employee/profile', 'common']);
-  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const [profile, setProfile] = useState<EmployeeProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -365,10 +364,10 @@ export default function EmployeeProfile() {
           </div>
         </form>
 
-        {/* Info Card */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-800">
-            <strong>💡 {t('tip_title')}:</strong> {t('tip_message')}
+          <p className="text-sm text-blue-800 flex items-center">
+            <Lightbulb className="w-4 h-4 mr-2 text-blue-600" />
+            <strong className="mr-1">{t('tip_title')}:</strong> {t('tip_message')}
           </p>
         </div>
       </div>

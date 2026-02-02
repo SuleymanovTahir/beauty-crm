@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Save, Bot, MessageSquare, DollarSign, Sparkles, BookOpen, Shield, Zap, MessageCircle, Bell,
   BarChart3, Layout, Activity, Flag, Smile, Info, HelpCircle, AlertCircle, User, Heart, Mic, XCircle, MapPin, Users,
-  CheckCircle, Target, Star, ShieldCheck
+  CheckCircle, Target, Star, ShieldCheck, Zap as ZapIcon, Brain, MessageSquare as MessageIcon
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
@@ -349,7 +349,7 @@ export default function BotSettings() {
                   onClick={() => setSettings({ ...settings, response_style: 'concise' })}
                   className={`bot-settings-style-card ${settings.response_style === 'concise' ? 'bot-settings-style-card-active' : ''}`}
                 >
-                  <div className="text-[2rem] mb-[0.5rem]">⚡</div>
+                  <div className="text-blue-500 mb-[0.5rem]"><ZapIcon size={32} /></div>
                   <div className="font-[600] text-[#111827] mb-[0.25rem]">
                     {t('style_concise')}
                   </div>
@@ -363,7 +363,7 @@ export default function BotSettings() {
                   onClick={() => setSettings({ ...settings, response_style: 'adaptive' })}
                   className={`bot-settings-style-card ${settings.response_style === 'adaptive' ? 'bot-settings-style-card-active' : ''}`}
                 >
-                  <div className="text-[2rem] mb-[0.5rem]">🧠</div>
+                  <div className="text-purple-500 mb-[0.5rem]"><Brain size={32} /></div>
                   <div className="font-[600] text-[#111827] mb-[0.25rem]">
                     {t('style_adaptive')}
                   </div>
@@ -377,7 +377,7 @@ export default function BotSettings() {
                   onClick={() => setSettings({ ...settings, response_style: 'detailed' })}
                   className={`bot-settings-style-card ${settings.response_style === 'detailed' ? 'bot-settings-style-card-active' : ''}`}
                 >
-                  <div className="text-[2rem] mb-[0.5rem]">💬</div>
+                  <div className="text-green-500 mb-[0.5rem]"><MessageIcon size={32} /></div>
                   <div className="font-[600] text-[#111827] mb-[0.25rem]">
                     {t('style_detailed')}
                   </div>

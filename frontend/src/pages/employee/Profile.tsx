@@ -3,7 +3,7 @@
 // ПОЛНАЯ ВЕРСИЯ С ВСЕМИ УЛУЧШЕНИЯМИ
 
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Save, AlertCircle, Key, Loader, Calendar, UserIcon, Camera, Instagram, Phone, Briefcase } from 'lucide-react';
+import { User, Mail, Save, AlertCircle, Key, Loader, Calendar, UserIcon, Camera, Instagram, Phone, Briefcase, Lightbulb } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -150,26 +150,26 @@ export default function EmployeeProfile() {
 
     try {
       setSaving(true);
-      
+
       // Обновляем профиль через API
       await api.updateUserProfile(userId, {
         username: profileData.username,
         full_name: profileData.full_name,
         email: profileData.email
       });
-      
+
       // Обновляем локальное хранилище
-      const updatedUser = { 
-        ...currentUser, 
+      const updatedUser = {
+        ...currentUser,
         username: profileData.username,
         full_name: profileData.full_name,
         email: profileData.email
       };
       localStorage.setItem('user', JSON.stringify(updatedUser));
-      
+
       // Перезагружаем профиль
       await loadProfile();
-      
+
       toast.success(t('profile:profile_successfully_updated'));
     } catch (err) {
       const message = err instanceof Error ? err.message : t('profile:error_updating_profile');
@@ -201,20 +201,20 @@ export default function EmployeeProfile() {
 
     try {
       setSaving(true);
-      
+
       // Меняем пароль через API
       await api.changePassword(userId, {
         old_password: passwordData.old_password,
         new_password: passwordData.new_password
       });
-      
+
       toast.success(t('profile:password_successfully_changed'));
-      
+
       // Очищаем поля
-      setPasswordData({ 
-        old_password: '', 
-        new_password: '', 
-        confirm_password: '' 
+      setPasswordData({
+        old_password: '',
+        new_password: '',
+        confirm_password: ''
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : t('profile:error_changing_password');
@@ -464,10 +464,13 @@ export default function EmployeeProfile() {
           <TabsContent value="password">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
               <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('profile:change_password')}</h2>
-              
+
               <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-blue-800">
-                  <strong>💡 {t('profile:tip')}:</strong> {t('profile:use_complex_password_at_least_6_characters')} 
+                <p className="text-sm text-blue-800 flex items-center">
+                  <Lightbulb className="w-4 h-4 mr-2 text-blue-600" />
+                  <strong className="mr-1">{t('profile:tip')}:</strong> {t('profile:use_complex_password_at_least_6_characters')}
+                </p>
+                <p className="text-sm text-blue-800 ml-6 mt-1">
                   {t('profile:combine_letters_numbers_and_special_characters_for_maximum_security')}
                 </p>
               </div>
@@ -520,8 +523,8 @@ export default function EmployeeProfile() {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={saving}
                   className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
                 >
@@ -724,12 +727,13 @@ export default function EmployeeProfile() {
                   </Button>
                 </form>
 
-                {/* Info Card */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
-                  <p className="text-sm text-blue-800">
-                    <strong>💡 Совет:</strong> Заполните все поля для создания полного профиля.
-                    Ваша информация будет отображаться на публичной странице и поможет клиентам
-                    узнать о вас больше и выбрать именно вас для записи.
+                  <p className="text-sm text-blue-800 flex items-center">
+                    <Lightbulb className="w-4 h-4 mr-2 text-blue-600" />
+                    <strong className="mr-1">{t('profile:tip', { defaultValue: 'Совет' })}:</strong> {t('profile:fill_all_fields_for_full_profile', { defaultValue: 'Заполните все поля для создания полного профиля.' })}
+                  </p>
+                  <p className="text-sm text-blue-800 ml-6 mt-1">
+                    {t('profile:profile_info_visibility', { defaultValue: 'Ваша информация будет отображаться на публичной странице и поможет клиентам узнать о вас больше и выбрать именно вас для записи.' })}
                   </p>
                 </div>
               </div>

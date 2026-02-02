@@ -32,43 +32,45 @@ def get_all_services(active_only=True, include_positions=False):
     query += " ORDER BY category, name"
 
     c.execute(query)
-    services = c.fetchall()
+    services_rows = c.fetchall()
 
     if not include_positions:
         conn.close()
-        return services
+        return services_rows
 
-    # Добавляем должности для каждой услуги
+    # Добавляем должности для каждой услуги ОПТИМИЗИРОВАННО (один запрос)
+    c.execute("""
+        SELECT sp.service_id, p.id, p.name
+        FROM service_positions sp
+        JOIN positions p ON sp.position_id = p.id
+        ORDER BY sp.service_id, p.name
+    """)
+    all_positions = c.fetchall()
+    
+    # Группируем должности по service_id
+    positions_map = {}
+    for row in all_positions:
+        s_id = row[0]
+        if s_id not in positions_map:
+            positions_map[s_id] = []
+        positions_map[s_id].append({"id": row[1], "name": row[2]})
+
     result = []
-    for service in services:
-        service_id = service[0]
-
-        # Получаем должности для этой услуги
-        c.execute("""
-            SELECT p.id, p.name
-            FROM service_positions sp
-            JOIN positions p ON sp.position_id = p.id
-            WHERE sp.service_id = %s
-            ORDER BY p.name
-        """, (service_id,))
-
-        positions = [{"id": pos[0], "name": pos[1]} for pos in c.fetchall()]
-
-        # Конвертируем tuple в dict (индексы соответствуют fields выше)
-        service_dict = {
-            "id": service[0],
-            "service_key": service[1],
-            "name": service[2],
-            "category": service[3],
-            "price": service[4],
-            "min_price": service[5],
-            "max_price": service[6],
-            "currency": service[7],
-            "duration": service[8],
-            "description": service[9],
-            "positions": positions
-        }
-        result.append(service_dict)
+    for row in services_rows:
+        s_id = row[0]
+        result.append({
+            "id": row[0],
+            "service_key": row[1],
+            "name": row[2],
+            "category": row[3],
+            "price": row[4],
+            "min_price": row[5],
+            "max_price": row[6],
+            "currency": row[7],
+            "duration": row[8],
+            "description": row[9],
+            "positions": positions_map.get(s_id, [])
+        })
 
     conn.close()
     return result

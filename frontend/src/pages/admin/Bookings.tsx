@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash2, Clock, CheckCircle2, CalendarDays, DollarSign, ChevronDown, Users, AlertTriangle, X, FileText, BarChart3 } from 'lucide-react';
+import { Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus, Upload, Edit, Instagram, Send, Trash2, Clock, Check, CheckCircle2, CalendarDays, DollarSign, ChevronDown, Users, AlertTriangle, X, FileText, BarChart3 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ExportDropdown } from '../../components/shared/ExportDropdown';
 import { StatusSelect } from '../../components/shared/StatusSelect';
@@ -1277,7 +1277,10 @@ export default function Bookings() {
                   className="input-field file-input-dashed"
                 />
                 {importFile && (
-                  <p className="text-xs text-green-600 mt-2">✓ {t('bookings:selected_file', { name: importFile.name })}</p>
+                  <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    {t('bookings:selected_file', { name: importFile.name })}
+                  </p>
                 )}
               </div>
 
