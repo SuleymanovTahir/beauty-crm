@@ -1,4 +1,30 @@
 {
+  "active_clients": "Aktive Kunden",
+  "active_sessions": "Aktive Sitzungen",
+  "all_bookings": "Alle buchungen",
+  "analytics": "Analytics",
+  "average_check": "Durchschnittliche Rechnung",
+  "bookings": "Buchungen",
+  "bot_analytics": "Bot Analytics",
+  "cancellations": "Stornierungen",
+  "client": "Kunde",
+  "client_database": "Basiskunden",
+  "conversion": "Umrechnung",
+  "date_filter": "Zeitraum",
+  "datetime": "Datum/Uhrzeit",
+  "filter_custom": "Ihr Zeitraum",
+  "filter_last_month": "Letzter Monat",
+  "filter_last30days": "Letzte 30 Tage",
+  "filter_last7days": "Letzte 7 Tage",
+  "filter_this_month": "Dieser Monat",
+  "filter_today": "Heute",
+  "filter_yesterday": "Gestern",
+  "from": "Datum bis",
+  "id": "ID",
+  "latest_bookings": "Letzte buchungen",
+  "new_booking": "Neuer buchung",
+  "new_clients": "Neue Kunden",
+  "no_active_leads": "Keine aktiven Anfragen",
   "quick_actions": {
     "challenges": {
       "description": "Ziele erstellen und verwalten",
@@ -47,6 +73,9 @@
     "users_registered_many": "{{count}} neue Benutzer registriert",
     "users_registered_other": "{{count}} neue Benutzer registriert"
   },
+  "recent_leads": "Neueste Bewerbungen",
+  "report": "Bericht",
+  "revenue": "Umsatz",
   "stats": {
     "active_challenges": "Aktive Ziele",
     "from_last_month": "vom letzten Monat",
@@ -54,6 +83,15 @@
     "total_referrals": "Empfehlungen insgesamt",
     "total_users": "Benutzer insgesamt"
   },
+  "status_cancelled": "Storniert",
+  "status_completed": "Abgeschlossen",
+  "status_confirmed": "Bestätigt",
+  "status_pending": "Ausstehend",
   "subtitle": "Benutzer, Treue und Engagement verwalten",
-  "title": "Panel-Steuerelemente"
+  "title": "Panel-Steuerelemente",
+  "to": "Bis",
+  "total_clients": "Kunden insgesamt",
+  "vip_clients": "VIP-Kunden",
+  "visits": "Besuche",
+  "welcome": "Willkommen zurück! Das passiert heute in Ihrem Salon."
 }

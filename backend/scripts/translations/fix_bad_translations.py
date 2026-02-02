@@ -95,7 +95,12 @@ def process_lang(lang, ru_files, ru_dir, translator):
         rel_path = ru_file.relative_to(ru_dir)
         target_path = LOCALES_DIR / lang / rel_path
         
-        with open(ru_file, 'r', encoding='utf-8') as f: source_data = json.load(f)
+        try:
+            with open(ru_file, 'r', encoding='utf-8') as f: 
+                source_data = json.load(f)
+        except Exception as e:
+            print(f"    ⚠️  Skipping corrupted/empty file: {rel_path} ({e})")
+            continue
         target_data = {}
         if target_path.exists():
             try:

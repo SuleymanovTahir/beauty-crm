@@ -34,7 +34,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Бикини желісі",
+      "name": "бикини сызығы",
       "price": 100.0
     },
     "blowdry_long": {
@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Лякты өзгерту (pedi)",
+      "name": "Лякты өзгерту (Pedi)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -634,7 +634,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Смарт педикюр + лак",
+      "name": "Ақылды педикюр + жылтыратқыш",
       "price": 150.0
     },
     "peeling": {
@@ -644,7 +644,7 @@
       "duration": "60",
       "max_price": 400.0,
       "min_price": 300.0,
-      "name": "пилинг",
+      "name": "Пиллинг",
       "price": 350.0
     },
     "permanent_brows": {

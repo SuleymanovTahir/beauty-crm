@@ -12,12 +12,12 @@ from db import get_all_bookings, get_analytics_data
 from db.settings import get_salon_settings
 from core.config import DATABASE_NAME, SALON_PHONE_DEFAULT
 from db.connection import get_db_connection
-from utils.utils import require_auth
 from utils.logger import log_error, log_warning
+from utils.translation import t, register_fonts
 
 # Попытка импортировать библиотеки для PDF и Excel
 try:
-    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.pagesizes import A4, letter
     from reportlab.lib import colors
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
@@ -41,19 +41,27 @@ router = APIRouter(tags=["Export"])
 
 # ===== ФУНКЦИИ ЭКСПОРТА КЛИЕНТОВ =====
 
-def export_clients_csv(clients):
+def export_clients_csv(clients, lang='en'):
     """Экспорт клиентов в CSV"""
     import json
     output = io.StringIO()
     writer = csv.writer(output)
     
-    # Headers matching import column mappings
-    writer.writerow(['Name', 'Phone', 'Username', 'Email', 'Gender', 
-                    'Category', 'Date of Birth', 'Card Number', 'Discount', 'Status', 
-                    'Total Visits', 'Total Spend, AED', 'Paid, AED',
-                    'First Visit', 'Last Visit', 'Notes',
-                    'Additional Phone Number', 'Agreed to receive newsletter', 
-                    'Agreed to the processing of personal data'])
+    # Headers translated if possible, or fallback to English as standard for CSV
+    headers = [
+        t(lang, 'booking.formName', 'Name'),
+        t(lang, 'common.phone', 'Phone'),
+        'Username', 'Email', 
+        t(lang, 'booking.auth.gender', 'Gender'),
+        'Category', 
+        t(lang, 'booking.auth.birthday', 'Date of Birth'),
+        'Card Number', 'Discount', 
+        t(lang, 'common.status', 'Status'),
+        'Total Visits', 'Total Spend, AED', 'Paid, AED',
+        'First Visit', 'Last Visit', 'Notes',
+        'Additional Phone Number', 'Newsletter', 'Personal data'
+    ]
+    writer.writerow(headers)
     
     for c in clients:
         # Extract fields from tuple based on query order
@@ -96,21 +104,16 @@ def export_clients_csv(clients):
     output.seek(0)
     return output.getvalue().encode('utf-8')
 
-def export_clients_pdf(clients):
+def export_clients_pdf(clients, lang='en'):
     """Экспорт клиентов в PDF"""
     if not PDF_AVAILABLE:
         raise Exception("PDF экспорт недоступен")
     
+    fontName = register_fonts()
+    
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4)
     elements = []
-    
-    # Регистрируем шрифт с поддержкой кириллицы
-    try:
-        pdfmetrics.registerFont(TTFont('DejaVuSans', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'))
-        fontName = 'DejaVuSans'
-    except:
-        fontName = 'Helvetica'
     
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle(
@@ -123,17 +126,31 @@ def export_clients_pdf(clients):
         fontName=fontName
     )
     
+    normal_style = ParagraphStyle(
+        'CustomNormal',
+        parent=styles['Normal'],
+        fontName=fontName
+    )
+    
     salon = get_salon_settings()
-    title = Paragraph(f"База клиентов - {salon['name']}", title_style)
+    clients_base_label = t(lang, 'admin/clients:title', 'База клиентов')
+    title = Paragraph(f"{clients_base_label} - {salon['name']}", title_style)
     elements.append(title)
     elements.append(Spacer(1, 12))
     
-    date_text = Paragraph(f"Дата: {datetime.now().strftime('%d.%m.%Y %H:%M')}", 
-                         styles['Normal'])
+    date_label = t(lang, 'booking.formDate', 'Дата')
+    date_text = Paragraph(f"{date_label}: {datetime.now().strftime('%d.%m.%Y %H:%M')}", 
+                         normal_style)
     elements.append(date_text)
     elements.append(Spacer(1, 20))
     
-    data = [['Имя', 'Телефон', 'Статус', 'Визитов', 'LTV']]
+    data = [[
+        t(lang, 'booking.formName', 'Имя'),
+        t(lang, 'common.phone', 'Телефон'),
+        t(lang, 'common.status', 'Статус'),
+        t(lang, 'adminPanel.dashboard.visits', 'Визитов'),
+        'LTV'
+    ]]
     
     for c in clients:
         data.append([
@@ -163,7 +180,7 @@ def export_clients_pdf(clients):
     buffer.seek(0)
     return buffer.getvalue()
 
-def export_clients_excel(clients):
+def export_clients_excel(clients, lang='en'):
     """Экспорт клиентов в Excel"""
     import json
     if not EXCEL_AVAILABLE:
@@ -171,15 +188,22 @@ def export_clients_excel(clients):
     
     wb = Workbook()
     ws = wb.active
-    ws.title = "Клиенты"
+    ws.title = t(lang, 'admin/clients:title', 'Клиенты')
     
-    # Headers matching import column mappings
-    headers = ['Name', 'Phone', 'Username', 'Email', 'Gender', 
-              'Category', 'Date of Birth', 'Card Number', 'Discount', 'Status', 
-              'Total Visits', 'Total Spend, AED', 'Paid, AED',
-              'First Visit', 'Last Visit', 'Notes',
-              'Additional Phone Number', 'Agreed to receive newsletter', 
-              'Agreed to the processing of personal data']
+    # Headers translated if possible, or fallback to English as standard for Excel
+    headers = [
+        t(lang, 'booking.formName', 'Name'),
+        t(lang, 'common.phone', 'Phone'),
+        'Username', 'Email', 
+        t(lang, 'booking.auth.gender', 'Gender'),
+        'Category', 
+        t(lang, 'booking.auth.birthday', 'Date of Birth'),
+        'Card Number', 'Discount', 
+        t(lang, 'common.status', 'Status'),
+        'Total Visits', 'Total Spend, AED', 'Paid, AED',
+        'First Visit', 'Last Visit', 'Notes',
+        'Additional Phone Number', 'Newsletter', 'Personal data'
+    ]
     ws.append(headers)
     
     header_fill = PatternFill(start_color="EC4899", end_color="EC4899", fill_type="solid")
@@ -241,13 +265,22 @@ def export_clients_excel(clients):
 
 # ===== ФУНКЦИИ ЭКСПОРТА ЗАПИСЕЙ =====
 
-def export_bookings_csv(bookings):
+def export_bookings_csv(bookings, lang='en'):
     """Экспорт записей в CSV"""
     output = io.StringIO()
     writer = csv.writer(output)
     
-    writer.writerow(['ID', 'Клиент', 'Услуга', 'Дата/Время', 'Телефон', 
-                    'Статус', 'Доход (AED)', 'Создана'])
+    headers = [
+        t(lang, 'adminPanel.dashboard.id', 'ID'),
+        t(lang, 'adminPanel.dashboard.client', 'Клиент'),
+        t(lang, 'common.service', 'Услуга'),
+        t(lang, 'adminPanel.dashboard.datetime', 'Дата/Время'),
+        t(lang, 'common.phone', 'Телефон'),
+        t(lang, 'common.status', 'Статус'),
+        t(lang, 'adminPanel.dashboard.revenue', 'Доход (AED)'),
+        t(lang, 'common.created_at', 'Создана')
+    ]
+    writer.writerow(headers)
     
     for b in bookings:
         writer.writerow([
@@ -258,10 +291,12 @@ def export_bookings_csv(bookings):
     output.seek(0)
     return output.getvalue().encode('utf-8')
 
-def export_bookings_pdf(bookings):
+def export_bookings_pdf(bookings, lang='en'):
     """Экспорт записей в PDF"""
     if not PDF_AVAILABLE:
         raise Exception("PDF экспорт недоступен")
+    
+    fontName = register_fonts()
     
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4)
@@ -274,20 +309,36 @@ def export_bookings_pdf(bookings):
         fontSize=18,
         textColor=colors.HexColor('#ec4899'),
         spaceAfter=30,
-        alignment=1
+        alignment=1,
+        fontName=fontName
+    )
+    
+    normal_style = ParagraphStyle(
+        'CustomNormal',
+        parent=styles['Normal'],
+        fontName=fontName
     )
     
     salon = get_salon_settings()
-    title = Paragraph(f"Записи - {salon['name']}", title_style)
+    report_title = t(lang, 'adminPanel.dashboard.report', 'Отчет')
+    title = Paragraph(f"{report_title} - {salon['name']}", title_style)
     elements.append(title)
     elements.append(Spacer(1, 12))
     
-    date_text = Paragraph(f"Дата: {datetime.now().strftime('%d.%m.%Y %H:%M')}", 
-                         styles['Normal'])
+    date_label = t(lang, 'booking.formDate', 'Дата')
+    date_text = Paragraph(f"{date_label}: {datetime.now().strftime('%d.%m.%Y %H:%M')}", 
+                         normal_style)
     elements.append(date_text)
     elements.append(Spacer(1, 20))
     
-    data = [['ID', 'Клиент', 'Услуга', 'Дата', 'Статус', 'Доход']]
+    data = [[
+        t(lang, 'adminPanel.dashboard.id', 'ID'),
+        t(lang, 'adminPanel.dashboard.client', 'Клиент'),
+        t(lang, 'common.service', 'Услуга'),
+        t(lang, 'booking.formDate', 'Дата'),
+        t(lang, 'common.status', 'Статус'),
+        t(lang, 'adminPanel.dashboard.revenue', 'Доход')
+    ]]
     
     for b in bookings:
         try:
@@ -307,7 +358,7 @@ def export_bookings_pdf(bookings):
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#ec4899')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 0), (-1, -1), fontName),
         ('FONTSIZE', (0, 0), (-1, 0), 10),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
         ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
@@ -321,17 +372,25 @@ def export_bookings_pdf(bookings):
     buffer.seek(0)
     return buffer.getvalue()
 
-def export_bookings_excel(bookings):
+def export_bookings_excel(bookings, lang='en'):
     """Экспорт записей в Excel"""
     if not EXCEL_AVAILABLE:
         raise Exception("Excel экспорт недоступен")
     
     wb = Workbook()
     ws = wb.active
-    ws.title = "Записи"
+    ws.title = t(lang, 'adminPanel.dashboard.bookings', 'Записи')
     
-    headers = ['ID', 'Клиент', 'Услуга', 'Дата/Время', 'Телефон', 
-              'Статус', 'Доход (AED)', 'Создана']
+    headers = [
+        t(lang, 'adminPanel.dashboard.id', 'ID'),
+        t(lang, 'adminPanel.dashboard.client', 'Клиент'),
+        t(lang, 'common.service', 'Услуга'),
+        t(lang, 'adminPanel.dashboard.datetime', 'Дата/Время'),
+        t(lang, 'common.phone', 'Телефон'),
+        t(lang, 'common.status', 'Статус'),
+        t(lang, 'adminPanel.dashboard.revenue', 'Доход (AED)'),
+        t(lang, 'common.created_at', 'Создана')
+    ]
     ws.append(headers)
     
     header_fill = PatternFill(start_color="EC4899", end_color="EC4899", fill_type="solid")
@@ -367,7 +426,7 @@ def export_bookings_excel(bookings):
 
 # ===== ФУНКЦИИ ЭКСПОРТА ВСЕХ ДАННЫХ =====
 
-def export_full_data_csv():
+def export_full_data_csv(lang='en'):
     """Экспорт всех данных (клиенты + сообщения + записи) в один CSV"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -376,8 +435,8 @@ def export_full_data_csv():
     writer = csv.writer(output)
     
     # Заголовок
-    writer.writerow(['Тип', 'ID Клиента', 'Имя клиента', 'Телефон', 'Username', 
-                    'Тип данных', 'Содержание', 'Дата/Время', 'Статус', 'Доход'])
+    writer.writerow(['Type', 'Client ID', 'Client Name', 'Phone', 'Username', 
+                    'Data Type', 'Content', 'Date/Time', 'Status', 'Revenue'])
     
     # Получаем клиентов
     c.execute("""SELECT instagram_id, username, phone, name, status 
@@ -429,7 +488,7 @@ def export_full_data_csv():
     output.seek(0)
     return output.getvalue().encode('utf-8')
 
-def export_full_data_excel():
+def export_full_data_excel(lang='en'):
     """Экспорт всех данных в Excel с отдельными листами"""
     if not EXCEL_AVAILABLE:
         raise Exception("Excel экспорт недоступен")
@@ -441,13 +500,21 @@ def export_full_data_excel():
     
     # ===== Лист 1: Клиенты =====
     ws_clients = wb.active
-    ws_clients.title = "Клиенты"
+    ws_clients.title = t(lang, 'admin/clients:title', 'Клиенты')
     
-    headers = ['ID', 'Имя', 'Username', 'Телефон', 'Доп. телефон', 'Email', 'Пол', 
-              'Категория', 'Дата рождения', 'Карта', 'Скидка (%)', 'Статус', 
-              'Сообщений', 'Всего визитов', 'Всего потрачено (AED)', 'Оплачено (AED)',
-              'LTV (AED)', 'Первый контакт', 'Последний контакт', 'Заметки',
-              'Согласие на рассылку', 'Согласие на обработку данных']
+    headers = ['ID', 
+              t(lang, 'booking.formName', 'Name'),
+              'Username', 
+              t(lang, 'common.phone', 'Phone'),
+              'Add. Phone', 'Email', 
+              t(lang, 'booking.auth.gender', 'Gender'),
+              'Category', 
+              t(lang, 'booking.auth.birthday', 'Date of Birth'),
+              'Card', 'Discount (%)', 
+              t(lang, 'common.status', 'Status'),
+              'Messages', 'Total Visits', 'Total Spend', 'Paid',
+              'LTV', 'First Contact', 'Last Contact', 'Notes',
+              'Newsletter', 'Personal Data']
     ws_clients.append(headers)
     
     c.execute("""SELECT instagram_id, name, username, phone, additional_phone, email, gender,
@@ -471,8 +538,8 @@ def export_full_data_excel():
         cell.alignment = Alignment(horizontal='center')
     
     # ===== Лист 2: Сообщения =====
-    ws_messages = wb.create_sheet("Сообщения")
-    headers = ['ID Клиента', 'Имя', 'Сообщение', 'Отправитель', 'Дата', 'Тип']
+    ws_messages = wb.create_sheet(t(lang, 'manager/messages:title', 'Сообщения'))
+    headers = ['Client ID', t(lang, 'booking.formName', 'Name'), t(lang, 'manager/messages:message', 'Message'), 'Sender', t(lang, 'booking.formDate', 'Date'), 'Type']
     ws_messages.append(headers)
     
     c.execute("""SELECT m.instagram_id, c.name, m.message_text, m.sender, 
@@ -492,9 +559,9 @@ def export_full_data_excel():
         cell.alignment = Alignment(horizontal='center')
     
     # ===== Лист 3: Записи =====
-    ws_bookings = wb.create_sheet("Записи")
-    headers = ['ID', 'ID Клиента', 'Клиент', 'Услуга', 'Дата/Время', 
-              'Телефон', 'Статус', 'Доход']
+    ws_bookings = wb.create_sheet(t(lang, 'adminPanel.dashboard.bookings', 'Записи'))
+    headers = ['ID', 'Client ID', t(lang, 'adminPanel.dashboard.client', 'Client'), t(lang, 'common.service', 'Service'), t(lang, 'adminPanel.dashboard.datetime', 'Date/Time'), 
+              t(lang, 'common.phone', 'Phone'), t(lang, 'common.status', 'Status'), t(lang, 'adminPanel.dashboard.revenue', 'Revenue')]
     ws_bookings.append(headers)
     
     c.execute("""SELECT b.id, b.instagram_id, b.client_name, b.service_name,
@@ -536,6 +603,7 @@ async def export_clients(
     format: str = Query("csv"),
     date_from: str = Query(None),
     date_to: str = Query(None),
+    lang: str = Query("en"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Экспортировать клиентов в CSV, PDF или Excel"""
@@ -572,15 +640,15 @@ async def export_clients(
     
     try:
         if format == "csv":
-            content = export_clients_csv(clients)
+            content = export_clients_csv(clients, lang=lang)
             media_type = "text/csv"
             filename = f"clients_{date_from or 'all'}_{date_to or datetime.now().strftime('%Y%m%d')}.csv"
         elif format == "pdf":
-            content = export_clients_pdf(clients)
+            content = export_clients_pdf(clients, lang=lang)
             media_type = "application/pdf"
             filename = f"clients_{date_from or 'all'}_{date_to or datetime.now().strftime('%Y%m%d')}.pdf"
         elif format == "excel":
-            content = export_clients_excel(clients)
+            content = export_clients_excel(clients, lang=lang)
             media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             filename = f"clients_{date_from or 'all'}_{date_to or datetime.now().strftime('%Y%m%d')}.xlsx"
         else:
@@ -600,6 +668,7 @@ async def export_bookings(
     format: str = Query("csv"),
     date_from: str = Query(None),
     date_to: str = Query(None),
+    lang: str = Query("en"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Экспортировать записи в CSV, PDF или Excel"""
@@ -627,15 +696,15 @@ async def export_bookings(
     
     try:
         if format == "csv":
-            content = export_bookings_csv(bookings)
+            content = export_bookings_csv(bookings, lang=lang)
             media_type = "text/csv"
             filename = f"bookings_{datetime.now().strftime('%Y%m%d')}.csv"
         elif format == "pdf":
-            content = export_bookings_pdf(bookings)
+            content = export_bookings_pdf(bookings, lang=lang)
             media_type = "application/pdf"
             filename = f"bookings_{datetime.now().strftime('%Y%m%d')}.pdf"
         elif format == "excel":
-            content = export_bookings_excel(bookings)
+            content = export_bookings_excel(bookings, lang=lang)
             media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             filename = f"bookings_{datetime.now().strftime('%Y%m%d')}.xlsx"
         else:
@@ -656,6 +725,7 @@ async def export_analytics(
     period: int = Query(30),
     date_from: str = Query(None),
     date_to: str = Query(None),
+    lang: str = Query("en"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Экспортировать аналитику"""
@@ -673,12 +743,12 @@ async def export_analytics(
             output = io.StringIO()
             writer = csv.writer(output)
             
-            writer.writerow(['Дата', 'Записей'])
+            writer.writerow([t(lang, 'booking.formDate', 'Дата'), t(lang, 'adminPanel.dashboard.bookings', 'Записи')])
             for date, count in analytics.get('bookings_by_day', []):
                 writer.writerow([date, count])
             
             writer.writerow([])
-            writer.writerow(['Услуга', 'Количество', 'Доход'])
+            writer.writerow([t(lang, 'common.service', 'Услуга'), t(lang, 'admin/services:quantity', 'Количество'), t(lang, 'adminPanel.dashboard.revenue', 'Доход')])
             for name, count, revenue in analytics.get('services_stats', []):
                 writer.writerow([name, count, revenue])
             
@@ -694,14 +764,14 @@ async def export_analytics(
             
             wb = Workbook()
             ws = wb.active
-            ws.title = "Аналитика"
+            ws.title = t(lang, 'adminPanel.dashboard.analytics', 'Аналитика')
             
-            ws.append(['Дата', 'Записей'])
+            ws.append([t(lang, 'booking.formDate', 'Дата'), t(lang, 'adminPanel.dashboard.bookings', 'Записи')])
             for date, count in analytics.get('bookings_by_day', []):
                 ws.append([date, count])
             
             ws.append([])
-            ws.append(['Услуга', 'Количество', 'Доход'])
+            ws.append([t(lang, 'common.service', 'Услуга'), t(lang, 'admin/services:quantity', 'Количество'), t(lang, 'adminPanel.dashboard.revenue', 'Доход')])
             for name, count, revenue in analytics.get('services_stats', []):
                 ws.append([name, count, revenue])
             
@@ -730,6 +800,7 @@ async def export_messages(
     format: str = Query("csv"),
     date_from: str = Query(None),
     date_to: str = Query(None),
+    lang: str = Query("en"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Экспортировать сообщения в CSV, PDF или Excel"""
@@ -770,8 +841,16 @@ async def export_messages(
             output = io.StringIO()
             writer = csv.writer(output)
             
-            writer.writerow(['ID', 'Instagram ID', 'Username', 'Имя', 'Сообщение', 
-                           'Отправитель', 'Тип', 'Дата', 'Файл'])
+            headers = [
+                t(lang, 'adminPanel.dashboard.id', 'ID'),
+                'Instagram ID', 'Username',
+                t(lang, 'booking.formName', 'Имя'),
+                t(lang, 'manager/messages:message', 'Сообщение'),
+                'Sender', 'Type',
+                t(lang, 'booking.formDate', 'Дата'),
+                t(lang, 'manager/messages:file', 'Файл')
+            ]
+            writer.writerow(headers)
             
             for m in messages:
                 writer.writerow([
@@ -792,10 +871,17 @@ async def export_messages(
             
             wb = Workbook()
             ws = wb.active
-            ws.title = "Сообщения"
+            ws.title = t(lang, 'manager/messages:title', 'Сообщения')
             
-            headers = ['ID', 'Instagram ID', 'Username', 'Имя', 'Сообщение', 
-                      'Отправитель', 'Тип', 'Дата', 'Файл']
+            headers = [
+                t(lang, 'adminPanel.dashboard.id', 'ID'),
+                'Instagram ID', 'Username',
+                t(lang, 'booking.formName', 'Имя'),
+                t(lang, 'manager/messages:message', 'Сообщение'),
+                'Sender', 'Type',
+                t(lang, 'booking.formDate', 'Дата'),
+                t(lang, 'manager/messages:file', 'Файл')
+            ]
             ws.append(headers)
             
             header_fill = PatternFill(start_color="EC4899", end_color="EC4899", fill_type="solid")
@@ -847,6 +933,7 @@ async def export_messages(
 @router.get("/export/full-data")
 async def export_full_data(
     format: str = Query("csv"),
+    lang: str = Query("en"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Экспортировать все данные (клиенты + сообщения + записи)"""
@@ -856,11 +943,11 @@ async def export_full_data(
     
     try:
         if format == "csv":
-            content = export_full_data_csv()
+            content = export_full_data_csv(lang=lang)
             media_type = "text/csv"
             filename = f"full_data_{datetime.now().strftime('%Y%m%d_%H%M')}.csv"
         elif format == "excel":
-            content = export_full_data_excel()
+            content = export_full_data_excel(lang=lang)
             media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             filename = f"full_data_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
         else:
@@ -878,6 +965,7 @@ async def export_full_data(
 @router.get("/export/bookings/template")
 async def download_import_template(
     format: str = Query("csv"),
+    lang: str = Query("en"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Скачать шаблон для импорта записей"""
@@ -910,23 +998,12 @@ async def download_import_template(
                       'status', 'revenue']
             ws.append(headers)
             
-            ws.append(['example_user_1', 'Анна Иванова', SALON_PHONE_DEFAULT, 
-                      'Маникюр', '2026-01-31 14:00', 'pending', 150])
-            ws.append(['example_user_2', 'Мария Петрова', '+971507654321', 
-                      'Педикюр', '2026-02-01 15:30', 'confirmed', 200])
-            
-            header_fill = PatternFill(start_color="EC4899", end_color="EC4899", 
-                                     fill_type="solid")
-            header_font = Font(bold=True, color="FFFFFF")
-            
-            for cell in ws[1]:
-                cell.fill = header_fill
-                cell.font = header_font
+            ws.title = "Instruction"
+            ws.append(["This is a template. Do not change headers."])
             
             buffer = io.BytesIO()
             wb.save(buffer)
             buffer.seek(0)
-            
             return StreamingResponse(
                 iter([buffer.getvalue()]),
                 media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -939,3 +1016,389 @@ async def download_import_template(
     except Exception as e:
         log_error(f"Template download error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+# ===== ФУНКЦИИ ЭКСПОРТА ДАШБОРДА (Сводный отчет) =====
+
+def export_dashboard_report_csv(stats, bot_analytics, bookings, lang='en'):
+    """Экспорт сводного отчета дашборда в CSV"""
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    # 1. Заголовок
+    writer.writerow([t(lang, 'adminPanel.dashboard.report', 'Отчет по салону'), datetime.now().strftime('%d.%m.%Y')])
+    writer.writerow([])
+    
+    # 2. Основная статистика (KPI)
+    writer.writerow([t(lang, 'adminPanel.dashboard.analytics', 'Аналитика')])
+    
+    # Клиенты
+    writer.writerow([t(lang, 'adminPanel.dashboard.total_clients', 'Всего клиентов'), stats.get('clients', {}).get('total_active', 0)])
+    writer.writerow([t(lang, 'adminPanel.dashboard.vip_clients', 'VIP-клиенты'), stats.get('clients', {}).get('vip', 0)])
+    writer.writerow([t(lang, 'adminPanel.dashboard.new_clients', 'Новые клиенты'), stats.get('clients', {}).get('new', 0)])
+    writer.writerow([t(lang, 'adminPanel.dashboard.active_clients', 'Активные клиенты'), stats.get('clients', {}).get('total_active', 0)])
+    
+    # Финансы
+    writer.writerow([t(lang, 'adminPanel.dashboard.revenue', 'Доход'), stats.get('revenue', {}).get('total', 0)])
+    writer.writerow([t(lang, 'adminPanel.dashboard.average_check', 'Средний чек'), stats.get('revenue', {}).get('average_check', 0)])
+    
+    # Эффективность
+    writer.writerow([t(lang, 'adminPanel.dashboard.cancellations', 'Отмены'), f"{stats.get('bookings', {}).get('cancellation_rate', 0)}%"])
+    writer.writerow([t(lang, 'adminPanel.dashboard.conversion', 'Конверсия'), f"{stats.get('bookings', {}).get('completion_rate', 0)}%"])
+    
+    writer.writerow([])
+    
+    # 3. Бот аналитика
+    if bot_analytics:
+        writer.writerow([t(lang, 'adminPanel.dashboard.bot_analytics', 'Бот Аналитика')])
+        writer.writerow([t(lang, 'adminPanel.dashboard.active_sessions', 'Активных сессий'), bot_analytics.get('total_sessions', 0)])
+        writer.writerow([t(lang, 'adminPanel.dashboard.conversion', 'Конверсия'), f"{bot_analytics.get('conversion_rate', 0)}%"])
+        writer.writerow([])
+
+    # 4. Последние записи
+    writer.writerow([t(lang, 'adminPanel.dashboard.latest_bookings', 'Последние записи')])
+    headers = [
+        t(lang, 'adminPanel.dashboard.id', 'ID'),
+        t(lang, 'adminPanel.dashboard.client', 'Клиент'),
+        t(lang, 'common.service', 'Услуга'),
+        t(lang, 'adminPanel.dashboard.datetime', 'Дата/Время'),
+        t(lang, 'common.phone', 'Телефон'),
+        t(lang, 'common.status', 'Статус'),
+        t(lang, 'adminPanel.dashboard.revenue', 'Доход'),
+    ]
+    writer.writerow(headers)
+    
+    for b in bookings[:50]: # Ограничим 50 последними для отчета
+        try:
+            date_obj = datetime.fromisoformat(b[3])
+            date_str = date_obj.strftime('%d.%m.%Y %H:%M')
+        except:
+            date_str = str(b[3])
+            
+        writer.writerow([
+            b[0], 
+            b[5] or '', 
+            b[2] or '', 
+            date_str, 
+            b[4] or '', 
+            t(lang, f'adminPanel.dashboard.status_{b[6]}', b[6]),
+            b[8] if len(b) > 8 else 0
+        ])
+
+    output.seek(0)
+    return output.getvalue().encode('utf-8')
+
+def export_dashboard_report_excel(stats, bot_analytics, bookings, lang='en'):
+    """Экспорт сводного отчета дашборда в Excel"""
+    if not EXCEL_AVAILABLE:
+        raise Exception("Excel экспорт недоступен")
+    
+    wb = Workbook()
+    
+    # --- Лист 1: Обзор (Overview) ---
+    ws = wb.active
+    ws.title = t(lang, 'adminPanel.dashboard.report', 'Обзор')
+    
+    # Стили
+    header_font = Font(bold=True, size=14, color="EC4899")
+    sub_header_font = Font(bold=True, size=12)
+    bold_font = Font(bold=True)
+    
+    # Заголовок
+    ws['A1'] = t(lang, 'adminPanel.dashboard.report', 'Отчет по салону')
+    ws['A1'].font = header_font
+    ws['B1'] = datetime.now().strftime('%d.%m.%Y')
+    
+    row = 3
+    
+    # KPI Stats Grid
+    stats_to_show = [
+        (t(lang, 'adminPanel.dashboard.total_clients', 'Всего клиентов'), stats.get('clients', {}).get('total_active', 0)),
+        (t(lang, 'adminPanel.dashboard.vip_clients', 'VIP-клиенты'), stats.get('clients', {}).get('vip', 0)),
+        (t(lang, 'adminPanel.dashboard.new_clients', 'Новые клиенты'), stats.get('clients', {}).get('new', 0)),
+        (t(lang, 'adminPanel.dashboard.active_clients', 'Активные клиенты'), stats.get('clients', {}).get('total_active', 0)),
+        (t(lang, 'adminPanel.dashboard.revenue', 'Доход'), f"{stats.get('revenue', {}).get('total', 0)} AED"),
+        (t(lang, 'adminPanel.dashboard.average_check', 'Средний чек'), f"{stats.get('revenue', {}).get('average_check', 0)} AED"),
+        (t(lang, 'adminPanel.dashboard.cancellations', 'Отмены'), f"{stats.get('bookings', {}).get('cancellation_rate', 0)}%"),
+        (t(lang, 'adminPanel.dashboard.conversion', 'Конверсия'), f"{stats.get('bookings', {}).get('completion_rate', 0)}%")
+    ]
+    
+    for label, value in stats_to_show:
+        ws.cell(row=row, column=1, value=label).font = bold_font
+        ws.cell(row=row, column=2, value=value)
+        row += 1
+        
+    row += 2
+    
+    # Бот аналитика
+    if bot_analytics:
+        ws.cell(row=row, column=1, value=t(lang, 'adminPanel.dashboard.bot_analytics', 'Бот Аналитика')).font = sub_header_font
+        row += 1
+        ws.cell(row=row, column=1, value=t(lang, 'adminPanel.dashboard.active_sessions', 'Активных сессий'))
+        ws.cell(row=row, column=2, value=bot_analytics.get('total_sessions', 0))
+        row += 1
+        ws.cell(row=row, column=1, value=t(lang, 'adminPanel.dashboard.conversion', 'Конверсия'))
+        ws.cell(row=row, column=2, value=f"{bot_analytics.get('conversion_rate', 0)}%")
+        row += 2
+
+    # --- Лист 2: Записи (Bookings) ---
+    ws_bookings = wb.create_sheet(title=t(lang, 'adminPanel.dashboard.bookings', 'Записи'))
+    
+    headers = [
+        t(lang, 'adminPanel.dashboard.id', 'ID'),
+        t(lang, 'adminPanel.dashboard.client', 'Клиент'),
+        t(lang, 'common.service', 'Услуга'),
+        t(lang, 'adminPanel.dashboard.datetime', 'Дата/Время'),
+        t(lang, 'common.phone', 'Телефон'),
+        t(lang, 'common.status', 'Статус'),
+        t(lang, 'adminPanel.dashboard.revenue', 'Доход'),
+    ]
+    ws_bookings.append(headers)
+    
+    # Стили заголовка таблицы
+    fill = PatternFill(start_color="EC4899", end_color="EC4899", fill_type="solid")
+    font = Font(bold=True, color="FFFFFF")
+    for cell in ws_bookings[1]:
+        cell.fill = fill
+        cell.font = font
+    
+    for b in bookings:
+        try:
+            date_obj = datetime.fromisoformat(b[3])
+            date_str = date_obj.strftime('%d.%m.%Y %H:%M')
+        except:
+            date_str = str(b[3])
+            
+        ws_bookings.append([
+            b[0], 
+            b[5] or '', 
+            b[2] or '', 
+            date_str, 
+            b[4] or '', 
+            t(lang, f'adminPanel.dashboard.status_{b[6]}', b[6]),
+            b[8] if len(b) > 8 else 0
+        ])
+
+    # Автоширина колонок
+    for sheet in [ws, ws_bookings]:
+        for col in sheet.columns:
+            max_length = 0
+            col_letter = col[0].column_letter
+            for cell in col:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except: pass
+            sheet.column_dimensions[col_letter].width = min(max_length + 2, 50)
+            
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    return buffer.getvalue()
+
+def export_dashboard_report_pdf(stats, bot_analytics, bookings, lang='en'):
+    """Экспорт сводного отчета дашборда в PDF (Premium Style)"""
+    if not PDF_AVAILABLE:
+        raise Exception("PDF экспорт недоступен")
+        
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, 
+                          rightMargin=40, leftMargin=40, 
+                          topMargin=40, bottomMargin=40)
+    elements = []
+    
+    # Регистрация шрифтов
+    fontName = register_fonts()
+    
+    # Цветовая палитра
+    PRIMARY_COLOR = colors.HexColor('#EC4899') # Pink-500
+    SECONDARY_COLOR = colors.HexColor('#BE185D') # Pink-700
+    TEXT_COLOR = colors.HexColor('#1F2937') # Gray-800
+    LIGHT_GRAY = colors.HexColor('#F9FAFB') # Gray-50
+    BORDER_COLOR = colors.HexColor('#E5E7EB') # Gray-200
+    ACCENT_BG = colors.HexColor('#FDF2F8') # Pink-50
+    
+    # Стили
+    styles = getSampleStyleSheet()
+    
+    # Стиль Заголовка
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontName=fontName,
+        fontSize=24,
+        textColor=PRIMARY_COLOR,
+        alignment=TA_CENTER,
+        spaceAfter=10,
+        leading=30
+    )
+    
+    # Стиль Подзаголовка (Дата)
+    subtitle_style = ParagraphStyle(
+        'CustomSubtitle',
+        parent=styles['Normal'],
+        fontName=fontName,
+        fontSize=10,
+        textColor=colors.HexColor('#6B7280'), # Gray-500
+        alignment=TA_CENTER,
+        spaceAfter=30
+    )
+    
+    # Стиль Заголовков Разделов
+    section_style = ParagraphStyle(
+        'SectionHeader',
+        parent=styles['Heading2'],
+        fontName=fontName,
+        fontSize=16,
+        textColor=TEXT_COLOR,
+        spaceBefore=20,
+        spaceAfter=15,
+        borderWidth=0,
+        borderColor=PRIMARY_COLOR
+    )
+    
+    # --- HEADER ---
+    elements.append(Paragraph(t(lang, 'adminPanel.dashboard.report', 'Beauty CRM Report'), title_style))
+    elements.append(Paragraph(f"{t(lang, 'adminPanel.dashboard.datetime', 'Generated')}: {datetime.now().strftime('%d.%m.%Y %H:%M')}", subtitle_style))
+    
+    # --- KPI ANALYTICS SECTION ---
+    elements.append(Paragraph(t(lang, 'adminPanel.dashboard.analytics', 'Analytics Overview'), section_style))
+    
+    # Подготовка данных для таблицы KPI (2 колонки для компактности)
+    # Формат: [Метка, Значение]
+    kpi_data = [
+        [t(lang, 'adminPanel.dashboard.total_clients', 'Всего клиентов'), str(stats.get('clients', {}).get('total_active', 0))],
+        [t(lang, 'adminPanel.dashboard.vip_clients', 'VIP-клиенты'), str(stats.get('clients', {}).get('vip', 0))],
+        [t(lang, 'adminPanel.dashboard.new_clients', 'Новые клиенты'), str(stats.get('clients', {}).get('new', 0))],
+        [t(lang, 'adminPanel.dashboard.active_clients', 'Активные клиенты'), str(stats.get('clients', {}).get('total_active', 0))],
+        [t(lang, 'adminPanel.dashboard.revenue', 'Доход'), f"{stats.get('revenue', {}).get('total', 0)} AED"],
+        [t(lang, 'adminPanel.dashboard.average_check', 'Средний чек'), f"{stats.get('revenue', {}).get('average_check', 0)} AED"],
+        [t(lang, 'adminPanel.dashboard.cancellations', 'Отмены'), f"{stats.get('bookings', {}).get('cancellation_rate', 0)}%"],
+        [t(lang, 'adminPanel.dashboard.conversion', 'Конверсия'), f"{stats.get('bookings', {}).get('completion_rate', 0)}%"]
+    ]
+
+    # Стилизация таблицы KPI
+    t_kpi = Table(kpi_data, colWidths=[300, 150])
+    t_kpi.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (-1, -1), fontName),
+        ('FONTSIZE', (0, 0), (-1, -1), 11),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#4B5563')), # Muted labels
+        ('TEXTCOLOR', (1, 0), (1, -1), TEXT_COLOR), # Darker values
+        ('FONTNAME', (1, 0), (1, -1), fontName), # Bold values? No font variant loaded, rely on color
+        
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        
+        ('PADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        
+        # Горизонтальные линии
+        ('LINEBELOW', (0, 0), (-1, -2), 1, BORDER_COLOR),
+        ('LINEBELOW', (0, -1), (-1, -1), 2, PRIMARY_COLOR), # Bottom accent line
+        
+        # Чередование фона
+        ('ROWBACKGROUNDS', (0, 0), (-1, -1), [colors.white, ACCENT_BG]),
+    ]))
+    elements.append(t_kpi)
+    elements.append(Spacer(1, 20))
+
+    # --- BOT ANALYTICS SECTION ---
+    if bot_analytics:
+        elements.append(Paragraph(t(lang, 'adminPanel.dashboard.bot_analytics', 'Bot Analytics'), section_style))
+        
+        bot_data = [
+            [t(lang, 'adminPanel.dashboard.active_sessions', 'Active Sessions'), str(bot_analytics.get('total_sessions', 0))],
+            [t(lang, 'adminPanel.dashboard.conversion', 'Conversion'), f"{bot_analytics.get('conversion_rate', 0)}%"]
+        ]
+        
+        t_bot = Table(bot_data, colWidths=[300, 150])
+        t_bot.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (-1, -1), fontName),
+            ('FONTSIZE', (0, 0), (-1, -1), 11),
+            ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#4B5563')),
+            ('TEXTCOLOR', (1, 0), (1, -1), TEXT_COLOR),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+            ('PADDING', (0, 0), (-1, -1), 10),
+            ('LINEBELOW', (0, 0), (-1, -2), 1, BORDER_COLOR),
+            ('LINEBELOW', (0, -1), (-1, -1), 2, PRIMARY_COLOR),
+             ('ROWBACKGROUNDS', (0, 0), (-1, -1), [colors.white, ACCENT_BG]),
+        ]))
+        elements.append(t_bot)
+        elements.append(Spacer(1, 25))
+        
+    # --- RECENT BOOKINGS SECTION ---
+    # Page Break if needed? No, flowable is better.
+    elements.append(Paragraph(t(lang, 'adminPanel.dashboard.latest_bookings', 'Recent Bookings'), section_style))
+    
+    # Headers
+    booking_headers = [
+        t(lang, 'adminPanel.dashboard.client', 'Client'),
+        t(lang, 'common.service', 'Service'),
+        t(lang, 'adminPanel.dashboard.datetime', 'Date'),
+        t(lang, 'common.status', 'Status'),
+        t(lang, 'adminPanel.dashboard.revenue', 'Price')
+    ]
+    
+    data_bookings = [booking_headers]
+    
+    for b in bookings[:50]: # Top 50
+        try:
+            date_obj = datetime.fromisoformat(b[3])
+            date_str = date_obj.strftime('%d.%m %H:%M')
+        except:
+            date_str = str(b[3])[:11]
+            
+        status_text = t(lang, f'adminPanel.dashboard.status_{b[6]}', b[6])
+        
+        data_bookings.append([
+            (b[5] or '')[:20],
+            (b[2] or '')[:20],
+            date_str,
+            status_text,
+            str(b[8])
+        ])
+        
+    # Table Styling
+    col_widths = [140, 140, 90, 90, 70]
+    t_bookings = Table(data_bookings, colWidths=col_widths, repeatRows=1) # Repeat header on new page
+    
+    t_bookings.setStyle(TableStyle([
+        # Header Row
+        ('BACKGROUND', (0, 0), (-1, 0), PRIMARY_COLOR),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), fontName),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('ALIGN', (0, 0), (-1, 0), 'LEFT'),
+        ('PADDING', (0, 0), (-1, 0), 12),
+        
+        # Content Rows
+        ('FONTNAME', (0, 1), (-1, -1), fontName),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
+        ('TEXTCOLOR', (0, 1), (-1, -1), TEXT_COLOR),
+        ('ALIGN', (0, 1), (1, -1), 'LEFT'), # Client, Service left
+        ('ALIGN', (2, 1), (-1, -1), 'CENTER'), # Date, Status, Revenue center/right?
+        
+        # Borders & Spacing
+        ('GRID', (0, 1), (-1, -1), 0.5, BORDER_COLOR),
+        ('BOX', (0, 0), (-1, -1), 1, PRIMARY_COLOR),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, LIGHT_GRAY]),
+        ('PADDING', (0, 1), (-1, -1), 8),
+    ]))
+    
+    elements.append(t_bookings)
+    
+    # Footer info?
+    elements.append(Spacer(1, 30))
+    footer_style = ParagraphStyle(
+        'Footer',
+        parent=styles['Normal'],
+        fontName=fontName,
+        fontSize=8,
+        textColor=colors.gray,
+        alignment=TA_CENTER
+    )
+    elements.append(Paragraph(f"Beauty CRM • {datetime.now().year}", footer_style))
+    
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer.getvalue()

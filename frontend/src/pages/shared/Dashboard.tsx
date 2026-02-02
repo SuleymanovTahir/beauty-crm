@@ -230,7 +230,7 @@ export default function UniversalDashboard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ format, start_date: dateRange.start, end_date: dateRange.end })
+        body: JSON.stringify({ format, start_date: dateRange.start, end_date: dateRange.end, lang: i18n.language })
       });
 
       if (response.ok) {
