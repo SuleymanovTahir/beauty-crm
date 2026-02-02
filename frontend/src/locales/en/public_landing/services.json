@@ -11,7 +11,7 @@
     "manicure": "Manicure",
     "massage": "Massage",
     "pedicure": "Pedicure",
-    "permanent_makeup": "Перманентный макияж",
+    "permanent_makeup": "Permanent makeup",
     "spa": "SPA",
     "waxing": "waxing"
   },
@@ -644,7 +644,7 @@
       "duration": "60",
       "max_price": 400.0,
       "min_price": 300.0,
-      "name": "Peeling",
+      "name": "peeling",
       "price": 350.0
     },
     "permanent_brows": {

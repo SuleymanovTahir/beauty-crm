@@ -1,74 +1,74 @@
 {
   "items": [
     {
-      "bio": "Técnica de manicure experiente. Manicure e pedicure ideais de qualquer complexidade.",
-      "id": 1,
-      "name": "Kasymova Gulcehre",
-      "photo": "",
-      "position": "Nail & Waxing Master"
-    },
-    {
-      "bio": "Mestre universal da mais alta categoria. Executa com maestria qualquer tipo de corte de cabelo e styling.",
-      "id": 2,
-      "name": "Peradilla Jennifer",
-      "photo": "",
-      "position": "Universal Beauty Master"
-    },
-    {
-      "bio": "Estilista de ponta com experiência internacional. Um especialista em técnicas complexas de coloração e restauração de cabelos.",
-      "id": 3,
-      "name": "Amandurdyyeva Mestan",
-      "photo": "",
-      "position": "Cabeleireiro e Maquiador Permanente"
-    },
-    {
-      "bio": "Um estilista talentoso que cria looks únicos. Especialista em cortes de cabelo masculino e feminino.",
-      "id": 4,
-      "name": "Mohamed Sabri",
-      "photo": "",
-      "position": "Cabeleireiro"
-    },
-    {
-      "bio": "Um mestre cuidadoso e atencioso. Especializada em manicure estética e design.",
-      "id": 5,
-      "name": "Kozhabay Lyazat",
-      "photo": "",
-      "position": "Nail Master"
-    },
-    {
-      "bio": "",
       "id": 671,
       "name": "Kasymova Gulcehre",
-      "photo": "",
-      "position": "Nail & Waxing Master"
+      "position": "Nail & Waxing Master",
+      "bio": "Técnica de manicure experiente. Manicure e pedicure ideais de qualquer complexidade.",
+      "photo": ""
     },
     {
-      "bio": "",
       "id": 672,
       "name": "Peradilla Jennifer",
-      "photo": "",
-      "position": "Universal Beauty Master"
+      "position": "Universal Beauty Master",
+      "bio": "Mestre universal da mais alta categoria. Executa com maestria qualquer tipo de corte de cabelo e styling.",
+      "photo": ""
     },
     {
-      "bio": "",
       "id": 673,
       "name": "Amandurdyyeva Mestan",
-      "photo": "",
-      "position": "Cabeleireiro e Maquiador Permanente"
+      "position": "Cabeleireiro e Maquiador Permanente",
+      "bio": "Estilista de ponta com experiência internacional. Um especialista em técnicas complexas de coloração e restauração de cabelos.",
+      "photo": ""
     },
     {
-      "bio": "",
       "id": 674,
       "name": "Mohamed Sabri",
-      "photo": "",
-      "position": "Cabeleireiro"
+      "position": "Cabeleireiro",
+      "bio": "Um estilista talentoso que cria looks únicos. Especialista em cortes de cabelo masculino e feminino.",
+      "photo": ""
     },
     {
-      "bio": "",
       "id": 675,
       "name": "Kozhabay Lyazat",
-      "photo": "",
-      "position": "Nail Master"
+      "position": "Nail Master",
+      "bio": "Um mestre cuidadoso e atencioso. Especializada em manicure estética e design.",
+      "photo": ""
+    },
+    {
+      "id": 798,
+      "name": "Kasymova Gulcehre",
+      "position": "Nail & Waxing Master",
+      "bio": "",
+      "photo": ""
+    },
+    {
+      "id": 799,
+      "name": "Peradilla Jennifer",
+      "position": "Universal Beauty Master",
+      "bio": "",
+      "photo": ""
+    },
+    {
+      "id": 800,
+      "name": "Amandurdyyeva Mestan",
+      "position": "Cabeleireiro e Maquiador Permanente",
+      "bio": "",
+      "photo": ""
+    },
+    {
+      "id": 801,
+      "name": "Mohamed Sabri",
+      "position": "Cabeleireiro",
+      "bio": "",
+      "photo": ""
+    },
+    {
+      "id": 802,
+      "name": "Kozhabay Lyazat",
+      "position": "Nail Master",
+      "bio": "",
+      "photo": ""
     }
   ]
 }

@@ -28,6 +28,7 @@
     "password_no_upper": "Le mot de passe doit contenir au moins une lettre majuscule",
     "password_too_short": "Le mot de passe est trop court (8 caractères minimum)"
   },
+  "authorization_error": "Erreur d'autorisation",
   "back": "Retour",
   "back_to_bookings": "Retour aux réservations",
   "back_to_clients": "Retour aux clients",
@@ -161,6 +162,7 @@
   "happyClients": "Clients satisfaits",
   "import": "Importer",
   "importing": "Importer...",
+  "invalid_credentials": "Identifiant ou mot de passe incorrect",
   "language": "Langue",
   "last_14_days": "Derniers {{count}} jours",
   "last_14_days_few": "Derniers {{count}} jours",
@@ -310,6 +312,7 @@
   "upload_file": "Télécharger le fichier",
   "uploading": "Chargement...",
   "url_link": "Lien",
+  "user_not_found": "Utilisateur introuvable",
   "view_bookings": "Afficher les réservations",
   "view_calendar": "Aller à calendrier",
   "view_staff": "Allez aux employés",

@@ -297,13 +297,66 @@ def get_public_employees(
                 "service_ids": services_map.get(emp_id, [])
             })
             
-        # De-duplicate by name to handle cases where multiple records exist for same person
+        # De-duplicate by normalized name to handle cases where multiple records 
+        # exist for same person with slightly different spellings or languages.
         unique_employees = {}
+        
+        def _get_norm_name(name):
+            if not name: return ""
+            # Simple normalization: lower case, only alphanumeric
+            import re
+            return re.sub(r'[^a-zA-Z\u0400-\u04FF]', '', name.lower())
+
         for emp in employees:
-            # Using name as key to keep only the latest/last entry for each person
-            unique_employees[emp['name']] = emp
+            norm = _get_norm_name(emp['name'])
+            if not norm: continue
             
+            existing = unique_employees.get(norm)
+            if not existing:
+                unique_employees[norm] = emp
+            else:
+                # Merge strategy: prefer record with more information
+                # 1. Prefer record with photo (not default)
+                has_photo = emp['image'] and 'default' not in emp['image'] and 'ui-avatars' not in emp['image']
+                ext_has_photo = existing['image'] and 'default' not in existing['image'] and 'ui-avatars' not in existing['image']
+                
+                # 2. Prefer record with bio/specialty
+                emp_has_bio = len(emp.get('specialty', '')) > 20
+                ext_has_bio = len(existing.get('specialty', '')) > 20
+                
+                # 3. Prefer record with more services
+                emp_services = len(emp.get('service_ids', []))
+                ext_services = len(existing.get('service_ids', []))
+
+                score = 0
+                if has_photo: score += 10
+                if emp_has_bio: score += 5
+                score += emp_services * 0.1
+                
+                ext_score = 0
+                if ext_has_photo: ext_score += 10
+                if ext_has_bio: ext_score += 5
+                ext_score += ext_services * 0.1
+                
+                if score > ext_score:
+                    # Merge data: take services from both
+                    all_services = list(set(emp.get('service_ids', []) + existing.get('service_ids', [])))
+                    emp['service_ids'] = all_services
+                    unique_employees[norm] = emp
+                else:
+                    # Merge data back to existing
+                    all_services = list(set(emp.get('service_ids', []) + existing.get('service_ids', [])))
+                    existing['service_ids'] = all_services
+                    # Take bio/photo from emp if existing is missing it
+                    if not ext_has_photo and has_photo:
+                        existing['image'] = emp['image']
+                        existing['photo'] = emp['photo']
+                    if not ext_has_bio and emp_has_bio:
+                        existing['specialty'] = emp['specialty']
+        
         final_employees = list(unique_employees.values())
+        # Restore original order
+        final_employees.sort(key=lambda x: (x.get('sort_order', 0), x['name']))
         
         cache.set(cache_key, final_employees, expire=CACHE_TTL_MEDIUM)
         return final_employees

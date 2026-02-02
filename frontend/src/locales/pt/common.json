@@ -28,6 +28,7 @@
     "password_no_upper": "A senha deve conter pelo menos uma letra maiúscula",
     "password_too_short": "A senha é muito curta (mínimo 8 caracteres)"
   },
+  "authorization_error": "Erro de autorização",
   "back": "Voltar",
   "back_to_bookings": "Voltar às reservas",
   "back_to_clients": "Voltar aos clientes",
@@ -161,6 +162,7 @@
   "happyClients": "clientes satisfeitos",
   "import": "Importar",
   "importing": "Importar...",
+  "invalid_credentials": "Login ou senha incorretos",
   "language": "Idioma",
   "last_14_days": "Últimos {{count}} dias",
   "last_14_days_few": "Últimos {{count}} dias",
@@ -310,6 +312,7 @@
   "upload_file": "Carregar arquivo",
   "uploading": "Carregando...",
   "url_link": "Link",
+  "user_not_found": "Usuário não encontrado",
   "view_bookings": "Ver reservas",
   "view_calendar": "Ir para calendário",
   "view_staff": "Vá para os funcionários",
