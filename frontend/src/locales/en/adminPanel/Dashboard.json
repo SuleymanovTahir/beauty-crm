@@ -1,4 +1,30 @@
 {
+  "active_clients": "Active Clients",
+  "active_sessions": "Active Sessions",
+  "all_bookings": "All Bookings",
+  "analytics": "Analytics",
+  "average_check": "Average Bill",
+  "bookings": "Bookings",
+  "bot_analytics": "Bot Analytics",
+  "cancellations": "Cancellations",
+  "client": "Client",
+  "client_database": "Client Base",
+  "conversion": "Conversion",
+  "date_filter": "Period",
+  "datetime": "Date/Time",
+  "filter_custom": "Custom range",
+  "filter_last_month": "Last month",
+  "filter_last30days": "Last 30 days",
+  "filter_last7days": "Last 7 days",
+  "filter_this_month": "This month",
+  "filter_today": "Today",
+  "filter_yesterday": "Yesterday",
+  "from": "From",
+  "id": "ID",
+  "latest_bookings": "Recent Bookings",
+  "new_booking": "New Booking",
+  "new_clients": "New Clients",
+  "no_active_leads": "No active leads",
   "quick_actions": {
     "challenges": {
       "description": "Creating and managing goals",
@@ -47,6 +73,9 @@
     "users_registered_many": "{{count}} new users registered",
     "users_registered_other": "{{count}} new users registered"
   },
+  "recent_leads": "Recent Leads",
+  "report": "Report",
+  "revenue": "Revenue",
   "stats": {
     "active_challenges": "Active targets",
     "from_last_month": "from last month",
@@ -54,6 +83,15 @@
     "total_referrals": "Total referrals",
     "total_users": "Total users"
   },
+  "status_cancelled": "Cancelled",
+  "status_completed": "Completed",
+  "status_confirmed": "Confirmed",
+  "status_pending": "Pending",
   "subtitle": "User, loyalty and engagement management",
-  "title": "Control Panel"
+  "title": "Control Panel",
+  "to": "To",
+  "total_clients": "Total Clients",
+  "vip_clients": "VIP Clients",
+  "visits": "Visits",
+  "welcome": "Welcome back! Here's what's happening in your salon today."
 }

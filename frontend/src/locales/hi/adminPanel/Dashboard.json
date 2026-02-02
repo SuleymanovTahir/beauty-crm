@@ -1,4 +1,30 @@
 {
+  "active_clients": "सक्रिय ग्राहक",
+  "active_sessions": "सक्रिय सत्र",
+  "all_bookings": "सभी रिकॉर्ड",
+  "analytics": "एनालिटिक्स",
+  "average_check": "औसत बिल",
+  "bookings": "रिकॉर्ड",
+  "bot_analytics": "बॉट एनालिटिक्स",
+  "cancellations": "रद्दीकरण",
+  "client": "क्लाइंट",
+  "client_database": "बेस क्लाइंट",
+  "conversion": "रूपांतरण",
+  "date_filter": "अवधि",
+  "datetime": "तिथि/समय",
+  "filter_custom": "आपकी अवधि",
+  "filter_last_month": "पिछले महीने",
+  "filter_last30days": "पिछले 30 दिन",
+  "filter_last7days": "पिछले 7 दिन",
+  "filter_this_month": "इस महीने",
+  "filter_today": "आज",
+  "filter_yesterday": "कल",
+  "from": "से",
+  "id": "आईडी",
+  "latest_bookings": "अंतिम प्रविष्टियां",
+  "new_booking": "नई प्रविष्टि",
+  "new_clients": "नए ग्राहक",
+  "no_active_leads": "कोई सक्रिय अनुरोध नहीं",
   "quick_actions": {
     "challenges": {
       "description": "लक्ष्य बनाएं और प्रबंधित करें",
@@ -47,6 +73,9 @@
     "users_registered_many": "{{count}} नए उपयोगकर्ता पंजीकृत",
     "users_registered_other": "{{count}} नए उपयोगकर्ता पंजीकृत"
   },
+  "recent_leads": "नवीनतम एप्लिकेशन",
+  "report": "रिपोर्ट",
+  "revenue": "राजस्व",
   "stats": {
     "active_challenges": "सक्रिय लक्ष्य",
     "from_last_month": "पिछले महीने से",
@@ -54,6 +83,15 @@
     "total_referrals": "कुल रेफरल",
     "total_users": "कुल उपयोगकर्ता"
   },
+  "status_cancelled": "रद्द",
+  "status_completed": "पूर्ण",
+  "status_confirmed": "पुष्टि",
+  "status_pending": "लंबित",
   "subtitle": "उपयोगकर्ताओं, वफादारी और जुड़ाव को प्रबंधित करना",
-  "title": "कंट्रोल पैनल"
+  "title": "कंट्रोल पैनल",
+  "to": "जब तक",
+  "total_clients": "कुल ग्राहक",
+  "vip_clients": "वीआईपी ग्राहक",
+  "visits": "विज़िट",
+  "welcome": "वापस स्वागत है! यहां बताया गया है कि आज आपके सैलून में क्या हो रहा है।"
 }

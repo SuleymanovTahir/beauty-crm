@@ -1,4 +1,30 @@
 {
+  "active_clients": "Активные клиенты",
+  "active_sessions": "Активных сессий",
+  "all_bookings": "Все записи",
+  "analytics": "Аналитика",
+  "average_check": "Средний чек",
+  "bookings": "Записи",
+  "bot_analytics": "Бот Аналитика",
+  "cancellations": "Отмены",
+  "client": "Клиент",
+  "client_database": "База клиентов",
+  "conversion": "Конверсия",
+  "date_filter": "Период",
+  "datetime": "Дата/Время",
+  "filter_custom": "Свой период",
+  "filter_last_month": "Прошлый месяц",
+  "filter_last30days": "Последние 30 дней",
+  "filter_last7days": "Последние 7 дней",
+  "filter_this_month": "Этот месяц",
+  "filter_today": "Сегодня",
+  "filter_yesterday": "Вчера",
+  "from": "От",
+  "id": "ID",
+  "latest_bookings": "Последние записи",
+  "new_booking": "Новая запись",
+  "new_clients": "Новые клиенты",
+  "no_active_leads": "Нет активных заявок",
   "quick_actions": {
     "challenges": {
       "description": "Создание и управление целями",
@@ -47,6 +73,9 @@
     "users_registered_many": "{{count}} новых пользователей зарегистрировано",
     "users_registered_other": "{{count}} новых пользователей зарегистрировано"
   },
+  "recent_leads": "Последние заявки",
+  "report": "Отчет",
+  "revenue": "Доход",
   "stats": {
     "active_challenges": "Активных целей",
     "from_last_month": "от прошлого месяца",
@@ -54,6 +83,15 @@
     "total_referrals": "Всего рефералов",
     "total_users": "Всего пользователей"
   },
+  "status_cancelled": "Отменено",
+  "status_completed": "Завершено",
+  "status_confirmed": "Подтверждено",
+  "status_pending": "Ожидание",
   "subtitle": "Управление пользователями, лояльностью и вовлеченностью",
-  "title": "Панель управления"
+  "title": "Панель управления",
+  "to": "До",
+  "total_clients": "Всего клиентов",
+  "vip_clients": "VIP-клиенты",
+  "visits": "Визитов",
+  "welcome": "Добро пожаловать обратно! Вот что происходит в вашем салоне сегодня."
 }
