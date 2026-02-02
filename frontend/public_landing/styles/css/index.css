@@ -1,41 +1,6 @@
 @import "tailwindcss";
+@import "./theme.css";
 @import "./landing.css";
-
-@theme inline {
-  --font-size: 16px;
-
-  /* Primary Brand Color: Pink #db2777 */
-  --color-primary: #db2777;
-  --color-primary-foreground: #ffffff;
-
-  /* Background and Surfaces: White */
-  --color-background: #ffffff;
-  --color-foreground: #1c1917;
-  --color-card: #ffffff;
-  --color-card-foreground: #1c1917;
-  --color-popover: #ffffff;
-  --color-popover-foreground: #1c1917;
-
-  /* Accents and States */
-  --color-secondary: #fce7f3;
-  --color-secondary-foreground: #db2777;
-  --color-muted: #f8fafc;
-  --color-muted-foreground: #64748b;
-  --color-accent: #fdf2f8;
-  --color-accent-foreground: #db2777;
-
-  /* Structure */
-  --color-border: #e2e8f0;
-  --color-input: #e2e8f0;
-  --color-ring: #db2777;
-
-  /* Radius */
-  --radius-lg: 0.625rem;
-
-  /* WhatsApp Official Color */
-  --color-whatsapp: #25d366;
-  --color-whatsapp-hover: #128c7e;
-}
 
 @custom-variant dark (&:is(.dark *));
 @source "../../**/*.{js,ts,jsx,tsx}";

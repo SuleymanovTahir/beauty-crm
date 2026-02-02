@@ -57,14 +57,17 @@ def run_fix():
         if c.rowcount > 0:
             log_info(f"   ✅ Cleared {c.rowcount} missing employee photos", "maintenance")
 
-        # 4. Sync Banners
-        log_info("🚩 Syncing banners...", "maintenance")
-        c.execute("DELETE FROM public_banners")
-        c.execute("""
-            INSERT INTO public_banners (image_url, title, subtitle, is_active, display_order)
-            VALUES ('/landing-images/banners/banner2.webp', 'Салон красоты в Дубае', 'Искусство преображения', TRUE, 1)
-        """)
-        log_info("   ✅ Re-populated banners", "maintenance")
+        # 4. Sync Banners (Only if empty)
+        c.execute("SELECT COUNT(*) FROM public_banners")
+        if c.fetchone()[0] == 0:
+            log_info("🚩 Seeding initial banners...", "maintenance")
+            c.execute("""
+                INSERT INTO public_banners (image_url, title, subtitle, is_active, display_order, bg_pos_desktop_x, bg_pos_desktop_y, bg_pos_mobile_x, bg_pos_mobile_y)
+                VALUES ('/landing-images/banners/banner2.webp', 'Салон красоты в Дубае', 'Искусство преображения', TRUE, 1, 50, 50, 50, 50)
+            """)
+            log_info("   ✅ Re-populated banners", "maintenance")
+        else:
+            log_info("🚩 Banners already exist, skipping seed", "maintenance")
 
         # 5. Sync Employee Photos
         log_info("👨‍💼 Updating employee photos...", "maintenance")
@@ -79,47 +82,50 @@ def run_fix():
             c.execute("UPDATE users SET photo = %s WHERE full_name = %s", (photo_path, name))
         log_info("   ✅ Updated employee photos", "maintenance")
 
-        # 6. Clear and Re-populate Gallery
-        log_info("🎨 Syncing gallery...", "maintenance")
-        c.execute("DELETE FROM public_gallery")
-        
-        # Salon photos (MATCHING EXACT CASE FROM SERVER)
-        salon_photos = [
-            ('1.webp', 'Интерьер салона'), ('2.webp', 'SPA зона'), ('4.webp', 'Парикмахерский зал'),
-            ('8.webp', 'Детали интерьера'), ('9.webp', 'Зона ожидания'), ('Hair Styling Studio.webp', 'Парикмахерский зал'),
-            ('Massage Room (2).webp', 'Кабинет массажа'), ('Massage Room.webp', 'Кабинет массажа'),
-            ('Moroccan Bath.webp', 'Марокканская баня'), ('Nail Salon.webp', 'Зона маникюра')
-        ]
-        for img, title in salon_photos:
-            c.execute("""
-                INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
-                VALUES (%s, %s, %s, 'salon', 0, TRUE)
-            """, (f'/landing-images/salon/{img}', title, title))
+        # 6. Clear and Re-populate Gallery (Only if empty)
+        c.execute("SELECT COUNT(*) FROM public_gallery")
+        if c.fetchone()[0] == 0:
+            log_info("🎨 Syncing gallery...", "maintenance")
+            
+            # Salon photos (MATCHING EXACT CASE FROM SERVER)
+            salon_photos = [
+                ('1.webp', 'Интерьер салона'), ('2.webp', 'SPA зона'), ('4.webp', 'Парикмахерский зал'),
+                ('8.webp', 'Детали интерьера'), ('9.webp', 'Зона ожидания'), ('Hair Styling Studio.webp', 'Парикмахерский зал'),
+                ('Massage Room (2).webp', 'Кабинет массажа'), ('Massage Room.webp', 'Кабинет массажа'),
+                ('Moroccan Bath.webp', 'Марокканская баня'), ('Nail Salon.webp', 'Зона маникюра')
+            ]
+            for img, title in salon_photos:
+                c.execute("""
+                    INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
+                    VALUES (%s, %s, %s, 'salon', 0, TRUE)
+                """, (f'/landing-images/salon/{img}', title, title))
 
-        # Portfolio photos
-        portfolio_photos = [
-            ('Волосы.webp', 'Стильная укладка'), ('Маникюр.webp', 'Классический маникюр'),
-            ('Перманент губ.webp', 'Перманентный макияж губ'), ('Волосы2.webp', 'Стрижка и окрашивание')
-        ]
-        for img, title in portfolio_photos:
-            c.execute("""
-                INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
-                VALUES (%s, %s, %s, 'portfolio', 0, TRUE)
-            """, (f'/landing-images/portfolio/{img}', title, title))
+            # Portfolio photos
+            portfolio_photos = [
+                ('Волосы.webp', 'Стильная укладка'), ('Маникюр.webp', 'Классический маникюр'),
+                ('Перманент губ.webp', 'Перманентный макияж губ'), ('Волосы2.webp', 'Стрижка и окрашивание')
+            ]
+            for img, title in portfolio_photos:
+                c.execute("""
+                    INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
+                    VALUES (%s, %s, %s, 'portfolio', 0, TRUE)
+                """, (f'/landing-images/portfolio/{img}', title, title))
 
-        # Services photos
-        services_photos = [
-            ('Маникюр 4.webp', 'Маникюр'), ('Массаж лица.webp', 'Массаж лица'),
-            ('Перманент ресниц.webp', 'Перманент ресниц'), ('Спа.webp', 'SPA'),
-            ('Стрижка .webp', 'Стрижка')
-        ]
-        for img, title in services_photos:
-            c.execute("""
-                INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
-                VALUES (%s, %s, %s, 'services', 0, TRUE)
-            """, (f'/landing-images/services/{img}', title, title))
+            # Services photos
+            services_photos = [
+                ('Маникюр 4.webp', 'Маникюр'), ('Массаж лица.webp', 'Массаж лица'),
+                ('Перманент ресниц.webp', 'Перманент ресниц'), ('Спа.webp', 'SPA'),
+                ('Стрижка .webp', 'Стрижка')
+            ]
+            for img, title in services_photos:
+                c.execute("""
+                    INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
+                    VALUES (%s, %s, %s, 'services', 0, TRUE)
+                """, (f'/landing-images/services/{img}', title, title))
 
-        log_info(f"   ✅ Re-populated gallery with {len(salon_photos) + len(portfolio_photos) + len(services_photos)} items", "maintenance")
+            log_info(f"   ✅ Re-populated gallery with {len(salon_photos) + len(portfolio_photos) + len(services_photos)} items", "maintenance")
+        else:
+            log_info("🎨 Gallery already exists, skipping seed", "maintenance")
 
         # 7. Ensure non-service-providers are not shown on public site
         c.execute("""

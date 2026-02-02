@@ -18,7 +18,7 @@ interface LoginPageProps {
 }
 
 export function LoginPage({ initialView = 'login' }: LoginPageProps) {
-  const { t } = useTranslation(['public_landing', 'auth/Login', 'auth/register', 'common']);
+  const { t } = useTranslation(['public_landing', 'auth/login', 'auth/register', 'common']);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -51,7 +51,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
 
   const handleLogin = async () => {
     if (!formData.username || !formData.password) {
-      setError(t('auth/Login:fill_both_fields', 'Please fill in both fields'));
+      setError(t('auth/login:fill_both_fields', 'Пожалуйста, заполните оба поля'));
       return;
     }
 
@@ -61,7 +61,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
 
       if (response.success && response.token) {
         login(response.user, response.token);
-        toast.success(`${t('auth/Login:welcome', 'Welcome')} ${response.user.full_name || response.user.username}!`);
+        toast.success(`${t('auth/login:welcome', 'Добро пожаловать')} ${response.user.full_name || response.user.username}!`);
 
         // Redirect based on role
         if (response.user.role === 'client') {
@@ -77,11 +77,11 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
           setTimeout(() => navigate("/verify-email", { state: { email: response.email } }), 1500);
           return;
         }
-        setError(t('auth/Login:authorization_error', 'Authorization failed'));
+        setError(t('auth/login:authorization_error', 'Ошибка авторизации'));
       }
     } catch (err: any) {
       console.error("Login error:", err);
-      const message = err.message || t('auth/Login:login_error', 'Login error');
+      const message = err.message || t('auth/login:login_error', 'Ошибка входа');
       setError(message);
     } finally {
       setLoading(false);
@@ -146,7 +146,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
             className="h-16 w-auto mx-auto mb-4 object-contain"
           />
           <p className="text-muted-foreground">
-            {isLogin ? t('auth/Login:login_title', 'Login to your account') : t('auth/register:register_title', 'Create new account')}
+            {isLogin ? t('auth/login:login_title', 'Войдите в свой аккаунт') : t('auth/register:register_title', 'Создать новый аккаунт')}
           </p>
         </div>
 
@@ -157,7 +157,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
               className={`flex-1 py-2 rounded-lg transition-colors ${isLogin ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
                 }`}
             >
-              {t('auth/Login:login', 'Login')}
+              {t('auth/login:login', 'Войти')}
             </button>
             <button
               onClick={() => { setIsLogin(false); setError(""); }}
@@ -192,7 +192,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-2">{t('auth/Login:username', 'Username')}</label>
+              <label className="block text-sm font-medium mb-2">{t('auth/login:username', 'Логин')}</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -200,7 +200,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
                   required
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  placeholder={t('auth/Login:enter_login', 'Enter username')}
+                  placeholder={t('auth/login:enter_login', 'Введите логин')}
                   className="pl-10"
                 />
               </div>
@@ -224,7 +224,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-2">{t('auth/Login:password', 'Password')}</label>
+              <label className="block text-sm font-medium mb-2">{t('auth/login:password', 'Пароль')}</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -263,7 +263,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
             {isLogin && (
               <div className="text-right">
                 <a href="/forgot-password" className="text-sm text-primary hover:underline">
-                  {t('auth/Login:forgot_password', 'Forgot password?')}
+                  {t('auth/login:forgot_password', 'Забыли пароль?')}
                 </a>
               </div>
             )}
@@ -272,10 +272,10 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
               {loading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>{isLogin ? t('auth/Login:logging_in', 'Logging in...') : t('auth/register:registering', 'Registering...')}</span>
+                  <span>{isLogin ? t('auth/login:logging_in', 'Вход...') : t('auth/register:registering', 'Регистрация...')}</span>
                 </div>
               ) : (
-                isLogin ? t('auth/Login:submit', 'Sign In') : t('auth/register:submit', 'Sign Up')
+                isLogin ? t('auth/login:submit', 'Войти') : t('auth/register:submit', 'Зарегистрироваться')
               )}
             </Button>
           </form>

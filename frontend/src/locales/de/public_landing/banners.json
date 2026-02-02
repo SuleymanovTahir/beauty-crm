@@ -1,10 +1,10 @@
 {
   "items": [
     {
-      "image": "/landing-images/banners/banner2.webp",
-      "link": "",
+      "title": "Schönheitssalon in Dubai",
       "subtitle": "Die Kunst der Transformation",
-      "title": "Schönheitssalon in Dubai"
+      "image": "/landing-images/banners/banner2.webp",
+      "link": ""
     }
   ]
 }

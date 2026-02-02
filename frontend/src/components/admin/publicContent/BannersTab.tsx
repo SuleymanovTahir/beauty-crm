@@ -9,7 +9,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
 import { Checkbox } from '../../../components/ui/checkbox';
 import { toast } from 'sonner';
-import { apiClient } from '../../../api/client';
+import { apiClient, BASE_URL } from '../../../api/client';
+
+const getAbsoluteImageUrl = (url: string) => {
+    if (!url) return '';
+    if (url.startsWith('http') || url.startsWith('data:')) return url;
+    return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+};
 
 interface Banner {
     id: number;
@@ -33,14 +39,18 @@ const VisualPositionPicker = ({
     x,
     y,
     onChange,
-    previewAspectRatio
+    previewAspectRatio,
+    isFlippedH,
+    isFlippedV
 }: {
     label: string,
     imageUrl: string,
     x: number,
     y: number,
     onChange: (x: number, y: number) => void,
-    previewAspectRatio: string
+    previewAspectRatio: string,
+    isFlippedH?: boolean,
+    isFlippedV?: boolean
 }) => {
     const { t } = useTranslation('admin/publiccontent');
     const containerRef = useRef<HTMLDivElement>(null);
@@ -114,11 +124,15 @@ const VisualPositionPicker = ({
                     {imageUrl ? (
                         <>
                             <img
-                                src={imageUrl}
+                                src={getAbsoluteImageUrl(imageUrl)}
                                 alt="Preview"
                                 className="w-full h-full object-cover transition-all duration-75 select-none pointer-events-none"
                                 style={{
-                                    objectPosition: `${x}% ${y}%`
+                                    objectPosition: `${x}% ${y}%`,
+                                    transform: [
+                                        isFlippedH ? 'scaleX(-1)' : '',
+                                        isFlippedV ? 'scaleY(-1)' : ''
+                                    ].filter(Boolean).join(' ')
                                 }}
                             />
 
@@ -401,7 +415,6 @@ export default function BannersTab() {
                                             id="title"
                                             value={formData.title_ru}
                                             onChange={(e) => setFormData({ ...formData, title_ru: e.target.value })}
-                                            required
                                             placeholder={t('banners.title_placeholder')}
                                             className="px-3"
                                         />
@@ -504,20 +517,24 @@ export default function BannersTab() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <VisualPositionPicker
                                                 label={t('banners.desktop_position')}
-                                                imageUrl={formData.image_url ? `${formData.image_url}?t=${Date.now()}` : ''}
+                                                imageUrl={formData.image_url}
                                                 x={formData.bg_pos_desktop_x}
                                                 y={formData.bg_pos_desktop_y}
                                                 onChange={(x, y) => setFormData(prev => ({ ...prev, bg_pos_desktop_x: x, bg_pos_desktop_y: y }))}
                                                 previewAspectRatio="aspect-video"
+                                                isFlippedH={formData.is_flipped_horizontal}
+                                                isFlippedV={formData.is_flipped_vertical}
                                             />
 
                                             <VisualPositionPicker
                                                 label={t('banners.mobile_position')}
-                                                imageUrl={formData.image_url ? `${formData.image_url}?t=${Date.now()}` : ''}
+                                                imageUrl={formData.image_url}
                                                 x={formData.bg_pos_mobile_x}
                                                 y={formData.bg_pos_mobile_y}
                                                 onChange={(x, y) => setFormData(prev => ({ ...prev, bg_pos_mobile_x: x, bg_pos_mobile_y: y }))}
                                                 previewAspectRatio="aspect-[9/16]"
+                                                isFlippedH={formData.is_flipped_horizontal}
+                                                isFlippedV={formData.is_flipped_vertical}
                                             />
                                         </div>
                                     </div>
@@ -540,15 +557,15 @@ export default function BannersTab() {
                             {/* Background Image */}
                             {banner.image_url ? (
                                 <img
-                                    src={banner.image_url}
-                                    alt={banner.title_ru}
+                                    src={getAbsoluteImageUrl(banner.image_url)}
+                                    alt={banner.title_ru || banner.id.toString()}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                     style={{
                                         objectPosition: `${banner.bg_pos_desktop_x ?? 50}% ${banner.bg_pos_desktop_y ?? 50}% `,
                                         transform: [
                                             banner.is_flipped_horizontal ? 'scaleX(-1)' : '',
                                             banner.is_flipped_vertical ? 'scaleY(-1)' : ''
-                                        ].filter(Boolean).join(' ')
+                                        ].filter(Boolean).join(' ') || 'none'
                                     }}
                                 />
                             ) : (
@@ -562,17 +579,16 @@ export default function BannersTab() {
 
                             {/* Content */}
                             <div className="absolute inset-0 p-6 flex flex-col justify-end text-white">
-                                <h3 className="font-bold text-lg leading-tight mb-1">{banner.title_ru}</h3>
-                                {banner.subtitle_ru && (
-                                    <p className="text-sm text-white/80 mb-2">{banner.subtitle_ru}</p>
+                                <h3 className="font-bold text-lg leading-tight mb-1">{banner.title_ru || t('banners.default_title', { defaultValue: 'M Le Diamant' })}</h3>
+                                {(banner.subtitle_ru || !banner.title_ru) && (
+                                    <p className="text-sm text-white/80 mb-2">{banner.subtitle_ru || t('banners.default_subtitle', { defaultValue: 'Premium Beauty Salon' })}</p>
                                 )}
-                                {banner.link_url && (
-                                    <div className="flex items-center gap-1 text-xs text-blue-300">
-                                        <LinkIcon className="w-3 h-3" />
-                                        {banner.link_url}
-                                    </div>
-                                )}
-                            </div>
+                            </div>    {banner.link_url && (
+                                <div className="flex items-center gap-1 text-xs text-blue-300">
+                                    <LinkIcon className="w-3 h-3" />
+                                    {banner.link_url}
+                                </div>
+                            )}
 
                             {/* Actions (Top Right) */}
                             <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
