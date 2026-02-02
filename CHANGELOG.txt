@@ -1,3 +1,19 @@
+## [2026-02-02] Banner Fixes, Universal Ports & Translation Protection
+- 🖼️ **Banner Reliability & Fixes**:
+  - **Visibility Toggle Fix**: Resolved 500 Internal Server Error when toggling banner status by implementing proper database migrations for `is_active` and flip-related columns.
+  - **PostgreSQL Compatibility**: Fixed "API Error" on save by replacing `c.lastrowid` (sqlite-only) with `RETURNING id` across all public-admin endpoints (`banners`, `reviews`, `faq`, `gallery`).
+  - **Smart Seeding**: Updated `fix_data.py` to only seed default banners/gallery items if tables are completely empty, preventing the destruction of user-created content on every server restart.
+- 🌍 **Deep Port Universalization**:
+  - **Zero Hardcode Commitment**: Eliminated all remaining `:8000` references in `frontend/src/hooks/useChatWebSocket.ts`, `Bookings.tsx`, and `CreateUser.tsx`.
+  - **Dynamic Origin**: Frontend now dynamically resolves backend URLs using `window.location.origin`, ensuring seamless deployment on any port or domain without manual config changes.
+  - **WebSocket Proxying**: Optimized WebSocket connections to use the standard `/api/ws/` paths, leveraging Vite's proxy for zero-config development.
+- 🛡️ **Salon Name Intellectual Property**:
+  - **Translation Hardening**: Added "M LE DIAMANT" and "M.LE DIAMANT" to the global translation `EXCLUSIONS` list in `translator.py`.
+  - **Russian Fix**: Verified that "M Le Diamant" is no longer translated as "Г-н. Алмаз" (Mr. Diamond) across 9 languages.
+- 🧹 **Code Cleanliness**:
+  - **Profile.tsx**: Fixed a critical pre-existing JSX syntax error (missing closing `div`) and corrected type mismatches for user photos.
+  - **Unused Variables**: Cleaned up unused variables and lint warnings in `useChatWebSocket.ts` and `Profile.tsx`.
+
 ## [2026-01-28] Public Content Restoration & Photo Management
 - 🎨 **Full Public Content Restoration**:
   - **FAQ**: Восстановлено 20 вопросов из locale файлов (было только 3)

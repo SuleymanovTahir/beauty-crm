@@ -18,7 +18,7 @@ import GoogleLoginButton from "../../components/GoogleLoginButton";
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation(['auth/Login', 'common']);
+  const { t } = useTranslation(['auth/login', 'common']);
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
@@ -117,8 +117,10 @@ export default function Login() {
       }
 
       // Прочие ошибки
-      setError(err.error || t('authorization_error'));
-      toast.error(err.error || t('authorization_error'));
+      const errorKey = String(err.error || err.message);
+      const translatedError = String(t(errorKey, errorKey) || t('authorization_error'));
+      setError(translatedError);
+      toast.error(translatedError);
     } finally {
       setLoading(false);
     }
@@ -265,7 +267,7 @@ export default function Login() {
               className="w-full h-11 font-medium text-gray-600 hover:text-gray-900"
               onClick={() => navigate("/")}
             >
-              {t('return_to_home')}
+              {t('return_to_home', '← Вернуться на главную')}
             </Button>
           </div>
         </div>

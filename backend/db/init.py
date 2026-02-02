@@ -812,6 +812,13 @@ def init_database():
         )''')
 
         # Migrations for public_banners
+        add_column_if_not_exists('public_banners', 'is_flipped_horizontal', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('public_banners', 'is_flipped_vertical', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('public_banners', 'bg_pos_desktop_x', 'INTEGER DEFAULT 50')
+        add_column_if_not_exists('public_banners', 'bg_pos_desktop_y', 'INTEGER DEFAULT 50')
+        add_column_if_not_exists('public_banners', 'bg_pos_mobile_x', 'INTEGER DEFAULT 50')
+        add_column_if_not_exists('public_banners', 'bg_pos_mobile_y', 'INTEGER DEFAULT 50')
+        add_column_if_not_exists('public_banners', 'is_active', 'BOOLEAN DEFAULT TRUE')
 
 
         c.execute('''CREATE TABLE IF NOT EXISTS client_notes (

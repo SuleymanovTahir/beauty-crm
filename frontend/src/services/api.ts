@@ -79,8 +79,8 @@ export class ApiClient {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: response.statusText }))
-        // Выбрасываем объект с полной информацией об ошибке
         const error: any = new Error(errorData.error || errorData.message || `API Error: ${response.status}`)
+        error.error = errorData.error
         error.error_type = errorData.error_type
         error.email = errorData.email
         error.status = response.status

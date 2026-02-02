@@ -34,6 +34,41 @@
       "position": "Nail Master",
       "bio": "Ein ordentlicher und aufmerksamer Manikürist",
       "photo": ""
+    },
+    {
+      "id": 671,
+      "name": "Kasymova Gulcehre",
+      "position": "Nail & Waxing Master",
+      "bio": "",
+      "photo": ""
+    },
+    {
+      "id": 672,
+      "name": "Peradilla Jennifer",
+      "position": "Universal Beauty Master",
+      "bio": "",
+      "photo": ""
+    },
+    {
+      "id": 673,
+      "name": "Amandurdyyeva Mestan",
+      "position": "Friseur und Permanent Makeup Artist",
+      "bio": "",
+      "photo": ""
+    },
+    {
+      "id": 674,
+      "name": "Mohamed Sabri",
+      "position": "Friseur",
+      "bio": "",
+      "photo": ""
+    },
+    {
+      "id": 675,
+      "name": "Kozhabay Lyazat",
+      "position": "Nail Master",
+      "bio": "",
+      "photo": ""
     }
   ]
 }

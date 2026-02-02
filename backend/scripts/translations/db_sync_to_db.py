@@ -13,6 +13,7 @@ backend_dir = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(backend_dir))
 sys.path.insert(0, str(Path(__file__).parent))
 
+import psycopg2
 from db.connection import get_db_connection
 
 from config import (
@@ -93,8 +94,8 @@ def sync_to_database():
                         
                         # Try potential column names for this language
                         possible_columns = []
-                        if lang == 'en':
-                            possible_columns.append(base_field) # English is often the base field
+                        if lang == SOURCE_LANGUAGE:
+                            possible_columns.append(base_field) # Source language updates the base field
                         
                         possible_columns.append(f"{base_field}_{lang}")
                         
@@ -111,11 +112,15 @@ def sync_to_database():
                         try:
                             query = f"UPDATE {table_name} SET {target_column} = %s WHERE {id_field} = %s"
                             c.execute(query, (translation, record_id))
+                            conn.commit() # Commit each update to survive violations in next ones
                             total_updates += 1
+                        except psycopg2.errors.UniqueViolation:
+                            conn.rollback()
+                            print(f"  ⚠️  Skipped {table_name}.{target_column} update due to unique constraint: {translation}")
                         except Exception as e:
+                            conn.rollback()
                             print(f"  ❌ Error updating {table_name}.{target_column}: {e}")
         
-        conn.commit()
         print(f"\n✨ Database sync complete! {total_updates} translations updated.")
         
     except Exception as e:

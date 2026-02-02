@@ -348,7 +348,7 @@ export default function EmployeeProfile() {
             <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 overflow-hidden relative">
               {user.photo ? (
                 <img
-                  src={getPhotoUrl(user.photo)}
+                  src={getPhotoUrl(user.photo) || undefined}
                   alt={user.full_name}
                   className="w-full h-full object-cover"
                   onError={(e) => {
@@ -754,6 +754,7 @@ export default function EmployeeProfile() {
                         </div>
                       </div>
                     </div>
+                  </div>
                 </form>
               </div>
             </TabsContent>
