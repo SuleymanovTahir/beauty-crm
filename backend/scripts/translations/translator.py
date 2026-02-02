@@ -517,7 +517,7 @@ class Translator:
             variable_placeholders[placeholder] = f"{{{{{var}}}}}"
             text_to_translate = text_to_translate.replace(f"{{{{{var}}}}}", placeholder)
         text = text_to_translate
-        EXCLUSIONS = {'AED', 'USD', 'EUR', 'GBP', 'RUB', 'SAR', 'KWD', 'QAR', 'BHD', 'OMR', 'min', 'h', 'kg', 'cm', 'ml', 'ID', 'VIP', 'SPA', 'SMS', 'API', 'UV', 'LED', '2D', '3D', '4D', '5D', 'ML'}
+        EXCLUSIONS = {'AED', 'USD', 'EUR', 'GBP', 'RUB', 'SAR', 'KWD', 'QAR', 'BHD', 'OMR', 'min', 'h', 'kg', 'cm', 'ml', 'ID', 'VIP', 'SPA', 'SMS', 'API', 'UV', 'LED', '2D', '3D', '4D', '5D', 'ML', 'M LE DIAMANT', 'M.LE DIAMANT'}
         if text.strip().upper() in EXCLUSIONS: return text
         if target in SALON_TERMINOLOGY:
             lower_text = text.strip().lower()

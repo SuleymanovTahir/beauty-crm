@@ -31,7 +31,7 @@ TRANSLATION_CONFIG = {
     },
     "salon_settings": {
         "id_field": "id",
-        "fields": ["name", "address", "hours_weekdays", "hours_weekends"], 
+        "fields": ["address", "hours_weekdays", "hours_weekends"], 
         "where": None
     },
     "public_banners": {
@@ -65,7 +65,7 @@ TRANSLATE_OUTPUT = "scripts/translations/translations_completed.json"
 
 # Fields that should NEVER be translated (technical fields, proper nouns, etc.)
 SKIP_TRANSLATION_FIELDS = {
-    "salon_settings": ["city", "country"],  # Proper nouns should not be translated
+    "salon_settings": ["name", "city", "country"],  # Proper nouns should not be translated
     "services": ["duration"]  # Duration format like "1h", "30min" should not be translated
 }
 

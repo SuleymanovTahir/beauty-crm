@@ -34,7 +34,7 @@ class ReviewUpdate(BaseModel):
     display_order: Optional[int] = None
 
 class BannerCreate(BaseModel):
-    title: str
+    title: Optional[str] = None
     subtitle: Optional[str] = None
     image_url: Optional[str] = None
     link_url: Optional[str] = None
@@ -88,6 +88,7 @@ async def create_review(review: ReviewCreate):
             INSERT INTO public_reviews
             (author_name, rating, text, avatar_url)
             VALUES (%s,%s,%s,%s)
+            RETURNING id
         """, (
             review.author_name,
             review.rating,
@@ -95,7 +96,7 @@ async def create_review(review: ReviewCreate):
             review.avatar_url
         ))
 
-        review_id = c.lastrowid
+        review_id = c.fetchone()[0]
         conn.commit()
 
         return {"success": True, "id": review_id, "message": "Отзыв создан"}
@@ -225,6 +226,7 @@ async def create_banner(banner: BannerCreate):
             INSERT INTO public_banners
             (title, subtitle, image_url, link_url, bg_pos_desktop_x, bg_pos_desktop_y, bg_pos_mobile_x, bg_pos_mobile_y, is_flipped_horizontal, is_flipped_vertical)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            RETURNING id
         """, (
             banner.title,
             banner.subtitle,
@@ -238,7 +240,7 @@ async def create_banner(banner: BannerCreate):
             banner.is_flipped_vertical
         ))
 
-        banner_id = c.lastrowid
+        banner_id = c.fetchone()[0]
         conn.commit()
 
         return {"success": True, "id": banner_id}
@@ -400,13 +402,14 @@ async def create_faq(faq: FAQCreate):
             INSERT INTO public_faq
             (question, answer, category)
             VALUES (%s,%s,%s)
+            RETURNING id
         """, (
             faq.question,
             faq.answer,
             faq.category
         ))
 
-        faq_id = c.lastrowid
+        faq_id = c.fetchone()[0]
         conn.commit()
 
         return {"success": True, "id": faq_id}
@@ -508,6 +511,7 @@ async def create_gallery_item(item: GalleryCreate):
             INSERT INTO public_gallery
             (image_url, title, description, category)
             VALUES (%s,%s,%s,%s)
+            RETURNING id
         """, (
             item.image_url,
             item.title,
@@ -515,7 +519,7 @@ async def create_gallery_item(item: GalleryCreate):
             item.category
         ))
 
-        item_id = c.lastrowid
+        item_id = c.fetchone()[0]
         conn.commit()
 
         return {"success": True, "id": item_id}

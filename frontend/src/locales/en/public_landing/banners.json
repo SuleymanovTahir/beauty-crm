@@ -1,10 +1,10 @@
 {
   "items": [
     {
-      "image": "/landing-images/banners/banner2.webp",
-      "link": "",
+      "title": "Beauty salon in Dubai",
       "subtitle": "The art of transformation",
-      "title": "Beauty salon in Dubai"
+      "image": "/landing-images/banners/banner2.webp",
+      "link": ""
     }
   ]
 }

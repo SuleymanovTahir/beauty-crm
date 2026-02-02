@@ -21,7 +21,7 @@ import './Bookings.css';
 
 
 const api = {
-  baseURL: import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? `${window.location.protocol}//${window.location.hostname}:8000` : window.location.origin),
+  baseURL: import.meta.env.VITE_API_URL || window.location.origin,
 
   async getBookings(params: any = {}) {
     const searchParams = new URLSearchParams();

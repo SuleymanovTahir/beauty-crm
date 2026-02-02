@@ -4,7 +4,7 @@ import { Home, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
-import '../styles/css/landing.css';
+import '../styles/css/index.css';
 
 export function NotFound() {
   const { t, i18n } = useTranslation('public_landing');

@@ -297,8 +297,16 @@ def get_public_employees(
                 "service_ids": services_map.get(emp_id, [])
             })
             
-        cache.set(cache_key, employees, expire=CACHE_TTL_MEDIUM)
-        return employees
+        # De-duplicate by name to handle cases where multiple records exist for same person
+        unique_employees = {}
+        for emp in employees:
+            # Using name as key to keep only the latest/last entry for each person
+            unique_employees[emp['name']] = emp
+            
+        final_employees = list(unique_employees.values())
+        
+        cache.set(cache_key, final_employees, expire=CACHE_TTL_MEDIUM)
+        return final_employees
     except Exception as e:
         log_error(f"Error fetching employees: {e}", "public_api")
         return []
@@ -484,7 +492,6 @@ def get_public_banners(language: str = "ru"):
             banner['title'] = get_dynamic_translation('public_banners', b_id, 'title', lang_key, banner['title'])
             banner['subtitle'] = get_dynamic_translation('public_banners', b_id, 'subtitle', lang_key, banner['subtitle'])
             
-            banners.append(banner)
             banners.append(banner)
             
     except Exception as e:

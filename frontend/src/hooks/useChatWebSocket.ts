@@ -56,13 +56,9 @@ export const useChatWebSocket = ({
         }
 
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const port = window.location.port || (protocol === 'wss:' ? '443' : '80');
-        // В dev окружении часто используется порт 5173 или 8000
-        // Если мы на фронте (5173), нам нужно подключаться к бэкенду (8000)
-        // Но обычно в проде всё на одном порту через прокси.
-        const host = window.location.hostname;
-        // Предполагаем, что бэкенд проксируется через /api
-        const wsUrl = `${protocol}//${host}${port !== '443' && port !== '80' ? (window.location.port === '5173' ? ':8000' : ':' + port) : ''}/api/ws/chat`;
+        const host = window.location.host;
+        // Предполагаем, что бэкенд проксируется через /api или мы на том же домене
+        const wsUrl = `${protocol}//${host}/api/ws/chat`;
 
         console.log('💬 [Chat WS] Connecting to:', wsUrl);
 
