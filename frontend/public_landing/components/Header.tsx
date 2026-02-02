@@ -38,6 +38,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   const changeLanguage = (lang: string) => i18n.changeLanguage(lang);
   const { salonInfo, salonName, logoUrl } = useSalonInfo(propSalonInfo);
   const [isScrolled, setIsScrolled] = useState(false);
+  const isHomePage = window.location.pathname === "/";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -120,7 +121,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-sm shadow-sm" : "bg-background/5 backdrop-blur-sm shadow-sm"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || !isHomePage ? "bg-background/95 backdrop-blur-sm shadow-sm border-b border-border/10" : "bg-background/5 backdrop-blur-sm shadow-sm"
           }`}
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
