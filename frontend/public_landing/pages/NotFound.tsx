@@ -4,6 +4,7 @@ import { Home, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
+import '../styles/css/landing.css';
 
 export function NotFound() {
   const { t, i18n } = useTranslation('public_landing');
@@ -49,7 +50,7 @@ export function NotFound() {
       <main className="not-found-main">
         <div className="max-w-2xl w-full text-center">
           {/* 404 Logo */}
-          <div className="mb-8 font-serif">
+          <div className="mb-8">
             <h1 className="not-found-404-text">404</h1>
             <div className="not-found-divider"></div>
           </div>
