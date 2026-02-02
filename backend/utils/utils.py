@@ -101,23 +101,37 @@ def map_image_path(url: str) -> str:
 
     # Маппинг старых путей на новые (frontend/public_landing/styles/img/)
     path_mappings = {
-        '/static/images/salon/': '/landing-images/Фото салона/',
-        '/static/uploads/images/salon/': '/landing-images/Фото салона/',
-        '/static/images/portfolio/': '/landing-images/Портфолио/',
-        '/static/uploads/images/portfolio/': '/landing-images/Портфолио/',
-        '/static/images/banners/': '/landing-images/Баннер/',
-        '/static/uploads/images/banners/': '/landing-images/Баннер/',
-        '/static/uploads/images/services/': '/landing-images/Услуги/',
-        '/static/uploads/images/faces/': '/landing-images/Красивые лица/',
-        '/static/uploads/images/employees/': '/landing-images/Сотрудники/',
-        '/static/images/employees/': '/landing-images/Сотрудники/',
-        '/static/uploads/images/staff/': '/landing-images/Сотрудники/',
-        '/static/images/staff/': '/landing-images/Сотрудники/',
+        '/static/images/salon/': '/landing-images/salon/',
+        '/static/uploads/images/salon/': '/landing-images/salon/',
+        '/static/images/portfolio/': '/landing-images/portfolio/',
+        '/static/uploads/images/portfolio/': '/landing-images/portfolio/',
+        '/static/images/banners/': '/landing-images/banners/',
+        '/static/uploads/images/banners/': '/landing-images/banners/',
+        '/static/uploads/images/services/': '/landing-images/services/',
+        '/static/uploads/images/faces/': '/landing-images/faces/',
+        '/static/uploads/images/employees/': '/landing-images/staff/',
+        '/static/images/employees/': '/landing-images/staff/',
+        '/static/uploads/images/staff/': '/landing-images/staff/',
+        '/static/images/staff/': '/landing-images/staff/',
     }
 
     for old_path, new_path in path_mappings.items():
         if url.startswith(old_path):
             return url.replace(old_path, new_path, 1)
+
+    # Дополнительная защита: если путь все еще содержит кириллицу в /landing-images/ (от старых данных)
+    cyrillic_mapping = {
+        '/landing-images/Фото салона/': '/landing-images/salon/',
+        '/landing-images/Портфолио/': '/landing-images/portfolio/',
+        '/landing-images/Баннер/': '/landing-images/banners/',
+        '/landing-images/Услуги/': '/landing-images/services/',
+        '/landing-images/Красивые лица/': '/landing-images/faces/',
+        '/landing-images/Сотрудники/': '/landing-images/staff/',
+    }
+
+    for old, new in cyrillic_mapping.items():
+        if url.startswith(old):
+            return url.replace(old, new, 1)
 
     return url
 
