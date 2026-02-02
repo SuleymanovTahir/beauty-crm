@@ -28,22 +28,28 @@ async def list_employees(
     """Получить всех сотрудников (публичный endpoint)"""
     employees = get_all_employees(active_only=active_only)
     
-    return {
-        "employees": [
-            {
-                "id": e[0],           # id
-                "full_name": e[3],    # full_name
-                "position": e[9],     # position
-                "experience": e[13],  # experience
-                "photo": map_image_path(sanitize_url(e[10])),  # photo
-                "bio": e[12],         # bio
-                "phone": e[4] if len(e) > 4 else None,  # email used as phone fallback
-                "email": e[4],        # email
-                "instagram": None,    # instagram not in users table
-                "is_active": bool(e[8])  # is_active
-            } for e in employees
-        ]
-    }
+    # Конвертируем в список словарей для надежности
+    result = []
+    for e in employees:
+        # e - это tuple из SELECT * FROM users
+        # Для безопасности лучше использовать именованные поля если это возможно,
+        # но так как get_all_employees делает SELECT *, мы полагаемся на порядок в init.py
+        # или лучше переписать get_all_employees чтобы она возвращала dict
+        
+        # Временный фикс: используем db_connection для получения имен колонок
+        result.append({
+            "id": e[0],
+            "full_name": e[3],
+            "position": e[8], # position
+            "experience": e[16], # experience
+            "photo": map_image_path(sanitize_url(e[11])), # photo
+            "bio": e[15], # bio
+            "phone": e[5], # phone
+            "email": e[4], # email
+            "is_active": bool(e[25]) # is_active
+        })
+
+    return {"employees": result}
 
 # ===== EMPLOYEE SELF-SERVICE PROFILE ENDPOINTS =====
 
@@ -123,9 +129,9 @@ async def update_my_employee_profile(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    employee_id = user.get("employee_id")
-    if not employee_id:
-        return JSONResponse({"error": "User is not linked to an employee"}, status_code=404)
+    user_id = user.get("id")
+    if not user_id:
+        return JSONResponse({"error": "User ID not found in session"}, status_code=404)
 
     try:
         data = await request.json()
@@ -133,31 +139,41 @@ async def update_my_employee_profile(
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Определяем, какие поля обновлять
+        # Определяем, какие поля обновлять в таблице users
         update_fields = []
         update_values = []
 
-        allowed_fields = ['full_name', 'position', 'experience', 'photo', 'bio', 'phone', 'email', 'instagram']
+        # Маппинг полей из фронтенда на колонки в БД
+        field_mapping = {
+            'full_name': 'full_name',
+            'position': 'position',
+            'experience': 'experience',
+            'photo': 'photo',
+            'bio': 'bio',
+            'phone': 'phone',
+            'email': 'email',
+            'instagram': 'instagram_username'
+        }
 
-        for field in allowed_fields:
+        for field, col in field_mapping.items():
             if field in data:
-                update_fields.append(f"{field} = %s")
+                update_fields.append(f"{col} = %s")
                 update_values.append(data[field])
 
         if not update_fields:
             return JSONResponse({"error": "No fields to update"}, status_code=400)
 
         # Добавляем updated_at
-        update_fields.append("updated_at = NOW()")
-        update_values.append(employee_id)
+        update_fields.append("updated_at = CURRENT_TIMESTAMP")
+        update_values.append(user_id)
 
-        query = f"UPDATE employees SET {', '.join(update_fields)} WHERE id = %s"
+        query = f"UPDATE users SET {', '.join(update_fields)} WHERE id = %s"
         c.execute(query, tuple(update_values))
 
         conn.commit()
         conn.close()
 
-        log_info(f"Employee {employee_id} updated their profile", "api")
+        log_info(f"User {user_id} updated their employee profile", "api")
 
         return {"success": True}
     except Exception as e:
@@ -297,7 +313,6 @@ async def remove_service_from_employee(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     remove_employee_service(employee_id, service_id)
-    remove_employee_service(employee_id, service_id)
     return {"success": True}
 
 @router.put("/employees/{employee_id}/services/{service_id}")
@@ -369,7 +384,7 @@ async def reorder_employee(
     c = conn.cursor()
     
     try:
-        c.execute("UPDATE employees SET sort_order = %s WHERE id = %s", (new_order, employee_id))
+        c.execute("UPDATE users SET sort_order = %s WHERE id = %s", (new_order, employee_id))
         conn.commit()
         return {"success": True}
     except Exception as e:
@@ -390,9 +405,9 @@ async def get_available(
         "employees": [
             {
                 "id": e[0],
-                "full_name": e[1],
-                "position": e[2],
-                "photo": map_image_path(sanitize_url(e[4]))
+                "full_name": e[3], # full_name
+                "position": e[8], # position
+                "photo": map_image_path(sanitize_url(e[11])) # photo
             } for e in employees
         ]
     }

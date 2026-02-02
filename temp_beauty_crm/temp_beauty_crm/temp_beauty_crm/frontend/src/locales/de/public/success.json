@@ -1,9 +1,0 @@
-{
-  "backToHome": "Nach Hause zurückkehren",
-  "contactMessage": "Wir Wir wird sich in Kürze mit Ihnen in Verbindung setzen, um die Besprechungsdetails zu bestätigen.",
-  "dateTime": "{{дата}}, {{время}}",
-  "serviceBooked": "Ihr buchung <highlight>{{service}}</highlight> wurde erfolgreich erstellt.",
-  "thankYou": "Vielen Dank, {{name}}!",
-  "title": "Registrierung bestätigt!",
-  "viewServices": "Dienste anzeigen"
-}

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, date
 from db.settings import get_salon_settings
 from db.services import get_all_services, get_service
 from db.connection import get_db_connection
-from utils.utils import sanitize_url
+from utils.utils import sanitize_url, map_image_path
 from utils.cache import cache
 from utils.logger import log_info, log_error
 from core.config import is_localhost
@@ -20,46 +20,6 @@ def _add_v(url: str) -> str:
     sep = '&' if '?' in url else '?'
     return f"{url}{sep}v={ts}"
 
-def _map_image_path(url: str) -> str:
-    """Преобразовать старые пути к изображениям на новые из frontend папки"""
-    if not url:
-        return url
-
-    # Маппинг старых путей на новые (frontend/public_landing/styles/img/)
-    path_mappings = {
-        '/static/images/salon/': '/landing-images/salon/',
-        '/static/uploads/images/salon/': '/landing-images/salon/',
-        '/static/images/portfolio/': '/landing-images/portfolio/',
-        '/static/uploads/images/portfolio/': '/landing-images/portfolio/',
-        '/static/images/banners/': '/landing-images/banners/',
-        '/static/uploads/images/banners/': '/landing-images/banners/',
-        '/static/uploads/images/services/': '/landing-images/services/',
-        '/static/uploads/images/faces/': '/landing-images/faces/',
-        '/static/uploads/images/employees/': '/landing-images/staff/',
-        '/static/images/employees/': '/landing-images/staff/',
-        '/static/uploads/images/staff/': '/landing-images/staff/',
-        '/static/images/staff/': '/landing-images/staff/',
-    }
-
-    for old_path, new_path in path_mappings.items():
-        if url.startswith(old_path):
-            return url.replace(old_path, new_path, 1)
-
-    # Дополнительная защита: если путь все еще содержит кириллицу в /landing-images/ (от старых данных)
-    cyrillic_mapping = {
-        '/landing-images/Фото салона/': '/landing-images/salon/',
-        '/landing-images/Портфолио/': '/landing-images/portfolio/',
-        '/landing-images/Баннер/': '/landing-images/banners/',
-        '/landing-images/Услуги/': '/landing-images/services/',
-        '/landing-images/Красивые лица/': '/landing-images/faces/',
-        '/landing-images/Сотрудники/': '/landing-images/staff/',
-    }
-
-    for old, new in cyrillic_mapping.items():
-        if url.startswith(old):
-            return url.replace(old, new, 1)
-
-    return url
 
 import re
 
@@ -309,7 +269,7 @@ def get_public_employees(
 
             photo_url = sanitize_url(row_dict.get("photo")) or "/landing-images/Сотрудники/default_female.webp"
             # Map old paths to new frontend paths
-            photo_url = _map_image_path(photo_url)
+            photo_url = map_image_path(photo_url)
             final_photo = _add_v(photo_url)
 
             # Transliterate name based on language
@@ -474,7 +434,7 @@ def get_public_gallery(category: Optional[str] = None, language: str = "ru"):
     results = []
     for img in images:
         raw_url = sanitize_url(img.get("image_url"))
-        mapped_url = _map_image_path(raw_url)
+        mapped_url = map_image_path(raw_url)
         results.append({
             "id": img.get("id"),
             "category": img.get("category"),
@@ -490,6 +450,13 @@ def get_public_banners(language: str = "ru"):
     """Загрузить баннеры для лендинга с локализацией"""
     from utils.language_utils import validate_language, build_coalesce_query, get_dynamic_translation
     lang_key = validate_language(language)
+
+    # Кеширование
+    cache_key = f"public_banners_{lang_key}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -518,13 +485,12 @@ def get_public_banners(language: str = "ru"):
             banner['subtitle'] = get_dynamic_translation('public_banners', b_id, 'subtitle', lang_key, banner['subtitle'])
             
             banners.append(banner)
-        return {"success": True, "banners": banners}
-    except Exception as e:
-        log_error(f"Error fetching banners: {e}", "api")
-        return {"success": False, "banners": []}
-    finally:
         if conn:
             conn.close()
+            
+    res = {"success": True, "banners": banners}
+    cache.set(cache_key, res, CACHE_TTL_MEDIUM)
+    return res
 
 # ============================================================================
 # INITIAL LOAD
@@ -537,13 +503,22 @@ def get_initial_load(language: str = "ru"):
     from utils.language_utils import validate_language
     
     lang_key = validate_language(language)
+    
+    # Кеширование на 5 минут
+    cache_key = f"initial_load_{lang_key}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        # Добавляем версию для обхода кэша даже в кешированном ответе
+        # (хотя лучше если это делает клиент, но мы поможем)
+        return cached_data
+
     settings = get_salon_settings()
     
     # Banners
     banners_data = get_public_banners(language=lang_key)
     banners = banners_data.get("banners", [])
     for b in banners:
-        b['image_url'] = _map_image_path(b['image_url'])
+        b['image_url'] = map_image_path(b['image_url'])
         b['image_url'] = _add_v(b['image_url'])
     
     # Services
@@ -579,7 +554,7 @@ def get_initial_load(language: str = "ru"):
         he = settings.get('hours_weekends')
         localized_hours = f"{hw} / {he}" if hw != he else hw
 
-    return {
+    res = {
         "salon": {
             "name": localized_name,
             "phone": settings.get("phone"),
@@ -602,6 +577,9 @@ def get_initial_load(language: str = "ru"):
         "reviews": reviews,
         "language": language
     }
+    
+    cache.set(cache_key, res, CACHE_TTL_MEDIUM)
+    return res
 
 # ============================================================================
 # ACTIONS (BOOKING, CONTACT)

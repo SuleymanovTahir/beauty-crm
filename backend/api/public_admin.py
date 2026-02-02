@@ -7,6 +7,9 @@ from typing import Optional, List
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
+from utils.cache import cache
+from api.uploads import delete_upload_file
+from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Public Admin"], prefix="/public-admin")
 
@@ -341,41 +344,30 @@ async def update_banner(banner_id: int, banner: BannerUpdate):
 @router.delete("/banners/{banner_id}")
 async def delete_banner(banner_id: int):
     """Удалить баннер и связанный файл изображения"""
-    import os
-    from pathlib import Path
-    
     conn = get_db_connection()
     c = conn.cursor()
     
     try:
         # Получаем URL изображения перед удалением
-        c.execute("SELECT image_url FROM public_banners WHERE id =%s", (banner_id,))
+        c.execute("SELECT image_url FROM public_banners WHERE id = %s", (banner_id,))
         row = c.fetchone()
         
         if row and row[0]:
-            image_url = row[0]
-            # Проверяем, что это локальный файл (начинается с /static/)
-            if image_url.startswith('/static/'):
-                # Преобразуем URL в путь к файлу
-                # /static/uploads/images/filename.jpg -> backend/static/uploads/images/filename.jpg
-                file_path = Path(__file__).parent.parent / image_url.lstrip('/')
-                
-                # Удаляем файл, если он существует
-                if file_path.exists():
-                    try:
-                        os.remove(file_path)
-                        from utils.logger import log_info
-                        log_info(f"Deleted file: {file_path}", "api")
-                    except Exception as e:
-                        from utils.logger import log_warning
-                        log_warning(f"Failed to delete file {file_path}: {e}", "api")
+            delete_upload_file(row[0])
         
         # Удаляем запись из базы данных
-        c.execute("DELETE FROM public_banners WHERE id =%s", (banner_id,))
+        c.execute("DELETE FROM public_banners WHERE id = %s", (banner_id,))
         conn.commit()
+
+        # Инвалидируем кеш лендинга (для всех языков)
+        for lang in ['ru', 'en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']:
+            cache.delete(f"public_banners_{lang}")
+            cache.delete(f"initial_load_{lang}")
+        
         return {"success": True, "message": "Баннер и файл удалены"}
     except Exception as e:
         conn.rollback()
+        log_error(f"Error deleting banner: {e}", "public_admin")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
@@ -527,6 +519,35 @@ async def create_gallery_item(item: GalleryCreate):
         conn.commit()
 
         return {"success": True, "id": item_id}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.delete("/gallery/{item_id}")
+async def delete_gallery_item(item_id: int):
+    """Удалить фото из галереи и физический файл"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        # Получаем URL перед удалением
+        c.execute("SELECT image_url FROM public_gallery WHERE id = %s", (item_id,))
+        row = c.fetchone()
+        
+        if row and row[0]:
+            delete_upload_file(row[0])
+            
+        c.execute("DELETE FROM public_gallery WHERE id = %s", (item_id,))
+        conn.commit()
+        
+        # Инвалидируем кеш лендинга
+        for lang in ['ru', 'en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']:
+            cache.delete(f"public_gallery_{lang}")
+            cache.delete(f"initial_load_{lang}")
+
+        return {"success": True, "message": "Фото удалено"}
     except Exception as e:
         conn.rollback()
         raise HTTPException(status_code=500, detail=str(e))

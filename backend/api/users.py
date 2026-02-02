@@ -5,12 +5,11 @@ from fastapi import APIRouter, Request, Cookie,Depends,Query
 from fastapi.responses import JSONResponse
 from typing import Optional
 
-import hashlib
 import time
 from db import get_all_users, delete_user, log_activity
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
-from utils.utils import require_auth, sanitize_url, map_image_path
+from utils.utils import require_auth, sanitize_url, map_image_path, hash_password
 from utils.logger import log_error
 from core.auth import get_current_user_or_redirect as get_current_user
 import psycopg2
@@ -111,7 +110,6 @@ async def create_user_api(
             return JSONResponse({"error": "Пользователь с таким логином уже существует"}, status_code=400)
 
         # Создаем пользователя
-        from utils.utils import hash_password
         password_hash = hash_password(password)
         from datetime import datetime
         now = datetime.now().isoformat()
@@ -621,18 +619,23 @@ async def change_user_password(
                     {"error": "Необходимо указать текущий пароль"},
                     status_code=400
                 )
-            old_password_hash = hashlib.sha256(old_password.encode()).hexdigest()
-            c.execute("SELECT id FROM users WHERE id = %s AND password_hash = %s",
-                     (user_id, old_password_hash))
-            if not c.fetchone():
+            
+            c.execute("SELECT password_hash FROM users WHERE id = %s", (user_id,))
+            user_row = c.fetchone()
+            if not user_row:
+                conn.close()
+                return JSONResponse({"error": "Пользователь не найден"}, status_code=404)
+            
+            from utils.utils import verify_password
+            if not verify_password(old_password, user_row[0]):
                 conn.close()
                 return JSONResponse(
                     {"error": "Неверный текущий пароль"},
                     status_code=400
                 )
         
-        # Меняем пароль
-        new_password_hash = hashlib.sha256(new_password.encode()).hexdigest()
+        # Меняем пароль используя PBKDF2 (hash_password из utils)
+        new_password_hash = hash_password(new_password)
         c.execute("UPDATE users SET password_hash = %s WHERE id = %s", 
                  (new_password_hash, user_id))
         conn.commit()
