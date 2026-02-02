@@ -86,13 +86,19 @@ def log_debug(message: str, module: str = "main"):
 def send_telegram_alert(message):
     """Отправка критических ошибок в Telegram"""
     import requests
-    TELEGRAM_BOT_TOKEN = "your_token"
-    TELEGRAM_CHAT_ID = "your_chat_id"
+    import os
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    chat_id = os.getenv("TELEGRAM_MANAGER_CHAT_ID")
     
-    requests.post(
-        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-        json={"chat_id": TELEGRAM_CHAT_ID, "text": message}
-    )
+    if token and chat_id:
+        try:
+            requests.post(
+                f"https://api.telegram.org/bot{token}/sendMessage",
+                json={"chat_id": chat_id, "text": message},
+                timeout=5
+            )
+        except Exception as e:
+            logger.error(f"[logger] Ошибка отправки в Telegram: {e}")
 
 def log_critical(message, module, exc_info=True):
     logger.critical(f"[{module}] {message}", exc_info=exc_info)

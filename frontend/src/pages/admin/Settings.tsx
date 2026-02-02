@@ -32,6 +32,7 @@ import {
   X,
   User,
   Download,
+  Check,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -2410,13 +2411,15 @@ export default function AdminSettings() {
                                               <p className="text-xs text-gray-500">@{user.username} · {user.role}</p>
                                               <div className="flex gap-2 mt-1">
                                                 {broadcastForm.channels.includes('email') && (
-                                                  <span className={`text-[10px] ${user.email ? 'text-blue-600' : 'text-gray-400'}`}>
-                                                    {user.email ? `✓ ${t('settings:channel_email')}` : `✗ ${t('settings:channel_email')}`}
+                                                  <span className={`text-[10px] flex items-center gap-1 ${user.email ? 'text-blue-600' : 'text-gray-400'}`}>
+                                                    {user.email ? <Check className="w-2.5 h-2.5" /> : <X className="w-2.5 h-2.5" />}
+                                                    {t('settings:channel_email')}
                                                   </span>
                                                 )}
                                                 {broadcastForm.channels.includes('telegram') && (
-                                                  <span className={`text-[10px] ${user.telegram_id ? 'text-green-600' : 'text-gray-400'}`}>
-                                                    {user.telegram_id ? `✓ ${t('settings:channel_telegram')}` : `✗ ${t('settings:channel_telegram')}`}
+                                                  <span className={`text-[10px] flex items-center gap-1 ${user.telegram_id ? 'text-green-600' : 'text-gray-400'}`}>
+                                                    {user.telegram_id ? <Check className="w-2.5 h-2.5" /> : <X className="w-2.5 h-2.5" />}
+                                                    {t('settings:channel_telegram')}
                                                   </span>
                                                 )}
                                               </div>
@@ -2991,9 +2994,10 @@ export default function AdminSettings() {
                           ))}
                       </div>
                       {holidayForm.master_exceptions.length > 0 && (
-                        <p className="text-xs text-green-600 mt-2">
-                          ✓ {t('settings:masters_selected', { count: holidayForm.master_exceptions.length })}
-                        </p>
+                        <div className="flex items-center gap-1 text-xs text-green-600 mt-2">
+                          <Check className="w-3 h-3" />
+                          {t('settings:masters_selected', { count: holidayForm.master_exceptions.length })}
+                        </div>
                       )}
                     </div>
                   )}

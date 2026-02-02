@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/Analytics.tsx
 import { useState, useEffect } from 'react';
-import { BarChart3, Download, RefreshCw, AlertCircle, Loader, Filter, TrendingUp, TrendingDown } from 'lucide-react';
+import { BarChart3, Download, RefreshCw, AlertCircle, Loader, Filter, TrendingUp, TrendingDown, Lightbulb } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -661,8 +661,8 @@ export default function Analytics() {
 
           <div className="p-4 md:p-6 bg-blue-50 border-t border-blue-100">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                💡
+              <div className="flex-shrink-0">
+                <Lightbulb className="w-5 h-5 text-blue-600" />
               </div>
               <div>
                 <p className="text-sm font-medium text-blue-900 mb-1">

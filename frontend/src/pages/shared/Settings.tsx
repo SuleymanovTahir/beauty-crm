@@ -32,6 +32,7 @@ import {
   ShieldAlert,
   X,
   User,
+  Download,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -1956,7 +1957,7 @@ export default function AdminSettings() {
                     }
                   }}
                 >
-                  📥 {t('settings:download_backup')}
+                  <Download className="w-4 h-4 mr-2" /> {t('settings:download_backup')}
                 </Button>
               </div>
             </div>

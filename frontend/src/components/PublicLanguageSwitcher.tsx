@@ -1,5 +1,5 @@
 // /frontend/src/components/PublicLanguageSwitcher.tsx
-import { Globe } from 'lucide-react';
+import { Globe, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState, useRef, useEffect } from 'react';
 
@@ -51,7 +51,7 @@ export default function PublicLanguageSwitcher() {
                 {lang.name}
               </span>
               {i18n.language === lang.code && (
-                <span className="text-blue-600 text-sm">✓</span>
+                <Check className="w-4 h-4 text-blue-600" />
               )}
             </button>
           ))}

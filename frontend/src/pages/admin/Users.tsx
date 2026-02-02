@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/Users.tsx
 import { useState, useEffect } from 'react';
-import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield, Key, Filter, X, Calendar, Info, AlertTriangle } from 'lucide-react';
+import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield, Key, Filter, X, Calendar, Info, AlertTriangle, Check } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -206,14 +206,14 @@ export default function Users() {
         response = await api.getClients();
       }
 
-      console.log(`📥 Received ${activeTab}:`, response);
+      console.log(`📥 Received ${activeTab}: `, response);
 
       // Извлечение массива
       const dataArray = Array.isArray(response)
         ? response
         : (response?.clients || response?.users || []);
 
-      console.log(`✅ ${activeTab} array:`, dataArray);
+      console.log(`✅ ${activeTab} array: `, dataArray);
       setUsers(dataArray);
 
       if (dataArray.length === 0) {
@@ -222,8 +222,8 @@ export default function Users() {
     } catch (err) {
       const message = err instanceof Error ? err.message : t('error_loading_users');
       setError(message);
-      toast.error(`${t('error')}: ${message}`);
-      console.error(`❌ Error loading ${activeTab}:`, err);
+      toast.error(`${t('error')}: ${message} `);
+      console.error(`❌ Error loading ${activeTab}: `, err);
     } finally {
       setLoading(false);
     }
@@ -359,10 +359,10 @@ export default function Users() {
         <div className="flex gap-2">
           <button
             onClick={() => handleTabChange('employees')}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'employees'
-              ? 'bg-pink-600 text-white shadow-sm'
-              : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-              }`}
+            className={`flex - 1 px - 4 py - 2.5 rounded - lg text - sm font - medium transition - colors ${activeTab === 'employees'
+                ? 'bg-pink-600 text-white shadow-sm'
+                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+              } `}
           >
             <div className="flex items-center justify-center gap-2">
               <Shield className="w-4 h-4" />
@@ -374,10 +374,10 @@ export default function Users() {
           </button>
           <button
             onClick={() => handleTabChange('clients')}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'clients'
-              ? 'bg-pink-600 text-white shadow-sm'
-              : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-              }`}
+            className={`flex - 1 px - 4 py - 2.5 rounded - lg text - sm font - medium transition - colors ${activeTab === 'clients'
+                ? 'bg-pink-600 text-white shadow-sm'
+                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+              } `}
           >
             <div className="flex items-center justify-center gap-2">
               <UsersIcon className="w-4 h-4" />
@@ -537,7 +537,7 @@ export default function Users() {
                             {activeTab === 'employees' ? ((user as any).full_name || t('no_name')) : (user.name || user.username || t('no_name'))}
                           </p>
                           <p className="text-xs text-gray-400">
-                            {activeTab === 'employees' ? ((user as any).username || '-') : `@${user.username || 'user'}`}
+                            {activeTab === 'employees' ? ((user as any).username || '-') : `@${user.username || 'user'} `}
                           </p>
                         </div>
                       </div>
@@ -576,7 +576,7 @@ export default function Users() {
                                 user.status === 'lead' ? 'bg-blue-100 text-blue-800' :
                                   'bg-gray-100 text-gray-800'
                           }>
-                            {t(`common:status_${user.status}`)}
+                            {t(`common:status_${user.status} `)}
                           </Badge>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
@@ -595,7 +595,7 @@ export default function Users() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => navigate(`/crm/users/${(user as any).id}`)}
+                                onClick={() => navigate(`/ crm / users / ${(user as any).id} `)}
                                 className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                                 title={t('action_edit_title')}
                               >
@@ -661,7 +661,7 @@ export default function Users() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => navigate(`/crm/clients/${user.instagram_id}`)}
+                              onClick={() => navigate(`/ crm / clients / ${user.instagram_id} `)}
                               className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                               title={t('view_details')}
                             >
@@ -742,10 +742,10 @@ export default function Users() {
                               <button
                                 onClick={() => handleChangeRole((selectedUser as any).id, role.key)}
                                 disabled={savingRole}
-                                className={`w-full p-3 rounded-lg border-2 transition-all text-left ${(selectedUser as any).role === role.key
-                                  ? 'border-pink-500 bg-pink-50'
-                                  : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
-                                  }`}
+                                className={`w - full p - 3 rounded - lg border - 2 transition - all text - left ${(selectedUser as any).role === role.key
+                                    ? 'border-pink-500 bg-pink-50'
+                                    : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
+                                  } `}
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex-1">
@@ -767,7 +767,7 @@ export default function Users() {
                                   <ul className="space-y-1">
                                     {rolePermissions.map((perm, idx) => (
                                       <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
-                                        <span className="text-green-600 mt-0.5">✓</span>
+                                        <Check className="w-3 h-3 text-green-600 mt-0.5" />
                                         <span>{perm}</span>
                                       </li>
                                     ))}
