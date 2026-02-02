@@ -78,9 +78,7 @@ export default function Login() {
         toast.error(t('authorization_error'));
       }
     } catch (err: any) {
-      console.log("Login error caught:", err);
-
-      // Проверяем, есть ли информация о неподтвержденном email в ошибке
+      // Clean auth failure handling - no detailed logs in production/UI
       if (err.error_type === "email_not_verified" && err.email) {
         toast.error(t('email_not_verified_redirect', "Email не подтвержден. Перенаправление на страницу верификации..."));
         setTimeout(() => {
@@ -91,14 +89,15 @@ export default function Login() {
 
       // Проверяем, ожидает ли пользователь одобрения админа
       if (err.error_type === "not_approved" || err.error === "account_not_activated") {
-        setError(t('account_pending', "Ваш аккаунт ожидает одобрения администратора"));
+        setError('account_pending');
         return;
       }
 
       // Неверный логин/пароль
-      if (err.error === 'invalid_credentials' || err.error === 'user_not_found') {
-        setError(t('invalid_credentials', 'Неверный логин или пароль'));
-        toast.error(t('invalid_credentials', 'Неверный логин или пароль'));
+      const errorStr = String(err.error || err.message || (typeof err === 'string' ? err : ''));
+      if (errorStr.includes('invalid_credentials') || errorStr.includes('user_not_found')) {
+        setError('invalid_credentials');
+        toast.error(t('invalid_credentials', 'Неверный логин или пароль ❌'));
         return;
       }
 
@@ -110,17 +109,14 @@ export default function Login() {
         errorMessage === 'Load failed';
 
       if (isNetworkError) {
-        const networkErrorMsg = t('network_error', 'Ошибка сети. Проверьте подключение');
-        setError(networkErrorMsg);
-        toast.error(networkErrorMsg);
+        setError('network_error');
+        toast.error(t('network_error', 'Ошибка сети. Проверьте подключение'));
         return;
       }
 
       // Прочие ошибки
-      const errorKey = String(err.error || err.message);
-      const translatedError = String(t(errorKey, errorKey) || t('authorization_error'));
-      setError(translatedError);
-      toast.error(translatedError);
+      const errorKey = String(err.error || err.message || 'authorization_error');
+      setError(errorKey);
     } finally {
       setLoading(false);
     }
@@ -164,7 +160,7 @@ export default function Login() {
 
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-800 text-sm">{error}</p>
+              <p className="text-red-800 text-sm">{t(error, error === 'invalid_credentials' ? 'Неверный логин или пароль ❌' : error)}</p>
             </div>
           )}
 

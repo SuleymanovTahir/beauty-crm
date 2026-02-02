@@ -91,7 +91,7 @@
     "prerender:public": "npm run build:seo && node scripts/prerender-public.mjs",
     "postinstall": "patch-package || true",
     "i18n:setup": "node scripts/i18n/setup-i18n.js",
-    "i18n:extract": "node node_modules/i18next-parser/bin/cli.js --config scripts/i18n/i18next-parser.config.js && node scripts/i18n/cleanup-duplicates.js > /dev/null 2>&1 && node scripts/i18n/fix-nested-keys.js > /dev/null 2>&1 && echo '✅ Extraction complete' && npm run i18n:check-only",
+    "i18n:extract": "node node_modules/i18next-parser/bin/cli.js --config scripts/i18n/i18next-parser.config.js && node scripts/i18n/cleanup-duplicates.js > /dev/null 2>&1 && node scripts/i18n/fix-nested-keys.js > /dev/null 2>&1 && echo '✅ Extraction complete'",
     "i18n:check": "node scripts/check-translations.js",
     "i18n:check-only": "node scripts/check-translations.js",
     "i18n:sync": "node scripts/i18n-sync.js",

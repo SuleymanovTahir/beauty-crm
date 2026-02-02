@@ -28,6 +28,7 @@
     "password_no_upper": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل",
     "password_too_short": "كلمة المرور قصيرة جدًا (8 أحرف على الأقل)"
   },
+  "authorization_error": "خطأ في التفويض",
   "back": "الرجوع",
   "back_to_bookings": "الرجوع إلى المشاركات",
   "back_to_clients": "الرجوع إلى العملاء",
@@ -165,6 +166,7 @@
   "happyClients": "عملاء راضون",
   "import": "استيراد",
   "importing": "استيراد...",
+  "invalid_credentials": "تسجيل الدخول أو كلمة المرور غير صحيحة",
   "language": "اللغة",
   "last_14_days": "آخر {{count}} أيام",
   "last_14_days_zero": "",
@@ -324,6 +326,7 @@
   "upload_file": "تحميل ملف",
   "uploading": "جارٍ التحميل...",
   "url_link": "الرابط",
+  "user_not_found": "لم يتم العثور على المستخدم",
   "view_bookings": "عرض الإدخالات",
   "view_calendar": "انتقل إلى التقويم",
   "view_staff": "انتقل إلى الموظفين",

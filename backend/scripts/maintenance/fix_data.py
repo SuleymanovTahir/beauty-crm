@@ -127,23 +127,69 @@ def run_fix():
         else:
             log_info("🎨 Gallery already exists, skipping seed", "maintenance")
 
-        # 7. Ensure non-service-providers are not shown on public site
+        # 8. Merge duplicate employees
+        log_info("👥 Merging duplicate employees...", "maintenance")
+        # Map of (Target Username, Alternate Username) or just identifying duplicates by normalized name
+        # We want to transfer data from old/incomplete records to newer/complete ones or vice-versa
+        # Based on analysis: 67x records have services, 1-5 records have bios.
+        merges = [
+            (671, 1), # Kasimova Gulchekhre / Касимова Гульчехре
+            (672, 2), # Peradilla Jennifer / Перадилья Дженнифер
+            (673, 3), # Amandurdyyeva Mestan / Амандурдыева Местан
+            (674, 4), # Mohamed Sabri / Мохамед Сабри
+            (675, 5)  # Kozhabay Lyazat / Кожабай Лязат
+        ]
+        
+        # Update target names to preferred spelling (English version that transliterates well)
+        c.execute("UPDATE users SET full_name = 'Kasimova Gulchekhre' WHERE id = 671")
+        for target_id, source_id in merges:
+            # 1. Transfer bio/specialization if missing in target
+            c.execute("""
+                UPDATE users t
+                SET 
+                    bio = COALESCE(t.bio, s.bio),
+                    specialization = COALESCE(t.specialization, s.specialization),
+                    experience = COALESCE(t.experience, s.experience),
+                    years_of_experience = COALESCE(t.years_of_experience, s.years_of_experience),
+                    birthday = COALESCE(t.birthday, s.birthday)
+                FROM users s
+                WHERE t.id = %s AND s.id = %s
+            """, (target_id, source_id))
+            
+            # 2. Transfer services
+            c.execute("""
+                INSERT INTO user_services (user_id, service_id)
+                SELECT %s, service_id 
+                FROM user_services 
+                WHERE user_id = %s
+                ON CONFLICT DO NOTHING
+            """, (target_id, source_id))
+            
+            # 3. Mark source as inactive and hidden (Safe merge)
+            c.execute("""
+                UPDATE users 
+                SET is_active = FALSE, is_public_visible = FALSE, is_service_provider = FALSE 
+                WHERE id = %s
+            """, (source_id,))
+
+        log_info(f"   ✅ Merged {len(merges)} duplicate employee records", "maintenance")
+        # 9. Ensure only providers are public
         c.execute("""
             UPDATE users SET is_public_visible = FALSE
             WHERE is_service_provider = FALSE AND is_public_visible = TRUE
         """)
         
-        # Hide Director from public list (Tursunay)
+        # Hide Director (Tursunay)
         c.execute("UPDATE users SET is_public_visible = FALSE, is_service_provider = FALSE WHERE full_name = 'Турсунай'")
 
-        # 8. Fix service names capitalization
+        # 10. Fix service names capitalization
         log_info("✏️  Fixing service names capitalization...", "maintenance")
         c.execute("""
             UPDATE services SET name = 'Пилинг' WHERE name = 'пилинг';
             UPDATE services SET name = INITCAP(name) WHERE name ~ '^[а-яa-z]';
         """)
 
-        # 9. Sync Service Positions
+        # 11. Sync Service Positions
         log_info("🔗 Syncing service positions...", "maintenance")
         c.execute("""
             INSERT INTO service_positions (service_id, position_id)
@@ -152,6 +198,82 @@ def run_fix():
             WHERE position_id IS NOT NULL
             ON CONFLICT DO NOTHING
         """)
+
+        # 12. Fix Usernames and Full Names for Active Staff
+        log_info("👤 Fixing staff usernames and names...", "maintenance")
+        import os
+        from utils.utils import hash_password
+
+        # Structure: (target_id, preferred_username, preferred_full_name, source_id)
+        staff_fixes = [
+            (671, 'gulcehre', 'Kasymova Gulcehre', 1),
+            (672, 'jennifer', 'Peradilla Jennifer', 2),
+            (673, 'mestan', 'Amandurdyyeva Mestan', 3),
+            (674, 'sabri', 'Mohamed Sabri', 4),
+            (675, 'lyazat', 'Kozhabay Lyazat', 5)
+        ]
+        
+        # Load credentials from file
+        credentials_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "staff_credentials.txt")
+        passwords = {}
+        if os.path.exists(credentials_path):
+            try:
+                with open(credentials_path, "r", encoding="utf-8") as f:
+                    current_username = None
+                    for line in f:
+                        line = line.strip()
+                        if line.startswith("Username: "):
+                            current_username = line.replace("Username: ", "")
+                        elif line.startswith("Password: ") and current_username:
+                            passwords[current_username] = line.replace("Password: ", "")
+                            current_username = None
+                log_info(f"   📂 Loaded {len(passwords)} passwords from credentials file", "maintenance")
+            except Exception as e:
+                log_error(f"   ❌ Failed to read credentials: {e}", "maintenance")
+
+        for target_id, preferred_username, preferred_full_name, source_id in staff_fixes:
+            # 1. Rename OLD user if it still has the preferred username
+            c.execute("UPDATE users SET username = %s || '_archived', is_active = FALSE WHERE id = %s AND username = %s", 
+                      (preferred_username, source_id, preferred_username))
+            
+            # 2. Update ACTIVE user with preferred username and name
+            c.execute("SELECT id, username, full_name, password_hash FROM users WHERE id = %s", (target_id,))
+            user_data = c.fetchone()
+            
+            if user_data:
+                # Update username and name if needed
+                c.execute("UPDATE users SET username = %s, full_name = %s, is_active = TRUE WHERE id = %s", 
+                          (preferred_username, preferred_full_name, target_id))
+                
+                # 3. Apply password from staff_credentials.txt only IF DIFFERENT
+                if preferred_username in passwords:
+                    current_pwd_in_file = passwords[preferred_username]
+                    current_hash_in_db = user_data[3]
+                    
+                    from utils.utils import verify_password
+                    
+                    # Only hash and update if the current stored hash DOES NOT match the file password
+                    if not current_hash_in_db or not verify_password(current_pwd_in_file, current_hash_in_db):
+                        new_hash = hash_password(current_pwd_in_file)
+                        c.execute("UPDATE users SET password_hash = %s WHERE id = %s", (new_hash, target_id))
+                        log_info(f"   ✅ Password SYNCED for {preferred_username} (ID: {target_id})", "maintenance")
+                    else:
+                        # Password already matches, skipping hashing to save time and prevent reload triggers
+                        log_info(f"   ✅ Password OK for {preferred_username} (ID: {target_id})", "maintenance")
+                else:
+                    log_info(f"   ✅ Fixed {preferred_username} (ID: {target_id}) - Username fixed", "maintenance")
+
+        # Sync admin password if in file and DIFFERENT
+        if 'admin' in passwords:
+            c.execute("SELECT id, password_hash FROM users WHERE username = 'admin'")
+            admin_data = c.fetchone()
+            if admin_data:
+                from utils.utils import verify_password
+                if not admin_data[1] or not verify_password(passwords['admin'], admin_data[1]):
+                    c.execute("UPDATE users SET password_hash = %s WHERE username = 'admin'", (hash_password(passwords['admin']),))
+                    log_info("   ✅ Admin password SYNCED from credentials file", "maintenance")
+                else:
+                    log_info("   ✅ Admin password OK", "maintenance")
 
         conn.commit()
         log_info("🏆 Data maintenance completed successfully!", "maintenance")

@@ -28,6 +28,7 @@
     "password_no_upper": "Password must contain at least one uppercase letter",
     "password_too_short": "Password is too short (minimum 8 characters)"
   },
+  "authorization_error": "Authorization error",
   "back": "Back",
   "back_to_bookings": "Back to bookings",
   "back_to_clients": "Back to clients",
@@ -161,6 +162,7 @@
   "happyClients": "satisfied clients",
   "import": "Import",
   "importing": "Importing...",
+  "invalid_credentials": "Incorrect login or password",
   "language": "Language",
   "last_14_days": "Last {{count}} days",
   "last_14_days_few": "Last {{count}} days",
@@ -310,6 +312,7 @@
   "upload_file": "Upload file",
   "uploading": "Loading...",
   "url_link": "Link",
+  "user_not_found": "User not found",
   "view_bookings": "View bookings",
   "view_calendar": "Go to calendar",
   "view_staff": "Go to employees",

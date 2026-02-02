@@ -28,6 +28,7 @@
     "password_no_upper": "Passwort muss mindestens einen Großbuchstaben enthalten",
     "password_too_short": "Passwort ist zu kurz (mindestens 8 Zeichen)"
   },
+  "authorization_error": "Autorisierungsfehler",
   "back": "Zurück",
   "back_to_bookings": "Zurück zu den Beiträgen",
   "back_to_clients": "Zurück zu den Kunden",
@@ -161,6 +162,7 @@
   "happyClients": "zufriedene Kunden",
   "import": "Importieren",
   "importing": "Importieren...",
+  "invalid_credentials": "Falscher Login oder Passwort",
   "language": "Sprache",
   "last_14_days": "Letzte {{count}} Tage",
   "last_14_days_few": "Letzte {{count}} Tage",
@@ -310,6 +312,7 @@
   "upload_file": "Datei herunterladen",
   "uploading": "Laden...",
   "url_link": "Link",
+  "user_not_found": "Benutzer nicht gefunden",
   "view_bookings": "buchungen ansehen",
   "view_calendar": "Zum Kalender gehen",
   "view_staff": "Zu den Mitarbeitern gehen",

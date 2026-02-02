@@ -80,9 +80,21 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
         setError(t('auth/login:authorization_error', 'Ошибка авторизации'));
       }
     } catch (err: any) {
-      console.error("Login error:", err);
-      const message = err.message || t('auth/login:login_error', 'Ошибка входа');
-      setError(message);
+      // Clean error handling without detailed stack traces in the console
+      const errorStr = String(err.error || err.message || (typeof err === 'string' ? err : ''));
+
+      if (errorStr.includes('invalid_credentials') || errorStr.includes('user_not_found')) {
+        setError('auth/login:invalid_credentials');
+        toast.error(t('auth/login:invalid_credentials', 'Неверный логин или пароль ❌'));
+        return;
+      }
+
+      if (errorStr.includes('account_not_activated') || errorStr.includes('not_approved')) {
+        setError('auth/login:account_pending');
+        return;
+      }
+
+      setError(errorStr);
     } finally {
       setLoading(false);
     }
@@ -125,7 +137,8 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
       }
     } catch (err: any) {
       console.error("Register error:", err);
-      setError(err.message || t('auth/register:error_registration', 'Registration failed'));
+      const errorStr = String(err.error || err.message || (typeof err === 'string' ? err : ''));
+      setError(t(errorStr, t('auth/register:error_registration', 'Ошибка регистрации')));
     } finally {
       setLoading(false);
     }
@@ -171,7 +184,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
           {error && (
             <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2 text-destructive text-sm">
               <AlertCircle className="w-4 h-4" />
-              {error}
+              {t(error, error === 'auth/login:invalid_credentials' ? 'Неверный логин или пароль ❌' : error)}
             </div>
           )}
 

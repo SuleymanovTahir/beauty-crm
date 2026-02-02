@@ -1,3 +1,10 @@
+## [2026-02-03] Staff Authentication & Username Unification
+- 👤 **Staff Logic Restoration**:
+  - **Username Swap**: Resolved critical login issues for main masters (`sabri`, `jennifer`, `mestan`, `gulcehre`, `lyazat`). Swapped short usernames from deactivated older records to the new active records (ID 671-675).
+  - **Password Synchronization**: Automatically synced passwords from `staff_credentials.txt` to the active database records for all staff members, including the `admin` user.
+  - **Archiving**: Renamed legacy conflicting records to `*_archived` and ensured they remain inactive to prevent authentication collisions.
+  - **SSOT Maintenance**: Integrated these fixes into `fix_data.py` to ensure they are applied automatically and persist across environments.
+
 ## [2026-02-02] Banner Fixes, Universal Ports & Translation Protection
 - 🖼️ **Banner Reliability & Fixes**:
   - **Visibility Toggle Fix**: Resolved 500 Internal Server Error when toggling banner status by implementing proper database migrations for `is_active` and flip-related columns.

@@ -28,6 +28,7 @@
     "password_no_upper": "Пароль должен содержать хотя бы одну заглавную букву",
     "password_too_short": "Пароль слишком короткий (минимум 8 символов)"
   },
+  "authorization_error": "Ошибка авторизации",
   "back": "Назад",
   "back_to_bookings": "Назад к записям",
   "back_to_clients": "Назад к клиентам",
@@ -161,6 +162,7 @@
   "happyClients": "довольных клиентов",
   "import": "Импорт",
   "importing": "Импортирование...",
+  "invalid_credentials": "Неверный логин или пароль",
   "language": "Язык / Language",
   "last_14_days": "Последние {{count}} дней",
   "last_14_days_few": "Последние {{count}} дня",
@@ -310,6 +312,7 @@
   "upload_file": "Загрузить файл",
   "uploading": "Загрузка...",
   "url_link": "Ссылка",
+  "user_not_found": "Пользователь не найден",
   "view_bookings": "Посмотреть записи",
   "view_calendar": "Перейти в календарь",
   "view_staff": "Перейти к сотрудникам",

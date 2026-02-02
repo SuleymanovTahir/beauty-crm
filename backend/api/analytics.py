@@ -1,14 +1,15 @@
 """
 API Endpoints для аналитики
 """
-from fastapi import APIRouter, Query, Cookie, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Query, Cookie, HTTPException, Request
+from fastapi.responses import JSONResponse, StreamingResponse
 from typing import Optional
+from datetime import datetime
 
 from db import get_stats, get_analytics_data, get_funnel_data
 from utils.utils import require_auth, get_total_unread
 from utils.utils import require_auth, get_total_unread
-from utils.logger import log_warning, log_info
+from utils.logger import log_warning, log_info, log_error
 from utils.cache import cache
 
 router = APIRouter(tags=["Analytics"])
@@ -279,3 +280,67 @@ async def get_bot_analytics(
     
     from db.bot_analytics import get_bot_analytics_summary
     return get_bot_analytics_summary(days)
+
+@router.post("/admin/export-report")
+async def export_report_api(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Экспорт отчета (CSV, PDF, Excel) для Dashboard"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        data = await request.json()
+        format = data.get("format", "csv")
+        start_date = data.get("start_date")
+        end_date = data.get("end_date")
+
+        from api.export import export_bookings_csv, export_bookings_pdf, export_bookings_excel
+        from db import get_all_bookings
+        
+        # Получаем данные
+        bookings = get_all_bookings()
+        
+        # Фильтруем по дате если нужно
+        if start_date and end_date:
+            filtered = []
+            try:
+                # Пытаемся распарсить ISO форматы от фронтенда
+                s_dt = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+                e_dt = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+                
+                for b in bookings:
+                    try:
+                        b_dt = datetime.fromisoformat(b[3])
+                        if s_dt <= b_dt <= e_dt:
+                            filtered.append(b)
+                    except: continue
+                bookings = filtered
+            except Exception as e:
+                log_warning(f"Export date filtering failed: {e}", "export")
+
+        if format == "csv":
+            content = export_bookings_csv(bookings)
+            media_type = "text/csv"
+            filename = f"report_{datetime.now().strftime('%Y%m%d')}.csv"
+        elif format == "pdf":
+            content = export_bookings_pdf(bookings)
+            media_type = "application/pdf"
+            filename = f"report_{datetime.now().strftime('%Y%m%d')}.pdf"
+        elif format == "excel":
+            content = export_bookings_excel(bookings)
+            media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            filename = f"report_{datetime.now().strftime('%Y%m%d')}.xlsx"
+        else:
+            raise HTTPException(status_code=400, detail="Invalid format")
+
+        return StreamingResponse(
+            iter([content]),
+            media_type=media_type,
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+    except Exception as e:
+        log_error(f"Error in export-report: {e}", "export")
+        raise HTTPException(status_code=500, detail=str(e))
