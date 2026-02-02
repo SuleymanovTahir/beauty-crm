@@ -1,182 +1,189 @@
-2026-01-30 23:02:23 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-01-30 23:02:23 - crm - INFO - [modules] ======================================================================
-2026-01-30 23:02:23 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-01-30 23:02:23 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-01-30 23:02:23 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-01-30 23:02:23 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-01-30 23:02:23 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-01-30 23:02:23 - crm - INFO - [modules] ======================================================================
-2026-01-30 23:02:23 - crm - INFO - [birthday_checker] Планировщик дней рождения запущен
-2026-01-30 23:02:23 - crm - INFO - [birthday_checker] Планировщик поздравлений клиентов запущен
-2026-01-30 23:02:23 - crm - INFO - [booking_reminders] Планировщик email-напоминаний запущен (проверка каждые 10 минут)
-2026-01-30 23:02:23 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-01-30 23:02:23 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-01-30 23:02:23 - crm - INFO - [birthday_checker] Запущен планировщик поздравлений клиентов
-2026-01-30 23:02:23 - crm - INFO - [booking_reminders] Запущен планировщик email-напоминаний о записях
-2026-01-30 23:02:23 - crm - INFO - [booking_reminders] Проверка напоминаний: 23:02
-2026-01-30 23:02:23 - crm - INFO - [booking_reminders] Начинаю проверку напоминаний о записях...
-2026-01-30 23:02:23 - crm - INFO - [booking_reminders] Найдено активных настроек: 2
-2026-01-30 23:02:23 - crm - INFO - [booking_reminders] Нет предстоящих записей для напоминаний
-2026-01-30 23:02:23 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-01-30 23:02:30 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
-2026-01-30 23:02:30 - crm - ERROR - [cache] ❌ Redis connection failed: Error 61 connecting to localhost:6379. Connection refused.
-2026-01-30 23:02:30 - crm - INFO - [cache] ⚠️ Continuing without Redis cache
-2026-01-30 23:02:31 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-01-30 23:02:31 - crm - INFO - [boot] ============================================================
-2026-01-30 23:02:31 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-01-30 23:02:31 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-01-30 23:02:31 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-01-30 23:02:31 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-01-30 23:02:31 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-01-30 23:02:31 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-01-30 23:02:31 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-01-30 23:02:31 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 🧹 Running one-time data cleanup...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 📦 Skipping public content restore (CRM is source of truth)
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 👤 Skipping review avatar changes (CRM managed)
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 👨‍💼 Setting default employee details (won't overwrite existing)...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 🎨 Checking gallery...
-2026-01-30 23:02:31 - crm - INFO - [maintenance]    Gallery already has data - skipping (CRM managed)
-2026-01-30 23:02:31 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 🧹 Cleaning up duplicate achievements...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] ✅ Removed 0 redundant templates
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 📅 Verifying staff schedules...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 🗓️ All staff schedules are complete
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 🔗 Syncing service positions...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
-2026-01-30 23:02:31 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
-2026-01-30 23:02:31 - crm - INFO - [seeding] 🌱 Seeding production data...
-2026-01-30 23:02:31 - crm - INFO - [seeding]    📦 Seeding Services...
-2026-01-30 23:02:31 - crm - INFO - [seeding]    ✅ Added 81 services
-2026-01-30 23:02:31 - crm - INFO - [seeding]    🖼 Skipping Banners (CRM is source of truth)
-2026-01-30 23:02:31 - crm - INFO - [seeding]    📸 Seeding Gallery...
-2026-01-30 23:02:31 - crm - INFO - [seeding]    ⏭️ Gallery already has data, skipping seed
-2026-01-30 23:02:31 - crm - INFO - [seeding] 🎉 Seeding completed successfully!
-2026-01-30 23:02:31 - crm - INFO - [migrations] ✅ Production data seeded
-2026-01-30 23:02:31 - crm - INFO - [migrations] ✅ User data seeded (including admin)
-2026-01-30 23:02:31 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 🧹 Running one-time data cleanup...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 📦 Skipping public content restore (CRM is source of truth)
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 👤 Skipping review avatar changes (CRM managed)
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 👨‍💼 Setting default employee details (won't overwrite existing)...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 🎨 Checking gallery...
-2026-01-30 23:02:31 - crm - INFO - [maintenance]    Gallery already has data - skipping (CRM managed)
-2026-01-30 23:02:31 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 🧹 Cleaning up duplicate achievements...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] ✅ Removed 0 redundant templates
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 📅 Verifying staff schedules...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] ✅ Generated 7 missing shifts
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 🔗 Syncing service positions...
-2026-01-30 23:02:31 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
-2026-01-30 23:02:31 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-01-30 23:02:31 - crm - INFO - [modules] ======================================================================
-2026-01-30 23:02:31 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-01-30 23:02:31 - crm - INFO - [modules] ======================================================================
-2026-01-30 23:02:31 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-01-30 23:02:31 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-01-30 23:02:31 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-01-30 23:02:31 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-01-30 23:02:31 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-01-30 23:02:31 - crm - INFO - [modules] ======================================================================
-2026-01-30 23:02:31 - crm - INFO - [birthday_checker] Планировщик дней рождения запущен
-2026-01-30 23:02:31 - crm - INFO - [birthday_checker] Планировщик поздравлений клиентов запущен
-2026-01-30 23:02:31 - crm - INFO - [booking_reminders] Планировщик email-напоминаний запущен (проверка каждые 10 минут)
-2026-01-30 23:02:31 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-01-30 23:02:31 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-01-30 23:02:31 - crm - INFO - [birthday_checker] Запущен планировщик поздравлений клиентов
-2026-01-30 23:02:31 - crm - INFO - [booking_reminders] Запущен планировщик email-напоминаний о записях
-2026-01-30 23:02:31 - crm - INFO - [booking_reminders] Проверка напоминаний: 23:02
-2026-01-30 23:02:31 - crm - INFO - [booking_reminders] Начинаю проверку напоминаний о записях...
-2026-01-30 23:02:31 - crm - INFO - [booking_reminders] Найдено активных настроек: 2
-2026-01-30 23:02:31 - crm - INFO - [booking_reminders] Нет предстоящих записей для напоминаний
-2026-01-30 23:02:31 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-01-30 23:02:39 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
-2026-01-30 23:02:39 - crm - ERROR - [cache] ❌ Redis connection failed: Error 61 connecting to localhost:6379. Connection refused.
-2026-01-30 23:02:39 - crm - INFO - [cache] ⚠️ Continuing without Redis cache
-2026-01-30 23:02:39 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-01-30 23:02:40 - crm - INFO - [boot] ============================================================
-2026-01-30 23:02:40 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-01-30 23:02:40 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-01-30 23:02:40 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-01-30 23:02:40 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-01-30 23:02:40 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-01-30 23:02:40 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-01-30 23:02:40 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-01-30 23:02:40 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 🧹 Running one-time data cleanup...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 📦 Skipping public content restore (CRM is source of truth)
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 👤 Skipping review avatar changes (CRM managed)
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 👨‍💼 Setting default employee details (won't overwrite existing)...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 🎨 Checking gallery...
-2026-01-30 23:02:40 - crm - INFO - [maintenance]    Gallery already has data - skipping (CRM managed)
-2026-01-30 23:02:40 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 🧹 Cleaning up duplicate achievements...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] ✅ Removed 0 redundant templates
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 📅 Verifying staff schedules...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 🗓️ All staff schedules are complete
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 🔗 Syncing service positions...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
-2026-01-30 23:02:40 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
-2026-01-30 23:02:40 - crm - INFO - [seeding] 🌱 Seeding production data...
-2026-01-30 23:02:40 - crm - INFO - [seeding]    📦 Seeding Services...
-2026-01-30 23:02:40 - crm - INFO - [seeding]    ✅ Added 81 services
-2026-01-30 23:02:40 - crm - INFO - [seeding]    🖼 Skipping Banners (CRM is source of truth)
-2026-01-30 23:02:40 - crm - INFO - [seeding]    📸 Seeding Gallery...
-2026-01-30 23:02:40 - crm - INFO - [seeding]    ⏭️ Gallery already has data, skipping seed
-2026-01-30 23:02:40 - crm - INFO - [seeding] 🎉 Seeding completed successfully!
-2026-01-30 23:02:40 - crm - INFO - [migrations] ✅ Production data seeded
-2026-01-30 23:02:40 - crm - INFO - [migrations] ✅ User data seeded (including admin)
-2026-01-30 23:02:40 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 🧹 Running one-time data cleanup...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 📦 Skipping public content restore (CRM is source of truth)
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 👤 Skipping review avatar changes (CRM managed)
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 👨‍💼 Setting default employee details (won't overwrite existing)...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 🎨 Checking gallery...
-2026-01-30 23:02:40 - crm - INFO - [maintenance]    Gallery already has data - skipping (CRM managed)
-2026-01-30 23:02:40 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 🧹 Cleaning up duplicate achievements...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] ✅ Removed 0 redundant templates
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 📅 Verifying staff schedules...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] ✅ Generated 7 missing shifts
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 🔗 Syncing service positions...
-2026-01-30 23:02:40 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
-2026-01-30 23:02:40 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-01-30 23:02:40 - crm - INFO - [modules] ======================================================================
-2026-01-30 23:02:40 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-01-30 23:02:40 - crm - INFO - [modules] ======================================================================
-2026-01-30 23:02:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-01-30 23:02:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-01-30 23:02:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-01-30 23:02:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-01-30 23:02:40 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-01-30 23:02:40 - crm - INFO - [modules] ======================================================================
-2026-01-30 23:02:40 - crm - INFO - [birthday_checker] Планировщик дней рождения запущен
-2026-01-30 23:02:40 - crm - INFO - [birthday_checker] Планировщик поздравлений клиентов запущен
-2026-01-30 23:02:40 - crm - INFO - [booking_reminders] Планировщик email-напоминаний запущен (проверка каждые 10 минут)
-2026-01-30 23:02:40 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-01-30 23:02:40 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-01-30 23:02:40 - crm - INFO - [birthday_checker] Запущен планировщик поздравлений клиентов
-2026-01-30 23:02:40 - crm - INFO - [booking_reminders] Запущен планировщик email-напоминаний о записях
-2026-01-30 23:02:40 - crm - INFO - [booking_reminders] Проверка напоминаний: 23:02
-2026-01-30 23:02:40 - crm - INFO - [booking_reminders] Начинаю проверку напоминаний о записях...
-2026-01-30 23:02:40 - crm - INFO - [booking_reminders] Найдено активных настроек: 2
-2026-01-30 23:02:40 - crm - INFO - [booking_reminders] Нет предстоящих записей для напоминаний
-2026-01-30 23:02:40 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-01-30 23:12:40 - crm - INFO - [booking_reminders] Проверка напоминаний: 23:12
-2026-01-30 23:12:40 - crm - INFO - [booking_reminders] Начинаю проверку напоминаний о записях...
-2026-01-30 23:12:40 - crm - INFO - [booking_reminders] Найдено активных настроек: 2
-2026-01-30 23:12:40 - crm - INFO - [booking_reminders] Нет предстоящих записей для напоминаний
-2026-01-30 23:22:40 - crm - INFO - [booking_reminders] Проверка напоминаний: 23:22
-2026-01-30 23:22:40 - crm - INFO - [booking_reminders] Начинаю проверку напоминаний о записях...
-2026-01-30 23:22:40 - crm - INFO - [booking_reminders] Найдено активных настроек: 2
-2026-01-30 23:22:40 - crm - INFO - [booking_reminders] Нет предстоящих записей для напоминаний
-2026-01-30 23:32:40 - crm - INFO - 🔔 Checking for reminders...
-2026-01-30 23:32:40 - crm - INFO - [booking_reminders] Проверка напоминаний: 23:32
-2026-01-30 23:32:40 - crm - INFO - [booking_reminders] Начинаю проверку напоминаний о записях...
-2026-01-30 23:32:40 - crm - INFO - [booking_reminders] Найдено активных настроек: 2
-2026-01-30 23:32:40 - crm - INFO - [booking_reminders] Нет предстоящих записей для напоминаний
-2026-01-31 21:11:02 - crm - ERROR - [cache] ❌ Redis connection failed: Error 61 connecting to localhost:6379. Connection refused.
-2026-01-31 21:11:02 - crm - INFO - [cache] ⚠️ Continuing without Redis cache
-2026-01-31 21:11:02 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-01-31 21:11:03 - crm - INFO - [boot] ============================================================
-2026-01-31 21:11:03 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-02-02 05:10:21 - crm - INFO - [seeding]    ⏭️ Gallery already has data, skipping seed
+2026-02-02 05:10:21 - crm - INFO - [seeding] 🎉 Seeding completed successfully!
+2026-02-02 05:10:21 - crm - INFO - [migrations] ✅ Production data seeded
+2026-02-02 05:10:21 - crm - INFO - [migrations] ✅ User data seeded (including admin)
+2026-02-02 05:10:21 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
+2026-02-02 05:10:21 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
+2026-02-02 05:10:21 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos...
+2026-02-02 05:10:21 - crm - INFO - [maintenance]    ✅ Updated employee photos
+2026-02-02 05:10:21 - crm - INFO - [maintenance] 🎨 Syncing gallery...
+2026-02-02 05:10:21 - crm - INFO - [maintenance]    ✅ Re-populated gallery with 19 items
+2026-02-02 05:10:21 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
+2026-02-02 05:10:21 - crm - INFO - [maintenance] 🔗 Syncing service positions...
+2026-02-02 05:10:21 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
+2026-02-02 05:10:21 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-02 05:10:21 - crm - INFO - [modules] ======================================================================
+2026-02-02 05:10:21 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-02-02 05:10:21 - crm - INFO - [modules] ======================================================================
+2026-02-02 05:10:21 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
+2026-02-02 05:10:21 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-02-02 05:10:21 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-02-02 05:10:21 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-02-02 05:10:21 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-02-02 05:10:21 - crm - INFO - [modules] ======================================================================
+2026-02-02 05:10:21 - crm - INFO - [birthday_checker] Планировщик дней рождения запущен
+2026-02-02 05:10:21 - crm - INFO - [birthday_checker] Планировщик поздравлений клиентов запущен
+2026-02-02 05:10:21 - crm - INFO - [booking_reminders] Планировщик email-напоминаний запущен (проверка каждые 10 минут)
+2026-02-02 05:10:21 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-02-02 05:10:21 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-02-02 05:10:21 - crm - INFO - [birthday_checker] Запущен планировщик поздравлений клиентов
+2026-02-02 05:10:21 - crm - INFO - [booking_reminders] Запущен планировщик email-напоминаний о записях
+2026-02-02 05:10:21 - crm - INFO - [booking_reminders] Проверка напоминаний: 05:10
+2026-02-02 05:10:21 - crm - INFO - [booking_reminders] Начинаю проверку напоминаний о записях...
+2026-02-02 05:10:21 - crm - INFO - [booking_reminders] Найдено активных настроек: 2
+2026-02-02 05:10:21 - crm - INFO - [booking_reminders] Нет предстоящих записей для напоминаний
+2026-02-02 05:10:21 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-02-02 05:12:11 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
+2026-02-02 05:12:11 - crm - ERROR - [cache] ❌ Redis connection failed: Error 61 connecting to localhost:6379. Connection refused.
+2026-02-02 05:12:11 - crm - INFO - [cache] ⚠️ Continuing without Redis cache
+2026-02-02 05:12:11 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2026-02-02 05:12:12 - crm - INFO - [boot] ============================================================
+2026-02-02 05:12:12 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-02-02 05:12:12 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
+2026-02-02 05:12:12 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
+2026-02-02 05:12:12 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-02-02 05:12:12 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-02-02 05:12:12 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-02-02 05:12:12 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-02-02 05:12:12 - crm - INFO - [migrations] ✅ Chat history table created/verified
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 🚩 Syncing banners...
+2026-02-02 05:12:12 - crm - INFO - [maintenance]    ✅ Re-populated banners
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos...
+2026-02-02 05:12:12 - crm - INFO - [maintenance]    ✅ Updated employee photos
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 🎨 Syncing gallery...
+2026-02-02 05:12:12 - crm - INFO - [maintenance]    ✅ Re-populated gallery with 19 items
+2026-02-02 05:12:12 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 🔗 Syncing service positions...
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
+2026-02-02 05:12:12 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
+2026-02-02 05:12:12 - crm - INFO - [seeding] 🌱 Seeding production data...
+2026-02-02 05:12:12 - crm - INFO - [seeding]    📦 Seeding Services...
+2026-02-02 05:12:12 - crm - INFO - [seeding]    ✅ Added 81 services
+2026-02-02 05:12:12 - crm - INFO - [seeding]    🖼 Skipping Banners (CRM is source of truth)
+2026-02-02 05:12:12 - crm - INFO - [seeding]    📸 Seeding Gallery...
+2026-02-02 05:12:12 - crm - INFO - [seeding]    ⏭️ Gallery already has data, skipping seed
+2026-02-02 05:12:12 - crm - INFO - [seeding] 🎉 Seeding completed successfully!
+2026-02-02 05:12:12 - crm - INFO - [migrations] ✅ Production data seeded
+2026-02-02 05:12:12 - crm - INFO - [migrations] ✅ User data seeded (including admin)
+2026-02-02 05:12:12 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 🚩 Syncing banners...
+2026-02-02 05:12:12 - crm - INFO - [maintenance]    ✅ Re-populated banners
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos...
+2026-02-02 05:12:12 - crm - INFO - [maintenance]    ✅ Updated employee photos
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 🎨 Syncing gallery...
+2026-02-02 05:12:12 - crm - INFO - [maintenance]    ✅ Re-populated gallery with 19 items
+2026-02-02 05:12:12 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 🔗 Syncing service positions...
+2026-02-02 05:12:12 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
+2026-02-02 05:12:12 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-02 05:12:12 - crm - INFO - [modules] ======================================================================
+2026-02-02 05:12:12 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-02-02 05:12:12 - crm - INFO - [modules] ======================================================================
+2026-02-02 05:12:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
+2026-02-02 05:12:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-02-02 05:12:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-02-02 05:12:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-02-02 05:12:12 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-02-02 05:12:12 - crm - INFO - [modules] ======================================================================
+2026-02-02 05:12:12 - crm - INFO - [birthday_checker] Планировщик дней рождения запущен
+2026-02-02 05:12:12 - crm - INFO - [birthday_checker] Планировщик поздравлений клиентов запущен
+2026-02-02 05:12:12 - crm - INFO - [booking_reminders] Планировщик email-напоминаний запущен (проверка каждые 10 минут)
+2026-02-02 05:12:12 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-02-02 05:12:12 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-02-02 05:12:12 - crm - INFO - [birthday_checker] Запущен планировщик поздравлений клиентов
+2026-02-02 05:12:12 - crm - INFO - [booking_reminders] Запущен планировщик email-напоминаний о записях
+2026-02-02 05:12:12 - crm - INFO - [booking_reminders] Проверка напоминаний: 05:12
+2026-02-02 05:12:12 - crm - INFO - [booking_reminders] Начинаю проверку напоминаний о записях...
+2026-02-02 05:12:12 - crm - INFO - [booking_reminders] Найдено активных настроек: 2
+2026-02-02 05:12:12 - crm - INFO - [booking_reminders] Нет предстоящих записей для напоминаний
+2026-02-02 05:12:12 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-02-02 05:12:52 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
+2026-02-02 05:12:52 - crm - ERROR - [cache] ❌ Redis connection failed: Error 61 connecting to localhost:6379. Connection refused.
+2026-02-02 05:12:52 - crm - INFO - [cache] ⚠️ Continuing without Redis cache
+2026-02-02 05:12:53 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2026-02-02 05:12:53 - crm - INFO - [boot] ============================================================
+2026-02-02 05:12:53 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-02-02 05:12:53 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
+2026-02-02 05:12:53 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
+2026-02-02 05:12:53 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-02-02 05:12:53 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-02-02 05:12:53 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-02-02 05:12:53 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-02-02 05:12:53 - crm - INFO - [migrations] ✅ Chat history table created/verified
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 🚩 Syncing banners...
+2026-02-02 05:12:53 - crm - INFO - [maintenance]    ✅ Re-populated banners
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos...
+2026-02-02 05:12:53 - crm - INFO - [maintenance]    ✅ Updated employee photos
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 🎨 Syncing gallery...
+2026-02-02 05:12:53 - crm - INFO - [maintenance]    ✅ Re-populated gallery with 19 items
+2026-02-02 05:12:53 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 🔗 Syncing service positions...
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
+2026-02-02 05:12:53 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
+2026-02-02 05:12:53 - crm - INFO - [seeding] 🌱 Seeding production data...
+2026-02-02 05:12:53 - crm - INFO - [seeding]    📦 Seeding Services...
+2026-02-02 05:12:53 - crm - INFO - [seeding]    ✅ Added 81 services
+2026-02-02 05:12:53 - crm - INFO - [seeding]    🖼 Skipping Banners (CRM is source of truth)
+2026-02-02 05:12:53 - crm - INFO - [seeding]    📸 Seeding Gallery...
+2026-02-02 05:12:53 - crm - INFO - [seeding]    ⏭️ Gallery already has data, skipping seed
+2026-02-02 05:12:53 - crm - INFO - [seeding] 🎉 Seeding completed successfully!
+2026-02-02 05:12:53 - crm - INFO - [migrations] ✅ Production data seeded
+2026-02-02 05:12:53 - crm - INFO - [migrations] ✅ User data seeded (including admin)
+2026-02-02 05:12:53 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 🚩 Syncing banners...
+2026-02-02 05:12:53 - crm - INFO - [maintenance]    ✅ Re-populated banners
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos...
+2026-02-02 05:12:53 - crm - INFO - [maintenance]    ✅ Updated employee photos
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 🎨 Syncing gallery...
+2026-02-02 05:12:53 - crm - INFO - [maintenance]    ✅ Re-populated gallery with 19 items
+2026-02-02 05:12:53 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 🔗 Syncing service positions...
+2026-02-02 05:12:53 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
+2026-02-02 05:12:53 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-02 05:12:53 - crm - INFO - [modules] ======================================================================
+2026-02-02 05:12:53 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-02-02 05:12:53 - crm - INFO - [modules] ======================================================================
+2026-02-02 05:12:53 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
+2026-02-02 05:12:53 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-02-02 05:12:53 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-02-02 05:12:53 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-02-02 05:12:53 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-02-02 05:12:53 - crm - INFO - [modules] ======================================================================
+2026-02-02 05:12:53 - crm - INFO - [birthday_checker] Планировщик дней рождения запущен
+2026-02-02 05:12:53 - crm - INFO - [birthday_checker] Планировщик поздравлений клиентов запущен
+2026-02-02 05:12:53 - crm - INFO - [booking_reminders] Планировщик email-напоминаний запущен (проверка каждые 10 минут)
+2026-02-02 05:12:53 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-02-02 05:12:53 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-02-02 05:12:53 - crm - INFO - [birthday_checker] Запущен планировщик поздравлений клиентов
+2026-02-02 05:12:53 - crm - INFO - [booking_reminders] Запущен планировщик email-напоминаний о записях
+2026-02-02 05:12:53 - crm - INFO - [booking_reminders] Проверка напоминаний: 05:12
+2026-02-02 05:12:53 - crm - INFO - [booking_reminders] Начинаю проверку напоминаний о записях...
+2026-02-02 05:12:53 - crm - INFO - [booking_reminders] Найдено активных настроек: 2
+2026-02-02 05:12:53 - crm - INFO - [booking_reminders] Нет предстоящих записей для напоминаний
+2026-02-02 05:12:53 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-02-02 05:15:57 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
+2026-02-02 05:15:58 - crm - ERROR - [cache] ❌ Redis connection failed: Error 61 connecting to localhost:6379. Connection refused.
+2026-02-02 05:15:58 - crm - INFO - [cache] ⚠️ Continuing without Redis cache
+2026-02-02 05:15:58 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2026-02-02 05:15:58 - crm - INFO - [boot] ============================================================
+2026-02-02 05:15:58 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-02-02 05:15:58 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
+2026-02-02 05:15:59 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
+2026-02-02 05:15:59 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-02-02 05:15:59 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-02-02 05:15:59 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-02-02 05:15:59 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-02-02 05:15:59 - crm - INFO - [migrations] ✅ Chat history table created/verified
+2026-02-02 05:15:59 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
+2026-02-02 05:15:59 - crm - INFO - [maintenance] 🚩 Syncing banners...
+2026-02-02 05:15:59 - crm - INFO - [maintenance]    ✅ Re-populated banners
+2026-02-02 05:15:59 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos...
+2026-02-02 05:15:59 - crm - INFO - [maintenance]    ✅ Updated employee photos
+2026-02-02 05:15:59 - crm - INFO - [maintenance] 🎨 Syncing gallery...
+2026-02-02 05:15:59 - crm - INFO - [maintenance]    ✅ Re-populated gallery with 19 items
+2026-02-02 05:15:59 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
+2026-02-02 05:15:59 - crm - INFO - [maintenance] 🔗 Syncing service positions...

@@ -360,8 +360,8 @@ export default function Users() {
           <button
             onClick={() => handleTabChange('employees')}
             className={`flex - 1 px - 4 py - 2.5 rounded - lg text - sm font - medium transition - colors ${activeTab === 'employees'
-                ? 'bg-pink-600 text-white shadow-sm'
-                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+              ? 'bg-pink-600 text-white shadow-sm'
+              : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               } `}
           >
             <div className="flex items-center justify-center gap-2">
@@ -375,8 +375,8 @@ export default function Users() {
           <button
             onClick={() => handleTabChange('clients')}
             className={`flex - 1 px - 4 py - 2.5 rounded - lg text - sm font - medium transition - colors ${activeTab === 'clients'
-                ? 'bg-pink-600 text-white shadow-sm'
-                : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+              ? 'bg-pink-600 text-white shadow-sm'
+              : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               } `}
           >
             <div className="flex items-center justify-center gap-2">
@@ -595,7 +595,7 @@ export default function Users() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => navigate(`/ crm / users / ${(user as any).id} `)}
+                                onClick={() => navigate(`/crm/users/${(user as any).id}`)}
                                 className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                                 title={t('action_edit_title')}
                               >
@@ -661,7 +661,7 @@ export default function Users() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => navigate(`/ crm / clients / ${user.instagram_id} `)}
+                              onClick={() => navigate(`/crm/clients/${user.instagram_id}`)}
                               className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                               title={t('view_details')}
                             >
@@ -743,8 +743,8 @@ export default function Users() {
                                 onClick={() => handleChangeRole((selectedUser as any).id, role.key)}
                                 disabled={savingRole}
                                 className={`w - full p - 3 rounded - lg border - 2 transition - all text - left ${(selectedUser as any).role === role.key
-                                    ? 'border-pink-500 bg-pink-50'
-                                    : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
+                                  ? 'border-pink-500 bg-pink-50'
+                                  : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
                                   } `}
                               >
                                 <div className="flex items-center justify-between">

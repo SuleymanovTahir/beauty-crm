@@ -21,8 +21,7 @@ def run_fix():
 
     try:
         # ONE-TIME CLEANUP: Remove duplicate reviews and clear bad banner/employee data
-        # This runs once to fix existing issues, then CRM is source of truth
-        log_info("🧹 Running one-time data cleanup...", "maintenance")
+        log_info("🧹 Running data cleanup and synchronization...", "maintenance")
 
         # 1. Delete duplicate reviews - keep only one per unique (author_name, text)
         c.execute("""
@@ -37,18 +36,18 @@ def run_fix():
             log_info(f"   ✅ Removed {c.rowcount} duplicate reviews", "maintenance")
 
         # 2. Clear all banners with wrong/missing image paths
+        # Allowing /landing-images/ now
         c.execute("""
             DELETE FROM public_banners
             WHERE image_url IS NULL
                OR image_url LIKE '%/employees/%'
                OR image_url LIKE '/static/images/%'
-               OR image_url NOT LIKE '/static/uploads/%'
+               OR (image_url NOT LIKE '/static/uploads/%' AND image_url NOT LIKE '/landing-images/%')
         """)
         if c.rowcount > 0:
             log_info(f"   ✅ Removed {c.rowcount} banners with invalid paths", "maintenance")
 
         # 3. Clear employee photos that don't exist (404 paths)
-        # User should upload photos via CRM Staff section
         c.execute("""
             UPDATE users SET photo = NULL
             WHERE photo IS NOT NULL
@@ -56,140 +55,89 @@ def run_fix():
               AND is_service_provider = TRUE
         """)
         if c.rowcount > 0:
-            log_info(f"   ✅ Cleared {c.rowcount} missing employee photos (upload via CRM)", "maintenance")
+            log_info(f"   ✅ Cleared {c.rowcount} missing employee photos", "maintenance")
 
-        # 4. Ensure non-service-providers are not shown on public site
+        # 4. Sync Banners
+        log_info("🚩 Syncing banners...", "maintenance")
+        c.execute("DELETE FROM public_banners")
+        c.execute("""
+            INSERT INTO public_banners (image_url, title, subtitle, is_active, display_order)
+            VALUES ('/landing-images/banners/banner2.webp', 'Салон красоты в Дубае', 'Искусство преображения', TRUE, 1)
+        """)
+        log_info("   ✅ Re-populated banners", "maintenance")
+
+        # 5. Sync Employee Photos
+        log_info("👨‍💼 Updating employee photos...", "maintenance")
+        employee_photos = {
+            'Amandurdyyeva Mestan': '/landing-images/staff/Местан.webp',
+            'Mohamed Sabri': '/landing-images/staff/Симо.webp',
+            'Peradilla Jennifer': '/landing-images/staff/Дженнифер.webp',
+            'Kasymova Gulcehre': '/landing-images/staff/Гуля.webp',
+            'Kozhabay Lyazat': '/landing-images/staff/Ляззат.webp'
+        }
+        for name, photo_path in employee_photos.items():
+            c.execute("UPDATE users SET photo = %s WHERE full_name = %s", (photo_path, name))
+        log_info("   ✅ Updated employee photos", "maintenance")
+
+        # 6. Clear and Re-populate Gallery
+        log_info("🎨 Syncing gallery...", "maintenance")
+        c.execute("DELETE FROM public_gallery")
+        
+        # Salon photos (MATCHING EXACT CASE FROM SERVER)
+        salon_photos = [
+            ('1.webp', 'Интерьер салона'), ('2.webp', 'SPA зона'), ('4.webp', 'Парикмахерский зал'),
+            ('8.webp', 'Детали интерьера'), ('9.webp', 'Зона ожидания'), ('Hair Styling Studio.webp', 'Парикмахерский зал'),
+            ('Massage Room (2).webp', 'Кабинет массажа'), ('Massage Room.webp', 'Кабинет массажа'),
+            ('Moroccan Bath.webp', 'Марокканская баня'), ('Nail Salon.webp', 'Зона маникюра')
+        ]
+        for img, title in salon_photos:
+            c.execute("""
+                INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
+                VALUES (%s, %s, %s, 'salon', 0, TRUE)
+            """, (f'/landing-images/salon/{img}', title, title))
+
+        # Portfolio photos
+        portfolio_photos = [
+            ('Волосы.webp', 'Стильная укладка'), ('Маникюр.webp', 'Классический маникюр'),
+            ('Перманент губ.webp', 'Перманентный макияж губ'), ('Волосы2.webp', 'Стрижка и окрашивание')
+        ]
+        for img, title in portfolio_photos:
+            c.execute("""
+                INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
+                VALUES (%s, %s, %s, 'portfolio', 0, TRUE)
+            """, (f'/landing-images/portfolio/{img}', title, title))
+
+        # Services photos
+        services_photos = [
+            ('Маникюр 4.webp', 'Маникюр'), ('Массаж лица.webp', 'Массаж лица'),
+            ('Перманент ресниц.webp', 'Перманент ресниц'), ('Спа.webp', 'SPA'),
+            ('Стрижка .webp', 'Стрижка')
+        ]
+        for img, title in services_photos:
+            c.execute("""
+                INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active)
+                VALUES (%s, %s, %s, 'services', 0, TRUE)
+            """, (f'/landing-images/services/{img}', title, title))
+
+        log_info(f"   ✅ Re-populated gallery with {len(salon_photos) + len(portfolio_photos) + len(services_photos)} items", "maintenance")
+
+        # 7. Ensure non-service-providers are not shown on public site
         c.execute("""
             UPDATE users SET is_public_visible = FALSE
             WHERE is_service_provider = FALSE AND is_public_visible = TRUE
         """)
-        if c.rowcount > 0:
-            log_info(f"   ✅ Fixed {c.rowcount} non-providers visibility", "maintenance")
-
-        # NOTE: Public content (FAQ, Reviews, Banners) is now managed via CRM admin panel
-        # DO NOT auto-restore from locales - CRM is the source of truth
-        log_info("📦 Skipping public content restore (CRM is source of truth)", "maintenance")
         
-        # NOTE: Review avatars are now managed via CRM - skipping auto-clear
-        log_info("👤 Skipping review avatar changes (CRM managed)", "maintenance")
-        
-        # 4. Employee photos and details - now managed via CRM Staff section
-        # Only set experience/bio if NOT already set (don't overwrite CRM data)
-        log_info("👨‍💼 Setting default employee details (won't overwrite existing)...", "maintenance")
-        c.execute("""
-            -- Only set bio/experience if currently NULL (preserve CRM edits)
-            UPDATE users SET
-                years_of_experience = COALESCE(years_of_experience, 18),
-                bio = COALESCE(bio, 'Топ-стилист с международным опытом.')
-            WHERE full_name = 'Amandurdyyeva Mestan' AND (years_of_experience IS NULL OR bio IS NULL);
+        # Hide Director from public list (Tursunay)
+        c.execute("UPDATE users SET is_public_visible = FALSE, is_service_provider = FALSE WHERE full_name = 'Турсунай'")
 
-            UPDATE users SET
-                years_of_experience = COALESCE(years_of_experience, 10),
-                bio = COALESCE(bio, 'Талантливый стилист.')
-            WHERE full_name = 'Mohamed Sabri' AND (years_of_experience IS NULL OR bio IS NULL);
-
-            UPDATE users SET
-                years_of_experience = COALESCE(years_of_experience, 12),
-                bio = COALESCE(bio, 'Мастер-универсал высшей категории.')
-            WHERE full_name = 'Peradilla Jennifer' AND (years_of_experience IS NULL OR bio IS NULL);
-
-            UPDATE users SET
-                years_of_experience = COALESCE(years_of_experience, 8),
-                bio = COALESCE(bio, 'Опытный мастер ногтевого сервиса.')
-            WHERE full_name = 'Kasymova Gulcehre' AND (years_of_experience IS NULL OR bio IS NULL);
-
-            UPDATE users SET
-                years_of_experience = COALESCE(years_of_experience, 5),
-                bio = COALESCE(bio, 'Аккуратный и внимательный мастер.')
-            WHERE full_name = 'Kozhabay Lyazat' AND (years_of_experience IS NULL OR bio IS NULL);
-
-            -- NOTE: Employee photos should be uploaded via CRM Staff section
-            -- DO NOT set photo paths here - they are managed via CRM
-
-            -- Hide Director from public list (Tursunay)
-            UPDATE users SET is_public_visible = FALSE, is_service_provider = FALSE WHERE full_name = 'Турсунай';
-        """)
-        
-        # 5. Gallery is now managed via CRM Public Content > Gallery
-        # Only add salon photos if completely empty (for initial setup)
-        log_info("🎨 Checking gallery...", "maintenance")
-
-        c.execute("SELECT COUNT(*) FROM public_gallery WHERE category = 'salon'")
-        salon_count = c.fetchone()[0]
-
-        if salon_count == 0:
-            log_info("   Adding initial salon interior photos...", "maintenance")
-            c.execute("""
-                INSERT INTO public_gallery (image_url, title, description, category, display_order, is_active) VALUES
-                ('/static/uploads/images/salon/salon_main.webp', 'Интерьер салона', 'Уютная атмосфера нашего салона', 'salon', 1, TRUE),
-                ('/static/uploads/images/salon/moroccan_bath.webp', 'SPA зона', 'Зона релаксации и отдыха', 'salon', 2, TRUE),
-                ('/static/uploads/images/salon/hair_studio.webp', 'Парикмахерский зал', 'Профессиональное оборудование', 'salon', 3, TRUE),
-                ('/static/uploads/images/salon/nail_salon.webp', 'Зона маникюра', 'Комфортные рабочие места', 'salon', 4, TRUE),
-                ('/static/uploads/images/salon/massage_room.webp', 'Кабинет массажа', 'Расслабляющая обстановка', 'salon', 5, TRUE)
-            """)
-            log_info("   ✅ Added 5 initial salon photos", "maintenance")
-        else:
-            log_info("   Gallery already has data - skipping (CRM managed)", "maintenance")
-
-        # NOTE: Portfolio, services, and faces categories should be managed via CRM Gallery tab
-        # Use import_all_images.py script to bulk import from upload folders if needed
-
-        # 6. Fix service names capitalization (Professional terminology)
+        # 8. Fix service names capitalization
         log_info("✏️  Fixing service names capitalization...", "maintenance")
         c.execute("""
             UPDATE services SET name = 'Пилинг' WHERE name = 'пилинг';
             UPDATE services SET name = INITCAP(name) WHERE name ~ '^[а-яa-z]';
         """)
-        if c.rowcount > 0:
-            log_info(f"   ✅ Capitalized {c.rowcount} service names", "maintenance")
 
-
-        # 6. Deduplicate Achievement Templates
-        log_info("🧹 Cleaning up duplicate achievements...", "maintenance")
-        c.execute("""
-            DELETE FROM client_achievements 
-            WHERE id NOT IN (
-                SELECT MIN(id) 
-                FROM client_achievements 
-                WHERE client_id = 'template'
-                GROUP BY achievement_type, COALESCE(title, '')
-            ) AND client_id = 'template';
-        """)
-        log_info(f"✅ Removed {c.rowcount} redundant templates", "maintenance")
-
-        # 7. Staff Schedule Generation
-        log_info("📅 Verifying staff schedules...", "maintenance")
-        c.execute("SELECT id, full_name FROM users WHERE role IN ('master', 'employee', 'director', 'admin') AND is_active = TRUE")
-        users = c.fetchall()
-        
-        gen_count = 0
-        for user in users:
-            uid = user[0]
-            for day in range(7):
-                c.execute("SELECT id FROM user_schedule WHERE user_id = %s AND day_of_week = %s", (uid, day))
-                if not c.fetchone():
-                    c.execute("""
-                        INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
-                        VALUES (%s, %s, '10:30', '21:00', true)
-                    """, (uid, day))
-                    gen_count += 1
-        
-        if gen_count > 0:
-            log_info(f"✅ Generated {gen_count} missing shifts", "maintenance")
-        else:
-            log_info("🗓️ All staff schedules are complete", "maintenance")
-
-        # 8. Schedule Uniqueness check
-        c.execute("""
-            DELETE FROM user_schedule 
-            WHERE id NOT IN (
-                SELECT MIN(id) 
-                FROM user_schedule 
-                GROUP BY user_id, day_of_week
-            );
-        """)
-
-        # 9. Sync Service Positions (Migration from position_id to service_positions)
+        # 9. Sync Service Positions
         log_info("🔗 Syncing service positions...", "maintenance")
         c.execute("""
             INSERT INTO service_positions (service_id, position_id)
@@ -198,8 +146,6 @@ def run_fix():
             WHERE position_id IS NOT NULL
             ON CONFLICT DO NOTHING
         """)
-        if c.rowcount > 0:
-            log_info(f"✅ Synced {c.rowcount} primary positions to service_positions mapping", "maintenance")
 
         conn.commit()
         log_info("🏆 Data maintenance completed successfully!", "maintenance")
@@ -222,6 +168,7 @@ def run_fix():
             conn.close()
         except:
             pass
+
 
 if __name__ == "__main__":
     run_fix()
