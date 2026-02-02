@@ -1,0 +1,89 @@
+{
+  "adjust_points": "تغيير رصيد النقاط",
+  "buttons": {
+    "add_rule": "إضافة قاعدة",
+    "adjust_points": "تغيير الرصيد",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "save_changes": "حفظ التغييرات"
+  },
+  "categories": {
+    "category": "الفئة",
+    "category_placeholder": "على سبيل المثال. مانيكير",
+    "description": "إعداد مضاعفات النقاط لفئات الخدمة الفردية",
+    "multiplier": "المضاعف",
+    "title": "مضاعفات الفئات"
+  },
+  "config": {
+    "cashback_hint": "مثال: {{percent}}% استرداد نقدي ({{points}} نقطة لكل {{unit}} تم إنفاقها)",
+    "cashback_rate": "استرداد نقدي (%)",
+    "description": "الإعدادات الأساسية لبرنامج الولاء",
+    "expiration_days": "فترة صلاحية النقاط (أيام)",
+    "expiration_hint": "سيتم إلغاء النقاط تلقائيًا بعد الوقت المحدد.",
+    "points_per_unit": "النقاط مقابل وحدة واحدة. العملة",
+    "title": "الإعدادات العامة"
+  },
+  "confirm_delete_rule": "هل أنت متأكد من أنك تريد حذف هذه القاعدة؟",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "البريد الإلكتروني للعميل",
+      "client_email_placeholder": "أدخل البريد الإلكتروني للربط",
+      "description": "التعديل اليدوي لرصيد النقاط",
+      "points": "عدد النقاط",
+      "points_placeholder": "على سبيل المثال. 100 أو -100",
+      "reason": "السبب",
+      "reason_placeholder": "حدد سبب التغيير",
+      "title": "تغيير الرصيد"
+    },
+    "edit_tier": {
+      "description": "إعداد شروط الحصول على مستوى الامتياز",
+      "discount_percent": "نسبة الخصم",
+      "min_points": "الحد الأدنى للنقاط",
+      "tier_name": "الاسم المستوى",
+      "title": "تحرير المستوى"
+    },
+    "rule": {
+      "description": "معامل الاستحقاق الشخصي للفئة",
+      "title": "قاعدة الفئة"
+    }
+  },
+  "stats": {
+    "active_members": "المشاركين في البرنامج",
+    "points_redeemed": "النقاط المشطوبة",
+    "total_points_issued": "الإجمالي المتراكم"
+  },
+  "subtitle": "إدارة الخصومات ومستويات الامتياز وقواعد الاستحقاق النقاط",
+  "tiers": {
+    "description": "مستويات الولاء لتجزئة العملاء",
+    "discount": "الخصم {{percent}}%",
+    "from_points": "من {{points}} النقاط",
+    "starting_level": "مستوى البداية",
+    "title": "مستويات الامتياز"
+  },
+  "title": "برنامج الولاء",
+  "toasts": {
+    "config_updated": "الإعدادات تم الحفظ",
+    "failed_adjust": "فشل في تغيير الرصيد",
+    "failed_delete": "خطأ عند الحذف",
+    "failed_load": "فشل في تحميل البيانات",
+    "failed_save": "خطأ عند الحفظ",
+    "failed_update": "خطأ عند التحديث",
+    "points_adjusted_add": "{{count}} من النقاط الممنوحة",
+    "points_adjusted_deduct": "{{count}} تم شطب النقاط",
+    "rule_deleted": "تم حذف القاعدة بنجاح",
+    "rule_saved": "تم حفظ القاعدة",
+    "tier_updated": "تم تحديث بيانات المستوى"
+  },
+  "transactions": {
+    "description": "حجز المعاملات حسب نقاط الولاء",
+    "search_placeholder": "البحث حسب العميل...",
+    "table": {
+      "client": "العميل",
+      "date": "التاريخ",
+      "points": "النقاط",
+      "reason": "السبب",
+      "type": "النوع"
+    },
+    "title": "آخر المعاملات"
+  }
+}

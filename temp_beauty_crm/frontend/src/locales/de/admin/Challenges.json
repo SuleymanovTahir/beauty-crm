@@ -1,0 +1,51 @@
+{
+  "buttons": {
+    "add_challenge": "Aufgabe erstellen",
+    "create_challenge": "Herausforderung ausführen"
+  },
+  "card": {
+    "details": "Weitere Details",
+    "participants": "TEILNEHMER",
+    "progress": "FORTSCHRITT"
+  },
+  "dialogs": {
+    "add_title": "Neue Herausforderung",
+    "edit_title": "Herausforderung bearbeiten"
+  },
+  "empty": {
+    "subtitle": "Erstellen Sie die erste Spielaufgabe, um Kunden zu ermutigen, sich häufiger anzumelden.",
+    "title": "Herausforderungen sind nicht konfiguriert"
+  },
+  "fields": {
+    "dates": "Zeitlimit",
+    "description": "Öffentliche Beschreibung",
+    "reward": "Belohnung",
+    "target_value": "Plan (Ziel)",
+    "title": "Aufgabe Name",
+    "type": "Zielmethode"
+  },
+  "placeholders": {
+    "description": "Wie wird der Kunde diese Aufgabe sehen?",
+    "title": "Zum Beispiel: Goldstatus"
+  },
+  "stats": {
+    "active_challenges": "AKTIV AUFGABEN",
+    "completed_today": "HEUTE ABGESCHLOSSEN",
+    "total_participants": "GESAMTTEILNEHMER"
+  },
+  "status": {
+    "active": "AKTIV",
+    "inactive": "PAUSE"
+  },
+  "subtitle": "Erhöhen Sie die Kundenbindung mit Spielmechaniken und automatischen Belohnungen.",
+  "title": "Herausforderungen",
+  "toasts": {
+    "created": "Aufgabe erstellt",
+    "updated": "Aufgabe aktualisiert"
+  },
+  "types": {
+    "service": "Kategorieservice",
+    "spend": "Gesamtausgaben",
+    "visits": "Anzahl der Besuche"
+  }
+}

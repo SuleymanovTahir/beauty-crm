@@ -1,0 +1,11 @@
+{
+  "create_permission": "إنشاء",
+  "delete_permission": "حذف",
+  "edit_permission": "تحرير",
+  "error_changing_permissions": "حدث خطأ أثناء تغيير الحقوق",
+  "error_loading_permissions": "حدث خطأ أثناء تحميل حقوق الوصول",
+  "error_loading_users": "حدث خطأ أثناء تحميل المستخدمين",
+  "permission_granted": "تم منح الحقوق",
+  "permission_revoked": "تم إبطال الحقوق",
+  "view_permission": "عرض"
+}

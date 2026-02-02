@@ -1,0 +1,33 @@
+{
+  "confirm_empty_trash": "Are you sure you want to permanently delete all items in the trash?",
+  "delete_selected": "Delete Selected",
+  "empty_desc": "Deleted items will appear here",
+  "empty_title": "Trash is empty",
+  "empty_trash": "Empty Trash",
+  "filter_all": "All",
+  "important_info": "Important Information",
+  "info_desc": "Items in the trash are kept indefinitely, but we recommend periodic cleaning for optimal database performance. Restoring an employee also returns their status to \"Active\".",
+  "loading": "Loading data...",
+  "not_restorable": "Not restorable",
+  "objects_count_one": "In the cart {{count}} object",
+  "objects_count_few": "Objects in cart: {{count}}",
+  "objects_count_many": "Objects in cart: {{count}}",
+  "objects_count_other": "Objects in cart: {{count}}",
+  "permanent_delete": "Permanent Delete",
+  "permanent_delete_confirm": "Are you sure? This action cannot be undone!",
+  "restore": "Restore",
+  "restore_selected": "Restore Selected",
+  "search_placeholder": "Search by ID, reason or author...",
+  "subtitle": "Manage deleted items and restoration",
+  "title": "Trash Bin",
+  "toast": {
+    "delete_error": "Error during permanent deletion",
+    "delete_success": "Object permanently deleted",
+    "empty_error": "Error emptying trash",
+    "load_error": "Error loading trash bin",
+    "refreshed": "Refreshed",
+    "restore_error": "Failed to restore object",
+    "restore_success": "{{type}} successfully restored",
+    "trash_emptied": "Trash emptied"
+  }
+}

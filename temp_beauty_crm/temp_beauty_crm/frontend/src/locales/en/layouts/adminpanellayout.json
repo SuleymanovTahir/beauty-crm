@@ -1,0 +1,18 @@
+{
+  "admin_panel": "Admin panel",
+  "go_to_crm": "Go to CRM",
+  "logout": "Log out",
+  "menu": {
+    "challenges": "Challenges",
+    "dashboard": "Control Panel",
+    "feature_management": "Feature Management",
+    "loyalty_management": "Loyalty management",
+    "notifications": "Notifications",
+    "photo_gallery": "Photo gallery",
+    "public_content": "Public Content",
+    "referral_program": "Referral program",
+    "services": "Services",
+    "settings": "Settings",
+    "user_management": "User management"
+  }
+}

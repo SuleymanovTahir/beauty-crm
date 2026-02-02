@@ -1,0 +1,80 @@
+{
+  "booking": {
+    "description": "Fill out the form and we will contact you to confirm",
+    "form": {
+      "date": "Date *",
+      "name": "Your name *",
+      "namePlaceholder": "Anna Ivanova",
+      "phone": "Telephone *",
+      "phonePlaceholder": "{{points}}",
+      "service": "Service *",
+      "servicePlaceholder": "Select a service",
+      "submit": "Sign up",
+      "time": "Time *"
+    },
+    "loading": "Loading Services...",
+    "title": "Sign up for the procedure",
+    "validation": "Fill in all fields"
+  },
+  "features": {
+    "items": {
+      "masters": {
+        "description": "Our specialists have international certificates and many years of experience",
+        "title": "Experienced craftsmen"
+      },
+      "materials": {
+        "description": "We use only high-quality and safe materials from leading brands",
+        "title": "Premium materials"
+      },
+      "schedule": {
+        "description_few": "We are open {{count}} days a week at a time that is convenient for you.",
+        "description_many": "We are open {{count}} days a week at a time that is convenient for you.",
+        "description_one": "We are open {{count}} days a week at a time that is convenient for you.",
+        "description_other": "We are open {{count}} days a week at a time that is convenient for you.",
+        "title": "Convenient schedule"
+      }
+    },
+    "subtitle": "We offer the best service in the beauty industry",
+    "title": "Why you choose us"
+  },
+  "gallery": {
+    "items": {
+      "facial": "Face care",
+      "makeup": "Permanent makeup",
+      "salon": "Our salon"
+    },
+    "subtitle": "Results we are proud of",
+    "title": "Our works"
+  },
+  "hero": {
+    "badge": "Premium beauty services",
+    "bookButton": "Enroll now",
+    "description": "Professional craftsmen, individual approach and high quality materials. ",
+    "servicesButton": "Our services",
+    "title": "Discover a new level of beauty"
+  },
+  "services": {
+    "items": [
+      "Permanent eyebrow makeup",
+      "Manicure",
+      "Pedicure",
+      "Facial massage",
+      "Eyelash extensions",
+      "Cutting and styling",
+      "Hair coloring",
+      "Facial cleansing"
+    ]
+  },
+  "team": {
+    "description": "Professionals in their field to help you discover your natural beauty",
+    "noTeamAvailable": "Currently, the list of specialists is being refined",
+    "tag": "TEAM",
+    "title": "Our specialists"
+  },
+  "testimonials": {
+    "items": [],
+    "master": "Master",
+    "subtitle": "What do they say about us?",
+    "title": "Reviews of our clients"
+  }
+}

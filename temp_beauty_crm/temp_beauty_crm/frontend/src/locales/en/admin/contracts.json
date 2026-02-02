@@ -1,0 +1,80 @@
+{
+  "actions": "Actions",
+  "addContract": "Create an agreement",
+  "all": "All",
+  "allContracts": "All contracts",
+  "allStatuses": "All statuses",
+  "board": "Board",
+  "client": "Client",
+  "clientContracts": "Client",
+  "contractNumber": "Contract No.",
+  "createdAt": "Creation date",
+  "editContract": "Edit contract",
+  "errors": {
+    "deleteError": "Error deleting contract.",
+    "saveError": "Error saving contract.",
+    "sendError": "Error sending contract",
+    "updateError": "Failed to update status"
+  },
+  "form": {
+    "cancel": "Cancel",
+    "contractType": "Contract type",
+    "save": "Save",
+    "selectClient": "Select client"
+  },
+  "internalContracts": "Domestic",
+  "manage_stages": "Columns",
+  "manageTypes": "Types of contracts",
+  "messages": {
+    "confirmDelete": "Are you sure you want to delete this agreement?",
+    "contractCreated": "The contract has been created",
+    "contractDeleted": "Contract deleted",
+    "contractSent": "The contract has been sent",
+    "contractUpdated": "The contract has been updated"
+  },
+  "noContracts": "No contracts yet",
+  "search_placeholder": "Search by number or client...",
+  "sendDialog": {
+    "email": "E-mail",
+    "instagram": "Instagram",
+    "method": "Shipping method",
+    "recipient": "Recipient",
+    "sendButton": "Send",
+    "telegram": "Telegram",
+    "title": "Send contract",
+    "whatsapp": "Whatsapp"
+  },
+  "status": "Status",
+  "statuses": {
+    "cancelled": "Canceled",
+    "draft": "Draft",
+    "sent": "Sent",
+    "signed": "Signed"
+  },
+  "subtitle": "Client contract management",
+  "title": "Contracts",
+  "type": "Type",
+  "typeManagement": {
+    "add": "Add",
+    "code": "Code (lat., unique)",
+    "confirmDelete": "Confirm deletion",
+    "createType": "Create type",
+    "deletePrompt": "You want to delete this contract type. ",
+    "deleteTitle": "Removing type \"{{name}}\"",
+    "deleteWithDocs": "Delete all contracts",
+    "deleteWithDocsSub": "All documents of this type will be deleted permanently.",
+    "description": "Description",
+    "editType": "Edit type",
+    "keepDocs": "Leave contracts without type",
+    "keepDocsSub": "The contracts will remain, but the \"Type\" field will be cleared.",
+    "messages": {
+      "created": "Type created",
+      "deleted": "Type removed",
+      "updated": "Type updated"
+    },
+    "name": "Name",
+    "system": "System",
+    "systemProtected": "The system is protected",
+    "title": "Types of contracts"
+  }
+}

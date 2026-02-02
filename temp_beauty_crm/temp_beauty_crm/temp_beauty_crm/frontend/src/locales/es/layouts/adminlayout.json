@@ -1,0 +1,28 @@
+{
+  "admin": "Administrador",
+  "admin_panel": "Panel de administración",
+  "crm": "Panel CRM",
+  "logout": "Cerrar sesión",
+  "logout_success": "Ha cerrado sesión correctamente",
+  "menu": {
+    "analytics": "Análisis",
+    "audit_log": "Reservas de auditoría",
+    "bookings": "Reservas",
+    "bot_settings": "Configuración bot",
+    "calendar": "Calendario",
+    "chat": "Chat",
+    "clients": "Clientes",
+    "dashboard": "Panel",
+    "feedback": "Comentarios",
+    "funnel": "Embudo",
+    "plans": "Planes",
+    "public_content": "Contenido público",
+    "services": "Servicios",
+    "settings": "Configuración",
+    "tasks": "Tareas",
+    "telephony": "Telefonía",
+    "trash": "Papelera",
+    "users": "Usuarios",
+    "visitors": "Visitantes"
+  }
+}

@@ -1,0 +1,62 @@
+import { Sparkles, Award, Heart, Users } from "lucide-react";
+import { useTranslation } from "react-i18next";
+
+export function About() {
+  const { t } = useTranslation(['public_landing', 'common']);
+
+  const features = [
+    {
+      icon: Sparkles,
+      title: t('aboutFeature1Title'),
+      description: t('aboutFeature1Desc'),
+    },
+    {
+      icon: Award,
+      title: t('aboutFeature2Title'),
+      description: t('aboutFeature2Desc'),
+    },
+    {
+      icon: Heart,
+      title: t('aboutFeature3Title'),
+      description: t('aboutFeature3Desc'),
+    },
+    {
+      icon: Users,
+      title: t('aboutFeature4Title'),
+      description: t('aboutFeature4Desc'),
+    },
+  ];
+
+  return (
+    <section id="about" className="py-10 sm:py-14 lg:py-20 bg-background">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+          <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-2 sm:mb-3">
+            {t('aboutTag')}
+          </p>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
+            {t('aboutTitlePart1')} <span className="text-primary">{t('aboutTitlePart2')}</span>
+          </h2>
+          <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
+            {t('aboutDesc')}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          {features.map((feature) => (
+            <div
+              key={feature.title}
+              className="text-center about-feature"
+            >
+              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 about-feature-icon-wrapper">
+                <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-primary" />
+              </div>
+              <h3 className="text-sm sm:text-base lg:text-lg mb-1 sm:mb-2 text-[var(--heading)] px-1">{feature.title}</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground px-1">{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,0 +1,79 @@
+{
+  "actions": "Acciones",
+  "addInvoice": "Crear una cuenta",
+  "addPayment": "Agregar pago",
+  "allInvoices": "Todas las cuentas",
+  "allStatuses": "Todos los estados",
+  "board": "Junta",
+  "client": "Cliente",
+  "delete": "Eliminar",
+  "dueDate": "Fecha de vencimiento del pago",
+  "errors": {
+    "createError": "Error al crear la factura.",
+    "deleteError": "Error al eliminar la factura.",
+    "paymentError": "Error al agregar el pago",
+    "sendError": "Error al enviar la factura",
+    "updateError": "No se pudo actualizar el estado"
+  },
+  "form": {
+    "addItem": "Agregar artículo",
+    "cancel": "Cancelar",
+    "dueDate": "Condiciones de pago",
+    "itemName": "Nombre",
+    "itemPrice": "Precio",
+    "itemQuantity": "Cantidad",
+    "items": "Elementos de factura",
+    "notes": "Notas",
+    "save": "Guardar",
+    "selectClient": "Seleccionar cliente"
+  },
+  "invoiceNumber": "Nº de factura",
+  "manage_stages": "Columnas",
+  "messages": {
+    "confirmDelete": "¿Está seguro de que desea eliminar esta factura?",
+    "invoiceCreated": "Factura creada",
+    "invoiceDeleted": "Factura eliminada",
+    "invoiceSent": "Factura enviada",
+    "invoiceUpdated": "Factura actualizada",
+    "paymentAdded": "Pago agregado"
+  },
+  "noInvoices": "Aún no hay facturas",
+  "paidAmount": "Pagado",
+  "payment": {
+    "add": "Agregar",
+    "amount": "Importe",
+    "method": "Método de pago",
+    "methods": {
+      "card": "Tarjeta",
+      "cash": "Efectivo",
+      "online": "En línea",
+      "transfer": "Traducción"
+    },
+    "notes": "Notas",
+    "title": "Agregar pago"
+  },
+  "search_placeholder": "Buscar hasta fecha número o cliente...",
+  "sendButton": "Enviar",
+  "sendDialog": {
+    "email": "Correo electrónico",
+    "method": "Método de envío",
+    "recipient": "Destinatario",
+    "sendButton": "Enviar",
+    "telegram": "Telegram",
+    "title": "Enviar factura",
+    "whatsapp": "WhatsApp"
+  },
+  "status": "Estado",
+  "statuses": {
+    "cancelled": "Cancelado",
+    "draft": "Borrador",
+    "overdue": "Atrasado",
+    "paid": "Pagado",
+    "partial": "Parcialmente pagado",
+    "partially_paid": "Parcialmente pagado",
+    "sent": "Enviado"
+  },
+  "subtitle": "Administrar facturas y pagos",
+  "title": "Cuentas",
+  "totalAmount": "Suma"
+}

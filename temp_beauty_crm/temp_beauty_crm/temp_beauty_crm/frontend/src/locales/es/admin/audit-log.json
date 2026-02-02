@@ -1,0 +1,50 @@
+{
+  "clear_all": "Borrar todo",
+  "clear_confirm": "¿Está seguro de que desea borrar completamente el reserva de auditoría? Esta acción es irreversible.",
+  "delete_batch_confirm_few": "¿Eliminar {{count}} reservas seleccionadas?",
+  "delete_batch_confirm_many": "¿Eliminar {{count}} reservas seleccionadas?",
+  "delete_batch_confirm_one": "¿Eliminar {{count}} reservas seleccionadas?",
+  "delete_batch_confirm_other": "¿Eliminar reservas {{count}}?",
+  "delete_confirm": "¿Eliminar este reserva permanentemente?",
+  "delete_selected": "Eliminar los seleccionados",
+  "details": {
+    "ip": "IP",
+    "new_data": "Datos nuevos",
+    "no_data": "Sin datos",
+    "old_data": "Datos antiguos",
+    "op_id": "ID de operación",
+    "title": "Cambiar detalles"
+  },
+  "filter_all": "Todos acciones",
+  "filter_create": "Crear",
+  "filter_delete": "Eliminar",
+  "filter_delete_all": "Borrar reserva",
+  "filter_login": "Reserva",
+  "filter_restore": "Restaurar",
+  "filter_update": "Cambiar",
+  "search_placeholder": "Buscar hasta fecha usuario, entidad o acción...",
+  "stat_active_users": "Usuarios activos",
+  "stat_created": "Creado",
+  "stat_errors": "Errores ({{count}}h)",
+  "stat_total": "Total ({{count}}h)",
+  "subtitle": "Historial de todas las acciones y cambios en el sistema",
+  "table": {
+    "action": "Acción",
+    "empty": "El historial está vacío",
+    "entity": "Entidad",
+    "error": "ERROR",
+    "loading": "Cargando...",
+    "status": "Estado",
+    "success": "ÉXITO",
+    "time": "Hora",
+    "user": "Usuario"
+  },
+  "title": "reserva de auditoría",
+  "toast": {
+    "clear_error": "reserva de borrado de errores",
+    "clear_success": "reserva de auditoría borrado correctamente",
+    "delete_error": "Error al borrar el reserva",
+    "delete_success": "reserva(s) eliminado(s)",
+    "load_error": "Error al cargar auditoría log"
+  }
+}

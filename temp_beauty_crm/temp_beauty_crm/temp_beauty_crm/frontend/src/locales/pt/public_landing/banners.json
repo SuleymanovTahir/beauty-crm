@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "Serviços de beleza profissionais",
+      "title": "Beleza e Elegância"
+    },
+    {
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "Para todos os serviços de salão",
+      "title": "Descontos de até 50%"
+    },
+    {
+      "image": "/static/uploads/images/salon/moroccan_bath.webp",
+      "link": "",
+      "subtitle": "Para todos os serviços de salão",
+      "title": "Descontos de até {{percent}}%"
+    },
+    {
+      "image": "/static/uploads/images/salon/salon_main.webp",
+      "link": "",
+      "subtitle": "Serviços de beleza profissionais de primeira classe",
+      "title": "Beleza e Elegância"
+    },
+    {
+      "image": "/static/uploads/images/employees/simo.webp",
+      "link": "",
+      "subtitle": "Cuide do seu estilo e saúde",
+      "title": "Serviço Premium"
+    },
+    {
+      "image": "/static/uploads/images/employees/jennifer.webp",
+      "link": "",
+      "subtitle": "Sinta um relaxamento completo e um ritual de limpeza",
+      "title": "Banho Marroquino"
+    },
+    {
+      "image": "/static/uploads/images/employees/mestan.webp",
+      "link": "",
+      "subtitle": "Apenas este mês",
+      "title": "20% de desconto na primeira visita"
+    },
+    {
+      "image": "/static/uploads/images/employees/lyazzat.webp",
+      "link": "",
+      "subtitle": "Experimente a inovação",
+      "title": "Novo serviço: Smart Pedicure"
+    }
+  ]
+}

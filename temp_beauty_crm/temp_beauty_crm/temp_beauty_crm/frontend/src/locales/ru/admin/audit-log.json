@@ -1,0 +1,50 @@
+{
+  "clear_all": "Очистить всё",
+  "clear_confirm": "Вы уверены, что хотите полностью очистить журнал аудита? Это действие необратимо.",
+  "delete_batch_confirm_one": "Удалить {{count}} выбранную запись?",
+  "delete_batch_confirm_few": "Удалить {{count}} выбранные записи?",
+  "delete_batch_confirm_many": "Удалить {{count}} выбранных записей?",
+  "delete_batch_confirm_other": "Удалить {{count}} записей?",
+  "delete_confirm": "Удалить эту запись без возможности восстановления?",
+  "delete_selected": "Удалить выбранные",
+  "details": {
+    "ip": "ИП",
+    "new_data": "Новые данные",
+    "no_data": "Данные отсутствуют",
+    "old_data": "Старые данные",
+    "op_id": "ID операции",
+    "title": "Детали изменения"
+  },
+  "filter_all": "Все действия",
+  "filter_create": "Создание",
+  "filter_delete": "Удаление",
+  "filter_delete_all": "Очистка журнала",
+  "filter_login": "Запись",
+  "filter_restore": "Восстановление",
+  "filter_update": "Изменение",
+  "search_placeholder": "Поиск по пользователю, сущности или действию...",
+  "stat_active_users": "Активные пользователи",
+  "stat_created": "Создано",
+  "stat_errors": "Ошибки ({{count}}ч)",
+  "stat_total": "Всего ({{count}}ч)",
+  "subtitle": "История всех действий и изменений в системе",
+  "table": {
+    "action": "Действие",
+    "empty": "История пуста",
+    "entity": "Сущность",
+    "error": "ОШИБКА",
+    "loading": "Загрузка...",
+    "status": "Статус",
+    "success": "УСПЕХ",
+    "time": "Время",
+    "user": "Пользователь"
+  },
+  "title": "Журнал аудита",
+  "toast": {
+    "clear_error": "Ошибка при очистке журнала",
+    "clear_success": "Журнал аудита успешно очищен",
+    "delete_error": "Ошибка при удалении",
+    "delete_success": "Запись(и) удалена(ы)",
+    "load_error": "Ошибка при загрузке журнала аудита"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "change_password": "Change password",
+  "confirm_new_password": "Confirm your new password",
+  "confirm_password": "Confirm your password",
+  "current_password": "Current Password",
+  "email": "Email",
+  "email_placeholder": "your@email.com",
+  "enter_current_password": "Enter your current password",
+  "enter_new_password": "Enter a new password (minimum {{count}} characters)",
+  "fill_all_password_fields": "Fill in all fields to change your password",
+  "full_name": "Full name",
+  "full_name_placeholder": "Ivan Ivanov",
+  "full_name_validation": "The name must contain at least {{count}} character",
+  "manage_account_settings": "Manage account settings",
+  "my_settings": "My settings",
+  "new_password": "New Password",
+  "password_min_length": "The password must contain at least {{count}} characters",
+  "passwords_do_not_match": "Passwords don't match",
+  "personal_information": "Personal information",
+  "security_tip": "Use a strong password with a combination of letters, numbers and special characters for maximum account security.",
+  "update_password": "Update password",
+  "username": "Login"
+}

@@ -1,0 +1,72 @@
+{
+  "addProduct": "Agregar producto",
+  "allCategories": "Todas las categorías",
+  "analytics": {
+    "avgPrice": "Promedio. precio",
+    "last30Days": "hasta fecha {{count}} días",
+    "last30Days_one": "",
+    "last30Days_few": "",
+    "last30Days_many": "",
+    "last30Days_other": "",
+    "revenue": "Ingresos",
+    "totalSold": "Total vendido"
+  },
+  "createFirst": "Añadir el primer producto al sistema",
+  "delete": "Eliminar",
+  "detail": {
+    "costPriceLabel": "Costo: {{price}} {{currency}}",
+    "inStock_one": "En stock {{count}} uds.",
+    "inStock_few": "En stock {{count}} uds.",
+    "inStock_many": "En stock {{count}} uds.",
+    "inStock_other": "En stock {{count}} uds.",
+    "loadingData": "Cargando datos...",
+    "movementAdjustment": "Ajuste",
+    "movementHistory": "Historial de movimientos",
+    "movementIn": "Recibo",
+    "movementOut": "Cancelación",
+    "noCategory": "Sin categoría",
+    "noMovements": "Sin datos de movimiento"
+  },
+  "edit": "Editar",
+  "form": {
+    "cancel": "Cancelar",
+    "category": "Categoría",
+    "costPrice": "Costo",
+    "isActive": "Activo",
+    "minStockLevel": "Saldo mínimo",
+    "name": "Nombre",
+    "notes": "Notas",
+    "photos": "Foto del producto",
+    "price": "Precio de oferta",
+    "save": "Guardar",
+    "sku": "Artículo",
+    "stockQuantity": "Saldo de existencias",
+    "upload": "Subir",
+    "uploadError": "Error al cargar la foto"
+  },
+  "messages": {
+    "confirmDelete": "¿Está seguro de que desea eliminar este producto?",
+    "noResults": "No se encontró nada para su solicitud"
+  },
+  "movement": {
+    "quantity": "Cantidad",
+    "reason": "Razón",
+    "title": "Movimiento del producto",
+    "type": "Tipo de movimiento",
+    "types": {
+      "adjustment": "Ajuste",
+      "in": "Entrante",
+      "out": "Gasto"
+    }
+  },
+  "noProducts": "Aún no hay productos",
+  "search_placeholder": "Buscar hasta fecha nombre o categorías...",
+  "stock_status": {
+    "in_stock": "En stock",
+    "low_stock": "Pequeño",
+    "out_of_stock": "Agotado"
+  },
+  "subtitle": "Gestión de mercancías y saldos",
+  "title": "Productos y almacén",
+  "unit_pcs": "uds."
+}

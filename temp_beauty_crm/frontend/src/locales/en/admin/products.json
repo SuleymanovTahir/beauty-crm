@@ -1,0 +1,72 @@
+{
+  "addProduct": "Add Product",
+  "allCategories": "All Categories",
+  "analytics": {
+    "avgPrice": "Wed. ",
+    "last30Days": "For {{count}} days",
+    "last30Days_one": "",
+    "last30Days_few": "",
+    "last30Days_many": "",
+    "last30Days_other": "",
+    "revenue": "Revenue",
+    "totalSold": "Total sold"
+  },
+  "createFirst": "Add your first product to the system",
+  "delete": "Delete",
+  "detail": {
+    "costPriceLabel": "Cost: {{price}} {{currency}}",
+    "inStock_one": "In stock {{count}} pcs.",
+    "inStock_few": "In stock {{count}} pcs.",
+    "inStock_many": "In stock {{count}} pcs.",
+    "inStock_other": "In stock {{count}} pcs.",
+    "loadingData": "Loading data...",
+    "movementAdjustment": "Adjustment",
+    "movementHistory": "Movement History",
+    "movementIn": "Stock In",
+    "movementOut": "Stock Out",
+    "noCategory": "No category",
+    "noMovements": "No movement data"
+  },
+  "edit": "Edit",
+  "form": {
+    "cancel": "Cancel",
+    "category": "Category",
+    "costPrice": "Cost Price",
+    "isActive": "Active",
+    "minStockLevel": "Min Stock",
+    "name": "Name",
+    "notes": "Notes",
+    "photos": "Product Photos",
+    "price": "Sale Price",
+    "save": "Save",
+    "sku": "Article",
+    "stockQuantity": "In Stock",
+    "upload": "Upload",
+    "uploadError": "Photo upload error"
+  },
+  "messages": {
+    "confirmDelete": "Are you sure you want to delete this product?",
+    "noResults": "No results found for your search"
+  },
+  "movement": {
+    "quantity": "Quantity",
+    "reason": "Reason",
+    "title": "Product Movement",
+    "type": "Movement Type",
+    "types": {
+      "adjustment": "Adjustment",
+      "in": "Restock",
+      "out": "Sale"
+    }
+  },
+  "noProducts": "No products yet",
+  "search_placeholder": "Search by name or category...",
+  "stock_status": {
+    "in_stock": "In Stock",
+    "low_stock": "Low Stock",
+    "out_of_stock": "Out of Stock"
+  },
+  "subtitle": "Product and Inventory Management",
+  "title": "Products & Stock",
+  "unit_pcs": "pcs."
+}

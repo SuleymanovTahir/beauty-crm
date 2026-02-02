@@ -1,0 +1,97 @@
+{
+  "analyze_further": "Weitere Analyse",
+  "apply": "Anwenden",
+  "avg_check": "Durchschnittlicher Scheck",
+  "avg_time": "Durchschnittliche Zeit",
+  "booked": "Angemeldet",
+  "booking_statuses": "Aufzeichnungsstatus",
+  "bookings": "Aufzeichnungen",
+  "bookings_trend": "Aufzeichnungsdynamik",
+  "clarify_services": "Klärungsdienste",
+  "completed": "Besucht",
+  "conversation_stage": "Dialogphase",
+  "conversion": "Konvertierung",
+  "detailed_analysis": "Detaillierte Analyse des Salonbetriebs",
+  "drop_off_analysis": "Abbruchanalyse",
+  "drop_offs": "Ablehnungen",
+  "engaged": "Beteiligt",
+  "errors": {
+    "export_failed": "Dateiexportfehler",
+    "invalid_date_range": "Startdatum muss vor Enddatum liegen",
+    "invalid_period": "Ungültiger Zeitraum",
+    "loading_error": "Ladefehler",
+    "select_both_dates": "Wählen Sie beide Termine aus"
+  },
+  "export": "Exportieren",
+  "exporting": "Exportieren...",
+  "focus_on_highest_drop_off": "Achten Sie auf die Phase mit dem größten Ausfall",
+  "for_period": "Für den Zeitraum",
+  "from_visitors": "datum bis Besuchern zu Kunden",
+  "funnel": {
+    "conversion": {
+      "booked_to_completed": "Registriert -> Besucht",
+      "booking_to_booked": "Gestartet -> Unterzeichnet up",
+      "engaged_to_booking": "Beteiligt -> Aufzeichnung gestartet",
+      "visitor_to_engaged": "Besucher -> Beteiligt"
+    },
+    "desc": {
+      "booked": "Registrierung abgeschlossen",
+      "completed": "Dienstleistung erbracht",
+      "engaged": "Interesse gezeigt",
+      "started_booking": "Registrierungsformular geöffnet",
+      "visitors": "Website-/soziale Netzwerkbesucher"
+    },
+    "losses_few": "Verlust: {{count}}",
+    "losses_many": "Verlust: {{count}}",
+    "losses_one": "Verlust: {{count}}",
+    "losses_other": "Verluste: {{count}}",
+    "stages": {
+      "booked": "Registriert",
+      "completed": "Besucht",
+      "engaged": "Beteiligt",
+      "started_booking": "Aufzeichnung gestartet",
+      "visitors": "Besucher"
+    }
+  },
+  "funnel_chart": "Trichterdiagramm",
+  "funnel_overview": "Trichter Verkäufe",
+  "improve_greeting": "Begrüßung verbessern",
+  "income": "Einnahmen",
+  "min": "min",
+  "name": "Name",
+  "need_more_masters": "Benötigen Sie mehr Master",
+  "optimization_tip": "Optimierungsratschläge",
+  "peak_hours": "Stoßzeiten",
+  "per_booking": "Für jeden buchung",
+  "percentage": "Prozentsatz",
+  "quantity": "Menge",
+  "recommendation": "Empfehlung",
+  "refresh": "Update",
+  "response_time": "Reaktionszeit",
+  "revenue": "Umsatz",
+  "services_distribution": "Dienstverteilung",
+  "simplify_contact_collection": "Kontaktaufnahme vereinfachen",
+  "stages": {
+    "after_greeting": "Nach der Begrüßung",
+    "after_price": "Nach dem Preis",
+    "no_slots": "Keine freien Slots",
+    "service_selection": "Dienst auswählen",
+    "whatsapp_request": "Anfrage in WhatsApp"
+  },
+  "status": {
+    "cancelled": "Storniert",
+    "completed": "Abgeschlossen",
+    "confirmed": "Bestätigt",
+    "no_show": "Nicht angekommen",
+    "pending": "Warten"
+  },
+  "success": {
+    "file_downloaded": "Datei erfolgreich heruntergeladen"
+  },
+  "title": "Analytics",
+  "top_services": "Beliebte Dienste",
+  "try_again": "Erneut versuchen",
+  "visitors": "Besucher",
+  "where_clients_leave": "Wo gehen Kunden hin?",
+  "work_on_objections": "Arbeiten mit Einwänden"
+}

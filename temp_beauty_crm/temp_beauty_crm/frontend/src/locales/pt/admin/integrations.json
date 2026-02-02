@@ -1,0 +1,108 @@
+{
+  "errors": {
+    "createLinkFailed": "Erro ao criar link",
+    "loadFailed": "Erro ao carregar dados",
+    "loadServicesFailed": "Erro ao carregar serviços",
+    "saveFailed": "Erro ao salvar",
+    "syncFailed": "Erro de sincronização"
+  },
+  "marketplace": {
+    "active": "Ativo",
+    "activeSources": "Fontes ativas",
+    "apiKey": "Chave de API",
+    "apiSecret": "API Secret",
+    "bookings": "Reservas",
+    "configSuccess": "Configurações salvas",
+    "configure": "Personalizar",
+    "configureProvider": "Configurações",
+    "daysAgo_few": "{{count}} dias atrás",
+    "daysAgo_many": "{{count}} dias atrás",
+    "daysAgo_one": "{{count}} dias atrás",
+    "daysAgo_other": "{{count}} dias atrás",
+    "enableProvider": "Ativar integração",
+    "hoursAgo_few": "{{count}} horas atrás",
+    "hoursAgo_many": "{{count}} horas atrás",
+    "hoursAgo_one": "{{count}} há h",
+    "hoursAgo_other": "{{count}} horas atrás",
+    "inactive": "Não configurado",
+    "justNow": "Agora mesmo",
+    "lastSync": "Última sincronização",
+    "mappingHint": "Especifique o ID do serviço do mercado para sincronização.",
+    "minutesAgo_few": "{{count}} min atrás",
+    "minutesAgo_many": "{{count}} min atrás",
+    "minutesAgo_one": "{{count}} min atrás",
+    "minutesAgo_other": "{{count}} min atrás",
+    "neverSynced": "Nunca",
+    "providers": {
+      "2gis": {
+        "description": "Gravações on-line através de 2GIS",
+        "name": "2GIS"
+      },
+      "amazon": {
+        "description": "Amazon Marketplace",
+        "name": "Amazon"
+      },
+      "booksy": {
+        "description": "Plataforma de gravação on-line",
+        "name": "Booksy"
+      },
+      "google_business": {
+        "description": "Gravações e análises no Google",
+        "name": "Google Business"
+      },
+      "ozon": {
+        "description": "Marketplace Ozon",
+        "name": "Ozon"
+      },
+      "wildberries": {
+        "description": "Marketplace WB",
+        "name": "Wildberry"
+      },
+      "yandex_maps": {
+        "description": "Reservas e análises do Yandex.Maps",
+        "name": "Yandex.Maps"
+      },
+      "yclients": {
+        "description": "Plataforma de gravação on-line",
+        "name": "CLIENTES"
+      }
+    },
+    "reviews": "Avaliações",
+    "serviceMapping": "Mapeamento de serviço",
+    "settings": "Configurações",
+    "status": "Status",
+    "subtitle": "Integração com serviços de reserva e avaliação on-line",
+    "sync": "Sincronizar",
+    "syncStarted": "Sincronização iniciada",
+    "syncing": "Sincronização...",
+    "title": "Plataformas de reserva",
+    "totalBookings": "Total de reservas",
+    "urlCopied": "URL copiado",
+    "viewBookings": "Vá para reservas",
+    "webhookHint": "Especifique este URL para fornecer webhooks na plataforma",
+    "webhookUrl": "URL para webhook"
+  },
+  "payment": {
+    "active": "Ativo",
+    "amount": "Quantidade",
+    "apiKey": "Chave de API",
+    "configSuccess": "Configurações salvas",
+    "configure": "Configurar",
+    "configureProvider": "Configurações",
+    "createLink": "Criar link",
+    "createLinkTitle": "Criar link de pagamento",
+    "currency": "Moeda",
+    "descriptionPlaceholder": "até data exemplo: Pré-pagamento para manicure",
+    "enableProvider": "Ativar provedor",
+    "inactive": "Não configurado",
+    "linkCreated": "Link criado com sucesso",
+    "secretKey": "Chave secreta",
+    "setup": "Conectar",
+    "status": "Status",
+    "subtitle": "Conectar provedores de pagamento",
+    "title": "Sistemas de pagamento",
+    "viewTransactions": "Histórico de transações",
+    "webhookSecret": "Webhook Secret",
+    "webhookUrl": "URL do webhook"
+  }
+}

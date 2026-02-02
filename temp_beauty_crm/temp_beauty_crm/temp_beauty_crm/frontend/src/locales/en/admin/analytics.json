@@ -1,0 +1,97 @@
+{
+  "analyze_further": "Analyze further",
+  "apply": "Apply",
+  "avg_check": "Average Check",
+  "avg_time": "Average time",
+  "booked": "Signed up",
+  "booking_statuses": "Booking statuses",
+  "bookings": "Bookings",
+  "bookings_trend": "Dynamics of bookings",
+  "clarify_services": "Clarification of services",
+  "completed": "Visited",
+  "conversation_stage": "Dialogue stage",
+  "conversion": "Conversion",
+  "detailed_analysis": "Detailed analysis of the salon's work",
+  "drop_off_analysis": "Dropout analysis",
+  "drop_offs": "Failures",
+  "engaged": "Involved",
+  "errors": {
+    "export_failed": "File export error",
+    "invalid_date_range": "The start date must be before the end date",
+    "invalid_period": "Incorrect period",
+    "loading_error": "Loading error",
+    "select_both_dates": "Select both dates"
+  },
+  "export": "Export",
+  "exporting": "Export...",
+  "focus_on_highest_drop_off": "Pay attention to the stage with the largest dropout",
+  "for_period": "For the period",
+  "from_visitors": "From visitors to clients",
+  "funnel": {
+    "conversion": {
+      "booked_to_completed": "Signed up -> Visited",
+      "booking_to_booked": "Started -> Signed up",
+      "engaged_to_booking": "Engaged -> Started booking",
+      "visitor_to_engaged": "Visitor -> Engaged"
+    },
+    "desc": {
+      "booked": "Completed registration",
+      "completed": "Service Rendered",
+      "engaged": "Showed interest",
+      "started_booking": "Opened the registration form",
+      "visitors": "Website/social media visitors"
+    },
+    "losses_few": "Losses: {{count}}",
+    "losses_many": "Losses: {{count}}",
+    "losses_one": "Loss: {{count}}",
+    "losses_other": "Losses: {{count}}",
+    "stages": {
+      "booked": "Signed up",
+      "completed": "Service Rendered",
+      "engaged": "Involved",
+      "started_booking": "Started booking",
+      "visitors": "Visitors"
+    }
+  },
+  "funnel_chart": "Funnel chart",
+  "funnel_overview": "Sales funnel",
+  "improve_greeting": "Improve your greeting",
+  "income": "Income",
+  "min": "min",
+  "name": "Name",
+  "need_more_masters": "Need more masters",
+  "optimization_tip": "Optimization tip",
+  "peak_hours": "Peak Hours",
+  "per_booking": "For each booking",
+  "percentage": "Percentage",
+  "quantity": "Quantity",
+  "recommendation": "Recommendation",
+  "refresh": "Update",
+  "response_time": "Response time",
+  "revenue": "Revenue",
+  "services_distribution": "Service distribution",
+  "simplify_contact_collection": "Simplify your contact collection",
+  "stages": {
+    "after_greeting": "After the greeting",
+    "after_price": "After the price",
+    "no_slots": "No free slots",
+    "service_selection": "Select a service",
+    "whatsapp_request": "Request via WhatsApp"
+  },
+  "status": {
+    "cancelled": "Canceled",
+    "completed": "Completed",
+    "confirmed": "Confirmed",
+    "no_show": "Didn't come",
+    "pending": "Waiting"
+  },
+  "success": {
+    "file_downloaded": "File downloaded successfully"
+  },
+  "title": "Analytics",
+  "top_services": "Popular services",
+  "try_again": "Try again",
+  "visitors": "Visitors",
+  "where_clients_leave": "Where do customers go?",
+  "work_on_objections": "Dealing with objections"
+}

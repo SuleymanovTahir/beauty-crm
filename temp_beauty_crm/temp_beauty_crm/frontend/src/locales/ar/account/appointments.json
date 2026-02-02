@@ -1,0 +1,21 @@
+{
+  "button_book": "الاشتراك",
+  "button_cancel": "إلغاء",
+  "button_change": "تغيير",
+  "button_repeat": "كرر",
+  "history_empty": "ليس لديك إدخالات مكتملة بعد",
+  "history_empty_desc": "سيظهر سجلك هنا بعد زيارتك الأولى",
+  "no_upcoming": "لا توجد إدخالات قادمة",
+  "no_upcoming_desc": "حان الوقت لجدولة زيارة جديدة للمتخصص",
+  "recurring_desc": "قم بإعداد زيارات تلقائية لتكون في حالة جيدة دائمًا",
+  "recurring_title": "زيارات منتظمة",
+  "status_cancelled": "تم الإلغاء",
+  "status_completed": "مكتمل",
+  "status_upcoming": "معلق",
+  "subtitle": "إدارة إدخالاتك وعرض حجز التصفح",
+  "tab_history": "التاريخ",
+  "tab_recurring": "عادي",
+  "tab_upcoming": "قادم",
+  "title": "ملاحظاتي",
+  "unknown_master": "ماجستير لا محدد"
+}

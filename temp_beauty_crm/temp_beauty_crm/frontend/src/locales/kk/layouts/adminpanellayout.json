@@ -1,0 +1,18 @@
+{
+  "admin_panel": "Әкімші тақтасы",
+  "go_to_crm": "CRM жүйесіне өту",
+  "logout": "Шығу",
+  "menu": {
+    "challenges": "Қиындықтар",
+    "dashboard": "Басқару тақтасы",
+    "feature_management": "Con <z49>z49> функциялар",
+    "loyalty_management": "Адалдықты басқару",
+    "notifications": "Хабарландырулар",
+    "photo_gallery": "Фото галереясы",
+    "public_content": "Жалпыға ортақ мазмұн",
+    "referral_program": "Сілтеме бағдарламасы",
+    "services": "Қызметтер",
+    "settings": "Параметрлер",
+    "user_management": "Пайдаланушыларды басқару"
+  }
+}

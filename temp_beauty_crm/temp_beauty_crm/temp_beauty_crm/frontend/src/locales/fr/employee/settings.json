@@ -1,0 +1,23 @@
+{
+  "change_password": "Modifier mot de passe",
+  "confirm_new_password": "Confirmer le nouveau mot de passe",
+  "confirm_password": "Confirmer le mot de passe",
+  "current_password": "Mot de passe actuel",
+  "email": "E-mail",
+  "email_placeholder": "votre@email.com",
+  "enter_current_password": "Entrez le mot de passe actuel",
+  "enter_new_password": "Saisissez un nouveau mot de passe (minimum de {{count}} caractères)",
+  "fill_all_password_fields": "Remplissez tous les champs pour modifier votre mot de passe",
+  "full_name": "Complet nom",
+  "full_name_placeholder": "Ivan Ivanov",
+  "full_name_validation": "Le nom doit contenir au minimum {{count}} caractères",
+  "manage_account_settings": "Gérer les paramètres du compte",
+  "my_settings": "Mes paramètres",
+  "new_password": "Nouveau mot de passe",
+  "password_min_length": "Le mot de passe doit contenir un minimum de {{count}} caractères",
+  "passwords_do_not_match": "Les mots de passe ne correspondent pas",
+  "personal_information": "Informations personnelles",
+  "security_tip": "Utilisez un mot de passe fort avec une combinaison de lettres, de chiffres et de caractères spéciaux pour un compte de sécurité maximale.",
+  "update_password": "Mettre à jour le mot de passe",
+  "username": "Connexion"
+}

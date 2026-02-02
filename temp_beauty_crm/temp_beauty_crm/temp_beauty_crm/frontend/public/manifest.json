@@ -1,0 +1,16 @@
+{
+  "name": "M Le Diamant",
+  "short_name": "M Le Diamant",
+  "description": "Beauty salon booking and management",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ec4899",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

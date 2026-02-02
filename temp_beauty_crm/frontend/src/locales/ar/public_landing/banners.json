@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "خدمات التجميل الاحترافية",
+      "title": "الجمال والأناقة"
+    },
+    {
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "على جميع خدمات الصالون",
+      "title": "خصومات تصل إلى 50%"
+    },
+    {
+      "image": "/static/uploads/images/salon/moroccan_bath.webp",
+      "link": "",
+      "subtitle": "على جميع خدمات الصالون",
+      "title": "خصومات تصل إلى {{percent}}%"
+    },
+    {
+      "image": "/static/uploads/images/salon/salon_main.webp",
+      "link": "",
+      "subtitle": "خدمات تجميل احترافية رفيعة المستوى",
+      "title": "الجمال والأناقة"
+    },
+    {
+      "image": "/static/uploads/images/employees/simo.webp",
+      "link": "",
+      "subtitle": "العناية أسلوبك وصحتك",
+      "title": "خدمة متميزة"
+    },
+    {
+      "image": "/static/uploads/images/employees/jennifer.webp",
+      "link": "",
+      "subtitle": "استمتع بالاسترخاء التام وطقوس التنظيف",
+      "title": "الحمام المغربي"
+    },
+    {
+      "image": "/static/uploads/images/employees/mestan.webp",
+      "link": "",
+      "subtitle": "هذا الشهر فقط",
+      "title": "خصم 20% على زيارتك الأولى"
+    },
+    {
+      "image": "/static/uploads/images/employees/lyazzat.webp",
+      "link": "",
+      "subtitle": "جرب الابتكار",
+      "title": "خدمة جديدة: باديكير ذكي"
+    }
+  ]
+}

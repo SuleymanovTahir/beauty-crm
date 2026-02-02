@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "Профессиональные услуги красоты",
+      "title": "Красота и Элегантность"
+    },
+    {
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "На все услуги салона",
+      "title": "Скидки до 50%"
+    },
+    {
+      "image": "/static/uploads/images/salon/moroccan_bath.webp",
+      "link": "",
+      "subtitle": "На все услуги салона",
+      "title": "Скидки до {{percent}}%"
+    },
+    {
+      "image": "/static/uploads/images/salon/salon_main.webp",
+      "link": "",
+      "subtitle": "Профессиональные услуги красоты высшего класса",
+      "title": "Красота и Элегантность"
+    },
+    {
+      "image": "/static/uploads/images/employees/simo.webp",
+      "link": "",
+      "subtitle": "Забота о вашем стиле и здоровье",
+      "title": "Премиальный сервис"
+    },
+    {
+      "image": "/static/uploads/images/employees/jennifer.webp",
+      "link": "",
+      "subtitle": "Ощутите полное расслабление и ритуал очищения",
+      "title": "Марокканская Баня"
+    },
+    {
+      "image": "/static/uploads/images/employees/mestan.webp",
+      "link": "",
+      "subtitle": "Тек осы айда",
+      "title": "Алғашқы барғанда 20% жеңілдік"
+    },
+    {
+      "image": "/static/uploads/images/employees/lyazzat.webp",
+      "link": "",
+      "subtitle": "Инновацияны қолданып көріңіз",
+      "title": "Жаңа қызмет: Смарт педикюр"
+    }
+  ]
+}

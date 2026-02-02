@@ -1,0 +1,79 @@
+{
+  "actions": "Actions",
+  "addInvoice": "Créer un compte",
+  "addPayment": "Ajouter un paiement",
+  "allInvoices": "Toutes les factures",
+  "allStatuses": "Tous les statuts",
+  "board": "Tableau",
+  "client": "Client",
+  "delete": "Supprimer",
+  "dueDate": "Date d'échéance du paiement",
+  "errors": {
+    "createError": "Erreur lors de la création de la facture.",
+    "deleteError": "Erreur de suppression du compte.",
+    "paymentError": "Erreur lors de l'ajout du paiement",
+    "sendError": "Erreur d'envoi de la facture",
+    "updateError": "Échec de la mise à jour du statut"
+  },
+  "form": {
+    "addItem": "Ajouter un article",
+    "cancel": "Annuler",
+    "dueDate": "Conditions de paiement",
+    "itemName": "Nom",
+    "itemPrice": "Prix",
+    "itemQuantity": "Quantité",
+    "items": "Articles du compte",
+    "notes": "Notes",
+    "save": "Enregistrer",
+    "selectClient": "Sélectionner le client"
+  },
+  "invoiceNumber": "Numéro de compte",
+  "manage_stages": "Colonnes",
+  "messages": {
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette facture\u00a0?",
+    "invoiceCreated": "Compte créé",
+    "invoiceDeleted": "Facture supprimée",
+    "invoiceSent": "Facture envoyée",
+    "invoiceUpdated": "Facture mise à jour",
+    "paymentAdded": "Paiement ajouté"
+  },
+  "noInvoices": "Aucune facture pour l'instant",
+  "paidAmount": "Payé",
+  "payment": {
+    "add": "Ajouter",
+    "amount": "Montant",
+    "method": "Paiement méthode",
+    "methods": {
+      "card": "Carte",
+      "cash": "Espèces",
+      "online": "En ligne",
+      "transfer": "Transfert"
+    },
+    "notes": "Notes",
+    "title": "Ajouter un paiement"
+  },
+  "search_placeholder": "Recherche à la date numéro ou client...",
+  "sendButton": "Envoyer",
+  "sendDialog": {
+    "email": "E-mail",
+    "method": "Mode d'envoi",
+    "recipient": "Destinataire",
+    "sendButton": "Envoyer",
+    "telegram": "Télégramme",
+    "title": "Envoyer la facture",
+    "whatsapp": "WhatsApp"
+  },
+  "status": "Statut",
+  "statuses": {
+    "cancelled": "Annulé",
+    "draft": "Brouillon",
+    "overdue": "En retard",
+    "paid": "Payé",
+    "partial": "Partiellement payé",
+    "partially_paid": "Partiellement payé",
+    "sent": "Envoyé"
+  },
+  "subtitle": "Gérer les factures et les paiements",
+  "title": "Comptes",
+  "totalAmount": "Montant"
+}
