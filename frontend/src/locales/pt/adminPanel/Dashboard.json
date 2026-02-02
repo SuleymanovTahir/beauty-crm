@@ -1,4 +1,30 @@
 {
+  "active_clients": "Clientes ativos",
+  "active_sessions": "Sessões ativas",
+  "all_bookings": "Todos os reservas",
+  "analytics": "Analytics",
+  "average_check": "Fatura média",
+  "bookings": "Reservas",
+  "bot_analytics": "Bot Analytics",
+  "cancellations": "Cancelamentos",
+  "client": "Cliente",
+  "client_database": "Clientes base",
+  "conversion": "Conversão",
+  "date_filter": "Período",
+  "datetime": "Data/Hora",
+  "filter_custom": "Sua menstruação",
+  "filter_last_month": "Último mês",
+  "filter_last30days": "Últimos 30 dias",
+  "filter_last7days": "Últimos 7 dias",
+  "filter_this_month": "Este mês",
+  "filter_today": "Hoje",
+  "filter_yesterday": "Ontem",
+  "from": "De",
+  "id": "ID",
+  "latest_bookings": "Últimas reservas",
+  "new_booking": "Nova reserva",
+  "new_clients": "Novos clientes",
+  "no_active_leads": "Nenhuma solicitação ativa",
   "quick_actions": {
     "challenges": {
       "description": "Criar e gerenciar metas",
@@ -47,6 +73,9 @@
     "users_registered_many": "{{count}} novos usuários registrados",
     "users_registered_other": "{{count}} novos usuários registrados"
   },
+  "recent_leads": "Inscrições mais recentes",
+  "report": "Relatório",
+  "revenue": "Receita",
   "stats": {
     "active_challenges": "Metas ativas",
     "from_last_month": "do último mês",
@@ -54,6 +83,15 @@
     "total_referrals": "Total de indicações",
     "total_users": "Total de usuários"
   },
+  "status_cancelled": "Cancelado",
+  "status_completed": "Concluído",
+  "status_confirmed": "Confirmado",
+  "status_pending": "Pendente",
   "subtitle": "Gerenciamento de usuários, fidelidade e engajamento",
-  "title": "Painel"
+  "title": "Painel",
+  "to": "Até",
+  "total_clients": "Total de clientes",
+  "vip_clients": "Clientes VIP",
+  "visits": "Visitas",
+  "welcome": "Bem-vindo de volta! Veja o que está acontecendo no seu salão hoje."
 }

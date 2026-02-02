@@ -1,4 +1,30 @@
 {
+  "active_clients": "Белсенді клиенттер",
+  "active_sessions": "Белсенді сеанстар",
+  "all_bookings": "Барлық жазбалар",
+  "analytics": "Аналитика",
+  "average_check": "Орташа есепшот",
+  "bookings": "Жазбалар",
+  "bot_analytics": "Bot Analytics",
+  "cancellations": "Бас тартулар",
+  "client": "Клиент",
+  "client_database": "База клиентов",
+  "conversion": "Конверсия",
+  "date_filter": "Кезең",
+  "datetime": "Күн/уақыт",
+  "filter_custom": "Теңшелетін кезең",
+  "filter_last30days": "Соңғы 30 күн",
+  "filter_last7days": "Соңғы 7 күн",
+  "filter_last_month": "Өткен айда",
+  "filter_this_month": "Осы ай",
+  "filter_today": "Бүгін",
+  "filter_yesterday": "Кеше",
+  "from": "Кімнен",
+  "id": "ID",
+  "latest_bookings": "Соңғы жазбалар",
+  "new_booking": "Жаңа жазба",
+  "new_clients": "Жаңа клиенттер",
+  "no_active_leads": "Белсенді сұраулар жоқ",
   "quick_actions": {
     "challenges": {
       "description": "Мақсаттарды жасау және басқару",
@@ -47,6 +73,9 @@
     "users_registered_one": "{{count}} жаңа пайдаланушы тіркелді",
     "users_registered_other": "{{count}} жаңа пайдаланушылар тіркелді"
   },
+  "recent_leads": "Соңғы сұраулар",
+  "report": "Есеп",
+  "revenue": "Табыс",
   "stats": {
     "active_challenges": "Белсенді мақсаттар",
     "from_last_month": "өткен айдан бері",
@@ -54,6 +83,15 @@
     "total_referrals": "Барлығы",
     "total_users": "Жалпы пайдаланушылар"
   },
+  "status_cancelled": "Болдырмады",
+  "status_completed": "Аяқталды",
+  "status_confirmed": "Расталды",
+  "status_pending": "Күтуде",
   "subtitle": "Пайдаланушыларды, адалдықты және қатысуды басқару",
-  "title": "Басқару тақтасы"
+  "title": "Басқару тақтасы",
+  "to": "Бұған дейін",
+  "total_clients": "Жалпы клиенттер",
+  "vip_clients": "VIP клиенттер",
+  "visits": "Сапарлар",
+  "welcome": "Қайтадан қош келдіңіз! Міне, бүгін сіздің салоныңызда не болып жатыр."
 }

@@ -296,9 +296,11 @@ async def export_report_api(
         format = data.get("format", "csv")
         start_date = data.get("start_date")
         end_date = data.get("end_date")
+        lang = data.get("lang", "en")
 
-        from api.export import export_bookings_csv, export_bookings_pdf, export_bookings_excel
-        from db import get_all_bookings
+        from api.export import export_dashboard_report_csv, export_dashboard_report_pdf, export_dashboard_report_excel
+        from db import get_all_bookings, get_stats
+        from db.bot_analytics import get_bot_analytics_summary
         
         # Получаем данные
         bookings = get_all_bookings()
@@ -321,18 +323,22 @@ async def export_report_api(
             except Exception as e:
                 log_warning(f"Export date filtering failed: {e}", "export")
 
+        # Получаем данные (KPI и Бот)
+        stats = get_stats() 
+        bot_analytics = get_bot_analytics_summary(30) # За 30 дней по умолчанию
+
         if format == "csv":
-            content = export_bookings_csv(bookings)
+            content = export_dashboard_report_csv(stats, bot_analytics, bookings, lang=lang)
             media_type = "text/csv"
-            filename = f"report_{datetime.now().strftime('%Y%m%d')}.csv"
+            filename = f"dashboard_report_{datetime.now().strftime('%Y%m%d')}.csv"
         elif format == "pdf":
-            content = export_bookings_pdf(bookings)
+            content = export_dashboard_report_pdf(stats, bot_analytics, bookings, lang=lang)
             media_type = "application/pdf"
-            filename = f"report_{datetime.now().strftime('%Y%m%d')}.pdf"
+            filename = f"dashboard_report_{datetime.now().strftime('%Y%m%d')}.pdf"
         elif format == "excel":
-            content = export_bookings_excel(bookings)
+            content = export_dashboard_report_excel(stats, bot_analytics, bookings, lang=lang)
             media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            filename = f"report_{datetime.now().strftime('%Y%m%d')}.xlsx"
+            filename = f"dashboard_report_{datetime.now().strftime('%Y%m%d')}.xlsx"
         else:
             raise HTTPException(status_code=400, detail="Invalid format")
 

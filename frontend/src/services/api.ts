@@ -1,4 +1,5 @@
 // frontend/src/services/api.ts
+import i18n from '../i18n';
 const API_URL = import.meta.env.VITE_API_URL || window.location.origin
 
 export class ApiClient {
@@ -1004,7 +1005,8 @@ export class ApiClient {
 
   // ===== ЭКСПОРТ =====
   async exportClients(format: string = 'csv') {
-    const response = await fetch(`${this.baseURL}/api/export/clients?format=${format}`, {
+    const lang = i18n.language || 'en';
+    const response = await fetch(`${this.baseURL}/api/export/clients?format=${format}&lang=${lang}`, {
       credentials: 'include',
     })
 
@@ -1015,7 +1017,8 @@ export class ApiClient {
 
   // Экспорт с обработкой длинных названий
   async exportAnalytics(format: string = 'csv', period: number = 30, dateFrom?: string, dateTo?: string) {
-    let url = `${this.baseURL}/api/export/analytics?format=${format}&period=${period}`;
+    const lang = i18n.language || 'en';
+    let url = `${this.baseURL}/api/export/analytics?format=${format}&period=${period}&lang=${lang}`;
     if (dateFrom && dateTo) {
       url += `&date_from=${dateFrom}&date_to=${dateTo}`;
     }
@@ -1033,7 +1036,8 @@ export class ApiClient {
   }
 
   async exportMessages(clientId?: string, format: string = 'csv', dateFrom?: string, dateTo?: string) {
-    let url = `${this.baseURL}/api/export/messages?format=${format}`;
+    const lang = i18n.language || 'en';
+    let url = `${this.baseURL}/api/export/messages?format=${format}&lang=${lang}`;
     if (clientId) url += `&client_id=${clientId}`;
     if (dateFrom && dateTo) {
       url += `&date_from=${dateFrom}&date_to=${dateTo}`;
@@ -1049,7 +1053,8 @@ export class ApiClient {
   }
 
   async exportFullData(format: string = 'csv') {
-    const response = await fetch(`${this.baseURL}/api/export/full-data?format=${format}`, {
+    const lang = i18n.language || 'en';
+    const response = await fetch(`${this.baseURL}/api/export/full-data?format=${format}&lang=${lang}`, {
       credentials: 'include',
     })
 

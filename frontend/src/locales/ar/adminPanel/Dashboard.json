@@ -1,4 +1,30 @@
 {
+  "active_clients": "العملاء النشطين",
+  "active_sessions": "الجلسات النشطة",
+  "all_bookings": "جميع السجلات",
+  "analytics": "التحليلات",
+  "average_check": "متوسط الفاتورة",
+  "bookings": "السجلات",
+  "bot_analytics": "تحليلات الروبوت",
+  "cancellations": "الإلغاءات",
+  "client": "العميل",
+  "client_database": "العملاء الأساسيون",
+  "conversion": "التحويل",
+  "date_filter": "الفترة",
+  "datetime": "التاريخ/الوقت",
+  "filter_custom": "الدورة الشهرية",
+  "filter_last_month": "الشهر الماضي",
+  "filter_last30days": "آخر 30 يومًا",
+  "filter_last7days": "آخر 7 أيام",
+  "filter_this_month": "هذا الشهر",
+  "filter_today": "اليوم",
+  "filter_yesterday": "أمس",
+  "from": "من",
+  "id": "المعرف",
+  "latest_bookings": "آخر الإدخالات",
+  "new_booking": "إدخال جديد",
+  "new_clients": "عملاء جدد",
+  "no_active_leads": "لا توجد طلبات نشطة",
   "quick_actions": {
     "challenges": {
       "description": "إنشاء الأهداف وإدارتها",
@@ -55,6 +81,9 @@
     "users_registered_many": "{{count}} مستخدمون جدد مسجلون",
     "users_registered_other": "{{count}} مستخدمون جدد مسجلون"
   },
+  "recent_leads": "أحدث التطبيقات",
+  "report": "تقرير",
+  "revenue": "الإيرادات",
   "stats": {
     "active_challenges": "الأهداف النشطة",
     "from_last_month": "من الشهر الماضي",
@@ -62,6 +91,15 @@
     "total_referrals": "إجمالي الإحالات",
     "total_users": "إجمالي المستخدمين"
   },
+  "status_cancelled": "ملغاة",
+  "status_completed": "مكتملة",
+  "status_confirmed": "مؤكدة",
+  "status_pending": "معلقة",
   "subtitle": "إدارة المستخدمين والولاء والمشاركة",
-  "title": "لوحة التحكم"
+  "title": "لوحة التحكم",
+  "to": "حتى",
+  "total_clients": "إجمالي العملاء",
+  "vip_clients": "عملاء VIP",
+  "visits": "الزيارات",
+  "welcome": "مرحبًا بعودتك! إليك ما يحدث في صالونك اليوم."
 }

@@ -1,5 +1,6 @@
 // frontend/src/api/client.ts
 // Универсальный API клиент для всех endpoints
+import i18n from '../i18n';
 
 export const BASE_URL = import.meta.env.VITE_API_URL || window.location.origin;
 
@@ -167,10 +168,10 @@ export const apiClient = {
 
   // ===== EXPORT =====
   exportClients: (format: string = 'csv') =>
-    apiCall(`/api/export/clients?format=${format}`),
+    apiCall(`/api/export/clients?format=${format}&lang=${i18n.language || 'en'}`),
 
   exportAnalytics: (format: string = 'csv', period: number = 30) =>
-    apiCall(`/api/export/analytics?format=${format}&period=${period}`),
+    apiCall(`/api/export/analytics?format=${format}&period=${period}&lang=${i18n.language || 'en'}`),
 
   // ===== BOT SETTINGS =====
   getBotSettings: () =>
