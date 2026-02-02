@@ -1079,7 +1079,7 @@
   ],
   "services": [
     {
-      "id": 10485,
+      "id": 13077,
       "fields": {
         "name": {
           "ru": "Manicure Classic + Polish"
@@ -1087,7 +1087,7 @@
       }
     },
     {
-      "id": 10486,
+      "id": 13078,
       "fields": {
         "name": {
           "ru": "Classic Polish Only"
@@ -1095,7 +1095,7 @@
       }
     },
     {
-      "id": 10487,
+      "id": 13079,
       "fields": {
         "name": {
           "ru": "Gel Polish Only"
@@ -1103,7 +1103,7 @@
       }
     },
     {
-      "id": 10488,
+      "id": 13080,
       "fields": {
         "name": {
           "ru": "French Polish"
@@ -1111,7 +1111,7 @@
       }
     },
     {
-      "id": 10489,
+      "id": 13081,
       "fields": {
         "name": {
           "ru": "Japanese Manicure"
@@ -1119,7 +1119,7 @@
       }
     },
     {
-      "id": 10490,
+      "id": 13082,
       "fields": {
         "name": {
           "ru": "Overlay Biogel"
@@ -1127,7 +1127,7 @@
       }
     },
     {
-      "id": 10491,
+      "id": 13083,
       "fields": {
         "name": {
           "ru": "Remove Gel Polish"
@@ -1135,7 +1135,7 @@
       }
     },
     {
-      "id": 10492,
+      "id": 13084,
       "fields": {
         "name": {
           "ru": "Remove Classic Polish"
@@ -1143,7 +1143,7 @@
       }
     },
     {
-      "id": 10493,
+      "id": 13085,
       "fields": {
         "name": {
           "ru": "Remove Extensions"
@@ -1151,7 +1151,7 @@
       }
     },
     {
-      "id": 10494,
+      "id": 13086,
       "fields": {
         "name": {
           "ru": "Nail Extensions (Gel)"
@@ -1159,7 +1159,7 @@
       }
     },
     {
-      "id": 10495,
+      "id": 13087,
       "fields": {
         "name": {
           "ru": "Extensions Correction"
@@ -1167,7 +1167,7 @@
       }
     },
     {
-      "id": 10496,
+      "id": 13088,
       "fields": {
         "name": {
           "ru": "Repair 1 Extension"
@@ -1175,7 +1175,7 @@
       }
     },
     {
-      "id": 10497,
+      "id": 13089,
       "fields": {
         "name": {
           "ru": "Repair 1 Gel Nail"
@@ -1183,7 +1183,7 @@
       }
     },
     {
-      "id": 10498,
+      "id": 13090,
       "fields": {
         "name": {
           "ru": "Combined Manicure"
@@ -1191,7 +1191,7 @@
       }
     },
     {
-      "id": 10499,
+      "id": 13091,
       "fields": {
         "name": {
           "ru": "Combined Manicure + Gel"
@@ -1199,7 +1199,7 @@
       }
     },
     {
-      "id": 10500,
+      "id": 13092,
       "fields": {
         "name": {
           "ru": "Nail Shaping"
@@ -1207,7 +1207,7 @@
       }
     },
     {
-      "id": 10501,
+      "id": 13093,
       "fields": {
         "name": {
           "ru": "Smart Pedicure Basic"
@@ -1215,7 +1215,7 @@
       }
     },
     {
-      "id": 10502,
+      "id": 13094,
       "fields": {
         "name": {
           "ru": "Smart Pedicure + Polish"
@@ -1223,7 +1223,7 @@
       }
     },
     {
-      "id": 10503,
+      "id": 13095,
       "fields": {
         "name": {
           "ru": "Pedicure + Gel Polish"
@@ -1231,7 +1231,7 @@
       }
     },
     {
-      "id": 10504,
+      "id": 13096,
       "fields": {
         "name": {
           "ru": "Change Gel Polish (Pedi)"
@@ -1239,7 +1239,7 @@
       }
     },
     {
-      "id": 10505,
+      "id": 13097,
       "fields": {
         "name": {
           "ru": "Change Polish (Pedi)"
@@ -1247,7 +1247,7 @@
       }
     },
     {
-      "id": 10506,
+      "id": 13098,
       "fields": {
         "name": {
           "ru": "Combo Mani+Pedi (Gel)"
@@ -1255,7 +1255,7 @@
       }
     },
     {
-      "id": 10507,
+      "id": 13099,
       "fields": {
         "name": {
           "ru": "Blow Dry (Short)"
@@ -1263,7 +1263,7 @@
       }
     },
     {
-      "id": 10508,
+      "id": 13100,
       "fields": {
         "name": {
           "ru": "Blow Dry (Medium)"
@@ -1271,7 +1271,7 @@
       }
     },
     {
-      "id": 10509,
+      "id": 13101,
       "fields": {
         "name": {
           "ru": "Blow Dry (Long)"
@@ -1279,7 +1279,7 @@
       }
     },
     {
-      "id": 10510,
+      "id": 13102,
       "fields": {
         "name": {
           "ru": "Styling Iron/Waves (Short)"
@@ -1287,7 +1287,7 @@
       }
     },
     {
-      "id": 10511,
+      "id": 13103,
       "fields": {
         "name": {
           "ru": "Styling Iron/Waves (Medium)"
@@ -1295,7 +1295,7 @@
       }
     },
     {
-      "id": 10512,
+      "id": 13104,
       "fields": {
         "name": {
           "ru": "Styling Iron/Waves (Long)"
@@ -1303,7 +1303,7 @@
       }
     },
     {
-      "id": 10513,
+      "id": 13105,
       "fields": {
         "name": {
           "ru": "Evening Hairstyle"
@@ -1311,7 +1311,7 @@
       }
     },
     {
-      "id": 10514,
+      "id": 13106,
       "fields": {
         "name": {
           "ru": "Hair Wash"
@@ -1319,7 +1319,7 @@
       }
     },
     {
-      "id": 10515,
+      "id": 13107,
       "fields": {
         "name": {
           "ru": "Hair Trim Only"
@@ -1327,7 +1327,7 @@
       }
     },
     {
-      "id": 10516,
+      "id": 13108,
       "fields": {
         "name": {
           "ru": "Cut + Wash + Styling"
@@ -1335,7 +1335,7 @@
       }
     },
     {
-      "id": 10517,
+      "id": 13109,
       "fields": {
         "name": {
           "ru": "Cut + Wash"
@@ -1343,7 +1343,7 @@
       }
     },
     {
-      "id": 10518,
+      "id": 13110,
       "fields": {
         "name": {
           "ru": "Express Form (No Wash)"
@@ -1351,7 +1351,7 @@
       }
     },
     {
-      "id": 10519,
+      "id": 13111,
       "fields": {
         "name": {
           "ru": "Bangs Cut"
@@ -1359,7 +1359,7 @@
       }
     },
     {
-      "id": 10520,
+      "id": 13112,
       "fields": {
         "name": {
           "ru": "Kids Cut"
@@ -1367,7 +1367,7 @@
       }
     },
     {
-      "id": 10521,
+      "id": 13113,
       "fields": {
         "name": {
           "ru": "Roots Coloring"
@@ -1375,7 +1375,7 @@
       }
     },
     {
-      "id": 10522,
+      "id": 13114,
       "fields": {
         "name": {
           "ru": "Toning"
@@ -1383,7 +1383,7 @@
       }
     },
     {
-      "id": 10523,
+      "id": 13115,
       "fields": {
         "name": {
           "ru": "One Tone (Short)"
@@ -1391,7 +1391,7 @@
       }
     },
     {
-      "id": 10524,
+      "id": 13116,
       "fields": {
         "name": {
           "ru": "One Tone (Medium)"
@@ -1399,7 +1399,7 @@
       }
     },
     {
-      "id": 10525,
+      "id": 13117,
       "fields": {
         "name": {
           "ru": "One Tone (Long)"
@@ -1407,7 +1407,7 @@
       }
     },
     {
-      "id": 10526,
+      "id": 13118,
       "fields": {
         "name": {
           "ru": "Total Blonde"
@@ -1415,7 +1415,7 @@
       }
     },
     {
-      "id": 10527,
+      "id": 13119,
       "fields": {
         "name": {
           "ru": "Complex Color (Ombre/Balayage)"
@@ -1423,7 +1423,7 @@
       }
     },
     {
-      "id": 10528,
+      "id": 13120,
       "fields": {
         "name": {
           "ru": "Head Massage (60 min)"
@@ -1431,7 +1431,7 @@
       }
     },
     {
-      "id": 10529,
+      "id": 13121,
       "fields": {
         "name": {
           "ru": "Extremities Massage (60 min)"
@@ -1439,7 +1439,7 @@
       }
     },
     {
-      "id": 10530,
+      "id": 13122,
       "fields": {
         "name": {
           "ru": "Body Massage (60 min)"
@@ -1447,7 +1447,7 @@
       }
     },
     {
-      "id": 10531,
+      "id": 13123,
       "fields": {
         "name": {
           "ru": "Sculptural Body Massage"
@@ -1455,7 +1455,7 @@
       }
     },
     {
-      "id": 10532,
+      "id": 13124,
       "fields": {
         "name": {
           "ru": "Anti-cellulite Massage (60 min)"
@@ -1463,7 +1463,7 @@
       }
     },
     {
-      "id": 10533,
+      "id": 13125,
       "fields": {
         "name": {
           "ru": "Moroccan Bath SPA"
@@ -1471,7 +1471,7 @@
       }
     },
     {
-      "id": 10534,
+      "id": 13126,
       "fields": {
         "name": {
           "ru": "Full Bikini"
@@ -1479,7 +1479,7 @@
       }
     },
     {
-      "id": 10535,
+      "id": 13127,
       "fields": {
         "name": {
           "ru": "Bikini Line"
@@ -1487,7 +1487,7 @@
       }
     },
     {
-      "id": 10536,
+      "id": 13128,
       "fields": {
         "name": {
           "ru": "Full Legs"
@@ -1495,7 +1495,7 @@
       }
     },
     {
-      "id": 10537,
+      "id": 13129,
       "fields": {
         "name": {
           "ru": "Half Legs (Lower)"
@@ -1503,7 +1503,7 @@
       }
     },
     {
-      "id": 10538,
+      "id": 13130,
       "fields": {
         "name": {
           "ru": "Full Arms"
@@ -1511,7 +1511,7 @@
       }
     },
     {
-      "id": 10539,
+      "id": 13131,
       "fields": {
         "name": {
           "ru": "Half Arms"
@@ -1519,7 +1519,7 @@
       }
     },
     {
-      "id": 10540,
+      "id": 13132,
       "fields": {
         "name": {
           "ru": "Full Body Waxing"
@@ -1527,7 +1527,7 @@
       }
     },
     {
-      "id": 10541,
+      "id": 13133,
       "fields": {
         "name": {
           "ru": "Underarms Waxing"
@@ -1535,7 +1535,7 @@
       }
     },
     {
-      "id": 10542,
+      "id": 13134,
       "fields": {
         "name": {
           "ru": "Full Face Waxing"
@@ -1543,7 +1543,7 @@
       }
     },
     {
-      "id": 10543,
+      "id": 13135,
       "fields": {
         "name": {
           "ru": "Cheeks Waxing"
@@ -1551,7 +1551,7 @@
       }
     },
     {
-      "id": 10544,
+      "id": 13136,
       "fields": {
         "name": {
           "ru": "Upper Lip Waxing"
@@ -1559,7 +1559,7 @@
       }
     },
     {
-      "id": 10545,
+      "id": 13137,
       "fields": {
         "name": {
           "ru": "Chin Waxing"
@@ -1567,7 +1567,7 @@
       }
     },
     {
-      "id": 10546,
+      "id": 13138,
       "fields": {
         "name": {
           "ru": "Deep Facial Cleaning"
@@ -1575,7 +1575,7 @@
       }
     },
     {
-      "id": 10547,
+      "id": 13139,
       "fields": {
         "name": {
           "ru": "Medical Facial (Problem Skin)"
@@ -1583,7 +1583,7 @@
       }
     },
     {
-      "id": 10548,
+      "id": 13140,
       "fields": {
         "name": {
           "ru": "Lifting Massage + Mask"
@@ -1591,7 +1591,7 @@
       }
     },
     {
-      "id": 10549,
+      "id": 13141,
       "fields": {
         "name": {
           "ru": "Peeling"
@@ -1599,7 +1599,7 @@
       }
     },
     {
-      "id": 10550,
+      "id": 13142,
       "fields": {
         "name": {
           "ru": "Classic Lash Extensions"
@@ -1607,7 +1607,7 @@
       }
     },
     {
-      "id": 10551,
+      "id": 13143,
       "fields": {
         "name": {
           "ru": "2D Lash Extensions"
@@ -1615,7 +1615,7 @@
       }
     },
     {
-      "id": 10552,
+      "id": 13144,
       "fields": {
         "name": {
           "ru": "3D Lash Extensions"
@@ -1623,7 +1623,7 @@
       }
     },
     {
-      "id": 10553,
+      "id": 13145,
       "fields": {
         "name": {
           "ru": "4-5D Lash Extensions (Mega)"
@@ -1631,7 +1631,7 @@
       }
     },
     {
-      "id": 10554,
+      "id": 13146,
       "fields": {
         "name": {
           "ru": "Kim Style Effect / L, M Curves"
@@ -1639,7 +1639,7 @@
       }
     },
     {
-      "id": 10555,
+      "id": 13147,
       "fields": {
         "name": {
           "ru": "Remove Lashes"
@@ -1647,7 +1647,7 @@
       }
     },
     {
-      "id": 10556,
+      "id": 13148,
       "fields": {
         "name": {
           "ru": "Brow Lamination"
@@ -1655,7 +1655,7 @@
       }
     },
     {
-      "id": 10557,
+      "id": 13149,
       "fields": {
         "name": {
           "ru": "Lash Lamination"
@@ -1663,7 +1663,7 @@
       }
     },
     {
-      "id": 10558,
+      "id": 13150,
       "fields": {
         "name": {
           "ru": "Combo Lash + Brow Lami"
@@ -1671,7 +1671,7 @@
       }
     },
     {
-      "id": 10559,
+      "id": 13151,
       "fields": {
         "name": {
           "ru": "Brow Coloring"
@@ -1679,7 +1679,7 @@
       }
     },
     {
-      "id": 10560,
+      "id": 13152,
       "fields": {
         "name": {
           "ru": "Brow Correction"
@@ -1687,7 +1687,7 @@
       }
     },
     {
-      "id": 10561,
+      "id": 13153,
       "fields": {
         "name": {
           "ru": "Permanent Lips"
@@ -1695,7 +1695,7 @@
       }
     },
     {
-      "id": 10562,
+      "id": 13154,
       "fields": {
         "name": {
           "ru": "Permanent Brows"
@@ -1703,7 +1703,7 @@
       }
     },
     {
-      "id": 10563,
+      "id": 13155,
       "fields": {
         "name": {
           "ru": "Lashliner"
@@ -1711,7 +1711,7 @@
       }
     },
     {
-      "id": 10564,
+      "id": 13156,
       "fields": {
         "name": {
           "ru": "Eyeliner"
@@ -1719,7 +1719,7 @@
       }
     },
     {
-      "id": 10565,
+      "id": 13157,
       "fields": {
         "name": {
           "ru": "Permanent Makeup Correction"
@@ -1783,10 +1783,26 @@
       "id": 569,
       "fields": {
         "title": {
-          "ru": "Стильная укладка"
+          "ru": "Стильная укладка",
+          "en": "Stylish styling",
+          "ar": "شكل أنيق",
+          "es": "Estilo elegante",
+          "de": "Stilvolles Styling",
+          "fr": "Style élégant",
+          "hi": "स्टाइलिश स्टाइल",
+          "kk": "Сәнді сәндеу",
+          "pt": "Estilo elegante"
         },
         "description": {
-          "ru": "Работа нашего топ-стилиста"
+          "ru": "Работа нашего топ-стилиста",
+          "en": "The work of our top stylist",
+          "ar": "عمل أفضل مصففي الشعر لدينا",
+          "es": "Trabajo de nuestro mejor estilista",
+          "de": "Arbeit unserer Spitzenklasse Stylist",
+          "fr": "Travail de notre top styliste",
+          "hi": "हमारे शीर्ष स्टाइलिस्ट का काम",
+          "kk": "Үлкен стилистіміздің жұмысы",
+          "pt": "Trabalho do nosso melhor estilista"
         }
       }
     },
@@ -1794,10 +1810,26 @@
       "id": 570,
       "fields": {
         "title": {
-          "ru": "Классический маникюр"
+          "ru": "Классический маникюр",
+          "en": "Classic manicure",
+          "ar": "مانيكير كلاسيكي",
+          "es": "Manicura clásica",
+          "de": "Klassische Maniküre",
+          "fr": "Manucure classique",
+          "hi": "क्लासिक मैनीक्योर",
+          "kk": "Классикалық маникюр",
+          "pt": "Manicure clássica"
         },
         "description": {
-          "ru": "Чистота и идеальная форма"
+          "ru": "Чистота и идеальная форма",
+          "en": "Clean and perfect shape",
+          "ar": "شكل نظيف ومثالي",
+          "es": "Forma limpia y perfecta",
+          "de": "Saubere und perfekte Form",
+          "fr": "Forme propre et parfaite",
+          "hi": "स्वच्छ और सही आकार",
+          "kk": "Таза және мінсіз пішін",
+          "pt": "Forma limpa e perfeita"
         }
       }
     },
@@ -1805,10 +1837,26 @@
       "id": 571,
       "fields": {
         "title": {
-          "ru": "Перманентный макияж губ"
+          "ru": "Перманентный макияж губ",
+          "en": "Permanent lip makeup",
+          "ar": "مكياج الشفاه الدائم",
+          "es": "Maquillaje de labios permanente",
+          "de": "Permanentes Lippen-Make-up",
+          "fr": "Maquillage permanent des lèvres",
+          "hi": "स्थायी होंठ मेकअप",
+          "kk": "Тұрақты ерін макияжы",
+          "pt": "Maquiagem permanente para lábios"
         },
         "description": {
-          "ru": "Естественный контур и цвет"
+          "ru": "Естественный контур и цвет",
+          "en": "Natural contour and color",
+          "ar": "الكونتور واللون الطبيعي",
+          "es": "Contorno y color natural",
+          "de": "Natürliche Kontur und Farbe",
+          "fr": "Contour et couleur naturels",
+          "hi": "प्राकृतिक रूपरेखा और रंग",
+          "kk": "Табиғи контур және түс",
+          "pt": "Contorno e cor naturais"
         }
       }
     },
@@ -1816,10 +1864,26 @@
       "id": 572,
       "fields": {
         "title": {
-          "ru": "SPA-процедуры"
+          "ru": "SPA-процедуры",
+          "en": "SPA treatments",
+          "ar": "علاجات السبا",
+          "es": "Procedimientos de SPA",
+          "de": "SPA-Behandlungen",
+          "fr": "Procédures SPA",
+          "hi": "एसपीए उपचार",
+          "kk": "СПА процедуралары",
+          "pt": "Procedimentos de SPA"
         },
         "description": {
-          "ru": "Релакс и уход за кожей"
+          "ru": "Релакс и уход за кожей",
+          "en": "Relaxation and skin care",
+          "ar": "الاسترخاء والعناية بالبشرة",
+          "es": "Relajación y cuidado de la piel",
+          "de": "Entspannung und Hautpflege",
+          "fr": "Détente et soins de la peau",
+          "hi": "आराम और त्वचा की देखभाल",
+          "kk": "Релаксация және тері күтімі",
+          "pt": "Relaxamento e cuidados com a pele"
         }
       }
     },
@@ -1827,10 +1891,26 @@
       "id": 573,
       "fields": {
         "title": {
-          "ru": "Интерьер салона"
+          "ru": "Интерьер салона",
+          "en": "Interior",
+          "ar": "الصالون الداخلي",
+          "es": "Salón interior",
+          "de": "Interieur des Salons",
+          "fr": "Salon intérieur",
+          "hi": "सैलून इंटीरियर",
+          "kk": "Салон интерьері",
+          "pt": "Salão interior"
         },
         "description": {
-          "ru": "Уютная атмосфера нашего салона"
+          "ru": "Уютная атмосфера нашего салона",
+          "en": "The cozy atmosphere of our salon",
+          "ar": "أجواء الصالون المريحة",
+          "es": "El ambiente acogedor de nuestro salón",
+          "de": "Die gemütliche Atmosphäre unseres Salons",
+          "fr": "L'ambiance cosy de notre salon",
+          "hi": "हमारे सैलून का आरामदायक माहौल",
+          "kk": "Біздің салонның жайлы атмосферасы",
+          "pt": "O ambiente acolhedor do nosso salão"
         }
       }
     },
@@ -1838,10 +1918,26 @@
       "id": 574,
       "fields": {
         "title": {
-          "ru": "SPA зона"
+          "ru": "SPA зона",
+          "en": "SPA zone",
+          "ar": "منطقة السبا",
+          "es": "Zona SPA",
+          "de": "SPA-Bereich",
+          "fr": "Espace SPA",
+          "hi": "एसपीए क्षेत्र",
+          "kk": "СПА аймағы",
+          "pt": "Zona SPA"
         },
         "description": {
-          "ru": "Зона релаксации и отдыха"
+          "ru": "Зона релаксации и отдыха",
+          "en": "Relaxation and rest area",
+          "ar": "منطقة للاسترخاء والترفيه",
+          "es": "Zona de relajación y recreación",
+          "de": "Entspannung und Erholung Bereich",
+          "fr": "Détente et loisirs",
+          "hi": "विश्राम और मनोरंजन क्षेत्र",
+          "kk": "Демалыс және демалыс аймағы",
+          "pt": "Área de relaxamento e lazer"
         }
       }
     },
@@ -1849,10 +1945,26 @@
       "id": 575,
       "fields": {
         "title": {
-          "ru": "Парикмахерский зал"
+          "ru": "Парикмахерский зал",
+          "en": "Hair salon",
+          "ar": "تصفيف الشعر الصالون",
+          "es": "Peluquería",
+          "de": "Friseursalon",
+          "fr": "Salon de coiffure",
+          "hi": "हेयरड्रेसिंग सैलून",
+          "kk": "Шаштараз",
+          "pt": "Salão de cabeleireiro"
         },
         "description": {
-          "ru": "Профессиональное оборудование"
+          "ru": "Профессиональное оборудование",
+          "en": "Professional equipment",
+          "ar": "المعدات الاحترافية",
+          "es": "Equipamiento profesional",
+          "de": "Professionelle Ausstattung",
+          "fr": "Équipement professionnel",
+          "hi": "पेशेवर उपकरण",
+          "kk": "Профессиональное оборудование",
+          "pt": "Equipamento profissional"
         }
       }
     },
@@ -1860,10 +1972,26 @@
       "id": 576,
       "fields": {
         "title": {
-          "ru": "Зона маникюра"
+          "ru": "Зона маникюра",
+          "en": "Manicure area",
+          "ar": "منطقة العناية بالأظافر",
+          "es": "Zona de manicura",
+          "de": "Manikürebereich",
+          "fr": "Espace manucure",
+          "hi": "मैनीक्योर क्षेत्र",
+          "kk": "Маникюр алаңы",
+          "pt": "Área de manicure"
         },
         "description": {
-          "ru": "Комфорт и стерильность"
+          "ru": "Комфорт и стерильность",
+          "en": "Comfort and sterility",
+          "ar": "الراحة والعقم",
+          "es": "Comodidad y esterilidad",
+          "de": "Komfort und Sterilität",
+          "fr": "Confort et stérilité",
+          "hi": "आराम और बाँझपन",
+          "kk": "Ыңғайлылық және стерильділік",
+          "pt": "Conforto e esterilidade"
         }
       }
     },
@@ -1871,10 +1999,26 @@
       "id": 577,
       "fields": {
         "title": {
-          "ru": "Кабинет массажа"
+          "ru": "Кабинет массажа",
+          "en": "Massage room",
+          "ar": "غرفة التدليك",
+          "es": "Sala de masajes",
+          "de": "Massageraum",
+          "fr": "Salle de massage",
+          "hi": "मालिश कक्ष",
+          "kk": "Массаж бөлмесі",
+          "pt": "Sala de massagem"
         },
         "description": {
-          "ru": "Расслабляющая атмосфера"
+          "ru": "Расслабляющая атмосфера",
+          "en": "Relaxing atmosphere",
+          "ar": "أجواء مريحة",
+          "es": "Ambiente relajante",
+          "de": "Entspannende Atmosphäre",
+          "fr": "Atmosphère relaxante",
+          "hi": "आरामदायक वातावरण",
+          "kk": "Тыныштандыратын атмосфера",
+          "pt": "Atmosfera relaxante"
         }
       }
     },
@@ -1882,10 +2026,26 @@
       "id": 578,
       "fields": {
         "title": {
-          "ru": "Маникюр"
+          "ru": "Маникюр",
+          "en": "Manicure",
+          "ar": "مانيكير",
+          "es": "Manicura",
+          "de": "Maniküre",
+          "fr": "Manucure",
+          "hi": "मैनीक्योर",
+          "kk": "Маникюр",
+          "pt": "Manicure"
         },
         "description": {
-          "ru": "Профессиональный маникюр"
+          "ru": "Профессиональный маникюр",
+          "en": "Professional manicure",
+          "ar": "مانيكير احترافي",
+          "es": "Manicura profesional",
+          "de": "Professionelle Maniküre",
+          "fr": "Manucure professionnelle",
+          "hi": "पेशेवर मैनीक्योर",
+          "kk": "Кәсіби маникюр",
+          "pt": "Manicure profissional"
         }
       }
     },
@@ -1893,10 +2053,26 @@
       "id": 579,
       "fields": {
         "title": {
-          "ru": "Массаж лица"
+          "ru": "Массаж лица",
+          "en": "Facial massage",
+          "ar": "تدليك للوجه",
+          "es": "Masaje facial",
+          "de": "Gesichtsmassage",
+          "fr": "Massage du visage",
+          "hi": "चेहरे की मालिश",
+          "kk": "Бет массажы",
+          "pt": "Massagem facial"
         },
         "description": {
-          "ru": "Омолаживающий массаж"
+          "ru": "Омолаживающий массаж",
+          "en": "Rejuvenating massage",
+          "ar": "تدليك مجدد",
+          "es": "Masaje rejuvenecedor",
+          "de": "Verjüngungsmassage",
+          "fr": "Massage rajeunissant",
+          "hi": "कायाकल्प करने वाली मालिश",
+          "kk": "Жасартатын массаж",
+          "pt": "Massagem rejuvenescedora"
         }
       }
     },
@@ -1904,10 +2080,26 @@
       "id": 580,
       "fields": {
         "title": {
-          "ru": "SPA"
+          "ru": "SPA",
+          "en": "SPA",
+          "ar": "SPA",
+          "es": "SPA",
+          "de": "SPA",
+          "fr": "SPA",
+          "hi": "SPA",
+          "kk": "SPA",
+          "pt": "SPA"
         },
         "description": {
-          "ru": "Релакс процедуры"
+          "ru": "Релакс процедуры",
+          "en": "Relaxing procedures",
+          "ar": "إجراءات الاسترخاء",
+          "es": "Procedimientos relajantes",
+          "de": "Entspannende Behandlungen",
+          "fr": "Procédures relaxantes",
+          "hi": "आरामदायक प्रक्रियाएं",
+          "kk": "Босаңсыту процедуралары",
+          "pt": "Procedimentos relaxantes"
         }
       }
     },
@@ -1915,10 +2107,26 @@
       "id": 581,
       "fields": {
         "title": {
-          "ru": "Стрижка"
+          "ru": "Стрижка",
+          "en": "Haircut",
+          "ar": "قص الشعر",
+          "es": "Corte de pelo",
+          "de": "Haarschnitt",
+          "fr": "Coupe de cheveux",
+          "hi": "बाल कटवाना",
+          "kk": "Шаш қию",
+          "pt": "Corte de cabelo"
         },
         "description": {
-          "ru": "Профессиональная стрижка"
+          "ru": "Профессиональная стрижка",
+          "en": "Professional haircut",
+          "ar": "قصة شعر احترافية",
+          "es": "Corte de pelo profesional",
+          "de": "Professioneller Haarschnitt",
+          "fr": "Coupe de cheveux professionnelle",
+          "hi": "पेशेवर बाल कटवाने",
+          "kk": "Кәсіби шаш қию",
+          "pt": "Corte de cabelo profissional"
         }
       }
     }
