@@ -1,0 +1,69 @@
+{
+  "buttons": {
+    "cancel": "إلغاء",
+    "create_challenge": "أنشئ هدفًا",
+    "update_challenge": "حفظ التغييرات"
+  },
+  "card": {
+    "check_progress": "التحقق من التقدم",
+    "completed": "مكتمل",
+    "progress": "التقدم",
+    "pts": "النقاط",
+    "reward": "مكافأة",
+    "target": "الهدف"
+  },
+  "create_challenge": "إنشاء جديد الهدف",
+  "dialogs": {
+    "create": {
+      "description": "إعداد معلمات النشاط ومكافأة الإكمال",
+      "form": {
+        "challenge_type": "نوع النشاط",
+        "description": "وصف المهمة",
+        "description_placeholder": "على سبيل المثال: قم بزيارة الصالون {{count}} مرات هذا الشهر",
+        "end_date": "تاريخ الانتهاء",
+        "reward_placeholder": "{{points}}",
+        "reward_points": "نقاط المكافأة",
+        "start_date": "ابدأ التاريخ",
+        "target_placeholder": "{{count}}",
+        "target_value": "المبلغ المستهدف",
+        "title": "اسم الهدف",
+        "title_placeholder": "على سبيل المثال: تجديد الصيف"
+      },
+      "title": "إنشاء هدف",
+      "title_edit": "تعديل هدف"
+    },
+    "delete": {
+      "confirm": "هل أنت متأكد من رغبتك في حذف هذا النشاط؟ سيتم فقدان كل التقدم الذي أحرزه المشاركون."
+    }
+  },
+  "stats": {
+    "active_challenges": "الأهداف النشطة",
+    "completions": "مكتملة",
+    "total_participants": "المشاركين"
+  },
+  "statuses": {
+    "active": "نشطة",
+    "completed": "مكتملة",
+    "upcoming": "قادمة"
+  },
+  "subtitle": "إدارة آليات اللعبة وأهدافها لزيادة ولاء العملاء",
+  "title": "الأهداف والإنجازات",
+  "toasts": {
+    "created": "تم إنشاء النشاط بنجاح",
+    "deleted": "تم حذف النشاط",
+    "failed_check_progress": "فشل تحديث التقدم",
+    "failed_create": "خطأ عند إنشاء النشاط",
+    "failed_delete": "حدث خطأ عند الحذف",
+    "failed_load": "فشل تحميل البيانات",
+    "progress_checked_few": "تم تحديث التقدم لأعضاء {{count}}",
+    "progress_checked_many": "تم تحديث التقدم لأعضاء {{count}}",
+    "progress_checked_one": "تم تحديث التقدم لـ {{count}} الأعضاء",
+    "progress_checked_other": "تم تحديث التقدم لأعضاء {{count}}"
+  },
+  "types": {
+    "referrals": "الإحالات",
+    "services": "الخدمات",
+    "spending": "الإنفاق",
+    "visits": "الزيارات"
+  }
+}

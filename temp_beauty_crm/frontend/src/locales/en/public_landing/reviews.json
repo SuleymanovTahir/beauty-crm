@@ -1,0 +1,67 @@
+{
+  "items": [
+    {
+      "author_name": "Anna Petrova",
+      "employee_name": "",
+      "employee_position": "Перманентный макияж",
+      "rating": 5,
+      "text": "Потрясающий салон! Мастера - настоящие профессионалы. Делала перманентный макияж бровей, результат превзошел все ожидания. Очень естественно и красиво."
+    },
+    {
+      "author_name": "Sarah Jenkins",
+      "employee_name": "",
+      "employee_position": "Eyelashes",
+      "rating": 5,
+      "text": "Лучший салон красоты в Дубае!"
+    },
+    {
+      "author_name": "Elena Smirnova",
+      "employee_name": "",
+      "employee_position": "Manicure and pedicure",
+      "rating": 5,
+      "text": "Хожу сюда уже год на маникюр и педикюр. Всегда идеально чисто, стерильно и качественно. Рекомендую всем подругам!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Уход за лицом",
+      "rating": 5,
+      "text": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!"
+    },
+    {
+      "author_name": "Fatima Al-Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Отличный сервис и профессиональный персонал."
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Уход за лицом",
+      "rating": 5,
+      "text": "Потрясающий салон! Мастера настоящие профессионалы. Маникюр держится больше 3 недель, а результат превосходит все ожидания. Обязательно вернусь!"
+    },
+    {
+      "author_name": "Fatima Al-Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Делала окрашивание волос - результат просто шикарный! Цвет получился именно такой, как я хотела. Спасибо за профессионализм!"
+    },
+    {
+      "author_name": "Fatima Al-Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5,
+      "text": "Прекрасный сервис! Записалась онлайн за пару минут, пришла вовремя, без ожидания. Мастер сделала все быстро и качественно. Очень довольна!"
+    },
+    {
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Уход за лицом",
+      "rating": 5,
+      "text": "The best salon in Dubai! "
+    }
+  ]
+}

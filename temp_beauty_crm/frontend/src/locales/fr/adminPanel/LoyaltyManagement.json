@@ -1,0 +1,89 @@
+{
+  "adjust_points": "Modifier le solde de points",
+  "buttons": {
+    "add_rule": "Ajouter règle",
+    "adjust_points": "Modifier le solde",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "save_changes": "Enregistrer les modifications"
+  },
+  "categories": {
+    "category": "Catégorie",
+    "category_placeholder": "à la date ex. Manucure",
+    "description": "Configurer des multiplicateurs de points pour des catégories de services individuelles",
+    "multiplier": "Multiplicateur",
+    "title": "Multiplicateurs de catégorie"
+  },
+  "config": {
+    "cashback_hint": "Exemple : {{percent}}% de cashback ({{points}} points pour chaque {{unit}} dépensé)",
+    "cashback_rate": "Remise en argent (%)",
+    "description": "Paramètres de base du programme de fidélité",
+    "expiration_days": "Durée de validité des points (jours)",
+    "expiration_hint": "Les points seront automatiquement annulés après l'heure spécifiée.",
+    "points_per_unit": "points pour 1 unité. monnaies",
+    "title": "Paramètres globaux"
+  },
+  "confirm_delete_rule": "Êtes-vous sûr de vouloir supprimer cette règle ?",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "E-mail du client",
+      "client_email_placeholder": "Entrez l'e-mail pour lier",
+      "description": "Ajustement manuel du solde de points",
+      "points": "Nombre de points",
+      "points_placeholder": "à la date exemple. 100 ou -100",
+      "reason": "Raison",
+      "reason_placeholder": "Précisez la raison du changement",
+      "title": "Changement de solde"
+    },
+    "edit_tier": {
+      "description": "Paramétrage des conditions d'obtention d'un niveau de privilège",
+      "discount_percent": "Pourcentage de remise",
+      "min_points": "Seuil minimum de points",
+      "tier_name": "Nom du niveau",
+      "title": "Niveau d'édition"
+    },
+    "rule": {
+      "description": "Coefficient d'accumulation personnel pour la catégorie",
+      "title": "Règle de catégorie"
+    }
+  },
+  "stats": {
+    "active_members": "Participants au programme",
+    "points_redeemed": "points débités",
+    "total_points_issued": "Total accumulé"
+  },
+  "subtitle": "Gérer les remises, les niveaux de privilèges et les règles d'accumulation de points",
+  "tiers": {
+    "description": "Niveaux de fidélité pour la segmentation des clients",
+    "discount": "{{percent}}% de réduction",
+    "from_points": "à partir de {{points}} points",
+    "starting_level": "Niveau de départ",
+    "title": "Niveaux de privilège"
+  },
+  "title": "Programme de fidélité",
+  "toasts": {
+    "config_updated": "Paramètres enregistrés",
+    "failed_adjust": "Échec de la modification du solde",
+    "failed_delete": "Erreur lors de la suppression",
+    "failed_load": "Échec du chargement des données",
+    "failed_save": "Erreur lors de la sauvegarde",
+    "failed_update": "Erreur lors de la mise à jour",
+    "points_adjusted_add": "{{count}} points accumulés",
+    "points_adjusted_deduct": "Annulation de {{count}} points",
+    "rule_deleted": "Règle réussie supprimé",
+    "rule_saved": "Règle enregistrée",
+    "tier_updated": "Données de niveau mises à jour"
+  },
+  "transactions": {
+    "description": "Historique des transactions de points de fidélité",
+    "search_placeholder": "Recherche à la date client...",
+    "table": {
+      "client": "Client",
+      "date": "Date",
+      "points": "Points",
+      "reason": "Raison",
+      "type": "Type"
+    },
+    "title": "Dernières transactions"
+  }
+}

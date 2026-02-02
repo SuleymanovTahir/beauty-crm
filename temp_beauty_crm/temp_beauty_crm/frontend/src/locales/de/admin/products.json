@@ -1,0 +1,72 @@
+{
+  "addProduct": "Produkt hinzufügen",
+  "allCategories": "Alle Kategorien",
+  "analytics": {
+    "avgPrice": "Durchschn. Preis",
+    "last30Days": "Für {{count}} Tage",
+    "last30Days_one": "",
+    "last30Days_few": "",
+    "last30Days_many": "",
+    "last30Days_other": "",
+    "revenue": "Umsatz",
+    "totalSold": "Gesamtverkauft"
+  },
+  "createFirst": "Das erste Produkt zum System hinzufügen",
+  "delete": "Löschen",
+  "detail": {
+    "costPriceLabel": "Kosten: {{price}} {{currency}}",
+    "inStock_one": "Auf Lager {{count}} Stk.",
+    "inStock_few": "Auf Lager {{count}} Stk.",
+    "inStock_many": "Auf Lager {{count}} Stk.",
+    "inStock_other": "Auf Lager {{count}} Stk.",
+    "loadingData": "Daten werden geladen...",
+    "movementAdjustment": "Anpassung",
+    "movementHistory": "Bewegungshistorie",
+    "movementIn": "Eingang",
+    "movementOut": "Abschreibung",
+    "noCategory": "Keine Kategorie",
+    "noMovements": "Keine Daten zu Bewegungen"
+  },
+  "edit": "Bearbeiten",
+  "form": {
+    "cancel": "Abbrechen",
+    "category": "Kategorie",
+    "costPrice": "Kosten",
+    "isActive": "Aktiv",
+    "minStockLevel": "Mindestguthaben",
+    "name": "Name",
+    "notes": "Notizen",
+    "photos": "Produktfoto",
+    "price": "Verkaufspreis",
+    "save": "Speichern",
+    "sku": "Artikelnummer",
+    "stockQuantity": "Lagerbestand",
+    "upload": "Hochladen",
+    "uploadError": "Fehler beim Laden des Fotos"
+  },
+  "messages": {
+    "confirmDelete": "Sind Sie sicher, dass Sie dieses Produkt löschen möchten?",
+    "noResults": "Für Ihre Anfrage wurde nichts gefunden"
+  },
+  "movement": {
+    "quantity": "Menge",
+    "reason": "Grund",
+    "title": "Produktbewegung",
+    "type": "Bewegungstyp",
+    "types": {
+      "adjustment": "Anpassung",
+      "in": "Eingang",
+      "out": "Ausgang"
+    }
+  },
+  "noProducts": "Noch keine Produkte",
+  "search_placeholder": "Suche nach Name oder Kategorie...",
+  "stock_status": {
+    "in_stock": "Auf Lager",
+    "low_stock": "Wenig",
+    "out_of_stock": "Ausverkauft"
+  },
+  "subtitle": "Produktmanagement und Waagen",
+  "title": "Produkte und Lager",
+  "unit_pcs": "Stk."
+}

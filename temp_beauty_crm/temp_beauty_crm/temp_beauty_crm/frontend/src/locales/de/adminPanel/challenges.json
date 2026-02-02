@@ -1,0 +1,69 @@
+{
+  "buttons": {
+    "cancel": "Abbrechen",
+    "create_challenge": "Ein Ziel erstellen",
+    "update_challenge": "Änderungen speichern"
+  },
+  "card": {
+    "check_progress": "Check Progress",
+    "completed": "abgeschlossen",
+    "progress": "Fortschritt",
+    "pts": "Punkte",
+    "reward": "Belohnung",
+    "target": "Ziel"
+  },
+  "create_challenge": "Neues Ziel erstellen",
+  "dialogs": {
+    "create": {
+      "description": "Aktivitätsparameter und Abschluss festlegen Bonus",
+      "form": {
+        "challenge_type": "Aktivitätstyp",
+        "description": "Aufgabenbeschreibung",
+        "description_placeholder": "Beispiel: Besuchen Sie den Salon diesen Monat {{count}} Mal",
+        "end_date": "Ende Datum",
+        "reward_placeholder": "{{points}}",
+        "reward_points": "Bonuspunkte",
+        "start_date": "Startdatum",
+        "target_placeholder": "{{count}}",
+        "target_value": "Zielbetrag",
+        "title": "Zielname",
+        "title_placeholder": "Beispiel: Sommer-Makeover"
+      },
+      "title": "Ein Ziel erstellen",
+      "title_edit": "Ein Ziel bearbeiten"
+    },
+    "delete": {
+      "confirm": "Sind Sie sicher, dass Sie diese Aktivität löschen möchten? Sämtliche Fortschritte der Teilnehmer gehen verloren."
+    }
+  },
+  "stats": {
+    "active_challenges": "Aktive Ziele",
+    "completions": "Abgeschlossen",
+    "total_participants": "Teilnehmer"
+  },
+  "statuses": {
+    "active": "Aktiv",
+    "completed": "Abgeschlossen",
+    "upcoming": "Kommend"
+  },
+  "subtitle": "Spielmechaniken und Ziele verwalten, um die Kundenbindung zu erhöhen",
+  "title": "Ziele und Erfolge",
+  "toasts": {
+    "created": "Aktivität erfolgreich erstellt",
+    "deleted": "Aktivität gelöscht",
+    "failed_check_progress": "Failed to check progress",
+    "failed_create": "Fehler beim Erstellen der Aktivität",
+    "failed_delete": "Fehler beim Löschen",
+    "failed_load": "Laden fehlgeschlagen Daten",
+    "progress_checked_one": "Fortschritt für {{count}}-Mitglieder aktualisiert",
+    "progress_checked_few": "Fortschritt für {{count}}-Mitglieder aktualisiert",
+    "progress_checked_many": "Fortschritt für {{count}}-Mitglieder aktualisiert",
+    "progress_checked_other": "Fortschritt für {{count}}-Mitglieder aktualisiert"
+  },
+  "types": {
+    "referrals": "Empfehlungen",
+    "services": "Dienste",
+    "spending": "Ausgaben",
+    "visits": "Besuche"
+  }
+}

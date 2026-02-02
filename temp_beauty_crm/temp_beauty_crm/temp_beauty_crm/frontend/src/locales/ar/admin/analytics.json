@@ -1,0 +1,97 @@
+{
+  "analyze_further": "مزيد من التحليل",
+  "apply": "تطبيق",
+  "avg_check": "متوسط الفاتورة",
+  "avg_time": "متوسط الوقت",
+  "booked": "المسجلون",
+  "booking_statuses": "حالات التسجيل",
+  "bookings": "الحجوزات",
+  "bookings_trend": "سجلات الديناميكيات",
+  "clarify_services": "توضيح الخدمات",
+  "completed": "الزائرون",
+  "conversation_stage": "الحوار المرحلة",
+  "conversion": "التحويل",
+  "detailed_analysis": "تحليل تفصيلي لعملية الصالون",
+  "drop_off_analysis": "تحليل المتسربين",
+  "drop_offs": "الإخفاقات",
+  "engaged": "المشاركون",
+  "errors": {
+    "export_failed": "خطأ في تصدير الملف",
+    "invalid_date_range": "يجب أن يكون تاريخ البدء قبل تاريخ الانتهاء",
+    "invalid_period": "فترة غير صالحة",
+    "loading_error": "خطأ في التحميل",
+    "select_both_dates": "حدد كلا التاريخين"
+  },
+  "export": "تصدير",
+  "exporting": "تصدير...",
+  "focus_on_highest_drop_off": "انتبه إلى المرحلة ذات أكبر عدد من الانسحابات",
+  "for_period": "للفترة",
+  "from_visitors": "من الزوار إلى العملاء",
+  "funnel": {
+    "conversion": {
+      "booked_to_completed": "تم الاشتراك -> تمت الزيارة",
+      "booking_to_booked": "البدء -> تم الاشتراك",
+      "engaged_to_booking": "المشاركون -> بدأ التسجيل",
+      "visitor_to_engaged": "الزائر -> المشاركون"
+    },
+    "desc": {
+      "booked": "اكتمل التسجيل",
+      "completed": "الخدمة المقدمة",
+      "engaged": "أظهروا الاهتمام",
+      "started_booking": "فتح نموذج التسجيل",
+      "visitors": "زوار موقع الويب/الشبكات الاجتماعية"
+    },
+    "losses_few": "الخسارة: {{count}}",
+    "losses_many": "الخسارة: {{count}}",
+    "losses_one": "الخسارة: {{count}}",
+    "losses_other": "الخسائر: {{count}}",
+    "stages": {
+      "booked": "تم الاشتراك",
+      "completed": "تمت الزيارة",
+      "engaged": "المشاركون",
+      "started_booking": "تم بدء التسجيل",
+      "visitors": "الزوار"
+    }
+  },
+  "funnel_chart": "الرسم البياني للمسار",
+  "funnel_overview": "مسار تحويل المبيعات",
+  "improve_greeting": "تحسين تحيتك",
+  "income": "الدخل",
+  "min": "دقيقة",
+  "name": "الاسم",
+  "need_more_masters": "تحتاج إلى المزيد من المتخصصين",
+  "optimization_tip": "نصائح للتحسين",
+  "peak_hours": "ساعات الذروة",
+  "per_booking": "لكل إدخال",
+  "percentage": "النسبة المئوية",
+  "quantity": "الكمية",
+  "recommendation": "التوصية",
+  "refresh": "تحديث",
+  "response_time": "زمن الاستجابة",
+  "revenue": "الإيرادات",
+  "services_distribution": "الخدمة التوزيع",
+  "simplify_contact_collection": "تبسيط جمع جهات الاتصال",
+  "stages": {
+    "after_greeting": "بعد التحية",
+    "after_price": "بعد السعر",
+    "no_slots": "لا توجد فتحات مجانية",
+    "service_selection": "اختر الخدمة",
+    "whatsapp_request": "طلب WhatsApp"
+  },
+  "status": {
+    "cancelled": "تم الإلغاء",
+    "completed": "اكتمل",
+    "confirmed": "تم التأكيد",
+    "no_show": "لم يصل",
+    "pending": "في انتظار"
+  },
+  "success": {
+    "file_downloaded": "تم تنزيل الملف بنجاح"
+  },
+  "title": "التحليلات",
+  "top_services": "الخدمات الشائعة",
+  "try_again": "حاول مرة أخرى",
+  "visitors": "الزائرون",
+  "where_clients_leave": "أين يغادر العملاء؟",
+  "work_on_objections": "التعامل من تاريخ الاعتراضات"
+}

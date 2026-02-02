@@ -1,0 +1,43 @@
+{
+  "Book_a_procedure_right_now_and_feel_the_difference": "Запишитесь на процедуру прямо сейчас и почувствуйте разницу",
+  "In_our_salon_experienced_masters_with_international_certificates_work_Each_specialist_has_extensive_experience_and_regularly_upgrades_their_qualifications_to_provide_you_with_services_of_the_highest_quality": "В нашем салоне работают опытные мастера с международными сертификатами. Каждый специалист имеет богатый опыт и регулярно повышает свою квалификацию, чтобы предоставить вам услуги высочайшего качества",
+  "Love_for_our_craft": "Любовь к своему делу",
+  "Meet_our_talented_masters": "Познакомьтесь с нашими талантливыми мастерами",
+  "Our_masters_regularly_upgrade_their_qualifications": "Наши мастера регулярно повышают свою квалификацию",
+  "Our_team_of_professionals": "Наша команда профессионалов",
+  "Over_the_years_we_have_become_one_of_the_leading_beauty_salons_in_Dubai_having_served_over_10_000_satisfied_clients_Our_reputation_is_built_on_trust_professionalism_and_love_for_our_craft": "За эти годы мы стали одним из ведущих салонов красоты в Дубае, обслужив более {{count}} довольных клиентов. Наша репутация построена на доверии, профессионализме и любви к своему делу",
+  "The_principles_we_are_guided_by": "Принципы, которыми мы руководствуемся",
+  "We_are_constantly_evolving_following_the_latest_trends_in_the_beauty_industry_and_using_only_proven_high-quality_materials_and_equipment": "Мы постоянно развиваемся, следуя последним тенденциям индустрии красоты и используя только проверенные высококачественные материалы и оборудование",
+  "We_create_beauty_and_confidence_for_over_10_years_Our_mission_-_to_help_every_woman_feel_beautiful_and_special": "Мы создаем красоту и уверенность уже более {{count}} лет. Наша миссия - помочь каждой женщине почувствовать себя красивой и особенной",
+  "We_love_what_we_do_and_this_is_reflected_in_every_procedure": "Біз өз ісімізді жақсы көреміз және бұл әрбір процедурадан көрінеді",
+  "We_use_only_premium_materials_and_equipment": "Біз тек жоғары сапалы материалдар мен жабдықты пайдаланамыз",
+  "Your_comfort_and_satisfaction_-_our_priority": "Сіздің жайлылығыңыз бен қанағаттануыңыз біздің басты міндетіміз",
+  "cta": {
+    "book_procedure": "Рәсімге жазылу",
+    "ready_to_transform": "Түрлендіруге дайынсыз ба?"
+  },
+  "master_role": "Мастер",
+  "our_salon": "Біздің салон",
+  "our_story": "Біздің әңгіме",
+  "our_team": "Біздің команда",
+  "our_values": "Біздің құндылықтарымыз",
+  "stats": {
+    "awards_and_certificates": "Марапаттар мен сертификаттар",
+    "satisfied_clients": "Қанағаттандырылған клиенттер",
+    "service_types": "Қызмет түрлері",
+    "years_experience": "Көп жылдық тәжірибе"
+  },
+  "title": "Біз туралы",
+  "values": {
+    "client_focus": {
+      "title": "Тұтынушыға назар аудару"
+    },
+    "professionalism": {
+      "title": "Кәсібилік"
+    },
+    "quality": {
+      "title": "Сапа"
+    }
+  },
+  "your_reliable_partner_in_the_world_of_beauty": "сұлулық әлеміндегі сенімді серіктесіңіз"
+}

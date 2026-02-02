@@ -1,0 +1,71 @@
+{
+  "actions": {
+    "hide": "Hide",
+    "show": "Show"
+  },
+  "buttons": {
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "upload": "Herunterladen"
+  },
+  "card": {
+    "featured": "Favoriten",
+    "toggle_featured": "Favoriten umschalten",
+    "uploaded_by": "Hochgeladen {{name}}",
+    "views": "Ansichten"
+  },
+  "dialogs": {
+    "delete": {
+      "confirm": "Sind Sie sicher, dass Sie dieses Foto löschen möchten?"
+    },
+    "upload": {
+      "description": "Neues Foto zur Galerie hinzufügen",
+      "form": {
+        "after_photo": "Nachher-Foto",
+        "before_after": "Vorher/Nachher",
+        "before_photo": "Foto „Vorher“",
+        "category": "Kategorie",
+        "client": "Kunde",
+        "client_hint": "Foto wird in der Galerie des Kunden verfügbar sein",
+        "description": "Beschreibung",
+        "description_placeholder": "Fotobeschreibung",
+        "photo": "Foto",
+        "select_client": "Kunde auswählen",
+        "single_photo": "Ein Foto",
+        "title": "Name",
+        "title_placeholder": "Fotoname",
+        "upload_type": "Upload-Typ"
+      },
+      "title": "Foto hochladen"
+    }
+  },
+  "empty": {
+    "description": "Die ersten Fotos in die Galerie hochladen",
+    "title": "Noch keine Fotos"
+  },
+  "filters": {
+    "all_categories": "Alle Kategorien",
+    "search_placeholder": "Fotos suchen..."
+  },
+  "stats": {
+    "featured_photos": "Lieblingsfotos",
+    "recent_uploads": "Neueste Uploads",
+    "total_photos": "Fotos insgesamt",
+    "total_views": "Ansichten insgesamt"
+  },
+  "subtitle": "Kundenfotos und Portfolio verwalten",
+  "title": "Fotogalerie",
+  "toasts": {
+    "deleted": "Foto erfolgreich gelöscht",
+    "failed_delete": "Foto konnte nicht gelöscht werden",
+    "failed_featured": "Favoritenstatus konnte nicht aktualisiert werden",
+    "failed_load": "Fotos konnten nicht hochgeladen werden",
+    "failed_upload": "Hochladen fehlgeschlagen Foto",
+    "failed_visibility": "Failed to update visibility",
+    "featured_updated": "Favoritenstatus aktualisiert",
+    "select_both_photos": "Please select both before and after photos",
+    "uploaded": "Foto erfolgreich hochgeladen",
+    "visibility_updated": "Visibility updated"
+  },
+  "upload_photo": "Foto hochladen"
+}

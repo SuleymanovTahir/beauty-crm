@@ -1,0 +1,11 @@
+{
+  "create_permission": "बनाएं",
+  "delete_permission": "हटाएं",
+  "edit_permission": "संपादन",
+  "error_changing_permissions": "अधिकार बदलने में त्रुटि",
+  "error_loading_permissions": "पहुंच अधिकार लोड करने में त्रुटि",
+  "error_loading_users": "उपयोगकर्ताओं को लोड करने में त्रुटि",
+  "permission_granted": "अधिकार दिया गया",
+  "permission_revoked": "अधिकार निरस्त किया गया",
+  "view_permission": "देखें"
+}

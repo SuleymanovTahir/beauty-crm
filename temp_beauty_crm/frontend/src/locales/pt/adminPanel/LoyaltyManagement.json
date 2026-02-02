@@ -1,0 +1,89 @@
+{
+  "adjust_points": "Alterar saldo de pontos",
+  "buttons": {
+    "add_rule": "Adicionar regra",
+    "adjust_points": "Alterar saldo",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "save_changes": "Salvar alterações"
+  },
+  "categories": {
+    "category": "Categoria",
+    "category_placeholder": "Ex.: Manicure",
+    "description": "Configure multiplicadores de pontos para categorias de serviço individuais",
+    "multiplier": "Multiplicador",
+    "title": "Multiplicadores de categoria"
+  },
+  "config": {
+    "cashback_hint": "Exemplo: {{percent}}% de reembolso ({{points}} pontos para cada {{unit}} gasto)",
+    "cashback_rate": "Reembolso (%)",
+    "description": "Configurações básicas do programa de fidelidade",
+    "expiration_days": "Período de validade dos pontos (dias)",
+    "expiration_hint": "Os pontos serão cancelados automaticamente após o tempo especificado.",
+    "points_per_unit": "pontos até data 1 unidade. moedas",
+    "title": "Configurações globais"
+  },
+  "confirm_delete_rule": "Tem certeza de que deseja excluir esta regra?",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "E-mail do cliente",
+      "client_email_placeholder": "Insira o e-mail para vincular",
+      "description": "Ajuste manual do saldo de pontos",
+      "points": "Número de pontos",
+      "points_placeholder": "Ex. 100 ou -100",
+      "reason": "Motivo",
+      "reason_placeholder": "Especifique o motivo da alteração",
+      "title": "Alteração de saldo"
+    },
+    "edit_tier": {
+      "description": "Configuração de condições para obtenção de um nível de privilégio",
+      "discount_percent": "Porcentagem de desconto",
+      "min_points": "Limite mínimo de pontos",
+      "tier_name": "Nome do nível",
+      "title": "Nível de edição"
+    },
+    "rule": {
+      "description": "Coeficiente de acúmulo pessoal para a categoria",
+      "title": "Regra da categoria"
+    }
+  },
+  "stats": {
+    "active_members": "Participantes do programa",
+    "points_redeemed": "pontos deduzidos",
+    "total_points_issued": "Total acumulado"
+  },
+  "subtitle": "Gerenciar descontos, níveis de privilégio e regras de acúmulo de pontos",
+  "tiers": {
+    "description": "Níveis de fidelidade para segmentação de clientes",
+    "discount": "{{percent}}% de desconto",
+    "from_points": "de {{points}} pontos",
+    "starting_level": "Nível inicial",
+    "title": "Níveis de privilégio"
+  },
+  "title": "Programa de fidelidade",
+  "toasts": {
+    "config_updated": "Configurações salvas",
+    "failed_adjust": "Falha ao alterar o saldo",
+    "failed_delete": "Erro ao excluir",
+    "failed_load": "Falha ao carregar dados",
+    "failed_save": "Erro ao salvar",
+    "failed_update": "Erro ao atualizar",
+    "points_adjusted_add": "{{count}} pontos acumulados",
+    "points_adjusted_deduct": "{{count}} pontos amortizados",
+    "rule_deleted": "Regra com sucesso excluída",
+    "rule_saved": "Regra salva",
+    "tier_updated": "Dados de nível atualizados"
+  },
+  "transactions": {
+    "description": "Histórico de transações de pontos de fidelidade",
+    "search_placeholder": "Pesquisa até data cliente...",
+    "table": {
+      "client": "Cliente",
+      "date": "Data",
+      "points": "Pontos",
+      "reason": "Motivo",
+      "type": "Tipo"
+    },
+    "title": "Últimas transações"
+  }
+}

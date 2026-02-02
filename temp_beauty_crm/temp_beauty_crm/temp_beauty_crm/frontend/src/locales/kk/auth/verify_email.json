@@ -1,0 +1,21 @@
+{
+  "back_to_login": "Кіруге қайту",
+  "code_length_error": "Код 6 саннан тұруы керек",
+  "confirm_button": "Растау",
+  "email_not_found": "Электрондық пошта табылмады. Жүйеге қайта кіріңіз.",
+  "email_verified": "Электрондық пошта расталды!",
+  "email_verified_login": "Электрондық пошта расталды! Жүйеге кіру...",
+  "email_verified_login_message": "Электрондық пошта расталды. Жүйеге кіріңіз.",
+  "email_verified_title": "Электрондық пошта расталды!",
+  "enter_6_digit_code": "Электрондық поштадағы 6 таңбалы кодты енгізіңіз",
+  "enter_code_from_email": "Жіберілген электрондық поштадағы кодты енгізіңіз:",
+  "new_code_sent": "Электрондық поштаңызға жаңа код жіберілді",
+  "redirecting_login": "Кіру бетіне қайта бағытталды...",
+  "resend_code": "Кодты қайта жіберу",
+  "send_code_error": "Кодты жіберу қатесі",
+  "verification_code_label": "Растау коды",
+  "verification_error": "Электрондық поштаны растау қатесі",
+  "verification_error_short": "Тексеру қатесі",
+  "verify_email_title": "Электрондық поштаны растау",
+  "verifying": "Тексерілуде..."
+}

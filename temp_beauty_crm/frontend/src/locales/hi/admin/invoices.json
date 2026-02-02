@@ -1,0 +1,79 @@
+{
+  "actions": "कार्रवाई",
+  "addInvoice": "चालान बनाएं",
+  "addPayment": "भुगतान जोड़ें",
+  "allInvoices": "सभी चालान",
+  "allStatuses": "सभी स्थितियाँ",
+  "board": "बोर्ड",
+  "client": "ग्राहक",
+  "delete": "हटाएं",
+  "dueDate": "भुगतान देय तिथि",
+  "errors": {
+    "createError": "चालान बनाने में त्रुटि।",
+    "deleteError": "चालान हटाने में त्रुटि।",
+    "paymentError": "भुगतान जोड़ने में त्रुटि",
+    "sendError": "चालान भेजने में त्रुटि",
+    "updateError": "स्थिति अद्यतन करने में विफल"
+  },
+  "form": {
+    "addItem": "आइटम जोड़ें",
+    "cancel": "रद्द करें",
+    "dueDate": "भुगतान अवधि",
+    "itemName": "नाम",
+    "itemPrice": "मूल्य",
+    "itemQuantity": "मात्रा",
+    "items": "चालान आइटम",
+    "notes": "नोट्स",
+    "save": "सहेजें",
+    "selectClient": "ग्राहक का चयन करें"
+  },
+  "invoiceNumber": "खाता संख्या",
+  "manage_stages": "कॉलम",
+  "messages": {
+    "confirmDelete": "क्या आप वाकई इस चालान को हटाना चाहते हैं?",
+    "invoiceCreated": "चालान बनाया गया",
+    "invoiceDeleted": "खाता हटाया गया",
+    "invoiceSent": "चालान भेजा गया",
+    "invoiceUpdated": "चालान अपडेट किया गया",
+    "paymentAdded": "भुगतान जोड़ा गया"
+  },
+  "noInvoices": "अभी तक कोई चालान नहीं",
+  "paidAmount": "भुगतान किया गया",
+  "payment": {
+    "add": "जोड़ें",
+    "amount": "राशि",
+    "method": "भुगतान विधि",
+    "methods": {
+      "card": "कार्ड",
+      "cash": "नकद",
+      "online": "ऑनलाइन",
+      "transfer": "स्थानांतरण"
+    },
+    "notes": "नोट्स",
+    "title": "भुगतान जोड़ें"
+  },
+  "search_placeholder": "नंबर या क्लाइंट द्वारा खोजें...",
+  "sendButton": "भेजें",
+  "sendDialog": {
+    "email": "इलेक्ट्रॉनिक मेल",
+    "method": "भेजने का तरीका",
+    "recipient": "प्राप्तकर्ता",
+    "sendButton": "भेजें",
+    "telegram": "टेलीग्राम",
+    "title": "चालान भेजें",
+    "whatsapp": "व्हाट्सएप"
+  },
+  "status": "स्थिति",
+  "statuses": {
+    "cancelled": "रद्द कर दिया गया",
+    "draft": "मसौदा",
+    "overdue": "अतिदेय",
+    "paid": "चुकाया गया",
+    "partial": "आंशिक रूप से भुगतान किया गया",
+    "partially_paid": "आंशिक रूप से भुगतान किया",
+    "sent": "भेजा"
+  },
+  "subtitle": "बिल और भुगतान प्रबंधित करें",
+  "title": "खाते",
+  "totalAmount": "राशि"
+}

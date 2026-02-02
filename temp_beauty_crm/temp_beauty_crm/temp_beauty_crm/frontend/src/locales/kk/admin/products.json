@@ -1,0 +1,72 @@
+{
+  "addProduct": "Өнімді қосу",
+  "allCategories": "Барлық санаттар",
+  "analytics": {
+    "avgPrice": "Орт. баға",
+    "last30Days": "{{count}} күн ішінде",
+    "last30Days_few": "",
+    "last30Days_many": "",
+    "last30Days_one": "",
+    "last30Days_other": "",
+    "revenue": "Табыс",
+    "totalSold": "Барлығы сатылған"
+  },
+  "createFirst": "Жүйеге бірінші өнімді қосу",
+  "delete": "Жою",
+  "detail": {
+    "costPriceLabel": "Құны: {{price}} {{currency}}",
+    "inStock_few": "Қоймада {{count}} дана.",
+    "inStock_many": "Қоймада {{count}} дана.",
+    "inStock_one": "Қоймада {{count}} дана.",
+    "inStock_other": "Қоймада {{count}} дана.",
+    "loadingData": "Деректер жүктелуде...",
+    "movementAdjustment": "Реттеу",
+    "movementHistory": "Қозғалыстардың тарихы",
+    "movementIn": "Түбіртек",
+    "movementOut": "Есептен шығару",
+    "noCategory": "Санат жоқ",
+    "noMovements": "Қозғалыс деректері жоқ"
+  },
+  "edit": "Өңдеу",
+  "form": {
+    "cancel": "Болдырмау",
+    "category": "Санат",
+    "costPrice": "Құн бағасы",
+    "isActive": "Белсенді",
+    "minStockLevel": "Ең төменгі теңгерім",
+    "name": "Аты",
+    "notes": "Ескертпелер",
+    "photos": "Өнім фотосы",
+    "price": "Сату бағасы",
+    "save": "Сақтау",
+    "sku": "Мақаланың нөмірі",
+    "stockQuantity": "Қалған қор",
+    "upload": "Жүктеу балансы",
+    "uploadError": "Фотосуретті жүктеу қатесі"
+  },
+  "messages": {
+    "confirmDelete": "Бұл өнімді шынымен жойғыңыз келе ме?",
+    "noResults": "Сұранысыңыз бойынша ешнәрсе табылмады"
+  },
+  "movement": {
+    "quantity": "Саны",
+    "reason": "Себебі",
+    "title": "Өнім қозғалысы",
+    "type": "Қозғалыс түрі",
+    "types": {
+      "adjustment": "Реттеу",
+      "in": "Түбіртек",
+      "out": "Тұтыну"
+    }
+  },
+  "noProducts": "Әзірге өнім жоқ",
+  "search_placeholder": "Тақырып немесе санат бойынша іздеу...",
+  "stock_status": {
+    "in_stock": "Қоймада бар",
+    "low_stock": "Аз",
+    "out_of_stock": "Қоймада жоқ"
+  },
+  "subtitle": "Тауарлар мен баланстарды басқару",
+  "title": "Өнімдерді және қойманы",
+  "unit_pcs": "дана"
+}

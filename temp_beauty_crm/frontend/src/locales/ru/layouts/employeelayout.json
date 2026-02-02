@@ -1,0 +1,11 @@
+{
+  "crm": "CRM",
+  "employee": "Сотрудник",
+  "logout": "Выйти",
+  "menu": {
+    "calendar": "Календарь",
+    "my_bookings": "Мои бронирования",
+    "profile": "Профиль",
+    "settings": "Настройки"
+  }
+}

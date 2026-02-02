@@ -1,0 +1,69 @@
+{
+  "booking_and_cancellation": "Reservas y cancelaciones",
+  "booking_requirements": "Para registrarse en Tratamientos, debe proporcionar un contacto válido información. Nos reservamos el derecho de confirmar o rechazar su reserva.",
+  "cancellation_policy": "Política de cancelación",
+  "cancellation_policy_text": "El cliente podrá cancelar la cita hasta 24 horas antes de la hora prevista. Si cancela con menos de 24 horas de anticipación, se podrá cobrar una penalidad del 50% del costo del servicio.",
+  "client_obligations": "Antes del procedimiento, el cliente deberá informar al especialista sobre contraindicaciones médicas, alergias o condiciones de salud.",
+  "confidentiality": "Confidencialidad",
+  "contact_info": "Puede contactarnos ante cualquier duda respecto a estos Términos.",
+  "contacts": "Contactos",
+  "dissatisfaction_policy": "Si el resultado no es satisfactorio, el cliente deberá contactar al salón dentro de los 7 días para analizar posibles soluciones.",
+  "general_provisions": "Reglas generales",
+  "general_provisions_text": "Estos Términos de uso rigen el uso que usted haga de los Servicios de M Le Diamant. Al utilizar nuestros servicios, usted acepta estos términos.",
+  "lastUpdated": "Fecha de la última actualización: {{date}}",
+  "last_update_date": "Fecha de la última actualización",
+  "late_arrival": "Si el cliente llega más de 15 minutos tarde, el salón tiene derecho a cancelar la cita o acortar el tiempo del procedimiento.",
+  "medical_contraindications": "Contraindicaciones médicas",
+  "payment_details": "El pago es Realizado en efectivo o con tarjeta después de la prestación de los servicios. El costo de los servicios se indica en la lista de precios y está sujeto a cambios sin previo aviso.",
+  "payment_for_services": "Pago de los servicios",
+  "privacy_commitment": "Respetamos su privacidad y nos comprometemos a proteger su información personal cuenta con nuestra política de privacidad.",
+  "quality_guarantee": "Garantizamos la calidad de los materiales utilizados y la profesionalidad de nuestros artesanos. Los resultados del procedimiento pueden variar dependiendo de las características individuales del cliente.",
+  "salon_liability": "Si el cliente oculta información sobre contraindicaciones médicas, el salón no es responsable de las consecuencias de los procedimientos.",
+  "sections": {
+    "booking": {
+      "booking_requirements": "Para registrarse para los Procedimientos, debe proporcionar información de contacto válida. Nos reservamos el derecho de confirmar o rechazar su reserva.",
+      "cancellationText": "El cliente podrá cancelar la cita hasta 24 horas antes de la hora prevista. Si cancela con menos de 24 horas de antelación, se podrá cobrar una penalización del 50% del coste del servicio.",
+      "cancellationTitle": "Cancelar suscripción:",
+      "title": "2. Reservas y cancelaciones"
+    },
+    "changes": {
+      "content": "Nos reservamos el derecho de cambiar estos Términos de uso en cualquier momento. Los cambios entran en vigor desde el momento de su reserva en el sitio web.",
+      "title": "7. Cambios en los Términos de uso"
+    },
+    "contact": {
+      "address": "Dirección",
+      "description": "Puede contactarnos si tiene alguna pregunta sobre estos Términos:",
+      "email": "Dirección de correo electrónico",
+      "phone": "Teléfono",
+      "title": "8. Contactos"
+    },
+    "general": {
+      "content": "Estos Términos de uso rigen su uso de los Servicios {{salonName}}. Al utilizar nuestros servicios, usted acepta estos términos.",
+      "title": "1. Reglas generales"
+    },
+    "medical": {
+      "paragraph1": "Antes del procedimiento, el cliente debe informar al especialista sobre contraindicaciones médicas, alergias o condiciones de salud.",
+      "paragraph2": "Si el cliente oculta información sobre contraindicaciones médicas, el salón no se hace responsable de las consecuencias de los procedimientos.",
+      "title": "4. Contraindicaciones médicas."
+    },
+    "payment": {
+      "paragraph1": "El pago se realiza en efectivo o con tarjeta una vez prestado el servicio. El costo de los servicios está indicado en la lista de precios y puede modificarse sin previo aviso.",
+      "paragraph2": "Si el cliente llega más de 15 minutos tarde, el salón tiene derecho a cancelar la cita o acortar el tiempo del procedimiento.",
+      "title": "3. Pago de servicios"
+    },
+    "privacy": {
+      "content": "Respetamos su privacidad y nos comprometemos a proteger su información personal cuenta con nuestra <link>Política de Privacidad</link>.",
+      "title": "6. Confidencialidad"
+    },
+    "warranty": {
+      "paragraph1": "Garantizamos la calidad de los materiales utilizados y la profesionalidad de nuestros artesanos. Los resultados del procedimiento pueden variar dependiendo de las características individuales del cliente.",
+      "paragraph2": "Si el resultado no es satisfactorio, el cliente debe comunicarse con el salón dentro de los 7 días para discutir posibles soluciones.",
+      "title": "5. Garantías y responsabilidad"
+    }
+  },
+  "terms_changes": "Cambios en los Términos de uso",
+  "terms_changes_text": "Nos reservamos el derecho de cambiar estos Términos de uso en cualquier momento. Los cambios entran en vigor desde el momento de su reserva en el sitio web.",
+  "terms_of_use": "Condiciones de uso",
+  "title": "Condiciones de uso",
+  "warranties_and_liability": "Garantías y responsabilidad"
+}

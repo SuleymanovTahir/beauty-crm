@@ -1,0 +1,33 @@
+{
+  "confirm_empty_trash": "¿Estás seguro de que deseas eliminar permanentemente todos los elementos de la Papelera?",
+  "delete_selected": "Eliminar los seleccionados",
+  "empty_desc": "Los elementos eliminados aparecerán aquí",
+  "empty_title": "La Papelera de reciclaje está vacía",
+  "empty_trash": "Vaciar la Papelera de reciclaje",
+  "filter_all": "Todo",
+  "important_info": "Información importante",
+  "info_desc": "Los elementos de la Papelera de reciclaje se almacenan indefinidamente, pero recomendamos vaciarla periódicamente para mantener un rendimiento óptimo de la base de datos. Restaurar a un empleado también lo devuelve al estado \"Activo\".",
+  "loading": "Cargando datos...",
+  "not_restorable": "No recuperable",
+  "objects_count_one": "Hay {{count}} objeto en la cesta",
+  "objects_count_few": "Objetos en la cesta: {{count}}",
+  "objects_count_many": "Objetos en la cesta: {{count}}",
+  "objects_count_other": "Elementos en la papelera: {{count}}",
+  "permanent_delete": "Eliminar permanentemente",
+  "permanent_delete_confirm": "¿Estás seguro? ¡Esta acción no se puede deshacer!",
+  "restore": "Restaurar",
+  "restore_selected": "Restaurar seleccionado",
+  "search_placeholder": "Buscar hasta fecha ID, motivo o autor...",
+  "subtitle": "Administrar y restaurar datos eliminados",
+  "title": "Papelera",
+  "toast": {
+    "delete_error": "Error durante la eliminación permanente",
+    "delete_success": "Objeto eliminado permanentemente",
+    "empty_error": "Error al vaciar el Reciclaje Papelera",
+    "load_error": "Error al cargar la Papelera de reciclaje",
+    "refreshed": "Actualizado",
+    "restore_error": "No se puede restaurar el objeto",
+    "restore_success": "{{type}} restaurado exitosamente",
+    "trash_emptied": "Carrito vaciado"
+  }
+}

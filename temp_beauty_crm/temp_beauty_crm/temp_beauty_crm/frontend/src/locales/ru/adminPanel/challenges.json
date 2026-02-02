@@ -1,0 +1,69 @@
+{
+  "buttons": {
+    "cancel": "Отмена",
+    "create_challenge": "Создать цель",
+    "update_challenge": "Сохранить изменения"
+  },
+  "card": {
+    "check_progress": "Проверить прогресс",
+    "completed": "завершено",
+    "progress": "Прогресс",
+    "pts": "баллов",
+    "reward": "Награда",
+    "target": "Цель"
+  },
+  "create_challenge": "Создать новую цель",
+  "dialogs": {
+    "create": {
+      "description": "Настройте параметры активности и бонус за выполнение",
+      "form": {
+        "challenge_type": "Тип активности",
+        "description": "Описание задачи",
+        "description_placeholder": "Напр: Посетите салон {{count}} раза в этом месяце",
+        "end_date": "Дата окончания",
+        "reward_placeholder": "{{points}}",
+        "reward_points": "бонусных баллов",
+        "start_date": "Дата начала",
+        "target_placeholder": "{{count}}",
+        "target_value": "Целевое количество",
+        "title": "Название цели",
+        "title_placeholder": "Напр: Летнее преображение"
+      },
+      "title": "Создание цели",
+      "title_edit": "Редактирование цели"
+    },
+    "delete": {
+      "confirm": "Вы уверены, что хотите удалить эту активность? Весь прогресс участников будет потерян."
+    }
+  },
+  "stats": {
+    "active_challenges": "Активных целей",
+    "completions": "Выполнений",
+    "total_participants": "Участников"
+  },
+  "statuses": {
+    "active": "Активный",
+    "completed": "Завершенный",
+    "upcoming": "Предстоящий"
+  },
+  "subtitle": "Управление игровыми механиками и целями для повышения лояльности клиентов",
+  "title": "Цели и достижения",
+  "toasts": {
+    "created": "Активность успешно создана",
+    "deleted": "Активность удалена",
+    "failed_check_progress": "Не удалось обновить прогресс",
+    "failed_create": "Ошибка при создании активности",
+    "failed_delete": "Ошибка при удалении",
+    "failed_load": "Не удалось загрузить данные",
+    "progress_checked_one": "Прогресс обновлен для {{count}} участника",
+    "progress_checked_few": "Прогресс обновлен для {{count}} участников",
+    "progress_checked_many": "Прогресс обновлен для {{count}} участников",
+    "progress_checked_other": "Прогресс обновлен для {{count}} участников"
+  },
+  "types": {
+    "referrals": "Рефералы",
+    "services": "Услуги",
+    "spending": "Траты",
+    "visits": "Визиты"
+  }
+}

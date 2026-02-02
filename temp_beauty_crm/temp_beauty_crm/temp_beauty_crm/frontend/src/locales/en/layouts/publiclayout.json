@@ -1,0 +1,21 @@
+{
+  "about": "About Us",
+  "contacts": "Contacts",
+  "faq": "Frequently Asked Questions",
+  "footer": {
+    "all_rights": "All rights reserved",
+    "contacts": "Contacts",
+    "cooperation": "Cooperation",
+    "description": "Professional beauty salon in Dubai",
+    "privacy_policy": "Privacy Policy",
+    "quick_links": "Quick links",
+    "terms": "Terms of Use",
+    "weekdays": "Weekdays",
+    "weekends": "Weekend",
+    "working_hours": "Opening hours"
+  },
+  "home": "Home",
+  "login": "Login",
+  "personal_cabinet": "Personal account",
+  "price_list": "Price list"
+}

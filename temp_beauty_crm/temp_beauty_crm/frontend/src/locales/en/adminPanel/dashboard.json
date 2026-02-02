@@ -1,0 +1,59 @@
+{
+  "quick_actions": {
+    "challenges": {
+      "description": "Creating and managing goals",
+      "title": "Goals"
+    },
+    "loyalty_management": {
+      "description": "Manage loyalty points and levels",
+      "title": "Loyalty management"
+    },
+    "notifications": {
+      "description": "Sending and managing notifications",
+      "title": "Notifications"
+    },
+    "photo_gallery": {
+      "description": "Client photo and portfolio management",
+      "title": "Photo gallery"
+    },
+    "referral_program": {
+      "description": "View and manage referrals",
+      "title": "Referral program"
+    },
+    "title": "Quick Actions",
+    "user_management": {
+      "description": "Manage user accounts and permissions",
+      "title": "User management"
+    }
+  },
+  "recent_activity": {
+    "challenge_completed_one": "Target \"{{name}}\" completed by {{count}} by user",
+    "challenge_completed_few": "Target \"{{name}}\" completed by {{count}} users",
+    "challenge_completed_many": "Target \"{{name}}\" completed by {{count}} users",
+    "challenge_completed_other": "Target \"{{name}}\" completed by {{count}} users",
+    "day_ago_one": "{{count}} day ago",
+    "day_ago_few": "{{count}} days ago",
+    "day_ago_many": "{{count}} days ago",
+    "day_ago_other": "{{count}} days ago",
+    "hours_ago_one": "{{count}} an hour ago",
+    "hours_ago_few": "{{count}} hours ago",
+    "hours_ago_many": "{{count}} hours ago",
+    "hours_ago_other": "{{count}} hours ago",
+    "new_tier_activated": "New loyalty level activated",
+    "subtitle": "Recent actions in the admin panel",
+    "title": "Recent Activity",
+    "users_registered_one": "{{count}} new user registered",
+    "users_registered_few": "{{count}} new user registered",
+    "users_registered_many": "{{count}} new users registered",
+    "users_registered_other": "{{count}} new users registered"
+  },
+  "stats": {
+    "active_challenges": "Active targets",
+    "from_last_month": "from last month",
+    "loyalty_points_issued": "Loyalty points issued",
+    "total_referrals": "Total referrals",
+    "total_users": "Total users"
+  },
+  "subtitle": "User, loyalty and engagement management",
+  "title": "Control Panel"
+}

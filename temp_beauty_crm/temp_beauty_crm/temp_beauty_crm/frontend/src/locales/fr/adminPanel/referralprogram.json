@@ -1,0 +1,63 @@
+{
+  "buttons": {
+    "cancel": "Annuler",
+    "save_changes": "Enregistrer les modifications"
+  },
+  "current_settings": {
+    "edit": "Modifier",
+    "min_purchase": "Prix d'achat minimum\u00a0: <strong>{{amount}} {{currency}}</strong>",
+    "referred_bonus": "Bonus ami\u00a0: <strong>{{points}} points</strong>",
+    "referrer_bonus": "Bonus invité\u00a0: <strong>{{points}} points</strong>",
+    "title": "Configuration actuelle du bonus"
+  },
+  "dialogs": {
+    "settings": {
+      "description": "Configuration des points bonus et des conditions",
+      "min_purchase_amount": "Valeur d'achat minimale ({{currency}})",
+      "min_purchase_help": "Montant minimum qu'un l'ami doit dépenser pour activer le bonus de parrainage ({{min}} = pas de minimum)",
+      "referred_bonus": "points bonus pour un ami parrainé",
+      "referred_bonus_help": "points attribués à un ami lors de son inscription",
+      "referrer_bonus": "points bonus parrain",
+      "referrer_bonus_help": "points attribués au parrain lorsqu'un ami effectue son premier achat",
+      "title": "Paramètres du programme de parrainage"
+    }
+  },
+  "settings": "Paramètres",
+  "stats": {
+    "completed_referrals": "Parrainages terminés",
+    "points_distributed": "points distribués",
+    "total_referrals": "Total des parrainages"
+  },
+  "subtitle": "Gérer les parrainages et suivre l'efficacité du programme",
+  "table": {
+    "columns": {
+      "date": "Date",
+      "points_awarded": "points attribués",
+      "referred_friend": "Ami invité",
+      "referrer": "Parrain",
+      "status": "Statut"
+    },
+    "description": "Suivi de l'état des parrainages et distribution des points",
+    "filters": {
+      "all_statuses": "All Statuses"
+    },
+    "search_placeholder": "Recherche de parrainages...",
+    "sort": {
+      "date": "Sort by Date",
+      "points": "Sort by Points",
+      "status": "Sort by Status"
+    },
+    "statuses": {
+      "cancelled": "Annulé",
+      "completed": "Terminé",
+      "pending": "En attente"
+    },
+    "title": "Tous les parrainages"
+  },
+  "title": "Programme de parrainage",
+  "toasts": {
+    "failed_load": "Échec du chargement des parrainages",
+    "failed_save": "Échec de l'réservation",
+    "settings_saved": "Paramètres enregistrés avec succès"
+  }
+}

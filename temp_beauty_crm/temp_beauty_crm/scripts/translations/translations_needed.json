@@ -1,0 +1,2489 @@
+{
+  "users": [
+    {
+      "id": 7,
+      "fields": {
+        "position": {
+          "ru": "Director",
+          "key": "users.7.position.7c5ba892",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 6,
+      "fields": {
+        "full_name": {
+          "ru": "JENNIFER",
+          "key": "users.6.full_name.da883156",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "position": {
+          "ru": "Nail Master/Massages",
+          "key": "users.6.position.d68a2270",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 4,
+      "fields": {
+        "full_name": {
+          "ru": "LYAZZAT",
+          "key": "users.4.full_name.cff5b0c9",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "position": {
+          "ru": "Nail Master",
+          "key": "users.4.position.1c34eb1b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 2,
+      "fields": {
+        "full_name": {
+          "ru": "SIMO",
+          "key": "users.2.full_name.3bfe88dd",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "position": {
+          "ru": "Hair Stylist",
+          "key": "users.2.position.18612649",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 3,
+      "fields": {
+        "full_name": {
+          "ru": "MESTAN",
+          "key": "users.3.full_name.6b69b58c",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "position": {
+          "ru": "Hair Stylist",
+          "key": "users.3.position.18612649",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 5,
+      "fields": {
+        "full_name": {
+          "ru": "GULYA",
+          "key": "users.5.full_name.5e43f4f1",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "position": {
+          "ru": "Nail/Waxing",
+          "key": "users.5.position.0e33fa6b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    }
+  ],
+  "public_reviews": [
+    {
+      "id": 47,
+      "fields": {
+        "text_ru": {
+          "ru": "Прекрасный сервис! Записалась онлайн за пару минут, пришла вовремя, без ожидания. Мастер сделала все быстро и качественно. Очень довольна!",
+          "key": "public_reviews.47.text_ru.bb46c753",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Наталья Смирнова",
+          "key": "public_reviews.47.author_name.28218ffa",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 48,
+      "fields": {
+        "text_ru": {
+          "ru": "Делала педикюр и маникюр - все на высшем уровне! Стерильность, качественные материалы, приятная атмосфера. Буду ходить только сюда!",
+          "key": "public_reviews.48.text_ru.81c8b734",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Дарья Козлова",
+          "key": "public_reviews.48.author_name.c4893df8",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 43,
+      "fields": {
+        "text_ru": {
+          "ru": "Потрясающий салон! Мастера настоящие профессионалы. Маникюр держится больше 3 недель, а результат превосходит все ожидания. Обязательно вернусь!",
+          "key": "public_reviews.43.text_ru.f4b19a11",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Анна Петрова",
+          "key": "public_reviews.43.author_name.164fd122",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 44,
+      "fields": {
+        "text_ru": {
+          "ru": "Делала окрашивание волос - результат просто шикарный! Цвет получился именно такой, как я хотела. Спасибо за профессионализм!",
+          "key": "public_reviews.44.text_ru.f42a2ce5",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Мария Соколова",
+          "key": "public_reviews.44.author_name.dd8edd37",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 45,
+      "fields": {
+        "text_ru": {
+          "ru": "Лучший салон в городе! Атмосфера уютная, мастера внимательные. Особенно понравился макияж на свадьбу - держался весь день и выглядел безупречно.",
+          "key": "public_reviews.45.text_ru.c5129847",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Елена Волкова",
+          "key": "public_reviews.45.author_name.9382514c",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 46,
+      "fields": {
+        "text_ru": {
+          "ru": "Хожу в этот салон уже год. Всегда довольна результатом! Цены адекватные, качество на высоте. Рекомендую всем подругам!",
+          "key": "public_reviews.46.text_ru.734026f6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "author_name": {
+          "ru": "Ольга Иванова",
+          "key": "public_reviews.46.author_name.452e6bf7",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    }
+  ],
+  "public_faq": [
+    {
+      "id": 59,
+      "fields": {
+        "question_ru": {
+          "ru": "Какие материалы вы используете%s",
+          "key": "public_faq.59.question_ru.1f0cfd2b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "answer_ru": {
+          "ru": "Мы используем только профессиональные материалы премиум-класса от ведущих мировых брендов: OPI, CND, L'Oreal Professional, Kerastase, MAC и другие. Все продукты сертифицированы и безопасны.",
+          "key": "public_faq.59.answer_ru.6e824550",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 60,
+      "fields": {
+        "question_ru": {
+          "ru": "Есть ли у вас программа лояльности%s",
+          "key": "public_faq.60.question_ru.197f02fb",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "answer_ru": {
+          "ru": "Да, у нас действует накопительная система скидок для постоянных клиентов. При первом посещении вы получаете карту клиента, на которую начисляются бонусы. Также действуют специальные предложения и акции.",
+          "key": "public_faq.60.answer_ru.3fc726f3",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 62,
+      "fields": {
+        "question_ru": {
+          "ru": "Можно ли делать несколько процедур за одно посещение%s",
+          "key": "public_faq.62.question_ru.26732e25",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "answer_ru": {
+          "ru": "Конечно! Вы можете комбинировать различные услуги. Например, маникюр + педикюр, окрашивание + стрижка + укладка. При бронировании нескольких услуг сообщите об этом администратору для корректного планирования времени.",
+          "key": "public_faq.62.answer_ru.457bce90",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 63,
+      "fields": {
+        "question_ru": {
+          "ru": "Есть ли противопоказания к процедурам%s",
+          "key": "public_faq.63.question_ru.615a3428",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "answer_ru": {
+          "ru": "Некоторые процедуры имеют противопоказания (беременность, аллергические реакции, кожные заболевания). Наши мастера проведут консультацию перед процедурой и подберут безопасные варианты.",
+          "key": "public_faq.63.answer_ru.b9babc5f",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 57,
+      "fields": {
+        "question_ru": {
+          "ru": "Как записаться на процедуру%s",
+          "key": "public_faq.57.question_ru.7b5586ea",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "answer_ru": {
+          "ru": "Вы можете записаться онлайн через форму на нашем сайте, позвонив по телефону или написав нам в социальных сетях. Мы работаем ежедневно с 10:30 до 21:30.",
+          "key": "public_faq.57.answer_ru.699bca9c",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 58,
+      "fields": {
+        "question_ru": {
+          "ru": "Можно ли отменить или перенести запись%s",
+          "key": "public_faq.58.question_ru.64c85462",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "answer_ru": {
+          "ru": "Да, вы можете отменить или перенести запись, предупредив нас не менее чем за 24 часа. Просьба сообщать об изменениях заранее, чтобы мы могли предложить время другим клиентам.",
+          "key": "public_faq.58.answer_ru.3aa9d1d7",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 61,
+      "fields": {
+        "question_ru": {
+          "ru": "Сколько времени занимает процедура%s",
+          "key": "public_faq.61.question_ru.0919af6c",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "answer_ru": {
+          "ru": "Длительность зависит от выбранной процедуры. В среднем: маникюр - 60-90 минут, окрашивание волос - 2-3 часа, макияж - 60-90 минут. Точное время уточняйте при записи.",
+          "key": "public_faq.61.answer_ru.1d180689",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 64,
+      "fields": {
+        "question_ru": {
+          "ru": "Какие способы оплаты вы принимаете%s",
+          "key": "public_faq.64.question_ru.c006f792",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "answer_ru": {
+          "ru": "Мы принимаем наличные, банковские карты (Visa, Mastercard), а также оплату через мобильные приложения. Оплата производится после оказания услуги.",
+          "key": "public_faq.64.answer_ru.79ea8e44",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    }
+  ],
+  "services": [
+    {
+      "id": 112,
+      "fields": {
+        "name_ru": {
+          "ru": "Перманентный макияж губ",
+          "key": "services.112.name_ru.0988ebc3",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Стойкий цвет губ",
+          "key": "services.112.description_ru.2c7149ec",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 113,
+      "fields": {
+        "name_ru": {
+          "ru": "Перманентный макияж бровей",
+          "key": "services.113.name_ru.e14e4ffc",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Микроблейдинг или пудровые брови",
+          "key": "services.113.description_ru.d9f305a2",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 114,
+      "fields": {
+        "name_ru": {
+          "ru": "Межресничная стрелка",
+          "key": "services.114.name_ru.faaa31cf",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Подчеркивание линии роста ресниц",
+          "key": "services.114.description_ru.b4db8982",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 115,
+      "fields": {
+        "name_ru": {
+          "ru": "Подводка для глаз",
+          "key": "services.115.name_ru.b6beadab",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Перманентная подводка глаз",
+          "key": "services.115.description_ru.3dea7e3c",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 116,
+      "fields": {
+        "name_ru": {
+          "ru": "Коррекция перманентного макияжа",
+          "key": "services.116.name_ru.58ddfb6f",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Коррекция существующего перманента",
+          "key": "services.116.description_ru.c816bc6a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 117,
+      "fields": {
+        "name_ru": {
+          "ru": "Глубокое бикини",
+          "key": "services.117.name_ru.7945c923",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция зоны бикини",
+          "key": "services.117.description_ru.568f1503",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.117.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 118,
+      "fields": {
+        "name_ru": {
+          "ru": "Линия бикини",
+          "key": "services.118.name_ru.5c761657",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция по линии бикини",
+          "key": "services.118.description_ru.078dcd37",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.118.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 119,
+      "fields": {
+        "name_ru": {
+          "ru": "Бразильское бикини",
+          "key": "services.119.name_ru.cd80affa",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Бразильская эпиляция бикини",
+          "key": "services.119.description_ru.199d9108",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.119.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 120,
+      "fields": {
+        "name_ru": {
+          "ru": "Ноги полностью",
+          "key": "services.120.name_ru.3b3453b2",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция ног",
+          "key": "services.120.description_ru.0ccc7a02",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.120.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 121,
+      "fields": {
+        "name_ru": {
+          "ru": "Ноги до колен",
+          "key": "services.121.name_ru.65796548",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция ног до колен",
+          "key": "services.121.description_ru.3bad9c89",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.121.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 122,
+      "fields": {
+        "name_ru": {
+          "ru": "Руки полностью",
+          "key": "services.122.name_ru.fac91d90",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция рук",
+          "key": "services.122.description_ru.7168d5eb",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.122.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 123,
+      "fields": {
+        "name_ru": {
+          "ru": "Руки до локтя",
+          "key": "services.123.name_ru.7fb86af9",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция рук до локтя",
+          "key": "services.123.description_ru.e9cb16e1",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.123.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 124,
+      "fields": {
+        "name_ru": {
+          "ru": "Эпиляция всего тела",
+          "key": "services.124.name_ru.7b40c2d8",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция тела",
+          "key": "services.124.description_ru.187ce3b9",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.124.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 125,
+      "fields": {
+        "name_ru": {
+          "ru": "Подмышки",
+          "key": "services.125.name_ru.4da5bc5b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция подмышек",
+          "key": "services.125.description_ru.3186a3c3",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.125.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 126,
+      "fields": {
+        "name_ru": {
+          "ru": "Лицо полностью",
+          "key": "services.126.name_ru.c6f390eb",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полная эпиляция лица",
+          "key": "services.126.description_ru.67086220",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.126.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 127,
+      "fields": {
+        "name_ru": {
+          "ru": "Верхняя губа",
+          "key": "services.127.name_ru.9a3255a9",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция верхней губы",
+          "key": "services.127.description_ru.c364dec1",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.127.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 128,
+      "fields": {
+        "name_ru": {
+          "ru": "Подбородок",
+          "key": "services.128.name_ru.d2c6f434",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Эпиляция подбородка",
+          "key": "services.128.description_ru.3e342887",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.128.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 129,
+      "fields": {
+        "name_ru": {
+          "ru": "Ровный срез кончиков",
+          "key": "services.129.name_ru.d588be99",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Простой срез без мытья",
+          "key": "services.129.description_ru.6a0312d4",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 130,
+      "fields": {
+        "name_ru": {
+          "ru": "Стрижка + Укладка",
+          "key": "services.130.name_ru.68ef3fa2",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Профессиональная стрижка с укладкой",
+          "key": "services.130.description_ru.5d2597e1",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 131,
+      "fields": {
+        "name_ru": {
+          "ru": "Укладка",
+          "key": "services.131.name_ru.3fd3ef81",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Профессиональная укладка волос",
+          "key": "services.131.description_ru.7cbd9728",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.131.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 132,
+      "fields": {
+        "name_ru": {
+          "ru": "Детская стрижка",
+          "key": "services.132.name_ru.fe5b249b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Стрижка для детей",
+          "key": "services.132.description_ru.aaee775a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 133,
+      "fields": {
+        "name_ru": {
+          "ru": "Окрашивание корней + Укладка",
+          "key": "services.133.name_ru.34258f73",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Окрашивание корней с укладкой",
+          "key": "services.133.description_ru.2ad52607",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.133.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 134,
+      "fields": {
+        "name_ru": {
+          "ru": "Осветление корней + Укладка",
+          "key": "services.134.name_ru.3caf9ba3",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Осветление корней с укладкой",
+          "key": "services.134.description_ru.785f83b1",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 135,
+      "fields": {
+        "name_ru": {
+          "ru": "Тонирование + Укладка",
+          "key": "services.135.name_ru.60be0b49",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Тонирование волос с укладкой",
+          "key": "services.135.description_ru.837dbffc",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 136,
+      "fields": {
+        "name_ru": {
+          "ru": "Окрашивание в один тон + Укладка",
+          "key": "services.136.name_ru.841add1a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Полное окрашивание с укладкой",
+          "key": "services.136.description_ru.d5d8904e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "2ч",
+          "key": "services.136.duration.10b22734",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 137,
+      "fields": {
+        "name_ru": {
+          "ru": "Балаяж",
+          "key": "services.137.name_ru.abc5305a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Техника балаяж",
+          "key": "services.137.description_ru.0d9921e5",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "2ч",
+          "key": "services.137.duration.10b22734",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 138,
+      "fields": {
+        "name_ru": {
+          "ru": "Омбре/Шатуш/Аиртач",
+          "key": "services.138.name_ru.dffc4fe7",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Техники градиентного окрашивания",
+          "key": "services.138.description_ru.596e8006",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "2ч",
+          "key": "services.138.duration.10b22734",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 139,
+      "fields": {
+        "name_ru": {
+          "ru": "Выход из черного",
+          "key": "services.139.name_ru.1b90012d",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Коррекция цвета из темного",
+          "key": "services.139.description_ru.32fb73b4",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 140,
+      "fields": {
+        "name_ru": {
+          "ru": "Натуральный уход",
+          "key": "services.140.name_ru.04259ed1",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Натуральный уход за волосами",
+          "key": "services.140.description_ru.2777cc29",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.140.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 141,
+      "fields": {
+        "name_ru": {
+          "ru": "Наращивание волос за капсулу",
+          "key": "services.141.name_ru.ab1edd95",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Наращивание за капсулу",
+          "key": "services.141.description_ru.7295515b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 142,
+      "fields": {
+        "name_ru": {
+          "ru": "Классический объем ресниц",
+          "key": "services.142.name_ru.d85c8406",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Натуральное наращивание ресниц",
+          "key": "services.142.description_ru.1cb01f28",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 143,
+      "fields": {
+        "name_ru": {
+          "ru": "2D объем ресниц",
+          "key": "services.143.name_ru.6dc0aef0",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Наращивание 2D",
+          "key": "services.143.description_ru.b4b7781e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 144,
+      "fields": {
+        "name_ru": {
+          "ru": "3D объем ресниц",
+          "key": "services.144.name_ru.3276ee2f",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Наращивание 3D",
+          "key": "services.144.description_ru.9088ab16",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 145,
+      "fields": {
+        "name_ru": {
+          "ru": "4-5D объем (Мега)",
+          "key": "services.145.name_ru.b156e5fd",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Мега объем ресниц",
+          "key": "services.145.description_ru.0a54c5b1",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 146,
+      "fields": {
+        "name_ru": {
+          "ru": "ML локон / Стиль Ким",
+          "key": "services.146.name_ru.9c97dfe1",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Специальный изгиб",
+          "key": "services.146.description_ru.cc8b3435",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 147,
+      "fields": {
+        "name_ru": {
+          "ru": "Снятие ресниц",
+          "key": "services.147.name_ru.89cf60fb",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Безопасное снятие",
+          "key": "services.147.description_ru.4610f41a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.147.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 148,
+      "fields": {
+        "name_ru": {
+          "ru": "Ламинирование бровей",
+          "key": "services.148.name_ru.c66b6652",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Ламинирование бровей",
+          "key": "services.148.description_ru.c66b6652",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 149,
+      "fields": {
+        "name_ru": {
+          "ru": "Ламинирование ресниц",
+          "key": "services.149.name_ru.6a9d6c82",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Ламинирование ресниц",
+          "key": "services.149.description_ru.6a9d6c82",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 150,
+      "fields": {
+        "name_ru": {
+          "ru": "Ламинирование бровей и ресниц",
+          "key": "services.150.name_ru.429e7def",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Комбо ламинирование",
+          "key": "services.150.description_ru.c37d7e65",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 151,
+      "fields": {
+        "name_ru": {
+          "ru": "Окрашивание бровей",
+          "key": "services.151.name_ru.b0898877",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Профессиональное окрашивание",
+          "key": "services.151.description_ru.fcb57901",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.151.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 152,
+      "fields": {
+        "name_ru": {
+          "ru": "Оформление бровей",
+          "key": "services.152.name_ru.221b64b3",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Профессиональное оформление",
+          "key": "services.152.description_ru.dd9e95fb",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 153,
+      "fields": {
+        "name_ru": {
+          "ru": "Глубокая чистка лица",
+          "key": "services.153.name_ru.f5d3906b",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Профессиональная глубокая чистка",
+          "key": "services.153.description_ru.964e86eb",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.153.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 154,
+      "fields": {
+        "name_ru": {
+          "ru": "Медицинская чистка для проблемной кожи",
+          "key": "services.154.name_ru.a6e366dc",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Медицинская чистка",
+          "key": "services.154.description_ru.1340aaab",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.154.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 155,
+      "fields": {
+        "name_ru": {
+          "ru": "Подтягивающий массаж лица с маской",
+          "key": "services.155.name_ru.01f63d74",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Подтягивающий массаж",
+          "key": "services.155.description_ru.da76e7a6",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "30мин",
+          "key": "services.155.duration.c82753c8",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 156,
+      "fields": {
+        "name_ru": {
+          "ru": "Пилинг",
+          "key": "services.156.name_ru.349ad56c",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Химический пилинг",
+          "key": "services.156.description_ru.8dea543f",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.156.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 157,
+      "fields": {
+        "name_ru": {
+          "ru": "Маникюр без покрытия",
+          "key": "services.157.name_ru.9ce5aa82",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Базовый маникюр",
+          "key": "services.157.description_ru.0079cd02",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.157.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 158,
+      "fields": {
+        "name_ru": {
+          "ru": "Спа-маникюр",
+          "key": "services.158.name_ru.b7551641",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Спа-маникюр",
+          "key": "services.158.description_ru.b7551641",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.158.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 159,
+      "fields": {
+        "name_ru": {
+          "ru": "Маникюр с обычным покрытием",
+          "key": "services.159.name_ru.7d31de2e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Маникюр с обычным лаком",
+          "key": "services.159.description_ru.b2902707",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.159.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 160,
+      "fields": {
+        "name_ru": {
+          "ru": "Маникюр гель-лак",
+          "key": "services.160.name_ru.14c0870e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Маникюр с гель-лаком",
+          "key": "services.160.description_ru.eb95d49c",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч",
+          "key": "services.160.duration.9e639d8a",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 161,
+      "fields": {
+        "name_ru": {
+          "ru": "Японский маникюр",
+          "key": "services.161.name_ru.4fec55b5",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Японский маникюр",
+          "key": "services.161.description_ru.4fec55b5",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "1ч 30мин",
+          "key": "services.161.duration.4f527139",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 162,
+      "fields": {
+        "name_ru": {
+          "ru": "Детский маникюр",
+          "key": "services.162.name_ru.d83a8c76",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Маникюр для детей",
+          "key": "services.162.description_ru.650bd84f",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    },
+    {
+      "id": 163,
+      "fields": {
+        "name_ru": {
+          "ru": "Смена обычного лака",
+          "key": "services.163.name_ru.9e0c18fa",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "description_ru": {
+          "ru": "Смена обычного лака",
+          "key": "services.163.description_ru.9e0c18fa",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "duration": {
+          "ru": "30мин",
+          "key": "services.163.duration.c82753c8",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    }
+  ],
+  "public_banners": [
+    {
+      "id": 2,
+      "fields": {
+        "title_ru": {
+          "ru": "Получите скидку до 50% на все услуги в нашем салоне красоты в Дубае",
+          "key": "public_banners.2.title_ru.92d62431",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "title_en": {
+          "ru": "Get up to 50% off all services at our beauty salon in Dubai",
+          "key": "public_banners.2.title_en.3e577407",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        },
+        "title_ar": {
+          "ru": "احصل على خصم يصل إلى 50% على جميع الخدمات في صالون التجميل الخاص بنا في دبي",
+          "key": "public_banners.2.title_ar.c0e86f8e",
+          "en": null,
+          "ar": null,
+          "es": null,
+          "de": null,
+          "fr": null,
+          "hi": null,
+          "kk": null,
+          "pt": null
+        }
+      }
+    }
+  ]
+}

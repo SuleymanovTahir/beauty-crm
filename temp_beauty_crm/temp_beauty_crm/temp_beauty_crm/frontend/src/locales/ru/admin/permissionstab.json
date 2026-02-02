@@ -1,0 +1,16 @@
+{
+  "can_manage_roles_title": "Может управлять ролями",
+  "change_role_button": "Изменить роль",
+  "change_role_to": "Изменить роль на",
+  "current_role": "Текущая роль",
+  "error_loading_permissions": "Не удалось загрузить данные о правах",
+  "error_saving_permissions": "Ошибка сохранения прав",
+  "full_access_message": "Полный доступ ко всем функциям системы (роль Директор)",
+  "hierarchy_level": "Уровень иерархии:",
+  "individual_permissions_info": "Индивидуальные права: Вы можете изменить права пользователя независимо от его роли. Галочка означает, что право предоставлено. Снятая галочка означает, что право отозвано.",
+  "permissions_title": "Права доступа",
+  "permissions_updated": "Права обновлены",
+  "role_unchanged": "Роль не изменилась",
+  "role_user_title": "Роль пользователя",
+  "save_changes": "Сохранить изменения"
+}

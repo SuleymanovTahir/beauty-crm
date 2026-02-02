@@ -1,0 +1,11 @@
+{
+  "create_permission": "Crear",
+  "delete_permission": "Eliminar",
+  "edit_permission": "Edición",
+  "error_changing_permissions": "Error al cambiar derechos",
+  "error_loading_permissions": "Error al cargar derechos de acceso",
+  "error_loading_users": "Error al cargar usuarios",
+  "permission_granted": "Derecho concedido",
+  "permission_revoked": "Derecho revocado",
+  "view_permission": "Ver"
+}

@@ -22,13 +22,13 @@ def _map_gallery_path(url: str, category: str) -> str:
 
     # Маппинг категорий на папки в frontend/public_landing/styles/img/
     category_mappings = {
-        'salon': 'Фото салона',
-        'portfolio': 'Портфолио',
-        'services': 'Услуги',
-        'faces': 'Красивые лица',
-        'banners': 'Баннер',
-        'staff': 'Сотрудники',
-        'employees': 'Сотрудники',
+        'salon': 'salon',
+        'portfolio': 'portfolio',
+        'services': 'services',
+        'faces': 'faces',
+        'banners': 'banners',
+        'staff': 'staff',
+        'employees': 'staff',
     }
 
     # Старые пути к новым

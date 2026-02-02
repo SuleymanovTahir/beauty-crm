@@ -1,0 +1,17 @@
+{
+  "backToHome": "← Return to home",
+  "fillAllFields": "Please fill in all fields",
+  "loggingIn": "Entrance...",
+  "loginButton": "Sign in",
+  "loginError": "Invalid credentials",
+  "loginSuccess": "You have successfully logged in! 🎉",
+  "password": "Password",
+  "passwordHint": "Entered upon registration",
+  "passwordPlaceholder": "••••••",
+  "subtitle": "Log in to the salon management system",
+  "systemError": "Login error",
+  "title": "Personal account",
+  "username": "Username or email",
+  "usernameHint": "Enter your username",
+  "usernamePlaceholder": "admin"
+}

@@ -1,0 +1,79 @@
+{
+    "any_master": {
+        "ru": "любой мастер",
+        "en": "any professional",
+        "ar": "أي خبير",
+        "de": "beliebiger Mitarbeiter",
+        "es": "cualquier profesional",
+        "fr": "n'importe quel professionnel",
+        "hi": "कोई भी मास्टर",
+        "kk": "кез келген шебер",
+        "pt": "qualquer profissional"
+    },
+    "cancelled": {
+        "ru": "отменено",
+        "en": "cancelled",
+        "ar": "تم الإلغاء",
+        "de": "storniert",
+        "es": "cancelado",
+        "fr": "annulé",
+        "hi": "रद्द किया गया",
+        "kk": "бас тартылды",
+        "pt": "cancelado"
+    },
+    "date_from": {
+        "ru": "с даты",
+        "en": "date from",
+        "ar": "من تاريخ",
+        "de": "datum von",
+        "es": "desde fecha",
+        "fr": "de la date",
+        "hi": "दिनांक से",
+        "kk": "күннен бастап",
+        "pt": "de data"
+    },
+    "date_to": {
+        "ru": "по дату",
+        "en": "date to",
+        "ar": "إلى تاريخ",
+        "de": "datum bis",
+        "es": "hasta fecha",
+        "fr": "à la date",
+        "hi": "दिनांक तक",
+        "kk": "күнге дейін",
+        "pt": "até data"
+    },
+    "skipped": {
+        "ru": "пропущено",
+        "en": "skipped",
+        "ar": "تم التجاوز",
+        "de": "übersprungen",
+        "es": "omitido",
+        "fr": "ignoré",
+        "hi": "छोड़ा गया",
+        "kk": "өткізілді",
+        "pt": "pulado"
+    },
+    "pending": {
+        "ru": "в ожидании",
+        "en": "pending",
+        "ar": "قيد الانتظار",
+        "de": "ausstehend",
+        "es": "pendiente",
+        "fr": "en attente",
+        "hi": "लंबित",
+        "kk": "күтуде",
+        "pt": "pendente"
+    },
+    "master": {
+        "ru": "мастер",
+        "en": "stylist",
+        "ar": "خبير",
+        "de": "specialist",
+        "es": "especialista",
+        "fr": "spécialiste",
+        "hi": "विशेषज्ञ",
+        "kk": "маман",
+        "pt": "especialista"
+    }
+}

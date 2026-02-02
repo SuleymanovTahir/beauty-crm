@@ -1,0 +1,18 @@
+{
+  "admin_panel": "Painel de administração",
+  "go_to_crm": "Ir para CRM",
+  "logout": "Sair",
+  "menu": {
+    "challenges": "Desafios",
+    "dashboard": "Painel",
+    "feature_management": "Gerenciar recursos",
+    "loyalty_management": "Gerenciar fidelidade",
+    "notifications": "Notificações",
+    "photo_gallery": "Galeria de fotos",
+    "public_content": "Conteúdo público",
+    "referral_program": "Programa de referência",
+    "services": "Serviços",
+    "settings": "Configurações",
+    "user_management": "Usuário gerenciamento"
+  }
+}

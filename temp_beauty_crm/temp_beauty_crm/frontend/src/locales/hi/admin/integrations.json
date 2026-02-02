@@ -1,0 +1,108 @@
+{
+  "errors": {
+    "createLinkFailed": "लिंक बनाने में त्रुटि",
+    "loadFailed": "डेटा लोड करने में त्रुटि",
+    "loadServicesFailed": "सेवाएं लोड करने में त्रुटि",
+    "saveFailed": "त्रुटि सहेजना",
+    "syncFailed": "सिंक्रनाइज़ेशन त्रुटि"
+  },
+  "marketplace": {
+    "active": "सक्रिय",
+    "activeSources": "सक्रिय स्रोत",
+    "apiKey": "एपीआई कुंजी",
+    "apiSecret": "गुप्त एपीआई",
+    "bookings": "रिकॉर्ड्स",
+    "configSuccess": "सेटिंग्स सहेजी गईं",
+    "configure": "कॉन्फ़िगर करें",
+    "configureProvider": "सेटिंग",
+    "daysAgo_few": "{{count}} दिन पहले",
+    "daysAgo_many": "{{count}} दिन पहले",
+    "daysAgo_one": "{{count}} दिन पहले",
+    "daysAgo_other": "{{count}} दिन पहले",
+    "enableProvider": "एकीकरण सक्षम करें",
+    "hoursAgo_few": "{{count}} घंटे पहले",
+    "hoursAgo_many": "{{count}} घंटे पहले",
+    "hoursAgo_one": "{{count}} घंटे पहले",
+    "hoursAgo_other": "{{count}} घंटे पहले",
+    "inactive": "कॉन्फ़िगर नहीं",
+    "justNow": "अभी अभी",
+    "lastSync": "अंतिम सिंक्रनाइज़ेशन",
+    "mappingHint": "सेवा आईडी निर्दिष्ट करें सिंक्रनाइज़ेशन के लिए बाज़ार से।",
+    "minutesAgo_few": "{{count}} मिनट पहले",
+    "minutesAgo_many": "{{count}} मिनट पहले",
+    "minutesAgo_one": "{{count}} मिनट पहले",
+    "minutesAgo_other": "{{count}} मिनट पहले",
+    "neverSynced": "कभी नहीं",
+    "providers": {
+      "2gis": {
+        "description": "2GIS के माध्यम से ऑनलाइन रिकॉर्डिंग",
+        "name": "2GIS"
+      },
+      "amazon": {
+        "description": "Amazon मार्केटप्लेस",
+        "name": "Amazon"
+      },
+      "booksy": {
+        "description": "ऑनलाइन रिकॉर्डिंग प्लेटफॉर्म",
+        "name": "Booksy"
+      },
+      "google_business": {
+        "description": "Google पर रिकॉर्डिंग और समीक्षाएं",
+        "name": "Google व्यवसाय"
+      },
+      "ozon": {
+        "description": "ओजोन मार्केटप्लेस",
+        "name": "ओजोन"
+      },
+      "wildberries": {
+        "description": "मार्केटप्लेस WB",
+        "name": "वाइल्डबेरी"
+      },
+      "yandex_maps": {
+        "description": "Yandex.Maps से रिकॉर्ड और समीक्षाएं",
+        "name": "Yandex.Maps"
+      },
+      "yclients": {
+        "description": "ऑनलाइन रिकॉर्डिंग प्लेटफ़ॉर्म",
+        "name": "Yग्राहक"
+      }
+    },
+    "reviews": "समीक्षाएं",
+    "serviceMapping": "सेवा मानचित्रण",
+    "settings": "सेटिंग्स",
+    "status": "स्थिति",
+    "subtitle": "ऑनलाइन पंजीकरण और समीक्षा सेवाओं के साथ एकीकरण",
+    "sync": "सिंक्रोनाइज़",
+    "syncStarted": "सिंक्रनाइज़ेशन प्रारंभ",
+    "syncing": "सिंक्रोनाइज़ेशन...",
+    "title": "बुकिंग प्लेटफॉर्म",
+    "totalBookings": "कुल प्रविष्टियां",
+    "urlCopied": "यूआरएल कॉपी किया गया",
+    "viewBookings": "प्रविष्टियों पर जाएं",
+    "webhookHint": "प्लेटफॉर्म पर वेबहुक प्रदान करने के लिए इस यूआरएल को निर्दिष्ट करें",
+    "webhookUrl": "वेबहुक के लिए यूआरएल"
+  },
+  "payment": {
+    "active": "सक्रिय",
+    "amount": "राशि",
+    "apiKey": "एपीआई कुंजी",
+    "configSuccess": "सेटिंग्स सहेजी गईं",
+    "configure": "कॉन्फ़िगर करें",
+    "configureProvider": "सेटिंग्स",
+    "createLink": "लिंक बनाएं",
+    "createLinkTitle": "भुगतान लिंक बनाएं",
+    "currency": "मुद्रा",
+    "descriptionPlaceholder": "उदाहरण के लिए: मैनीक्योर के लिए अग्रिम भुगतान",
+    "enableProvider": "प्रदाता को सक्षम करें",
+    "inactive": "कॉन्फ़िगर नहीं किया गया",
+    "linkCreated": "लिंक सफलतापूर्वक बनाया गया",
+    "secretKey": "गुप्त कुंजी",
+    "setup": "कनेक्ट",
+    "status": "स्थिति",
+    "subtitle": "भुगतान प्रदाताओं को कनेक्ट करना",
+    "title": "भुगतान प्रणाली",
+    "viewTransactions": "लेनदेन इतिहास",
+    "webhookSecret": "वेबहुक रहस्य",
+    "webhookUrl": "वेबहुक के लिए यूआरएल"
+  }
+}

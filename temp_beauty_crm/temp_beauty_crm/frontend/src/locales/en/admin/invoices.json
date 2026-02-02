@@ -1,0 +1,79 @@
+{
+  "actions": "Actions",
+  "addInvoice": "Create an account",
+  "addPayment": "Add payment",
+  "allInvoices": "All accounts",
+  "allStatuses": "All statuses",
+  "board": "Board",
+  "client": "Client",
+  "delete": "Delete",
+  "dueDate": "Due date",
+  "errors": {
+    "createError": "Error creating account.",
+    "deleteError": "Error deleting account.",
+    "paymentError": "Error adding payment",
+    "sendError": "Error sending invoice",
+    "updateError": "Failed to update status"
+  },
+  "form": {
+    "addItem": "Add a position",
+    "cancel": "Cancel",
+    "dueDate": "Due date",
+    "itemName": "Name",
+    "itemPrice": "Price",
+    "itemQuantity": "Qty",
+    "items": "Account positions",
+    "notes": "Notes",
+    "save": "Save",
+    "selectClient": "Select client"
+  },
+  "invoiceNumber": "Account No.",
+  "manage_stages": "Columns",
+  "messages": {
+    "confirmDelete": "Are you sure you want to delete this account?",
+    "invoiceCreated": "Account created",
+    "invoiceDeleted": "Account deleted",
+    "invoiceSent": "Invoice sent",
+    "invoiceUpdated": "Account updated",
+    "paymentAdded": "Payment added"
+  },
+  "noInvoices": "No accounts yet",
+  "paidAmount": "Paid",
+  "payment": {
+    "add": "Add",
+    "amount": "Sum",
+    "method": "Payment method",
+    "methods": {
+      "card": "Map",
+      "cash": "Cash",
+      "online": "Online",
+      "transfer": "Translation"
+    },
+    "notes": "Notes",
+    "title": "Add payment"
+  },
+  "search_placeholder": "Search by number or client...",
+  "sendButton": "Send",
+  "sendDialog": {
+    "email": "E-mail",
+    "method": "Shipping method",
+    "recipient": "Recipient",
+    "sendButton": "Send",
+    "telegram": "Telegram",
+    "title": "Send invoice",
+    "whatsapp": "Whatsapp"
+  },
+  "status": "Status",
+  "statuses": {
+    "cancelled": "Cancelled",
+    "draft": "Draft",
+    "overdue": "Overdue",
+    "paid": "Paid",
+    "partial": "Partially paid",
+    "partially_paid": "Partially paid",
+    "sent": "Sent"
+  },
+  "subtitle": "Account and payment management",
+  "title": "Invoices",
+  "totalAmount": "Sum"
+}

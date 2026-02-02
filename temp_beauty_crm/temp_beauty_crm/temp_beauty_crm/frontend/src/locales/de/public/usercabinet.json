@@ -1,0 +1,17 @@
+{
+  "backToHome": "← Zurück zur Startseite",
+  "fillAllFields": "Bitte füllen Sie alle Felder aus",
+  "loggingIn": "Aufzeichnen...",
+  "loginButton": "Anmelden",
+  "loginError": "Ungültige Anmeldedaten",
+  "loginSuccess": "Sie haben sich erfolgreich angemeldet! 🎉",
+  "password": "Passwort",
+  "passwordHint": "Bei der Registrierung eingegeben",
+  "passwordPlaceholder": "••••••",
+  "subtitle": "Beim Salonverwaltungssystem anmelden",
+  "systemError": "Anmeldefehler",
+  "title": "Persönliches Konto",
+  "username": "Benutzername oder E-Mail-Adresse",
+  "usernameHint": "Geben Sie Ihren Benutzernamen ein",
+  "usernamePlaceholder": "Administrator"
+}

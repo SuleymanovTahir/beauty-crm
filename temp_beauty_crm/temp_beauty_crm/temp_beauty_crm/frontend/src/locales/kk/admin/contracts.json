@@ -1,0 +1,80 @@
+{
+  "actions": "Әрекеттер",
+  "addContract": "Келісім-шарт жасау",
+  "all": "Барлығы",
+  "allContracts": "Барлық келісімшарттар",
+  "allStatuses": "Барлық күйлер",
+  "board": "Басқарма",
+  "client": "Клиент",
+  "clientContracts": "Клиент",
+  "contractNumber": "Келісім-шарт №",
+  "createdAt": "Жасалған күні",
+  "editContract": "Келісімшартты өңдеу",
+  "errors": {
+    "deleteError": "Келісімшартты жою қатесі.",
+    "saveError": "Келісімшартты сақтау қатесі.",
+    "sendError": "Келісімшартты жіберу қатесі",
+    "updateError": "Күйді жаңарту орындалмады"
+  },
+  "form": {
+    "cancel": "Болдырмау",
+    "contractType": "Келісімшарт түрі",
+    "save": "Сақтау",
+    "selectClient": "Клиент таңдау"
+  },
+  "internalContracts": "Отандық",
+  "manageTypes": "Келісімшарттардың түрлері",
+  "manage_stages": "Бағандар",
+  "messages": {
+    "confirmDelete": "Осы келісімшартты шынымен жойғыңыз келе ме?",
+    "contractCreated": "Келісімшарт жасалды",
+    "contractDeleted": "Келісімшарт жойылды",
+    "contractSent": "Келісімшарт жіберілді",
+    "contractUpdated": "Келісімшарт жаңартылды"
+  },
+  "noContracts": "Әзірге келісімшарттар жоқ",
+  "search_placeholder": "Нөмір немесе клиент бойынша іздеу...",
+  "sendDialog": {
+    "email": "Электрондық пошта",
+    "instagram": "Instagram",
+    "method": "Жіберу әдісі",
+    "recipient": "Алушы",
+    "sendButton": "Жіберу",
+    "telegram": "Telegram",
+    "title": "Келісім-шартты жіберу",
+    "whatsapp": "WhatsApp"
+  },
+  "status": "Күйі",
+  "statuses": {
+    "cancelled": "Бас тартылды",
+    "draft": "Жоба",
+    "sent": "Жіберілді",
+    "signed": "Қол қойылды"
+  },
+  "subtitle": "Клиенттермен келісім-шарттарды басқару",
+  "title": "Келісімшарттар",
+  "type": "Түрі",
+  "typeManagement": {
+    "add": "Қосу",
+    "code": "Код (лат., бірегей)",
+    "confirmDelete": "Жоюды растаңыз",
+    "createType": "Түрді жасау",
+    "deletePrompt": "Осы келісімшарт түрін жойғыңыз келеді. Осы түрдегі бар келісімшарттармен не істеу керек?",
+    "deleteTitle": "\"{{name}}\" түрін жою",
+    "deleteWithDocs": "Барлық келісім-шарттарды жою",
+    "deleteWithDocsSub": "Осы түрдегі барлық құжаттар біржола жойылады.",
+    "description": "Сипаттамасы",
+    "editType": "Түрді өңдеу",
+    "keepDocs": "Келісімшарттарды түрінсіз қалдыру",
+    "keepDocsSub": "Келісімшарттар қалады, бірақ \"Түрі\" өрісі тазаланады.",
+    "messages": {
+      "created": "Түр құрылды",
+      "deleted": "Түр жойылды",
+      "updated": "Түр жаңартылды"
+    },
+    "name": "Аты",
+    "system": "Жүйе",
+    "systemProtected": "Жүйе қорғалған",
+    "title": "Келісімшарттардың түрлері"
+  }
+}

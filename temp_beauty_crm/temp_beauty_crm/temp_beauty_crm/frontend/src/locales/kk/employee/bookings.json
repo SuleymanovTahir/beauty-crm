@@ -1,0 +1,21 @@
+{
+  "all": "Барлығы",
+  "booking": "Енгізу",
+  "client": "Клиент",
+  "date_time": "Күн мен уақыт",
+  "my_bookings": "Менің жазбаларым",
+  "no_bookings": "Әзірге жазбалар жоқ",
+  "no_bookings_description": "Сізде жазбалар жоқ. Жаңа жазбалар осы жерде автоматты түрде пайда болады.",
+  "no_name": "Аты көрсетілмеген",
+  "no_phone": "Телефон нөмірі көрсетілмеген",
+  "notes": "Ескертпелер",
+  "past": "Өткен",
+  "phone": "Телефон",
+  "service": "Қызмет",
+  "status_cancelled": "Тоқтатылды",
+  "status_completed": "Аяқталды",
+  "status_confirmed": "Расталған",
+  "status_pending": "Күтуде",
+  "upcoming": "Алдағы",
+  "view_and_manage_bookings": "Тұтынушы жазбаларын көру және басқару"
+}

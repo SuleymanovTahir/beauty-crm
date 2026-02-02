@@ -1,0 +1,32 @@
+{
+  "active_clients": "Активных клиентов",
+  "booked": "Записались",
+  "client_base": "База клиентов",
+  "client_messages": "Сообщений от клиентов",
+  "completed": "Посетили",
+  "completed_procedures": "Завершенных процедур",
+  "conversion_rate": "Конверсия",
+  "engaged": "Вовлеченные",
+  "errors": {
+    "loading": "Ошибка загрузки данных",
+    "loading_title": "Ошибка загрузки"
+  },
+  "funnel_details": "Подробнее о воронке",
+  "good": "Хорошо",
+  "key_metrics": "Ключевые метрики",
+  "loading": "Загрузка данных",
+  "manager_desc": "Управление клиентами и аналитика",
+  "manager_panel": "Панель менеджера",
+  "messages": "Сообщения",
+  "normal": "Нормально",
+  "open_chat": "Открыть чат",
+  "pending": "В ожидании",
+  "quick_actions": "Быстрые действия",
+  "retry": "Попробовать снова",
+  "sales_funnel": "Воронка продаж",
+  "started_booking": "Начали запись",
+  "total_bookings": "Всего записей",
+  "total_clients": "Всего клиентов",
+  "total_revenue": "Общая выручка",
+  "visitors": "Посетители"
+}

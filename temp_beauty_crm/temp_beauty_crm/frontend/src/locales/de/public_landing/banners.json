@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "Professionelle Schönheitsdienstleistungen",
+      "title": "Schönheit und Eleganz"
+    },
+    {
+      "image": "/static/uploads/images/banners/banner_main.webp",
+      "link": "",
+      "subtitle": "Für alle Salondienstleistungen",
+      "title": "Rabatte bis zu 50 %"
+    },
+    {
+      "image": "/static/uploads/images/salon/moroccan_bath.webp",
+      "link": "",
+      "subtitle": "Für alle Salondienstleistungen",
+      "title": "Rabatte bis zu {{percent}} %"
+    },
+    {
+      "image": "/static/uploads/images/salon/salon_main.webp",
+      "link": "",
+      "subtitle": "Hochklassige professionelle Schönheitsdienstleistungen",
+      "title": "Schönheit und Eleganz"
+    },
+    {
+      "image": "/static/uploads/images/employees/simo.webp",
+      "link": "",
+      "subtitle": "Pflege für Ihren Stil und Ihre Gesundheit",
+      "title": "Premium-Service"
+    },
+    {
+      "image": "/static/uploads/images/employees/jennifer.webp",
+      "link": "",
+      "subtitle": "Erleben Sie völlige Entspannung und ein Reinigungsritual",
+      "title": "Marokkanisches Bad"
+    },
+    {
+      "image": "/static/uploads/images/employees/mestan.webp",
+      "link": "",
+      "subtitle": "Diesen Monat nur",
+      "title": "20 % Rabatt auf Ihren ersten Besuch"
+    },
+    {
+      "image": "/static/uploads/images/employees/lyazzat.webp",
+      "link": "",
+      "subtitle": "Probieren Sie Innovation aus",
+      "title": "Neuer Service: Smart Pedicure"
+    }
+  ]
+}

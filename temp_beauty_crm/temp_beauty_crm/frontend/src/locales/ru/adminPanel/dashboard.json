@@ -1,0 +1,59 @@
+{
+  "quick_actions": {
+    "challenges": {
+      "description": "Создание и управление целями",
+      "title": "Цели"
+    },
+    "loyalty_management": {
+      "description": "Управление баллами лояльности и уровнями",
+      "title": "Управление лояльностью"
+    },
+    "notifications": {
+      "description": "Отправка и управление уведомлениями",
+      "title": "Уведомления"
+    },
+    "photo_gallery": {
+      "description": "Управление фотографиями клиентов и портфолио",
+      "title": "Фото галерея"
+    },
+    "referral_program": {
+      "description": "Просмотр и управление рефералами",
+      "title": "Реферальная программа"
+    },
+    "title": "Быстрые действия",
+    "user_management": {
+      "description": "Управление учетными записями и разрешениями пользователей",
+      "title": "Управление пользователями"
+    }
+  },
+  "recent_activity": {
+    "challenge_completed_one": "Цель \"{{name}}\" завершена {{count}} пользователем",
+    "challenge_completed_few": "Цель \"{{name}}\" завершена {{count}} пользователями",
+    "challenge_completed_many": "Цель \"{{name}}\" завершена {{count}} пользователями",
+    "challenge_completed_other": "Цель \"{{name}}\" завершена {{count}} пользователями",
+    "day_ago_one": "{{count}} день назад",
+    "day_ago_few": "{{count}} дня назад",
+    "day_ago_many": "{{count}} дней назад",
+    "day_ago_other": "{{count}} дней назад",
+    "hours_ago_one": "{{count}} час назад",
+    "hours_ago_few": "{{count}} часа назад",
+    "hours_ago_many": "{{count}} часов назад",
+    "hours_ago_other": "{{count}} часов назад",
+    "new_tier_activated": "Новый уровень лояльности активирован",
+    "subtitle": "Последние действия в админ-панели",
+    "title": "Недавняя активность",
+    "users_registered_one": "{{count}} новый пользователь зарегистрирован",
+    "users_registered_few": "{{count}} новых пользователя зарегистрировано",
+    "users_registered_many": "{{count}} новых пользователей зарегистрировано",
+    "users_registered_other": "{{count}} новых пользователей зарегистрировано"
+  },
+  "stats": {
+    "active_challenges": "Активных целей",
+    "from_last_month": "от прошлого месяца",
+    "loyalty_points_issued": "Выдано баллов лояльности",
+    "total_referrals": "Всего рефералов",
+    "total_users": "Всего пользователей"
+  },
+  "subtitle": "Управление пользователями, лояльностью и вовлеченностью",
+  "title": "Панель управления"
+}

@@ -1,0 +1,21 @@
+{
+  "back_to_login": "Zurück zur Anmeldung",
+  "code_length_error": "Der Code muss 6 Ziffern enthalten",
+  "confirm_button": "Bestätigen",
+  "email_not_found": "E-Mail nicht gefunden. Bitte melden Sie sich erneut an.",
+  "email_verified": "E-Mail bestätigt!",
+  "email_verified_login": "E-Mail bestätigt! Beim System anmelden...",
+  "email_verified_login_message": "E-Mail bestätigt. Einloggen.",
+  "email_verified_title": "E-Mail bestätigt!",
+  "enter_6_digit_code": "Geben Sie den 6-stelligen Code aus der E-Mail ein",
+  "enter_code_from_email": "Geben Sie den Code aus der E-Mail ein, die an folgende Adresse gesendet wurde:",
+  "new_code_sent": "Ein neuer Code wurde an Ihre E-Mail-Adresse gesendet",
+  "redirecting_login": "Zur Anmeldeseite weiterleiten...",
+  "resend_code": "Code erneut senden",
+  "send_code_error": "Fehler beim Senden des Codes",
+  "verification_code_label": "Bestätigungscode",
+  "verification_error": "Fehler beim Bestätigen der E-Mail",
+  "verification_error_short": "Bestätigungsfehler",
+  "verify_email_title": "Bestätigungs-E-Mail",
+  "verifying": "Überprüfen..."
+}

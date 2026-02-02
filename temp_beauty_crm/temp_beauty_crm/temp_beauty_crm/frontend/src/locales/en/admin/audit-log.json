@@ -1,0 +1,50 @@
+{
+  "clear_all": "Clear all",
+  "clear_confirm": "Are you sure you want to completely clear the audit log? ",
+  "delete_batch_confirm_few": "Delete {{count}} selected bookings?",
+  "delete_batch_confirm_many": "Delete {{count}} selected bookings?",
+  "delete_batch_confirm_one": "Delete {{count}} selected booking?",
+  "delete_batch_confirm_other": "Delete {{count}} bookings?",
+  "delete_confirm": "Should I permanently delete this booking?",
+  "delete_selected": "Remove selected",
+  "details": {
+    "ip": "IP",
+    "new_data": "New data",
+    "no_data": "No data available",
+    "old_data": "Old data",
+    "op_id": "Operation ID",
+    "title": "Change details"
+  },
+  "filter_all": "All actions",
+  "filter_create": "Creation",
+  "filter_delete": "Removal",
+  "filter_delete_all": "Clearing the log",
+  "filter_login": "Booking",
+  "filter_restore": "Recovery",
+  "filter_update": "Change",
+  "search_placeholder": "Search by user, entity or action...",
+  "stat_active_users": "Active users",
+  "stat_created": "Created",
+  "stat_errors": "Errors ({{count}}h)",
+  "stat_total": "Total ({{count}}h)",
+  "subtitle": "History of all actions and changes in the system",
+  "table": {
+    "action": "Action",
+    "empty": "History is empty",
+    "entity": "Essence",
+    "error": "ERROR",
+    "loading": "Loading...",
+    "status": "Status",
+    "success": "SUCCESS",
+    "time": "Time",
+    "user": "User"
+  },
+  "title": "Audit log",
+  "toast": {
+    "clear_error": "Error clearing log",
+    "clear_success": "Audit log successfully cleared",
+    "delete_error": "Error during deletion",
+    "delete_success": "Booking(s) deleted",
+    "load_error": "Error loading audit log"
+  }
+}

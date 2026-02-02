@@ -1,0 +1,12 @@
+{
+  "assigned_to": "Attribué",
+  "due_date": "Date d'échéance",
+  "manage_your_tasks": "Gérer les tâches et les affectations",
+  "my_tasks": "Mes tâches",
+  "no_tasks": "Aucune tâche pour l'instant",
+  "no_tasks_description": "Vous n'avez aucune tâche active. Les nouvelles tâches apparaîtront ici lorsqu'elles seront attribuées.",
+  "priority": "Priorité",
+  "status": "Statut",
+  "task_description": "Description",
+  "task_title": "Nom de la tâche"
+}
