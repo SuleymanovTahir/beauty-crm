@@ -28,6 +28,7 @@
     "password_no_upper": "Құпия сөзде кем дегенде бір бас әріп болуы керек",
     "password_too_short": "Құпия сөз тым қысқа (кем дегенде 8 таңба)"
   },
+  "authorization_error": "Авторизация қатесі",
   "back": "Назад",
   "back_to_bookings": "Жазбаларға қайту",
   "back_to_clients": "Клиенттерге қайту",
@@ -161,6 +162,7 @@
   "happyClients": "қанағаттанған тұтынушылар",
   "import": "Импорттау",
   "importing": "Импорттау...",
+  "invalid_credentials": "Логин немесе құпия сөз қате",
   "language": "Тіл",
   "last_14_days": "Соңғы {{count}} күн",
   "last_14_days_few": "Соңғы {{count}} күн",
@@ -310,6 +312,7 @@
   "upload_file": "Файлды жүктеу",
   "uploading": "Жүктелуде...",
   "url_link": "Сілтеме",
+  "user_not_found": "Пайдаланушы табылмады",
   "view_bookings": "Посмотреть записи",
   "view_calendar": "Перейти в календарь",
   "view_staff": "Перейти к сотрудникам",

@@ -28,6 +28,7 @@
     "password_no_upper": "पासवर्ड में कम से कम एक अपरकेस अक्षर होना चाहिए",
     "password_too_short": "पासवर्ड बहुत छोटा है (न्यूनतम 8 अक्षर)"
   },
+  "authorization_error": "प्राधिकरण त्रुटि",
   "back": "वापस",
   "back_to_bookings": "पोस्ट पर वापस",
   "back_to_clients": "ग्राहकों के पास वापस",
@@ -161,6 +162,7 @@
   "happyClients": "संतुष्ट ग्राहक",
   "import": "आयात",
   "importing": "आयात...",
+  "invalid_credentials": "गलत लॉगिन या पासवर्ड",
   "language": "भाषा",
   "last_14_days": "अंतिम {{count}} दिन",
   "last_14_days_few": "अंतिम {{गिनती}} दिन",
@@ -310,6 +312,7 @@
   "upload_file": "फ़ाइल डाउनलोड करें",
   "uploading": "लोड हो रहा है...",
   "url_link": "लिंक",
+  "user_not_found": "उपयोगकर्ता नहीं मिला",
   "view_bookings": "प्रविष्टियां देखें",
   "view_calendar": "पर जाएं कैलेंडर",
   "view_staff": "कर्मचारियों के पास जाएं",

@@ -58,41 +58,27 @@ export function Hero({ initialBanner, salonInfo }: HeroProps) {
   const backgroundImage = heroBanner?.image_url ? getFullImageUrl(heroBanner.image_url) : '';
 
   // Invert coordinates when image is flipped
-  const isFlippedH = heroBanner?.is_flipped_horizontal === 1 || heroBanner?.is_flipped_horizontal === true;
-  const isFlippedV = heroBanner?.is_flipped_vertical === 1 || heroBanner?.is_flipped_vertical === true;
 
-  const desktopX = isFlippedH ? (100 - (Number(heroBanner?.bg_pos_desktop_x) ?? 50)) : (Number(heroBanner?.bg_pos_desktop_x) ?? 50);
-  const desktopY = isFlippedV ? (100 - (Number(heroBanner?.bg_pos_desktop_y) ?? 50)) : (Number(heroBanner?.bg_pos_desktop_y) ?? 50);
-  const mobileX = isFlippedH ? (100 - (Number(heroBanner?.bg_pos_mobile_x) ?? 50)) : (Number(heroBanner?.bg_pos_mobile_x) ?? 50);
-  const mobileY = isFlippedV ? (100 - (Number(heroBanner?.bg_pos_mobile_y) ?? 50)) : (Number(heroBanner?.bg_pos_mobile_y) ?? 50);
+  const desktopX = heroBanner?.bg_pos_desktop_x ?? 50;
+  const desktopY = heroBanner?.bg_pos_desktop_y ?? 50;
+  const mobileX = heroBanner?.bg_pos_mobile_x ?? 50;
+  const mobileY = heroBanner?.bg_pos_mobile_y ?? 50;
 
   // Stats from custom_settings
   const stats = salonInfo?.custom_settings?.stats;
 
   return (
     <section id="home" className="relative min-h-screen flex flex-col overflow-hidden">
-      <style>{`
-        .hero-banner-img {
-          --object-pos-x: ${mobileX}%;
-          --object-pos-y: ${mobileY}%;
-          object-position: var(--object-pos-x) var(--object-pos-y);
-        }
-        @media (min-width: 640px) {
-          .hero-banner-img {
-            --object-pos-x: ${desktopX}%;
-            --object-pos-y: ${desktopY}%;
-          }
-        }
-      `}</style>
       <div className="absolute inset-0 bg-muted/20">
         {backgroundImage && (
           <img
             src={backgroundImage}
             alt="Elegant Beauty"
-            className="hero-banner-img w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out"
+            className="hero-banner-img w-full h-full object-cover transition-opacity duration-700 ease-in-out"
             loading="eager"
             fetchPriority="high"
             style={{
+              objectPosition: `${window.innerWidth < 640 ? mobileX : desktopX}% ${window.innerWidth < 640 ? mobileY : desktopY}%`,
               transform: [
                 (heroBanner?.is_flipped_horizontal === 1 || heroBanner?.is_flipped_horizontal === true) ? 'scaleX(-1)' : '',
                 (heroBanner?.is_flipped_vertical === 1 || heroBanner?.is_flipped_vertical === true) ? 'scaleY(-1)' : ''

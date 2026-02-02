@@ -44,18 +44,7 @@ export class ApiClient {
       const endTime = performance.now()
       const duration = endTime - startTime
       clearTimeout(timeoutId)
-
-      // Log request timing
       const durationFormatted = duration.toFixed(2) + 'ms'
-
-      if (duration > 1000) {
-        console.warn(`⚠️ SLOW REQUEST: ${endpoint} took ${durationFormatted}`, {
-          url: url,
-          duration: duration
-        })
-      } else {
-        console.log(`⏱️ API Request: ${endpoint} took ${durationFormatted}`)
-      }
 
       // Track longest request
       if (duration > ApiClient.longestRequest.duration) {
@@ -63,11 +52,24 @@ export class ApiClient {
         console.log(`🐢 NEW RECORD: Slowest request so far is ${endpoint} (${durationFormatted})`)
       }
 
+      // Log only non-auth requests to be less verbose
+      if (endpoint !== '/api/login') {
+        if (duration > 1000) {
+          console.warn(`⚠️ SLOW REQUEST: ${endpoint} took ${durationFormatted}`, {
+            url: url,
+            duration: duration
+          })
+        } else {
+          console.log(`⏱️ API Request: ${endpoint} took ${durationFormatted}`)
+        }
+      }
+
       if (response.status === 401) {
         // Не редиректить на логин если это сам запрос логина - просто вернуть ошибку
         if (endpoint === '/api/login') {
-          const errorData = await response.json().catch(() => ({ error: 'Invalid credentials' }))
-          const error: any = new Error(errorData.error || 'Неверный логин или пароль')
+          const errorData = await response.json().catch(() => ({ error: 'invalid_credentials' }))
+          const error: any = new Error(errorData.error || 'authorization_error')
+          error.error = errorData.error || 'invalid_credentials'
           error.status = 401
           throw error
         }

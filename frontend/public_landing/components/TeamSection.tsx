@@ -45,33 +45,36 @@ export function TeamSection() {
         const data = await res.json();
 
         if (Array.isArray(data)) {
-          const teamMembers = data.map((emp: any) => ({
-            id: emp.id,
-            name: capitalizeName(emp.name),
-            role: t(`dynamic:users.${emp.id}.position`, { defaultValue: emp.role || "" }),
-            specialty: t(`dynamic:users.${emp.id}.specialization`, { defaultValue: emp.specialty || "" }),
-            // Experience from backend might be number or string. 
-            experience: emp.experience || 0,
-            age: emp.age,
-            // Check if image is full URL or needs prefix. Usually backend sends filename.
-            image: emp.image ? (
-              emp.image.startsWith('http') ? emp.image :
-                `${API_URL}${emp.image.startsWith('/') ? '' : '/'}${emp.image}`
-            ) : `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name || 'Staff')}&background=ec4899&color=fff&size=400`
-          }));
+          const teamMembers = data.map((emp: any) => {
+            const name = capitalizeName(emp.name);
+            const role = t(`dynamic:users.${emp.id}.position`, { defaultValue: emp.role || "" });
+            const specialty = t(`dynamic:users.${emp.id}.specialization`, { defaultValue: emp.specialty || "" });
+
+            return {
+              id: emp.id,
+              name,
+              // Prevent showing name twice if role/specialty is erroneously set to the name
+              role: role.toLowerCase() === name.toLowerCase() ? "" : role,
+              specialty: specialty.toLowerCase() === name.toLowerCase() ? "" : specialty,
+              experience: emp.experience || 0,
+              age: emp.age,
+              image: emp.image ? (
+                emp.image.startsWith('http') ? emp.image :
+                  `${API_URL}${emp.image.startsWith('/') ? '' : '/'}${emp.image}`
+              ) : `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name || 'Staff')}&background=ec4899&color=fff&size=400`
+            };
+          });
           setTeam(teamMembers);
         } else {
           setTeam([]);
         }
-
       } catch (error) {
-        console.error('Error loading employees:', error);
         setTeam([]);
       }
     };
 
     fetchEmployees();
-  }, [language]);
+  }, [language, t]);
 
   const displayedMembers = team.slice(0, displayCount);
 
@@ -99,8 +102,6 @@ export function TeamSection() {
                   alt={member.name}
                   loading="lazy"
                   className="w-full h-full object-cover object-top"
-                  onLoad={() => console.log(`[Team] Image loaded successfully: ${member.image}`)}
-                  onError={() => console.error(`[Team] Image failed to load: ${member.image}`)}
                 />
                 <div className="team-card-overlay">
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3">

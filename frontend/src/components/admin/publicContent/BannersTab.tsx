@@ -19,8 +19,8 @@ const getAbsoluteImageUrl = (url: string) => {
 
 interface Banner {
     id: number;
-    title_ru: string;
-    subtitle_ru?: string;
+    title: string;
+    subtitle?: string;
     image_url: string;
     link_url?: string;
     display_order: number;
@@ -169,8 +169,8 @@ export default function BannersTab() {
 
     // Form state
     const [formData, setFormData] = useState({
-        title_ru: '',
-        subtitle_ru: '',
+        title: '',
+        subtitle: '',
         image_url: '',
         link_url: '',
         bg_pos_desktop_x: 50,
@@ -300,8 +300,8 @@ export default function BannersTab() {
     const handleEdit = (banner: Banner) => {
         setEditingBanner(banner);
         setFormData({
-            title_ru: banner.title_ru,
-            subtitle_ru: banner.subtitle_ru || '',
+            title: banner.title || '',
+            subtitle: banner.subtitle || '',
             image_url: banner.image_url || '',
             link_url: banner.link_url || '',
             bg_pos_desktop_x: banner.bg_pos_desktop_x ?? 50,
@@ -317,8 +317,8 @@ export default function BannersTab() {
     const resetForm = () => {
         setEditingBanner(null);
         setFormData({
-            title_ru: '',
-            subtitle_ru: '',
+            title: '',
+            subtitle: '',
             image_url: '',
             link_url: '',
             bg_pos_desktop_x: 50,
@@ -413,8 +413,8 @@ export default function BannersTab() {
                                         <Label htmlFor="title">{t('banners.title_label')}</Label>
                                         <Input
                                             id="title"
-                                            value={formData.title_ru}
-                                            onChange={(e) => setFormData({ ...formData, title_ru: e.target.value })}
+                                            value={formData.title}
+                                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                             placeholder={t('banners.title_placeholder')}
                                             className="px-3"
                                         />
@@ -423,8 +423,8 @@ export default function BannersTab() {
                                         <Label htmlFor="subtitle">{t('banners.subtitle_label')}</Label>
                                         <Input
                                             id="subtitle"
-                                            value={formData.subtitle_ru}
-                                            onChange={(e) => setFormData({ ...formData, subtitle_ru: e.target.value })}
+                                            value={formData.subtitle}
+                                            onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
                                             placeholder={t('banners.subtitle_placeholder')}
                                             className="px-3"
                                         />
@@ -558,10 +558,10 @@ export default function BannersTab() {
                             {banner.image_url ? (
                                 <img
                                     src={getAbsoluteImageUrl(banner.image_url)}
-                                    alt={banner.title_ru || banner.id.toString()}
+                                    alt={banner.title || banner.id.toString()}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                     style={{
-                                        objectPosition: `${banner.bg_pos_desktop_x ?? 50}% ${banner.bg_pos_desktop_y ?? 50}% `,
+                                        objectPosition: `${banner.bg_pos_desktop_x ?? 50}% ${banner.bg_pos_desktop_y ?? 50}%`,
                                         transform: [
                                             banner.is_flipped_horizontal ? 'scaleX(-1)' : '',
                                             banner.is_flipped_vertical ? 'scaleY(-1)' : ''
@@ -579,9 +579,9 @@ export default function BannersTab() {
 
                             {/* Content */}
                             <div className="absolute inset-0 p-6 flex flex-col justify-end text-white">
-                                <h3 className="font-bold text-lg leading-tight mb-1">{banner.title_ru || t('banners.default_title', { defaultValue: 'M Le Diamant' })}</h3>
-                                {(banner.subtitle_ru || !banner.title_ru) && (
-                                    <p className="text-sm text-white/80 mb-2">{banner.subtitle_ru || t('banners.default_subtitle', { defaultValue: 'Premium Beauty Salon' })}</p>
+                                <h3 className="font-bold text-lg leading-tight mb-1">{banner.title || t('banners.default_title', { defaultValue: 'M Le Diamant' })}</h3>
+                                {(banner.subtitle || !banner.title) && (
+                                    <p className="text-sm text-white/80 mb-2">{banner.subtitle || t('banners.default_subtitle', { defaultValue: 'Premium Beauty Salon' })}</p>
                                 )}
                             </div>    {banner.link_url && (
                                 <div className="flex items-center gap-1 text-xs text-blue-300">
