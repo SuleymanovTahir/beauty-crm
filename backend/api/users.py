@@ -243,7 +243,7 @@ async def get_users(
         users = []
         for row in c.fetchall():
             # Add cache buster to photo
-            photo_url = map_image_path(sanitize_url(row[12]))
+            photo_url = map_image_path(sanitize_url(row[9]))
 
             user_data = {
                 "id": row[0],

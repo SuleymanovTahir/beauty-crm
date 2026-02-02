@@ -21,6 +21,7 @@ interface UserProfile {
   full_name: string;
   email: string;
   role: string;
+  photo?: string | null;
   created_at?: string;
   last_login?: string;
   employee_id?: number;
@@ -128,7 +129,7 @@ export default function EmployeeProfile() {
       }
     } catch (err) {
       console.error('Error loading profile:', err);
-      toast.error(t('profile:error_loading_profile'));
+      toast.error(t('error_loading_profile'));
     } finally {
       setLoading(false);
     }
@@ -139,12 +140,12 @@ export default function EmployeeProfile() {
 
     // Валидация
     if (!profileData.username || profileData.username.length < 3) {
-      toast.error(t('profile:username_must_be_at_least_3_characters'));
+      toast.error(t('username_must_be_at_least_3_characters'));
       return;
     }
 
     if (!profileData.full_name || profileData.full_name.length < 2) {
-      toast.error(t('profile:full_name_must_be_at_least_2_characters'));
+      toast.error(t('full_name_must_be_at_least_2_characters'));
       return;
     }
 
@@ -170,11 +171,11 @@ export default function EmployeeProfile() {
       // Перезагружаем профиль
       await loadProfile();
 
-      toast.success(t('profile:profile_successfully_updated'));
+      toast.success(t('profile_successfully_updated'));
     } catch (err) {
-      const message = err instanceof Error ? err.message : t('profile:error_updating_profile');
+      const message = err instanceof Error ? err.message : t('error_updating_profile');
       toast.error(`${message}`);
-      console.error(t('profile:error_updating_profile'), err);
+      console.error(t('error_updating_profile'), err);
     } finally {
       setSaving(false);
     }
@@ -185,17 +186,17 @@ export default function EmployeeProfile() {
 
     // Валидация
     if (!passwordData.old_password) {
-      toast.error(t('profile:enter_current_password'));
+      toast.error(t('enter_current_password'));
       return;
     }
 
     if (!passwordData.new_password || passwordData.new_password.length < 6) {
-      toast.error(t('profile:new_password_must_be_at_least_6_characters'));
+      toast.error(t('new_password_must_be_at_least_6_characters'));
       return;
     }
 
     if (passwordData.new_password !== passwordData.confirm_password) {
-      toast.error(t('profile:passwords_do_not_match'));
+      toast.error(t('passwords_do_not_match'));
       return;
     }
 
@@ -208,7 +209,7 @@ export default function EmployeeProfile() {
         new_password: passwordData.new_password
       });
 
-      toast.success(t('profile:password_successfully_changed'));
+      toast.success(t('password_successfully_changed'));
 
       // Очищаем поля
       setPasswordData({
@@ -217,9 +218,9 @@ export default function EmployeeProfile() {
         confirm_password: ''
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : t('profile:error_changing_password');
+      const message = err instanceof Error ? err.message : t('error_changing_password');
       toast.error(`${message}`);
-      console.error(t('profile:error_changing_password'), err);
+      console.error(t('error_changing_password'), err);
     } finally {
       setSaving(false);
     }
@@ -300,9 +301,9 @@ export default function EmployeeProfile() {
 
   // Роли с красивыми метками
   const roleLabels: Record<string, { label: string; color: string }> = {
-    admin: { label: t('profile:admin'), color: 'bg-blue-100 text-blue-800' },
-    manager: { label: t('profile:manager'), color: 'bg-blue-100 text-blue-800' },
-    employee: { label: t('profile:employee'), color: 'bg-green-100 text-green-800' }
+    admin: { label: t('admin'), color: 'bg-blue-100 text-blue-800' },
+    manager: { label: t('manager'), color: 'bg-blue-100 text-blue-800' },
+    employee: { label: t('employee'), color: 'bg-green-100 text-green-800' }
   };
 
   if (loading) {
@@ -310,7 +311,7 @@ export default function EmployeeProfile() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">{t('profile:loading_profile')}</p>
+          <p className="text-gray-600">{t('loading_profile')}</p>
         </div>
       </div>
     );
@@ -322,8 +323,8 @@ export default function EmployeeProfile() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-red-600" />
           <div>
-            <p className="text-red-800 font-medium">{t('profile:error_loading_profile')}</p>
-            <p className="text-red-700 text-sm mt-1">{t('profile:try_reloading_page')}</p>
+            <p className="text-red-800 font-medium">{t('error_loading_profile')}</p>
+            <p className="text-red-700 text-sm mt-1">{t('try_reloading_page')}</p>
           </div>
         </div>
       </div>
@@ -336,16 +337,30 @@ export default function EmployeeProfile() {
         <div className="mb-8">
           <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
             <User className="w-8 h-8 text-pink-600" />
-            {t('profile:my_profile')}
+            {t('my_profile')}
           </h1>
-          <p className="text-gray-600">{t('profile:manage_personal_data_and_security_settings')}</p>
+          <p className="text-gray-600">{t('manage_personal_data_and_security_settings')}</p>
         </div>
 
         {/* НОВОЕ: Карточка профиля с расширенной информацией */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
           <div className="flex items-start gap-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-bold flex-shrink-0">
-              {user.full_name.charAt(0).toUpperCase()}
+            <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 overflow-hidden relative">
+              {user.photo ? (
+                <img
+                  src={getPhotoUrl(user.photo)}
+                  alt={user.full_name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const img = e.target as HTMLImageElement;
+                    img.style.display = 'none';
+                    img.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+              ) : null}
+              <span className={`${user.photo ? 'hidden' : 'flex'} w-full h-full items-center justify-center absolute top-0 left-0 bg-gradient-to-br from-pink-500 to-blue-600`}>
+                {user.full_name.charAt(0).toUpperCase()}
+              </span>
             </div>
             <div className="flex-1">
               <h2 className="text-2xl text-gray-900 font-bold mb-2">{user.full_name}</h2>
@@ -365,7 +380,7 @@ export default function EmployeeProfile() {
                 {user.created_at && (
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-gray-500" />
-                    {t('profile:in_system_since')} {new Date(user.created_at).toLocaleDateString('ru-RU')}
+                    {t('in_system_since')} {new Date(user.created_at).toLocaleDateString('ru-RU')}
                   </div>
                 )}
               </div>
@@ -379,33 +394,33 @@ export default function EmployeeProfile() {
             {employeeProfile && (
               <TabsTrigger value="employee">
                 <Briefcase className="w-4 h-4 mr-2" />
-                {t('profile:employee_profile')}
+                {t('employee_profile')}
               </TabsTrigger>
             )}
             <TabsTrigger value="profile">
               <UserIcon className="w-4 h-4 mr-2" />
-              {t('profile:account')}
+              {t('account')}
             </TabsTrigger>
             <TabsTrigger value="password">
               <Key className="w-4 h-4 mr-2" />
-              {t('profile:change_password')}
+              {t('change_password')}
             </TabsTrigger>
           </TabsList>
 
           {/* Вкладка: Редактирование профиля (учетная запись) */}
           <TabsContent value="profile">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('profile:account')}</h2>
+              <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('account')}</h2>
 
               <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  <strong>Информация:</strong> Здесь вы можете изменить данные для входа в систему. Для изменения публичной информации используйте вкладку "Профиль сотрудника".
+                  <strong>{t('info')}:</strong> {t('account_info_hint')}
                 </p>
               </div>
 
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div>
-                  <Label htmlFor="username">{t('profile:username')} *</Label>
+                  <Label htmlFor="username">{t('username')} *</Label>
                   <Input
                     id="username"
                     required
@@ -416,12 +431,12 @@ export default function EmployeeProfile() {
                     minLength={3}
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    {t('profile:username_must_be_at_least_3_characters')}
+                    {t('username_must_be_at_least_3_characters')}
                   </p>
                 </div>
 
                 <div>
-                  <Label htmlFor="email">{t('profile:email')}</Label>
+                  <Label htmlFor="email">{t('email')}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
@@ -430,12 +445,12 @@ export default function EmployeeProfile() {
                       disabled={saving}
                       value={profileData.email}
                       onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                      placeholder={t('profile:email_placeholder')}
+                      placeholder={t('email_placeholder')}
                       className="pl-10"
                     />
                   </div>
                   <p className="text-sm text-gray-500 mt-1">
-                    {t('profile:for_password_recovery')}
+                    {t('for_password_recovery')}
                   </p>
                 </div>
 
@@ -447,12 +462,12 @@ export default function EmployeeProfile() {
                   {saving ? (
                     <>
                       <Loader className="w-4 h-4 mr-2 animate-spin" />
-                      {t('profile:saving_changes')}
+                      {t('saving_changes')}
                     </>
                   ) : (
                     <>
                       <Save className="w-4 h-4 mr-2" />
-                      {t('profile:save_changes')}
+                      {t('save_changes')}
                     </>
                   )}
                 </Button>
@@ -463,21 +478,21 @@ export default function EmployeeProfile() {
           {/* НОВАЯ Вкладка: Смена пароля */}
           <TabsContent value="password">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('profile:change_password')}</h2>
+              <h2 className="text-xl text-gray-900 mb-6 font-semibold">{t('change_password')}</h2>
 
               <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800 flex items-center">
                   <Lightbulb className="w-4 h-4 mr-2 text-blue-600" />
-                  <strong className="mr-1">{t('profile:tip')}:</strong> {t('profile:use_complex_password_at_least_6_characters')}
+                  <strong className="mr-1">{t('tip')}:</strong> {t('use_complex_password_at_least_6_characters')}
                 </p>
                 <p className="text-sm text-blue-800 ml-6 mt-1">
-                  {t('profile:combine_letters_numbers_and_special_characters_for_maximum_security')}
+                  {t('combine_letters_numbers_and_special_characters_for_maximum_security')}
                 </p>
               </div>
 
               <form onSubmit={handleChangePassword} className="space-y-6">
                 <div>
-                  <Label htmlFor="old_password">{t('profile:current_password')} *</Label>
+                  <Label htmlFor="old_password">{t('current_password')} *</Label>
                   <Input
                     id="old_password"
                     type="password"
@@ -488,12 +503,12 @@ export default function EmployeeProfile() {
                     placeholder="••••••"
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    {t('profile:enter_current_password_for_confirmation')}
+                    {t('enter_current_password_for_confirmation')}
                   </p>
                 </div>
 
                 <div>
-                  <Label htmlFor="new_password">{t('profile:new_password')} *</Label>
+                  <Label htmlFor="new_password">{t('new_password')} *</Label>
                   <Input
                     id="new_password"
                     type="password"
@@ -505,12 +520,12 @@ export default function EmployeeProfile() {
                     minLength={6}
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    {t('profile:new_password_must_be_at_least_6_characters')}
+                    {t('new_password_must_be_at_least_6_characters')}
                   </p>
                 </div>
 
                 <div>
-                  <Label htmlFor="confirm_password">{t('profile:confirm_new_password')} *</Label>
+                  <Label htmlFor="confirm_password">{t('confirm_new_password')} *</Label>
                   <Input
                     id="confirm_password"
                     type="password"
@@ -531,12 +546,12 @@ export default function EmployeeProfile() {
                   {saving ? (
                     <>
                       <Loader className="w-4 h-4 mr-2 animate-spin" />
-                      {t('profile:changing_password')}
+                      {t('changing_password')}
                     </>
                   ) : (
                     <>
                       <Key className="w-4 h-4 mr-2" />
-                      {t('profile:change_password')}
+                      {t('change_password')}
                     </>
                   )}
                 </Button>
@@ -549,193 +564,197 @@ export default function EmployeeProfile() {
             <TabsContent value="employee">
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                 <form onSubmit={handleUpdateEmployeeProfile}>
-                  {/* Photo Section */}
-                  <div className="mb-8 flex flex-col items-center">
-                    <Label className="text-lg font-semibold mb-4">Фотография профиля</Label>
+                  <div className="flex flex-col md:flex-row gap-8 mb-8">
+                    {/* Photo Section - Left Column */}
+                    <div className="flex-shrink-0 flex flex-col items-center md:items-start space-y-4">
+                      <Label className="text-lg font-semibold">{t('profile_photo')}</Label>
 
-                    <div className="relative">
-                      {photoPreview ? (
-                        <img
-                          src={getPhotoUrl(photoPreview) || photoPreview}
-                          alt="Profile"
-                          className="w-32 h-32 rounded-full object-cover border-4 border-pink-200"
-                          onError={(e) => {
-                            const img = e.target as HTMLImageElement;
-                            img.style.display = 'none';
-                          }}
-                        />
-                      ) : (
-                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-pink-500 to-blue-600 flex items-center justify-center text-white text-4xl font-bold">
-                          {employeeData.full_name.charAt(0).toUpperCase()}
+                      <div className="relative group">
+                        <div className="w-40 h-40 rounded-xl overflow-hidden shadow-md bg-gray-100 flex items-center justify-center relative">
+                          {photoPreview ? (
+                            <img
+                              src={getPhotoUrl(photoPreview) || photoPreview}
+                              alt="Profile"
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const img = e.target as HTMLImageElement;
+                                img.style.display = 'none';
+                                img.nextElementSibling?.classList.remove('hidden');
+                              }}
+                            />
+                          ) : null}
+                          <div className={`${photoPreview ? 'hidden' : 'flex'} w-full h-full absolute top-0 left-0 bg-gradient-to-br from-pink-500 to-blue-600 items-center justify-center text-white text-5xl font-bold`}>
+                            {employeeData.full_name.charAt(0).toUpperCase()}
+                          </div>
                         </div>
-                      )}
 
-                      <label
-                        htmlFor="photo-upload"
-                        className="absolute bottom-0 right-0 bg-pink-600 text-white p-2 rounded-full cursor-pointer hover:bg-pink-700 transition-colors shadow-lg"
-                      >
-                        {uploadingPhoto ? (
-                          <Loader className="w-5 h-5 animate-spin" />
-                        ) : (
-                          <Camera className="w-5 h-5" />
-                        )}
-                        <input
-                          id="photo-upload"
-                          type="file"
-                          accept="image/*"
-                          onChange={handlePhotoUpload}
-                          className="hidden"
-                          disabled={uploadingPhoto}
-                        />
-                      </label>
+                        <label
+                          htmlFor="photo-upload"
+                          className="absolute bottom-2 right-2 bg-pink-600 text-white p-2 rounded-full cursor-pointer hover:bg-pink-700 transition-colors shadow-lg"
+                        >
+                          {uploadingPhoto ? (
+                            <Loader className="w-5 h-5 animate-spin" />
+                          ) : (
+                            <Camera className="w-5 h-5" />
+                          )}
+                          <input
+                            id="photo-upload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handlePhotoUpload}
+                            className="hidden"
+                            disabled={uploadingPhoto}
+                          />
+                        </label>
+                      </div>
+                      <p className="text-xs text-gray-500 text-center md:text-left max-w-[200px]">
+                        {t('photo_recommendation')}
+                      </p>
                     </div>
 
-                    <p className="text-sm text-gray-500 mt-3 text-center">
-                      Рекомендуется: квадратное фото, минимум 300x300px
-                    </p>
-                  </div>
+                    {/* Right Column - Inputs */}
+                    <div className="flex-1 space-y-6">
+                      {/* Basic Info */}
+                      <div className="space-y-4">
+                        <h2 className="text-xl text-gray-900 font-semibold">{t('basic_info')}</h2>
 
-                  {/* Basic Info */}
-                  <h2 className="text-xl text-gray-900 mb-6 font-semibold">Основная информация</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <Label htmlFor="emp_full_name">{t('full_name')} *</Label>
+                            <Input
+                              id="emp_full_name"
+                              required
+                              disabled={saving}
+                              value={employeeData.full_name}
+                              onChange={(e) => setEmployeeData({ ...employeeData, full_name: e.target.value })}
+                              placeholder={t('full_name_placeholder')}
+                              minLength={2}
+                            />
+                          </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                      <Label htmlFor="emp_full_name">Полное имя *</Label>
-                      <Input
-                        id="emp_full_name"
-                        required
-                        disabled={saving}
-                        value={employeeData.full_name}
-                        onChange={(e) => setEmployeeData({ ...employeeData, full_name: e.target.value })}
-                        placeholder="Ваше полное имя"
-                        minLength={2}
-                      />
-                    </div>
+                          <div>
+                            <Label htmlFor="position">{t('position')} *</Label>
+                            <Input
+                              id="position"
+                              required
+                              disabled={saving}
+                              value={employeeData.position}
+                              onChange={(e) => setEmployeeData({ ...employeeData, position: e.target.value })}
+                              placeholder={t('position_placeholder')}
+                              minLength={2}
+                            />
+                          </div>
+                        </div>
 
-                    <div>
-                      <Label htmlFor="position">Должность *</Label>
-                      <Input
-                        id="position"
-                        required
-                        disabled={saving}
-                        value={employeeData.position}
-                        onChange={(e) => setEmployeeData({ ...employeeData, position: e.target.value })}
-                        placeholder="Например: HAIR STYLIST"
-                        minLength={2}
-                      />
-                    </div>
-                  </div>
+                        <div className="mb-6">
+                          <Label htmlFor="experience">{t('experience')}</Label>
+                          <Input
+                            id="experience"
+                            disabled={saving}
+                            value={employeeData.experience}
+                            onChange={(e) => setEmployeeData({ ...employeeData, experience: e.target.value })}
+                            placeholder={t('experience_placeholder')}
+                          />
+                        </div>
 
-                  <div className="mb-6">
-                    <Label htmlFor="experience">Опыт работы</Label>
-                    <Input
-                      id="experience"
-                      disabled={saving}
-                      value={employeeData.experience}
-                      onChange={(e) => setEmployeeData({ ...employeeData, experience: e.target.value })}
-                      placeholder="Например: 5 лет"
-                    />
-                  </div>
+                        {/* Contact Info */}
+                        <h2 className="text-xl text-gray-900 mb-6 font-semibold mt-8">{t('contact_info')}</h2>
 
-                  {/* Contact Info */}
-                  <h2 className="text-xl text-gray-900 mb-6 font-semibold mt-8">Контактная информация</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                          <div>
+                            <Label htmlFor="emp_phone">{t('phone')}</Label>
+                            <div className="relative">
+                              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                              <Input
+                                id="emp_phone"
+                                type="tel"
+                                disabled={saving}
+                                value={employeeData.phone}
+                                onChange={(e) => setEmployeeData({ ...employeeData, phone: e.target.value })}
+                                placeholder={t('phone_placeholder')}
+                                className="pl-10"
+                              />
+                            </div>
+                          </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                      <Label htmlFor="emp_phone">Телефон</Label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <Input
-                          id="emp_phone"
-                          type="tel"
+                          <div>
+                            <Label htmlFor="emp_email">{t('email')}</Label>
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                              <Input
+                                id="emp_email"
+                                type="email"
+                                disabled={saving}
+                                value={employeeData.email}
+                                onChange={(e) => setEmployeeData({ ...employeeData, email: e.target.value })}
+                                placeholder={t('email_placeholder')}
+                                className="pl-10"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mb-6">
+                          <Label htmlFor="instagram">{t('instagram')}</Label>
+                          <div className="relative">
+                            <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Input
+                              id="instagram"
+                              disabled={saving}
+                              value={employeeData.instagram}
+                              onChange={(e) => setEmployeeData({ ...employeeData, instagram: e.target.value })}
+                              placeholder={t('instagram_placeholder')}
+                              className="pl-10"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Bio */}
+                        <h2 className="text-xl text-gray-900 mb-6 font-semibold mt-8">{t('about_me')}</h2>
+
+                        <div className="mb-6">
+                          <Label htmlFor="bio">{t('bio')}</Label>
+                          <Textarea
+                            id="bio"
+                            disabled={saving}
+                            value={employeeData.bio}
+                            onChange={(e) => setEmployeeData({ ...employeeData, bio: e.target.value })}
+                            placeholder={t('bio_placeholder')}
+                            rows={6}
+                            className="resize-none"
+                          />
+                          <p className="text-sm text-gray-500 mt-1">
+                            {t('bio_hint')}
+                          </p>
+                        </div>
+
+                        <Button
+                          type="submit"
                           disabled={saving}
-                          value={employeeData.phone}
-                          onChange={(e) => setEmployeeData({ ...employeeData, phone: e.target.value })}
-                          placeholder="+971 XX XXX XXXX"
-                          className="pl-10"
-                        />
+                          className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
+                        >
+                          {saving ? (
+                            <>
+                              <Loader className="w-4 h-4 mr-2 animate-spin" />
+                              {t('saving')}
+                            </>
+                          ) : (
+                            <>
+                              <Save className="w-4 h-4 mr-2" />
+                              {t('save_changes')}
+                            </>
+                          )}
+                        </Button>
+
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
+                          <p className="text-sm text-blue-800 flex items-center">
+                            <Lightbulb className="w-4 h-4 mr-2 text-blue-600" />
+                            <strong className="mr-1">{t('tip')}:</strong> {t('tip_message')}
+                          </p>
+                        </div>
                       </div>
                     </div>
-
-                    <div>
-                      <Label htmlFor="emp_email">Email</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <Input
-                          id="emp_email"
-                          type="email"
-                          disabled={saving}
-                          value={employeeData.email}
-                          onChange={(e) => setEmployeeData({ ...employeeData, email: e.target.value })}
-                          placeholder="your@email.com"
-                          className="pl-10"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mb-6">
-                    <Label htmlFor="instagram">Instagram</Label>
-                    <div className="relative">
-                      <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <Input
-                        id="instagram"
-                        disabled={saving}
-                        value={employeeData.instagram}
-                        onChange={(e) => setEmployeeData({ ...employeeData, instagram: e.target.value })}
-                        placeholder="@your_instagram"
-                        className="pl-10"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Bio */}
-                  <h2 className="text-xl text-gray-900 mb-6 font-semibold mt-8">О себе</h2>
-
-                  <div className="mb-6">
-                    <Label htmlFor="bio">Биография</Label>
-                    <Textarea
-                      id="bio"
-                      disabled={saving}
-                      value={employeeData.bio}
-                      onChange={(e) => setEmployeeData({ ...employeeData, bio: e.target.value })}
-                      placeholder="Расскажите о себе, своих достижениях, сертификатах..."
-                      rows={6}
-                      className="resize-none"
-                    />
-                    <p className="text-sm text-gray-500 mt-1">
-                      Эта информация будет видна клиентам на публичной странице
-                    </p>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={saving}
-                    className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
-                  >
-                    {saving ? (
-                      <>
-                        <Loader className="w-4 h-4 mr-2 animate-spin" />
-                        Сохранение...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4 mr-2" />
-                        Сохранить изменения
-                      </>
-                    )}
-                  </Button>
                 </form>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
-                  <p className="text-sm text-blue-800 flex items-center">
-                    <Lightbulb className="w-4 h-4 mr-2 text-blue-600" />
-                    <strong className="mr-1">{t('profile:tip', { defaultValue: 'Совет' })}:</strong> {t('profile:fill_all_fields_for_full_profile', { defaultValue: 'Заполните все поля для создания полного профиля.' })}
-                  </p>
-                  <p className="text-sm text-blue-800 ml-6 mt-1">
-                    {t('profile:profile_info_visibility', { defaultValue: 'Ваша информация будет отображаться на публичной странице и поможет клиентам узнать о вас больше и выбрать именно вас для записи.' })}
-                  </p>
-                </div>
               </div>
             </TabsContent>
           )}

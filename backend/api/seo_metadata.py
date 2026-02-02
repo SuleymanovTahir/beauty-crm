@@ -102,17 +102,14 @@ def get_seo_metadata():
             }
         }
         
-        return JSONResponse(content=metadata)
+        return metadata
         
     except Exception as e:
         # Return minimal defaults on error
-        return JSONResponse(
-            content={
+        return {
                 "error": str(e),
                 "salon_name": os.getenv('SALON_NAME', "Beauty Salon"),
                 "phone": salon.get('phone', '') if 'salon' in locals() else '',
                 "city": "Dubai",
                 "base_url": os.getenv('SALON_BASE_URL', "https://mlediamant.com")
-            },
-            status_code=500
-        )
+            }

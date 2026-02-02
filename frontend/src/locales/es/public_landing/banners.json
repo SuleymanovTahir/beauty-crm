@@ -1,52 +1,10 @@
 {
   "items": [
     {
-      "image": "/static/uploads/images/banners/banner_main.webp",
+      "image": "/landing-images/banners/banner2.webp",
       "link": "",
-      "subtitle": "Servicios de belleza profesionales",
-      "title": "Belleza y Elegancia"
-    },
-    {
-      "image": "/static/uploads/images/banners/banner_main.webp",
-      "link": "",
-      "subtitle": "Para todos los servicios del salón",
-      "title": "Descuentos de hasta el 50%"
-    },
-    {
-      "image": "/static/uploads/images/salon/moroccan_bath.webp",
-      "link": "",
-      "subtitle": "Para todos los servicios del salón",
-      "title": "Descuentos de hasta el {{percent}}%"
-    },
-    {
-      "image": "/static/uploads/images/salon/salon_main.webp",
-      "link": "",
-      "subtitle": "Servicios de belleza profesionales de primer nivel",
-      "title": "Belleza y Elegancia"
-    },
-    {
-      "image": "/static/uploads/images/employees/simo.webp",
-      "link": "",
-      "subtitle": "Cuida tu estilo y salud",
-      "title": "Servicio premium"
-    },
-    {
-      "image": "/static/uploads/images/employees/jennifer.webp",
-      "link": "",
-      "subtitle": "Siente una relajación completa y un ritual de limpieza",
-      "title": "Baño Marroquí"
-    },
-    {
-      "image": "/static/uploads/images/employees/mestan.webp",
-      "link": "",
-      "subtitle": "Solo este mes",
-      "title": "20% de descuento en tu primera visita"
-    },
-    {
-      "image": "/static/uploads/images/employees/lyazzat.webp",
-      "link": "",
-      "subtitle": "Pruebe la innovación",
-      "title": "Nuevo servicio: Smart Pedicure"
+      "subtitle": "El arte de la transformación",
+      "title": "Salón de belleza en Dubái"
     }
   ]
 }
