@@ -23,8 +23,8 @@
     "selectClient": "حدد العميل"
   },
   "internalContracts": "داخلي",
-  "manage_stages": "الأعمدة",
   "manageTypes": "أنواع العقود",
+  "manage_stages": "الأعمدة",
   "messages": {
     "confirmDelete": "هل أنت متأكد من أنك تريد حذف هذا العقد؟",
     "contractCreated": "تم إنشاء العقد",
