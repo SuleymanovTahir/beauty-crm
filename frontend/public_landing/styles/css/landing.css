@@ -465,3 +465,31 @@ textarea::placeholder {
 .service-card:hover .service-category-tag {
   @apply bg-primary text-white;
 }
+/* 404 Page Styles */
+.not-found-container {
+  @apply min-h-screen flex flex-col;
+}
+
+.not-found-main {
+  @apply flex-1 flex items-center justify-center bg-gradient-to-br from-secondary/30 via-background to-secondary/30 px-4 pt-24 pb-12;
+}
+
+.not-found-404-text {
+  @apply text-9xl font-bold text-primary mb-4 tracking-tight;
+}
+
+.not-found-divider {
+  @apply h-1 w-24 bg-primary mx-auto rounded-full;
+}
+
+.btn-primary-capsule {
+  @apply inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 hover:shadow-lg transition-all duration-300 font-medium shadow-md shadow-primary/20;
+}
+
+.btn-outline-capsule {
+  @apply inline-flex items-center gap-2 px-8 py-4 border-2 border-border text-foreground rounded-full hover:border-primary hover:text-primary transition-all duration-300 font-medium;
+}
+
+.popular-link-tag {
+  @apply px-4 py-2 rounded-full bg-background border border-border text-sm text-muted-foreground hover:text-primary hover:border-primary/20 transition-all shadow-sm;
+}

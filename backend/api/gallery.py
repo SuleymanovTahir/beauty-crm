@@ -11,6 +11,7 @@ from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.utils import require_auth, sanitize_url
 from utils.logger import log_info, log_error
+from utils.cache import cache
 import time
 
 router = APIRouter(tags=["Gallery"])
@@ -137,7 +138,10 @@ async def add_gallery_image(
 
         image_id = c.fetchone()[0]
         conn.commit()
-        conn.close()
+        # Инвалидируем кеш
+        for lang in ['ru', 'en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']:
+            cache.delete(f"public_gallery_{lang}")
+            cache.delete(f"initial_load_{lang}")
 
         return {"success": True, "image_id": image_id}
 
@@ -191,6 +195,12 @@ async def update_gallery_image(
             conn.commit()
 
         conn.close()
+
+        # Инвалидируем кеш
+        for lang in ['ru', 'en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']:
+            cache.delete(f"public_gallery_{lang}")
+            cache.delete(f"initial_load_{lang}")
+
         return {"success": True}
 
     except Exception as e:
@@ -219,8 +229,11 @@ async def delete_gallery_image(
             c.execute("DELETE FROM public_gallery WHERE id = %s", (image_id,))
             conn.commit()
             if row[0]: delete_upload_file(row[0])
-
-        conn.close()
+            
+            # Инвалидируем кеш
+            for lang in ['ru', 'en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']:
+                cache.delete(f"public_gallery_{lang}")
+                cache.delete(f"initial_load_{lang}")
         return {"success": True}
 
     except Exception as e:
@@ -279,7 +292,10 @@ async def upload_gallery_image(
 
         image_id = c.fetchone()[0]
         conn.commit()
-        conn.close()
+        # Инвалидируем кеш
+        for lang in ['ru', 'en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']:
+            cache.delete(f"public_gallery_{lang}")
+            cache.delete(f"initial_load_{lang}")
 
         return {"success": True, "image_id": image_id, "image_path": image_url}
 
