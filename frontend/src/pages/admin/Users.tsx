@@ -359,7 +359,7 @@ export default function Users() {
         <div className="flex gap-2">
           <button
             onClick={() => handleTabChange('employees')}
-            className={`flex - 1 px - 4 py - 2.5 rounded - lg text - sm font - medium transition - colors ${activeTab === 'employees'
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'employees'
               ? 'bg-pink-600 text-white shadow-sm'
               : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               } `}
@@ -374,7 +374,7 @@ export default function Users() {
           </button>
           <button
             onClick={() => handleTabChange('clients')}
-            className={`flex - 1 px - 4 py - 2.5 rounded - lg text - sm font - medium transition - colors ${activeTab === 'clients'
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'clients'
               ? 'bg-pink-600 text-white shadow-sm'
               : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               } `}
@@ -390,7 +390,7 @@ export default function Users() {
         </div>
       </div>
 
-      {/* Date Filter Section - только для клиентов */}
+      {/* Date Filter Section-только для клиентов */}
       {activeTab === 'clients' && (
         <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -595,7 +595,11 @@ export default function Users() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => navigate(`/crm/users/${(user as any).id}`)}
+                                onClick={() => {
+                                  const path = `/crm/users/${(user as any).id}`;
+                                  console.log('Navigating to user edit:', path);
+                                  navigate(path);
+                                }}
                                 className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                                 title={t('action_edit_title')}
                               >
@@ -661,7 +665,11 @@ export default function Users() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => navigate(`/crm/clients/${user.instagram_id}`)}
+                              onClick={() => {
+                                const path = `/crm/clients/${user.instagram_id}`;
+                                console.log('Navigating to client details:', path);
+                                navigate(path);
+                              }}
                               className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                               title={t('view_details')}
                             >
@@ -742,7 +750,7 @@ export default function Users() {
                               <button
                                 onClick={() => handleChangeRole((selectedUser as any).id, role.key)}
                                 disabled={savingRole}
-                                className={`w - full p - 3 rounded - lg border - 2 transition - all text - left ${(selectedUser as any).role === role.key
+                                className={`w-full p-3 rounded-lg border-2 transition-all text-left ${(selectedUser as any).role === role.key
                                   ? 'border-pink-500 bg-pink-50'
                                   : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
                                   } `}

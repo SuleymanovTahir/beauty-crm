@@ -485,6 +485,13 @@ def get_public_banners(language: str = "ru"):
             banner['subtitle'] = get_dynamic_translation('public_banners', b_id, 'subtitle', lang_key, banner['subtitle'])
             
             banners.append(banner)
+            banners.append(banner)
+            
+    except Exception as e:
+        log_error(f"Error fetching public banners: {e}")
+        # Return empty list on error instead of failing
+        banners = []
+    finally:
         if conn:
             conn.close()
             
