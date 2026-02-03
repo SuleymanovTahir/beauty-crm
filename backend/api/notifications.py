@@ -174,6 +174,28 @@ async def clear_all_notifications(session_token: Optional[str] = Cookie(None)):
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 
+@router.post("/notifications")
+async def add_notification_endpoint(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Добавить уведомление вручную (через API)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    try:
+        data = await request.json()
+        success = create_notification(
+            user_id=user["id"],
+            title=data.get("title", ""),
+            message=data.get("content", ""),
+            notification_type=data.get("notification_type", "info"),
+            action_url=data.get("action_url")
+        )
+        return {"success": success}
+    except Exception as e:
+        log_error(f"Error in add_notification_endpoint: {e}", "notifications")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
 def create_notification(user_id: int, title: str, message: str, notification_type: str = "info", action_url: str = None):
     """Создать уведомление (системное)"""
     try:

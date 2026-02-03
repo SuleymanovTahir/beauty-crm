@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import LanguageSwitcher from '../LanguageSwitcher';
@@ -58,7 +58,12 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const { t } = useTranslation(['layouts/mainlayout', 'common']);
 
     // Global Call State
-    const [incomingCall, setIncomingCall] = useState<{ from: number, type: CallType, name: string } | null>(null);
+    const [incomingCall, setIncomingCall] = useState<{
+        from: number;
+        type: 'audio' | 'video';
+        callerName?: string;
+        callerPhoto?: string;
+    } | null>(null);
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -85,6 +90,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const activeMenuItemRef = useRef<HTMLButtonElement>(null);
     const navContainerRef = useRef<HTMLDivElement>(null);
     const expandedMenuRef = useRef<HTMLUListElement>(null);
+    const [users, setUsers] = useState<any[]>([]); // Assuming users might be loaded elsewhere or need to be fetched
 
     // Используем централизованную систему прав
     const permissions = usePermissions(user?.role || 'employee');
@@ -130,46 +136,105 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         }
     });
 
-    // WebRTC Service Initialization (Global Online Status & Calls)
+    // Handlers for WebRTC events - memoized to prevent listener re-registration thrashing
+    const handleStopRinging = useCallback(() => {
+        console.log('☎️ [MainLayout:Call] Stopping ringtone and clearing incoming call record');
+        webrtcService.stopRingtone();
+        setIncomingCall(null);
+    }, []);
+
+    const handleAcceptCall = useCallback(() => {
+        if (incomingCall) {
+            console.log('☎️ [MainLayout] Accepting call from:', incomingCall.from);
+            webrtcService.stopRingtone();
+            setIncomingCall(null);
+            navigate(`${rolePrefix}/internal-chat?answer=true&from=${incomingCall.from}&type=${incomingCall.type}`);
+        } else {
+            console.warn('☎️ [MainLayout] handleAcceptCall called but no incomingCall in state');
+            // Fallback: if we just joined, try to find the incoming call info from service if possible
+            // but usually we rely on state.
+        }
+    }, [incomingCall, navigate, rolePrefix]);
+
+    const handleRejectCallLocal = useCallback(() => {
+        console.log('☎️ [MainLayout] Rejecting call');
+        webrtcService.rejectCall();
+        webrtcService.stopRingtone();
+        setIncomingCall(null);
+    }, []);
+
+    const handleIncomingCall = useCallback((fromId: number, type: CallType, _status: string, name?: string, photo?: string, dndActive?: boolean) => {
+        console.info('☎️ [MainLayout:Call] Processing INCOMING call event:', { fromId, type, name, photo, dndActive });
+
+        // Try to find user in loaded users list first for better name display
+        const caller = users.find(u => u.id === fromId);
+        const finalCallerName = name || caller?.full_name || caller?.username || t('common:user', 'Пользователь');
+        const finalCallerPhoto = photo || caller?.photo;
+
+        if (dndActive) {
+            console.log('☎️ [MainLayout:Call] DND active, showing silent missed call notification');
+            toast.error(t('calls.missed_call', 'Пропущенный звонок'), {
+                description: `${finalCallerName}: ${type === 'video' ? t('calls.video_call') : t('calls.audio_call')} (DND)`,
+                duration: 5000
+            });
+
+            // Log to database notifications
+            api.addNotification({
+                title: t('calls.missed_call', 'Пропущенный звонок'),
+                message: `${finalCallerName} звонил(а) вам (режим DND)`,
+                type: 'urgent',
+                action_url: `/admin/internal-chat?user_id=${fromId}`
+            }).catch(e => console.error('Failed to save missed call notification:', e));
+            return;
+        }
+
+        webrtcService.playRingtone('incoming');
+
+        console.info('☎️ [MainLayout:Call] Updating UI state for incoming call from:', finalCallerName);
+        setIncomingCall({
+            from: fromId,
+            type,
+            callerName: finalCallerName,
+            callerPhoto: finalCallerPhoto
+        });
+
+        // Show toast notification on ALL pages (including internal-chat)
+        console.log('☎️ [MainLayout:Call] Displaying global toast for incoming call');
+        toast.info(t('calls.incoming_call', 'Входящий звонок!'), {
+            description: `${finalCallerName}: ${type === 'video' ? t('calls.video_call') : t('calls.audio_call')}`,
+            duration: 30000,
+            action: {
+                label: t('calls.accept', 'Принять'),
+                onClick: () => {
+                    console.log('☎️ [MainLayout:Call] Accepting from toast action');
+                    handleAcceptCall();
+                }
+            }
+        });
+    }, [users, t, handleAcceptCall]);
+
+    // Initialize WebRTC Service
     useEffect(() => {
         if (user?.id) {
+            console.log('🔌 [MainLayout] Initializing WebRTC for user:', user.id);
             webrtcService.initialize(user.id).catch(err => {
                 console.error('Failed to initialize WebRTC globally:', err);
             });
+        }
+    }, [user?.id]);
 
-            // Global Incoming Call Handler
-            const handleIncomingCall = async (fromUserId: number, callType: CallType) => {
-                webrtcService.playRingtone('incoming');
-
-                // Fetch caller name
-                let callerName = t('common:user', 'Пользователь');
-                try {
-                    const profile = await api.getUserProfile(fromUserId);
-                    callerName = profile.full_name || profile.username || callerName;
-                } catch (err) {
-                    console.error('Failed to fetch caller profile:', err);
-                }
-
-                setIncomingCall({ from: fromUserId, type: callType, name: callerName });
-
-                // Also show a toast as backup
-                if (!location.pathname.includes('/internal-chat')) {
-                    toast.info(t('calls.incoming_call', 'Входящий звонок!'), {
-                        description: `${callerName}: ${callType === 'video' ? t('calls.video_call') : t('calls.audio_call')}`,
-                        duration: 30000,
-                    });
-                }
-            };
-
-            const handleStopRinging = () => {
-                webrtcService.stopRingtone();
-                setIncomingCall(null);
-            };
-
+    // Manage WebRTC Listeners
+    useEffect(() => {
+        if (user?.id) {
             webrtcService.addEventListener('incomingCall', handleIncomingCall);
             webrtcService.addEventListener('callAccepted', handleStopRinging);
             webrtcService.addEventListener('callRejected', handleStopRinging);
             webrtcService.addEventListener('callEnded', handleStopRinging);
+
+            // Add debug helper to window
+            (window as any).triggerIncomingCall = (fromId = 3, name = 'Debug User') => {
+                handleIncomingCall(fromId, 'video', 'available', name);
+            };
 
             return () => {
                 webrtcService.removeEventListener('incomingCall', handleIncomingCall);
@@ -178,9 +243,41 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 webrtcService.removeEventListener('callEnded', handleStopRinging);
             };
         }
-    }, [user?.id, t, location.pathname]);
+    }, [user?.id, handleIncomingCall, handleStopRinging]);
 
-    // Handle 404 Dynamic Import Errors (Common during deployment)
+    // Auto-reject incoming call after 30s (Missed call)
+    useEffect(() => {
+        let timeout: NodeJS.Timeout | null = null;
+        if (incomingCall) {
+            timeout = setTimeout(() => {
+                console.log('⏰ [MainLayout] Auto-rejecting call (missed)');
+                handleRejectCallLocal();
+                toast.info(t('calls.missed_auto', 'Звонок пропущен (авто-отклонение)'));
+            }, 30000);
+        }
+        return () => {
+            if (timeout) clearTimeout(timeout);
+        };
+    }, [incomingCall, handleRejectCallLocal, t]);
+
+    // Resume AudioContext on first user gesture
+    useEffect(() => {
+        const handleGesture = () => {
+            webrtcService.resumeAudioContext();
+            // Remove after first interaction
+            window.removeEventListener('click', handleGesture);
+            window.removeEventListener('touchstart', handleGesture);
+        };
+
+        window.addEventListener('click', handleGesture);
+        window.addEventListener('touchstart', handleGesture);
+
+        return () => {
+            window.removeEventListener('click', handleGesture);
+            window.removeEventListener('touchstart', handleGesture);
+        };
+    }, []);
+
     useEffect(() => {
         const handleError = (e: ErrorEvent | PromiseRejectionEvent) => {
             const message = (e instanceof ErrorEvent) ? e.message : e.reason?.message;
@@ -207,7 +304,8 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             loadUserProfile(),
             loadMenuSettings(),
             loadNotifications(),
-            loadUnreadCount()
+            loadUnreadCount(),
+            loadUsers() // Load users for caller info
         ]).catch(error => {
             console.error('Error loading initial data:', error);
         });
@@ -331,6 +429,15 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         }
     };
 
+    const loadUsers = async () => {
+        try {
+            const response = await api.getUsers(); // Assuming an API call to get all users
+            setUsers(response.users || []);
+        } catch (error) {
+            console.error('Error loading users:', error);
+        }
+    };
+
     const markNotificationRead = async (id: number) => {
         try {
             await api.markNotificationRead(id);
@@ -393,6 +500,8 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             toast.success(t('logout_success'));
         }
     };
+
+    /* Redundant handlers removed - moved to memoized versions above */
 
     // Фильтруем пункты меню на основе прав пользователя
     const menuItems = useMemo(() => {
@@ -904,22 +1013,14 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                     </div>
                 </div>
             )}
-            {/* Global Incoming Call Modal */}
+            {/* Incoming Call Modal - Global */}
             {incomingCall && (
                 <IncomingCallModal
-                    callerName={incomingCall.name}
+                    callerName={incomingCall.callerName || users.find(u => u.id === incomingCall.from)?.full_name || t('calls.incoming_call', 'Входящий звонок')}
                     callerId={incomingCall.from}
                     callType={incomingCall.type}
-                    onAccept={() => {
-                        webrtcService.stopRingtone();
-                        setIncomingCall(null);
-                        navigate(`${rolePrefix}/internal-chat?answer=true&from=${incomingCall.from}&type=${incomingCall.type}`);
-                    }}
-                    onReject={() => {
-                        webrtcService.rejectCall();
-                        webrtcService.stopRingtone();
-                        setIncomingCall(null);
-                    }}
+                    onAccept={handleAcceptCall}
+                    onReject={handleRejectCallLocal}
                 />
             )}
         </div>

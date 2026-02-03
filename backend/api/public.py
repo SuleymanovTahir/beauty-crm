@@ -225,7 +225,8 @@ def get_public_employees(
                 u.years_of_experience,
                 u.birthday,
                 u.sort_order,
-                u.updated_at
+                u.updated_at,
+                u.nickname
             FROM users u
             WHERE u.is_service_provider = TRUE
             AND u.is_active = TRUE
@@ -272,8 +273,24 @@ def get_public_employees(
             photo_url = map_image_path(photo_url)
             final_photo = _add_v(photo_url)
 
+            # Name Logic (as per Rule): Nickname > First Name (Capitalized)
+            nickname = row_dict.get("nickname")
+            full_name = row_dict.get("full_name") or ""
+            
+            if nickname:
+                display_name = nickname
+            else:
+                # Split by space or parenthesis and take first part
+                import re
+                parts = re.split(r'[\s\(\)]+', full_name.strip())
+                display_name = parts[0] if parts else full_name
+
+            # Ensure proper capitalization
+            if display_name:
+                display_name = display_name[0].upper() + display_name[1:].lower()
+
             # Transliterate name based on language
-            final_name = get_localized_name(emp_id, row_dict["full_name"], language=lang_key)
+            final_name = get_localized_name(emp_id, display_name, language=lang_key)
             
             # Translate position
             raw_position = row_dict["position"] or "Specialist"

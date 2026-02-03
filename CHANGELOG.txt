@@ -1,3 +1,15 @@
+## [2026-02-04] Chat Stability, Staff Activation & Assets Mapping
+- 📞 **Internal Chat Enhancements**:
+  - **Staff Visibility Fix**: Activated operational staff members (Jennifer, Sabri, Gulcehre) in the database to ensure a full team presence in the chat list.
+  - **Call History Robustness**: Added safety checks to prevent UI crashes when call logs are returned as non-array objects.
+  - **DND Centralization**: Mirrored the Do Not Disturb toggle within the Call Settings modal for better accessibility.
+- 🖼️ **Public Landing Reliability**:
+  - **Image Mapping Expansion**: Added 10+ new mappings for Russian-named assets in the database to their English equivalents on disk (Services, Portfolio).
+  - **Cyrillic URL Support**: Enhanced `getPhotoUrl` utility with `encodeURI` to correctly handle spaces and Cyrillic characters in image paths.
+- 🎵 **Ringtone Customization**:
+  - **Increased Limits**: Expanded custom ringtone upload limit to 10MB to support high-fidelity audio files.
+  - **Management Tools**: Added the ability to delete custom uploaded ringtones and reset to system defaults.
+
 ## [2026-02-03] Advanced Internal Call System & Scalability
 - 📞 **Premium Communication Suite**:
   - **Screen Sharing**: Implemented high-performance screen sharing using WebRTC (VP8/VP9) with automatic remote track management.

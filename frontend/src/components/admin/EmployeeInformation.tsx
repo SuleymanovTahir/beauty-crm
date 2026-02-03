@@ -13,7 +13,6 @@ interface Employee {
     id: number;
     username: string;
     full_name: string;
-    full_name?: string;
     email: string;
     phone?: string;
     phone_number?: string;
@@ -27,6 +26,7 @@ interface Employee {
     years_of_experience?: string | number;
     specialization?: string;
     about_me?: string;
+    nickname?: string;
     photo_url?: string;
     photo?: string;
 }
@@ -54,6 +54,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
         years_of_experience: '',
         specialization: '',
         about_me: '',
+        nickname: '',
         current_password: '',
         new_password: '',
         confirm_password: '',
@@ -74,6 +75,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
             years_of_experience: String(employee.years_of_experience || ''),
             specialization: employee.specialization || '',
             about_me: employee.about_me || '',
+            nickname: employee.nickname || '',
             current_password: '',
             new_password: '',
             confirm_password: '',
@@ -97,12 +99,12 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
         try {
             setUploadingPhoto(true);
             const uploadResponse = await api.uploadFile(file);
-            if (uploadResponse.url) {
+            if (uploadResponse.file_url) {
                 await api.updateUserProfile(employee.id, {
                     username: employee.username,
                     full_name: employee.full_name,
                     email: employee.email,
-                    photo: uploadResponse.url,
+                    photo: uploadResponse.file_url,
                 } as any);
                 toast.success(t('photo_updated', 'Photo updated'));
                 window.dispatchEvent(new CustomEvent('profile-updated'));
@@ -165,6 +167,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                 years_of_experience: form.years_of_experience,
                 specialization: form.specialization,
                 about_me: form.about_me,
+                nickname: form.nickname,
             };
 
             if (form.new_password) {
@@ -236,7 +239,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                             />
                         </div>
                         <p className="text-xs text-gray-500 mt-3 text-center max-w-[160px]">
-                            {t('max_size', 'Max 5MB')}
+                            {t('max_size', { max: 5 })}
                         </p>
                     </div>
 
@@ -313,6 +316,22 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 onChange={(e) => setForm({ ...form, full_name: e.target.value })}
                                 className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                                 placeholder="Иван Иванов"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <Label htmlFor="nickname" className="text-sm font-medium text-gray-700 mb-2">
+                            {t('nickname', 'Nickname')}
+                        </Label>
+                        <div className="relative">
+                            <Star className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <Input
+                                id="nickname"
+                                value={form.nickname}
+                                onChange={(e) => setForm({ ...form, nickname: e.target.value })}
+                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                                placeholder="Simo"
                             />
                         </div>
                     </div>

@@ -201,7 +201,8 @@ async def send_internal_message(
     c = conn.cursor()
 
     # Вставляем сообщение
-    now = datetime.now().isoformat()
+    from datetime import timezone
+    now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     c.execute("""
         INSERT INTO internal_chat (sender_id, receiver_id, message, timestamp, type)
         VALUES (%s, %s, %s, %s, %s)
@@ -223,8 +224,8 @@ async def send_internal_message(
 
     log_info(f"Internal message sent by {user.get('full_name', user['username'])}", "internal_chat")
 
-    # Отправляем email уведомление асинхронно
-    if recipient_info and recipient_info[0]:
+    # Отправляем email уведомление асинхронно (только для обычных текстовых сообщений)
+    if recipient_info and recipient_info[0] and msg_type not in ['call_log', 'system']:
         asyncio.create_task(send_chat_email_notification(
             sender_name=user.get('full_name', user['username']),
             recipient_email=recipient_info[0],
@@ -269,7 +270,7 @@ async def get_chat_users(
         WHERE u.id != %s 
           AND u.is_active = TRUE 
           AND u.deleted_at IS NULL
-          AND u.role NOT IN ('client', 'guest')
+          AND u.role != 'guest'
         ORDER BY u.id, u.full_name
     """, (user['id'],))
     
@@ -895,8 +896,8 @@ async def get_call_logs(limit: int = 50, session_token: Optional[str] = Cookie(N
                cl.duration, cl.created_at, 
                u1.full_name as caller_name, u2.full_name as callee_name
         FROM user_call_logs cl
-        JOIN users u1 ON cl.caller_id = u1.id
-        JOIN users u2 ON cl.callee_id = u2.id
+        LEFT JOIN users u1 ON cl.caller_id = u1.id
+        LEFT JOIN users u2 ON cl.callee_id = u2.id
         WHERE cl.caller_id = %s OR cl.callee_id = %s
         ORDER BY cl.created_at DESC
         LIMIT %s
@@ -904,6 +905,15 @@ async def get_call_logs(limit: int = 50, session_token: Optional[str] = Cookie(N
     
     logs = []
     for row in c.fetchall():
+        created_at = row[6]
+        # Append Z if it's a datetime object without timezone to tell frontend it's UTC
+        if hasattr(created_at, 'isoformat'):
+            ts = created_at.isoformat()
+            if '+' not in ts and 'Z' not in ts:
+                ts += 'Z'
+        else:
+            ts = str(created_at)
+
         logs.append({
             "id": row[0],
             "caller_id": row[1],
@@ -911,53 +921,12 @@ async def get_call_logs(limit: int = 50, session_token: Optional[str] = Cookie(N
             "type": row[3],
             "status": row[4],
             "duration": row[5],
-            "created_at": row[6].isoformat(),
+            "created_at": ts,
             "caller_name": row[7],
             "callee_name": row[8],
             "direction": "out" if row[1] == user['id'] else "in"
         })
     
     conn.close()
-    return logs
-
-@router.get("/call-logs")
-async def get_call_logs(session_token: Optional[str] = Cookie(None)):
-    """Получить историю звонков пользователя"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
-
-    conn = get_db_connection()
-    c = conn.cursor()
-
-    c.execute("""
-        SELECT 
-            l.id, l.caller_id, l.callee_id, l.status, l.type, l.duration, l.created_at,
-            u1.full_name as caller_name,
-            u2.full_name as callee_name
-        FROM user_call_logs l
-        LEFT JOIN users u1 ON l.caller_id = u1.id
-        LEFT JOIN users u2 ON l.callee_id = u2.id
-        WHERE l.caller_id = %s OR l.callee_id = %s
-        ORDER BY l.created_at DESC
-        LIMIT 100
-    """, (user['id'], user['id']))
-
-    logs = []
-    for row in c.fetchall():
-        logs.append({
-            'id': row[0],
-            'caller_id': row[1],
-            'callee_id': row[2],
-            'status': row[3],
-            'type': row[4],
-            'duration': row[5],
-            'created_at': row[6].isoformat(),
-            'caller_name': row[7],
-            'callee_name': row[8],
-            'direction': 'out' if row[1] == user['id'] else 'in'
-        })
-
-    conn.close()
-
     return {"logs": logs}
+
