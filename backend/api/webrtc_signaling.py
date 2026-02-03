@@ -140,8 +140,9 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # Регистрация пользователя
             if message_type == "register":
-                user_id = data.get("user_id")
-                if user_id:
+                user_id_raw = data.get("user_id")
+                if user_id_raw is not None:
+                    user_id = int(user_id_raw)
                     # Manually add to manager (since we already accepted)
                     if user_id not in manager.active_connections:
                         manager.active_connections[user_id] = set()
@@ -165,8 +166,8 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # Инициация звонка
             elif message_type == "call":
-                from_user = data.get("from")
-                to_user = data.get("to")
+                from_user = int(data.get("from"))
+                to_user = int(data.get("to"))
                 call_type = data.get("call_type", "audio")
 
                 # Проверяем, онлайн ли получатель
