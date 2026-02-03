@@ -37,7 +37,7 @@ export class WebRTCService {
   private startTime: number | null = null;
 
   // Callback properties (for component compatibility)
-  public onIncomingCall: ((fromUserId: number, type: CallType, calleeStatus?: string) => void) | null = null;
+  public onIncomingCall: ((fromUserId: number, type: CallType, calleeStatus?: string, callerName?: string, callerPhoto?: string) => void) | null = null;
   public onCallAccepted: (() => void) | null = null;
   public onCallRejected: ((reason?: string) => void) | null = null;
   public onCallEnded: (() => void) | null = null;
@@ -57,14 +57,29 @@ export class WebRTCService {
   private isAudioEnabled: boolean = true;
   private isVideoEnabled: boolean = true;
   private qualityCheckInterval: any = null;
+  private isConnecting: boolean = false;
 
   // Audio handling
   private audioContext: AudioContext | null = null;
-  private activeOscillators: any[] = [];
+  private activeOscillators: OscillatorNode[] = [];
+  private ringtoneAudio: HTMLAudioElement | null = null;
+  private previewAudio: HTMLAudioElement | null = null;
+  private currentRingtoneUrl: string = localStorage.getItem('webrtc_ringtone_url') ?? '/audio/ringtones/default_classic.mp3';
+  private ringtoneVolume: number = Number(localStorage.getItem('webrtc_ringtone_volume') ?? '0.5');
   private isRinging: boolean = false;
   private isCallActive: boolean = false;
+  private isDndEnabled: boolean = false;
 
-  public get isInCall(): boolean {
+  // Public getters for state sync
+  public getRemoteUserId() { return this.remoteUserId; }
+  public setRemoteUserId(id: number) { this.remoteUserId = id; }
+  public getCallType() { return this.callType; }
+  public setCallType(type: CallType) { this.callType = type; }
+
+  /**
+   * Status check
+   */
+  isInCall(): boolean {
     return this.isCallActive;
   }
 
@@ -87,13 +102,34 @@ export class WebRTCService {
   }
 
   /**
+   * Resume AudioContext on user gesture to comply with browser autoplay policies
+   */
+  public async resumeAudioContext(): Promise<void> {
+    if (this.audioContext && (this.audioContext.state === 'suspended' || this.audioContext.state === 'interrupted')) {
+      try {
+        await this.audioContext.resume();
+        console.log('🔊 [WebRTC] AudioContext resumed successfully');
+      } catch (err) {
+        console.error('❌ [WebRTC] Failed to resume AudioContext:', err);
+      }
+    } else if (!this.audioContext) {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioCtx) {
+        this.audioContext = new AudioCtx();
+        console.log('🔊 [WebRTC] AudioContext created on gesture');
+      }
+    }
+  }
+
+  /**
    * Emit an event to all subscribers and callback properties
    */
   private emit(event: string, ...args: any[]): void {
+    console.debug(`📢 [WebRTC:Emit] Event: ${event}`, args);
     // Call callback properties for backwards compatibility
     switch (event) {
       case 'incomingCall':
-        if (this.onIncomingCall) this.onIncomingCall(args[0], args[1], args[2]);
+        if (this.onIncomingCall) this.onIncomingCall(args[0], args[1], args[2], args[3], args[4]);
         break;
       case 'callAccepted':
         this.isCallActive = true;
@@ -149,10 +185,93 @@ export class WebRTCService {
     this.activeOscillators = [];
     this.isRinging = false;
 
+    if (this.ringtoneAudio) {
+      this.ringtoneAudio.pause();
+      this.ringtoneAudio.currentTime = 0;
+      this.ringtoneAudio = null;
+    }
+
+    if (this.previewAudio) {
+      this.previewAudio.pause();
+      this.previewAudio.currentTime = 0;
+      this.previewAudio = null;
+    }
+
     // Resume context if it was suspended to avoid "interrupted" errors later
     if (this.audioContext && this.audioContext.state === 'suspended') {
       this.audioContext.resume().catch(() => { });
     }
+  }
+
+  setRingtone(url: string) {
+    this.currentRingtoneUrl = url;
+    localStorage.setItem('webrtc_ringtone_url', url);
+    // Also sync with chat_ringtone if needed, but we'll use webrtc_ringtone_url as SSOT
+  }
+
+  setDnd(enabled: boolean) {
+    this.isDndEnabled = enabled;
+  }
+
+  getDnd() {
+    return this.isDndEnabled;
+  }
+
+  /**
+   * Play a short preview of a ringtone
+   */
+  public async playPreview(url: string, onEnd?: () => void): Promise<void> {
+    try {
+      // If same URL is playing, stop it
+      if (this.previewAudio && this.previewAudio.src === url && !this.previewAudio.paused) {
+        this.stopRingtone();
+        if (onEnd) onEnd();
+        return;
+      }
+
+      this.stopRingtone();
+      await this.resumeAudioContext();
+
+      const audioUrl = url || 'https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3';
+      this.previewAudio = new Audio(audioUrl);
+      this.previewAudio.volume = this.ringtoneVolume;
+
+      this.previewAudio.onended = () => {
+        this.previewAudio = null;
+        if (onEnd) onEnd();
+      };
+
+      await this.previewAudio.play();
+    } catch (e) {
+      console.warn("Ringtone preview failed:", e);
+      if (onEnd) onEnd();
+    }
+  }
+
+  public isPreviewPlaying(url: string): boolean {
+    if (!this.previewAudio) return false;
+    // Handle cases where src might have host vs relative
+    const currentSrc = this.previewAudio.src;
+    return !this.previewAudio.paused && (currentSrc === url || currentSrc.endsWith(url));
+  }
+
+  getRingtone() {
+    return this.currentRingtoneUrl;
+  }
+
+  setVolume(volume: number) {
+    this.ringtoneVolume = volume;
+    localStorage.setItem('webrtc_ringtone_volume', volume.toString());
+    if (this.ringtoneAudio) {
+      this.ringtoneAudio.volume = volume;
+    }
+    if (this.previewAudio) {
+      this.previewAudio.volume = volume;
+    }
+  }
+
+  getVolume() {
+    return this.ringtoneVolume;
   }
 
   /**
@@ -161,55 +280,99 @@ export class WebRTCService {
   playRingtone(type: 'incoming' | 'outgoing' | 'end'): void {
     try {
       // Don't play if already ringing (prevent overlap)
-      if (this.isRinging && type !== 'end') return;
+      if (this.isRinging && type !== 'end') {
+        console.debug(`🎵 [WebRTC:Ringtone] Already ringing, ignoring '${type}'`);
+        return;
+      }
 
+      console.info(`🎵 [WebRTC:Ringtone] Attempting to play '${type}'`);
+
+      // 1. If we have a custom or preset URL-based ringtone, use HTMLAudioElement
+      if (type === 'incoming' && this.currentRingtoneUrl) {
+        this.stopRingtone();
+        this.isRinging = true;
+        this.ringtoneAudio = new Audio(this.currentRingtoneUrl);
+        this.ringtoneAudio.loop = true;
+        this.ringtoneAudio.volume = this.ringtoneVolume;
+        this.ringtoneAudio.play().catch(e => console.warn("Failed to play custom ringtone:", e));
+        return;
+      }
+
+      // 2. Fallback to Oscillator-based sound if no URL or for other sounds
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtx) return;
+      if (!AudioCtx) {
+        console.error('❌ [Ringtone] AudioContext NOT supported');
+        return;
+      }
 
       if (!this.audioContext) {
         this.audioContext = new AudioCtx();
+        console.info('🔊 [Ringtone] Created new AudioContext');
       }
       const ctx = this.audioContext;
+      console.info(`🔊 [Ringtone] AudioContext state: ${ctx.state}`);
 
       // Resume context if suspended
       if (ctx.state === 'suspended') {
-        ctx.resume().catch(() => { });
+        console.warn('⚠️ [Ringtone] Context suspended, attempting resume...');
+        ctx.resume().then(() => {
+          console.info('✅ [Ringtone] Context resumed');
+        }).catch(e => {
+          console.error('❌ [Ringtone] Resume failed:', e);
+        });
       }
 
       this.stopRingtone(); // Stop previous sounds
 
+      // Explicitly try to resume before playing
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {
+          console.warn('[WebRTC] AudioContext resume failed - waiting for user gesture');
+        });
+      }
+
       if (type === 'incoming') {
         this.isRinging = true;
 
-        // Melodic double-tone (European classic ring)
+        // Digital Phone Trill (Very distinct from beeps)
         const playRingPattern = (startTime: number) => {
-          const createTone = (freq: number, volume: number) => {
-            const o = ctx.createOscillator();
-            const g = ctx.createGain();
-            o.type = 'triangle'; // Richer sound than sine
-            o.frequency.setValueAtTime(freq, startTime);
-            o.frequency.exponentialRampToValueAtTime(freq * 1.01, startTime + 1); // Subtle fluctuation
+          const osc1 = ctx.createOscillator();
+          const osc2 = ctx.createOscillator(); // Modulator
+          const gain = ctx.createGain();
+          const modGain = ctx.createGain();
 
-            g.gain.setValueAtTime(0, startTime);
-            g.gain.linearRampToValueAtTime(volume, startTime + 0.05);
-            g.gain.setValueAtTime(volume, startTime + 1.0);
-            g.gain.linearRampToValueAtTime(0, startTime + 1.1);
+          osc1.type = 'square'; // Square wave for "digital" sound
+          osc1.frequency.setValueAtTime(600, startTime);
 
-            o.connect(g);
-            g.connect(ctx.destination);
-            o.start(startTime);
-            o.stop(startTime + 1.2);
-            this.activeOscillators.push(o);
-          };
+          osc2.type = 'square';
+          osc2.frequency.setValueAtTime(25, startTime); // 25Hz modulation (the "trill")
 
-          // Harmonic interval (A4 and C#5)
-          createTone(440, 0.08);
-          createTone(554.37, 0.04);
+          modGain.gain.value = 100; // Depth of modulation
+
+          // FM Synthesis: Modulator -> ModGain -> Carrier.frequency
+          osc2.connect(modGain);
+          modGain.connect(osc1.frequency);
+
+          gain.gain.setValueAtTime(0, startTime);
+          gain.gain.linearRampToValueAtTime(0.2, startTime + 0.1);
+          gain.gain.setValueAtTime(0.2, startTime + 1.8);
+          gain.gain.linearRampToValueAtTime(0, startTime + 2.0);
+
+          osc1.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc1.start(startTime);
+          osc2.start(startTime);
+          osc1.stop(startTime + 2.0);
+          osc2.stop(startTime + 2.0);
+
+          this.activeOscillators.push(osc1);
+          this.activeOscillators.push(osc2);
         };
 
-        // Schedule for 60 seconds
-        for (let i = 0; i < 12; i++) {
-          playRingPattern(ctx.currentTime + i * 5);
+        // Schedule for 60 seconds (Loop every 3 seconds)
+        for (let i = 0; i < 20; i++) {
+          playRingPattern(ctx.currentTime + i * 3);
         }
       } else if (type === 'outgoing') {
         this.isRinging = true;
@@ -256,18 +419,26 @@ export class WebRTCService {
     }
   }
 
-  /**
-   * Инициализация WebRTC сервиса
-   */
   async initialize(userId: number): Promise<void> {
-    // Skip if already initialized with the same user and WebSocket is open
-    if (this.currentUserId === userId && this.ws && this.ws.readyState === WebSocket.OPEN) {
-      console.log('🔌 [WebRTC] Already initialized and connected, skipping...');
+    // Skip if already initialized or connecting
+    if (this.currentUserId === userId && this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
+      console.log('🔌 [WebRTC] Already initialized or connecting, skipping...');
       return;
     }
 
+    if (this.isConnecting) {
+      console.log('🔌 [WebRTC] Already in process of connecting, skipping...');
+      return;
+    }
+
+    console.log(`🔌 [WebRTC] Initializing for user ${userId}`);
     this.currentUserId = userId;
-    await this.connectWebSocket();
+    this.isConnecting = true;
+    try {
+      await this.connectWebSocket();
+    } finally {
+      this.isConnecting = false;
+    }
   }
 
   /**
@@ -293,8 +464,13 @@ export class WebRTCService {
       };
 
       this.ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        this.handleSignal(data);
+        try {
+          const data = JSON.parse(event.data);
+          console.debug('📩 [WebRTC:WS] Message received:', data);
+          this.handleSignal(data);
+        } catch (e) {
+          console.error('❌ [WebRTC:WS] Failed to parse message:', event.data, e);
+        }
       };
 
       this.ws.onerror = (error) => {
@@ -320,11 +496,24 @@ export class WebRTCService {
         break;
 
       case 'incoming-call':
-        console.log('📞 Incoming call from:', data.from, 'Type:', data.call_type, 'Remote user status:', data.callee_status);
+        console.info(`� [Call-IN] 1. Signal received from ${data.from}`);
+        console.info(`   - Name: ${data.caller_name}`);
+        console.info(`   - Photo: ${data.caller_photo ? 'Yes' : 'No'}`);
+        console.info(`   - Type: ${data.call_type}`);
+
         this.remoteUserId = data.from;
         this.callType = data.call_type;
-        this.emit('incomingCall', data.from, data.call_type, data.callee_status);
-        this.playRingtone('incoming');
+        const dndActive = data.dnd_active || this.isDndEnabled;
+
+        // Pass caller details to event
+        this.emit('incomingCall', data.from, data.call_type, data.callee_status, data.caller_name, data.caller_photo, dndActive);
+
+        if (!dndActive) {
+          console.info(`🎵 [Call-IN] 2. Triggering ringtone`);
+          this.playRingtone('incoming');
+        } else {
+          console.info(`🔇 [Call-IN] 2. DND active, skipping audible ringtone`);
+        }
         break;
 
       case 'call-accepted':
@@ -409,6 +598,7 @@ export class WebRTCService {
       this.createPeerConnection();
 
       // Отправляем сигнал о звонке
+      console.info('🚀 [Call-OUT] 4. Sending call signal to server');
       this.sendSignal({
         type: 'call',
         from: this.currentUserId,
@@ -416,9 +606,9 @@ export class WebRTCService {
         call_type: callType
       });
 
-      console.log(`📞 Calling user ${toUserId} (${callType})`);
+      console.info(`📞 [Call-OUT] 5. Call signal sent to user ${toUserId} (${callType})`);
     } catch (error) {
-      console.error('Error starting call:', error);
+      console.error('❌ [Call-OUT] Failed:', error);
       this.emit('error', 'Не удалось получить доступ к камере/микрофону');
       this.cleanup();
     }
@@ -428,14 +618,26 @@ export class WebRTCService {
    * Принять входящий звонок
    */
   async acceptCall(): Promise<void> {
+    console.info('🚀 [WebRTC:Accept] 1. Starting acceptCall sequence');
+    console.info(`   - Current User: ${this.currentUserId}`);
+    console.info(`   - Remote User: ${this.remoteUserId}`);
+    console.info(`   - Call Type: ${this.callType}`);
+
+    if (!this.remoteUserId) {
+      console.warn('⚠️ [WebRTC:Accept] Remote user ID is missing! Attempting to recover...');
+    }
+
     try {
       // Получаем доступ к камере/микрофону
+      console.info('📸 [WebRTC:Accept] 2. Requesting media devices');
       await this.getMediaDevices(this.callType);
 
       // Создаем peer connection
+      console.info('🔌 [WebRTC:Accept] 3. Creating PeerConnection');
       this.createPeerConnection();
 
       // Отправляем подтверждение
+      console.info('📤 [WebRTC:Accept] 4. Sending accept-call signal');
       this.sendSignal({
         type: 'accept-call',
         from: this.currentUserId,
@@ -443,13 +645,16 @@ export class WebRTCService {
       });
 
       // Вызываем событие локально
+      this.isCallActive = true;
+      this.startTime = Date.now();
       this.emit('callAccepted');
 
-      console.log('Call accepted');
+      console.info('✅ [WebRTC:Accept] 5. Call accepted successfully');
     } catch (error) {
-      console.error('Error accepting call:', error);
+      console.error('❌ [WebRTC:Accept] Failed:', error);
       this.emit('error', 'Не удалось получить доступ к камере/микрофону');
       this.cleanup();
+      throw error;
     }
   }
 
@@ -637,7 +842,8 @@ export class WebRTCService {
 
   async getCallLogs(): Promise<any[]> {
     const response = await fetch('/api/internal-chat/call-logs');
-    return await response.json();
+    const data = await response.json();
+    return data.logs ?? [];
   }
 
   /**
@@ -673,10 +879,14 @@ export class WebRTCService {
     };
 
     try {
+      console.info(`📸 [WebRTC:Media] Requesting getUserMedia with constraints:`, constraints);
       this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
-      console.log('🎥 Local stream obtained per constraints');
+      console.info('✅ [WebRTC:Media] Local stream obtained successfully');
+      this.localStream.getTracks().forEach(t => {
+        console.debug(`   - Track: ${t.kind}, ID: ${t.id}, Enabled: ${t.enabled}`);
+      });
     } catch (error) {
-      console.error('Failed to get media devices:', error);
+      console.error('❌ [WebRTC:Media] Failed to get media devices:', error);
       throw error;
     }
   }
@@ -700,9 +910,14 @@ export class WebRTCService {
 
     // Обработка удаленного stream
     this.peerConnection.ontrack = (event) => {
-      console.log('📺 Remote track received');
-      this.remoteStream = event.streams[0];
-      this.emit('remoteStream', this.remoteStream);
+      console.info('📺 [WebRTC:Remote] Remote track received:', event.track.kind);
+      if (event.streams && event.streams[0]) {
+        this.remoteStream = event.streams[0];
+        console.info(`   - Stream ID: ${this.remoteStream.id}, Tracks: ${this.remoteStream.getTracks().length}`);
+        this.emit('remoteStream', this.remoteStream);
+      } else {
+        console.warn('⚠️ [WebRTC:Remote] No stream attached to track event');
+      }
     };
 
     // Обработка ICE candidates
@@ -719,14 +934,15 @@ export class WebRTCService {
 
     // Обработка изменения состояния соединения
     this.peerConnection.onconnectionstatechange = () => {
-      console.log('Connection state:', this.peerConnection?.connectionState);
+      const state = this.peerConnection?.connectionState;
+      console.info(`🌐 [WebRTC:PC] Connection state changed: ${state}`);
 
-      if (this.peerConnection?.connectionState === 'connected') {
+      if (state === 'connected') {
         this.startQualityMonitoring();
       }
 
-      if (this.peerConnection?.connectionState === 'disconnected' ||
-        this.peerConnection?.connectionState === 'failed') {
+      if (state === 'disconnected' || state === 'failed' || state === 'closed') {
+        console.warn(`🛑 [WebRTC:PC] Connection lost or closed (state: ${state})`);
         this.emit('callEnded');
         this.cleanup();
       }

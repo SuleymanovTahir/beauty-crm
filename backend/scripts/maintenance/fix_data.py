@@ -85,17 +85,41 @@ def run_fix():
             log_info("🚩 Verified banner images", "maintenance")
 
         # 5. Sync Employee Photos
-        log_info("👨‍💼 Updating employee photos...", "maintenance")
+        log_info("👨‍💼 Updating employee photos and public status...", "maintenance")
         employee_photos = {
             'Amandurdyyeva Mestan': '/landing-images/staff/Mestan.webp',
-            'Mohamed Sabri': '/landing-images/staff/Simo.webp',
+            'Simo (Mohamed Sabri)': '/landing-images/staff/Simo.webp',
             'Peradilla Jennifer': '/landing-images/staff/Jennifer.webp',
             'Kasymova Gulcehre': '/landing-images/staff/Gulya.webp',
             'Kozhabay Lyazat': '/landing-images/staff/Lyazzat.webp'
         }
+        
+        # First, ensure these names are correctly set in the DB
+        c.execute("UPDATE users SET full_name = 'Simo (Mohamed Sabri)' WHERE full_name = 'Mohamed Sabri' OR username = 'sabri'")
+        
         for name, photo_path in employee_photos.items():
-            c.execute("UPDATE users SET photo = %s, is_active = TRUE, is_service_provider = TRUE, is_public_visible = TRUE WHERE full_name = %s", (photo_path, name))
-        log_info("   ✅ Updated employee photos and status", "maintenance")
+            c.execute("""
+                UPDATE users SET 
+                    photo = %s, 
+                    is_active = TRUE, 
+                    is_service_provider = TRUE, 
+                    is_public_visible = TRUE 
+                WHERE full_name = %s OR (full_name = 'Mohamed Sabri' AND %s = 'Simo (Mohamed Sabri)')
+            """, (photo_path, name, name))
+        log_info("   ✅ Updated employee photos, visibility and status", "maintenance")
+        
+        # 5.1 Sync Nicknames for employees (As per USER's objective for public display)
+        log_info("📛 Updating employee nicknames...", "maintenance")
+        employee_nicknames = {
+            'sabri': 'Simo',
+            'gulcehre': 'Gulya',
+            'mestan': 'Mestan',
+            'jennifer': 'Jennifer',
+            'lyazat': 'Lyazat'
+        }
+        for uname, nname in employee_nicknames.items():
+            c.execute("UPDATE users SET nickname = %s WHERE username = %s OR username = %s", (nname, uname, f"{uname}_archived"))
+        log_info("   ✅ Synchronized employee nicknames", "maintenance")
 
         # 6. Clear and Re-populate Gallery (Only if empty)
         c.execute("SELECT COUNT(*) FROM public_gallery")
@@ -146,11 +170,11 @@ def run_fix():
         log_info("👥 Merging duplicate employees (Deep Cleanup)...", "maintenance")
         
         staff_targets = [
-            {'username': 'kasymova_gulcehre', 'alternates': ['gulcehre', 'gulcehre_archived'], 'names': ['Kasymova Gulcehre', 'Касымова Гульчере', 'Гульчара']},
-            {'username': 'peradilla_jennifer', 'alternates': ['jennifer', 'jennifer_archived'], 'names': ['Peradilla Jennifer', 'Перадилья Дженнифер', 'Дженнифер']},
-            {'username': 'amandurdyyeva_mestan', 'alternates': ['mestan', 'mestan_archived'], 'names': ['Amandurdyyeva Mestan', 'Амандурдыева Местан', 'Местан']},
-            {'username': 'mohamed_sabri', 'alternates': ['sabri', 'sabri_archived'], 'names': ['Mohamed Sabri', 'Мохамед Сабри', 'Мохаммед Сабри', 'Сабри']},
-            {'username': 'kozhabay_lyazat', 'alternates': ['lyazat', 'lyazat_archived'], 'names': ['Kozhabay Lyazat', 'Кожабай Лязат', 'Лязат']}
+            {'username': 'gulcehre', 'alternates': ['kasymova_gulcehre', 'gulya', 'gulcehre_archived'], 'names': ['Kasymova Gulcehre', 'Гульчехра', 'Гуля']},
+            {'username': 'jennifer', 'alternates': ['peradilla_jennifer', 'jennifer_archived'], 'names': ['Peradilla Jennifer', 'Перадилья Дженнифер', 'Дженнифер']},
+            {'username': 'mestan', 'alternates': ['amandurdyyeva_mestan', 'mestan_archived'], 'names': ['Amandurdyyeva Mestan', 'Амандурдыева Местан', 'Местан']},
+            {'username': 'sabri', 'alternates': ['mohamed_sabri', 'sabri_archived'], 'names': ['Mohamed Sabri', 'Мохамед Сабри', 'Мохаммед Сабри', 'Симо']},
+            {'username': 'lyazat', 'alternates': ['kozhabay_lyazat', 'lyazat_archived'], 'names': ['Kozhabay Lyazat', 'Кожабай Лязат', 'Лязат']}
         ]
 
         # First, ensure target usernames are set for the BEST records
@@ -250,11 +274,11 @@ def run_fix():
 
         # Structure: (preferred_username, preferred_full_name)
         staff_fixes = [
-            ('kasymova_gulcehre', 'Kasymova Gulcehre'),
-            ('peradilla_jennifer', 'Peradilla Jennifer'),
-            ('amandurdyyeva_mestan', 'Amandurdyyeva Mestan'),
-            ('mohamed_sabri', 'Mohamed Sabri'),
-            ('kozhabay_lyazat', 'Kozhabay Lyazat')
+            ('gulcehre', 'Kasymova Gulcehre'),
+            ('jennifer', 'Peradilla Jennifer'),
+            ('mestan', 'Amandurdyyeva Mestan'),
+            ('sabri', 'Simo (Mohamed Sabri)'),
+            ('lyazat', 'Kozhabay Lyazat')
         ]
         
         # Load credentials from file

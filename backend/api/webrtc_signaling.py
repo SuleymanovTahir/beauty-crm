@@ -9,6 +9,8 @@ import time
 from datetime import datetime
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
+from utils.redis_pubsub import redis_pubsub
+import asyncio
 
 router = APIRouter(tags=["WebRTC"])
 
@@ -54,7 +56,7 @@ def save_call_log(caller_id: int, callee_id: int, status: str, call_type: str = 
 
 
 class ConnectionManager:
-    """Управление WebSocket соединениями для WebRTC"""
+    """Управление WebSocket соединениями для WebRTC с поддержкой Redis Pub/Sub"""
 
     def __init__(self):
         self.active_connections: Dict[int, Set[WebSocket]] = {}
@@ -64,7 +66,7 @@ class ConnectionManager:
         if user_id not in self.active_connections:
             self.active_connections[user_id] = set()
         self.active_connections[user_id].add(websocket)
-        log_info(f"WebRTC: User {user_id} connected. Total sessions: {len(self.active_connections.get(user_id, []))}", "webrtc")
+        log_info(f"WebRTC: User {user_id} connected locally. Total sessions here: {len(self.active_connections.get(user_id, []))}", "webrtc")
 
     def disconnect(self, user_id: int, websocket: WebSocket):
         """Удалить соединение"""
@@ -74,26 +76,29 @@ class ConnectionManager:
             
             if not self.active_connections[user_id]:
                 del self.active_connections[user_id]
-                log_info(f"WebRTC: User {user_id} fully disconnected (no active sessions).", "webrtc")
-                return True # Indicates user is now completely offline
+                log_info(f"WebRTC: User {user_id} fully disconnected from THIS worker.", "webrtc")
+                return True # Indicates user is now offline on THIS worker
             else:
-                log_info(f"WebRTC: User {user_id} disconnected one session. Remaining: {len(self.active_connections[user_id])}", "webrtc")
-                return False # User still has other active connections
+                log_info(f"WebRTC: User {user_id} disconnected one local session. Remaining: {len(self.active_connections[user_id])}", "webrtc")
+                return False 
         return False
 
     async def send_to_user(self, user_id: int, message: dict):
-        """Отправить сообщение конкретному пользователю (на все его устройства)"""
+        """Публикуем сообщение в Redis для доставки пользователю на любой воркер"""
+        await redis_pubsub.publish(f"crm:webrtc:user:{user_id}", message)
+        return True
+
+    async def send_to_user_local(self, user_id: int, message: dict):
+        """Отправить сообщение локально подключенному пользователю"""
         if user_id in self.active_connections:
-            # Отправляем на все активные соединения пользователя
             dead_sockets = []
-            for connection in self.active_connections[user_id]:
+            for connection in list(self.active_connections[user_id]):
                 try:
                     await connection.send_json(message)
                 except Exception as e:
-                    log_error(f"Error sending to user {user_id}: {e}", "webrtc")
+                    log_error(f"Error sending local to user {user_id}: {e}", "webrtc")
                     dead_sockets.append(connection)
             
-            # Cleanup dead sockets
             for ds in dead_sockets:
                 if ds in self.active_connections.get(user_id, set()):
                     self.active_connections[user_id].remove(ds)
@@ -101,25 +106,55 @@ class ConnectionManager:
             if not self.active_connections.get(user_id):
                 if user_id in self.active_connections:
                     del self.active_connections[user_id]
-            
             return True
         return False
 
     async def broadcast(self, message: dict):
-        """Broadcast message to all connected users"""
-        for user_id, connections in self.active_connections.items():
-            for connection in connections:
-                try:
-                    await connection.send_json(message)
-                except Exception as e:
-                    log_error(f"Error broadcasting to user {user_id}: {e}", "webrtc")
+        """Публикуем сообщение в Redis для рассылки всем воркерам"""
+        await redis_pubsub.publish("crm:webrtc:broadcast", message)
+
+    async def broadcast_local(self, message: dict):
+        """Разослать сообщение всем локально подключенным пользователям"""
+        for user_id in list(self.active_connections.keys()):
+            await self.send_to_user_local(user_id, message)
 
     def is_user_online(self, user_id: int) -> bool:
-        """Проверить, онлайн ли пользователь"""
-        return user_id in self.active_connections and len(self.active_connections[user_id]) > 0
+        """
+        Проверить, онлайн ли пользователь (по БД).
+        Это работает корректно при любом количестве воркеров.
+        """
+        try:
+            conn = get_db_connection()
+            c = conn.cursor()
+            c.execute("SELECT is_online FROM user_status WHERE user_id = %s", (user_id,))
+            row = c.fetchone()
+            conn.close()
+            return bool(row[0]) if row else False
+        except Exception as e:
+            log_error(f"Error checking online status for user {user_id}: {e}", "webrtc")
+            # Fallback to local check if DB fails
+            return user_id in self.active_connections
 
 
 manager = ConnectionManager()
+
+# Регистрация обработчика сообщений из Redis
+async def webrtc_pubsub_handler(channel: str, data: dict):
+    """
+    Обработчик сообщений WebRTC из Redis.
+    Маршрутизирует сообщения на локальные WebSocket соединения.
+    """
+    if channel == "crm:webrtc:broadcast":
+        await manager.broadcast_local(data)
+    elif channel.startswith("crm:webrtc:user:"):
+        try:
+            user_id = int(channel.split(":")[-1])
+            await manager.send_to_user_local(user_id, data)
+        except (ValueError, IndexError):
+            log_error(f"Invalid WebRTC user channel: {channel}", "webrtc")
+
+# Регистрируем префикс для этого модуля
+redis_pubsub.register_handler("crm:webrtc:", webrtc_pubsub_handler)
 
 
 @router.websocket("/signal")
@@ -156,13 +191,31 @@ async def websocket_endpoint(websocket: WebSocket):
                     
                     manager.active_connections[user_id].add(websocket)
                     
+                    # Update DB status to online
+                    try:
+                        conn = get_db_connection()
+                        c = conn.cursor()
+                        now = datetime.now()
+                        c.execute("""
+                            INSERT INTO user_status (user_id, is_online, last_seen)
+                            VALUES (%s, true, %s)
+                            ON CONFLICT (user_id) 
+                            DO UPDATE SET is_online = true, last_seen = %s
+                        """, (user_id, now, now))
+                        conn.commit()
+                        conn.close()
+                    except Exception as e:
+                        log_error(f"Error updating online status in DB: {e}", "webrtc")
+                        # Don't stop here, at least we have local connection
+                        continue
+
                     await websocket.send_json({
                         "type": "registered",
                         "user_id": user_id,
                         "success": True
                     })
                     
-                    log_info(f"User {user_id} registered for WebRTC", "webrtc")
+                    log_info(f"User {user_id} registered for WebRTC and marked online", "webrtc")
 
             # Инициация звонка
             elif message_type == "call":
@@ -172,39 +225,58 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 # Проверяем, онлайн ли получатель
                 if manager.is_user_online(to_user):
-                    # Проверяем DND (Do Not Disturb)
-                    if get_user_dnd(to_user):
-                        await websocket.send_json({
-                            "type": "call-rejected",
-                            "from": to_user,
-                            "reason": "busy" # DND интерпретируется как занят
-                        })
-                        save_call_log(from_user, to_user, 'busy', call_type)
-                        log_info(f"🚫 WebRTC: Call blocked by DND {to_user}", "webrtc")
-                        return
+                    log_info(f"✅ [Signaling] User {to_user} is ONLINE", "webrtc")
+                    
+                    # Проверяем DND (Do Not Disturb) - теперь только помечаем флаг, но пропускаем
+                    dnd_active = get_user_dnd(to_user)
+                    if dnd_active:
+                        log_info(f"🔇 [Signaling] User {to_user} is in DND, but notifying for missed call tracking", "webrtc")
 
                     # Проверяем статус (Call Waiting support)
                     current_status = user_call_status.get(to_user, "available")
+                    log_info(f"ℹ️ [Signaling] User {to_user} status: {current_status}", "webrtc")
                     
+                    # Получаем информацию о звонящем
+                    try:
+                        conn = get_db_connection()
+                        c = conn.cursor()
+                        c.execute("SELECT full_name, photo, username FROM users WHERE id = %s", (from_user,))
+                        caller_info = c.fetchone()
+                        conn.close()
+                        
+                        caller_name = caller_info[0] or caller_info[2] or "Unknown"
+                        caller_photo = caller_info[1]
+                        log_info(f"📸 [Signaling] Fetched caller info for {from_user}: {caller_name}", "webrtc")
+                    except Exception as e:
+                        log_error(f"Error fetching caller info: {e}", "webrtc")
+                        caller_name = "Unknown"
+                        caller_photo = None
+
                     # Отправляем уведомление о входящем звонке
+                    log_info(f"🚀 [Signaling] Sending 'incoming-call' payload to {to_user}", "webrtc")
                     await manager.send_to_user(to_user, {
                         "type": "incoming-call",
                         "from": from_user,
+                        "caller_name": caller_name,
+                        "caller_photo": caller_photo,
                         "call_type": call_type,
-                        "callee_status": current_status
+                        "callee_status": current_status,
+                        "dnd_active": dnd_active
                     })
                     
                     # Устанавливаем статус "calling" (вызывается)
                     if from_user not in user_call_status or user_call_status[from_user] == "available":
                         user_call_status[from_user] = "calling"
                         
-                    log_info(f"📞 WebRTC: Call initiated {from_user} -> {to_user} ({call_type}). To-user status: {current_status}", "webrtc")
+                    log_info(f"📞 WebRTC: Call initiated {from_user} ({caller_name}) -> {to_user} ({call_type}). To-user status: {current_status}", "webrtc")
                 else:
+                    log_info(f"❌ [Signaling] User {to_user} is OFFLINE", "webrtc")
                     # Пользователь оффлайн
                     await websocket.send_json({
                         "type": "error",
                         "message": "User is offline"
                     })
+                    continue
 
             # Принятие звонка
             elif message_type == "accept-call":
@@ -218,7 +290,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     "type": "call-accepted",
                     "from": from_user
                 })
-                log_info(f"✅ WebRTC: Call accepted {from_user} <-> {to_user}", "webrtc")
+                log_info(f"✅ WebRTC [Accept]: {from_user} accepted call from {to_user}. Both marked as BUSY.", "webrtc")
 
             # Отклонение звонка
             elif message_type == "reject-call":
@@ -240,7 +312,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     "reason": reason
                 })
                 save_call_log(to_user, from_user, reason)
-                log_info(f"❌ WebRTC: Call {reason}: {from_user} X {to_user}", "webrtc")
+                log_info(f"❌ WebRTC [Reject]: {from_user} rejected call from {to_user}. Reason: {reason}", "webrtc")
 
             # WebRTC Offer (SDP)
             elif message_type == "offer":
@@ -253,7 +325,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     "from": from_user,
                     "sdp": sdp
                 })
-                log_info(f"SDP Offer: {from_user} -> {to_user}", "webrtc")
+                log_info(f"📩 WebRTC [SDP]: Offer from {from_user} -> {to_user}", "webrtc")
 
             # WebRTC Answer (SDP)
             elif message_type == "answer":
@@ -266,7 +338,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     "from": from_user,
                     "sdp": sdp
                 })
-                log_info(f"SDP Answer: {from_user} -> {to_user}", "webrtc")
+                log_info(f"📩 WebRTC [SDP]: Answer from {from_user} -> {to_user}", "webrtc")
 
             # ICE Candidate
             elif message_type == "ice-candidate":
@@ -361,6 +433,17 @@ async def websocket_endpoint(websocket: WebSocket):
                     "status": "offline",
                     "last_seen": datetime.now().isoformat()
                 })
+                
+                # Update DB status to offline
+                try:
+                    conn = get_db_connection()
+                    c = conn.cursor()
+                    c.execute("UPDATE user_status SET is_online = false WHERE user_id = %s", (user_id,))
+                    conn.commit()
+                    conn.close()
+                except Exception as e:
+                    log_error(f"Error updating offline status in DB: {e}", "webrtc")
+                    
             log_info(f"WebSocket disconnected: user {user_id}", "webrtc")
     except Exception as e:
         log_error(f"WebSocket error: {e}", "webrtc")

@@ -9,5 +9,15 @@ export const getPhotoUrl = (path: string | null | undefined) => {
     const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
     // Ensure path starts with / for proper URL concatenation
     const separator = path.startsWith('/') ? '' : '/';
-    return `${baseUrl}${separator}${path}`;
+
+    // Encode Cyrillic and spaces in the filename but keep / slashes
+    // Use decodeURIComponent first to avoid double encoding if already encoded
+    try {
+        const decoded = decodeURIComponent(path);
+        const encoded = encodeURI(decoded);
+        return `${baseUrl}${separator}${encoded}`;
+    } catch (e) {
+        return `${baseUrl}${separator}${encodeURI(path)}`;
+    }
 };
+

@@ -7,11 +7,12 @@ from typing import Dict, Set
 import json
 from datetime import datetime
 from utils.logger import log_info, log_error
+from utils.redis_pubsub import redis_pubsub
 
 router = APIRouter(tags=["Notifications"])
 
 class NotificationsConnectionManager:
-    """Управление WebSocket соединениями для уведомлений"""
+    """Управление WebSocket соединениями для уведомлений с поддержкой Redis Pub/Sub"""
 
     def __init__(self):
         self.active_connections: Dict[int, Set[WebSocket]] = {}
@@ -21,7 +22,7 @@ class NotificationsConnectionManager:
         if user_id not in self.active_connections:
             self.active_connections[user_id] = set()
         self.active_connections[user_id].add(websocket)
-        log_info(f"🔔 Notifications WS: User {user_id} connected. Active users: {len(self.active_connections)}", "notifications")
+        log_info(f"🔔 Notifications WS: User {user_id} connected locally. Local users: {len(self.active_connections)}", "notifications")
 
     def disconnect(self, user_id: int, websocket: WebSocket):
         """Удалить соединение"""
@@ -31,30 +32,51 @@ class NotificationsConnectionManager:
 
             if not self.active_connections[user_id]:
                 del self.active_connections[user_id]
-                log_info(f"🔔 Notifications WS: User {user_id} disconnected. Active users: {len(self.active_connections)}", "notifications")
+                log_info(f"🔔 Notifications WS: User {user_id} disconnected locally. Local users: {len(self.active_connections)}", "notifications")
 
     async def send_to_user(self, user_id: int, message: dict):
-        """Отправить сообщение конкретному пользователю"""
+        """Публикуем уведомление в Redis для доставки на все воркеры"""
+        await redis_pubsub.publish(f"crm:notifications:user:{user_id}", message)
+
+    async def send_to_user_local(self, user_id: int, message: dict):
+        """Отправить сообщение локально подключенному пользователю"""
         if user_id in self.active_connections:
             disconnected = set()
-            for connection in self.active_connections[user_id]:
+            for connection in list(self.active_connections[user_id]):
                 try:
                     await connection.send_json(message)
                 except Exception as e:
-                    log_error(f"Error sending to user {user_id}: {e}", "notifications")
+                    log_error(f"Error sending local notification to user {user_id}: {e}", "notifications")
                     disconnected.add(connection)
 
-            # Очистка отключенных соединений
             for conn in disconnected:
                 self.disconnect(user_id, conn)
 
     async def broadcast_to_all(self, message: dict):
-        """Отправить сообщение всем подключенным пользователям"""
+        """Публикуем шировещательное уведомление в Redis"""
+        await redis_pubsub.publish("crm:notifications:broadcast", message)
+
+    async def broadcast_to_all_local(self, message: dict):
+        """Отправить сообщение всем локально подключенным пользователям"""
         for user_id in list(self.active_connections.keys()):
-            await self.send_to_user(user_id, message)
+            await self.send_to_user_local(user_id, message)
 
 # Singleton instance
 notifications_manager = NotificationsConnectionManager()
+
+# Регистрация обработчика сообщений из Redis
+async def notifications_pubsub_handler(channel: str, data: dict):
+    if channel == "crm:notifications:broadcast":
+        await notifications_manager.broadcast_to_all_local(data)
+    elif channel.startswith("crm:notifications:user:"):
+        try:
+            user_id = int(channel.split(":")[-1])
+            await notifications_manager.send_to_user_local(user_id, data)
+        except (ValueError, IndexError):
+            log_error(f"Invalid notifications user channel: {channel}", "notifications")
+
+# Регистрируем префикс для этого модуля
+redis_pubsub.register_handler("crm:notifications:", notifications_pubsub_handler)
 
 
 @router.websocket("/notifications")

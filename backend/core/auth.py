@@ -51,10 +51,12 @@ async def api_login(request: Request, username: str = Form(...), password: str =
         log_info(f"[LOGIN] Attempt: username='{username}' | IP={client_ip} | Origin={origin}", "auth")
         log_info(f"[LOGIN] User-Agent: {user_agent[:100]}...", "auth")
 
-        user = verify_user(username, password)
+        # Case-insensitive username search
+        username_clean = username.strip().lower()
+        user = verify_user(username_clean, password)
         
         if not user:
-            log_warning(f"Invalid credentials for {username}", "auth")
+            log_warning(f"Invalid credentials for '{username}' (cleaned: '{username_clean}')", "auth")
             return JSONResponse(
                 {"error": "invalid_credentials"}, 
                 status_code=401

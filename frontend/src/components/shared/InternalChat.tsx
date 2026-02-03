@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Send,
   Loader,
@@ -30,12 +30,13 @@ import {
   Monitor,
   Share2,
   Clock,
+  History as HistoryIcon,
   ArrowDownLeft,
   ArrowUpRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { webrtcService, CallType, ConnectionQuality } from '../../services/webrtc';
@@ -52,9 +53,14 @@ interface Message {
   message: string;
   is_read: boolean;
   created_at: string;
-  sender_name: string;
-  recipient_name: string;
-  type?: 'text' | 'image' | 'video' | 'audio' | 'voice' | 'file';
+  type: 'text' | 'image' | 'video' | 'audio' | 'voice' | 'file' | 'call_log';
+  sender_name?: string;
+  recipient_name?: string;
+  edited?: boolean;
+  edited_at?: string;
+  deleted_for_sender?: boolean;
+  deleted_for_receiver?: boolean;
+  reactions?: any[];
 }
 
 interface User {
@@ -82,8 +88,7 @@ export default function InternalChat() {
   }, []);
 
   const { t, i18n } = useTranslation(['common', 'layouts/mainlayout']);
-  const { user: _currentUser } = useAuth();
-  // useAuth(); // Removed redundant call if not needed or keeps it if side-effect relevant
+  const { user } = useAuth();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -99,9 +104,11 @@ export default function InternalChat() {
   const [showMobileUserList, setShowMobileUserList] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false); // Settings modal state
-  const [customRingtone, setCustomRingtone] = useState<string | null>(localStorage.getItem('chat_ringtone'));
+  const [customRingtone, setCustomRingtone] = useState<string | null>(localStorage.getItem('webrtc_ringtone_url'));
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [inviteSearchTerm, setInviteSearchTerm] = useState('');
+  const [playingPreviewUrl, setPlayingPreviewUrl] = useState<string | null>(null);
+  const [localVolume, setLocalVolume] = useState(webrtcService.getVolume());
 
   // Voice recording state
   const [voiceRecorder, setVoiceRecorder] = useState<VoiceRecorder>({
@@ -111,14 +118,14 @@ export default function InternalChat() {
     recordingTime: 0,
   });
 
-  // Video/Audio call state
+  // Video/Audio call state removed - handled by MainLayout
   const [isInCall, setIsInCall] = useState(false);
   const [callType, setCallType] = useState<CallType | null>(null);
   const [connectionQuality, setConnectionQuality] = useState<ConnectionQuality>('excellent');
   const [qualityStats, setQualityStats] = useState({ latency: 0, packetLoss: 0 });
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
-  const [incomingCall, setIncomingCall] = useState<{ from: number; type: CallType; callee_status?: string } | null>(null);
+  // const [incomingCall, setIncomingCall] = useState<{ from: number; type: CallType; callee_status?: string } | null>(null); // Removed - handled by MainLayout
   const [isMinimized, setIsMinimized] = useState(false);
   const [callStartTime, setCallStartTime] = useState<number | null>(null);
   const [isCallRecording, setIsCallRecording] = useState(false);
@@ -132,12 +139,12 @@ export default function InternalChat() {
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const [callLogs, setCallLogs] = useState<any[]>([]);
-  const [ringTimeout, setRingTimeout] = useState<NodeJS.Timeout | null>(null);
+
 
   const fetchCallLogs = async () => {
     try {
       const data = await api.getCallLogs();
-      setCallLogs(data.logs || []);
+      setCallLogs(data.logs ?? []);
     } catch (err) {
       console.error('Error fetching call logs:', err);
     }
@@ -162,231 +169,30 @@ export default function InternalChat() {
 
 
 
-  const currentUserData = JSON.parse(localStorage.getItem('user') || '{}');
+  const currentUserData = user ?? JSON.parse(localStorage.getItem('user') ?? '{}');
 
   const { search } = useLocation();
+  const navigate = useNavigate();
+  const hasAutoAnswered = useRef(false);
 
-  useEffect(() => {
-    loadData();
+  // 1. Initial data load - separated to avoid infinite loops
+  const loadData = useCallback(async (showLoader = true) => {
+    // If a load is already in progress and we're not explicitly forcing a new load, return.
+    // Also, if users already exist and we're not forcing a load, don't re-load.
+    if (loading && !showLoader) return;
+    if (!showLoader && users.length > 0) return; // Avoid unnecessary re-loads if data exists and not forced
 
-    // Check for auto-answer query param
-    const params = new URLSearchParams(search);
-    if (params.get('answer') === 'true' && params.get('from')) {
-      const fromId = parseInt(params.get('from')!);
-      console.log('🚀 [InternalChat] Auto-answering call from:', fromId);
-
-      // We need to wait for users to load before selecting
-      const interval = setInterval(() => {
-        if (users.length > 0) {
-          const caller = users.find(u => u.id === fromId);
-          if (caller) {
-            setSelectedUser(caller);
-            clearInterval(interval);
-
-            // Execute actual accept after a short delay
-            setTimeout(async () => {
-              try {
-                // Clear URL params
-                window.history.replaceState({}, '', window.location.pathname);
-                await webrtcService.acceptCall();
-                setIsInCall(true);
-                setCallStartTime(Date.now());
-                const callType = params.get('type') as CallType || 'audio';
-                setCallType(callType);
-                toast.success(t('calls.accepted_automatically', 'Вызов принят автоматически'));
-              } catch (err) {
-                console.error("Auto-answer failed", err);
-              }
-            }, 500);
-          }
-        }
-      }, 500);
-      setTimeout(() => clearInterval(interval), 5000);
-    }
-  }, [search]);
-
-  useEffect(() => {
-    if (showCallHistory) {
-      fetchCallLogs();
-    }
-  }, [showCallHistory]);
-
-  // Set user online status
-  useEffect(() => {
-    const setOnlineStatus = async () => {
-      try {
-        await api.updateStatusOnline();
-      } catch (err) {
-        console.error('Error updating status to online:', err);
-      }
-    };
-
-    // Set online immediately when component mounts
-    setOnlineStatus();
-
-    // Set online every 30 seconds (heartbeat)
-    const heartbeatInterval = setInterval(() => {
-      setOnlineStatus();
-    }, 30000);
-
-    // Set offline when component unmounts or page is about to unload
-    const setOfflineStatus = async () => {
-      try {
-        await api.updateStatusOffline();
-      } catch (err) {
-        console.error('Error updating status to offline:', err);
-      }
-    };
-
-    // Handle page unload/refresh
-    const handleBeforeUnload = () => {
-      // Use sendBeacon for reliability during page unload
-      navigator.sendBeacon('/api/internal-chat/status/offline');
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      clearInterval(heartbeatInterval);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      setOfflineStatus();
-    };
-  }, []);
-
-  // ... (existing useEffects)
-
-  // Initialize WebRTC service
-  // Initialize WebRTC service
-  useEffect(() => {
-    if (currentUserData?.id) {
-      // Инициализация безопасна для повторного вызова
-      webrtcService.initialize(currentUserData.id).catch(err => {
-        console.error('Failed to initialize WebRTC:', err);
-      });
-
-      const handleIncomingCall = (fromUserId: number, type: CallType, calleeStatus?: string) => {
-        setIncomingCall({ from: fromUserId, type, callee_status: calleeStatus });
-        // Если мы уже в созвоне, UI покажет "вторую линию" (Call Waiting)
-      };
-
-      const handleHold = () => {
-        setIsRemoteOnHold(true);
-        toast.info(t('calls.user_on_hold', 'Собеседник поставил звонок на удержание'));
-      };
-
-      const handleResume = () => {
-        setIsRemoteOnHold(false);
-        toast.info(t('calls.user_resumed', 'Собеседник вернулся в звонок'));
-      };
-
-      const handleUserStatusChange = (userId: number, isOnline: boolean, lastSeen: string | null) => {
-        setUsers(prevUsers => prevUsers.map(u => {
-          if (u.id === userId) {
-            return { ...u, is_online: isOnline, last_seen: lastSeen || null };
-          }
-          return u;
-        }));
-      };
-
-      const handleQualityChange = (quality: ConnectionQuality, stats: any) => {
-        setConnectionQuality(quality);
-        setQualityStats(stats);
-      };
-
-      const handleCallAccepted = () => {
-        webrtcService.stopRingtone(); // Stop ringing
-        setIsCalling(false);
-        setIsInCall(true);
-        setIsLocalOnHold(false);
-        setIsRemoteOnHold(false);
-        setCallStartTime(Date.now());
-        toast.success(t('calls.call_accepted', 'Звонок принят'));
-      };
-
-      const handleCallRejected = (reason?: string) => {
-        webrtcService.stopRingtone();
-        setIsCalling(false);
-        if (reason === 'busy') {
-          toast.error(t('calls.user_busy', 'Пользователь занят'));
-        } else {
-          setIsInCall(false);
-          setIncomingCall(null);
-          toast.error(t('calls.call_rejected', 'Звонок отклонен'));
-        }
-      };
-
-      const handleRemoteStream = (stream: MediaStream) => {
-        console.log('📺 Received remote stream in InternalChat');
-        // Always attach to audio ref first to ensure sound works regardless of video call or audio call
-        if (remoteAudioRef.current) {
-          remoteAudioRef.current.srcObject = stream;
-          // Ensure it plays
-          remoteAudioRef.current.play().catch(e => {
-            if (e.name !== 'AbortError') console.error("Audio auto-play failed", e);
-          });
-        }
-
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = stream;
-          remoteVideoRef.current.play().catch(e => {
-            if (e.name !== 'AbortError') console.error("Remote video play failed", e);
-          });
-        }
-      };
-
-      const handleCallEnded = () => {
-        webrtcService.stopRingtone();
-        setIsCalling(false);
-        handleCallEndedByRemote();
-      };
-
-      const handleError = (error: string) => {
-        toast.error(error);
-      };
-
-      // Add listeners
-      webrtcService.addEventListener('incomingCall', handleIncomingCall);
-      webrtcService.addEventListener('userStatus', handleUserStatusChange);
-      webrtcService.addEventListener('qualityChange', handleQualityChange);
-      webrtcService.addEventListener('callAccepted', handleCallAccepted);
-      webrtcService.addEventListener('callRejected', handleCallRejected);
-      webrtcService.addEventListener('remoteStream', handleRemoteStream);
-      webrtcService.addEventListener('callEnded', handleCallEnded);
-      webrtcService.addEventListener('hold', handleHold);
-      webrtcService.addEventListener('resume', handleResume);
-      webrtcService.addEventListener('error', handleError);
-
-      return () => {
-        webrtcService.stopRingtone();
-        // Remove listeners
-        webrtcService.removeEventListener('incomingCall', handleIncomingCall);
-        webrtcService.removeEventListener('userStatus', handleUserStatusChange);
-        webrtcService.removeEventListener('qualityChange', handleQualityChange);
-        webrtcService.removeEventListener('callAccepted', handleCallAccepted);
-        webrtcService.removeEventListener('callRejected', handleCallRejected);
-        webrtcService.removeEventListener('remoteStream', handleRemoteStream);
-        webrtcService.removeEventListener('callEnded', handleCallEnded);
-        webrtcService.removeEventListener('error', handleError);
-
-        // DO NOT disconnect here anymore to keep socket alive for global status
-        // webrtcService.disconnect();
-      };
-    }
-  }, [currentUserData?.id]);
-
-
-
-  const loadData = async () => {
     try {
-      setLoading(true);
+      if (showLoader || users.length === 0) setLoading(true);
       setError(null);
+
       const data = await api.getInternalChatUsers(i18n.language);
-      let loadedUsers = (data.users || []) as User[];
+      let loadedUsers = (data.users ?? []) as User[];
 
       // Fetch online users status
       try {
         const onlineData = await api.getOnlineUsers();
-        const onlineUserIds = (onlineData.online_users || []) as number[];
+        const onlineUserIds = (onlineData.online_users ?? []) as number[];
 
         loadedUsers = loadedUsers.map((u: User) => ({
           ...u,
@@ -417,25 +223,276 @@ export default function InternalChat() {
       } else if (typeof err === 'object') {
         try {
           debugInfo = JSON.stringify(err, null, 2);
-        } catch (e) {
-          debugInfo = String(err);
+        } catch {
+          debugInfo = 'Unknown object error';
         }
-      } else {
-        debugInfo = String(err);
       }
-
-      // Append request info if available (e.g. from fetch failure)
-      debugInfo += `\nTime: ${new Date().toISOString()}`;
-      debugInfo += `\nURL: /api/internal-chat/users`;
-
-      const userFriendlyMessage = t('common:error_loading_data', 'Ошибка загрузки данных');
-      setError(`${userFriendlyMessage}\n\nTECHNICAL DETAILS:\n${debugInfo}`);
-
-      toast.error(t('common:error_loading_data', 'Ошибка загрузки данных'));
+      setError(debugInfo || t('common:error_loading', 'Ошибка загрузки данных'));
     } finally {
       setLoading(false);
     }
-  };
+  }, [i18n.language, users.length, loading]); // Added 'loading' to dependencies for the guard condition
+
+  useEffect(() => {
+    loadData(true);
+  }, [i18n.language, loadData]); // Added loadData to dependencies as it's a useCallback function
+
+  // 2. Auto-answer logic - separated and made non-blocking
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    const isAnswer = params.get('answer') === 'true';
+    const fromIdStr = params.get('from');
+
+    if (isAnswer && fromIdStr && !hasAutoAnswered.current) {
+      hasAutoAnswered.current = true; // Guard against multiple triggers
+      const fromId = parseInt(fromIdStr);
+      const callTypeFromUrl = (params.get('type') as CallType) ?? 'audio';
+
+      console.log('🚀 [InternalChat:AutoAnswer] 1. URL param detected. Starting auto-answer flow for caller:', fromId);
+
+      // Explicitly set these in the service BEFORE calling acceptCall
+      webrtcService.setRemoteUserId(fromId);
+      webrtcService.setCallType(callTypeFromUrl);
+      setCallType(callTypeFromUrl);
+
+      // PART A: Acceptance - FAST and independent of user list
+      const performAcceptance = async () => {
+        try {
+          console.info('🚀 [InternalChat:AutoAnswer] 2a. Triggering webrtcService.acceptCall()');
+
+          // Clear URL params using navigate to properly update hook state
+          // Explicitly use location.pathname to ensure params are stripped
+          navigate(location.pathname, { replace: true });
+
+          await webrtcService.acceptCall();
+          console.info('✅ [InternalChat:AutoAnswer] 3a. Call acceptance signal sent');
+          toast.success(t('calls.accepted_automatically', 'Вызов принят автоматически'));
+        } catch (err) {
+          console.error("❌ [InternalChat:AutoAnswer] FAILED to auto-answer:", err);
+          toast.error(t('calls.error_accepting', 'Ошибка при принятии вызова'));
+          hasAutoAnswered.current = false; // Allow retry if failed
+        }
+      };
+
+      // Slight delay to ensure PeerConnection singleton is ready and listeners are attached
+      const acceptanceTimer = setTimeout(performAcceptance, 350); // Increased slightly for listener safety
+
+      // PART B: Selection - UX improvement, wait for user list
+      let selectionInterval: NodeJS.Timeout | null = null;
+      let selectionAttempts = 0;
+
+      const trySelectUser = () => {
+        if (users.length > 0) {
+          const caller = users.find(u => u.id === fromId);
+          if (caller) {
+            console.log('🚀 [InternalChat:AutoAnswer] 2b. Caller found, selecting user:', caller.full_name);
+            setSelectedUser(caller);
+            return true;
+          }
+        }
+        return false;
+      };
+
+      if (!trySelectUser()) {
+        selectionInterval = setInterval(() => {
+          selectionAttempts++;
+          if (trySelectUser()) {
+            if (selectionInterval) clearInterval(selectionInterval);
+          } else if (selectionAttempts > 10) { // 5 seconds
+            console.warn('⚠️ [InternalChat:AutoAnswer] Could not find user in list for selection after timeout');
+            if (selectionInterval) clearInterval(selectionInterval);
+          }
+        }, 500);
+      }
+
+      return () => {
+        clearTimeout(acceptanceTimer);
+        if (selectionInterval) clearInterval(selectionInterval);
+      };
+    }
+  }, [search, users.length > 0]); // Dependency on search and whether users list is loaded
+
+  useEffect(() => {
+    if (showCallHistory) {
+      fetchCallLogs();
+    }
+  }, [showCallHistory]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchCallLogs();
+  }, []);
+
+  // Set user online status
+  useEffect(() => {
+    const setOnlineStatus = async () => {
+      try {
+        await api.updateStatusOnline();
+      } catch (err) {
+        console.error('Error updating status to online:', err);
+      }
+    };
+
+    // Set online immediately when component mounts
+    setOnlineStatus();
+
+    // Set online every 30 seconds (heartbeat)
+    const heartbeatInterval = setInterval(() => {
+      setOnlineStatus();
+    }, 30000);
+
+    // Set offline when component unmounts or page is about to unload
+
+    // Handle page unload/refresh
+    const handleBeforeUnload = () => {
+      // Use sendBeacon for reliability during page unload
+      navigator.sendBeacon('/api/internal-chat/status/offline');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      clearInterval(heartbeatInterval);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  // 3. Initialize WebRTC service and Listeners
+  useEffect(() => {
+    if (currentUserData?.id) {
+      // Инициализация безопасна для повторного вызова
+      webrtcService.initialize(currentUserData.id).catch(err => {
+        console.error('Failed to initialize WebRTC:', err);
+      });
+
+      // Sync initial state from service if already in call
+      if (webrtcService.isInCall()) {
+        console.log('🔄 [InternalChat] Synchronizing state with ACTIVE call');
+        setIsInCall(true);
+        setCallType(webrtcService.getCallType());
+
+        const remoteId = webrtcService.getRemoteUserId();
+        if (remoteId && !selectedUser && users.length > 0) {
+          const caller = users.find(u => u.id === remoteId);
+          if (caller) {
+            console.log('🔄 [InternalChat] Auto-selecting user from active call:', caller.full_name);
+            setSelectedUser(caller);
+          }
+        }
+      }
+
+      const handleHold = () => {
+        setIsRemoteOnHold(true);
+        toast.info(t('calls.user_on_hold', 'Собеседник поставил звонок на удержание'));
+      };
+
+      const handleResume = () => {
+        setIsRemoteOnHold(false);
+        toast.info(t('calls.user_resumed', 'Собеседник вернулся в звонок'));
+      };
+
+      const handleUserStatusChange = (userId: number, isOnline: boolean, lastSeen: string | null) => {
+        setUsers(prevUsers => prevUsers.map(u => {
+          if (u.id === userId) {
+            return { ...u, is_online: isOnline, last_seen: lastSeen || null };
+          }
+          return u;
+        }));
+      };
+
+      const handleQualityChange = (quality: ConnectionQuality, stats: any) => {
+        setConnectionQuality(quality);
+        setQualityStats(stats);
+      };
+
+      const handleCallAccepted = () => {
+        console.info('☎️ [InternalChat] handleCallAccepted event triggered');
+        webrtcService.stopRingtone(); // Stop ringing
+        setIsCalling(false);
+        setIsInCall(true);
+        setIsLocalOnHold(false);
+        setIsRemoteOnHold(false);
+        setCallStartTime(Date.now());
+        toast.success(t('calls.call_accepted', 'Звонок принят'));
+      };
+
+      const handleCallRejected = (reason?: string) => {
+        console.info('☎️ [InternalChat] handleCallBlocked/Rejected event triggered');
+        webrtcService.stopRingtone();
+        setIsCalling(false);
+        if (reason === 'busy') {
+          toast.error(t('calls.user_busy', 'Пользователь занят'));
+        } else {
+          setIsInCall(false);
+          toast.error(t('calls.call_rejected', 'Звонок отклонен'));
+        }
+      };
+
+      const handleRemoteStream = (stream: MediaStream) => {
+        console.log('📺 [InternalChat] handleRemoteStream event triggered');
+        // Always attach to audio ref first to ensure sound works regardless of video call or audio call
+        if (remoteAudioRef.current) {
+          remoteAudioRef.current.srcObject = stream;
+          // Ensure it plays
+          remoteAudioRef.current.play().catch(e => {
+            if (e.name !== 'AbortError') console.error("Audio auto-play failed", e);
+          });
+        }
+
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = stream;
+          remoteVideoRef.current.play().catch(e => {
+            if (e.name !== 'AbortError') console.error("Remote video play failed", e);
+          });
+        }
+      };
+
+      const handleCallEnded = () => {
+        console.info('☎️ [InternalChat] handleCallEnded event triggered');
+        webrtcService.stopRingtone();
+        setIsCalling(false);
+        handleCallEndedByRemote();
+      };
+
+      const handleError = (error: string) => {
+        toast.error(error);
+      };
+
+      // Redundant safely handled listener for InternalChat specifically
+      const handleIncomingCallLocal = (fromId: number, type: CallType, _status: string, name?: string) => {
+        console.log('☎️ [InternalChat] Redundant incoming call listener caught event', { fromId, type, name });
+        toast.info(`${t('calls.incoming_call', 'Входящий звонок')}: ${name || fromId}`);
+      };
+
+      webrtcService.addEventListener('incomingCall', handleIncomingCallLocal);
+      webrtcService.addEventListener('userStatus', handleUserStatusChange);
+      webrtcService.addEventListener('qualityChange', handleQualityChange);
+      webrtcService.addEventListener('callAccepted', handleCallAccepted);
+      webrtcService.addEventListener('callRejected', handleCallRejected);
+      webrtcService.addEventListener('remoteStream', handleRemoteStream);
+      webrtcService.addEventListener('callEnded', handleCallEnded);
+      webrtcService.addEventListener('hold', handleHold);
+      webrtcService.addEventListener('resume', handleResume);
+      webrtcService.addEventListener('error', handleError);
+
+      return () => {
+        webrtcService.stopRingtone();
+        webrtcService.removeEventListener('incomingCall', handleIncomingCallLocal);
+        webrtcService.removeEventListener('userStatus', handleUserStatusChange);
+        webrtcService.removeEventListener('qualityChange', handleQualityChange);
+        webrtcService.removeEventListener('callAccepted', handleCallAccepted);
+        webrtcService.removeEventListener('callRejected', handleCallRejected);
+        webrtcService.removeEventListener('remoteStream', handleRemoteStream);
+        webrtcService.removeEventListener('callEnded', handleCallEnded);
+        webrtcService.removeEventListener('error', handleError);
+      };
+    }
+  }, [currentUserData?.id, users.length > 0]); // Dependency on users to sync selectedUser if already in call
+
+
+
+  // loadData was moved up and wrapped in useCallback to prevent loops
+
 
   const loadMessagesWithUser = async (userId: number) => {
     try {
@@ -454,7 +511,7 @@ export default function InternalChat() {
   };
 
   const handleSendMessage = async (messageText?: string, messageType: Message['type'] = 'text', fileUrl?: string) => {
-    const textToSend = messageText || newMessage;
+    const textToSend = messageText ?? newMessage;
 
     if ((!textToSend.trim() && !fileUrl) || !selectedUser) {
       toast.error(t('common:select_user_first', 'Выберите пользователя'));
@@ -481,10 +538,10 @@ export default function InternalChat() {
         id: Date.now(),
         from_user_id: currentUserData.id,
         to_user_id: selectedUser.id,
-        message: fileUrl || finalMessage,
+        message: fileUrl ?? finalMessage,
         is_read: false,
         created_at: new Date().toISOString(),
-        sender_name: currentUserData.full_name || currentUserData.username,
+        sender_name: currentUserData?.full_name ?? currentUserData?.username,
         recipient_name: selectedUser.full_name,
         type: messageType
       };
@@ -658,36 +715,21 @@ export default function InternalChat() {
     toast.success(t('calls.device_switched', 'Устройство переключено'));
   };
 
-  // Auto-voicemail logic (Missed call after 30s)
-  useEffect(() => {
-    if (incomingCall && !callStartTime) {
-      const timeout = setTimeout(() => {
-        webrtcService.rejectCall('missed');
-        setIncomingCall(null);
-        toast.info(t('calls.missed_auto', 'Звонок пропущен (авто-отклонение)'));
-      }, 30000); // 30 seconds
-      setRingTimeout(timeout as any);
-    } else if (callStartTime && ringTimeout) {
-      clearTimeout(ringTimeout as any);
-      setRingTimeout(null);
+  const loadCallInitialData = async () => {
+    try {
+      const logs = await webrtcService.getCallLogs();
+      setCallLogs(logs);
+
+      const devices = await webrtcService.enumerateDevices();
+      setAudioDevices(devices.filter(d => d.kind === 'audioinput'));
+      setVideoDevices(devices.filter(d => d.kind === 'videoinput'));
+    } catch (e) {
+      console.error("Error loading chat initial data:", e);
     }
-    return () => { if (ringTimeout) clearTimeout(ringTimeout as any); };
-  }, [incomingCall, callStartTime]);
+  };
 
   useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        const logs = await webrtcService.getCallLogs();
-        setCallLogs(logs);
-
-        const devices = await webrtcService.enumerateDevices();
-        setAudioDevices(devices.filter(d => d.kind === 'audioinput'));
-        setVideoDevices(devices.filter(d => d.kind === 'videoinput'));
-      } catch (e) {
-        console.error("Error loading chat initial data:", e);
-      }
-    };
-    loadInitialData();
+    loadCallInitialData();
   }, []);
 
   const stopVoiceRecording = () => {
@@ -813,47 +855,54 @@ export default function InternalChat() {
   };
 
   const startCall = async (type: CallType) => {
-    if (!selectedUser) return;
+    if (!selectedUser) {
+      console.warn('⚠️ [InternalChat:Call] Cannot start call: No user selected');
+      return;
+    }
     try {
+      console.info(`📞 [InternalChat:Call] 1. Initiating ${type.toUpperCase()} call to:`, selectedUser.full_name, `(ID: ${selectedUser.id})`);
       setCallType(type);
       setIsCalling(true);
+
+      console.info('🚀 [InternalChat:Call] 2. Calling webrtcService.startCall()');
       await webrtcService.startCall(selectedUser.id, type);
+
+      console.info('🎵 [InternalChat:Call] 3. Starting outgoing ringtone');
       webrtcService.playRingtone('outgoing');
     } catch (err) {
-      console.error('Call failed:', err);
+      console.error('❌ [InternalChat:Call] FAILED to start call:', err);
       setIsCalling(false);
       toast.error(t('calls.error_media', 'Ошибка доступа к медиа-устройствам'));
     }
   };
 
+  /* 
   const handleAcceptCall = async () => {
     try {
-      // Set the selected user to the caller to avoid UI crashes and ensure correct chat context
       if (incomingCall?.from) {
         const caller = users.find(u => u.id === incomingCall.from);
         if (caller) {
           setSelectedUser(caller);
         }
       }
-
+ 
       await webrtcService.acceptCall();
       setIsInCall(true);
       setCallStartTime(Date.now());
       setCallType(incomingCall?.type || 'audio');
       setIncomingCall(null);
-
-      // Local video will be attached by useEffect
     } catch (err) {
       console.error('Error accepting call:', err);
       toast.error(t('calls.error_accepting', 'Ошибка при приёме звонка'));
     }
   };
-
+ 
   const handleRejectCall = () => {
     webrtcService.rejectCall();
-    webrtcService.stopRingtone(); // Ensure sound stops
+    webrtcService.stopRingtone();
     setIncomingCall(null);
   };
+  */
 
   const formatDuration = (ms: number) => {
     const seconds = Math.floor(ms / 1000);
@@ -863,19 +912,24 @@ export default function InternalChat() {
   };
 
   const handleCallEndedByRemote = () => {
+    console.info('📴 [InternalChat:Call] Call ended by remote party or connection lost');
     stopCallRecording(); // Stop recording if active
     setIsInCall(false);
+    setIsCalling(false);
     setCallType(null);
-    setIncomingCall(null);
+    // setIncomingCall(null); // Managed by MainLayout
     setIsMicMuted(false);
     setIsVideoOff(false);
     setIsMinimized(false);
+
+    console.info('🎵 [InternalChat:Call] Playing end-of-call sound');
     webrtcService.playRingtone('end');
 
     if (callStartTime && selectedUser) {
       const duration = Date.now() - callStartTime;
       const durationText = formatDuration(duration);
-      handleSendMessage(`${t('calls.ended', 'Звонок завершен')}. ${t('calls.duration', 'Длительность')}: ${durationText}`, 'text');
+      console.info(`📝 [InternalChat:Call] Call lasted ${durationText}. Sending status message.`);
+      handleSendMessage(`${t('calls.ended', 'Звонок завершен')}. ${t('calls.duration', 'Длительность')}: ${durationText}`, 'call_log');
       setCallStartTime(null);
     }
 
@@ -883,6 +937,7 @@ export default function InternalChat() {
   };
 
   const endCall = () => {
+    console.info('📴 [InternalChat:Call] Locally terminating call');
     webrtcService.endCall();
     handleCallEndedByRemote();
   };
@@ -982,7 +1037,7 @@ export default function InternalChat() {
     );
   }
 
-  if (loading) {
+  if (loading && users.length === 0) {
     return (
       <div className="p-8 flex items-center justify-center min-h-screen bg-background">
         <div className="flex flex-col items-center gap-4">
@@ -999,42 +1054,7 @@ export default function InternalChat() {
 
   return (
     <div className="h-[calc(100vh-4rem)] flex bg-background">
-      {/* Incoming Call Modal */}
-      {incomingCall && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-card rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-border">
-            <div className="text-center mb-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-pink-600 rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4 shadow-lg">
-                {users.find(u => u.id === incomingCall.from)?.full_name.charAt(0).toUpperCase()}
-              </div>
-              <h3 className="text-2xl font-bold text-foreground mb-2">
-                {users.find(u => u.id === incomingCall.from)?.full_name}
-              </h3>
-              <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                {incomingCall.type === 'video' ? <Video className="w-5 h-5 text-blue-500" /> : <Phone className="w-5 h-5 text-blue-500" />}
-                <span>{incomingCall.type === 'video' ? t('calls.video_call', 'Видеозвонок') : t('calls.audio_call', 'Аудиозвонок')}</span>
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <button
-                onClick={handleRejectCall}
-                className="flex-1 py-4 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
-              >
-                <PhoneOff className="w-5 h-5" />
-                {t('calls.reject', 'Отклонить')}
-              </button>
-              <button
-                onClick={handleAcceptCall}
-                className="flex-1 py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
-              >
-                <Phone className="w-5 h-5" />
-                {t('calls.accept', 'Принять')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Incoming Call Modal is now handled globally in MainLayout */}
 
       {/* Call Overlay or Minimized View */}
       {isInCall && (
@@ -1121,45 +1141,7 @@ export default function InternalChat() {
                     </div>
                   )}
 
-                  {incomingCall && incomingCall.from !== selectedUser?.id && (
-                    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[60] bg-blue-600/90 backdrop-blur-md border border-white/20 px-6 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-top-4 flex items-center gap-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                          <Phone className="w-5 h-5 text-white animate-bounce" />
-                        </div>
-                        <div>
-                          <p className="text-white text-xs opacity-80">{t('calls.second_line', 'Вторая линия')}</p>
-                          <p className="text-white font-bold">{users.find(u => u.id === incomingCall.from)?.full_name || t('calls.incoming', 'Входящий')}</p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            webrtcService.rejectCall('busy');
-                            setIncomingCall(null);
-                          }}
-                          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-medium transition-colors"
-                        >
-                          {t('calls.reject', 'Отклонить')}
-                        </button>
-                        <button
-                          onClick={async () => {
-                            // End current, answer new
-                            webrtcService.endCall();
-                            const caller = users.find(u => u.id === incomingCall.from);
-                            if (caller) {
-                              setSelectedUser(caller);
-                              setTimeout(() => webrtcService.acceptCall(), 500);
-                            }
-                            setIncomingCall(null);
-                          }}
-                          className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-medium transition-colors"
-                        >
-                          {t('calls.switch_calls', 'Переключить')}
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  {/* Second line handling removed - handled globally by MainLayout */}
                   <video
                     ref={localVideoRef}
                     autoPlay
@@ -1315,13 +1297,23 @@ export default function InternalChat() {
               <MessageCircle className="w-6 h-6 text-primary" />
               {t('layouts/mainlayout:menu.internal_chat', 'Внутренняя связь')}
             </h2>
-            <button
-              onClick={() => setShowSettings(true)}
-              className="p-2 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground transition-colors"
-              title={t('settings.audio_settings', 'Настройки звука')}
-            >
-              <Settings className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={toggleDnd}
+                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xl transition-all border ${isDndEnabled ? 'bg-red-500/10 text-red-500 border-red-500/20' : 'bg-green-500/10 text-green-600 border-green-500/20'}`}
+                title={isDndEnabled ? t('calls.dnd_on', 'Не беспокоить') : t('calls.available', 'В сети')}
+              >
+                <div className={`w-2 h-2 rounded-full ${isDndEnabled ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)] animate-pulse'}`} />
+                <span className="text-[10px] font-bold uppercase tracking-wider">{isDndEnabled ? 'DND' : 'Online'}</span>
+              </button>
+              <button
+                onClick={() => setShowSettings(true)}
+                className="p-2 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground transition-colors"
+                title={t('settings.audio_settings', 'Настройки звука')}
+              >
+                <Settings className="w-5 h-5" />
+              </button>
+            </div>
           </div>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -1365,23 +1357,28 @@ export default function InternalChat() {
                   )}
                 </div>
                 <div className="flex-1 text-left min-w-0">
-                  <div className="flex justify-between items-start">
-                    <span className="font-medium text-gray-900 truncate pr-2">
-                      {user.full_name || user.username}
-                      {user.id === currentUserData.id && ` (${t('common:you', 'Вы')})`}
+                  <div className="flex justify-between items-center mb-0.5">
+                    <span className="font-bold text-sm text-foreground truncate pr-2">
+                      {user.full_name ?? user.username}
+                      {user.id === currentUserData?.id && ` (${t('common:you', 'Вы')})`}
                     </span>
                   </div>
-                  <div className="flex items-center text-xs text-gray-500 mt-1">
+                  <div className="flex items-center text-[11px] text-muted-foreground min-h-[16px]">
                     {user.is_online ? (
-                      <span className="flex items-center gap-1.5 text-green-600 font-medium">
-                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      <span className="flex items-center gap-1.5 text-green-500 font-bold">
+                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
                         {t('status.online', 'В сети')}
+                        <span className="mx-1 opacity-30 text-muted-foreground font-normal">•</span>
+                        <span className="opacity-70 font-normal">
+                          {user.role === 'director' ? t('common:director', 'Директор') : t('common:employee', 'Сотрудник')}
+                        </span>
                       </span>
                     ) : (
-                      <span className="truncate max-w-[180px]">
+                      <span className="truncate flex items-center gap-1">
+                        <Clock className="w-3 h-3 opacity-50" />
                         {user.last_seen
                           ? `${t('status.last_seen', 'Был(а)')} ${new Date(user.last_seen).toLocaleDateString('ru-RU')} ${new Date(user.last_seen).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`
-                          : ''}
+                          : t('status.offline', 'Не в сети')}
                       </span>
                     )}
                   </div>
@@ -1419,7 +1416,7 @@ export default function InternalChat() {
                 </button>
                 <div className="w-10 h-10 rounded-full overflow-hidden shadow-lg flex-shrink-0 ring-2 ring-white/30">
                   <img
-                    src={getUserAvatar(selectedUser) || undefined}
+                    src={getUserAvatar(selectedUser) ?? undefined}
                     alt={selectedUser.full_name}
                     className="w-full h-full object-cover"
                   />
@@ -1446,49 +1443,47 @@ export default function InternalChat() {
               </div>
 
               <div className="flex items-center gap-2 flex-shrink-0">
-                <button
-                  onClick={() => setIsInviteModalOpen(true)}
-                  className="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
-                  title={t('calls.invite', 'Пригласить сотрудников')}
-                >
-                  <UserPlus className="w-5 h-5" />
-                </button>
+                {/* Show Call History button when NOT in call */}
+                {!isInCall && (
+                  <button
+                    onClick={() => setShowCallHistory(true)}
+                    className="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+                    title={t('calls.history', 'История звонков')}
+                  >
+                    <HistoryIcon className="w-5 h-5" />
+                  </button>
+                )}
 
-                <button
-                  onClick={toggleDnd}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border ${isDndEnabled ? 'bg-red-500/20 text-red-100 border-red-500/50' : 'bg-white/10 text-white border-white/20'}`}
-                >
-                  <div className={`w-2 h-2 rounded-full ${isDndEnabled ? 'bg-red-500' : 'bg-green-400 animate-pulse'}`} />
-                  {isDndEnabled ? t('calls.dnd_on_short', 'DND') : t('calls.available', 'Online')}
-                </button>
-
-                <div className="h-6 w-px bg-white/20 mx-2" />
-
-                <button
-                  onClick={() => startCall('audio')}
-                  disabled={isInCall}
-                  className="p-2 text-white hover:bg-white/10 rounded-full transition-colors disabled:opacity-50"
-                  title={t('calls.audio_call', 'Аудиозвонок')}
-                >
-                  <Phone className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => startCall('video')}
-                  disabled={isInCall}
-                  className="p-2 text-white hover:bg-white/10 rounded-full transition-colors disabled:opacity-50"
-                  title={t('calls.video_call', 'Видеозвонок')}
-                >
-                  <Video className="w-5 h-5" />
-                </button>
-
-                <button
-                  onClick={() => setShowCallHistory(true)}
-                  className="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
-                  title={t('calls.history', 'История звонков')}
-                >
-                  <Clock className="w-5 h-5" />
-                </button>
+                {/* Show Invite/UserPlus ONLY when in call */}
+                {isInCall && (
+                  <button
+                    onClick={() => setIsInviteModalOpen(true)}
+                    className="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+                    title={t('calls.invite', 'Пригласить сотрудников')}
+                  >
+                    <UserPlus className="w-5 h-5" />
+                  </button>
+                )}
               </div>
+
+              <div className="h-6 w-px bg-white/20 mx-2" />
+
+              <button
+                onClick={() => startCall('audio')}
+                disabled={isInCall}
+                className="p-2 text-white hover:bg-white/10 rounded-full transition-colors disabled:opacity-50"
+                title={t('calls.audio_call', 'Аудиозвонок')}
+              >
+                <Phone className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => startCall('video')}
+                disabled={isInCall}
+                className="p-2 text-white hover:bg-white/10 rounded-full transition-colors disabled:opacity-50"
+                title={t('calls.video_call', 'Видеозвонок')}
+              >
+                <Video className="w-5 h-5" />
+              </button>
             </div>
 
             {/* Messages Area */}
@@ -1567,7 +1562,7 @@ export default function InternalChat() {
                           ) : (
                             <p className="text-sm whitespace-pre-wrap break-words">
                               {msg.message.includes(t('chat.reply_to', 'Ответ на:'))
-                                ? msg.message.split('\n\n')[1] || msg.message
+                                ? (msg.message.split('\n\n')[1] ?? msg.message)
                                 : msg.message
                               }
                             </p>
@@ -1696,6 +1691,7 @@ export default function InternalChat() {
                       <Trash2 className="w-5 h-5" />
                       <span className="text-sm font-medium">{t('common:cancel', 'Отменить')}</span>
                     </button>
+
 
                     <button
                       onClick={stopVoiceRecording}
@@ -1829,286 +1825,415 @@ export default function InternalChat() {
         )
       }
       {/* Settings Modal */}
-      {showSettings && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center">
-          <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold flex items-center gap-2">
-                <Settings className="w-6 h-6 text-primary" />
-                {t('settings.audio_settings', 'Настройки звука')}
-              </h3>
-              <button
-                onClick={() => setShowSettings(false)}
-                className="p-2 hover:bg-muted rounded-full transition-all"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('settings.ringtone', 'Мелодия звонка')}</label>
-                <input
-                  type="file"
-                  accept="audio/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      if (file.size > 2 * 1024 * 1024) {
-                        toast.error(t('settings.file_too_large', 'Файл слишком большой (макс {{max}}МБ)', { max: 2 }));
-                        return;
-                      }
-                      const reader = new FileReader();
-                      reader.onload = (evt) => {
-                        const result = evt.target?.result as string;
-                        setCustomRingtone(result);
-                        localStorage.setItem('chat_ringtone', result);
-                        toast.success(t('settings.ringtone_saved', 'Мелодия сохранена'));
-
-                        // Preview
-                        const audio = new Audio(result);
-                        audio.play();
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                  className="w-full text-sm text-slate-500
-                              file:mr-4 file:py-2 file:px-4
-                              file:rounded-full file:border-0
-                              file:text-sm file:font-semibold
-                              file:bg-violet-50 file:text-violet-700
-                              hover:file:bg-violet-100"
-                />
-                <p className="text-xs text-muted-foreground mt-2">
-                  {t('settings.ringtone_hint', 'Загрузите свой файл (mp3, wav). Макс 2MB.')}
-                </p>
+      {
+        showSettings && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center">
+            <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                  <Settings className="w-6 h-6 text-primary" />
+                  {t('settings.audio_settings', 'Настройки звука')}
+                </h3>
+                <button
+                  onClick={() => setShowSettings(false)}
+                  className="p-2 hover:bg-muted rounded-full transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              {customRingtone && (
-                <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-xl">
-                  <div className="flex-1 overflow-hidden">
-                    <p className="text-sm font-medium truncate">{t('settings.custom_ringtone_set', 'Установлена пользовательская мелодия')}</p>
+              <div className="space-y-6">
+                {/* DND Toggle - redundant for visibility */}
+                <div className="flex items-center justify-between p-4 bg-muted/30 rounded-2xl border border-border">
+                  <div>
+                    <p className="font-bold text-sm tracking-tight">{t('calls.dnd_mode', 'Режим "Не беспокоить"')}</p>
+                    <p className="text-xs text-muted-foreground">{t('calls.dnd_hint', 'Вы не будете получать уведомления о звонках')}</p>
                   </div>
                   <button
                     onClick={() => {
-                      setCustomRingtone(null);
-                      localStorage.removeItem('chat_ringtone');
-                      toast.success(t('settings.ringtone_reset', 'Сброшено на стандартную'));
+                      toggleDnd();
+                      webrtcService.setDnd(!isDndEnabled);
                     }}
-                    className="text-sm text-red-500 hover:text-red-600 font-medium"
+                    className={`w-12 h-6 rounded-full transition-all relative ${isDndEnabled ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.3)]' : 'bg-gray-300 dark:bg-gray-700'}`}
                   >
-                    {t('common:reset', 'Сбросить')}
+                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${isDndEnabled ? 'left-7 shadow-sm' : 'left-1'}`} />
                   </button>
                 </div>
-              )}
+
+                {/* Ringtone Selection */}
+                <div className="space-y-4">
+                  <label className="block text-sm font-bold tracking-tight uppercase opacity-50">{t('settings.ringtone', 'Мелодия звонка')}</label>
+
+                  {/* Preset Choices with Scrollbar */}
+                  <div className="max-h-72 overflow-y-scroll pr-2 custom-scrollbar">
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { id: 'default', name: t('settings.ringtone_classic', 'Классика'), url: '/audio/ringtones/default_classic.mp3' },
+                        { id: 'apple', name: 'Apple iOS', url: '/audio/ringtones/apple_default.mp3' },
+                        { id: 'iphone_xylo', name: 'iPhone old', url: '/audio/ringtones/iphone_xylophone.mp3' },
+                        { id: 'marimba', name: 'Marimba', url: '/audio/ringtones/marimba.mp3' },
+                        { id: 'samsung', name: 'Samsung Galaxy', url: '/audio/ringtones/samsung_galaxy.mp3' },
+                        { id: 'huawei', name: 'Huawei Tune', url: '/audio/ringtones/huawei.mp3' },
+                        { id: 'miui', name: 'MIUI 8', url: '/audio/ringtones/miui.mp3' },
+                        { id: 'nokia', name: 'Nokia Guitar', url: '/audio/ringtones/nokia_guitar.mp3' },
+                        { id: 'motorola', name: 'Motorola', url: '/audio/ringtones/motorola_c350.mp3' },
+                        { id: 'sony', name: 'Sony Ericsson', url: '/audio/ringtones/sony_ericsson.mp3' },
+                        { id: 'lg_prada', name: 'LG Prada', url: '/audio/ringtones/lg_prada.mp3' },
+                        { id: 'lumia', name: 'Lumia Retro', url: '/audio/ringtones/lumia_retro.mp3' },
+                        { id: 'viber', name: 'Viber', url: '/audio/ringtones/viber.mp3' },
+                        { id: 'hangouts', name: 'Hangouts', url: '/audio/ringtones/hangouts.mp3' },
+                        { id: 'xperia', name: 'Xperia Breeze', url: '/audio/ringtones/xperia_breeze.mp3' },
+                        { id: 'standard_7', name: t('settings.ringtone_pulse', 'Пульс'), url: '/audio/ringtones/standard_7.mp3' }
+                      ].map(preset => (
+                        <div key={preset.id} className="relative group">
+                          <button
+                            onClick={() => {
+                              webrtcService.setRingtone(preset.url);
+                              setCustomRingtone(preset.url || null);
+                              if (preset.url) {
+                                setPlayingPreviewUrl(preset.url);
+                                webrtcService.playPreview(preset.url, () => setPlayingPreviewUrl(null));
+                              } else {
+                                webrtcService.stopRingtone();
+                                setPlayingPreviewUrl(null);
+                              }
+                              toast.success(`${t('settings.updated', 'Обновлено')}: ${preset.name}`);
+                            }}
+                            className={`w-full p-4 text-xs font-bold rounded-2xl border text-center transition-all ${((!customRingtone && preset.id === 'default') || customRingtone === preset.url)
+                              ? 'bg-primary/10 border-primary text-primary shadow-sm'
+                              : 'bg-card border-border hover:bg-accent'}`}
+                          >
+                            {preset.name}
+                          </button>
+                          {preset.url && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (playingPreviewUrl === preset.url) {
+                                  webrtcService.stopRingtone();
+                                  setPlayingPreviewUrl(null);
+                                } else {
+                                  setPlayingPreviewUrl(preset.url);
+                                  webrtcService.playPreview(preset.url, () => setPlayingPreviewUrl(null));
+                                }
+                              }}
+                              className={`absolute top-2 right-2 p-1.5 rounded-full transition-all hover:scale-110 ${playingPreviewUrl === preset.url ? 'bg-primary text-white' : 'bg-primary/5 text-primary opacity-60 group-hover:opacity-100'}`}
+                              title={playingPreviewUrl === preset.url ? t('common:pause', 'Пауза') : t('common:play', 'Прослушать')}
+                            >
+                              {playingPreviewUrl === preset.url ? (
+                                <Pause className="w-3.5 h-3.5 fill-current" />
+                              ) : (
+                                <Play className="w-3.5 h-3.5 fill-current" />
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Volume slider */}
+                  <div className="space-y-2 mt-4">
+                    <div className="flex justify-between items-center text-xs font-bold uppercase opacity-50">
+                      <span>{t('settings.volume', 'Громкость')}</span>
+                      <span>{Math.round(webrtcService.getVolume() * 100)}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={localVolume}
+                      onInput={(e) => {
+                        const vol = parseFloat((e.target as HTMLInputElement).value);
+                        setLocalVolume(vol);
+                        webrtcService.setVolume(vol);
+                      }}
+                      className="w-full accent-primary h-1.5 bg-muted rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="relative mt-6">
+                    <label className="block text-[10px] font-bold uppercase opacity-50 mb-2">{t('settings.upload_custom', 'Загрузить свою')}</label>
+                    <input
+                      type="file"
+                      id="ringtone-upload"
+                      accept="audio/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          // localStorage has limits, usually 5MB. 
+                          // Base64 encoding adds ~33% overhead. So 3.5MB file -> ~4.7MB string.
+                          if (file.size > 10 * 1024 * 1024) {
+                            toast.error(t('settings.file_too_large', { max: 10 }));
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onload = (evt) => {
+                            try {
+                              const result = evt.target?.result as string;
+                              webrtcService.setRingtone(result);
+                              setCustomRingtone(result);
+                              toast.success(t('settings.ringtone_saved', 'Пользовательская мелодия сохранена'));
+                            } catch (e) {
+                              toast.error(t('settings.save_failed', 'Ошибка при сохранении файла (возможно он слишком тяжелый)'));
+                            }
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                    {customRingtone && !['', 'https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3', 'https://assets.mixkit.co/active_storage/sfx/2361/2361-preview.mp3', 'https://www.soundjay.com/phone/phone-ringing-01.wav'].includes(customRingtone) && (
+                      <button
+                        onClick={() => {
+                          webrtcService.setRingtone('');
+                          setCustomRingtone(null);
+                          toast.success(t('settings.ringtone_deleted', 'Мелодия удалена'));
+                        }}
+                        className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-all z-10"
+                        title={t('common:delete', 'Удалить')}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                    <label
+                      htmlFor="ringtone-upload"
+                      className="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-border rounded-2xl hover:bg-accent cursor-pointer transition-all hover:border-primary/50 group"
+                    >
+                      <Paperclip className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                      <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground">
+                        {customRingtone && !['', 'https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3', 'https://assets.mixkit.co/active_storage/sfx/2361/2361-preview.mp3', 'https://www.soundjay.com/phone/phone-ringing-01.wav'].includes(customRingtone)
+                          ? t('settings.change_file', 'Сменить файл')
+                          : t('settings.choose_file', 'Выберите аудиофайл')
+                        }
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
       {/* Invite Modal */}
-      {isInviteModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold flex items-center gap-2">
-                <UserPlus className="w-6 h-6 text-primary" />
-                {t('calls.invite_to_call', 'Пригласить в звонок')}
-              </h3>
-              <button
-                onClick={() => setIsInviteModalOpen(false)}
-                className="p-2 hover:bg-muted rounded-full transition-all"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {
+        isInviteModalOpen && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+            <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                  <UserPlus className="w-6 h-6 text-primary" />
+                  {t('calls.invite_to_call', 'Пригласить в звонок')}
+                </h3>
+                <button
+                  onClick={() => setIsInviteModalOpen(false)}
+                  className="p-2 hover:bg-muted rounded-full transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-            <div className="mb-4 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder={t('common:search', 'Поиск по имени...')}
-                value={inviteSearchTerm}
-                onChange={(e) => setInviteSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary transition-all"
-              />
-            </div>
+              <div className="mb-4 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder={t('common:search', 'Поиск по имени...')}
+                  value={inviteSearchTerm}
+                  onChange={(e) => setInviteSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary transition-all"
+                />
+              </div>
 
-            <div className="max-h-60 overflow-y-auto space-y-2">
-              {users
-                .filter(u =>
-                  u.id !== currentUserData?.id &&
-                  u.id !== selectedUser?.id &&
-                  (u.full_name.toLowerCase().includes(inviteSearchTerm.toLowerCase()) ||
-                    u.username.toLowerCase().includes(inviteSearchTerm.toLowerCase()))
-                )
-                .map(u => (
-                  <button
-                    key={u.id}
-                    onClick={() => handleInviteUser(u.id)}
-                    className="w-full p-3 flex items-center gap-3 hover:bg-accent rounded-xl transition-colors text-left"
-                  >
-                    <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                      <img
-                        src={getUserAvatar(u) || undefined}
-                        alt={u.full_name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{u.full_name}</p>
-                      <p className="text-xs text-muted-foreground">{u.role}</p>
-                    </div>
-                    <div className={`w-2 h-2 rounded-full ${u.is_online ? 'bg-green-500' : 'bg-gray-400'}`} />
-                  </button>
-                ))
-              }
+              <div className="max-h-60 overflow-y-auto space-y-2">
+                {users
+                  .filter(u =>
+                    u.id !== currentUserData?.id &&
+                    u.id !== selectedUser?.id &&
+                    (u.full_name.toLowerCase().includes(inviteSearchTerm.toLowerCase()) ||
+                      u.username.toLowerCase().includes(inviteSearchTerm.toLowerCase()))
+                  )
+                  .map(u => (
+                    <button
+                      key={u.id}
+                      onClick={() => handleInviteUser(u.id)}
+                      className="w-full p-3 flex items-center gap-3 hover:bg-accent rounded-xl transition-colors text-left"
+                    >
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                        <img
+                          src={getUserAvatar(u) || undefined}
+                          alt={u.full_name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{u.full_name}</p>
+                        <p className="text-xs text-muted-foreground">{u.role}</p>
+                      </div>
+                      <div className={`w-2 h-2 rounded-full ${u.is_online ? 'bg-green-500' : 'bg-gray-400'}`} />
+                    </button>
+                  ))
+                }
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
       {/* Transfer Call Modal */}
-      {isTransferModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold flex items-center gap-2">
-                <Share2 className="w-6 h-6 text-primary" />
-                {t('calls.transfer_call', 'Перевести звонок')}
-              </h3>
-              <button
-                onClick={() => setIsTransferModalOpen(false)}
-                className="p-2 hover:bg-muted rounded-full transition-all"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {
+        isTransferModalOpen && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+            <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                  <Share2 className="w-6 h-6 text-primary" />
+                  {t('calls.transfer_call', 'Перевести звонок')}
+                </h3>
+                <button
+                  onClick={() => setIsTransferModalOpen(false)}
+                  className="p-2 hover:bg-muted rounded-full transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-            <div className="mb-4 text-sm text-muted-foreground">
-              {t('calls.transfer_hint', 'Выберите сотрудника, на которого хотите перевести текущий разговор')}
-            </div>
+              <div className="mb-4 text-sm text-muted-foreground">
+                {t('calls.transfer_hint', 'Выберите сотрудника, на которого хотите перевести текущий разговор')}
+              </div>
 
-            <div className="max-h-60 overflow-y-auto space-y-2">
-              {users
-                .filter(u => u.is_online && u.id !== currentUserData?.id && u.id !== selectedUser?.id)
-                .map(u => (
-                  <button
-                    key={u.id}
-                    onClick={() => handleTransfer(u.id)}
-                    className="w-full p-3 flex items-center gap-3 hover:bg-accent rounded-xl transition-colors text-left"
-                  >
-                    <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                      <img
-                        src={getUserAvatar(u) || undefined}
-                        alt={u.full_name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{u.full_name}</p>
-                      <p className="text-xs text-muted-foreground">{u.role}</p>
-                    </div>
-                    <div className="w-2 h-2 rounded-full bg-green-500" />
-                  </button>
-                ))
-              }
-              {users.filter(u => u.is_online && u.id !== currentUserData?.id && u.id !== selectedUser?.id).length === 0 && (
-                <div className="text-center py-8 text-muted-foreground italic text-sm">
-                  {t('calls.no_online_staff', 'Нет сотрудников в сети для перевода')}
-                </div>
-              )}
+              <div className="max-h-60 overflow-y-auto space-y-2">
+                {users
+                  .filter(u => u.is_online && u.id !== currentUserData?.id && u.id !== selectedUser?.id)
+                  .map(u => (
+                    <button
+                      key={u.id}
+                      onClick={() => handleTransfer(u.id)}
+                      className="w-full p-3 flex items-center gap-3 hover:bg-accent rounded-xl transition-colors text-left"
+                    >
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                        <img
+                          src={getUserAvatar(u) || undefined}
+                          alt={u.full_name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{u.full_name}</p>
+                        <p className="text-xs text-muted-foreground">{u.role}</p>
+                      </div>
+                      <div className="w-2 h-2 rounded-full bg-green-500" />
+                    </button>
+                  ))
+                }
+                {users.filter(u => u.is_online && u.id !== currentUserData?.id && u.id !== selectedUser?.id).length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground italic text-sm">
+                    {t('calls.no_online_staff', 'Нет сотрудников в сети для перевода')}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Outgoing Call Overlay (Calling State) */}
-      {isCalling && (
-        <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-xl z-[60] flex flex-col items-center justify-center p-6 animate-in fade-in duration-300">
-          <div className="relative mb-12">
-            <div className="w-40 h-40 bg-gradient-to-br from-blue-500 to-pink-600 rounded-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl animate-pulse">
-              {selectedUser?.full_name.charAt(0).toUpperCase()}
+      {
+        isCalling && (
+          <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-xl z-[60] flex flex-col items-center justify-center p-6 animate-in fade-in duration-300">
+            <div className="relative mb-12">
+              <div className="w-40 h-40 bg-gradient-to-br from-blue-500 to-pink-600 rounded-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl animate-pulse">
+                {selectedUser?.full_name.charAt(0).toUpperCase()}
+              </div>
+              <div className="absolute -inset-4 border-2 border-white/20 rounded-full animate-ping opacity-20"></div>
             </div>
-            <div className="absolute -inset-4 border-2 border-white/20 rounded-full animate-ping opacity-20"></div>
-          </div>
 
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-2">{selectedUser?.full_name}</h2>
-            <p className="text-blue-400 font-medium animate-pulse">
-              {t('calls.calling_status', 'Вызов...')}
-            </p>
-          </div>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-white mb-2">{selectedUser?.full_name}</h2>
+              <p className="text-blue-400 font-medium animate-pulse">
+                {t('calls.calling_status', 'Вызов...')}
+              </p>
+            </div>
 
-          <div className="flex flex-col items-center gap-6">
-            <button
-              onClick={endCall}
-              className="w-20 h-20 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
-            >
-              <PhoneOff className="w-10 h-10" />
-            </button>
-            <span className="text-white/60 font-medium uppercase tracking-widest text-xs">
-              {t('calls.cancel_call', 'Отменить')}
-            </span>
+            <div className="flex flex-col items-center gap-6">
+              <button
+                onClick={() => {
+                  endCall();
+                  // Force close overlay immediately
+                  setIsCalling(false);
+                  setCallType(null);
+                  webrtcService.stopRingtone();
+                }}
+                className="w-20 h-20 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
+              >
+                <PhoneOff className="w-10 h-10" />
+              </button>
+              <span className="text-white/60 font-medium uppercase tracking-widest text-xs">
+                {t('calls.cancel_call', 'Отменить')}
+              </span>
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Call History Side Sheet */}
-      {showCallHistory && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-xl p-6 rounded-2xl shadow-2xl border border-border">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold flex items-center gap-2">
-                <Clock className="w-6 h-6 text-primary" />
-                {t('calls.call_history', 'История звонков')}
-              </h3>
-              <button
-                onClick={() => setShowCallHistory(false)}
-                className="p-2 hover:bg-muted rounded-full transition-all"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {
+        showCallHistory && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+            <div className="bg-card w-full max-w-xl p-6 rounded-2xl shadow-2xl border border-border">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                  <Clock className="w-6 h-6 text-primary" />
+                  {t('calls.call_history', 'История звонков')}
+                </h3>
+                <button
+                  onClick={() => setShowCallHistory(false)}
+                  className="p-2 hover:bg-muted rounded-full transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-            <div className="max-h-[70vh] overflow-y-auto space-y-3 pr-2">
-              {callLogs.map((log) => (
-                <div key={log.id} className="p-4 bg-muted/30 rounded-2xl border border-border/50 flex items-center justify-between transition-all hover:bg-muted/50">
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-full ${log.status === 'completed' ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
-                      {log.direction === 'in' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm">
-                        {log.direction === 'in' ? log.caller_name : log.callee_name}
-                      </p>
-                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
-                        <span>{new Date(log.created_at).toLocaleString('ru-RU')}</span>
-                        <span>•</span>
-                        <span className={log.status === 'completed' ? 'text-green-500' : 'text-red-500'}>
-                          {t(`calls.status_${log.status}`, log.status) as any}
-                        </span>
+              <div className="max-h-[70vh] overflow-y-auto space-y-3 pr-2">
+                {Array.isArray(callLogs) && callLogs.map((log) => (
+                  <div key={log.id} className="p-4 bg-muted/30 rounded-2xl border border-border/50 flex items-center justify-between transition-all hover:bg-muted/50">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-full ${log.status === 'completed' ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
+                        {log.direction === 'in' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm">
+                          {log.direction === 'in' ? log.caller_name : log.callee_name}
+                        </p>
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
+                          <span>{new Date(log.created_at).toLocaleString('ru-RU')}</span>
+                          <span>•</span>
+                          <span className={log.status === 'completed' ? 'text-green-500' : 'text-red-500'}>
+                            {t(`calls.status_${log.status}`, log.status) as any}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <div className="text-right">
+                      <p className="text-xs font-mono bg-muted px-2 py-1 rounded-lg">
+                        {Math.floor(log.duration / 60)}:{(log.duration % 60).toString().padStart(2, '0')}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground mt-1 uppercase font-bold opacity-50">
+                        {t(`calls.${log.type}`, log.type) as any}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs font-mono bg-muted px-2 py-1 rounded-lg">
-                      {Math.floor(log.duration / 60)}:{(log.duration % 60).toString().padStart(2, '0')}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground mt-1 uppercase font-bold opacity-50">
-                      {t(`calls.${log.type}`, log.type) as any}
-                    </p>
+                ))}
+                {callLogs.length === 0 && (
+                  <div className="text-center py-20 opacity-50">
+                    <Phone className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                    <p>{t('calls.no_history', 'История звонков пуста')}</p>
                   </div>
-                </div>
-              ))}
-              {callLogs.length === 0 && (
-                <div className="text-center py-20 opacity-50">
-                  <Phone className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                  <p>{t('calls.no_history', 'История звонков пуста')}</p>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
       {/* (Adding logic to show history could be a dedicated tab, let's add a toggle-able overlay) */}
 
     </div >

@@ -169,47 +169,32 @@ def seed_data():
                     elif line.startswith("Password: ") and current_username:
                         existing_passwords[current_username] = line.replace("Password: ", "")
                         current_username = None
-            if existing_passwords:
-                print(f"📂 Loaded {len(existing_passwords)} existing passwords from staff_credentials.txt")
         except Exception as e:
             print(f"⚠️  Could not read existing credentials: {e}")
 
-    # Only open for writing if we actually need to add new users
-    users_to_add_to_file = []
-    
-    for u in required_users:
-        if u['username'] not in existing_passwords:
-            # Generate random password only for NEW users not in file
-            chars = string.ascii_letters + string.digits + "!@#$%^&*"
-            while True:
-                raw_password = ''.join(random.choice(chars) for _ in range(10))
-                if (any(c.islower() for c in raw_password)
-                        and any(c.isupper() for c in raw_password)
-                        and any(c.isdigit() for c in raw_password)
-                        and any(c in "!@#$%^&*" for c in raw_password)):
-                    break
-            existing_passwords[u['username']] = raw_password
-            users_to_add_to_file.append(u)
-            print(f"🎲 Generated new password for new user: {u['username']}")
-
-    # Only write to file if there are new users to add
-    if users_to_add_to_file:
-        with open(credentials_path, "a", encoding="utf-8") as cred_file:
-            for u in users_to_add_to_file:
-                cred_file.write(f"Role: {u['role']}\n")
-                cred_file.write(f"Name: {u['full_name']}\n")
-                cred_file.write(f"Username: {u['username']}\n")
-                cred_file.write(f"Password: {existing_passwords[u['username']]}\n")
-                cred_file.write("-" * 30 + "\n")
-        print(f"✅ Appended {len(users_to_add_to_file)} new users to: {credentials_path}")
+    # Фиксированные пароли (SSOT)
+    FIXED_PASSWORDS = {
+        'admin': '8&&cY*xY#T',
+        'sabri': '1d5Fx$Ud8$',
+        'mestan': 'z2tkD5^gJh',
+        'jennifer': 'dff&aW&q2@',
+        'gulcehre': 'Hj#GH9ieZx',
+        'lyazat': 'nJOn!2Fgmd',
+        'tursunay': 'hZ&!Ci1P6K'
+    }
 
     for u in required_users:
         c.execute("SELECT id, password_hash FROM users WHERE username = %s OR full_name = %s", (u['username'], u['full_name']))
         existing_user = c.fetchone()
 
-        raw_password = existing_passwords.get(u['username'])
+        # Используем фиксированный пароль или из файла
+        raw_password = FIXED_PASSWORDS.get(u['username']) or existing_passwords.get(u['username'])
+        
         if not raw_password:
-            continue
+            # Только для совершенно новых пользователей, которых нет в списке выше
+            chars = string.ascii_letters + string.digits + "!@#$%^&*"
+            raw_password = ''.join(random.choice(chars) for _ in range(12))
+            print(f"🎲 Generated password for unknown user: {u['username']}")
             
         hashed_pwd = hash_password(raw_password)
 
@@ -220,13 +205,27 @@ def seed_data():
             """, (u['username'], u['full_name'], f"{u['username']}@example.com", u['role'], hashed_pwd, u['is_service_provider'], u['position']))
             print(f"➕ Created user: {u['full_name']} ({u['position']})")
         else:
-            # ONLY update password if it's NULL or we are forced (preventing reload loop and constant hashing)
-            if not existing_user['password_hash']:
-                c.execute("UPDATE users SET password_hash = %s WHERE id = %s", (hashed_pwd, existing_user['id']))
-                print(f"🔄 Set initial password for: {u['full_name']}")
-            # Skip updating if already has hash - fix_data.py handles forced sync from file now
+            # Всегда синхронизируем пароль и роль, если они отличаются
+            # Это гарантирует, что фиксированные пароли будут работать
+            c.execute("""
+                UPDATE users SET 
+                    password_hash = %s,
+                    role = %s,
+                    position = %s
+                WHERE id = %s
+            """, (hashed_pwd, u['role'], u['position'], existing_user['id']))
+            print(f"🔄 Synced credentials for: {u['full_name']}")
 
-            # Skip updating if already has hash - fix_data.py handles forced sync from file now
+    # Обновляем файл staff_credentials.txt актуальными данными
+    with open(credentials_path, "w", encoding="utf-8") as cred_file:
+        cred_file.write(f"=== USERS CREDENTIALS (Fixed & Active) ===\n\n")
+        for u in required_users:
+            pwd = FIXED_PASSWORDS.get(u['username']) or "Check Database"
+            cred_file.write(f"Role: {u['role']}\n")
+            cred_file.write(f"Name: {u['full_name']}\n")
+            cred_file.write(f"Username: {u['username']}\n")
+            cred_file.write(f"Password: {pwd}\n")
+            cred_file.write("-" * 30 + "\n")
 
     print(f"✅ Credentials saved to: {credentials_path}")
 
