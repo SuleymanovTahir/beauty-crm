@@ -920,3 +920,44 @@ async def get_call_logs(limit: int = 50, session_token: Optional[str] = Cookie(N
     conn.close()
     return logs
 
+@router.get("/call-logs")
+async def get_call_logs(session_token: Optional[str] = Cookie(None)):
+    """Получить историю звонков пользователя"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Требуется авторизация"}, status_code=401)
+
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT 
+            l.id, l.caller_id, l.callee_id, l.status, l.type, l.duration, l.created_at,
+            u1.full_name as caller_name,
+            u2.full_name as callee_name
+        FROM user_call_logs l
+        LEFT JOIN users u1 ON l.caller_id = u1.id
+        LEFT JOIN users u2 ON l.callee_id = u2.id
+        WHERE l.caller_id = %s OR l.callee_id = %s
+        ORDER BY l.created_at DESC
+        LIMIT 100
+    """, (user['id'], user['id']))
+
+    logs = []
+    for row in c.fetchall():
+        logs.append({
+            'id': row[0],
+            'caller_id': row[1],
+            'callee_id': row[2],
+            'status': row[3],
+            'type': row[4],
+            'duration': row[5],
+            'created_at': row[6].isoformat(),
+            'caller_name': row[7],
+            'callee_name': row[8],
+            'direction': 'out' if row[1] == user['id'] else 'in'
+        })
+
+    conn.close()
+
+    return {"logs": logs}

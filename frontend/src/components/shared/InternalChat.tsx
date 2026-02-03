@@ -127,11 +127,21 @@ export default function InternalChat() {
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [isDndEnabled, setIsDndEnabled] = useState(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isCalling, setIsCalling] = useState(false);
   const [showCallHistory, setShowCallHistory] = useState(false);
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const [callLogs, setCallLogs] = useState<any[]>([]);
   const [ringTimeout, setRingTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  const fetchCallLogs = async () => {
+    try {
+      const data = await api.getCallLogs();
+      setCallLogs(data.logs || []);
+    } catch (err) {
+      console.error('Error fetching call logs:', err);
+    }
+  };
 
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -194,6 +204,12 @@ export default function InternalChat() {
       setTimeout(() => clearInterval(interval), 5000);
     }
   }, [search]);
+
+  useEffect(() => {
+    if (showCallHistory) {
+      fetchCallLogs();
+    }
+  }, [showCallHistory]);
 
   // Set user online status
   useEffect(() => {
@@ -279,6 +295,7 @@ export default function InternalChat() {
 
       const handleCallAccepted = () => {
         webrtcService.stopRingtone(); // Stop ringing
+        setIsCalling(false);
         setIsInCall(true);
         setIsLocalOnHold(false);
         setIsRemoteOnHold(false);
@@ -288,6 +305,7 @@ export default function InternalChat() {
 
       const handleCallRejected = (reason?: string) => {
         webrtcService.stopRingtone();
+        setIsCalling(false);
         if (reason === 'busy') {
           toast.error(t('calls.user_busy', 'Пользователь занят'));
         } else {
@@ -318,6 +336,7 @@ export default function InternalChat() {
 
       const handleCallEnded = () => {
         webrtcService.stopRingtone();
+        setIsCalling(false);
         handleCallEndedByRemote();
       };
 
@@ -795,18 +814,15 @@ export default function InternalChat() {
 
   const startCall = async (type: CallType) => {
     if (!selectedUser) return;
-
     try {
       setCallType(type);
+      setIsCalling(true);
       await webrtcService.startCall(selectedUser.id, type);
       webrtcService.playRingtone('outgoing');
-
-      // Local video will be attached by useEffect
-
-      toast.success(`${t('calls.calling', 'Звоним')} ${selectedUser.full_name}...`);
     } catch (err) {
-      console.error('Error starting call:', err);
-      toast.error(t('calls.error_starting', 'Ошибка при начале звонка'));
+      console.error('Call failed:', err);
+      setIsCalling(false);
+      toast.error(t('calls.error_media', 'Ошибка доступа к медиа-устройствам'));
     }
   };
 
@@ -2005,7 +2021,38 @@ export default function InternalChat() {
         </div>
       )}
 
-      {/* Call History Side Sheet (Mock-like implementation in current UI) */}
+      {/* Outgoing Call Overlay (Calling State) */}
+      {isCalling && (
+        <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-xl z-[60] flex flex-col items-center justify-center p-6 animate-in fade-in duration-300">
+          <div className="relative mb-12">
+            <div className="w-40 h-40 bg-gradient-to-br from-blue-500 to-pink-600 rounded-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl animate-pulse">
+              {selectedUser?.full_name.charAt(0).toUpperCase()}
+            </div>
+            <div className="absolute -inset-4 border-2 border-white/20 rounded-full animate-ping opacity-20"></div>
+          </div>
+
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-white mb-2">{selectedUser?.full_name}</h2>
+            <p className="text-blue-400 font-medium animate-pulse">
+              {t('calls.calling_status', 'Вызов...')}
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center gap-6">
+            <button
+              onClick={endCall}
+              className="w-20 h-20 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
+            >
+              <PhoneOff className="w-10 h-10" />
+            </button>
+            <span className="text-white/60 font-medium uppercase tracking-widest text-xs">
+              {t('calls.cancel_call', 'Отменить')}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Call History Side Sheet */}
       {showCallHistory && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
           <div className="bg-card w-full max-w-xl p-6 rounded-2xl shadow-2xl border border-border">

@@ -142,41 +142,54 @@ def run_fix():
         else:
             log_info("🎨 Gallery already exists, skipping seed", "maintenance")
 
-        # 8. Merge duplicate employees
-        log_info("👥 Merging duplicate employees...", "maintenance")
+        # 8. Merge duplicate employees (PRO-ACTIVE DEDUPLICATION)
+        log_info("👥 Merging duplicate employees (Deep Cleanup)...", "maintenance")
         
         staff_targets = [
-            {'username': 'kasymova_gulcehre', 'alternates': ['gulcehre', 'gulcehre_archived'], 'names': ['Kasymova Gulcehre', 'Касымова Гульчере']},
+            {'username': 'kasymova_gulcehre', 'alternates': ['gulcehre', 'gulcehre_archived'], 'names': ['Kasymova Gulcehre', 'Касымова Гульчере', 'Гульчара']},
             {'username': 'peradilla_jennifer', 'alternates': ['jennifer', 'jennifer_archived'], 'names': ['Peradilla Jennifer', 'Перадилья Дженнифер', 'Дженнифер']},
-            {'username': 'amandurdyyeva_mestan', 'alternates': ['mestan', 'mestan_archived'], 'names': ['Amandurdyyeva Mestan', 'Амандурдыева Местан']},
-            {'username': 'mohamed_sabri', 'alternates': ['sabri', 'sabri_archived'], 'names': ['Mohamed Sabri', 'Мохамед Сабри', 'Мохаммед Сабри']},
-            {'username': 'kozhabay_lyazat', 'alternates': ['lyazat', 'lyazat_archived'], 'names': ['Kozhabay Lyazat', 'Кожабай Лязат']}
+            {'username': 'amandurdyyeva_mestan', 'alternates': ['mestan', 'mestan_archived'], 'names': ['Amandurdyyeva Mestan', 'Амандурдыева Местан', 'Местан']},
+            {'username': 'mohamed_sabri', 'alternates': ['sabri', 'sabri_archived'], 'names': ['Mohamed Sabri', 'Мохамед Сабри', 'Мохаммед Сабри', 'Сабри']},
+            {'username': 'kozhabay_lyazat', 'alternates': ['lyazat', 'lyazat_archived'], 'names': ['Kozhabay Lyazat', 'Кожабай Лязат', 'Лязат']}
         ]
 
+        # First, ensure target usernames are set for the BEST records
         for target in staff_targets:
-            # 1. Find the master ID (the one with the correct username)
+            # Try to find the record that SHOULD be the master
+            # Priority: 1. Correct username, 2. Highest ID with correct full name
             c.execute("SELECT id FROM users WHERE username = %s LIMIT 1", (target['username'],))
             res = c.fetchone()
             if not res:
-                # If target username doesn't exist, try to find by name and fix it
-                c.execute("SELECT id FROM users WHERE full_name IN %s ORDER BY id DESC LIMIT 1", (tuple(target['names']),))
+                # Find by any of the names
+                c.execute("SELECT id FROM users WHERE full_name ILIKE ANY(%s) ORDER BY id DESC LIMIT 1", (target['names'],))
                 res = c.fetchone()
                 if not res: continue
                 master_id = res[0]
-                c.execute("UPDATE users SET username = %s WHERE id = %s", (target['username'], master_id))
+                c.execute("UPDATE users SET username = %s, is_active = TRUE WHERE id = %s", (target['username'], master_id))
             else:
                 master_id = res[0]
 
-            # 2. Find all other IDs for this person
+            # 2. Find ALL other active users who might be duplicates (same name or known alternates)
+            # Use ILIKE and ANY for broad matching
             c.execute("""
                 SELECT id FROM users 
-                WHERE (username IN %s OR full_name IN %s) 
+                WHERE (username IN %s OR username ILIKE ANY(%s) OR full_name ILIKE ANY(%s)) 
                   AND id != %s
-            """, (tuple(target['alternates'] + [target['username']]), tuple(target['names']), master_id))
+                  AND role NOT IN ('client', 'guest')
+            """, (tuple(target['alternates'] + [target['username']]), 
+                  [f"%{a}%" for a in target['alternates']], 
+                  [f"%{n}%" for n in target['names']], 
+                  master_id))
+            
             duplicate_ids = [r[0] for r in c.fetchall()]
 
             for source_id in duplicate_ids:
-                # Transfer bio/specialization if missing in master
+                # Log the merge
+                c.execute("SELECT username, full_name FROM users WHERE id = %s", (source_id,))
+                s_info = c.fetchone()
+                log_info(f"   🔄 Merging duplicate: {s_info[0]} ({s_info[1]}) -> {target['username']}", "maintenance")
+
+                # Transfer data
                 c.execute("""
                     UPDATE users t
                     SET 
@@ -199,10 +212,10 @@ def run_fix():
                     ON CONFLICT DO NOTHING
                 """, (master_id, source_id))
                 
-                # Deactivate duplicate
+                # DEACTIVATE DUPLICATE
                 c.execute("UPDATE users SET is_active = FALSE, is_public_visible = FALSE, is_service_provider = FALSE WHERE id = %s", (source_id,))
 
-        log_info(f"   ✅ Finished merging staff duplicates", "maintenance")
+        log_info("   ✅ Finished deep cleanup of staff duplicates", "maintenance")
         
         # 9. Ensure only providers are public
         c.execute("""

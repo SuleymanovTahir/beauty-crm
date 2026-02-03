@@ -2203,6 +2203,10 @@ export class ApiClient {
     })
   }
 
+  async getCallLogs() {
+    return this.request<any>('/api/internal-chat/call-logs')
+  }
+
   async getInternalChatUnreadCount() {
     return this.request<any>('/api/internal-chat/unread-count')
   }
