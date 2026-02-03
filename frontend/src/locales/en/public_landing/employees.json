@@ -2,69 +2,34 @@
   "items": [
     {
       "bio": "Experienced nail technician. ",
-      "id": 671,
-      "name": "Kasymova Gulcehre",
-      "photo": "",
-      "position": "Nail & Waxing Master"
-    },
-    {
-      "bio": "Master all-rounder of the highest category. ",
-      "id": 672,
-      "name": "Peradilla Jennifer",
-      "photo": "",
-      "position": "Universal Beauty Master"
-    },
-    {
-      "bio": "Top stylist with international experience. ",
-      "id": 673,
-      "name": "Amandurdyyeva Mestan",
-      "photo": "",
-      "position": "Hair Stylist & Permanent Makeup Artist"
-    },
-    {
-      "bio": "A talented stylist who creates unique images. ",
-      "id": 674,
-      "name": "Mohamed Sabri",
-      "photo": "",
-      "position": "Hair Stylist"
-    },
-    {
-      "bio": "A neat and attentive master. ",
-      "id": 675,
-      "name": "Kozhabay Lyazat",
-      "photo": "",
-      "position": "Nail Master"
-    },
-    {
-      "bio": "",
       "id": 798,
       "name": "Kasymova Gulcehre",
       "photo": "",
       "position": "Nail & Waxing Master"
     },
     {
-      "bio": "",
+      "bio": "Master all-rounder of the highest category. ",
       "id": 799,
       "name": "Peradilla Jennifer",
       "photo": "",
       "position": "Universal Beauty Master"
     },
     {
-      "bio": "",
+      "bio": "Top stylist with international experience. ",
       "id": 800,
       "name": "Amandurdyyeva Mestan",
       "photo": "",
       "position": "Hair Stylist & Permanent Makeup Artist"
     },
     {
-      "bio": "",
+      "bio": "A talented stylist who creates unique images. ",
       "id": 801,
-      "name": "Mohamed Sabri",
+      "name": "Mohammed Sabri",
       "photo": "",
       "position": "Hair Stylist"
     },
     {
-      "bio": "",
+      "bio": "A neat and attentive master. ",
       "id": 802,
       "name": "Kozhabay Lyazat",
       "photo": "",

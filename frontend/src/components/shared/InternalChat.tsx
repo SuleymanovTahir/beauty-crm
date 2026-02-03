@@ -1855,7 +1855,7 @@ export default function InternalChat() {
                     const file = e.target.files?.[0];
                     if (file) {
                       if (file.size > 2 * 1024 * 1024) {
-                        toast.error(t('settings.file_too_large', 'Файл слишком большой (макс 2MB)'));
+                        toast.error(t('settings.file_too_large', 'Файл слишком большой (макс {{max}}МБ)', { max: 2 }));
                         return;
                       }
                       const reader = new FileReader();

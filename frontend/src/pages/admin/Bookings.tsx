@@ -696,7 +696,7 @@ export default function Bookings() {
           </h1>
           <p className="bookings-count-label">
             <span className="bookings-count-dot" />
-            {totalItems} {t('bookings:records_count')}
+            {t('bookings:records_count', { count: totalItems })}
           </p>
         </div>
         <button
