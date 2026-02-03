@@ -80,6 +80,8 @@ from api.internal_chat import router as internal_chat_router
 from api.statuses import router as statuses_router
 from api.gallery import router as gallery_router
 from api.public_admin import router as public_admin_router
+from utils.redis_pubsub import redis_pubsub
+import asyncio
 
 from scheduler import (
     start_birthday_checker, 
@@ -121,6 +123,12 @@ async def lifespan(app: FastAPI):
     # log_info("✅ База данных пересоздана. ТЕПЕРЬ ОБЯЗАТЕЛЬНО ЗАПУСТИТЕ МИГРАЦИИ (пункт 3)", "startup")
 
     init_connection_pool()
+    
+    # 3. Redis Pub/Sub (Sink for multi-worker synchronization)
+    await redis_pubsub.connect()
+    app.state.redis_listener = asyncio.create_task(redis_pubsub.start_listening())
+    log_info("✅ Redis Pub/Sub listener started", "boot")
+
     try:
         def warmup():
             try:
@@ -198,7 +206,18 @@ async def lifespan(app: FastAPI):
         log_info("✅ Планировщики (Mission-control) активны", "boot")
 
     yield
+    
+    # 7. Завершение работы
     log_info("🛑 Двигатель CRM безопасно останавливается...", "shutdown")
+    
+    # Stop Redis Pub/Sub
+    await redis_pubsub.stop()
+    if hasattr(app.state, 'redis_listener'):
+        app.state.redis_listener.cancel()
+        try:
+            await app.state.redis_listener
+        except asyncio.CancelledError:
+            pass
 
 # Инициализация FastAPI
 app = FastAPI(title="Beauty CRM", lifespan=lifespan)

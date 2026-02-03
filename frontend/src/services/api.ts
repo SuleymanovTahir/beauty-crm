@@ -1084,6 +1084,17 @@ export class ApiClient {
 
 
   // ===== NOTIFICATIONS =====
+  async addNotification(data: { title: string; message: string; type?: string; action_url?: string }): Promise<any> {
+    return this.request('/api/notifications', {
+      method: 'POST',
+      body: JSON.stringify({
+        title: data.title,
+        content: data.message,
+        notification_type: data.type || 'info',
+        action_url: data.action_url
+      })
+    })
+  }
   async getNotifications(unreadOnly: boolean = false, limit: number = 50) {
     return this.request<{ notifications: any[] }>(`/api/notifications?unread_only=${unreadOnly}&limit=${limit}`)
   }

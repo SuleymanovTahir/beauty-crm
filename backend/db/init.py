@@ -211,6 +211,7 @@ def init_database():
             gender TEXT DEFAULT 'female',
             bio TEXT, experience TEXT, years_of_experience INTEGER,
             specialization TEXT,
+            nickname TEXT,
             base_salary REAL DEFAULT 0, commission_rate REAL DEFAULT 0,
             telegram_id TEXT, telegram_chat_id TEXT, telegram_username TEXT, instagram_username TEXT,
             is_active BOOLEAN DEFAULT TRUE,
@@ -237,6 +238,7 @@ def init_database():
         add_column_if_not_exists('users', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
         add_column_if_not_exists('users', 'phone', 'TEXT')
         add_column_if_not_exists('users', 'telegram_username', 'TEXT')
+        add_column_if_not_exists('users', 'nickname', 'TEXT')
 
         # Soft Delete Tracking (Trash) - REQUIRED by housekeeping
         c.execute('''CREATE TABLE IF NOT EXISTS deleted_items (
@@ -1622,23 +1624,35 @@ def init_database():
 
         # Продуктовые сотрудники
         default_employees = [
-            ('Kasymova Gulcehre', 'kasymova_gulcehre', 'employee', 'Nail & Waxing Master', 'female'),
-            ('Peradilla Jennifer', 'peradilla_jennifer', 'employee', 'Universal Beauty Master', 'female'),
-            ('Amandurdyyeva Mestan', 'amandurdyyeva_mestan', 'employee', 'Hair Stylist & Permanent Makeup Artist', 'female'),
-            ('Mohamed Sabri', 'mohamed_sabri', 'employee', 'Hair Stylist', 'male'),
-            ('Kozhabay Lyazat', 'kozhabay_lyazat', 'employee', 'Nail Master', 'female'),
-            ('Турсунай', 'tursunay', 'director', 'Owner / Director', 'female')
+            ('Kasymova Gulcehre', 'gulcehre', 'employee', 'Nail & Waxing Master', 'female'),
+            ('Peradilla Jennifer', 'jennifer', 'employee', 'Universal Beauty Master', 'female'),
+            ('Amandurdyyeva Mestan', 'mestan', 'employee', 'Hair Stylist & Permanent Makeup Artist', 'female'),
+            ('Mohamed Sabri', 'sabri', 'employee', 'Hair Stylist', 'male'),
+            ('Kozhabay Lyazat', 'lyazat', 'employee', 'Nail Master', 'female'),
+            ('Турсунай', 'tursunay', 'director', 'Owner / Director', 'female'),
+            ('Admin', 'admin', 'director', 'System Admin', 'female')
         ]
         for name, uname, role, pos, gender in default_employees:
-            c.execute("""
-                INSERT INTO users (full_name, username, password_hash, role, position, gender, is_active, is_service_provider)
-                VALUES (%s, %s, %s, %s, %s, %s, TRUE, TRUE)
-                ON CONFLICT (username) DO UPDATE SET 
-                    full_name = EXCLUDED.full_name,
-                    role = EXCLUDED.role,
-                    position = EXCLUDED.position,
-                    gender = EXCLUDED.gender
-            """, (name, uname, 'pbkdf2:sha256:260000$default_staff_hash', role, pos, gender))
+            # Сначала проверяем существование пользователя
+            c.execute("SELECT id FROM users WHERE username = %s", (uname,))
+            user_exists = c.fetchone()
+            
+            if not user_exists:
+                # Создаем только если нет (пароль по умолчанию временный, будет обновлен в seed_test_data)
+                c.execute("""
+                    INSERT INTO users (full_name, username, password_hash, role, position, gender, is_active, is_service_provider)
+                    VALUES (%s, %s, %s, %s, %s, %s, TRUE, TRUE)
+                """, (name, uname, 'pbkdf2:sha256:260000$initial_setup_only', role, pos, gender))
+            else:
+                # Обновляем только роль и позицию, НЕ трогая пароль
+                c.execute("""
+                    UPDATE users SET 
+                        full_name = %s,
+                        role = %s,
+                        position = %s,
+                        gender = %s
+                    WHERE username = %s
+                """, (name, role, pos, gender, uname))
 
         # Fix gender for Mohamed and Tahir specifically
         c.execute("UPDATE users SET gender = 'male' WHERE full_name ILIKE '%Mohamed%' OR full_name ILIKE '%Tahir%' OR username ILIKE '%tahir%'")

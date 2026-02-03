@@ -143,6 +143,13 @@ def map_image_path(url: str) -> str:
         '/landing-images/portfolio/Волосы2.webp': '/landing-images/portfolio/Hair2.webp',
         '/landing-images/portfolio/Ногти до после.webp': '/landing-images/portfolio/Nogti_do_posle.webp',
         '/landing-images/portfolio/Кератин блондинка.webp': '/landing-images/portfolio/Keratin_blonde.webp',
+        '/landing-images/portfolio/Волосы.webp': '/landing-images/portfolio/Hair.webp',
+        # Services
+        '/landing-images/services/Массаж лица.webp': '/landing-images/services/Face_massage.webp',
+        '/landing-images/services/Стрижка .webp': '/landing-images/services/Haircut.webp',
+        '/landing-images/services/Маникюр 4.webp': '/landing-images/services/Manicure_4.webp',
+        '/landing-images/services/Перманент ресниц.webp': '/landing-images/services/Permanent_lashes.webp',
+        '/landing-images/services/Спа.webp': '/landing-images/services/Spa.webp',
     }
 
     if url in file_mappings:
