@@ -4,7 +4,7 @@
       "id": 671,
       "fields": {
         "full_name": {
-          "ru": "Kasymova Gulcehre",
+          "ru": "Касымова Гульчере",
           "en": "Kasymova Gulcehre",
           "ar": "كاسيموفا جولشير",
           "es": "Kasymova Gulcehre",
@@ -42,7 +42,7 @@
       "id": 672,
       "fields": {
         "full_name": {
-          "ru": "Peradilla Jennifer",
+          "ru": "Перадилья Дженнифер",
           "en": "Peradilla Jennifer",
           "ar": "بيراديلا جنيفر",
           "es": "Jennifer Peradilla",
@@ -118,7 +118,7 @@
       "id": 674,
       "fields": {
         "full_name": {
-          "ru": "Mohamed Sabri",
+          "ru": "Мохаммед Сабри",
           "en": "Mohamed Sabri",
           "ar": "محمد صبري",
           "es": "Mohamed Sabri",
@@ -1214,7 +1214,7 @@
   ],
   "services": [
     {
-      "id": 23040,
+      "id": 27738,
       "fields": {
         "name": {
           "ru": "Manicure Classic + Polish"
@@ -1222,7 +1222,7 @@
       }
     },
     {
-      "id": 23041,
+      "id": 27739,
       "fields": {
         "name": {
           "ru": "Classic Polish Only"
@@ -1230,7 +1230,7 @@
       }
     },
     {
-      "id": 23042,
+      "id": 27740,
       "fields": {
         "name": {
           "ru": "Gel Polish Only"
@@ -1238,7 +1238,7 @@
       }
     },
     {
-      "id": 23043,
+      "id": 27741,
       "fields": {
         "name": {
           "ru": "French Polish"
@@ -1246,7 +1246,7 @@
       }
     },
     {
-      "id": 23044,
+      "id": 27742,
       "fields": {
         "name": {
           "ru": "Japanese Manicure"
@@ -1254,7 +1254,7 @@
       }
     },
     {
-      "id": 23045,
+      "id": 27743,
       "fields": {
         "name": {
           "ru": "Overlay Biogel"
@@ -1262,7 +1262,7 @@
       }
     },
     {
-      "id": 23046,
+      "id": 27744,
       "fields": {
         "name": {
           "ru": "Remove Gel Polish"
@@ -1270,7 +1270,7 @@
       }
     },
     {
-      "id": 23047,
+      "id": 27745,
       "fields": {
         "name": {
           "ru": "Remove Classic Polish"
@@ -1278,7 +1278,7 @@
       }
     },
     {
-      "id": 23048,
+      "id": 27746,
       "fields": {
         "name": {
           "ru": "Remove Extensions"
@@ -1286,7 +1286,7 @@
       }
     },
     {
-      "id": 23049,
+      "id": 27747,
       "fields": {
         "name": {
           "ru": "Nail Extensions (Gel)"
@@ -1294,7 +1294,7 @@
       }
     },
     {
-      "id": 23050,
+      "id": 27748,
       "fields": {
         "name": {
           "ru": "Extensions Correction"
@@ -1302,7 +1302,7 @@
       }
     },
     {
-      "id": 23051,
+      "id": 27749,
       "fields": {
         "name": {
           "ru": "Repair 1 Extension"
@@ -1310,7 +1310,7 @@
       }
     },
     {
-      "id": 23052,
+      "id": 27750,
       "fields": {
         "name": {
           "ru": "Repair 1 Gel Nail"
@@ -1318,7 +1318,7 @@
       }
     },
     {
-      "id": 23053,
+      "id": 27751,
       "fields": {
         "name": {
           "ru": "Combined Manicure"
@@ -1326,7 +1326,7 @@
       }
     },
     {
-      "id": 23054,
+      "id": 27752,
       "fields": {
         "name": {
           "ru": "Combined Manicure + Gel"
@@ -1334,7 +1334,7 @@
       }
     },
     {
-      "id": 23055,
+      "id": 27753,
       "fields": {
         "name": {
           "ru": "Nail Shaping"
@@ -1342,7 +1342,7 @@
       }
     },
     {
-      "id": 23056,
+      "id": 27754,
       "fields": {
         "name": {
           "ru": "Smart Pedicure Basic"
@@ -1350,7 +1350,7 @@
       }
     },
     {
-      "id": 23057,
+      "id": 27755,
       "fields": {
         "name": {
           "ru": "Smart Pedicure + Polish"
@@ -1358,7 +1358,7 @@
       }
     },
     {
-      "id": 23058,
+      "id": 27756,
       "fields": {
         "name": {
           "ru": "Pedicure + Gel Polish"
@@ -1366,7 +1366,7 @@
       }
     },
     {
-      "id": 23059,
+      "id": 27757,
       "fields": {
         "name": {
           "ru": "Change Gel Polish (Pedi)"
@@ -1374,7 +1374,7 @@
       }
     },
     {
-      "id": 23060,
+      "id": 27758,
       "fields": {
         "name": {
           "ru": "Change Polish (Pedi)"
@@ -1382,7 +1382,7 @@
       }
     },
     {
-      "id": 23061,
+      "id": 27759,
       "fields": {
         "name": {
           "ru": "Combo Mani+Pedi (Gel)"
@@ -1390,7 +1390,7 @@
       }
     },
     {
-      "id": 23062,
+      "id": 27760,
       "fields": {
         "name": {
           "ru": "Blow Dry (Short)"
@@ -1398,7 +1398,7 @@
       }
     },
     {
-      "id": 23063,
+      "id": 27761,
       "fields": {
         "name": {
           "ru": "Blow Dry (Medium)"
@@ -1406,7 +1406,7 @@
       }
     },
     {
-      "id": 23064,
+      "id": 27762,
       "fields": {
         "name": {
           "ru": "Blow Dry (Long)"
@@ -1414,7 +1414,7 @@
       }
     },
     {
-      "id": 23065,
+      "id": 27763,
       "fields": {
         "name": {
           "ru": "Styling Iron/Waves (Short)"
@@ -1422,7 +1422,7 @@
       }
     },
     {
-      "id": 23066,
+      "id": 27764,
       "fields": {
         "name": {
           "ru": "Styling Iron/Waves (Medium)"
@@ -1430,7 +1430,7 @@
       }
     },
     {
-      "id": 23067,
+      "id": 27765,
       "fields": {
         "name": {
           "ru": "Styling Iron/Waves (Long)"
@@ -1438,7 +1438,7 @@
       }
     },
     {
-      "id": 23068,
+      "id": 27766,
       "fields": {
         "name": {
           "ru": "Evening Hairstyle"
@@ -1446,7 +1446,7 @@
       }
     },
     {
-      "id": 23069,
+      "id": 27767,
       "fields": {
         "name": {
           "ru": "Hair Wash"
@@ -1454,7 +1454,7 @@
       }
     },
     {
-      "id": 23070,
+      "id": 27768,
       "fields": {
         "name": {
           "ru": "Hair Trim Only"
@@ -1462,7 +1462,7 @@
       }
     },
     {
-      "id": 23071,
+      "id": 27769,
       "fields": {
         "name": {
           "ru": "Cut + Wash + Styling"
@@ -1470,7 +1470,7 @@
       }
     },
     {
-      "id": 23072,
+      "id": 27770,
       "fields": {
         "name": {
           "ru": "Cut + Wash"
@@ -1478,7 +1478,7 @@
       }
     },
     {
-      "id": 23073,
+      "id": 27771,
       "fields": {
         "name": {
           "ru": "Express Form (No Wash)"
@@ -1486,7 +1486,7 @@
       }
     },
     {
-      "id": 23074,
+      "id": 27772,
       "fields": {
         "name": {
           "ru": "Bangs Cut"
@@ -1494,7 +1494,7 @@
       }
     },
     {
-      "id": 23075,
+      "id": 27773,
       "fields": {
         "name": {
           "ru": "Kids Cut"
@@ -1502,7 +1502,7 @@
       }
     },
     {
-      "id": 23076,
+      "id": 27774,
       "fields": {
         "name": {
           "ru": "Roots Coloring"
@@ -1510,7 +1510,7 @@
       }
     },
     {
-      "id": 23077,
+      "id": 27775,
       "fields": {
         "name": {
           "ru": "Toning"
@@ -1518,7 +1518,7 @@
       }
     },
     {
-      "id": 23078,
+      "id": 27776,
       "fields": {
         "name": {
           "ru": "One Tone (Short)"
@@ -1526,7 +1526,7 @@
       }
     },
     {
-      "id": 23079,
+      "id": 27777,
       "fields": {
         "name": {
           "ru": "One Tone (Medium)"
@@ -1534,7 +1534,7 @@
       }
     },
     {
-      "id": 23080,
+      "id": 27778,
       "fields": {
         "name": {
           "ru": "One Tone (Long)"
@@ -1542,7 +1542,7 @@
       }
     },
     {
-      "id": 23081,
+      "id": 27779,
       "fields": {
         "name": {
           "ru": "Total Blonde"
@@ -1550,7 +1550,7 @@
       }
     },
     {
-      "id": 23082,
+      "id": 27780,
       "fields": {
         "name": {
           "ru": "Complex Color (Ombre/Balayage)"
@@ -1558,7 +1558,7 @@
       }
     },
     {
-      "id": 23083,
+      "id": 27781,
       "fields": {
         "name": {
           "ru": "Head Massage (60 min)"
@@ -1566,7 +1566,7 @@
       }
     },
     {
-      "id": 23084,
+      "id": 27782,
       "fields": {
         "name": {
           "ru": "Extremities Massage (60 min)"
@@ -1574,7 +1574,7 @@
       }
     },
     {
-      "id": 23085,
+      "id": 27783,
       "fields": {
         "name": {
           "ru": "Body Massage (60 min)"
@@ -1582,7 +1582,7 @@
       }
     },
     {
-      "id": 23086,
+      "id": 27784,
       "fields": {
         "name": {
           "ru": "Sculptural Body Massage"
@@ -1590,7 +1590,7 @@
       }
     },
     {
-      "id": 23087,
+      "id": 27785,
       "fields": {
         "name": {
           "ru": "Anti-cellulite Massage (60 min)"
@@ -1598,7 +1598,7 @@
       }
     },
     {
-      "id": 23088,
+      "id": 27786,
       "fields": {
         "name": {
           "ru": "Moroccan Bath SPA"
@@ -1606,7 +1606,7 @@
       }
     },
     {
-      "id": 23089,
+      "id": 27787,
       "fields": {
         "name": {
           "ru": "Full Bikini"
@@ -1614,7 +1614,7 @@
       }
     },
     {
-      "id": 23090,
+      "id": 27788,
       "fields": {
         "name": {
           "ru": "Bikini Line"
@@ -1622,7 +1622,7 @@
       }
     },
     {
-      "id": 23091,
+      "id": 27789,
       "fields": {
         "name": {
           "ru": "Full Legs"
@@ -1630,7 +1630,7 @@
       }
     },
     {
-      "id": 23092,
+      "id": 27790,
       "fields": {
         "name": {
           "ru": "Half Legs (Lower)"
@@ -1638,7 +1638,7 @@
       }
     },
     {
-      "id": 23093,
+      "id": 27791,
       "fields": {
         "name": {
           "ru": "Full Arms"
@@ -1646,7 +1646,7 @@
       }
     },
     {
-      "id": 23094,
+      "id": 27792,
       "fields": {
         "name": {
           "ru": "Half Arms"
@@ -1654,7 +1654,7 @@
       }
     },
     {
-      "id": 23095,
+      "id": 27793,
       "fields": {
         "name": {
           "ru": "Full Body Waxing"
@@ -1662,7 +1662,7 @@
       }
     },
     {
-      "id": 23096,
+      "id": 27794,
       "fields": {
         "name": {
           "ru": "Underarms Waxing"
@@ -1670,7 +1670,7 @@
       }
     },
     {
-      "id": 23097,
+      "id": 27795,
       "fields": {
         "name": {
           "ru": "Full Face Waxing"
@@ -1678,7 +1678,7 @@
       }
     },
     {
-      "id": 23098,
+      "id": 27796,
       "fields": {
         "name": {
           "ru": "Cheeks Waxing"
@@ -1686,7 +1686,7 @@
       }
     },
     {
-      "id": 23099,
+      "id": 27797,
       "fields": {
         "name": {
           "ru": "Upper Lip Waxing"
@@ -1694,7 +1694,7 @@
       }
     },
     {
-      "id": 23100,
+      "id": 27798,
       "fields": {
         "name": {
           "ru": "Chin Waxing"
@@ -1702,7 +1702,7 @@
       }
     },
     {
-      "id": 23101,
+      "id": 27799,
       "fields": {
         "name": {
           "ru": "Deep Facial Cleaning"
@@ -1710,7 +1710,7 @@
       }
     },
     {
-      "id": 23102,
+      "id": 27800,
       "fields": {
         "name": {
           "ru": "Medical Facial (Problem Skin)"
@@ -1718,7 +1718,7 @@
       }
     },
     {
-      "id": 23103,
+      "id": 27801,
       "fields": {
         "name": {
           "ru": "Lifting Massage + Mask"
@@ -1726,7 +1726,7 @@
       }
     },
     {
-      "id": 23104,
+      "id": 27802,
       "fields": {
         "name": {
           "ru": "Peeling"
@@ -1734,7 +1734,7 @@
       }
     },
     {
-      "id": 23105,
+      "id": 27803,
       "fields": {
         "name": {
           "ru": "Classic Lash Extensions"
@@ -1742,7 +1742,7 @@
       }
     },
     {
-      "id": 23106,
+      "id": 27804,
       "fields": {
         "name": {
           "ru": "2D Lash Extensions"
@@ -1750,7 +1750,7 @@
       }
     },
     {
-      "id": 23107,
+      "id": 27805,
       "fields": {
         "name": {
           "ru": "3D Lash Extensions"
@@ -1758,7 +1758,7 @@
       }
     },
     {
-      "id": 23108,
+      "id": 27806,
       "fields": {
         "name": {
           "ru": "4-5D Lash Extensions (Mega)"
@@ -1766,7 +1766,7 @@
       }
     },
     {
-      "id": 23109,
+      "id": 27807,
       "fields": {
         "name": {
           "ru": "Kim Style Effect / L, M Curves"
@@ -1774,7 +1774,7 @@
       }
     },
     {
-      "id": 23110,
+      "id": 27808,
       "fields": {
         "name": {
           "ru": "Remove Lashes"
@@ -1782,7 +1782,7 @@
       }
     },
     {
-      "id": 23111,
+      "id": 27809,
       "fields": {
         "name": {
           "ru": "Brow Lamination"
@@ -1790,7 +1790,7 @@
       }
     },
     {
-      "id": 23112,
+      "id": 27810,
       "fields": {
         "name": {
           "ru": "Lash Lamination"
@@ -1798,7 +1798,7 @@
       }
     },
     {
-      "id": 23113,
+      "id": 27811,
       "fields": {
         "name": {
           "ru": "Combo Lash + Brow Lami"
@@ -1806,7 +1806,7 @@
       }
     },
     {
-      "id": 23114,
+      "id": 27812,
       "fields": {
         "name": {
           "ru": "Brow Coloring"
@@ -1814,7 +1814,7 @@
       }
     },
     {
-      "id": 23115,
+      "id": 27813,
       "fields": {
         "name": {
           "ru": "Brow Correction"
@@ -1822,7 +1822,7 @@
       }
     },
     {
-      "id": 23116,
+      "id": 27814,
       "fields": {
         "name": {
           "ru": "Permanent Lips"
@@ -1830,7 +1830,7 @@
       }
     },
     {
-      "id": 23117,
+      "id": 27815,
       "fields": {
         "name": {
           "ru": "Permanent Brows"
@@ -1838,7 +1838,7 @@
       }
     },
     {
-      "id": 23118,
+      "id": 27816,
       "fields": {
         "name": {
           "ru": "Lashliner"
@@ -1846,7 +1846,7 @@
       }
     },
     {
-      "id": 23119,
+      "id": 27817,
       "fields": {
         "name": {
           "ru": "Eyeliner"
@@ -1854,7 +1854,7 @@
       }
     },
     {
-      "id": 23120,
+      "id": 27818,
       "fields": {
         "name": {
           "ru": "Permanent Makeup Correction"

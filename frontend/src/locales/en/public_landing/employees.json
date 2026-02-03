@@ -1,74 +1,74 @@
 {
   "items": [
     {
+      "bio": "Experienced nail technician. ",
       "id": 671,
       "name": "Kasymova Gulcehre",
-      "position": "Nail & Waxing Master",
-      "bio": "Experienced nail technician. ",
-      "photo": ""
+      "photo": "",
+      "position": "Nail & Waxing Master"
     },
     {
+      "bio": "Master all-rounder of the highest category. ",
       "id": 672,
       "name": "Peradilla Jennifer",
-      "position": "Universal Beauty Master",
-      "bio": "Master all-rounder of the highest category. ",
-      "photo": ""
+      "photo": "",
+      "position": "Universal Beauty Master"
     },
     {
+      "bio": "Top stylist with international experience. ",
       "id": 673,
       "name": "Amandurdyyeva Mestan",
-      "position": "Hair Stylist & Permanent Makeup Artist",
-      "bio": "Top stylist with international experience. ",
-      "photo": ""
+      "photo": "",
+      "position": "Hair Stylist & Permanent Makeup Artist"
     },
     {
+      "bio": "A talented stylist who creates unique images. ",
       "id": 674,
       "name": "Mohamed Sabri",
-      "position": "Hair Stylist",
-      "bio": "A talented stylist who creates unique images. ",
-      "photo": ""
+      "photo": "",
+      "position": "Hair Stylist"
     },
     {
+      "bio": "A neat and attentive master. ",
       "id": 675,
       "name": "Kozhabay Lyazat",
-      "position": "Nail Master",
-      "bio": "A neat and attentive master. ",
-      "photo": ""
+      "photo": "",
+      "position": "Nail Master"
     },
     {
+      "bio": "",
       "id": 798,
       "name": "Kasymova Gulcehre",
-      "position": "Nail & Waxing Master",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Nail & Waxing Master"
     },
     {
+      "bio": "",
       "id": 799,
       "name": "Peradilla Jennifer",
-      "position": "Universal Beauty Master",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Universal Beauty Master"
     },
     {
+      "bio": "",
       "id": 800,
       "name": "Amandurdyyeva Mestan",
-      "position": "Hair Stylist & Permanent Makeup Artist",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Hair Stylist & Permanent Makeup Artist"
     },
     {
+      "bio": "",
       "id": 801,
       "name": "Mohamed Sabri",
-      "position": "Hair Stylist",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Hair Stylist"
     },
     {
+      "bio": "",
       "id": 802,
       "name": "Kozhabay Lyazat",
-      "position": "Nail Master",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Nail Master"
     }
   ]
 }

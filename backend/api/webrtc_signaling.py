@@ -5,7 +5,9 @@ WebRTC Signaling Server для видео/аудио звонков
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from typing import Dict, Set
 import json
+import time
 from datetime import datetime
+from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["WebRTC"])
@@ -15,8 +17,40 @@ router = APIRouter(tags=["WebRTC"])
 active_connections: Dict[int, Set[WebSocket]] = {}
 
 # Хранилище активных звонков
-# Структура: {call_id: {caller_id, callee_id, type}}
+# Структура: {room_id: {participants: {user_id: {joined_at, socket}}, type, start_time}}
 active_calls: Dict[str, dict] = {}
+
+# Статус пользователей (для индикации занятости)
+# Структура: {user_id: "available" | "busy" | "calling" | "on_hold"}
+user_call_status: Dict[int, str] = {}
+
+def get_user_dnd(user_id: int) -> bool:
+    """Проверить DND статус пользователя в БД"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT is_dnd FROM user_status WHERE user_id = %s", (user_id,))
+        row = c.fetchone()
+        conn.close()
+        return bool(row[0]) if row else False
+    except Exception as e:
+        log_error(f"Error checking DND for user {user_id}: {e}", "webrtc")
+        return False
+
+def save_call_log(caller_id: int, callee_id: int, status: str, call_type: str = 'audio', duration: int = 0, metadata: dict = None):
+    """Сохранить лог звонка в БД"""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("""
+            INSERT INTO user_call_logs (caller_id, callee_id, status, type, duration, metadata)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (caller_id, callee_id, status, call_type, duration, json.dumps(metadata) if metadata else None))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        log_error(f"Error saving call log: {e}", "webrtc")
+
 
 
 class ConnectionManager:
@@ -137,13 +171,33 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 # Проверяем, онлайн ли получатель
                 if manager.is_user_online(to_user):
+                    # Проверяем DND (Do Not Disturb)
+                    if get_user_dnd(to_user):
+                        await websocket.send_json({
+                            "type": "call-rejected",
+                            "from": to_user,
+                            "reason": "busy" # DND интерпретируется как занят
+                        })
+                        save_call_log(from_user, to_user, 'busy', call_type)
+                        log_info(f"🚫 WebRTC: Call blocked by DND {to_user}", "webrtc")
+                        return
+
+                    # Проверяем статус (Call Waiting support)
+                    current_status = user_call_status.get(to_user, "available")
+                    
                     # Отправляем уведомление о входящем звонке
                     await manager.send_to_user(to_user, {
                         "type": "incoming-call",
                         "from": from_user,
-                        "call_type": call_type
+                        "call_type": call_type,
+                        "callee_status": current_status
                     })
-                    log_info(f"Call initiated: {from_user} -> {to_user} ({call_type})", "webrtc")
+                    
+                    # Устанавливаем статус "calling" (вызывается)
+                    if from_user not in user_call_status or user_call_status[from_user] == "available":
+                        user_call_status[from_user] = "calling"
+                        
+                    log_info(f"📞 WebRTC: Call initiated {from_user} -> {to_user} ({call_type}). To-user status: {current_status}", "webrtc")
                 else:
                     # Пользователь оффлайн
                     await websocket.send_json({
@@ -156,22 +210,36 @@ async def websocket_endpoint(websocket: WebSocket):
                 from_user = data.get("from")
                 to_user = data.get("to")
 
+                user_call_status[from_user] = "busy"
+                user_call_status[to_user] = "busy"
+
                 await manager.send_to_user(to_user, {
                     "type": "call-accepted",
                     "from": from_user
                 })
-                log_info(f"Call accepted: {from_user} <-> {to_user}", "webrtc")
+                log_info(f"✅ WebRTC: Call accepted {from_user} <-> {to_user}", "webrtc")
 
             # Отклонение звонка
             elif message_type == "reject-call":
                 from_user = data.get("from")
                 to_user = data.get("to")
+                reason = data.get("reason", "rejected")
+
+                # Если отклонил из-за занятости
+                if reason == "busy":
+                    log_info(f"📵 WebRTC: User {from_user} is busy for {to_user}", "webrtc")
+                else:
+                    # Сбрасываем статус только если он был в процессе вызова
+                    if user_call_status.get(from_user) == "calling":
+                        user_call_status[from_user] = "available"
 
                 await manager.send_to_user(to_user, {
                     "type": "call-rejected",
-                    "from": from_user
+                    "from": from_user,
+                    "reason": reason
                 })
-                log_info(f"Call rejected: {from_user} X {to_user}", "webrtc")
+                save_call_log(to_user, from_user, reason)
+                log_info(f"❌ WebRTC: Call {reason}: {from_user} X {to_user}", "webrtc")
 
             # WebRTC Offer (SDP)
             elif message_type == "offer":
@@ -215,20 +283,68 @@ async def websocket_endpoint(websocket: WebSocket):
             elif message_type == "hangup":
                 from_user = data.get("from")
                 to_user = data.get("to")
+                duration = data.get("duration", 0)
 
+                user_call_status[from_user] = "available"
                 if to_user:
+                    user_call_status[to_user] = "available"
                     await manager.send_to_user(to_user, {
                         "type": "hangup",
                         "from": from_user
                     })
-                    log_info(f"Call ended: {from_user} -> {to_user}", "webrtc")
+                    save_call_log(from_user, to_user, "completed", duration=duration)
+                
+                log_info(f"📴 WebRTC: Call ended {from_user} -> {to_user if to_user else 'all'}", "webrtc")
+
+            # Перевод звонка (Transfer)
+            elif message_type == "transfer":
+                from_user = data.get("from")
+                target_user = data.get("to")
+                party_to_transfer = data.get("party_id") # С кем сейчас говорим
+                transfer_type = data.get("transfer_type", "blind") # blind or attended
+                
+                if manager.is_user_online(target_user):
+                    # Отправляем инвайт целевому пользователю
+                    await manager.send_to_user(target_user, {
+                        "type": "incoming-call",
+                        "from": party_to_transfer,
+                        "transferred_from": from_user,
+                        "call_type": "audio"
+                    })
+                    
+                    # Уведомляем того, кого переводим
+                    await manager.send_to_user(party_to_transfer, {
+                        "type": "transferring",
+                        "to": target_user,
+                        "by": from_user
+                    })
+                    
+                    log_info(f"⤴️ WebRTC: Transfer initiated by {from_user}: {party_to_transfer} -> {target_user}", "webrtc")
+                else:
+                    await websocket.send_json({"type": "error", "message": "Target user offline"})
+
+            # Удержание / Возобновление
+            elif message_type in ["hold", "resume"]:
+                from_user = data.get("from")
+                to_user = data.get("to")
+                user_call_status[from_user] = "on_hold" if message_type == "hold" else "busy"
+                
+                await manager.send_to_user(to_user, {
+                    "type": message_type,
+                    "from": from_user
+                })
+                log_info(f"⏸️ WebRTC: Call {message_type} by {from_user}", "webrtc")
+
 
     except WebSocketDisconnect:
         if user_id:
             # 1. First remove the connection so we don't try to broadcast to it
             is_offline = manager.disconnect(user_id, websocket)
             
-            # 2. Then send hangup cleanup to others
+            # 2. Reset status
+            user_call_status[user_id] = "available"
+
+            # 3. Then send hangup cleanup to others
             log_info(f"WebSocket disconnect cleanup for user {user_id}", "webrtc")
             await manager.broadcast({
                 "type": "hangup",
@@ -236,6 +352,7 @@ async def websocket_endpoint(websocket: WebSocket):
             })
             
             if is_offline:
+                if user_id in user_call_status: del user_call_status[user_id]
                 # Broadcast offline status only if no connections left
                 await manager.broadcast({
                     "type": "user_status",

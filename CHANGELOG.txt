@@ -1,3 +1,19 @@
+## [2026-02-03] Advanced Internal Call System & Scalability
+- 📞 **Premium Communication Suite**:
+  - **Screen Sharing**: Implemented high-performance screen sharing using WebRTC (VP8/VP9) with automatic remote track management.
+  - **Call Transfer**: Added support for both blind and attended transfers, allowing seamless call relocation across staff members.
+  - **Do Not Disturb (DND)**: Integrated system-wide DND mode with backend synchronization; incoming calls are automatically rejected/diverted when active.
+  - **Media Device Management**: Added a real-time settings interface for switching cameras and microphones during active calls.
+  - **Call History & Analytics**: Implemented a detailed call log system tracking duration, direction (in/out), status (completed, missed, busy), and participants.
+  - **Missed Call Automation**: Added a 30-second ring timeout that automatically logs missed calls and triggers auto-responder signals.
+  - **Visual Polishing**: Optimized call control layout for mobile devices, improved ringtone harmonics, and synchronized all call states (Hold, Resume, Recording).
+- 🌍 **Global Localization**:
+  - **9-Language Sync**: Fully translated all telephony and call-related interface elements into EN, AR, KK, DE, ES, FR, PT, HI, and RU.
+  - **i18n Automation**: Executed `npm run db:i18n:auto` to ensure 100% dictionary coverage.
+- 🧬 **System Scalability**:
+  - **Optimized User Discovery**: Refactored internal chat user retrieval to handle 100+ concurrent staff members by filtering non-operational roles and implementing efficient SQL joins.
+  - **Signal Robustness**: Enhanced signaling handlers to prevent connection leaks and ensure camera/mic release on all disconnect scenarios.
+
 ## [2026-02-03] Staff Authentication & Username Unification
 - 👤 **Staff Logic Restoration**:
   - **Username Swap**: Resolved critical login issues for main masters (`sabri`, `jennifer`, `mestan`, `gulcehre`, `lyazat`). Swapped short usernames from deactivated older records to the new active records (ID 671-675).

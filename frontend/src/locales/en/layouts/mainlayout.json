@@ -3,8 +3,10 @@
   "admin_panel": "Admin panel",
   "all_notifications_cleared": "All notifications have been deleted",
   "calls": {
+    "audio_call": "",
     "click_to_answer": "Click to answer",
-    "incoming_call": "Incoming call!"
+    "incoming_call": "Incoming call!",
+    "video_call": ""
   },
   "clear_all": "Clear all",
   "close": "Close",

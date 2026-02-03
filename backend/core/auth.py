@@ -104,23 +104,9 @@ async def api_login(request: Request, username: str = Form(...), password: str =
         from datetime import datetime
         now = datetime.now().isoformat()
         
-        # Check for existing valid session
-        c.execute("""
-            SELECT session_token FROM sessions 
-            WHERE user_id = %s AND expires_at > %s 
-            ORDER BY created_at DESC LIMIT 1
-        """, (user["id"], now))
-        
-        existing_session = c.fetchone()
-        
-        if existing_session:
-            # Reuse existing session
-            session_token = existing_session[0]
-            log_info(f"Reusing existing session for {username}", "auth")
-        else:
-            # Create new session only if none exists
-            session_token = create_session(user["id"])
-            log_info(f"New session created for {username}", "auth")
+        # ALWAYS create new session for each login to prevent cross-device logout issues
+        session_token = create_session(user["id"])
+        log_info(f"New unique session created for {username}", "auth")
         
         conn.close()
         

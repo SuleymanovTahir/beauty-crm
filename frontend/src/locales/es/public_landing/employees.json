@@ -1,74 +1,74 @@
 {
   "items": [
     {
+      "bio": "Servicio de uñas de maquillaje experimentado. Manicura y pedicura ideales de cualquier complejidad.",
       "id": 671,
       "name": "Kasymova Gulcehre",
-      "position": "Maestro de uñas y depilación",
-      "bio": "Servicio de uñas de maquillaje experimentado. Manicura y pedicura ideales de cualquier complejidad.",
-      "photo": ""
+      "photo": "",
+      "position": "Maestro de uñas y depilación"
     },
     {
+      "bio": "Maestro universal de la más alta categoría. Realiza con maestría cualquier tipo de corte y estilismo.",
       "id": 672,
       "name": "Jennifer Peradilla",
-      "position": "Maestro de belleza universal",
-      "bio": "Maestro universal de la más alta categoría. Realiza con maestría cualquier tipo de corte y estilismo.",
-      "photo": ""
+      "photo": "",
+      "position": "Maestro de belleza universal"
     },
     {
+      "bio": "Estilista de primer nivel con experiencia internacional. Un experto en técnicas complejas de restauración y coloración del cabello.",
       "id": 673,
       "name": "Amandurdyyeva Mestan",
-      "position": "Estilista y maquillador permanente",
-      "bio": "Estilista de primer nivel con experiencia internacional. Un experto en técnicas complejas de restauración y coloración del cabello.",
-      "photo": ""
+      "photo": "",
+      "position": "Estilista y maquillador permanente"
     },
     {
+      "bio": "Un estilista talentoso que crea looks únicos. Especialista en cortes de pelo de hombre y mujer.",
       "id": 674,
       "name": "Mohamed Sabri",
-      "position": "Estilista",
-      "bio": "Un estilista talentoso que crea looks únicos. Especialista en cortes de pelo de hombre y mujer.",
-      "photo": ""
+      "photo": "",
+      "position": "Estilista"
     },
     {
+      "bio": "Un maestro pulcro y atento. Se especializa en manicura estética y diseño.",
       "id": 675,
       "name": "Kozhabay Lyazat",
-      "position": "Nail Master",
-      "bio": "Un maestro pulcro y atento. Se especializa en manicura estética y diseño.",
-      "photo": ""
+      "photo": "",
+      "position": "Nail Master"
     },
     {
+      "bio": "",
       "id": 798,
       "name": "Kasymova Gulcehre",
-      "position": "Maestro de uñas y depilación",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Maestro de uñas y depilación"
     },
     {
+      "bio": "",
       "id": 799,
       "name": "Jennifer Peradilla",
-      "position": "Maestro de belleza universal",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Maestro de belleza universal"
     },
     {
+      "bio": "",
       "id": 800,
       "name": "Amandurdyyeva Mestan",
-      "position": "Estilista y maquillador permanente",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Estilista y maquillador permanente"
     },
     {
+      "bio": "",
       "id": 801,
       "name": "Mohamed Sabri",
-      "position": "Estilista",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Estilista"
     },
     {
+      "bio": "",
       "id": 802,
       "name": "Kozhabay Lyazat",
-      "position": "Nail Master",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Nail Master"
     }
   ]
 }

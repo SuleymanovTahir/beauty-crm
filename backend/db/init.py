@@ -1158,8 +1158,23 @@ def init_database():
         c.execute('''CREATE TABLE IF NOT EXISTS user_status (
             user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
             is_online BOOLEAN DEFAULT FALSE,
+            is_dnd BOOLEAN DEFAULT FALSE, -- Режим "Не беспокоить"
             last_seen TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        add_column_if_not_exists('user_status', 'is_dnd', 'BOOLEAN DEFAULT FALSE')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS user_call_logs (
+            id SERIAL PRIMARY KEY,
+            caller_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            callee_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            transferred_from INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            type TEXT DEFAULT 'audio', -- 'audio', 'video'
+            status TEXT DEFAULT 'missed', -- 'completed', 'missed', 'rejected', 'busy', 'transferred'
+            duration INTEGER DEFAULT 0, -- в секундах
+            recording_url TEXT,
+            metadata JSONB, -- дополнительные данные (например, список участников конференции)
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
 
         c.execute('''CREATE TABLE IF NOT EXISTS user_subscriptions (

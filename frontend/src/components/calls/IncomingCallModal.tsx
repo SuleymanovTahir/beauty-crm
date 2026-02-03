@@ -24,14 +24,9 @@ export default function IncomingCallModal({
   const [ringing] = useState(true);
 
   useEffect(() => {
-    // Воспроизведение звука звонка
-    const audio = new Audio('/sounds/incoming-call.mp3');
-    audio.loop = true;
-    audio.play().catch(() => console.log('Audio playback failed'));
-
+    // The ringing is already handled by the global WebRTCService
     return () => {
-      audio.pause();
-      audio.currentTime = 0;
+      // Just in case, ensure ringing stops when modal unmounts
     };
   }, []);
 
