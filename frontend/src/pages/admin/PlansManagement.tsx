@@ -34,8 +34,6 @@ interface Metric {
     id: number;
     key: string;
     name: string;
-    name: string;
-    name: string;
     unit?: string;
     description?: string;
 }
@@ -542,7 +540,7 @@ export default function PlansManagement() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="week">{t('periods.week')}</SelectItem>
-                                    <SelectItem value="two_weeks">{t('periods.two_weeks')}</SelectItem>
+                                    <SelectItem value="two_weeks">{t('periods.two_weeks', { count: 2 })}</SelectItem>
                                     <SelectItem value="month">{t('periods.month')}</SelectItem>
                                     <SelectItem value="quarter">{t('periods.quarter')}</SelectItem>
                                     <SelectItem value="year">{t('periods.year')}</SelectItem>

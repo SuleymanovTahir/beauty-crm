@@ -34,11 +34,11 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "خط بيكيني",
+      "name": "خط البكيني",
       "price": 100.0
     },
     "blowdry_long": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -48,7 +48,7 @@
       "price": 280.0
     },
     "blowdry_medium": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -58,7 +58,7 @@
       "price": 250.0
     },
     "blowdry_short": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -178,7 +178,7 @@
       "price": 400.0
     },
     "evening_hairstyle": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -758,7 +758,7 @@
       "price": 250.0
     },
     "styling_long": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -768,7 +768,7 @@
       "price": 300.0
     },
     "styling_medium": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -778,7 +778,7 @@
       "price": 260.0
     },
     "styling_short": {
-      "category": "تسريح الشعر",
+      "category": "الشعر التصميم",
       "currency": "AED",
       "description": "",
       "duration": "60",

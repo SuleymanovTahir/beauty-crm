@@ -2,69 +2,34 @@
   "items": [
     {
       "bio": "Erfahrene Nageltechnikerin. Ideale Maniküre und Pediküre jeder Komplexität.",
-      "id": 671,
-      "name": "Kasymova Gulcehre",
-      "photo": "",
-      "position": "Nail & Waxing Master"
-    },
-    {
-      "bio": "Universalmeister der höchsten Kategorie. Führt meisterhaft jede Art datum bis Haarschnitt und Styling durch.",
-      "id": 672,
-      "name": "Peradilla Jennifer",
-      "photo": "",
-      "position": "Universal Beauty Master"
-    },
-    {
-      "bio": "Top-Stylist mit internationaler Erfahrung. Ein Experte für komplexe Haarfärbe- und Wiederherstellungstechniken.",
-      "id": 673,
-      "name": "Amandurdyyeva Mestan",
-      "photo": "",
-      "position": "Friseur und Permanent Makeup Artist"
-    },
-    {
-      "bio": "Ein talentierter Stylist, der einzigartige Looks kreiert. Spezialist für Herren- und Damenhaarschnitte.",
-      "id": 674,
-      "name": "Mohamed Sabri",
-      "photo": "",
-      "position": "Friseur"
-    },
-    {
-      "bio": "Ein ordentlicher und aufmerksamer Meister. Spezialisiert auf ästhetische Maniküre und Design.",
-      "id": 675,
-      "name": "Kozhabay Lyazat",
-      "photo": "",
-      "position": "Nail Master"
-    },
-    {
-      "bio": "",
       "id": 798,
       "name": "Kasymova Gulcehre",
       "photo": "",
       "position": "Nail & Waxing Master"
     },
     {
-      "bio": "",
+      "bio": "Universalmeister der höchsten Kategorie. Führt meisterhaft jede Art datum bis Haarschnitt und Styling durch.",
       "id": 799,
       "name": "Peradilla Jennifer",
       "photo": "",
       "position": "Universal Beauty Master"
     },
     {
-      "bio": "",
+      "bio": "Top-Stylist mit internationaler Erfahrung. Ein Experte für komplexe Haarfärbe- und Wiederherstellungstechniken.",
       "id": 800,
       "name": "Amandurdyyeva Mestan",
       "photo": "",
       "position": "Friseur und Permanent Makeup Artist"
     },
     {
-      "bio": "",
+      "bio": "Ein talentierter Stylist, der einzigartige Looks kreiert. Spezialist für Herren- und Damenhaarschnitte.",
       "id": 801,
-      "name": "Mohamed Sabri",
+      "name": "Mohammed Sabri",
       "photo": "",
       "position": "Friseur"
     },
     {
-      "bio": "",
+      "bio": "Ein ordentlicher und aufmerksamer Meister. Spezialisiert auf ästhetische Maniküre und Design.",
       "id": 802,
       "name": "Kozhabay Lyazat",
       "photo": "",

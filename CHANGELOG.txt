@@ -1837,3 +1837,22 @@ format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
 - `frontend/src/pages/employee/EmployeeProfile.tsx` - MODIFIED
 - `frontend/src/components/LanguageSwitcher.tsx` - MODIFIED
 - `frontend/src/components/PublicLanguageSwitcher.tsx` - MODIFIED
+
+### [2026-02-03] - Исправление переменных в переводах и улучшение i18n
+- **Универсальность бэкенда**: Модифицирована функция t() в backend/utils/translation.py для поддержки плейсхолдеров {{variable}} через kwargs.
+- **Исправление фронтенда**:
+  - AuditLog.tsx: Исправлено отображение статистики (добавлен проброс count: 24).
+  - InternalChat.tsx: Исправлено уведомление о размере файла (динамический max).
+  - PlansManagement.tsx: Исправлен выбор периода "2 недели", удалено дублирование поля name в интерфейсе Metric.
+- **Локализация (RU)**:
+  - Исправлен перевод characters_count (плейсхолдеры вместо "персонажи").
+  - Исправлен ключ manage_goals_and_targets.
+- **Автоматизация**: Запущен полный цикл синхронизации переводов npm run db:i18n:auto.
+
+#### ФАЙЛЫ
+- backend/utils/translation.py - MODIFIED
+- frontend/src/pages/admin/AuditLog.tsx - MODIFIED
+- frontend/src/pages/admin/PlansManagement.tsx - MODIFIED
+- frontend/src/components/shared/InternalChat.tsx - MODIFIED
+- frontend/src/locales/ru/common.json - MODIFIED
+- frontend/src/locales/ru/admin/plans.json - MODIFIED
