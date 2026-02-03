@@ -28,13 +28,13 @@
       "price": 100.0
     },
     "bikini_line": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "बिकनी लाइन",
+      "name": "बिकिनी लाइन",
       "price": 100.0
     },
     "blowdry_long": {
@@ -68,7 +68,7 @@
       "price": 200.0
     },
     "brow_coloring": {
-      "category": "भौहें",
+      "category": "ब्राउज",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -78,7 +78,7 @@
       "price": 40.0
     },
     "brow_correction": {
-      "category": "भौहें",
+      "category": "ब्राउज",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -88,7 +88,7 @@
       "price": 40.0
     },
     "brow_lami": {
-      "category": "भौहें",
+      "category": "ब्राउज",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "पोलिश बदलें (पेडी)",
+      "name": "पॉलिश बदलना (पेडी)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -118,7 +118,7 @@
       "price": 100.0
     },
     "cheeks_wax": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -128,7 +128,7 @@
       "price": 40.0
     },
     "chin_wax": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -228,7 +228,7 @@
       "price": 190.0
     },
     "full_arms": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -238,7 +238,7 @@
       "price": 80.0
     },
     "full_bikini": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -248,7 +248,7 @@
       "price": 150.0
     },
     "full_body_wax": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -258,7 +258,7 @@
       "price": 400.0
     },
     "full_face_wax": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -268,7 +268,7 @@
       "price": 90.0
     },
     "full_legs": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -328,7 +328,7 @@
       "price": 70.0
     },
     "half_arms": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -338,7 +338,7 @@
       "price": 50.0
     },
     "half_legs": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -808,7 +808,7 @@
       "price": 1250.0
     },
     "underarms": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -818,7 +818,7 @@
       "price": 50.0
     },
     "upper_lip_wax": {
-      "category": "डिपिलेशन वैक्स",
+      "category": "वैक्सिंग",
       "currency": "AED",
       "description": "",
       "duration": "60",

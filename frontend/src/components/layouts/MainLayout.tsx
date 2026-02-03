@@ -44,7 +44,8 @@ import { api } from '../../services/api';
 import { usePermissions } from '../../utils/permissions';
 import { getPhotoUrl } from '../../utils/photoUtils';
 
-import { webrtcService } from '../../services/webrtc';
+import { webrtcService, CallType } from '../../services/webrtc';
+import IncomingCallModal from '../calls/IncomingCallModal';
 
 interface MainLayoutProps {
     user: { id: number; role: string; full_name: string; username?: string } | null;
@@ -55,7 +56,10 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     const navigate = useNavigate();
     const location = useLocation();
     const { t } = useTranslation(['layouts/mainlayout', 'common']);
-    // ... (rest of state definitions)
+
+    // Global Call State
+    const [incomingCall, setIncomingCall] = useState<{ from: number, type: CallType, name: string } | null>(null);
+
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const [expandedMenu, setExpandedMenu] = useState<string | null>(() => {
@@ -134,24 +138,33 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             });
 
             // Global Incoming Call Handler
-            const handleIncomingCall = (_fromUserId: number, _callType: string) => {
+            const handleIncomingCall = async (fromUserId: number, callType: CallType) => {
                 webrtcService.playRingtone('incoming');
-                // If we are already on the chat page, we don't need a toast because the chat handles it
+
+                // Fetch caller name
+                let callerName = t('common:user', 'Пользователь');
+                try {
+                    const profile = await api.getUserProfile(fromUserId);
+                    callerName = profile.full_name || profile.username || callerName;
+                } catch (err) {
+                    console.error('Failed to fetch caller profile:', err);
+                }
+
+                setIncomingCall({ from: fromUserId, type: callType, name: callerName });
+
+                // Also show a toast as backup
                 if (!location.pathname.includes('/internal-chat')) {
                     toast.info(t('calls.incoming_call', 'Входящий звонок!'), {
-                        description: t('calls.click_to_answer', 'Нажмите, чтобы ответить'),
-                        action: {
-                            label: t('common:answer', 'Ответить'),
-                            onClick: () => navigate(`${rolePrefix}/internal-chat`)
-                        },
-                        duration: 10000,
-                        onDismiss: () => webrtcService.stopRingtone(),
-                        onAutoClose: () => webrtcService.stopRingtone(),
+                        description: `${callerName}: ${callType === 'video' ? t('calls.video_call') : t('calls.audio_call')}`,
+                        duration: 30000,
                     });
                 }
             };
 
-            const handleStopRinging = () => webrtcService.stopRingtone();
+            const handleStopRinging = () => {
+                webrtcService.stopRingtone();
+                setIncomingCall(null);
+            };
 
             webrtcService.addEventListener('incomingCall', handleIncomingCall);
             webrtcService.addEventListener('callAccepted', handleStopRinging);
@@ -163,10 +176,28 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                 webrtcService.removeEventListener('callAccepted', handleStopRinging);
                 webrtcService.removeEventListener('callRejected', handleStopRinging);
                 webrtcService.removeEventListener('callEnded', handleStopRinging);
-                webrtcService.disconnect();
             };
         }
-    }, [user?.id, location.pathname, navigate, rolePrefix, t]);
+    }, [user?.id, t, location.pathname]);
+
+    // Handle 404 Dynamic Import Errors (Common during deployment)
+    useEffect(() => {
+        const handleError = (e: ErrorEvent | PromiseRejectionEvent) => {
+            const message = (e instanceof ErrorEvent) ? e.message : e.reason?.message;
+            if (message && (message.includes('Failed to fetch dynamically imported module') || message.includes('error loading dynamically imported module'))) {
+                console.log('🔄 Detected dynamic import error (likely new version). Reloading...');
+                window.location.reload();
+            }
+        };
+
+        window.addEventListener('error', handleError);
+        window.addEventListener('unhandledrejection', handleError);
+
+        return () => {
+            window.removeEventListener('error', handleError);
+            window.removeEventListener('unhandledrejection', handleError);
+        };
+    }, []);
 
     useEffect(() => {
         // Загружаем все данные параллельно для ускорения загрузки
@@ -872,6 +903,24 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                         </div>
                     </div>
                 </div>
+            )}
+            {/* Global Incoming Call Modal */}
+            {incomingCall && (
+                <IncomingCallModal
+                    callerName={incomingCall.name}
+                    callerId={incomingCall.from}
+                    callType={incomingCall.type}
+                    onAccept={() => {
+                        webrtcService.stopRingtone();
+                        setIncomingCall(null);
+                        navigate(`${rolePrefix}/internal-chat?answer=true&from=${incomingCall.from}&type=${incomingCall.type}`);
+                    }}
+                    onReject={() => {
+                        webrtcService.rejectCall();
+                        webrtcService.stopRingtone();
+                        setIncomingCall(null);
+                    }}
+                />
             )}
         </div>
     );

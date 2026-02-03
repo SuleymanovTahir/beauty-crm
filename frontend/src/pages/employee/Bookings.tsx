@@ -3,6 +3,7 @@ import { Calendar, Clock, AlertCircle, User, Phone } from 'lucide-react';
 import { Badge } from '../../components/ui/badge';
 import { Skeleton } from '../../components/ui/skeleton';
 import { useTranslation } from 'react-i18next';
+import { api } from '../../services/api';
 import i18n from 'i18next';
 
 interface Booking {
@@ -29,13 +30,7 @@ export default function EmployeeBookings() {
   const loadBookings = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/bookings', {
-        credentials: 'include',
-      });
-      if (!response.ok) {
-        throw new Error(t('common:error_loading'));
-      }
-      const data = await response.json();
+      const data = await api.getBookings();
       const allBookings = data.bookings || [];
 
       // Filter bookings based on selected filter
@@ -63,6 +58,7 @@ export default function EmployeeBookings() {
       });
 
       setBookings(filtered);
+
     } catch (err: any) {
       console.error('Error loading bookings:', err);
       setError(err.message || t('common:error_loading'));

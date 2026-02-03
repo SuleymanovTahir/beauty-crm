@@ -144,56 +144,66 @@ def run_fix():
 
         # 8. Merge duplicate employees
         log_info("👥 Merging duplicate employees...", "maintenance")
-        # Map of (Target Username, Alternate Username) or just identifying duplicates by normalized name
-        # We want to transfer data from old/incomplete records to newer/complete ones or vice-versa
-        # Based on analysis: 67x records have services, 1-5 records have bios.
-        # Merges are only needed for fixing duplicate records in an existing database.
-        # For a fresh database from seed, we skip this to avoid deactivating primary users.
-        merges = []
-        # [
-        #    (119, 1), # Kasymova Gulcehre
-        #    (120, 2), # Peradilla Jennifer
-        #    (121, 3), # Amandurdyyeva Mestan
-        #    (122, 4), # Mohamed Sabri
-        #    (123, 5)  # Kozhabay Lyazat
-        # ]
         
-        # Update target names to preferred spelling (English version that transliterates well)
-        c.execute("UPDATE users SET full_name = 'Kasymova Gulcehre' WHERE id = 119")
-        for target_id, source_id in merges:
-            if target_id == source_id:
-                continue
-            
-            # 1. Transfer bio/specialization if missing in target
-            c.execute("""
-                UPDATE users t
-                SET 
-                    bio = COALESCE(t.bio, s.bio),
-                    specialization = COALESCE(t.specialization, s.specialization),
-                    experience = COALESCE(t.experience, s.experience),
-                    years_of_experience = COALESCE(t.years_of_experience, s.years_of_experience),
-                    birthday = COALESCE(t.birthday, s.birthday)
-                FROM users s
-                WHERE t.id = %s AND s.id = %s
-            """, (target_id, source_id))
-            
-            # 2. Transfer services
-            c.execute("""
-                INSERT INTO user_services (user_id, service_id)
-                SELECT %s, service_id 
-                FROM user_services 
-                WHERE user_id = %s
-                ON CONFLICT DO NOTHING
-            """, (target_id, source_id))
-            
-            # 3. Mark source as inactive and hidden (Safe merge)
-            c.execute("""
-                UPDATE users 
-                SET is_active = FALSE, is_public_visible = FALSE, is_service_provider = FALSE 
-                WHERE id = %s
-            """, (source_id,))
+        staff_targets = [
+            {'username': 'kasymova_gulcehre', 'alternates': ['gulcehre', 'gulcehre_archived'], 'names': ['Kasymova Gulcehre', 'Касымова Гульчере']},
+            {'username': 'peradilla_jennifer', 'alternates': ['jennifer', 'jennifer_archived'], 'names': ['Peradilla Jennifer', 'Перадилья Дженнифер', 'Дженнифер']},
+            {'username': 'amandurdyyeva_mestan', 'alternates': ['mestan', 'mestan_archived'], 'names': ['Amandurdyyeva Mestan', 'Амандурдыева Местан']},
+            {'username': 'mohamed_sabri', 'alternates': ['sabri', 'sabri_archived'], 'names': ['Mohamed Sabri', 'Мохамед Сабри', 'Мохаммед Сабри']},
+            {'username': 'kozhabay_lyazat', 'alternates': ['lyazat', 'lyazat_archived'], 'names': ['Kozhabay Lyazat', 'Кожабай Лязат']}
+        ]
 
-        log_info(f"   ✅ Processed {len(merges)} potential merges", "maintenance")
+        for target in staff_targets:
+            # 1. Find the master ID (the one with the correct username)
+            c.execute("SELECT id FROM users WHERE username = %s LIMIT 1", (target['username'],))
+            res = c.fetchone()
+            if not res:
+                # If target username doesn't exist, try to find by name and fix it
+                c.execute("SELECT id FROM users WHERE full_name IN %s ORDER BY id DESC LIMIT 1", (tuple(target['names']),))
+                res = c.fetchone()
+                if not res: continue
+                master_id = res[0]
+                c.execute("UPDATE users SET username = %s WHERE id = %s", (target['username'], master_id))
+            else:
+                master_id = res[0]
+
+            # 2. Find all other IDs for this person
+            c.execute("""
+                SELECT id FROM users 
+                WHERE (username IN %s OR full_name IN %s) 
+                  AND id != %s
+            """, (tuple(target['alternates'] + [target['username']]), tuple(target['names']), master_id))
+            duplicate_ids = [r[0] for r in c.fetchall()]
+
+            for source_id in duplicate_ids:
+                # Transfer bio/specialization if missing in master
+                c.execute("""
+                    UPDATE users t
+                    SET 
+                        bio = COALESCE(t.bio, s.bio),
+                        specialization = COALESCE(t.specialization, s.specialization),
+                        experience = COALESCE(t.experience, s.experience),
+                        years_of_experience = COALESCE(t.years_of_experience, s.years_of_experience),
+                        photo = COALESCE(t.photo, s.photo),
+                        gender = COALESCE(t.gender, s.gender)
+                    FROM users s
+                    WHERE t.id = %s AND s.id = %s
+                """, (master_id, source_id))
+                
+                # Transfer services
+                c.execute("""
+                    INSERT INTO user_services (user_id, service_id)
+                    SELECT %s, service_id 
+                    FROM user_services 
+                    WHERE user_id = %s
+                    ON CONFLICT DO NOTHING
+                """, (master_id, source_id))
+                
+                # Deactivate duplicate
+                c.execute("UPDATE users SET is_active = FALSE, is_public_visible = FALSE, is_service_provider = FALSE WHERE id = %s", (source_id,))
+
+        log_info(f"   ✅ Finished merging staff duplicates", "maintenance")
+        
         # 9. Ensure only providers are public
         c.execute("""
             UPDATE users SET is_public_visible = FALSE
@@ -227,11 +237,11 @@ def run_fix():
 
         # Structure: (preferred_username, preferred_full_name)
         staff_fixes = [
-            ('gulcehre', 'Kasymova Gulcehre'),
-            ('jennifer', 'Peradilla Jennifer'),
-            ('mestan', 'Amandurdyyeva Mestan'),
-            ('sabri', 'Mohamed Sabri'),
-            ('lyazat', 'Kozhabay Lyazat')
+            ('kasymova_gulcehre', 'Kasymova Gulcehre'),
+            ('peradilla_jennifer', 'Peradilla Jennifer'),
+            ('amandurdyyeva_mestan', 'Amandurdyyeva Mestan'),
+            ('mohamed_sabri', 'Mohamed Sabri'),
+            ('kozhabay_lyazat', 'Kozhabay Lyazat')
         ]
         
         # Load credentials from file

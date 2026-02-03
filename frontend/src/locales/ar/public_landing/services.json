@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تغيير البولندية (بيدي)",
+      "name": "تغيير طلاء الأظافر (بيدي)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -634,7 +634,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "باديكير ذكي + بوليش",
+      "name": "باديكير ذكي + طلاء",
       "price": 150.0
     },
     "peeling": {

@@ -24,18 +24,26 @@ import {
   Minimize2,
   Maximize2,
   Settings,
+  UserPlus,
+  Pause,
+  Play,
+  Monitor,
+  Share2,
+  Clock,
+  ArrowDownLeft,
+  ArrowUpRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
-import { webrtcService, CallType } from '../../services/webrtc';
+import { webrtcService, CallType, ConnectionQuality } from '../../services/webrtc';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { getPhotoUrl } from '../../utils/photoUtils';
 import { api } from '../../services/api';
 import AudioPlayer from './AudioPlayer';
-import IncomingCallModal from '../calls/IncomingCallModal';
-import CallQualityIndicator, { ConnectionQuality } from '../calls/CallQualityIndicator';
+import CallQualityIndicator from '../calls/CallQualityIndicator';
 
 interface Message {
   id: number;
@@ -92,6 +100,8 @@ export default function InternalChat() {
   const [error, setError] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false); // Settings modal state
   const [customRingtone, setCustomRingtone] = useState<string | null>(localStorage.getItem('chat_ringtone'));
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [inviteSearchTerm, setInviteSearchTerm] = useState('');
 
   // Voice recording state
   const [voiceRecorder, setVoiceRecorder] = useState<VoiceRecorder>({
@@ -104,16 +114,25 @@ export default function InternalChat() {
   // Video/Audio call state
   const [isInCall, setIsInCall] = useState(false);
   const [callType, setCallType] = useState<CallType | null>(null);
-  const [incomingCallFrom, setIncomingCallFrom] = useState<number | null>(null);
-  const [incomingCallType, setIncomingCallType] = useState<CallType | null>(null);
-  const [connectionQuality, setConnectionQuality] = useState<ConnectionQuality>('good');
+  const [connectionQuality, setConnectionQuality] = useState<ConnectionQuality>('excellent');
   const [qualityStats, setQualityStats] = useState({ latency: 0, packetLoss: 0 });
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
-  const [incomingCall, setIncomingCall] = useState<{ from: number; type: CallType } | null>(null);
+  const [incomingCall, setIncomingCall] = useState<{ from: number; type: CallType; callee_status?: string } | null>(null);
   const [isMinimized, setIsMinimized] = useState(false);
   const [callStartTime, setCallStartTime] = useState<number | null>(null);
   const [isCallRecording, setIsCallRecording] = useState(false);
+  const [isLocalOnHold, setIsLocalOnHold] = useState(false);
+  const [isRemoteOnHold, setIsRemoteOnHold] = useState(false);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [isDndEnabled, setIsDndEnabled] = useState(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [showCallHistory, setShowCallHistory] = useState(false);
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
+  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
+  const [callLogs, setCallLogs] = useState<any[]>([]);
+  const [ringTimeout, setRingTimeout] = useState<NodeJS.Timeout | null>(null);
+
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
@@ -135,9 +154,46 @@ export default function InternalChat() {
 
   const currentUserData = JSON.parse(localStorage.getItem('user') || '{}');
 
+  const { search } = useLocation();
+
   useEffect(() => {
     loadData();
-  }, []);
+
+    // Check for auto-answer query param
+    const params = new URLSearchParams(search);
+    if (params.get('answer') === 'true' && params.get('from')) {
+      const fromId = parseInt(params.get('from')!);
+      console.log('🚀 [InternalChat] Auto-answering call from:', fromId);
+
+      // We need to wait for users to load before selecting
+      const interval = setInterval(() => {
+        if (users.length > 0) {
+          const caller = users.find(u => u.id === fromId);
+          if (caller) {
+            setSelectedUser(caller);
+            clearInterval(interval);
+
+            // Execute actual accept after a short delay
+            setTimeout(async () => {
+              try {
+                // Clear URL params
+                window.history.replaceState({}, '', window.location.pathname);
+                await webrtcService.acceptCall();
+                setIsInCall(true);
+                setCallStartTime(Date.now());
+                const callType = params.get('type') as CallType || 'audio';
+                setCallType(callType);
+                toast.success(t('calls.accepted_automatically', 'Вызов принят автоматически'));
+              } catch (err) {
+                console.error("Auto-answer failed", err);
+              }
+            }, 500);
+          }
+        }
+      }, 500);
+      setTimeout(() => clearInterval(interval), 5000);
+    }
+  }, [search]);
 
   // Set user online status
   useEffect(() => {
@@ -192,11 +248,19 @@ export default function InternalChat() {
         console.error('Failed to initialize WebRTC:', err);
       });
 
-      const handleIncomingCall = (fromUserId: number, type: CallType) => {
-        setIncomingCallFrom(fromUserId);
-        setIncomingCallType(type);
-        setIncomingCall({ from: fromUserId, type });
-        webrtcService.playRingtone('incoming');
+      const handleIncomingCall = (fromUserId: number, type: CallType, calleeStatus?: string) => {
+        setIncomingCall({ from: fromUserId, type, callee_status: calleeStatus });
+        // Если мы уже в созвоне, UI покажет "вторую линию" (Call Waiting)
+      };
+
+      const handleHold = () => {
+        setIsRemoteOnHold(true);
+        toast.info(t('calls.user_on_hold', 'Собеседник поставил звонок на удержание'));
+      };
+
+      const handleResume = () => {
+        setIsRemoteOnHold(false);
+        toast.info(t('calls.user_resumed', 'Собеседник вернулся в звонок'));
       };
 
       const handleUserStatusChange = (userId: number, isOnline: boolean, lastSeen: string | null) => {
@@ -216,27 +280,39 @@ export default function InternalChat() {
       const handleCallAccepted = () => {
         webrtcService.stopRingtone(); // Stop ringing
         setIsInCall(true);
+        setIsLocalOnHold(false);
+        setIsRemoteOnHold(false);
         setCallStartTime(Date.now());
         toast.success(t('calls.call_accepted', 'Звонок принят'));
       };
 
-      const handleCallRejected = () => {
+      const handleCallRejected = (reason?: string) => {
         webrtcService.stopRingtone();
-        setIsInCall(false);
-        setIncomingCall(null);
-        toast.error(t('calls.call_rejected', 'Звонок отклонен'));
+        if (reason === 'busy') {
+          toast.error(t('calls.user_busy', 'Пользователь занят'));
+        } else {
+          setIsInCall(false);
+          setIncomingCall(null);
+          toast.error(t('calls.call_rejected', 'Звонок отклонен'));
+        }
       };
 
       const handleRemoteStream = (stream: MediaStream) => {
+        console.log('📺 Received remote stream in InternalChat');
         // Always attach to audio ref first to ensure sound works regardless of video call or audio call
         if (remoteAudioRef.current) {
           remoteAudioRef.current.srcObject = stream;
           // Ensure it plays
-          remoteAudioRef.current.play().catch(e => console.error("Audio auto-play failed", e));
+          remoteAudioRef.current.play().catch(e => {
+            if (e.name !== 'AbortError') console.error("Audio auto-play failed", e);
+          });
         }
 
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = stream;
+          remoteVideoRef.current.play().catch(e => {
+            if (e.name !== 'AbortError') console.error("Remote video play failed", e);
+          });
         }
       };
 
@@ -257,6 +333,8 @@ export default function InternalChat() {
       webrtcService.addEventListener('callRejected', handleCallRejected);
       webrtcService.addEventListener('remoteStream', handleRemoteStream);
       webrtcService.addEventListener('callEnded', handleCallEnded);
+      webrtcService.addEventListener('hold', handleHold);
+      webrtcService.addEventListener('resume', handleResume);
       webrtcService.addEventListener('error', handleError);
 
       return () => {
@@ -284,13 +362,12 @@ export default function InternalChat() {
       setLoading(true);
       setError(null);
       const data = await api.getInternalChatUsers(i18n.language);
-
-      let loadedUsers = data.users || [];
+      let loadedUsers = (data.users || []) as User[];
 
       // Fetch online users status
       try {
         const onlineData = await api.getOnlineUsers();
-        const onlineUserIds = onlineData.online_users || [];
+        const onlineUserIds = (onlineData.online_users || []) as number[];
 
         loadedUsers = loadedUsers.map((u: User) => ({
           ...u,
@@ -300,7 +377,17 @@ export default function InternalChat() {
         console.error('Error fetching online users:', err);
       }
 
-      setUsers(loadedUsers);
+      // De-duplication safeguarding: Ensure users are unique by ID
+      const uniqueUsersMap = new Map<number, User>();
+      loadedUsers.forEach(user => {
+        if (!uniqueUsersMap.has(user.id)) {
+          uniqueUsersMap.set(user.id, user);
+        }
+      });
+
+      const uniqueUsers = Array.from(uniqueUsersMap.values());
+      setUsers(uniqueUsers);
+
     } catch (err: any) {
       console.error('Error loading users:', err);
       // Construct a detailed error message for mobile debugging
@@ -521,6 +608,69 @@ export default function InternalChat() {
     }
   };
 
+  const toggleScreenShare = async () => {
+    if (isScreenSharing) {
+      await webrtcService.stopScreenShare();
+      setIsScreenSharing(false);
+    } else {
+      const stream = await webrtcService.startScreenShare();
+      if (stream) setIsScreenSharing(true);
+    }
+  };
+
+  const handleTransfer = (userId: number) => {
+    if (selectedUser) {
+      webrtcService.transferCall(userId, selectedUser.id);
+      setIsTransferModalOpen(false);
+      endCall();
+      toast.success(t('calls.transfer_initiated', 'Перевод звонка инициирован'));
+    }
+  };
+
+  const toggleDnd = async () => {
+    const newState = !isDndEnabled;
+    await webrtcService.toggleDND(newState);
+    setIsDndEnabled(newState);
+    toast.info(newState ? t('calls.dnd_on', 'Режим "Не беспокоить" включен') : t('calls.dnd_off', 'Режим "Не беспокоить" выключен'));
+  };
+
+  const handleSwitchDevice = async (kind: 'audioinput' | 'videoinput', deviceId: string) => {
+    await webrtcService.switchDevice(kind, deviceId);
+    toast.success(t('calls.device_switched', 'Устройство переключено'));
+  };
+
+  // Auto-voicemail logic (Missed call after 30s)
+  useEffect(() => {
+    if (incomingCall && !callStartTime) {
+      const timeout = setTimeout(() => {
+        webrtcService.rejectCall('missed');
+        setIncomingCall(null);
+        toast.info(t('calls.missed_auto', 'Звонок пропущен (авто-отклонение)'));
+      }, 30000); // 30 seconds
+      setRingTimeout(timeout as any);
+    } else if (callStartTime && ringTimeout) {
+      clearTimeout(ringTimeout as any);
+      setRingTimeout(null);
+    }
+    return () => { if (ringTimeout) clearTimeout(ringTimeout as any); };
+  }, [incomingCall, callStartTime]);
+
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        const logs = await webrtcService.getCallLogs();
+        setCallLogs(logs);
+
+        const devices = await webrtcService.enumerateDevices();
+        setAudioDevices(devices.filter(d => d.kind === 'audioinput'));
+        setVideoDevices(devices.filter(d => d.kind === 'videoinput'));
+      } catch (e) {
+        console.error("Error loading chat initial data:", e);
+      }
+    };
+    loadInitialData();
+  }, []);
+
   const stopVoiceRecording = () => {
     if (voiceRecorder.mediaRecorder && voiceRecorder.isRecording) {
       voiceRecorder.mediaRecorder.stop();
@@ -560,10 +710,15 @@ export default function InternalChat() {
 
   // Ensure local video is attached when call starts and video element appears
   useEffect(() => {
-    if (isInCall && callType === 'video' && localVideoRef.current) {
+    if (isInCall && localVideoRef.current) {
       const localStream = webrtcService.getLocalStream();
       if (localStream) {
-        localVideoRef.current.srcObject = localStream;
+        if (localVideoRef.current.srcObject !== localStream) {
+          localVideoRef.current.srcObject = localStream;
+        }
+        localVideoRef.current.play().catch(e => {
+          if (e.name !== 'AbortError') console.error("Local video play failed", e);
+        });
       }
     }
   }, [isInCall, callType, isMinimized]); // Re-run if view changes (minimized/maximized)
@@ -655,7 +810,7 @@ export default function InternalChat() {
     }
   };
 
-  const acceptCall = async () => {
+  const handleAcceptCall = async () => {
     try {
       // Set the selected user to the caller to avoid UI crashes and ensure correct chat context
       if (incomingCall?.from) {
@@ -666,10 +821,10 @@ export default function InternalChat() {
       }
 
       await webrtcService.acceptCall();
+      setIsInCall(true);
+      setCallStartTime(Date.now());
       setCallType(incomingCall?.type || 'audio');
       setIncomingCall(null);
-      setIncomingCallFrom(null);
-      setIncomingCallType(null);
 
       // Local video will be attached by useEffect
     } catch (err) {
@@ -678,16 +833,11 @@ export default function InternalChat() {
     }
   };
 
-  const rejectCall = () => {
+  const handleRejectCall = () => {
     webrtcService.rejectCall();
-    setIncomingCall(null);
-    setIncomingCallFrom(null);
-    setIncomingCallType(null);
     webrtcService.stopRingtone(); // Ensure sound stops
+    setIncomingCall(null);
   };
-
-  const handleAcceptCall = acceptCall;
-  const handleRejectCall = rejectCall;
 
   const formatDuration = (ms: number) => {
     const seconds = Math.floor(ms / 1000);
@@ -701,8 +851,6 @@ export default function InternalChat() {
     setIsInCall(false);
     setCallType(null);
     setIncomingCall(null);
-    setIncomingCallFrom(null);
-    setIncomingCallType(null);
     setIsMicMuted(false);
     setIsVideoOff(false);
     setIsMinimized(false);
@@ -721,6 +869,16 @@ export default function InternalChat() {
   const endCall = () => {
     webrtcService.endCall();
     handleCallEndedByRemote();
+  };
+
+  const toggleHold = () => {
+    if (isLocalOnHold) {
+      webrtcService.resumeCall();
+      setIsLocalOnHold(false);
+    } else {
+      webrtcService.holdCall();
+      setIsLocalOnHold(true);
+    }
   };
 
   const toggleMic = () => {
@@ -745,7 +903,19 @@ export default function InternalChat() {
     }
   };
 
-  const handleEmojiClick = (emojiData: EmojiClickData) => {
+  const handleInviteUser = async (userId: number) => {
+    try {
+      const inviteMsg = `${t('calls.invite_message', 'Приглашаю вас присоединиться к звонку')}! 📞`;
+      await api.sendInternalChatMessage(userId, inviteMsg, 'text');
+      toast.success(t('calls.invite_sent', 'Приглашение отправлено'));
+      setIsInviteModalOpen(false);
+    } catch (err) {
+      console.error('Error sending invite:', err);
+      toast.error(t('calls.invite_error', 'Ошибка при отправке приглашения'));
+    }
+  };
+
+  const onEmojiClick = (emojiData: EmojiClickData) => {
     setNewMessage(prev => prev + emojiData.emoji);
   };
 
@@ -832,14 +1002,14 @@ export default function InternalChat() {
 
             <div className="flex gap-4">
               <button
-                onClick={rejectCall}
+                onClick={handleRejectCall}
                 className="flex-1 py-4 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
               >
                 <PhoneOff className="w-5 h-5" />
                 {t('calls.reject', 'Отклонить')}
               </button>
               <button
-                onClick={acceptCall}
+                onClick={handleAcceptCall}
                 className="flex-1 py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
               >
                 <Phone className="w-5 h-5" />
@@ -924,63 +1094,193 @@ export default function InternalChat() {
                     ref={remoteVideoRef}
                     autoPlay
                     playsInline
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full object-cover transition-filter duration-300 ${isRemoteOnHold ? 'blur-xl grayscale' : ''}`}
                   />
+                  {isRemoteOnHold && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="bg-black/60 px-6 py-3 rounded-full backdrop-blur-md border border-white/10 flex items-center gap-3">
+                        <Pause className="w-6 h-6 text-white animate-pulse" />
+                        <span className="text-white font-medium">{t('calls.user_on_hold_status', 'Звонок на удержании')}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {incomingCall && incomingCall.from !== selectedUser?.id && (
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[60] bg-blue-600/90 backdrop-blur-md border border-white/20 px-6 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-top-4 flex items-center gap-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                          <Phone className="w-5 h-5 text-white animate-bounce" />
+                        </div>
+                        <div>
+                          <p className="text-white text-xs opacity-80">{t('calls.second_line', 'Вторая линия')}</p>
+                          <p className="text-white font-bold">{users.find(u => u.id === incomingCall.from)?.full_name || t('calls.incoming', 'Входящий')}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            webrtcService.rejectCall('busy');
+                            setIncomingCall(null);
+                          }}
+                          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-medium transition-colors"
+                        >
+                          {t('calls.reject', 'Отклонить')}
+                        </button>
+                        <button
+                          onClick={async () => {
+                            // End current, answer new
+                            webrtcService.endCall();
+                            const caller = users.find(u => u.id === incomingCall.from);
+                            if (caller) {
+                              setSelectedUser(caller);
+                              setTimeout(() => webrtcService.acceptCall(), 500);
+                            }
+                            setIncomingCall(null);
+                          }}
+                          className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-medium transition-colors"
+                        >
+                          {t('calls.switch_calls', 'Переключить')}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                   <video
                     ref={localVideoRef}
                     autoPlay
                     playsInline
                     muted
-                    className={`absolute bottom-4 right-4 w-48 aspect-video bg-gray-800 rounded-xl object-cover border-2 border-white/20 shadow-lg transition-all ${isVideoOff ? 'hidden' : ''
+                    className={`absolute bottom-4 right-4 w-48 aspect-video bg-gray-800 rounded-xl object-cover border-2 border-white/20 shadow-lg transition-all ${isVideoOff || isLocalOnHold ? 'hidden' : ''
                       }`}
                   />
-                  {isVideoOff && (
+                  {(isVideoOff || isLocalOnHold) && (
                     <div className="absolute bottom-4 right-4 w-48 aspect-video bg-gray-800 rounded-xl flex items-center justify-center border-2 border-white/20 shadow-lg">
                       <VideoOff className="w-12 h-12 text-white/50" />
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="w-40 h-40 bg-gradient-to-br from-blue-500 to-pink-600 rounded-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl animate-pulse">
-                  {selectedUser?.full_name.charAt(0).toUpperCase()}
+                <div className="relative">
+                  <div className="w-40 h-40 bg-gradient-to-br from-blue-500 to-pink-600 rounded-full flex items-center justify-center text-white text-6xl font-bold shadow-2xl animate-pulse">
+                    {selectedUser?.full_name.charAt(0).toUpperCase()}
+                  </div>
+                  {isRemoteOnHold && (
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 mt-12 w-max bg-black/40 px-4 py-2 rounded-full backdrop-blur-sm border border-white/5">
+                      <span className="text-white text-sm">{t('calls.on_hold', 'На удержании')}</span>
+                    </div>
+                  )}
                 </div>
               )}
 
-              <div className="mt-12 flex gap-6">
-                <button
-                  onClick={toggleMic}
-                  className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isMicMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
-                    }`}
-                  title={isMicMuted ? t('calls.unmute', 'Включить микрофон') : t('calls.mute', 'Выключить микрофон')}
-                >
-                  {isMicMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
-                </button>
+              <div className="mt-8 md:mt-12 flex flex-wrap justify-center gap-3 md:gap-6 px-4">
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    onClick={toggleMic}
+                    className={`w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isMicMuted ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
+                      }`}
+                  >
+                    {isMicMuted ? <MicOff className="w-5 h-5 md:w-6 md:h-6" /> : <Mic className="w-5 h-5 md:w-6 md:h-6" />}
+                  </button>
+                  <span className="text-[10px] md:text-xs text-gray-400 font-medium">{t('calls.mic', 'Микрофон')}</span>
+                </div>
 
                 {callType === 'video' && (
-                  <button
-                    onClick={toggleVideo}
-                    className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
-                      }`}
-                    title={isVideoOff ? t('calls.enable_video', 'Включить видео') : t('calls.disable_video', 'Выключить видео')}
-                  >
-                    {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
-                  </button>
+                  <div className="flex flex-col items-center gap-2">
+                    <button
+                      onClick={toggleVideo}
+                      className={`w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isVideoOff ? 'bg-red-500 hover:bg-red-600' : 'bg-gray-700 hover:bg-gray-600'
+                        }`}
+                    >
+                      {isVideoOff ? <VideoOff className="w-5 h-5 md:w-6 md:h-6" /> : <Video className="w-5 h-5 md:w-6 md:h-6" />}
+                    </button>
+                    <span className="text-[10px] md:text-xs text-gray-400 font-medium">{t('calls.video', 'Видео')}</span>
+                  </div>
                 )}
 
-                <button
-                  onClick={isCallRecording ? stopCallRecording : startCallRecording}
-                  className={`w-16 h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isCallRecording ? 'bg-red-500 animate-pulse' : 'bg-gray-700 hover:bg-gray-600'}`}
-                  title={isCallRecording ? t('calls.stop_recording', 'Остановить запись') : t('calls.start_recording', 'Начать запись')}
-                >
-                  <Square className={`w-6 h-6 ${isCallRecording ? 'fill-current' : ''}`} />
-                </button>
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    onClick={toggleHold}
+                    className={`w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isLocalOnHold ? 'bg-orange-500 hover:bg-orange-600' : 'bg-gray-700 hover:bg-gray-600'}`}
+                  >
+                    {isLocalOnHold ? <Play className="w-5 h-5 md:w-6 md:h-6" /> : <Pause className="w-5 h-5 md:w-6 md:h-6" />}
+                  </button>
+                  <span className="text-[10px] md:text-xs text-gray-400 font-medium">{isLocalOnHold ? t('calls.resume', 'Продолжить') : t('calls.hold', 'Удержать')}</span>
+                </div>
 
-                <button
-                  onClick={endCall}
-                  className="w-20 h-20 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white transition-all shadow-xl hover:scale-110"
-                >
-                  <PhoneOff className="w-8 h-8" />
-                </button>
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    onClick={isCallRecording ? stopCallRecording : startCallRecording}
+                    className={`w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isCallRecording ? 'bg-red-500 animate-pulse' : 'bg-gray-700 hover:bg-gray-600'}`}
+                  >
+                    <Square className={`w-5 h-5 md:w-6 md:h-6 ${isCallRecording ? 'fill-current' : ''}`} />
+                  </button>
+                  <span className="text-[10px] md:text-xs text-gray-400 font-medium">{t('calls.record', 'Запись')}</span>
+                </div>
+
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    onClick={() => setIsInviteModalOpen(true)}
+                    className="w-14 h-14 md:w-16 md:h-16 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110"
+                  >
+                    <UserPlus className="w-5 h-5 md:w-6 md:h-6" />
+                  </button>
+                  <span className="text-[10px] md:text-xs text-gray-400 font-medium">{t('calls.invite', 'Пригласить')}</span>
+                </div>
+
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    onClick={toggleScreenShare}
+                    className={`w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110 ${isScreenSharing ? 'bg-blue-500' : 'bg-gray-700 hover:bg-gray-600'}`}
+                  >
+                    <Monitor className="w-5 h-5 md:w-6 md:h-6" />
+                  </button>
+                  <span className="text-[10px] md:text-xs text-gray-400 font-medium">{t('calls.screen_share', 'Экран')}</span>
+                </div>
+
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    onClick={() => setIsTransferModalOpen(true)}
+                    className="w-14 h-14 md:w-16 md:h-16 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110"
+                  >
+                    <Share2 className="w-5 h-5 md:w-6 md:h-6" />
+                  </button>
+                  <span className="text-[10px] md:text-xs text-gray-400 font-medium">{t('calls.transfer', 'Перевод')}</span>
+                </div>
+
+                <div className="flex flex-col items-center gap-2">
+                  <div className="relative group">
+                    <button
+                      className="w-14 h-14 md:w-16 md:h-16 bg-gray-700 hover:bg-gray-600 rounded-full flex items-center justify-center text-white transition-all shadow-lg hover:scale-110"
+                    >
+                      <Settings className="w-5 h-5 md:w-6 md:h-6" />
+                    </button>
+                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-800 rounded-xl shadow-2xl p-4 hidden group-hover:block z-[70] min-w-[200px] border border-white/10">
+                      <p className="text-white text-xs font-bold mb-2 uppercase opacity-50">{t('calls.mic', 'Микрофон')}</p>
+                      {audioDevices.map(d => (
+                        <button key={d.deviceId} onClick={() => handleSwitchDevice('audioinput', d.deviceId)} className="w-full text-left text-white text-xs py-2 px-3 hover:bg-white/10 rounded-lg truncate">
+                          {d.label}
+                        </button>
+                      ))}
+                      <div className="h-px bg-white/10 my-2" />
+                      <p className="text-white text-xs font-bold mb-2 uppercase opacity-50">{t('calls.camera', 'Камера')}</p>
+                      {videoDevices.map(d => (
+                        <button key={d.deviceId} onClick={() => handleSwitchDevice('videoinput', d.deviceId)} className="w-full text-left text-white text-xs py-2 px-3 hover:bg-white/10 rounded-lg truncate">
+                          {d.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <span className="text-[10px] md:text-xs text-gray-400 font-medium">{t('calls.settings', 'Настройки')}</span>
+                </div>
+
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    onClick={endCall}
+                    className="w-16 h-16 md:w-20 md:h-20 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white transition-all shadow-xl hover:scale-110"
+                  >
+                    <PhoneOff className="w-7 h-7 md:w-8 md:h-8" />
+                  </button>
+                  <span className="text-[10px] md:text-xs text-red-400 font-bold">{t('calls.end', 'Завершить')}</span>
+                </div>
               </div>
             </div>
           )
@@ -1131,6 +1431,24 @@ export default function InternalChat() {
 
               <div className="flex items-center gap-2 flex-shrink-0">
                 <button
+                  onClick={() => setIsInviteModalOpen(true)}
+                  className="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+                  title={t('calls.invite', 'Пригласить сотрудников')}
+                >
+                  <UserPlus className="w-5 h-5" />
+                </button>
+
+                <button
+                  onClick={toggleDnd}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border ${isDndEnabled ? 'bg-red-500/20 text-red-100 border-red-500/50' : 'bg-white/10 text-white border-white/20'}`}
+                >
+                  <div className={`w-2 h-2 rounded-full ${isDndEnabled ? 'bg-red-500' : 'bg-green-400 animate-pulse'}`} />
+                  {isDndEnabled ? t('calls.dnd_on_short', 'DND') : t('calls.available', 'Online')}
+                </button>
+
+                <div className="h-6 w-px bg-white/20 mx-2" />
+
+                <button
                   onClick={() => startCall('audio')}
                   disabled={isInCall}
                   className="p-2 text-white hover:bg-white/10 rounded-full transition-colors disabled:opacity-50"
@@ -1145,6 +1463,14 @@ export default function InternalChat() {
                   title={t('calls.video_call', 'Видеозвонок')}
                 >
                   <Video className="w-5 h-5" />
+                </button>
+
+                <button
+                  onClick={() => setShowCallHistory(true)}
+                  className="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
+                  title={t('calls.history', 'История звонков')}
+                >
+                  <Clock className="w-5 h-5" />
                 </button>
               </div>
             </div>
@@ -1433,7 +1759,7 @@ export default function InternalChat() {
                       {showEmojiPicker && (
                         <div className="absolute bottom-full right-0 mb-2 z-50">
                           <EmojiPicker
-                            onEmojiClick={handleEmojiClick}
+                            onEmojiClick={onEmojiClick}
                             width={350}
                             height={400}
                           />
@@ -1471,18 +1797,8 @@ export default function InternalChat() {
         )}
       </div>
 
-      {/* Incoming Call Modal */}
-      {
-        incomingCallFrom && incomingCallType && (
-          <IncomingCallModal
-            callerName={users.find(u => u.id === incomingCallFrom)?.full_name || 'Unknown'}
-            callerId={incomingCallFrom}
-            callType={incomingCallType}
-            onAccept={handleAcceptCall}
-            onReject={handleRejectCall}
-          />
-        )
-      }
+      {/* Incoming Call Modal is now handled globally in MainLayout */}
+
 
       {/* Call Quality Indicator - shown during active call */}
       {
@@ -1573,6 +1889,182 @@ export default function InternalChat() {
           </div>
         </div>
       )}
+      {/* Invite Modal */}
+      {isInviteModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+          <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <UserPlus className="w-6 h-6 text-primary" />
+                {t('calls.invite_to_call', 'Пригласить в звонок')}
+              </h3>
+              <button
+                onClick={() => setIsInviteModalOpen(false)}
+                className="p-2 hover:bg-muted rounded-full transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder={t('common:search', 'Поиск по имени...')}
+                value={inviteSearchTerm}
+                onChange={(e) => setInviteSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary transition-all"
+              />
+            </div>
+
+            <div className="max-h-60 overflow-y-auto space-y-2">
+              {users
+                .filter(u =>
+                  u.id !== currentUserData?.id &&
+                  u.id !== selectedUser?.id &&
+                  (u.full_name.toLowerCase().includes(inviteSearchTerm.toLowerCase()) ||
+                    u.username.toLowerCase().includes(inviteSearchTerm.toLowerCase()))
+                )
+                .map(u => (
+                  <button
+                    key={u.id}
+                    onClick={() => handleInviteUser(u.id)}
+                    className="w-full p-3 flex items-center gap-3 hover:bg-accent rounded-xl transition-colors text-left"
+                  >
+                    <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                      <img
+                        src={getUserAvatar(u) || undefined}
+                        alt={u.full_name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{u.full_name}</p>
+                      <p className="text-xs text-muted-foreground">{u.role}</p>
+                    </div>
+                    <div className={`w-2 h-2 rounded-full ${u.is_online ? 'bg-green-500' : 'bg-gray-400'}`} />
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Transfer Call Modal */}
+      {isTransferModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+          <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <Share2 className="w-6 h-6 text-primary" />
+                {t('calls.transfer_call', 'Перевести звонок')}
+              </h3>
+              <button
+                onClick={() => setIsTransferModalOpen(false)}
+                className="p-2 hover:bg-muted rounded-full transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4 text-sm text-muted-foreground">
+              {t('calls.transfer_hint', 'Выберите сотрудника, на которого хотите перевести текущий разговор')}
+            </div>
+
+            <div className="max-h-60 overflow-y-auto space-y-2">
+              {users
+                .filter(u => u.is_online && u.id !== currentUserData?.id && u.id !== selectedUser?.id)
+                .map(u => (
+                  <button
+                    key={u.id}
+                    onClick={() => handleTransfer(u.id)}
+                    className="w-full p-3 flex items-center gap-3 hover:bg-accent rounded-xl transition-colors text-left"
+                  >
+                    <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                      <img
+                        src={getUserAvatar(u) || undefined}
+                        alt={u.full_name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{u.full_name}</p>
+                      <p className="text-xs text-muted-foreground">{u.role}</p>
+                    </div>
+                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                  </button>
+                ))
+              }
+              {users.filter(u => u.is_online && u.id !== currentUserData?.id && u.id !== selectedUser?.id).length === 0 && (
+                <div className="text-center py-8 text-muted-foreground italic text-sm">
+                  {t('calls.no_online_staff', 'Нет сотрудников в сети для перевода')}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Call History Side Sheet (Mock-like implementation in current UI) */}
+      {showCallHistory && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+          <div className="bg-card w-full max-w-xl p-6 rounded-2xl shadow-2xl border border-border">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <Clock className="w-6 h-6 text-primary" />
+                {t('calls.call_history', 'История звонков')}
+              </h3>
+              <button
+                onClick={() => setShowCallHistory(false)}
+                className="p-2 hover:bg-muted rounded-full transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="max-h-[70vh] overflow-y-auto space-y-3 pr-2">
+              {callLogs.map((log) => (
+                <div key={log.id} className="p-4 bg-muted/30 rounded-2xl border border-border/50 flex items-center justify-between transition-all hover:bg-muted/50">
+                  <div className="flex items-center gap-4">
+                    <div className={`p-3 rounded-full ${log.status === 'completed' ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
+                      {log.direction === 'in' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm">
+                        {log.direction === 'in' ? log.caller_name : log.callee_name}
+                      </p>
+                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
+                        <span>{new Date(log.created_at).toLocaleString('ru-RU')}</span>
+                        <span>•</span>
+                        <span className={log.status === 'completed' ? 'text-green-500' : 'text-red-500'}>
+                          {t(`calls.status_${log.status}`, log.status) as any}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-mono bg-muted px-2 py-1 rounded-lg">
+                      {Math.floor(log.duration / 60)}:{(log.duration % 60).toString().padStart(2, '0')}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground mt-1 uppercase font-bold opacity-50">
+                      {t(`calls.${log.type}`, log.type) as any}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              {callLogs.length === 0 && (
+                <div className="text-center py-20 opacity-50">
+                  <Phone className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                  <p>{t('calls.no_history', 'История звонков пуста')}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* (Adding logic to show history could be a dedicated tab, let's add a toggle-able overlay) */}
+
     </div >
   );
 }
+

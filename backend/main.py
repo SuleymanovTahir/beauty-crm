@@ -86,7 +86,8 @@ from scheduler import (
     start_client_birthday_checker, 
     start_booking_reminder_checker, 
     start_task_checker, 
-    start_user_status_checker
+    start_user_status_checker,
+    start_weekly_report_checker
 )
 
 # Глобальное состояние приложения
@@ -169,6 +170,7 @@ async def lifespan(app: FastAPI):
         start_booking_reminder_checker()
         start_task_checker()
         start_user_status_checker()
+        start_weekly_report_checker()
         
         cron = AsyncIOScheduler(job_defaults={'misfire_grace_time': 3600})
         
@@ -188,6 +190,10 @@ async def lifespan(app: FastAPI):
         cron.add_job(check_appointment_reminders, 'interval', minutes=30, id='appointments')
         cron.add_job(run_housekeeping, 'cron', hour=3, minute=0, id='cleaning')
         cron.add_job(cleanup_expired_sessions, 'interval', hours=6, id='sessions')
+        
+        # Регистрация еженедельного отчета (PN 09:00)
+        from scheduler.weekly_report_checker import generate_and_send_weekly_report
+        cron.add_job(generate_and_send_weekly_report, 'cron', day_of_week='mon', hour=9, minute=0, id='weekly_analytics_report')
         
         cron.start()
         log_info("✅ Планировщики (Mission-control) активны", "boot")

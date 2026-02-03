@@ -1,74 +1,74 @@
 {
   "items": [
     {
+      "bio": "Erfahrene Nageltechnikerin. Ideale Maniküre und Pediküre jeder Komplexität.",
       "id": 671,
       "name": "Kasymova Gulcehre",
-      "position": "Nail & Waxing Master",
-      "bio": "Erfahrene Nageltechnikerin. Ideale Maniküre und Pediküre jeder Komplexität.",
-      "photo": ""
+      "photo": "",
+      "position": "Nail & Waxing Master"
     },
     {
+      "bio": "Universalmeister der höchsten Kategorie. Führt meisterhaft jede Art datum bis Haarschnitt und Styling durch.",
       "id": 672,
       "name": "Peradilla Jennifer",
-      "position": "Universal Beauty Master",
-      "bio": "Universalmeister der höchsten Kategorie. Führt meisterhaft jede Art datum bis Haarschnitt und Styling durch.",
-      "photo": ""
+      "photo": "",
+      "position": "Universal Beauty Master"
     },
     {
+      "bio": "Top-Stylist mit internationaler Erfahrung. Ein Experte für komplexe Haarfärbe- und Wiederherstellungstechniken.",
       "id": 673,
       "name": "Amandurdyyeva Mestan",
-      "position": "Friseur und Permanent Makeup Artist",
-      "bio": "Top-Stylist mit internationaler Erfahrung. Ein Experte für komplexe Haarfärbe- und Wiederherstellungstechniken.",
-      "photo": ""
+      "photo": "",
+      "position": "Friseur und Permanent Makeup Artist"
     },
     {
+      "bio": "Ein talentierter Stylist, der einzigartige Looks kreiert. Spezialist für Herren- und Damenhaarschnitte.",
       "id": 674,
       "name": "Mohamed Sabri",
-      "position": "Friseur",
-      "bio": "Ein talentierter Stylist, der einzigartige Looks kreiert. Spezialist für Herren- und Damenhaarschnitte.",
-      "photo": ""
+      "photo": "",
+      "position": "Friseur"
     },
     {
+      "bio": "Ein ordentlicher und aufmerksamer Meister. Spezialisiert auf ästhetische Maniküre und Design.",
       "id": 675,
       "name": "Kozhabay Lyazat",
-      "position": "Nail Master",
-      "bio": "Ein ordentlicher und aufmerksamer Meister. Spezialisiert auf ästhetische Maniküre und Design.",
-      "photo": ""
+      "photo": "",
+      "position": "Nail Master"
     },
     {
+      "bio": "",
       "id": 798,
       "name": "Kasymova Gulcehre",
-      "position": "Nail & Waxing Master",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Nail & Waxing Master"
     },
     {
+      "bio": "",
       "id": 799,
       "name": "Peradilla Jennifer",
-      "position": "Universal Beauty Master",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Universal Beauty Master"
     },
     {
+      "bio": "",
       "id": 800,
       "name": "Amandurdyyeva Mestan",
-      "position": "Friseur und Permanent Makeup Artist",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Friseur und Permanent Makeup Artist"
     },
     {
+      "bio": "",
       "id": 801,
       "name": "Mohamed Sabri",
-      "position": "Friseur",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Friseur"
     },
     {
+      "bio": "",
       "id": 802,
       "name": "Kozhabay Lyazat",
-      "position": "Nail Master",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Nail Master"
     }
   ]
 }
