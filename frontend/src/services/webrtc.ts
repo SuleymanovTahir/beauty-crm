@@ -124,6 +124,11 @@ export class WebRTCService {
     });
     this.activeOscillators = [];
     this.isRinging = false;
+
+    // Resume context if it was suspended to avoid "interrupted" errors later
+    if (this.audioContext && this.audioContext.state === 'suspended') {
+      this.audioContext.resume().catch(() => { });
+    }
   }
 
   /**
@@ -144,57 +149,70 @@ export class WebRTCService {
 
       // Resume context if suspended
       if (ctx.state === 'suspended') {
-        ctx.resume();
+        ctx.resume().catch(() => { });
       }
 
       this.stopRingtone(); // Stop previous sounds
 
       if (type === 'incoming') {
         this.isRinging = true;
-        // Rhythmic ringing loop
-        const startBeep = (time: number) => {
-          const o = ctx.createOscillator();
-          const g = ctx.createGain();
-          o.connect(g);
-          g.connect(ctx.destination);
-          o.frequency.value = 800;
-          g.gain.setValueAtTime(0.1, time);
-          g.gain.linearRampToValueAtTime(0, time + 1);
-          o.start(time);
-          o.stop(time + 1);
-          this.activeOscillators.push(o);
+
+        // Melodic rhythmic ringing (European style: 1s ring, 4s silence)
+        const playRingPattern = (startTime: number) => {
+          // Double tone (400Hz + 450Hz)
+          const createTone = (freq: number, volume: number) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(freq, startTime);
+
+            g.gain.setValueAtTime(0, startTime);
+            g.gain.linearRampToValueAtTime(volume, startTime + 0.05);
+            g.gain.setValueAtTime(volume, startTime + 1.0);
+            g.gain.linearRampToValueAtTime(0, startTime + 1.1);
+
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.start(startTime);
+            o.stop(startTime + 1.2);
+            this.activeOscillators.push(o);
+          };
+
+          createTone(400, 0.1);
+          createTone(450, 0.1);
         };
 
-        // Schedule 15 seconds of ringing
-        for (let i = 0; i < 15; i++) {
-          startBeep(ctx.currentTime + i * 2);
+        // Schedule for 60 seconds
+        for (let i = 0; i < 12; i++) {
+          playRingPattern(ctx.currentTime + i * 5);
         }
 
       } else if (type === 'outgoing') {
         this.isRinging = true;
-        // Dial tone
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
 
-        osc.frequency.value = 440;
-        gain.gain.value = 0.05;
+        // Outgoing "tuuu... tuuu..." pattern
+        const playOutgoingPattern = (startTime: number) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'sine';
+          o.frequency.setValueAtTime(425, startTime);
 
-        // Pulse it
-        const lfo = ctx.createOscillator();
-        lfo.type = 'square';
-        lfo.frequency.value = 0.5;
-        const lfoGain = ctx.createGain();
-        lfoGain.gain.value = 500;
+          g.gain.setValueAtTime(0, startTime);
+          g.gain.linearRampToValueAtTime(0.08, startTime + 0.1);
+          g.gain.setValueAtTime(0.08, startTime + 1.5);
+          g.gain.linearRampToValueAtTime(0, startTime + 1.6);
 
-        osc.start();
-        this.activeOscillators.push(osc);
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.start(startTime);
+          o.stop(startTime + 1.7);
+          this.activeOscillators.push(o);
+        };
 
-        // Stop dialing after 30s timeout
-        setTimeout(() => {
-          if (this.isRinging) this.stopRingtone();
-        }, 30000);
+        // Schedule for 60 seconds
+        for (let i = 0; i < 12; i++) {
+          playOutgoingPattern(ctx.currentTime + i * 6);
+        }
 
       } else if (type === 'end') {
         // Disconnect tone
@@ -203,7 +221,7 @@ export class WebRTCService {
         osc.connect(gain);
         gain.connect(ctx.destination);
 
-        osc.frequency.value = 300;
+        osc.frequency.setValueAtTime(300, ctx.currentTime);
         gain.gain.setValueAtTime(0.1, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
         osc.start();

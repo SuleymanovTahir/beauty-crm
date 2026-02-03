@@ -32,6 +32,7 @@ import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { webrtcService, CallType } from '../../services/webrtc';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { getPhotoUrl } from '../../utils/photoUtils';
+import { api } from '../../services/api';
 import AudioPlayer from './AudioPlayer';
 import IncomingCallModal from '../calls/IncomingCallModal';
 import CallQualityIndicator, { ConnectionQuality } from '../calls/CallQualityIndicator';
@@ -68,6 +69,10 @@ interface VoiceRecorder {
 }
 
 export default function InternalChat() {
+  useEffect(() => {
+    console.log('🚀 [InternalChat] Version: 2026-02-03_v3 (ServiceWorker Fix)');
+  }, []);
+
   const { t, i18n } = useTranslation(['common', 'layouts/mainlayout']);
   const { user: _currentUser } = useAuth();
   // useAuth(); // Removed redundant call if not needed or keeps it if side-effect relevant
@@ -120,6 +125,10 @@ export default function InternalChat() {
   const callRecorderRef = useRef<MediaRecorder | null>(null);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   // Audio refs and functions removed in favor of WebRTCService
 
 
@@ -134,12 +143,9 @@ export default function InternalChat() {
   useEffect(() => {
     const setOnlineStatus = async () => {
       try {
-        await fetch('/api/internal-chat/status/online', {
-          method: 'POST',
-          credentials: 'include'
-        });
+        await api.updateStatusOnline();
       } catch (err) {
-        console.error('Error setting online status:', err);
+        console.error('Error updating status to online:', err);
       }
     };
 
@@ -154,12 +160,9 @@ export default function InternalChat() {
     // Set offline when component unmounts or page is about to unload
     const setOfflineStatus = async () => {
       try {
-        await fetch('/api/internal-chat/status/offline', {
-          method: 'POST',
-          credentials: 'include'
-        });
+        await api.updateStatusOffline();
       } catch (err) {
-        console.error('Error setting offline status:', err);
+        console.error('Error updating status to offline:', err);
       }
     };
 
@@ -280,41 +283,48 @@ export default function InternalChat() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`/api/internal-chat/users?language=${i18n.language}`, { credentials: 'include' });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
+      const data = await api.getInternalChatUsers(i18n.language);
 
       let loadedUsers = data.users || [];
 
       // Fetch online users status
       try {
-        const onlineResponse = await fetch('/api/webrtc/online-users', { credentials: 'include' });
-        if (onlineResponse.ok) {
-          const onlineData = await onlineResponse.json();
-          const onlineUserIds = onlineData.online_users || [];
+        const onlineData = await api.getOnlineUsers();
+        const onlineUserIds = onlineData.online_users || [];
 
-          loadedUsers = loadedUsers.map((u: User) => ({
-            ...u,
-            is_online: onlineUserIds.includes(u.id)
-          }));
-        }
+        loadedUsers = loadedUsers.map((u: User) => ({
+          ...u,
+          is_online: onlineUserIds.includes(u.id)
+        }));
       } catch (err) {
         console.error('Error fetching online users:', err);
       }
 
       setUsers(loadedUsers);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error loading users:', err);
-      const errorMessage = err instanceof Error ? err.message : t('common:unknown_error', 'Неизвестная ошибка');
-      setError(errorMessage);
+      // Construct a detailed error message for mobile debugging
+      let debugInfo = '';
+      if (err instanceof Error) {
+        debugInfo = `${err.name}: ${err.message}`;
+        if (err.stack) debugInfo += `\nStack: ${err.stack}`;
+      } else if (typeof err === 'object') {
+        try {
+          debugInfo = JSON.stringify(err, null, 2);
+        } catch (e) {
+          debugInfo = String(err);
+        }
+      } else {
+        debugInfo = String(err);
+      }
+
+      // Append request info if available (e.g. from fetch failure)
+      debugInfo += `\nTime: ${new Date().toISOString()}`;
+      debugInfo += `\nURL: /api/internal-chat/users`;
+
+      const userFriendlyMessage = t('common:error_loading_data', 'Ошибка загрузки данных');
+      setError(`${userFriendlyMessage}\n\nTECHNICAL DETAILS:\n${debugInfo}`);
+
       toast.error(t('common:error_loading_data', 'Ошибка загрузки данных'));
     } finally {
       setLoading(false);
@@ -323,13 +333,17 @@ export default function InternalChat() {
 
   const loadMessagesWithUser = async (userId: number) => {
     try {
-      const response = await fetch(`/api/internal-chat/messages?with_user_id=${userId}&language=${i18n.language}`, {
-        credentials: 'include'
-      });
-      const data = await response.json();
+      setLoading(true);
+      const data = await api.getInternalChatMessages(userId);
       setMessages(data.messages || []);
+      setLoading(false);
+
+      // Использование setTimeout чтобы дождаться рендеринга сообщений
+      setTimeout(scrollToBottom, 50);
     } catch (err) {
       console.error('Error loading messages:', err);
+      toast.error(t('common:error_loading_messages', 'Ошибка загрузки сообщений'));
+      setLoading(false);
     }
   };
 
@@ -354,20 +368,7 @@ export default function InternalChat() {
         finalMessage = `${t('chat.reply_to', 'Ответ на:')} "${quotedText}"\n\n${textToSend}`;
       }
 
-      const response = await fetch('/api/internal-chat/send', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: fileUrl || finalMessage,
-          to_user_id: selectedUser.id,
-          type: messageType // Добавляем тип сообщения
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
+      await api.sendInternalChatMessage(selectedUser.id, fileUrl || finalMessage, messageType);
 
       // Add message to local state immediately
       const newMsg: Message = {
@@ -403,18 +404,7 @@ export default function InternalChat() {
       for (const file of files) {
         try {
           setIsUploadingFile(true);
-          const formData = new FormData();
-          formData.append('file', file);
-
-          const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
-            method: 'POST',
-            credentials: 'include',
-            body: formData,
-          });
-
-          if (!uploadResponse.ok) throw new Error('Upload failed');
-
-          const { file_url } = await uploadResponse.json();
+          const { file_url } = await api.uploadFile(file);
           const fileType = file.type.startsWith('image/') ? 'image' :
             file.type.startsWith('video/') ? 'video' : 'file';
 
@@ -438,18 +428,7 @@ export default function InternalChat() {
       for (const file of files) {
         try {
           setIsUploadingFile(true);
-          const formData = new FormData();
-          formData.append('file', file);
-
-          const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
-            method: 'POST',
-            credentials: 'include',
-            body: formData,
-          });
-
-          if (!uploadResponse.ok) throw new Error('Upload failed');
-
-          const { file_url } = await uploadResponse.json();
+          const { file_url } = await api.uploadFile(file);
           await handleSendMessage(file.name, 'file', file_url);
           toast.success(`✅ ${file.name}`);
         } catch (err) {
@@ -500,18 +479,7 @@ export default function InternalChat() {
 
         try {
           setIsUploadingFile(true);
-          const formData = new FormData();
-          formData.append('file', file);
-
-          const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
-            method: 'POST',
-            credentials: 'include',
-            body: formData,
-          });
-
-          if (!uploadResponse.ok) throw new Error('Upload failed');
-
-          const { file_url } = await uploadResponse.json();
+          const { file_url } = await api.uploadFile(file);
           await handleSendMessage(t('chat.voice_message', 'Голосовое сообщение'), 'voice', file_url);
           toast.success(t('chat.voice_sent', 'Голосовое сообщение отправлено'));
         } catch (err) {
@@ -807,8 +775,12 @@ export default function InternalChat() {
           <div className="w-16 h-16 bg-red-500 rounded-2xl flex items-center justify-center shadow-2xl">
             <X className="w-8 h-8 text-white" />
           </div>
-          <p className="text-foreground font-medium">{t('common:error_loading', 'Ошибка загрузки')}</p>
-          <p className="text-sm text-muted-foreground">{error}</p>
+          <p className="text-foreground font-medium text-center">{t('common:error_loading', 'Ошибка загрузки')}</p>
+          <div className="bg-muted/50 p-4 rounded-lg w-full max-w-lg overflow-x-auto">
+            <pre className="text-xs text-red-500 font-mono whitespace-pre-wrap break-all">
+              {error}
+            </pre>
+          </div>
           <button
             onClick={() => {
               setError(null);

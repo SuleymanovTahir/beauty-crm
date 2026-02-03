@@ -225,17 +225,16 @@ async def websocket_endpoint(websocket: WebSocket):
 
     except WebSocketDisconnect:
         if user_id:
-            # CRITICAL: Send hangup to all users who might be in call with this user
-            # This ensures camera/mic cleanup on both sides
-            log_info(f"WebSocket disconnect for user {user_id}, sending cleanup signals", "webrtc")
+            # 1. First remove the connection so we don't try to broadcast to it
+            is_offline = manager.disconnect(user_id, websocket)
             
-            # Broadcast hangup to all connected users (they'll ignore if not in call)
+            # 2. Then send hangup cleanup to others
+            log_info(f"WebSocket disconnect cleanup for user {user_id}", "webrtc")
             await manager.broadcast({
                 "type": "hangup",
                 "from": user_id
             })
             
-            is_offline = manager.disconnect(user_id, websocket)
             if is_offline:
                 # Broadcast offline status only if no connections left
                 await manager.broadcast({
