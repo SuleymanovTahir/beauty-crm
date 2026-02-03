@@ -100,10 +100,9 @@ async def api_login(request: Request, username: str = Form(...), password: str =
         conn = get_db_connection()
         c = conn.cursor()
         
-        # Delete expired sessions first
+        # Note: Expired sessions are now handled by scheduler/user_status_checker every minute
         from datetime import datetime
         now = datetime.now().isoformat()
-        c.execute("DELETE FROM sessions WHERE expires_at < %s", (now,))
         
         # Check for existing valid session
         c.execute("""
@@ -139,13 +138,23 @@ async def api_login(request: Request, username: str = Form(...), password: str =
         }
         
         response = JSONResponse(response_data)
+        
+        # CRITICAL FIX FOR MOBILE:
+        # We must set path='/' to ensure cookie is sent for all API routes (including /api/internal-chat)
+        # We set samesite='lax' for normal navigation
+        # We set secure=True ONLY if we are on HTTPS
+        use_ssl = os.getenv("USE_SSL", "false").lower() == "true"
+        base_url = os.getenv("BASE_URL", "")
+        is_https = base_url.startswith("https://") or use_ssl
+        
         response.set_cookie(
             key="session_token",
             value=session_token,
-            httponly=True,
-            max_age=7*24*60*60,
+            httponly=True, 
+            max_age=7*24*60*60, # 7 days
             samesite="lax",
-            secure=os.getenv("ENVIRONMENT") == "production"
+            secure=is_https,
+            path="/"
         )
         
         return response

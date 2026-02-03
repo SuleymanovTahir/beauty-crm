@@ -221,6 +221,12 @@ else:
             clean_val = val.strip().rstrip("/")
             if clean_val and clean_val not in cors_origins:
                 cors_origins.append(clean_val)
+                # Automatically add 'www' variant if it's a domain
+                if "://" in clean_val and "www." not in clean_val:
+                    protocol, rest = clean_val.split("://", 1)
+                    www_variant = f"{protocol}://www.{rest}"
+                    if www_variant not in cors_origins:
+                        cors_origins.append(www_variant)
 
 app.add_middleware(
     CORSMiddleware,

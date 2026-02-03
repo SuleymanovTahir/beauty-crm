@@ -2186,6 +2186,46 @@ export class ApiClient {
       method: 'DELETE'
     })
   }
+
+  // ===== INTERNAL CHAT =====
+  async getInternalChatUsers(language: string = 'ru') {
+    return this.request<any>(`/api/internal-chat/users?language=${language}`)
+  }
+
+  async getInternalChatMessages(withUserId: number, limit: number = 50) {
+    return this.request<any>(`/api/internal-chat/messages?to_user_id=${withUserId}&limit=${limit}`)
+  }
+
+  async sendInternalChatMessage(toUserId: number, message: string, type: string = 'text') {
+    return this.request<any>('/api/internal-chat/send', {
+      method: 'POST',
+      body: JSON.stringify({ to_user_id: toUserId, message, type })
+    })
+  }
+
+  async getInternalChatUnreadCount() {
+    return this.request<any>('/api/internal-chat/unread-count')
+  }
+
+  async markInternalChatAsRead(fromUserId: number) {
+    return this.request<any>('/api/internal-chat/mark-read', {
+      method: 'POST',
+      body: JSON.stringify({ from_user_id: fromUserId })
+    })
+  }
+
+  // ===== WEBRTC & STATUS =====
+  async getOnlineUsers() {
+    return this.request<any>('/api/webrtc/online-users')
+  }
+
+  async updateStatusOnline() {
+    return this.request<any>('/api/internal-chat/status/online', { method: 'POST' })
+  }
+
+  async updateStatusOffline() {
+    return this.request<any>('/api/internal-chat/status/offline', { method: 'POST' })
+  }
 }
 
 export const api = new ApiClient()

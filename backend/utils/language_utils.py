@@ -11,7 +11,7 @@ FALLBACK_LANGUAGE = 'en'
 
 # Cache for dynamic translations (language -> {translations dict, load_time})
 _translations_cache = {}
-_CACHE_TTL_SECONDS = 300  # 5 minutes
+_CACHE_TTL_SECONDS = 3600  # 1 hour (translations change rarely)
 
 def validate_language(language: str) -> str:
     """Валидировать и нормализовать код языка"""
@@ -66,7 +66,7 @@ def translate_position(position: str, language: str) -> str:
     return position
 
 def _load_translations(language: str) -> dict:
-    """Load translations from file with caching"""
+    """Load translations from file with caching and pre-indexing for performance"""
     import json
     from pathlib import Path
 
@@ -83,61 +83,79 @@ def _load_translations(language: str) -> dict:
     base_dir = Path(__file__).parent.parent.parent
     locales_file = base_dir / 'frontend' / 'src' / 'locales' / language / 'dynamic.json'
 
-    if not locales_file.exists():
-        _translations_cache[language] = {'data': {}, 'time': now}
-        return {}
+    data = {}
+    if locales_file.exists():
+        try:
+            with open(locales_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except Exception:
+            data = {}
 
-    try:
-        with open(locales_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        _translations_cache[language] = {'data': data, 'time': now}
-        return data
-    except Exception:
-        _translations_cache[language] = {'data': {}, 'time': now}
-        return {}
+    # Pre-index for get_dynamic_translation performance
+    # We want O(1) lookup for prefixes
+    index = {}
+    for key, value in data.items():
+        if '.' in key:
+            parts = key.split('.')
+            if len(parts) >= 3:
+                table, item_id, field_part = parts[0], parts[1], parts[2]
+                base_field = field_part
+                if '_ru' in field_part:
+                    base_field = field_part.split('_ru')[0]
+                prefix = f"{table}.{item_id}.{base_field}"
+                if prefix not in index:
+                    index[prefix] = []
+                index[prefix].append((key, value))
+            elif len(parts) == 2:
+                prefix = f"{parts[0]}.{parts[1]}"
+                if prefix not in index:
+                    index[prefix] = []
+                index[prefix].append((key, value))
+        
+        if key not in index:
+            index[key] = [(key, value)]
+        else:
+            if not any(k == key for k, v in index[key]):
+                index[key].append((key, value))
+
+    result = {'raw': data, 'index': index}
+    _translations_cache[language] = {'data': result, 'time': now}
+    return result
 
 
 def get_dynamic_translation(table: str, item_id: int, field: str, language: str, default_value: str = "") -> str:
     """
     Получить перевод динамического контента из locales/*.json
     Служит заменой локализованным колонкам в БД.
-    Uses in-memory cache for performance.
+    Uses in-memory cache and index for high performance (O(1)).
     """
     language = validate_language(language)
-    translations = _load_translations(language)
-
-    if not translations:
+    cache_obj = _load_translations(language)
+    
+    if not cache_obj:
         return default_value
-
-    # Ищем ключ: table.item_id.field (может быть с хешем в конце)
+        
+    index = cache_obj.get('index', {})
+    
+    # Ищем ключ: table.item_id.field
     if field:
         prefix = f"{table}.{item_id}.{field}"
     else:
         prefix = f"{table}.{item_id}"
 
-    # Ищем все подходящие ключи
-    matches = []
+    matches = index.get(prefix, [])
+    if not matches:
+        return default_value
 
-    # 1. Точное совпадение
-    if prefix in translations:
-        matches.append((prefix, translations[prefix]))
-
-    # 2. Совпадение по префиксу (с хешем)
-    for key, value in translations.items():
-        if key != prefix and key.startswith(prefix + "_ru."): # Format: field_ru.hash
-            matches.append((key, value))
-        elif key != prefix and key.startswith(prefix + "."): # Format: field.hash
-            matches.append((key, value))
-
-    # Эвристика выбора: приоритет ключам с хешем (длинным), так как они содержат нормальные переводы
+    # Эвристика выбора: приоритет ключам с хешем (длинным) или содержащим '_ru.'
     for key, value in matches:
+        if "." in key and len(key.split('.')[-1]) > 5:
+            return value
         if "_ru." in key:
             return value
 
-    # Если нет ключей с хешем, возвращаем точное совпадение или первое попавшееся
-    result = default_value
-    if matches:
-        result = matches[0][1]
+    # Если спец-ключей нет, возвращаем первое попавшееся (обычно точное совпадение)
+    return matches[0][1]
 
     # Fallback: Dictionary check for EN if result contains Cyrillic
     if language == 'en' and _has_cyrillic(result):

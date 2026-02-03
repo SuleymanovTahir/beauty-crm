@@ -78,11 +78,6 @@ def restore_full_content():
             c.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name = %s", (table,))
             valid_columns = {row[0] for row in c.fetchall()}
             
-            # Delete existing data to avoid conflicts and duplicates
-            # The user wants to replace "short" with "full"
-            c.execute(f"DELETE FROM {table}")
-            print(f"   🗑️ Cleared existing {table} data")
-            
             items = master_data.get(table, {})
             sorted_ids = sorted(items.keys())
             
@@ -100,16 +95,18 @@ def restore_full_content():
                 placeholders = ['%s'] * len(columns)
                 values = [item_id] + list(filtered_fields.values())
                 
-                # Add default values for required fields if missing
-                if table == 'public_banners' and 'image_url' not in valid_columns:
-                    # public_banners usually has image_url as NOT NULL or handled separately
-                    pass
+                # Update part for ON CONFLICT
+                update_parts = [f"{col} = EXCLUDED.{col}" for col in filtered_fields.keys()]
                 
-                query = f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({', '.join(placeholders)})"
+                query = f"""
+                    INSERT INTO {table} ({', '.join(columns)}) 
+                    VALUES ({', '.join(placeholders)})
+                    ON CONFLICT (id) DO UPDATE SET {', '.join(update_parts)}
+                """
                 c.execute(query, values)
                 count += 1
                 
-            print(f"   ✅ Restored {count} items to {table}")
+            print(f"   ✅ Restored/Updated {count} items to {table}")
             
             # Reset sequence
             c.execute(f"SELECT setval(pg_get_serial_sequence('{table}', 'id'), COALESCE((SELECT MAX(id) FROM {table}), 1))")
