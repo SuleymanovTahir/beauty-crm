@@ -3,8 +3,10 @@
   "admin_panel": "Panneau d'administration",
   "all_notifications_cleared": "Toutes les notifications supprimées",
   "calls": {
+    "audio_call": "",
     "click_to_answer": "Cliquez pour répondre",
-    "incoming_call": "Appel entrant\u00a0!"
+    "incoming_call": "Appel entrant\u00a0!",
+    "video_call": ""
   },
   "clear_all": "Effacer tout",
   "close": "Fermer",

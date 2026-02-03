@@ -1,74 +1,74 @@
 {
   "items": [
     {
+      "bio": "Technicienne expérimentée en service d'ongles. Manucure et pédicure idéales de toute complexité.",
       "id": 671,
       "name": "Kasymova Gulcehre",
-      "position": "Maître des ongles et de l'épilation",
-      "bio": "Technicienne expérimentée en service d'ongles. Manucure et pédicure idéales de toute complexité.",
-      "photo": ""
+      "photo": "",
+      "position": "Maître des ongles et de l'épilation"
     },
     {
+      "bio": "Maître universel de la plus haute catégorie. Effectue magistralement tout type de coupe de cheveux et de coiffure.",
       "id": 672,
       "name": "Peradilla Jennifer",
-      "position": "Maître beauté universel",
-      "bio": "Maître universel de la plus haute catégorie. Effectue magistralement tout type de coupe de cheveux et de coiffure.",
-      "photo": ""
+      "photo": "",
+      "position": "Maître beauté universel"
     },
     {
+      "bio": "Styliste de haut niveau avec une expérience internationale. Un expert en techniques complexes de coloration et de restauration des cheveux.",
       "id": 673,
       "name": "Amandurdyyeva Mestan",
-      "position": "Coiffeur et maquilleur permanent",
-      "bio": "Styliste de haut niveau avec une expérience internationale. Un expert en techniques complexes de coloration et de restauration des cheveux.",
-      "photo": ""
+      "photo": "",
+      "position": "Coiffeur et maquilleur permanent"
     },
     {
+      "bio": "Un styliste talentueux qui crée des looks uniques. Spécialiste des coupes de cheveux hommes et femmes.",
       "id": 674,
       "name": "Mohamed Sabri",
-      "position": "Coiffeur",
-      "bio": "Un styliste talentueux qui crée des looks uniques. Spécialiste des coupes de cheveux hommes et femmes.",
-      "photo": ""
+      "photo": "",
+      "position": "Coiffeur"
     },
     {
+      "bio": "Un maître soigné et attentionné. Spécialisé dans la manucure esthétique et le design.",
       "id": 675,
       "name": "Kozhabay Lyazat",
-      "position": "Maître des ongles",
-      "bio": "Un maître soigné et attentionné. Spécialisé dans la manucure esthétique et le design.",
-      "photo": ""
+      "photo": "",
+      "position": "Maître des ongles"
     },
     {
+      "bio": "",
       "id": 798,
       "name": "Kasymova Gulcehre",
-      "position": "Maître des ongles et de l'épilation",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Maître des ongles et de l'épilation"
     },
     {
+      "bio": "",
       "id": 799,
       "name": "Peradilla Jennifer",
-      "position": "Maître beauté universel",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Maître beauté universel"
     },
     {
+      "bio": "",
       "id": 800,
       "name": "Amandurdyyeva Mestan",
-      "position": "Coiffeur et maquilleur permanent",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Coiffeur et maquilleur permanent"
     },
     {
+      "bio": "",
       "id": 801,
       "name": "Mohamed Sabri",
-      "position": "Coiffeur",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Coiffeur"
     },
     {
+      "bio": "",
       "id": 802,
       "name": "Kozhabay Lyazat",
-      "position": "Maître des ongles",
-      "bio": "",
-      "photo": ""
+      "photo": "",
+      "position": "Maître des ongles"
     }
   ]
 }

@@ -9,6 +9,9 @@ export interface CallUser {
 }
 
 export type CallType = 'audio' | 'video';
+export type ConnectionQuality = 'excellent' | 'good' | 'poor' | 'disconnected';
+
+
 
 interface WebRTCConfig {
   iceServers: RTCIceServer[];
@@ -30,13 +33,17 @@ export class WebRTCService {
   private currentUserId: number | null = null;
   private remoteUserId: number | null = null;
   private callType: CallType = 'audio';
+  private screenStream: MediaStream | null = null;
+  private startTime: number | null = null;
 
   // Callback properties (for component compatibility)
-  public onIncomingCall: ((fromUserId: number, type: CallType) => void) | null = null;
+  public onIncomingCall: ((fromUserId: number, type: CallType, calleeStatus?: string) => void) | null = null;
   public onCallAccepted: (() => void) | null = null;
-  public onCallRejected: (() => void) | null = null;
+  public onCallRejected: ((reason?: string) => void) | null = null;
   public onCallEnded: (() => void) | null = null;
   public onRemoteStream: ((stream: MediaStream) => void) | null = null;
+  public onHold: ((fromUserId: number) => void) | null = null;
+  public onResume: ((fromUserId: number) => void) | null = null;
   public onError: ((error: string) => void) | null = null;
 
   // Event listeners storage
@@ -55,6 +62,11 @@ export class WebRTCService {
   private audioContext: AudioContext | null = null;
   private activeOscillators: any[] = [];
   private isRinging: boolean = false;
+  private isCallActive: boolean = false;
+
+  public get isInCall(): boolean {
+    return this.isCallActive;
+  }
 
   /**
    * Subscribe to an event
@@ -81,13 +93,14 @@ export class WebRTCService {
     // Call callback properties for backwards compatibility
     switch (event) {
       case 'incomingCall':
-        if (this.onIncomingCall) this.onIncomingCall(args[0], args[1]);
+        if (this.onIncomingCall) this.onIncomingCall(args[0], args[1], args[2]);
         break;
       case 'callAccepted':
+        this.isCallActive = true;
         if (this.onCallAccepted) this.onCallAccepted();
         break;
       case 'callRejected':
-        if (this.onCallRejected) this.onCallRejected();
+        if (this.onCallRejected) this.onCallRejected(args[0]);
         break;
       case 'callEnded':
         if (this.onCallEnded) this.onCallEnded();
@@ -95,8 +108,19 @@ export class WebRTCService {
       case 'remoteStream':
         if (this.onRemoteStream) this.onRemoteStream(args[0]);
         break;
+      case 'hold':
+        if (this.onHold) this.onHold(args[0]);
+        break;
+      case 'resume':
+        if (this.onResume) this.onResume(args[0]);
+        break;
       case 'error':
         if (this.onError) this.onError(args[0]);
+        break;
+      case 'transferring':
+        if (this.listeners['transferring']) {
+          this.listeners['transferring'].forEach(cb => cb(args[0], args[1]));
+        }
         break;
     }
 
@@ -157,14 +181,14 @@ export class WebRTCService {
       if (type === 'incoming') {
         this.isRinging = true;
 
-        // Melodic rhythmic ringing (European style: 1s ring, 4s silence)
+        // Melodic double-tone (European classic ring)
         const playRingPattern = (startTime: number) => {
-          // Double tone (400Hz + 450Hz)
           const createTone = (freq: number, volume: number) => {
             const o = ctx.createOscillator();
             const g = ctx.createGain();
-            o.type = 'sine';
+            o.type = 'triangle'; // Richer sound than sine
             o.frequency.setValueAtTime(freq, startTime);
+            o.frequency.exponentialRampToValueAtTime(freq * 1.01, startTime + 1); // Subtle fluctuation
 
             g.gain.setValueAtTime(0, startTime);
             g.gain.linearRampToValueAtTime(volume, startTime + 0.05);
@@ -178,15 +202,15 @@ export class WebRTCService {
             this.activeOscillators.push(o);
           };
 
-          createTone(400, 0.1);
-          createTone(450, 0.1);
+          // Harmonic interval (A4 and C#5)
+          createTone(440, 0.08);
+          createTone(554.37, 0.04);
         };
 
         // Schedule for 60 seconds
         for (let i = 0; i < 12; i++) {
           playRingPattern(ctx.currentTime + i * 5);
         }
-
       } else if (type === 'outgoing') {
         this.isRinging = true;
 
@@ -296,10 +320,11 @@ export class WebRTCService {
         break;
 
       case 'incoming-call':
-        console.log('📞 Incoming call from:', data.from);
+        console.log('📞 Incoming call from:', data.from, 'Type:', data.call_type, 'Remote user status:', data.callee_status);
         this.remoteUserId = data.from;
         this.callType = data.call_type;
-        this.emit('incomingCall', data.from, data.call_type);
+        this.emit('incomingCall', data.from, data.call_type, data.callee_status);
+        this.playRingtone('incoming');
         break;
 
       case 'call-accepted':
@@ -309,8 +334,9 @@ export class WebRTCService {
         break;
 
       case 'call-rejected':
-        console.log('Call rejected by:', data.from);
-        this.emit('callRejected');
+        console.log('Call rejected by:', data.from, 'Reason:', data.reason);
+        this.stopRingtone();
+        this.emit('callRejected', data.reason);
         this.cleanup();
         break;
 
@@ -331,8 +357,19 @@ export class WebRTCService {
 
       case 'hangup':
         console.log('📴 Call ended by remote user');
+        this.stopRingtone();
         this.emit('callEnded');
         this.cleanup();
+        break;
+
+      case 'hold':
+        console.log('Call put on hold by:', data.from);
+        this.emit('hold', data.from);
+        break;
+
+      case 'resume':
+        console.log('Call resumed by:', data.from);
+        this.emit('resume', data.from);
         break;
 
       case 'error':
@@ -340,9 +377,10 @@ export class WebRTCService {
         this.emit('error', data.message);
         break;
 
-      case 'user_status':
-        console.log(`👤 User ${data.user_id} is ${data.status}`);
-        this.emit('userStatus', data.user_id, data.status === 'online', data.last_seen || data.timestamp);
+      case 'transferring':
+        console.log(`⤴️ Transferring to ${data.to} by ${data.by}`);
+        this.emit('transferring', data.to, data.by);
+        // We might want to end current call and show "connecting to new person"
         break;
     }
   }
@@ -418,13 +456,52 @@ export class WebRTCService {
   /**
    * Отклонить входящий звонок
    */
-  rejectCall(): void {
+  rejectCall(reason: string = 'rejected'): void {
     this.sendSignal({
       type: 'reject-call',
       from: this.currentUserId,
-      to: this.remoteUserId
+      to: this.remoteUserId,
+      reason: reason
     });
+    this.stopRingtone();
     this.cleanup();
+  }
+
+  /**
+   * Put call on hold
+   */
+  holdCall(): void {
+    if (this.remoteUserId) {
+      this.sendSignal({
+        type: 'hold',
+        from: this.currentUserId,
+        to: this.remoteUserId
+      });
+    }
+    // Mute tracks locally
+    if (this.localStream) {
+      this.localStream.getTracks().forEach(track => track.enabled = false);
+    }
+  }
+
+  /**
+   * Resume call from hold
+   */
+  resumeCall(): void {
+    if (this.remoteUserId) {
+      this.sendSignal({
+        type: 'resume',
+        from: this.currentUserId,
+        to: this.remoteUserId
+      });
+    }
+    // Enable tracks back
+    if (this.localStream) {
+      this.localStream.getTracks().forEach(track => {
+        if (track.kind === 'audio' && this.isAudioEnabled) track.enabled = true;
+        if (track.kind === 'video' && this.isVideoEnabled) track.enabled = true;
+      });
+    }
   }
 
   /**
@@ -441,12 +518,138 @@ export class WebRTCService {
     } else {
       console.warn('Attempted to end call but remoteUserId is null');
     }
+    this.stopRingtone();
+    const duration = this.startTime ? Math.floor((Date.now() - this.startTime) / 1000) : 0;
+    this.sendSignal({
+      type: 'hangup',
+      from: this.currentUserId,
+      to: this.remoteUserId,
+      duration: duration
+    });
     this.cleanup();
   }
 
   /**
-   * Получить доступ к медиа-устройствам
+   * Screen Sharing
    */
+  async startScreenShare(): Promise<MediaStream | null> {
+    try {
+      this.screenStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true
+      });
+
+      if (this.peerConnection && this.screenStream) {
+        const videoTrack = this.screenStream.getVideoTracks()[0];
+        const sender = this.peerConnection.getSenders().find(s => s.track?.kind === 'video');
+        if (sender) {
+          sender.replaceTrack(videoTrack);
+        }
+
+        videoTrack.onended = () => {
+          this.stopScreenShare();
+        };
+      }
+      return this.screenStream;
+    } catch (error) {
+      console.error('Error sharing screen:', error);
+      return null;
+    }
+  }
+
+  async stopScreenShare(): Promise<void> {
+    if (this.screenStream) {
+      this.screenStream.getTracks().forEach(t => t.stop());
+      this.screenStream = null;
+    }
+
+    // Switch back to camera
+    if (this.localStream && this.peerConnection) {
+      const videoTrack = this.localStream.getVideoTracks()[0];
+      const sender = this.peerConnection.getSenders().find(s => s.track?.kind === 'video');
+      if (sender && videoTrack) {
+        sender.replaceTrack(videoTrack);
+      }
+    }
+  }
+
+  /**
+   * Transfer Call
+   */
+  transferCall(toUserId: number, partyId: number): void {
+    this.sendSignal({
+      type: 'transfer',
+      from: this.currentUserId,
+      to: toUserId,
+      party_id: partyId
+    });
+  }
+
+  /**
+   * Device Management
+   */
+  async enumerateDevices(): Promise<MediaDeviceInfo[]> {
+    return await navigator.mediaDevices.enumerateDevices();
+  }
+
+  async switchDevice(kind: 'audioinput' | 'videoinput', deviceId: string): Promise<void> {
+    if (!this.localStream) return;
+
+    const constraints = {
+      audio: kind === 'audioinput' ? { deviceId: { exact: deviceId } } : this.isAudioEnabled,
+      video: kind === 'videoinput' ? { deviceId: { exact: deviceId } } : this.isVideoEnabled
+    };
+
+    const newStream = await navigator.mediaDevices.getUserMedia(constraints);
+    const newTrack = kind === 'audioinput' ? newStream.getAudioTracks()[0] : newStream.getVideoTracks()[0];
+
+    if (this.peerConnection) {
+      const sender = this.peerConnection.getSenders().find(s => s.track?.kind === (kind === 'audioinput' ? 'audio' : 'video'));
+      if (sender && newTrack) {
+        sender.replaceTrack(newTrack);
+
+        // Stop old track
+        const oldTrack = kind === 'audioinput' ? this.localStream.getAudioTracks()[0] : this.localStream.getVideoTracks()[0];
+        if (oldTrack) oldTrack.stop();
+
+        // Update local stream
+        if (kind === 'audioinput') {
+          this.localStream.removeTrack(oldTrack);
+          this.localStream.addTrack(newTrack);
+        } else {
+          this.localStream.removeTrack(oldTrack);
+          this.localStream.addTrack(newTrack);
+        }
+      }
+    }
+  }
+
+  /**
+   * DND Mode & Call Logs
+   */
+  async toggleDND(enabled: boolean): Promise<any> {
+    const response = await fetch('/api/internal-chat/status/dnd?dnd=' + enabled, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return await response.json();
+  }
+
+  async getCallLogs(): Promise<any[]> {
+    const response = await fetch('/api/internal-chat/call-logs');
+    return await response.json();
+  }
+
+  /**
+   * Getters
+   */
+  getLocalStream(): MediaStream | null {
+    return this.localStream;
+  }
+
+  getRemoteStream(): MediaStream | null {
+    return this.remoteStream;
+  }
   /**
    * Получить доступ к медиа-устройствам
    */
@@ -631,19 +834,10 @@ export class WebRTCService {
     this.iceCandidatesQueue = [];
   }
 
-  /**
-   * Получить локальный stream
-   */
-  getLocalStream(): MediaStream | null {
-    return this.localStream;
-  }
 
   /**
    * Получить удаленный stream
    */
-  getRemoteStream(): MediaStream | null {
-    return this.remoteStream;
-  }
 
   /**
    * Переключить микрофон (вкл/выкл)
@@ -750,6 +944,7 @@ export class WebRTCService {
    */
   private cleanup(): void {
     console.log('🧹 Cleaning up WebRTC resources');
+    this.isCallActive = false;
     this.stopRingtone();
     this.stopQualityMonitoring();
 

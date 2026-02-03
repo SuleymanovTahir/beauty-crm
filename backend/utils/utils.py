@@ -186,12 +186,9 @@ def require_auth(session_token: Optional[str] = Cookie(None)):
     import time
     from utils.logger import log_info
     
-    if not session_token:
-        # Debug logging for mobile auth issues
-        # only log intermittently or if this is a critical path
-        # from fastapi import Request
-        # we don't have request object here easily without changing signature
-        # log_info("⚠️ [require_auth] No session_token provided in cookie", "auth")
+    if not session_token or not isinstance(session_token, str):
+        # If session_token is the Cookie parameter object because it was called without Depends
+        # or if it's just None, we return None
         return None
     
     auth_start = time.time()

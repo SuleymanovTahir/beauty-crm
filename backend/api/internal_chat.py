@@ -258,22 +258,31 @@ async def get_chat_users(
 
     languages = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
 
+    # Исключаем клиентов из списка внутреннего чата для ускорения загрузки
+    # (hundreds of users handling: staff only)
     c.execute(f"""
-        SELECT u.id, u.username, u.full_name, 
+        SELECT DISTINCT ON (u.id) u.id, u.username, u.full_name, 
                u.role, u.email, u.photo,
-               us.is_online, us.last_seen
+               us.is_online, us.last_seen, us.is_dnd
         FROM users u
         LEFT JOIN user_status us ON u.id = us.user_id
-        WHERE u.id != %s AND u.is_active = TRUE AND u.deleted_at IS NULL
-        ORDER BY u.full_name
+        WHERE u.id != %s 
+          AND u.is_active = TRUE 
+          AND u.deleted_at IS NULL
+          AND u.role NOT IN ('client', 'guest')
+        ORDER BY u.id, u.full_name
     """, (user['id'],))
     
     db_duration = time.time() - start_time
-    log_info(f"⏱️ get_chat_users query took {db_duration:.4f}s", "perf")
+    if db_duration > 1.0:
+        log_info(f"⚠️ SLOW QUERY: get_chat_users took {db_duration:.4f}s", "perf")
+    else:
+        log_info(f"⏱️ get_chat_users query took {db_duration:.4f}s", "perf")
+
 
     users = []
     for row in c.fetchall():
-        uid, username, full_name, role, email, photo, is_online, last_seen = row
+        uid, username, full_name, role, email, photo, is_online, last_seen, is_dnd = row
         
         # Logic to add cache buster - use timestamp logic if needed, but without updated_at column
         # We can use current time or just assume photo URL changes if updated completely.
@@ -288,6 +297,7 @@ async def get_chat_users(
             'email': email,
             'photo': final_photo,
             'is_online': is_online if is_online is not None else False,
+            'is_dnd': is_dnd if is_dnd is not None else False,
             'last_seen': last_seen.isoformat() if last_seen else None
         })
 
@@ -852,3 +862,61 @@ async def get_chat_recordings(
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:
         conn.close()
+
+@router.post("/status/dnd")
+async def update_status_dnd(dnd: bool, session_token: Optional[str] = Cookie(None)):
+    """Обновить режим "Не беспокоить" """
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        INSERT INTO user_status (user_id, is_dnd, updated_at)
+        VALUES (%s, %s, CURRENT_TIMESTAMP)
+        ON CONFLICT (user_id) DO UPDATE 
+        SET is_dnd = EXCLUDED.is_dnd, updated_at = CURRENT_TIMESTAMP
+    """, (user['id'], dnd))
+    conn.commit()
+    conn.close()
+    return {"status": "success", "is_dnd": dnd}
+
+@router.get("/call-logs")
+async def get_call_logs(limit: int = 50, session_token: Optional[str] = Cookie(None)):
+    """Получить историю звонков пользователя"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    c.execute("""
+        SELECT cl.id, cl.caller_id, cl.callee_id, cl.type, cl.status, 
+               cl.duration, cl.created_at, 
+               u1.full_name as caller_name, u2.full_name as callee_name
+        FROM user_call_logs cl
+        JOIN users u1 ON cl.caller_id = u1.id
+        JOIN users u2 ON cl.callee_id = u2.id
+        WHERE cl.caller_id = %s OR cl.callee_id = %s
+        ORDER BY cl.created_at DESC
+        LIMIT %s
+    """, (user['id'], user['id'], limit))
+    
+    logs = []
+    for row in c.fetchall():
+        logs.append({
+            "id": row[0],
+            "caller_id": row[1],
+            "callee_id": row[2],
+            "type": row[3],
+            "status": row[4],
+            "duration": row[5],
+            "created_at": row[6].isoformat(),
+            "caller_name": row[7],
+            "callee_name": row[8],
+            "direction": "out" if row[1] == user['id'] else "in"
+        })
+    
+    conn.close()
+    return logs
+
