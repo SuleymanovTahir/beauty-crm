@@ -52,10 +52,11 @@ def load_translations(lang: str) -> Dict[str, Any]:
     _translations_cache[lang] = combined
     return combined
 
-def t(lang: str, key: str, default: str = None) -> str:
+def t(lang: str, key: str, default: str = None, **kwargs) -> str:
     """
     Получить перевод по ключу.
     Поддерживает вложенные ключи через точку, например: 'common.actions.save'
+    Поддерживает подстановку переменных через kwargs, например: t('en', 'greeting', name='John')
     """
     if not lang:
         lang = 'en'
@@ -72,12 +73,19 @@ def t(lang: str, key: str, default: str = None) -> str:
         else:
             # Если ключ не найден, пробуем найти в 'en'
             if lang != 'en':
-                ru_val = t('en', key, None)
-                if ru_val:
-                    return ru_val
+                val = t('en', key, None, **kwargs)
+                if val:
+                    return val
             return default if default is not None else key
             
-    return str(current)
+    val = str(current)
+    
+    # Подстановка переменных {{var}}
+    if kwargs:
+        for k, v in kwargs.items():
+            val = val.replace(f"{{{{{k}}}}}", str(v))
+            
+    return val
 
 def register_fonts():
     """Регистрация шрифтов с поддержкой кириллицы и других символов"""

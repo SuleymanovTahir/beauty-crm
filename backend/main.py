@@ -170,7 +170,6 @@ async def lifespan(app: FastAPI):
         start_booking_reminder_checker()
         start_task_checker()
         start_user_status_checker()
-        start_weekly_report_checker()
         
         cron = AsyncIOScheduler(job_defaults={'misfire_grace_time': 3600})
         
@@ -192,8 +191,8 @@ async def lifespan(app: FastAPI):
         cron.add_job(cleanup_expired_sessions, 'interval', hours=6, id='sessions')
         
         # Регистрация еженедельного отчета (PN 09:00)
-        from scheduler.weekly_report_checker import generate_and_send_weekly_report
-        cron.add_job(generate_and_send_weekly_report, 'cron', day_of_week='mon', hour=9, minute=0, id='weekly_analytics_report')
+        from scheduler.weekly_report_checker import start_weekly_report_checker
+        start_weekly_report_checker(cron)
         
         cron.start()
         log_info("✅ Планировщики (Mission-control) активны", "boot")
@@ -314,7 +313,7 @@ if is_module_enabled('public'):
     from api.public import router as public_api
     app.include_router(public_api, prefix="/api/public", tags=["public"])
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health_check():
     """Проверка состояния сервера"""
     try:

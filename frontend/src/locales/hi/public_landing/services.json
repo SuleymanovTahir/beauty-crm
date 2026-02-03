@@ -34,7 +34,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "बिकिनी लाइन",
+      "name": "बिकनी लाइन",
       "price": 100.0
     },
     "blowdry_long": {
@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "पॉलिश बदलना (पेडी)",
+      "name": "पोलिश (पेडी) बदलना",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -634,7 +634,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "स्मार्ट पेडीक्योर + पॉलिश",
+      "name": "स्मार्ट पेडीक्योर + वार्निश",
       "price": 150.0
     },
     "peeling": {

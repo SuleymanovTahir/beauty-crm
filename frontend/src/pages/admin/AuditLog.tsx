@@ -216,8 +216,8 @@ const AuditLog: React.FC = () => {
             {summary && (
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
                     {[
-                        { label: t('stat_total'), value: summary.total_24h, icon: Activity, color: 'text-blue-400' },
-                        { label: t('stat_errors'), value: summary.failures_24h, icon: AlertCircle, color: 'text-red-400' },
+                        { label: t('stat_total', { count: 24 }), value: summary.total_24h, icon: Activity, color: 'text-blue-400' },
+                        { label: t('stat_errors', { count: 24 }), value: summary.failures_24h, icon: AlertCircle, color: 'text-red-400' },
                         { label: t('stat_active_users'), value: summary.active_users_24h, icon: User, color: 'text-blue-400' },
                         { label: t('stat_created'), value: summary.actions_breakdown?.create || 0, icon: Plus, color: 'text-green-400' },
                     ].map((stat, i) => (
