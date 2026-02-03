@@ -57,30 +57,45 @@ def run_fix():
         if c.rowcount > 0:
             log_info(f"   ✅ Cleared {c.rowcount} missing employee photos", "maintenance")
 
-        # 4. Sync Banners (Only if empty)
-        c.execute("SELECT COUNT(*) FROM public_banners")
-        if c.fetchone()[0] == 0:
+        # 4. Sync Banners - Ensure all banners have images
+        c.execute("SELECT id, image_url FROM public_banners")
+        existing_banners = c.fetchall()
+        if not existing_banners:
             log_info("🚩 Seeding initial banners...", "maintenance")
             c.execute("""
-                INSERT INTO public_banners (image_url, title, subtitle, is_active, display_order, bg_pos_desktop_x, bg_pos_desktop_y, bg_pos_mobile_x, bg_pos_mobile_y)
-                VALUES ('/landing-images/banners/banner2.webp', 'Салон красоты в Дубае', 'Искусство преображения', TRUE, 1, 50, 50, 50, 50)
+                INSERT INTO public_banners (image_url, title, subtitle, is_active, display_order)
+                VALUES ('/landing-images/banners/banner1.webp', 'Салон красоты в Дубае', 'Искусство преображения', TRUE, 1)
             """)
             log_info("   ✅ Re-populated banners", "maintenance")
         else:
-            log_info("🚩 Banners already exist, skipping seed", "maintenance")
+            # Fix any banners with missing/empty image_url
+            for b_id, img_url in existing_banners:
+                if not img_url or img_url.strip() == "":
+                    # Better assignment based on found files
+                    if b_id == 1:
+                        new_img = "/landing-images/faces/banner.webp"
+                    elif b_id == 2:
+                        new_img = "/landing-images/banners/banner2.webp"
+                    elif b_id == 3:
+                        new_img = "/landing-images/banners/banner1.webp"
+                    else:
+                        new_img = "/landing-images/banners/banner1.webp"
+                    
+                    c.execute("UPDATE public_banners SET image_url = %s WHERE id = %s", (new_img, b_id))
+            log_info("🚩 Verified banner images", "maintenance")
 
         # 5. Sync Employee Photos
         log_info("👨‍💼 Updating employee photos...", "maintenance")
         employee_photos = {
-            'Amandurdyyeva Mestan': '/landing-images/staff/Местан.webp',
-            'Mohamed Sabri': '/landing-images/staff/Симо.webp',
-            'Peradilla Jennifer': '/landing-images/staff/Дженнифер.webp',
-            'Kasymova Gulcehre': '/landing-images/staff/Гуля.webp',
-            'Kozhabay Lyazat': '/landing-images/staff/Ляззат.webp'
+            'Amandurdyyeva Mestan': '/landing-images/staff/Mestan.webp',
+            'Mohamed Sabri': '/landing-images/staff/Simo.webp',
+            'Peradilla Jennifer': '/landing-images/staff/Jennifer.webp',
+            'Kasymova Gulcehre': '/landing-images/staff/Gulya.webp',
+            'Kozhabay Lyazat': '/landing-images/staff/Lyazzat.webp'
         }
         for name, photo_path in employee_photos.items():
-            c.execute("UPDATE users SET photo = %s WHERE full_name = %s", (photo_path, name))
-        log_info("   ✅ Updated employee photos", "maintenance")
+            c.execute("UPDATE users SET photo = %s, is_active = TRUE, is_service_provider = TRUE, is_public_visible = TRUE WHERE full_name = %s", (photo_path, name))
+        log_info("   ✅ Updated employee photos and status", "maintenance")
 
         # 6. Clear and Re-populate Gallery (Only if empty)
         c.execute("SELECT COUNT(*) FROM public_gallery")
@@ -102,8 +117,8 @@ def run_fix():
 
             # Portfolio photos
             portfolio_photos = [
-                ('Волосы.webp', 'Стильная укладка'), ('Маникюр.webp', 'Классический маникюр'),
-                ('Перманент губ.webp', 'Перманентный макияж губ'), ('Волосы2.webp', 'Стрижка и окрашивание')
+                ('Hair.webp', 'Стильная укладка'), ('Manicure.webp', 'Классический маникюр'),
+                ('Permanent_lips.webp', 'Перманентный макияж губ'), ('Hair2.webp', 'Стрижка и окрашивание')
             ]
             for img, title in portfolio_photos:
                 c.execute("""
@@ -113,9 +128,9 @@ def run_fix():
 
             # Services photos
             services_photos = [
-                ('Маникюр 4.webp', 'Маникюр'), ('Массаж лица.webp', 'Массаж лица'),
-                ('Перманент ресниц.webp', 'Перманент ресниц'), ('Спа.webp', 'SPA'),
-                ('Стрижка .webp', 'Стрижка')
+                ('Manicure_4.webp', 'Маникюр'), ('Face_massage.webp', 'Массаж лица'),
+                ('Permanent_lashes.webp', 'Перманент ресниц'), ('Spa.webp', 'SPA'),
+                ('Haircut.webp', 'Стрижка')
             ]
             for img, title in services_photos:
                 c.execute("""
@@ -132,17 +147,23 @@ def run_fix():
         # Map of (Target Username, Alternate Username) or just identifying duplicates by normalized name
         # We want to transfer data from old/incomplete records to newer/complete ones or vice-versa
         # Based on analysis: 67x records have services, 1-5 records have bios.
-        merges = [
-            (671, 1), # Kasimova Gulchekhre / Касимова Гульчехре
-            (672, 2), # Peradilla Jennifer / Перадилья Дженнифер
-            (673, 3), # Amandurdyyeva Mestan / Амандурдыева Местан
-            (674, 4), # Mohamed Sabri / Мохамед Сабри
-            (675, 5)  # Kozhabay Lyazat / Кожабай Лязат
-        ]
+        # Merges are only needed for fixing duplicate records in an existing database.
+        # For a fresh database from seed, we skip this to avoid deactivating primary users.
+        merges = []
+        # [
+        #    (119, 1), # Kasymova Gulcehre
+        #    (120, 2), # Peradilla Jennifer
+        #    (121, 3), # Amandurdyyeva Mestan
+        #    (122, 4), # Mohamed Sabri
+        #    (123, 5)  # Kozhabay Lyazat
+        # ]
         
         # Update target names to preferred spelling (English version that transliterates well)
-        c.execute("UPDATE users SET full_name = 'Kasimova Gulchekhre' WHERE id = 671")
+        c.execute("UPDATE users SET full_name = 'Kasymova Gulcehre' WHERE id = 119")
         for target_id, source_id in merges:
+            if target_id == source_id:
+                continue
+            
             # 1. Transfer bio/specialization if missing in target
             c.execute("""
                 UPDATE users t
@@ -172,7 +193,7 @@ def run_fix():
                 WHERE id = %s
             """, (source_id,))
 
-        log_info(f"   ✅ Merged {len(merges)} duplicate employee records", "maintenance")
+        log_info(f"   ✅ Processed {len(merges)} potential merges", "maintenance")
         # 9. Ensure only providers are public
         c.execute("""
             UPDATE users SET is_public_visible = FALSE
@@ -204,13 +225,13 @@ def run_fix():
         import os
         from utils.utils import hash_password
 
-        # Structure: (target_id, preferred_username, preferred_full_name, source_id)
+        # Structure: (preferred_username, preferred_full_name)
         staff_fixes = [
-            (671, 'gulcehre', 'Kasymova Gulcehre', 1),
-            (672, 'jennifer', 'Peradilla Jennifer', 2),
-            (673, 'mestan', 'Amandurdyyeva Mestan', 3),
-            (674, 'sabri', 'Mohamed Sabri', 4),
-            (675, 'lyazat', 'Kozhabay Lyazat', 5)
+            ('gulcehre', 'Kasymova Gulcehre'),
+            ('jennifer', 'Peradilla Jennifer'),
+            ('mestan', 'Amandurdyyeva Mestan'),
+            ('sabri', 'Mohamed Sabri'),
+            ('lyazat', 'Kozhabay Lyazat')
         ]
         
         # Load credentials from file
@@ -231,37 +252,35 @@ def run_fix():
             except Exception as e:
                 log_error(f"   ❌ Failed to read credentials: {e}", "maintenance")
 
-        for target_id, preferred_username, preferred_full_name, source_id in staff_fixes:
-            # 1. Rename OLD user if it still has the preferred username
-            c.execute("UPDATE users SET username = %s || '_archived', is_active = FALSE WHERE id = %s AND username = %s", 
-                      (preferred_username, source_id, preferred_username))
-            
-            # 2. Update ACTIVE user with preferred username and name
-            c.execute("SELECT id, username, full_name, password_hash FROM users WHERE id = %s", (target_id,))
+        for preferred_username, preferred_full_name in staff_fixes:
+            # Update user by full_name
+            c.execute("SELECT id, username, password_hash FROM users WHERE full_name = %s", (preferred_full_name,))
             user_data = c.fetchone()
             
             if user_data:
-                # Update username and name if needed
-                c.execute("UPDATE users SET username = %s, full_name = %s, is_active = TRUE WHERE id = %s", 
-                          (preferred_username, preferred_full_name, target_id))
+                target_id = user_data[0]
+                current_username = user_data[1]
+                current_hash_in_db = user_data[2]
                 
-                # 3. Apply password from staff_credentials.txt only IF DIFFERENT
+                # Update username if different
+                if current_username != preferred_username:
+                    c.execute("UPDATE users SET username = %s, is_active = TRUE WHERE id = %s", 
+                              (preferred_username, target_id))
+                    log_info(f"   ✅ Updated username to {preferred_username} for {preferred_full_name}", "maintenance")
+                
+                # Apply password from staff_credentials.txt only IF DIFFERENT
                 if preferred_username in passwords:
                     current_pwd_in_file = passwords[preferred_username]
-                    current_hash_in_db = user_data[3]
-                    
                     from utils.utils import verify_password
                     
-                    # Only hash and update if the current stored hash DOES NOT match the file password
                     if not current_hash_in_db or not verify_password(current_pwd_in_file, current_hash_in_db):
                         new_hash = hash_password(current_pwd_in_file)
                         c.execute("UPDATE users SET password_hash = %s WHERE id = %s", (new_hash, target_id))
                         log_info(f"   ✅ Password SYNCED for {preferred_username} (ID: {target_id})", "maintenance")
                     else:
-                        # Password already matches, skipping hashing to save time and prevent reload triggers
                         log_info(f"   ✅ Password OK for {preferred_username} (ID: {target_id})", "maintenance")
-                else:
-                    log_info(f"   ✅ Fixed {preferred_username} (ID: {target_id}) - Username fixed", "maintenance")
+            else:
+                log_error(f"   ❌ User with name {preferred_full_name} not found!", "maintenance")
 
         # Sync admin password if in file and DIFFERENT
         if 'admin' in passwords:

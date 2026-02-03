@@ -82,8 +82,6 @@ def sanitize_url(url: str) -> Optional[str]:
         else:
             url = re.sub(local_pattern, '', url)
 
-    # НЕ кодируем URL - FastAPI StaticFiles работает с исходными именами файлов
-    # Кириллица в путях допустима и работает корректно
     return url
 
 def map_image_path(url: str) -> str:
@@ -131,7 +129,24 @@ def map_image_path(url: str) -> str:
 
     for old, new in cyrillic_mapping.items():
         if url.startswith(old):
-            return url.replace(old, new, 1)
+            url = url.replace(old, new, 1)
+
+    # Защита от кириллических ИМЕН файлов (если папка уже латинская)
+    file_mappings = {
+        '/landing-images/portfolio/СПА3.webp': '/landing-images/portfolio/SPA3.webp',
+        '/landing-images/portfolio/Спа2.webp': '/landing-images/portfolio/Spa2.webp',
+        '/landing-images/portfolio/Перманент губ.webp': '/landing-images/portfolio/Permanent_lips.webp',
+        '/landing-images/portfolio/Волосы блондинка.webp': '/landing-images/portfolio/Hair_blonde.webp',
+        '/landing-images/portfolio/Маникюр.webp': '/landing-images/portfolio/Manicure.webp',
+        '/landing-images/portfolio/Маникюр3.webp': '/landing-images/portfolio/Manikjur3.webp',
+        '/landing-images/portfolio/Ногти2.webp': '/landing-images/portfolio/Nogti2.webp',
+        '/landing-images/portfolio/Волосы2.webp': '/landing-images/portfolio/Hair2.webp',
+        '/landing-images/portfolio/Ногти до после.webp': '/landing-images/portfolio/Nogti_do_posle.webp',
+        '/landing-images/portfolio/Кератин блондинка.webp': '/landing-images/portfolio/Keratin_blonde.webp',
+    }
+
+    if url in file_mappings:
+        return file_mappings[url]
 
     return url
 
@@ -172,6 +187,11 @@ def require_auth(session_token: Optional[str] = Cookie(None)):
     from utils.logger import log_info
     
     if not session_token:
+        # Debug logging for mobile auth issues
+        # only log intermittently or if this is a critical path
+        # from fastapi import Request
+        # we don't have request object here easily without changing signature
+        # log_info("⚠️ [require_auth] No session_token provided in cookie", "auth")
         return None
     
     auth_start = time.time()
@@ -180,6 +200,9 @@ def require_auth(session_token: Optional[str] = Cookie(None)):
     
     if auth_duration > 500:
         log_info(f"⚠️ [require_auth] Slow auth check: {auth_duration:.2f}ms", "auth")
+    
+    if not user:
+        log_info(f"⚠️ [require_auth] Invalid or expired session token: {session_token[:10]}...", "auth")
     
     return user if user else None
 

@@ -195,6 +195,49 @@ def init_database():
 
         # --- 2. BASE ENTITIES ---
 
+        # Users and Staff
+        c.execute('''CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            full_name TEXT,
+            email TEXT, phone TEXT, role TEXT DEFAULT 'employee',
+            secondary_role TEXT,
+            position TEXT,
+            position_id INTEGER,
+            employee_id TEXT,
+            photo TEXT, photo_url TEXT,
+            birthday TEXT,
+            gender TEXT DEFAULT 'female',
+            bio TEXT, experience TEXT, years_of_experience INTEGER,
+            specialization TEXT,
+            base_salary REAL DEFAULT 0, commission_rate REAL DEFAULT 0,
+            telegram_id TEXT, telegram_chat_id TEXT, telegram_username TEXT, instagram_username TEXT,
+            is_active BOOLEAN DEFAULT TRUE,
+            is_service_provider BOOLEAN DEFAULT FALSE,
+            is_public_visible BOOLEAN DEFAULT TRUE,
+            email_verified BOOLEAN DEFAULT FALSE,
+            verification_code TEXT,
+            verification_code_expires TIMESTAMP,
+            sort_order INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP, deleted_at TIMESTAMP NULL
+        )''')
+        
+        # Migrations for users
+        add_column_if_not_exists('users', 'birthday', 'TEXT')
+        add_column_if_not_exists('users', 'gender', "TEXT DEFAULT 'female'")
+        add_column_if_not_exists('users', 'secondary_role', 'TEXT')
+        add_column_if_not_exists('users', 'position_id', 'INTEGER')
+        add_column_if_not_exists('users', 'employee_id', 'TEXT')
+        add_column_if_not_exists('users', 'email_verified', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('users', 'verification_code', 'TEXT')
+        add_column_if_not_exists('users', 'verification_code_expires', 'TIMESTAMP')
+        add_column_if_not_exists('users', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        add_column_if_not_exists('users', 'phone', 'TEXT')
+        add_column_if_not_exists('users', 'telegram_username', 'TEXT')
+
         # Soft Delete Tracking (Trash) - REQUIRED by housekeeping
         c.execute('''CREATE TABLE IF NOT EXISTS deleted_items (
             id SERIAL PRIMARY KEY,
@@ -247,48 +290,6 @@ def init_database():
         add_column_if_not_exists('salon_settings', 'loyalty_points_conversion_rate', 'REAL DEFAULT 0.1')
         add_column_if_not_exists('salon_settings', 'points_expiration_days', 'INTEGER DEFAULT 365')
 
-        # Users and Staff
-        c.execute('''CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            username TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            full_name TEXT,
-            email TEXT, phone TEXT, role TEXT DEFAULT 'employee',
-            secondary_role TEXT,
-            position TEXT,
-            position_id INTEGER,
-            employee_id TEXT,
-            photo TEXT, photo_url TEXT,
-            birthday TEXT,
-            gender TEXT DEFAULT 'female',
-            bio TEXT, experience TEXT, years_of_experience INTEGER,
-            specialization TEXT,
-            base_salary REAL DEFAULT 0, commission_rate REAL DEFAULT 0,
-            telegram_id TEXT, telegram_chat_id TEXT, telegram_username TEXT, instagram_username TEXT,
-            is_active BOOLEAN DEFAULT TRUE,
-            is_service_provider BOOLEAN DEFAULT FALSE,
-            is_public_visible BOOLEAN DEFAULT TRUE,
-            email_verified BOOLEAN DEFAULT FALSE,
-            verification_code TEXT,
-            verification_code_expires TIMESTAMP,
-            sort_order INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            last_login TIMESTAMP, deleted_at TIMESTAMP NULL
-        )''')
-        
-        # Migrations for existing DBs
-        add_column_if_not_exists('users', 'birthday', 'TEXT')
-        add_column_if_not_exists('users', 'gender', "TEXT DEFAULT 'female'")
-        add_column_if_not_exists('users', 'secondary_role', 'TEXT')
-        add_column_if_not_exists('users', 'position_id', 'INTEGER')
-        add_column_if_not_exists('users', 'employee_id', 'TEXT')
-        add_column_if_not_exists('users', 'email_verified', 'BOOLEAN DEFAULT FALSE')
-        add_column_if_not_exists('users', 'verification_code', 'TEXT')
-        add_column_if_not_exists('users', 'verification_code_expires', 'TIMESTAMP')
-        add_column_if_not_exists('users', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
-        add_column_if_not_exists('users', 'phone', 'TEXT')
-        add_column_if_not_exists('users', 'telegram_username', 'TEXT')
 
         # Registration Audit Log
         c.execute('''CREATE TABLE IF NOT EXISTS registration_audit (

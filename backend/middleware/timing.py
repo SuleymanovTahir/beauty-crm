@@ -1,50 +1,41 @@
-"""
-Timing Middleware для мониторинга производительности API
-Логирует время выполнения каждого запроса
-"""
 import time
-from fastapi import Request
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import Response
 from utils.logger import log_info, log_warning, log_error
 
-class TimingMiddleware(BaseHTTPMiddleware):
+class TimingMiddleware:
     """
-    Middleware для логирования времени выполнения запросов
+    Native ASGI Middleware для логирования времени выполнения запросов.
+    Избегает накладных расходов BaseHTTPMiddleware.
     """
+    def __init__(self, app):
+        self.app = app
 
-    async def dispatch(self, request: Request, call_next) -> Response:
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
         start_time = time.time()
-        path = request.url.path
-        method = request.method
+        path = scope.get("path", "")
+        method = scope.get("method", "")
         
-        try:
-            response = await call_next(request)
-        except Exception as e:
-            process_time = (time.time() - start_time) * 1000
-            # Safe logging with fallback
-            try:
-                log_error(f"❌ REQUEST FAILED in {process_time:.2f}ms: {method} {path} - {e}", "performance")
-            except Exception:
-                print(f"❌ REQUEST FAILED in {process_time:.2f}ms: {method} {path} - {e}")
-            raise
-            
-        process_time = (time.time() - start_time) * 1000
+        status_code = [None] # Use list to be mutable in closure
 
-        # Safe logging with try-except to prevent middleware crashes
+        async def send_wrapper(message):
+            if message["type"] == "http.response.start":
+                status_code[0] = message["status"]
+            await send(message)
+
         try:
-            if process_time > 1000:
-                status_code = getattr(response, "status_code", "Unknown")
-                log_warning(
-                    f"⚠️ SLOW REQUEST ({process_time:.2f}ms): {method} {path} ({status_code})",
-                    "performance"
-                )
-            elif process_time > 500:
-                log_info(f"⏱️ {method} {path} - {process_time:.2f}ms", "performance")
-        except Exception as log_err:
-            # Fallback to print if logger fails
-            print(f"⚠️ Logging error in timing middleware: {log_err}")
-        
-        # Добавляем заголовок с временем выполнения
-        response.headers["X-Process-Time"] = f"{process_time:.2f}ms"
-        return response
+            await self.app(scope, receive, send_wrapper)
+        except Exception as e:
+            duration = (time.time() - start_time) * 1000
+            log_error(f"❌ REQ FAILED ({duration:.2f}ms): {method} {path} - {e}", "performance")
+            raise
+        finally:
+            duration = (time.time() - start_time) * 1000
+            
+            # Логируем только медленные запросы или информационные
+            if duration > 1000:
+                log_warning(f"⚠️  SLOW REQ ({duration:.2f}ms): {method} {path} ({status_code[0]})", "performance")
+            elif duration > 500:
+                log_info(f"⏱️  {method} {path} - {duration:.2f}ms ({status_code[0]})", "performance")

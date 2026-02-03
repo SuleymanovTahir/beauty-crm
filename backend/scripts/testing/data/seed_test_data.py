@@ -145,11 +145,11 @@ def seed_data():
     # 1. Masters & Users (Ensure they exist)
     required_users = [
         {'username': 'admin', 'full_name': 'Admin', 'role': 'director', 'is_service_provider': False, 'position': 'Owner'},
-        {'username': 'sabri', 'full_name': 'Mohamed Sabri', 'role': 'admin', 'is_service_provider': True, 'position': 'Senior Stylist'},
-        {'username': 'mestan', 'full_name': 'Amandurdyyeva Mestan', 'role': 'admin', 'is_service_provider': True, 'position': 'Senior Stylist'},
-        {'username': 'jennifer', 'full_name': 'Peradilla Jennifer', 'role': 'admin', 'is_service_provider': True, 'position': 'Nail Master'},
-        {'username': 'gulcehre', 'full_name': 'Kasymova Gulcehre', 'role': 'admin', 'is_service_provider': True, 'position': 'Stylist'},
-        {'username': 'lyazat', 'full_name': 'Kozhabay Lyazat', 'role': 'admin', 'is_service_provider': True, 'position': 'Stylist'},
+        {'username': 'sabri', 'full_name': 'Mohamed Sabri', 'role': 'employee', 'is_service_provider': True, 'position': 'Senior Stylist'},
+        {'username': 'mestan', 'full_name': 'Amandurdyyeva Mestan', 'role': 'employee', 'is_service_provider': True, 'position': 'Senior Stylist'},
+        {'username': 'jennifer', 'full_name': 'Peradilla Jennifer', 'role': 'employee', 'is_service_provider': True, 'position': 'Nail Master'},
+        {'username': 'gulcehre', 'full_name': 'Kasymova Gulcehre', 'role': 'employee', 'is_service_provider': True, 'position': 'Stylist'},
+        {'username': 'lyazat', 'full_name': 'Kozhabay Lyazat', 'role': 'employee', 'is_service_provider': True, 'position': 'Stylist'},
         {'username': 'tursunay', 'full_name': 'Турсунай', 'role': 'director', 'is_service_provider': False, 'position': 'Owner'}
     ]
 

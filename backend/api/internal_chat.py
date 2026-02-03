@@ -243,6 +243,9 @@ async def get_chat_users(
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить список пользователей для чата"""
+    # Debug log
+    log_info(f"[InternalChat] Requesting users. Token present: {bool(session_token)}", "DEBUG_MOBILE")
+    
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Требуется авторизация"}, status_code=401)

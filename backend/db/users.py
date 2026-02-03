@@ -404,3 +404,23 @@ def update_user_info(user_id: int, data: dict) -> bool:
         return False
     finally:
         conn.close()
+
+def cleanup_expired_sessions():
+    """Удалить просроченные сессии из базы данных"""
+    conn = None
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        from datetime import datetime
+        now = datetime.now().isoformat()
+        c.execute("DELETE FROM sessions WHERE expires_at < %s", (now,))
+        affected = c.rowcount
+        conn.commit()
+        if affected > 0:
+            from utils.logger import log_info
+            log_info(f"🧹 Cleaned up {affected} expired sessions", "auth")
+    except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error cleaning up sessions: {e}", "auth")
+    finally:
+        if conn: conn.close()
