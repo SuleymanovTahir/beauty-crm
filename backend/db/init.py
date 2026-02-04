@@ -159,6 +159,12 @@ def init_database():
         add_column_if_not_exists('unified_communication_log', 'action_url', 'TEXT')
         add_column_if_not_exists('unified_communication_log', 'error_message', 'TEXT')
 
+        # Add indexes for speed (Unread count queries)
+        c.execute("CREATE INDEX IF NOT EXISTS idx_unified_log_user_unread ON unified_communication_log (user_id, is_read, medium)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_unified_log_client_id ON unified_communication_log (client_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_unified_log_booking_id ON unified_communication_log (booking_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_unified_log_user_id ON unified_communication_log (user_id)")
+
         # Broadcast History (Batches)
         c.execute('''CREATE TABLE IF NOT EXISTS broadcast_history (
             id SERIAL PRIMARY KEY,
@@ -260,8 +266,12 @@ def init_database():
             name TEXT NOT NULL,
             url TEXT NOT NULL,
             is_system BOOLEAN DEFAULT FALSE,
+            start_time FLOAT DEFAULT 0.0,
+            end_time FLOAT DEFAULT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('ringtones', 'start_time', 'FLOAT DEFAULT 0.0')
+        add_column_if_not_exists('ringtones', 'end_time', 'FLOAT DEFAULT NULL')
         
         # Seed default ringtones if empty
         c.execute("SELECT COUNT(*) FROM ringtones")

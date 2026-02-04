@@ -25,6 +25,7 @@ def create_sessions_table():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             expires_at TIMESTAMP NOT NULL
         )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_sessions_token_expires ON sessions (session_token, expires_at)")
         conn.commit()
         log_info("✅ Sessions table created/verified", "migrations")
     except Exception as e:

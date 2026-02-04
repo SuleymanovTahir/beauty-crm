@@ -16,7 +16,7 @@ async def get_ringtones():
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("SELECT id, name, url, is_system FROM ringtones ORDER BY is_system DESC, created_at DESC")
+        c.execute("SELECT id, name, url, is_system, start_time, end_time FROM ringtones ORDER BY is_system DESC, created_at DESC")
         rows = c.fetchall()
         ringtones = []
         for row in rows:
@@ -24,10 +24,32 @@ async def get_ringtones():
                 "id": row[0],
                 "name": row[1],
                 "url": row[2],
-                "is_system": row[3]
+                "is_system": row[3],
+                "start_time": row[4],
+                "end_time": row[5]
             })
         return ringtones
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.post("/ringtones/{ringtone_id}/trim")
+async def update_ringtone_trim(ringtone_id: int, data: dict):
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        start_time = data.get("start_time", 0.0)
+        end_time = data.get("end_time")
+        
+        c.execute(
+            "UPDATE ringtones SET start_time = %s, end_time = %s WHERE id = %s",
+            (start_time, end_time, ringtone_id)
+        )
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        conn.rollback()
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()

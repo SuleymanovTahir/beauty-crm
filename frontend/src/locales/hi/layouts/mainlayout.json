@@ -3,9 +3,12 @@
   "admin_panel": "एडमिन पैनल",
   "all_notifications_cleared": "सभी सूचनाएं हटा दी गईं",
   "calls": {
+    "accept": "स्वीकार करें",
     "audio_call": "",
     "click_to_answer": "उत्तर देने के लिए क्लिक करें",
     "incoming_call": "इनकमिंग कॉल!",
+    "missed_auto": "मिस्ड कॉल (ऑटो-रिजेक्ट)",
+    "missed_call": "मिस्ड कॉल",
     "video_call": ""
   },
   "clear_all": "साफ़ करें सभी",

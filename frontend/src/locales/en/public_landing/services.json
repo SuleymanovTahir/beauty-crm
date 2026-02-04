@@ -34,7 +34,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Bikini line",
+      "name": "bikini line",
       "price": 100.0
     },
     "blowdry_long": {
@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Change of polish (pedi)",
+      "name": "Changing polish (Pedi)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -644,7 +644,7 @@
       "duration": "60",
       "max_price": 400.0,
       "min_price": 300.0,
-      "name": "peeling",
+      "name": "Peeling",
       "price": 350.0
     },
     "permanent_brows": {
