@@ -2241,6 +2241,33 @@ export class ApiClient {
   async updateStatusOffline() {
     return this.request<any>('/api/internal-chat/status/offline', { method: 'POST' })
   }
+
+  // ===== RINGTONES (NEW) =====
+  async getRingtones() {
+    return this.request<any[]>('/api/ringtones')
+  }
+
+  async uploadRingtone(file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch(`${this.baseURL}/api/ringtones`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include',
+    })
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: response.statusText }))
+      throw new Error(error.error || error.detail || 'Upload failed')
+    }
+
+    return response.json()
+  }
+
+  async deleteRingtone(id: number) {
+    return this.request<any>(`/api/ringtones/${id}`, { method: 'DELETE' })
+  }
 }
 
 export const api = new ApiClient()

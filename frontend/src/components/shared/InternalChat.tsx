@@ -118,6 +118,50 @@ export default function InternalChat() {
     recordingTime: 0,
   });
 
+  const [ringtones, setRingtones] = useState<any[]>([]);
+
+  const fetchRingtones = useCallback(async () => {
+    try {
+      const data = await api.getRingtones();
+      const apiBaseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+
+      const processed = data.map(r => {
+        let fullUrl = r.url;
+        // Default ringtones reside in frontend/public/audio, so keep them relative
+        if (r.url.startsWith('/audio/')) {
+          fullUrl = r.url;
+        }
+        // Custom uploads reside in backend/static, so prepend API URL
+        else if (r.url.startsWith('/static/')) {
+          fullUrl = `${apiBaseUrl}${r.url}`;
+        }
+        // Fallback or absolute URLs
+        else if (!r.url.startsWith('http')) {
+          fullUrl = `${apiBaseUrl}${r.url}`;
+        }
+
+        return { ...r, full_url: fullUrl };
+      }).sort((a, b) => {
+        // Custom (is_system: false) first, then System (is_system: true)
+        if (a.is_system === b.is_system) {
+          return a.name.localeCompare(b.name);
+        }
+        return a.is_system ? 1 : -1;
+      });
+
+      console.log('🎵 Loaded ringtones:', processed);
+      setRingtones(processed);
+    } catch (e) {
+      console.error('Failed to fetch ringtones', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (showSettings) {
+      fetchRingtones();
+    }
+  }, [showSettings, fetchRingtones]);
+
   // Video/Audio call state removed - handled by MainLayout
   const [isInCall, setIsInCall] = useState(false);
   const [callType, setCallType] = useState<CallType | null>(null);
@@ -1835,7 +1879,11 @@ export default function InternalChat() {
                   {t('settings.audio_settings', 'Настройки звука')}
                 </h3>
                 <button
-                  onClick={() => setShowSettings(false)}
+                  onClick={() => {
+                    setShowSettings(false);
+                    webrtcService.stopRingtone();
+                    setPlayingPreviewUrl(null);
+                  }}
                   className="p-2 hover:bg-muted rounded-full transition-all"
                 >
                   <X className="w-5 h-5" />
@@ -1865,66 +1913,80 @@ export default function InternalChat() {
                   <label className="block text-sm font-bold tracking-tight uppercase opacity-50">{t('settings.ringtone', 'Мелодия звонка')}</label>
 
                   {/* Preset Choices with Scrollbar */}
-                  <div className="max-h-72 overflow-y-scroll pr-2 custom-scrollbar">
+                  <div className="max-h-72 overflow-y-scroll pr-2">
                     <div className="grid grid-cols-2 gap-3">
-                      {[
-                        { id: 'default', name: t('settings.ringtone_classic', 'Классика'), url: '/audio/ringtones/default_classic.mp3' },
-                        { id: 'apple', name: 'Apple iOS', url: '/audio/ringtones/apple_default.mp3' },
-                        { id: 'iphone_xylo', name: 'iPhone old', url: '/audio/ringtones/iphone_xylophone.mp3' },
-                        { id: 'marimba', name: 'Marimba', url: '/audio/ringtones/marimba.mp3' },
-                        { id: 'samsung', name: 'Samsung Galaxy', url: '/audio/ringtones/samsung_galaxy.mp3' },
-                        { id: 'huawei', name: 'Huawei Tune', url: '/audio/ringtones/huawei.mp3' },
-                        { id: 'miui', name: 'MIUI 8', url: '/audio/ringtones/miui.mp3' },
-                        { id: 'nokia', name: 'Nokia Guitar', url: '/audio/ringtones/nokia_guitar.mp3' },
-                        { id: 'motorola', name: 'Motorola', url: '/audio/ringtones/motorola_c350.mp3' },
-                        { id: 'sony', name: 'Sony Ericsson', url: '/audio/ringtones/sony_ericsson.mp3' },
-                        { id: 'lg_prada', name: 'LG Prada', url: '/audio/ringtones/lg_prada.mp3' },
-                        { id: 'lumia', name: 'Lumia Retro', url: '/audio/ringtones/lumia_retro.mp3' },
-                        { id: 'viber', name: 'Viber', url: '/audio/ringtones/viber.mp3' },
-                        { id: 'hangouts', name: 'Hangouts', url: '/audio/ringtones/hangouts.mp3' },
-                        { id: 'xperia', name: 'Xperia Breeze', url: '/audio/ringtones/xperia_breeze.mp3' },
-                        { id: 'standard_7', name: t('settings.ringtone_pulse', 'Пульс'), url: '/audio/ringtones/standard_7.mp3' }
-                      ].map(preset => (
-                        <div key={preset.id} className="relative group">
+                      {ringtones.map(preset => (
+                        <div key={preset.id} className="relative group overflow-hidden rounded-2xl">
                           <button
                             onClick={() => {
-                              webrtcService.setRingtone(preset.url);
-                              setCustomRingtone(preset.url || null);
-                              if (preset.url) {
-                                setPlayingPreviewUrl(preset.url);
-                                webrtcService.playPreview(preset.url, () => setPlayingPreviewUrl(null));
+                              webrtcService.setRingtone(preset.full_url);
+                              setCustomRingtone(preset.full_url);
+                              if (preset.full_url) {
+                                setPlayingPreviewUrl(preset.full_url);
+                                webrtcService.playPreview(preset.full_url, () => setPlayingPreviewUrl(null));
                               } else {
                                 webrtcService.stopRingtone();
                                 setPlayingPreviewUrl(null);
                               }
-                              toast.success(`${t('settings.updated', 'Обновлено')}: ${preset.name}`);
+                              // toast.success(`${t('settings.updated', 'Обновлено')}: ${preset.name}`);
                             }}
-                            className={`w-full p-4 text-xs font-bold rounded-2xl border text-center transition-all ${((!customRingtone && preset.id === 'default') || customRingtone === preset.url)
+                            className={`w-full p-4 text-xs font-bold border text-center transition-all h-14 flex items-center justify-center relative overflow-hidden ${((customRingtone === preset.full_url))
                               ? 'bg-primary/10 border-primary text-primary shadow-sm'
                               : 'bg-card border-border hover:bg-accent'}`}
                           >
-                            {preset.name}
+                            <div className={`w-full text-left pl-4 pr-20 ${playingPreviewUrl === preset.full_url && preset.name.length > 10 ? 'animate-marquee whitespace-nowrap' : 'truncate'}`}>
+                              {preset.name}
+                            </div>
                           </button>
-                          {preset.url && (
+
+                          {/* Play/Pause Button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (playingPreviewUrl === preset.full_url) {
+                                webrtcService.stopRingtone();
+                                setPlayingPreviewUrl(null);
+                              } else {
+                                console.log('▶️ Playing preview:', preset.full_url);
+                                setPlayingPreviewUrl(preset.full_url);
+                                webrtcService.playPreview(preset.full_url, () => setPlayingPreviewUrl(null));
+                              }
+                            }}
+                            className={`absolute top-1/2 -translate-y-1/2 right-2 p-1.5 rounded-full transition-all hover:scale-110 z-10 ${playingPreviewUrl === preset.full_url ? 'bg-primary text-white' : 'bg-primary/5 text-primary opacity-60 group-hover:opacity-100'}`}
+                            title={playingPreviewUrl === preset.full_url ? t('common:pause', 'Пауза') : t('common:play', 'Прослушать')}
+                          >
+                            {playingPreviewUrl === preset.full_url ? (
+                              <Pause className="w-3.5 h-3.5 fill-current" />
+                            ) : (
+                              <Play className="w-3.5 h-3.5 fill-current" />
+                            )}
+                          </button>
+
+                          {/* Delete Button (Only for non-system) */}
+                          {!preset.is_system && (
                             <button
-                              onClick={(e) => {
+                              onClick={async (e) => {
                                 e.stopPropagation();
-                                if (playingPreviewUrl === preset.url) {
+                                if (playingPreviewUrl === preset.full_url) {
                                   webrtcService.stopRingtone();
                                   setPlayingPreviewUrl(null);
-                                } else {
-                                  setPlayingPreviewUrl(preset.url);
-                                  webrtcService.playPreview(preset.url, () => setPlayingPreviewUrl(null));
+                                }
+                                try {
+                                  await api.deleteRingtone(preset.id);
+                                  if (customRingtone === preset.full_url) {
+                                    setCustomRingtone(null);
+                                    webrtcService.setRingtone('');
+                                  }
+                                  toast.success(t('settings.ringtone_deleted', 'Мелодия удалена'));
+                                  fetchRingtones();
+                                } catch (err) {
+                                  toast.error('Failed to delete');
                                 }
                               }}
-                              className={`absolute top-2 right-2 p-1.5 rounded-full transition-all hover:scale-110 ${playingPreviewUrl === preset.url ? 'bg-primary text-white' : 'bg-primary/5 text-primary opacity-60 group-hover:opacity-100'}`}
-                              title={playingPreviewUrl === preset.url ? t('common:pause', 'Пауза') : t('common:play', 'Прослушать')}
+                              className="absolute top-1/2 -translate-y-1/2 right-9 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all z-10"
+                              title={t('common:delete', 'Удалить')}
                             >
-                              {playingPreviewUrl === preset.url ? (
-                                <Pause className="w-3.5 h-3.5 fill-current" />
-                              ) : (
-                                <Play className="w-3.5 h-3.5 fill-current" />
-                              )}
+                              <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           )}
                         </div>
@@ -1955,60 +2017,52 @@ export default function InternalChat() {
 
                   <div className="relative mt-6">
                     <label className="block text-[10px] font-bold uppercase opacity-50 mb-2">{t('settings.upload_custom', 'Загрузить свою')}</label>
+                    <div className="flex justify-center mt-2">
+                      <label
+                        htmlFor="ringtone-upload"
+                        className="flex items-center justify-center gap-2 px-6 py-3 bg-secondary/50 hover:bg-secondary rounded-xl cursor-pointer transition-all group w-full"
+                      >
+                        <Paperclip className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                        <span className="text-sm font-medium text-foreground">
+                          {t('settings.upload_custom', 'Загрузить свою')}
+                        </span>
+                      </label>
+                    </div>
+
                     <input
                       type="file"
                       id="ringtone-upload"
                       accept="audio/*"
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          // localStorage has limits, usually 5MB. 
-                          // Base64 encoding adds ~33% overhead. So 3.5MB file -> ~4.7MB string.
                           if (file.size > 10 * 1024 * 1024) {
                             toast.error(t('settings.file_too_large', { max: 10 }));
                             return;
                           }
-                          const reader = new FileReader();
-                          reader.onload = (evt) => {
-                            try {
-                              const result = evt.target?.result as string;
-                              webrtcService.setRingtone(result);
-                              setCustomRingtone(result);
+
+                          try {
+                            const loadingToast = toast.loading(t('common:uploading', 'Загрузка...'));
+                            const response = await api.uploadRingtone(file);
+
+                            if (response && response.full_url) {
+                              await fetchRingtones();
+                              webrtcService.setRingtone(response.full_url);
+                              setCustomRingtone(response.full_url);
                               toast.success(t('settings.ringtone_saved', 'Пользовательская мелодия сохранена'));
-                            } catch (e) {
-                              toast.error(t('settings.save_failed', 'Ошибка при сохранении файла (возможно он слишком тяжелый)'));
                             }
-                          };
-                          reader.readAsDataURL(file);
+                            toast.dismiss(loadingToast);
+                          } catch (error) {
+                            console.error(error);
+                            toast.error(t('settings.save_failed', 'Ошибка загрузки файла'));
+                          }
+
+                          // Clear input
+                          e.target.value = '';
                         }
                       }}
                       className="hidden"
                     />
-                    {customRingtone && !['', 'https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3', 'https://assets.mixkit.co/active_storage/sfx/2361/2361-preview.mp3', 'https://www.soundjay.com/phone/phone-ringing-01.wav'].includes(customRingtone) && (
-                      <button
-                        onClick={() => {
-                          webrtcService.setRingtone('');
-                          setCustomRingtone(null);
-                          toast.success(t('settings.ringtone_deleted', 'Мелодия удалена'));
-                        }}
-                        className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-all z-10"
-                        title={t('common:delete', 'Удалить')}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                    <label
-                      htmlFor="ringtone-upload"
-                      className="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-border rounded-2xl hover:bg-accent cursor-pointer transition-all hover:border-primary/50 group"
-                    >
-                      <Paperclip className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                      <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground">
-                        {customRingtone && !['', 'https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3', 'https://assets.mixkit.co/active_storage/sfx/2361/2361-preview.mp3', 'https://www.soundjay.com/phone/phone-ringing-01.wav'].includes(customRingtone)
-                          ? t('settings.change_file', 'Сменить файл')
-                          : t('settings.choose_file', 'Выберите аудиофайл')
-                        }
-                      </span>
-                    </label>
                   </div>
                 </div>
               </div>
