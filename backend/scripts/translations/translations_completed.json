@@ -1,10 +1,11 @@
 {
   "users": [
     {
-      "id": 798,
+      "id": 671,
       "fields": {
         "full_name": {
           "ru": "Касымова Гульчере",
+          "detected_language": "tk",
           "en": "Kasymova Gulcehre",
           "ar": "كاسيموفا جولشير",
           "es": "Kasymova Gulcehre",
@@ -12,23 +13,23 @@
           "fr": "Kasymova Gulcehre",
           "hi": "कासिमोवा गुलसेरे",
           "kk": "Қасымова Гүлчехре",
-          "pt": "Kasymova Gulcehre",
-          "detected_language": "ky"
+          "pt": "Kasymova Gulcehre"
         },
         "position": {
-          "ru": "Мастер маникюра и депиляции",
-          "en": "Nail & Waxing Master",
-          "ar": "متخصص في العناية بالأظافر وإزالة الشعر بالشمع",
-          "es": "Maestro de uñas y depilación",
-          "de": "Nail & Waxing Master",
-          "fr": "Maître des ongles et de l'épilation",
-          "hi": "नेल और वैक्सिंग मास्टर",
-          "kk": "Тырнақ және балауыз жасау шебері",
-          "pt": "Nail & Waxing Master",
-          "detected_language": "ru"
+          "ru": "Стилист",
+          "detected_language": "en",
+          "en": "Stylist",
+          "ar": "المصمم",
+          "es": "Estilista",
+          "de": "Stylist",
+          "fr": "Styliste",
+          "hi": "स्टाइलिस्ट",
+          "kk": "Стилист",
+          "pt": "Estilista"
         },
         "bio": {
           "ru": "Опытный мастер ногтевого сервиса. Идеальный маникюр и педикюр любой сложности.",
+          "detected_language": "ru",
           "en": "Experienced nail technician. ",
           "ar": "خدمة أظافر ذات خبرة سيد. مانيكير وباديكير مثالي بأي تعقيد.",
           "es": "Servicio de uñas de maquillaje experimentado. Manicura y pedicura ideales de cualquier complejidad.",
@@ -36,16 +37,16 @@
           "fr": "Technicienne expérimentée en service d'ongles. Manucure et pédicure idéales de toute complexité.",
           "hi": "अनुभवी नेल सर्विस मास्टर। किसी भी जटिलता का आदर्श मैनीक्योर और पेडीक्योर।",
           "kk": "Тәжірибелі тырнақ техникі қызметі. Кез келген күрделіліктегі тамаша маникюр мен педикюр.",
-          "pt": "Técnica de manicure experiente. Manicure e pedicure ideais de qualquer complexidade.",
-          "detected_language": "ru"
+          "pt": "Técnica de manicure experiente. Manicure e pedicure ideais de qualquer complexidade."
         }
       }
     },
     {
-      "id": 799,
+      "id": 672,
       "fields": {
         "full_name": {
           "ru": "Перадилья Дженнифер",
+          "detected_language": "id",
           "en": "Peradilla Jennifer",
           "ar": "بيراديلا جنيفر",
           "es": "Jennifer Peradilla",
@@ -53,11 +54,11 @@
           "fr": "Peradilla Jennifer",
           "hi": "पेराडिला जेनिफ़र",
           "kk": "Перадилла Дженнифер",
-          "pt": "Peradilla Jennifer",
-          "detected_language": "ru"
+          "pt": "Peradilla Jennifer"
         },
         "position": {
           "ru": "Мастер универсальной красоты",
+          "detected_language": "en",
           "en": "Universal Beauty Master",
           "ar": "عالم تجميل عالمي",
           "es": "Maestro de belleza universal",
@@ -65,11 +66,11 @@
           "fr": "Maître beauté universel",
           "hi": "यूनिवर्सल ब्यूटी मास्टर",
           "kk": "Әмбебап сұлулық шебері",
-          "pt": "Universal Beauty Master",
-          "detected_language": "ru"
+          "pt": "Universal Beauty Master"
         },
         "bio": {
           "ru": "Мастер-универсал высшей категории. Виртуозно выполняет любые виды стрижек и укладок.",
+          "detected_language": "ru",
           "en": "Master all-rounder of the highest category. ",
           "ar": "سيد عالمي من أعلى فئة. يقوم بتنفيذ أي نوع من قصات الشعر وتصفيفه ببراعة.",
           "es": "Maestro universal de la más alta categoría. Realiza con maestría cualquier tipo de corte y estilismo.",
@@ -77,16 +78,16 @@
           "fr": "Maître universel de la plus haute catégorie. Effectue magistralement tout type de coupe de cheveux et de coiffure.",
           "hi": "उच्चतम श्रेणी का यूनिवर्सल मास्टर। किसी भी प्रकार के हेयरकट और स्टाइलिंग को निपुणता से करता है।",
           "kk": "Жоғары санаттағы әмбебап шебер. Шаш қиюдың және сәндеудің кез келген түрін шебер орындайды.",
-          "pt": "Mestre universal da mais alta categoria. Executa com maestria qualquer tipo de corte de cabelo e styling.",
-          "detected_language": "ru"
+          "pt": "Mestre universal da mais alta categoria. Executa com maestria qualquer tipo de corte de cabelo e styling."
         }
       }
     },
     {
-      "id": 800,
+      "id": 673,
       "fields": {
         "full_name": {
           "ru": "Amandurdyyeva Mestan",
+          "detected_language": "ru",
           "en": "Amandurdyyeva Mestan",
           "ar": "أماندوردييفا ميستان",
           "es": "Amandurdyyeva Mestan",
@@ -94,11 +95,11 @@
           "fr": "Amandurdyyeva Mestan",
           "hi": "अमान्दुर्दयेवा मेस्तान",
           "kk": "Амандұрдыева Местан",
-          "pt": "Amandurdyyeva Mestan",
-          "detected_language": "ru"
+          "pt": "Amandurdyyeva Mestan"
         },
         "position": {
           "ru": "Парикмахер и Мастер по перманентному макияжу",
+          "detected_language": "en",
           "en": "Hair Stylist & Permanent Makeup Artist",
           "ar": "مصفف شعر وفنان مكياج دائم",
           "es": "Estilista y maquillador permanente",
@@ -106,11 +107,11 @@
           "fr": "Coiffeur et maquilleur permanent",
           "hi": "हेयर स्टाइलिस्ट और परमानेंट मेकअप आर्टिस्ट",
           "kk": "Шаш стилисті және тұрақты макияж суретшісі",
-          "pt": "Cabeleireiro e Maquiador Permanente",
-          "detected_language": "ru"
+          "pt": "Cabeleireiro e Maquiador Permanente"
         },
         "bio": {
           "ru": "Топ-стилист с международным опытом. Эксперт по сложным техникам окрашивания и восстановлению волос.",
+          "detected_language": "ru",
           "en": "Top stylist with international experience. ",
           "ar": "مصفف شعر ذو خبرة عالمية. خبيرة في تقنيات صبغ الشعر وترميمه المعقدة.",
           "es": "Estilista de primer nivel con experiencia internacional. Un experto en técnicas complejas de restauración y coloración del cabello.",
@@ -118,16 +119,16 @@
           "fr": "Styliste de haut niveau avec une expérience internationale. Un expert en techniques complexes de coloration et de restauration des cheveux.",
           "hi": "अंतर्राष्ट्रीय अनुभव के साथ शीर्ष स्टाइलिस्ट। जटिल बाल रंगने और बहाली तकनीकों में विशेषज्ञ।",
           "kk": "Халықаралық тәжірибесі бар үздік стилист. Шашты бояудың және қалпына келтірудің күрделі әдістерінің маманы.",
-          "pt": "Estilista de ponta com experiência internacional. Um especialista em técnicas complexas de coloração e restauração de cabelos.",
-          "detected_language": "ru"
+          "pt": "Estilista de ponta com experiência internacional. Um especialista em técnicas complexas de coloração e restauração de cabelos."
         }
       }
     },
     {
-      "id": 801,
+      "id": 674,
       "fields": {
         "full_name": {
-          "ru": "Мохаммед Сабри",
+          "ru": "Мохамед Сабри",
+          "detected_language": "id",
           "en": "Mohamed Sabri",
           "ar": "محمد صبري",
           "es": "Mohamed Sabri",
@@ -135,11 +136,11 @@
           "fr": "Mohamed Sabri",
           "hi": "मोहम्मद साबरी",
           "kk": "Мохамед Сабри",
-          "pt": "Mohamed Sabri",
-          "detected_language": "bg"
+          "pt": "Mohamed Sabri"
         },
         "position": {
           "ru": "Парикмахер",
+          "detected_language": "en",
           "en": "Hair Stylist",
           "ar": "مصفف شعر",
           "es": "Estilista",
@@ -147,11 +148,11 @@
           "fr": "Coiffeur",
           "hi": "हेयर स्टाइलिस्ट",
           "kk": "Шаш стилисті",
-          "pt": "Cabeleireiro",
-          "detected_language": "ru"
+          "pt": "Cabeleireiro"
         },
         "bio": {
           "ru": "Талантливый стилист, создающий неповторимые образы. Специалист по мужским и женским стрижкам.",
+          "detected_language": "ru",
           "en": "A talented stylist who creates unique images. ",
           "ar": "مصففة شعر موهوبة تبتكر إطلالات فريدة. متخصص في القصات الرجالية والنسائية.",
           "es": "Un estilista talentoso que crea looks únicos. Especialista en cortes de pelo de hombre y mujer.",
@@ -159,16 +160,16 @@
           "fr": "Un styliste talentueux qui crée des looks uniques. Spécialiste des coupes de cheveux hommes et femmes.",
           "hi": "एक प्रतिभाशाली स्टाइलिस्ट जो अद्वितीय लुक बनाता है। पुरुषों और महिलाओं के बाल कटाने में विशेषज्ञ।",
           "kk": "Бірегей көріністер жасайтын дарынды стилист. Ерлер мен әйелдер шаштары бойынша маман.",
-          "pt": "Um estilista talentoso que cria looks únicos. Especialista em cortes de cabelo masculino e feminino.",
-          "detected_language": "ru"
+          "pt": "Um estilista talentoso que cria looks únicos. Especialista em cortes de cabelo masculino e feminino."
         }
       }
     },
     {
-      "id": 802,
+      "id": 675,
       "fields": {
         "full_name": {
           "ru": "Kozhabay Lyazat",
+          "detected_language": "ru",
           "en": "Kozhabay Lyazat",
           "ar": "كوزباي ليازات",
           "es": "Kozhabay Lyazat",
@@ -176,11 +177,11 @@
           "fr": "Kozhabay Lyazat",
           "hi": "कोझाबे ल्याज़त",
           "kk": "Қожабай Ләзат",
-          "pt": "Kozhabay Lyazat",
-          "detected_language": "ru"
+          "pt": "Kozhabay Lyazat"
         },
         "position": {
           "ru": "Мастер маникюра",
+          "detected_language": "en",
           "en": "Nail Master",
           "ar": "متخصص في العناية بالأظافر",
           "es": "Nail Master",
@@ -188,11 +189,11 @@
           "fr": "Maître des ongles",
           "hi": "नेल मास्टर",
           "kk": "Тырнақ шебері",
-          "pt": "Nail Master",
-          "detected_language": "ru"
+          "pt": "Nail Master"
         },
         "bio": {
           "ru": "Аккуратный и внимательный мастер. Специализируется на эстетическом маникюре и дизайне.",
+          "detected_language": "ru",
           "en": "A neat and attentive master. ",
           "ar": "سيد أنيق ومهتم. متخصصون في تجميل الأظافر والتصميم.",
           "es": "Un maestro pulcro y atento. Se especializa en manicura estética y diseño.",
@@ -200,8 +201,7 @@
           "fr": "Un maître soigné et attentionné. Spécialisé dans la manucure esthétique et le design.",
           "hi": "एक साफ-सुथरा और चौकस मास्टर। सौंदर्यपूर्ण मैनीक्योर और डिज़ाइन में विशेषज्ञता।",
           "kk": "Ұқыпты және мұқият шаштараз. Эстетикалық маникюр және дизайн бойынша маманданған.",
-          "pt": "Um mestre cuidadoso e atencioso. Especializada em manicure estética e design.",
-          "detected_language": "ru"
+          "pt": "Um mestre cuidadoso e atencioso. Especializada em manicure estética e design."
         }
       }
     }
@@ -1161,10 +1161,11 @@
   ],
   "services": [
     {
-      "id": 29682,
+      "id": 36405,
       "fields": {
         "name": {
           "ru": "Классический маникюр + лак",
+          "detected_language": "en",
           "en": "Manicure Classic + Polish",
           "ar": "مانيكير كلاسيكي + طلاء",
           "es": "Manicura clásica + esmalte",
@@ -1172,16 +1173,16 @@
           "fr": "Manucure Classique + Vernis",
           "hi": "मैनीक्योर क्लासिक + पॉलिश",
           "kk": "Классикалық маникюр + поляк",
-          "pt": "Manicure Clássica + Polonês",
-          "detected_language": "ru"
+          "pt": "Manicure Clássica + Polonês"
         }
       }
     },
     {
-      "id": 29683,
+      "id": 36406,
       "fields": {
         "name": {
           "ru": "Только классический лак",
+          "detected_language": "en",
           "en": "Classic Polish Only",
           "ar": "تلميع كلاسيكي فقط",
           "es": "Solo esmalte clásico",
@@ -1189,16 +1190,16 @@
           "fr": "Vernis classique uniquement",
           "hi": "केवल क्लासिक पॉलिश",
           "kk": "Тек классикалық поляк",
-          "pt": "Somente Polonês Clássico",
-          "detected_language": "ru"
+          "pt": "Somente Polonês Clássico"
         }
       }
     },
     {
-      "id": 29684,
+      "id": 36407,
       "fields": {
         "name": {
           "ru": "Только гель-лак",
+          "detected_language": "en",
           "en": "Gel Polish Only",
           "ar": "طلاء جل فقط",
           "es": "Solo esmalte en gel",
@@ -1206,16 +1207,16 @@
           "fr": "Vernis gel uniquement",
           "hi": "केवल जेल पॉलिश",
           "kk": "Тек гельдік поляк",
-          "pt": "Somente Polonês em Gel",
-          "detected_language": "ru"
+          "pt": "Somente Polonês em Gel"
         }
       }
     },
     {
-      "id": 29685,
+      "id": 36408,
       "fields": {
         "name": {
           "ru": "Французский лак",
+          "detected_language": "en",
           "en": "French Polish",
           "ar": "تلميع فرنسي",
           "es": "Esmalte francés",
@@ -1223,16 +1224,16 @@
           "fr": "Vernis français",
           "hi": "फ्रेंच पॉलिश",
           "kk": "Француздық поляк",
-          "pt": "Polonês Francês",
-          "detected_language": "ru"
+          "pt": "Polonês Francês"
         }
       }
     },
     {
-      "id": 29686,
+      "id": 36409,
       "fields": {
         "name": {
           "ru": "Японский маникюр",
+          "detected_language": "en",
           "en": "Japanese Manicure",
           "ar": "مانيكير ياباني",
           "es": "Manicura japonesa",
@@ -1240,16 +1241,16 @@
           "fr": "Manucure japonaise",
           "hi": "जापानी मैनीक्योर",
           "kk": "Жапон маникюрі",
-          "pt": "Manicure Japonesa",
-          "detected_language": "ru"
+          "pt": "Manicure Japonesa"
         }
       }
     },
     {
-      "id": 29687,
+      "id": 36410,
       "fields": {
         "name": {
           "ru": "Наложение биогеля",
+          "detected_language": "en",
           "en": "Overlay Biogel",
           "ar": "تراكب Biogel",
           "es": "Superposición de biogel",
@@ -1257,16 +1258,16 @@
           "fr": "Superposition Biogel",
           "hi": "ओवरले बायोजेल",
           "kk": "Биогельді қабаттастыру",
-          "pt": "Overlay Biogel",
-          "detected_language": "ru"
+          "pt": "Overlay Biogel"
         }
       }
     },
     {
-      "id": 29688,
+      "id": 36411,
       "fields": {
         "name": {
           "ru": "Удаление гель-лака",
+          "detected_language": "en",
           "en": "Remove Gel Polish",
           "ar": "إزالة جل البولندية",
           "es": "Quitar esmalte en gel",
@@ -1274,16 +1275,16 @@
           "fr": "Enlever le vernis gel",
           "hi": "जेल पॉलिश हटाएं",
           "kk": "Классикалық гель лак",
-          "pt": "Remover Polonês em Gel",
-          "detected_language": "ru"
+          "pt": "Remover Polonês em Gel"
         }
       }
     },
     {
-      "id": 29689,
+      "id": 36412,
       "fields": {
         "name": {
           "ru": "Удаление классического лака",
+          "detected_language": "en",
           "en": "Remove Classic Polish",
           "ar": "إزالة طلاء أظافر كلاسيكي",
           "es": "Quitar esmalte clásico",
@@ -1291,16 +1292,16 @@
           "fr": "Enlever le vernis classique",
           "hi": "क्लासिक पॉलिश हटाएं",
           "kk": "Классикалық полякты алып тастаңыз",
-          "pt": "Remover Polonês Clássico",
-          "detected_language": "ru"
+          "pt": "Remover Polonês Clássico"
         }
       }
     },
     {
-      "id": 29690,
+      "id": 36413,
       "fields": {
         "name": {
           "ru": "Удаление наращивания",
+          "detected_language": "en",
           "en": "Remove Extensions",
           "ar": "إزالة الامتدادات",
           "es": "Quitar extensiones",
@@ -1308,16 +1309,16 @@
           "fr": "Enlever les extensions",
           "hi": "एक्सटेंशन हटाएं",
           "kk": "Кеңейтімдерді жою",
-          "pt": "Remover Extensões",
-          "detected_language": "ru"
+          "pt": "Remover Extensões"
         }
       }
     },
     {
-      "id": 29691,
+      "id": 36414,
       "fields": {
         "name": {
           "ru": "наращивание ногтей (гель)",
+          "detected_language": "en",
           "en": "Nail Extensions (Gel)",
           "ar": "وصلات الأظافر (جل)",
           "es": "Extensiones de uñas (gel)",
@@ -1325,16 +1326,16 @@
           "fr": "Extensions d'ongles (Gel)",
           "hi": "नाखून एक्सटेंशन (जेल)",
           "kk": "Тырнақ ұзартулары (гель)",
-          "pt": "Extensões de unhas (gel)",
-          "detected_language": "ru"
+          "pt": "Extensões de unhas (gel)"
         }
       }
     },
     {
-      "id": 29692,
+      "id": 36415,
       "fields": {
         "name": {
           "ru": "Исправление расширений",
+          "detected_language": "en",
           "en": "Extensions Correction",
           "ar": "تصحيح الامتدادات",
           "es": "Corrección de extensiones",
@@ -1342,16 +1343,16 @@
           "fr": "Correction des extensions",
           "hi": "एक्सटेंशन सुधार",
           "kk": "Кеңейтімдерді түзету",
-          "pt": "Correção de extensões",
-          "detected_language": "ru"
+          "pt": "Correção de extensões"
         }
       }
     },
     {
-      "id": 29693,
+      "id": 36416,
       "fields": {
         "name": {
           "ru": "Восстановить 1 расширение",
+          "detected_language": "en",
           "en": "Repair 1 Extension",
           "ar": "إصلاح 1 التمديد",
           "es": "Reparación 1 extensión",
@@ -1359,16 +1360,16 @@
           "fr": "Réparer 1 extension",
           "hi": "मरम्मत 1 एक्सटेंशन",
           "kk": "Жөндеу 1 кеңейтім",
-          "pt": "Reparar 1 extensão",
-          "detected_language": "ru"
+          "pt": "Reparar 1 extensão"
         }
       }
     },
     {
-      "id": 29694,
+      "id": 36417,
       "fields": {
         "name": {
           "ru": "Ремонт 1 гелевого ногтей",
+          "detected_language": "en",
           "en": "Repair 1 Gel Nail",
           "ar": "إصلاح 1 جل الأظافر",
           "es": "Reparar 1 Uña de Gel",
@@ -1376,16 +1377,16 @@
           "fr": "Réparer 1 ongle en gel",
           "hi": "1 जेल कील की मरम्मत करें",
           "kk": "Тырнақты жөндеуге арналған 1 гель",
-          "pt": "Reparar 1 unha de gel",
-          "detected_language": "ru"
+          "pt": "Reparar 1 unha de gel"
         }
       }
     },
     {
-      "id": 29695,
+      "id": 36418,
       "fields": {
         "name": {
           "ru": "Комбинированный маникюр",
+          "detected_language": "en",
           "en": "Combined Manicure",
           "ar": "مانيكير مجتمعة",
           "es": "Manicura combinada",
@@ -1393,16 +1394,16 @@
           "fr": "Manucure combinée",
           "hi": "संयुक्त मैनीक्योर",
           "kk": "Аралас маникюр",
-          "pt": "Manicura Combinada",
-          "detected_language": "ru"
+          "pt": "Manicura Combinada"
         }
       }
     },
     {
-      "id": 29696,
+      "id": 36419,
       "fields": {
         "name": {
           "ru": "Комбинированный маникюр + гель",
+          "detected_language": "en",
           "en": "Combined Manicure + Gel",
           "ar": "مانيكير + جل مدمج",
           "es": "Manicura Combinada + Gel",
@@ -1410,16 +1411,16 @@
           "fr": "Manucure Combinée + Gel",
           "hi": "संयुक्त मैनीक्योर + जेल",
           "kk": "Аралас маникюр + гель",
-          "pt": "Manicura Combinada + Gel",
-          "detected_language": "ru"
+          "pt": "Manicura Combinada + Gel"
         }
       }
     },
     {
-      "id": 29697,
+      "id": 36420,
       "fields": {
         "name": {
           "ru": "Формирование ногтей",
+          "detected_language": "en",
           "en": "Nail Shaping",
           "ar": "تشكيل الأظافر",
           "es": "modelado de uñas",
@@ -1427,16 +1428,16 @@
           "fr": "Mise en forme des ongles",
           "hi": "नाखून आकार देना",
           "kk": "Тырнақты пішіндеу",
-          "pt": "Modelagem de unhas",
-          "detected_language": "ru"
+          "pt": "Modelagem de unhas"
         }
       }
     },
     {
-      "id": 29698,
+      "id": 36421,
       "fields": {
         "name": {
           "ru": "Умный педикюр Базовый",
+          "detected_language": "en",
           "en": "Smart Pedicure Basic",
           "ar": "باديكير الذكية الأساسية",
           "es": "Pedicura inteligente básica",
@@ -1444,16 +1445,16 @@
           "fr": "Pédicure intelligente de base",
           "hi": "स्मार्ट पेडीक्योर बेसिक",
           "kk": "Smart Pedicure Basic",
-          "pt": "Pedicure Inteligente Básica",
-          "detected_language": "ru"
+          "pt": "Pedicure Inteligente Básica"
         }
       }
     },
     {
-      "id": 29699,
+      "id": 36422,
       "fields": {
         "name": {
-          "ru": "Smart-педикюр + лак",
+          "ru": "Смарт-педикюр + лак",
+          "detected_language": "en",
           "en": "Smart Pedicure + Polish",
           "ar": "باديكير ذكي + بوليش",
           "es": "Pedicura inteligente + esmalte",
@@ -1461,16 +1462,16 @@
           "fr": "Pédicure intelligente + vernis",
           "hi": "स्मार्ट पेडीक्योर + पॉलिश",
           "kk": "Смарт педикюр + поляк",
-          "pt": "Pedicure Inteligente + Polonês",
-          "detected_language": "bg"
+          "pt": "Pedicure Inteligente + Polonês"
         }
       }
     },
     {
-      "id": 29700,
+      "id": 36423,
       "fields": {
         "name": {
           "ru": "Педикюр + гель-лак",
+          "detected_language": "en",
           "en": "Pedicure + Gel Polish",
           "ar": "باديكير + جل بوليش",
           "es": "Pedicura + Esmalte en gel",
@@ -1478,16 +1479,16 @@
           "fr": "Pédicure + Vernis Gel",
           "hi": "पेडीक्योर + जेल पॉलिश",
           "kk": "Педикюр + Гель-лак",
-          "pt": "Pedicure + Verniz em Gel",
-          "detected_language": "uk"
+          "pt": "Pedicure + Verniz em Gel"
         }
       }
     },
     {
-      "id": 29701,
+      "id": 36424,
       "fields": {
         "name": {
           "ru": "Смена гель-лака (Педи)",
+          "detected_language": "en",
           "en": "Change Gel Polish (Pedi)",
           "ar": "تغيير جل البولندية (بيدي)",
           "es": "Cambiar esmalte en gel (Pedi)",
@@ -1495,16 +1496,16 @@
           "fr": "Changer le vernis gel (Pedi)",
           "hi": "जेल पॉलिश बदलें (पेडी)",
           "kk": "Гель-лакты өзгерту (Педи)",
-          "pt": "Trocar esmalte em gel (Pedi)",
-          "detected_language": "ru"
+          "pt": "Trocar esmalte em gel (Pedi)"
         }
       }
     },
     {
-      "id": 29702,
+      "id": 36425,
       "fields": {
         "name": {
-          "ru": "Смена полировки (педи)",
+          "ru": "Смена лака (Педи)",
+          "detected_language": "en",
           "en": "Change Polish (Pedi)",
           "ar": "تغيير البولندية (بيدي)",
           "es": "Cambiar polaco (Pedi)",
@@ -1512,16 +1513,16 @@
           "fr": "Changer le polonais (Pedi)",
           "hi": "पोलिश बदलें (पेडी)",
           "kk": "Поляк тілін өзгерту (Педи)",
-          "pt": "Alterar polonês (Pedi)",
-          "detected_language": "sr"
+          "pt": "Alterar polonês (Pedi)"
         }
       }
     },
     {
-      "id": 29703,
+      "id": 36426,
       "fields": {
         "name": {
           "ru": "Комбо Мани+Педи (Гель)",
+          "detected_language": "it",
           "en": "Combo Mani+Pedi (Gel)",
           "ar": "كومبو مانيكير+بيدي (جل)",
           "es": "Combo Mani+Pedi (Gel)",
@@ -1529,16 +1530,16 @@
           "fr": "Combo Mani+Pedi (Gel)",
           "hi": "कॉम्बो मणि+पेडी (जेल)",
           "kk": "Combo Mani+Pedi (Гель)",
-          "pt": "Combo Mani+Pedi (Gel)",
-          "detected_language": "ru"
+          "pt": "Combo Mani+Pedi (Gel)"
         }
       }
     },
     {
-      "id": 29704,
+      "id": 36427,
       "fields": {
         "name": {
           "ru": "Укладка феном (короткометражка)",
+          "detected_language": "en",
           "en": "Blow Dry (Short)",
           "ar": "تجفيف بالسيشوار (قصير)",
           "es": "Secar con secador (corto)",
@@ -1546,16 +1547,16 @@
           "fr": "Sécher au sèche-cheveux (court)",
           "hi": "ब्लो ड्राई (लघु)",
           "kk": "Кептіргіш (қысқа)",
-          "pt": "Secar com secador (curto)",
-          "detected_language": "ru"
+          "pt": "Secar com secador (curto)"
         }
       }
     },
     {
-      "id": 29705,
+      "id": 36428,
       "fields": {
         "name": {
           "ru": "Укладка феном (средняя)",
+          "detected_language": "en",
           "en": "Blow Dry (Medium)",
           "ar": "تجفيف بالسيشوار (متوسط)",
           "es": "Secar con secador (medio)",
@@ -1563,16 +1564,16 @@
           "fr": "Séchage au sèche-cheveux (moyen)",
           "hi": "ब्लो ड्राई (मध्यम)",
           "kk": "Кептіргіш (орташа)",
-          "pt": "Secar (médio)",
-          "detected_language": "ru"
+          "pt": "Secar (médio)"
         }
       }
     },
     {
-      "id": 29706,
+      "id": 36429,
       "fields": {
         "name": {
           "ru": "Укладка феном (длинная)",
+          "detected_language": "en",
           "en": "Blow Dry (Long)",
           "ar": "تجفيف بالسيشوار (طويل)",
           "es": "Secar con secador (largo)",
@@ -1580,16 +1581,16 @@
           "fr": "Sécher au sèche-cheveux (long)",
           "hi": "ब्लो ड्राई (लंबा)",
           "kk": "Кептіргіш (ұзын)",
-          "pt": "Secar (longo)",
-          "detected_language": "ru"
+          "pt": "Secar (longo)"
         }
       }
     },
     {
-      "id": 29707,
+      "id": 36430,
       "fields": {
         "name": {
           "ru": "Утюжок для укладки/волны (короткий)",
+          "detected_language": "en",
           "en": "Styling Iron/Waves (Short)",
           "ar": "مكواة/موجات تصفيف (قصيرة)",
           "es": "Plancha de peinado/ondas (corta)",
@@ -1597,16 +1598,16 @@
           "fr": "Fer à coiffer/vagues (court)",
           "hi": "स्टाइलिंग आयरन/वेव्स (लघु)",
           "kk": "Сәндеуші үтік/толқындар (қысқа)",
-          "pt": "Modelagem de Ferro/Ondas (Curto)",
-          "detected_language": "ru"
+          "pt": "Modelagem de Ferro/Ondas (Curto)"
         }
       }
     },
     {
-      "id": 29708,
+      "id": 36431,
       "fields": {
         "name": {
           "ru": "Утюжок для укладки/волны (средний)",
+          "detected_language": "en",
           "en": "Styling Iron/Waves (Medium)",
           "ar": "مكواة/تموجات التصفيف (متوسطة)",
           "es": "Plancha de peinado/ondas (mediana)",
@@ -1614,16 +1615,16 @@
           "fr": "Fer à coiffer/vagues (moyen)",
           "hi": "स्टाइलिंग आयरन/वेव्स (मध्यम)",
           "kk": "Сәндеуге арналған үтік/толқындар (орташа)",
-          "pt": "Modelagem de Ferro/Ondas (Médio)",
-          "detected_language": "ru"
+          "pt": "Modelagem de Ferro/Ondas (Médio)"
         }
       }
     },
     {
-      "id": 29709,
+      "id": 36432,
       "fields": {
         "name": {
           "ru": "Утюжок для укладки/волны (длинный)",
+          "detected_language": "en",
           "en": "Styling Iron/Waves (Long)",
           "ar": "مكواة/موجات تصفيف الشعر (طويلة)",
           "es": "Plancha de peinado/ondas (larga)",
@@ -1631,16 +1632,16 @@
           "fr": "Fer à Coiffer/Vagues (Long)",
           "hi": "स्टाइलिंग आयरन/वेव्स (लंबा)",
           "kk": "Сәндеуге арналған үтік/толқындар (ұзын)",
-          "pt": "Modelagem de Ferro/Ondas (Longas)",
-          "detected_language": "ru"
+          "pt": "Modelagem de Ferro/Ondas (Longas)"
         }
       }
     },
     {
-      "id": 29710,
+      "id": 36433,
       "fields": {
         "name": {
           "ru": "Вечерняя прическа",
+          "detected_language": "en",
           "en": "Evening Hairstyle",
           "ar": "تصفيفة الشعر المسائية",
           "es": "Peinado de noche",
@@ -1648,16 +1649,16 @@
           "fr": "Coiffure de soirée",
           "hi": "शाम का हेयरस्टाइल",
           "kk": "Кешкі шаш үлгісі",
-          "pt": "Penteado noturno",
-          "detected_language": "ru"
+          "pt": "Penteado noturno"
         }
       }
     },
     {
-      "id": 29711,
+      "id": 36434,
       "fields": {
         "name": {
           "ru": "Мытье волос",
+          "detected_language": "en",
           "en": "Hair Wash",
           "ar": "غسل الشعر",
           "es": "lavado de cabello",
@@ -1665,16 +1666,16 @@
           "fr": "Lavage des cheveux",
           "hi": "बाल धोना",
           "kk": "Шаш жуу",
-          "pt": "Lavagem de cabelo",
-          "detected_language": "ru"
+          "pt": "Lavagem de cabelo"
         }
       }
     },
     {
-      "id": 29712,
+      "id": 36435,
       "fields": {
         "name": {
           "ru": "Только стрижка волос",
+          "detected_language": "en",
           "en": "Hair Trim Only",
           "ar": "قص الشعر فقط",
           "es": "Sólo corte de cabello",
@@ -1682,16 +1683,16 @@
           "fr": "Coupe de cheveux uniquement",
           "hi": "केवल बाल ट्रिम करें",
           "kk": "Тек шаш қию",
-          "pt": "Apenas corte de cabelo",
-          "detected_language": "ru"
+          "pt": "Apenas corte de cabelo"
         }
       }
     },
     {
-      "id": 29713,
+      "id": 36436,
       "fields": {
         "name": {
           "ru": "Стрижка + мытье + укладка",
+          "detected_language": "en",
           "en": "Cut + Wash + Styling",
           "ar": "قص + غسيل + تصفيف",
           "es": "Cortar + Lavar + Peinar",
@@ -1699,16 +1700,16 @@
           "fr": "Couper + Lavage + Coiffage",
           "hi": "काटें + धोएं + स्टाइल करें",
           "kk": "Кесу + Жуу + Сәндеу",
-          "pt": "Corte + Lavagem + Modelagem",
-          "detected_language": "ru"
+          "pt": "Corte + Lavagem + Modelagem"
         }
       }
     },
     {
-      "id": 29714,
+      "id": 36437,
       "fields": {
         "name": {
           "ru": "Вырезать + промыть",
+          "detected_language": "en",
           "en": "Cut + Wash",
           "ar": "قطع + غسل",
           "es": "Cortar + Lavar",
@@ -1716,16 +1717,16 @@
           "fr": "Couper + Laver",
           "hi": "काटें + धोएं",
           "kk": "Кесу + Жуу",
-          "pt": "Corte + Lavagem",
-          "detected_language": "ru"
+          "pt": "Corte + Lavagem"
         }
       }
     },
     {
-      "id": 29715,
+      "id": 36438,
       "fields": {
         "name": {
           "ru": "Экспресс-форма (без стирки)",
+          "detected_language": "en",
           "en": "Express Form (No Wash)",
           "ar": "النموذج السريع (بدون غسيل)",
           "es": "Formulario Express (Sin Lavado)",
@@ -1733,16 +1734,16 @@
           "fr": "Formulaire express (sans lavage)",
           "hi": "एक्सप्रेस फॉर्म (कोई धुलाई नहीं)",
           "kk": "Экспресс пішін (жуусыз)",
-          "pt": "Formulário Expresso (Sem Lavagem)",
-          "detected_language": "ru"
+          "pt": "Formulário Expresso (Sem Lavagem)"
         }
       }
     },
     {
-      "id": 29716,
+      "id": 36439,
       "fields": {
         "name": {
           "ru": "стрижка челки",
+          "detected_language": "en",
           "en": "Bangs Cut",
           "ar": "قطع الانفجارات",
           "es": "corte de flequillo",
@@ -1750,16 +1751,16 @@
           "fr": "Frange coupée",
           "hi": "बैंग्स कट",
           "kk": "Bangs Cut",
-          "pt": "Corte de franja",
-          "detected_language": "ru"
+          "pt": "Corte de franja"
         }
       }
     },
     {
-      "id": 29717,
+      "id": 36440,
       "fields": {
         "name": {
           "ru": "Детская стрижка",
+          "detected_language": "en",
           "en": "Kids Cut",
           "ar": "قطع الاطفال",
           "es": "Corte para niños",
@@ -1767,16 +1768,16 @@
           "fr": "Coupe Enfants",
           "hi": "बच्चों का काटना",
           "kk": "Балалар кесу",
-          "pt": "Corte infantil",
-          "detected_language": "ru"
+          "pt": "Corte infantil"
         }
       }
     },
     {
-      "id": 29718,
+      "id": 36441,
       "fields": {
         "name": {
           "ru": "Окрашивание корней",
+          "detected_language": "en",
           "en": "Roots Coloring",
           "ar": "تلوين الجذور",
           "es": "Coloración de raíces",
@@ -1784,16 +1785,16 @@
           "fr": "Coloration des racines",
           "hi": "जड़ों का रंग",
           "kk": "Тамырларды бояу",
-          "pt": "Coloração de raízes",
-          "detected_language": "ru"
+          "pt": "Coloração de raízes"
         }
       }
     },
     {
-      "id": 29719,
+      "id": 36442,
       "fields": {
         "name": {
           "ru": "Тонирование",
+          "detected_language": "en",
           "en": "Toning",
           "ar": "التنغيم",
           "es": "Viraje",
@@ -1801,16 +1802,16 @@
           "fr": "Tonifiant",
           "hi": "toning",
           "kk": "Тондау",
-          "pt": "Tonificação",
-          "detected_language": "ru"
+          "pt": "Tonificação"
         }
       }
     },
     {
-      "id": 29720,
+      "id": 36443,
       "fields": {
         "name": {
           "ru": "Один тон (короткометражный)",
+          "detected_language": "en",
           "en": "One Tone (Short)",
           "ar": "نغمة واحدة (قصيرة)",
           "es": "Un tono (corto)",
@@ -1818,16 +1819,16 @@
           "fr": "Un ton (court)",
           "hi": "एक स्वर (लघु)",
           "kk": "Бір тон (қысқа)",
-          "pt": "Um tom (curto)",
-          "detected_language": "ru"
+          "pt": "Um tom (curto)"
         }
       }
     },
     {
-      "id": 29721,
+      "id": 36444,
       "fields": {
         "name": {
           "ru": "Один тон (средний)",
+          "detected_language": "en",
           "en": "One Tone (Medium)",
           "ar": "نغمة واحدة (متوسطة)",
           "es": "Un tono (medio)",
@@ -1835,16 +1836,16 @@
           "fr": "Un ton (moyen)",
           "hi": "एक स्वर (मध्यम)",
           "kk": "Бір тон (орташа)",
-          "pt": "Um tom (médio)",
-          "detected_language": "ru"
+          "pt": "Um tom (médio)"
         }
       }
     },
     {
-      "id": 29722,
+      "id": 36445,
       "fields": {
         "name": {
           "ru": "Один тон (длинный)",
+          "detected_language": "en",
           "en": "One Tone (Long)",
           "ar": "نغمة واحدة (طويلة)",
           "es": "Un tono (largo)",
@@ -1852,16 +1853,16 @@
           "fr": "Un ton (long)",
           "hi": "एक स्वर (लंबा)",
           "kk": "Бір тон (ұзын)",
-          "pt": "Um tom (longo)",
-          "detected_language": "ru"
+          "pt": "Um tom (longo)"
         }
       }
     },
     {
-      "id": 29723,
+      "id": 36446,
       "fields": {
         "name": {
           "ru": "Тотальная блондинка",
+          "detected_language": "en",
           "en": "Total Blonde",
           "ar": "مجموع شقراء",
           "es": "rubia total",
@@ -1869,16 +1870,16 @@
           "fr": "Blonde totale",
           "hi": "पूर्ण गोरा",
           "kk": "Жалпы аққұба",
-          "pt": "Loira Total",
-          "detected_language": "ru"
+          "pt": "Loira Total"
         }
       }
     },
     {
-      "id": 29724,
+      "id": 36447,
       "fields": {
         "name": {
           "ru": "Сложный цвет (Омбре/балаяж)",
+          "detected_language": "en",
           "en": "Complex Color (Ombre/Balayage)",
           "ar": "لون معقد (أومبير/بالياج)",
           "es": "Color complejo (Ombre/Balayage)",
@@ -1886,16 +1887,16 @@
           "fr": "Couleur complexe (Ombre/Balayage)",
           "hi": "जटिल रंग (ओम्ब्रे/बालाएज)",
           "kk": "Күрделі түс (омбре/балаяж)",
-          "pt": "Cor Complexa (Ombre/Balayage)",
-          "detected_language": "ru"
+          "pt": "Cor Complexa (Ombre/Balayage)"
         }
       }
     },
     {
-      "id": 29725,
+      "id": 36448,
       "fields": {
         "name": {
           "ru": "Массаж головы (60 мин)",
+          "detected_language": "en",
           "en": "Head Massage (60 min)",
           "ar": "تدليك الرأس (60 دقيقة)",
           "es": "Masaje de cabeza (60 min)",
@@ -1903,16 +1904,16 @@
           "fr": "Massage de la tête (60 min)",
           "hi": "सिर की मालिश (60 मिनट)",
           "kk": "Бас массажы (60 мин)",
-          "pt": "Massagem na Cabeça (60 min)",
-          "detected_language": "ru"
+          "pt": "Massagem na Cabeça (60 min)"
         }
       }
     },
     {
-      "id": 29726,
+      "id": 36449,
       "fields": {
         "name": {
           "ru": "Массаж конечностей (60 мин)",
+          "detected_language": "en",
           "en": "Extremities Massage (60 min)",
           "ar": "تدليك الأطراف (60 دقيقة)",
           "es": "Masaje de Extremidades (60 min)",
@@ -1920,16 +1921,16 @@
           "fr": "Massage des extrémités (60 min)",
           "hi": "चरम मालिश (60 मिनट)",
           "kk": "Аяқ-қол массажы (60 мин)",
-          "pt": "Massagem de Extremidades (60 min)",
-          "detected_language": "ru"
+          "pt": "Massagem de Extremidades (60 min)"
         }
       }
     },
     {
-      "id": 29727,
+      "id": 36450,
       "fields": {
         "name": {
           "ru": "Массаж тела (60 мин)",
+          "detected_language": "en",
           "en": "Body Massage (60 min)",
           "ar": "تدليك الجسم (60 دقيقة)",
           "es": "Masaje Corporal (60 min)",
@@ -1937,16 +1938,16 @@
           "fr": "Massage corporel (60 min)",
           "hi": "शारीरिक मालिश (60 मिनट)",
           "kk": "Дене массажы (60 мин)",
-          "pt": "Massagem Corporal (60 min)",
-          "detected_language": "ru"
+          "pt": "Massagem Corporal (60 min)"
         }
       }
     },
     {
-      "id": 29728,
+      "id": 36451,
       "fields": {
         "name": {
           "ru": "Скульптурный массаж тела",
+          "detected_language": "en",
           "en": "Sculptural Body Massage",
           "ar": "تدليك الجسم النحتي",
           "es": "Masaje Corporal Escultural",
@@ -1954,16 +1955,16 @@
           "fr": "Massage corporel sculptural",
           "hi": "मूर्तिकला शारीरिक मालिश",
           "kk": "Мүсіндік дене массажы",
-          "pt": "Massagem Corporal Escultural",
-          "detected_language": "ru"
+          "pt": "Massagem Corporal Escultural"
         }
       }
     },
     {
-      "id": 29729,
+      "id": 36452,
       "fields": {
         "name": {
           "ru": "Антицеллюлитный массаж (60 мин)",
+          "detected_language": "en",
           "en": "Anti-cellulite Massage (60 min)",
           "ar": "تدليك مضاد للسيلوليت (60 دقيقة)",
           "es": "Masaje Anticelulítico (60 min)",
@@ -1971,16 +1972,16 @@
           "fr": "Massage Anti-cellulite (60 min)",
           "hi": "एंटी-सेल्युलाईट मालिश (60 मिनट)",
           "kk": "Целлюлитке қарсы массаж (60 мин)",
-          "pt": "Massagem Anticelulite (60 min)",
-          "detected_language": "ru"
+          "pt": "Massagem Anticelulite (60 min)"
         }
       }
     },
     {
-      "id": 29730,
+      "id": 36453,
       "fields": {
         "name": {
           "ru": "Марокканская баня СПА",
+          "detected_language": "en",
           "en": "Moroccan Bath SPA",
           "ar": "سبا الحمام المغربي",
           "es": "Baño marroquí SPA",
@@ -1988,16 +1989,16 @@
           "fr": "Bain SPA Marocain",
           "hi": "मोरक्कन बाथ स्पा",
           "kk": "Марокко моншасы СПА",
-          "pt": "SPA de banho marroquino",
-          "detected_language": "ru"
+          "pt": "SPA de banho marroquino"
         }
       }
     },
     {
-      "id": 29731,
+      "id": 36454,
       "fields": {
         "name": {
           "ru": "полное бикини",
+          "detected_language": "en",
           "en": "Full Bikini",
           "ar": "بيكيني كامل",
           "es": "bikini completo",
@@ -2005,16 +2006,16 @@
           "fr": "Bikini complet",
           "hi": "पूरी बिकिनी",
           "kk": "Толық бикини",
-          "pt": "Biquíni Completo",
-          "detected_language": "ru"
+          "pt": "Biquíni Completo"
         }
       }
     },
     {
-      "id": 29732,
+      "id": 36455,
       "fields": {
         "name": {
-          "ru": "Линия бикини",
+          "ru": "линия бикини",
+          "detected_language": "en",
           "en": "Bikini Line",
           "ar": "خط بيكيني",
           "es": "línea del bikini",
@@ -2022,16 +2023,16 @@
           "fr": "Ligne de bikini",
           "hi": "बिकनी लाइन",
           "kk": "Бикини желісі",
-          "pt": "Linha de biquíni",
-          "detected_language": "bg"
+          "pt": "Linha de biquíni"
         }
       }
     },
     {
-      "id": 29733,
+      "id": 36456,
       "fields": {
         "name": {
           "ru": "Полные ноги",
+          "detected_language": "en",
           "en": "Full Legs",
           "ar": "أرجل كاملة",
           "es": "Piernas Completas",
@@ -2039,16 +2040,16 @@
           "fr": "Jambes entières",
           "hi": "पूर्ण पैर",
           "kk": "Толық аяқтар",
-          "pt": "Pernas completas",
-          "detected_language": "ru"
+          "pt": "Pernas completas"
         }
       }
     },
     {
-      "id": 29734,
+      "id": 36457,
       "fields": {
         "name": {
           "ru": "Полуноги (нижние)",
+          "detected_language": "en",
           "en": "Half Legs (Lower)",
           "ar": "نصف الأرجل (سفلي)",
           "es": "Medias piernas (inferiores)",
@@ -2056,16 +2057,16 @@
           "fr": "Demi-jambes (inférieures)",
           "hi": "आधा पैर (निचला)",
           "kk": "Жартылай аяқтар (төменгі)",
-          "pt": "Meias pernas (inferior)",
-          "detected_language": "sr"
+          "pt": "Meias pernas (inferior)"
         }
       }
     },
     {
-      "id": 29735,
+      "id": 36458,
       "fields": {
         "name": {
           "ru": "Полное оружие",
+          "detected_language": "en",
           "en": "Full Arms",
           "ar": "الأسلحة الكاملة",
           "es": "Armas completas",
@@ -2073,16 +2074,16 @@
           "fr": "Bras complets",
           "hi": "पूर्ण भुजाएँ",
           "kk": "Толық қарулар",
-          "pt": "Braços completos",
-          "detected_language": "ru"
+          "pt": "Braços completos"
         }
       }
     },
     {
-      "id": 29736,
+      "id": 36459,
       "fields": {
         "name": {
           "ru": "Половина оружия",
+          "detected_language": "en",
           "en": "Half Arms",
           "ar": "نصف الأسلحة",
           "es": "Medios brazos",
@@ -2090,16 +2091,16 @@
           "fr": "Demi-bras",
           "hi": "आधा हथियार",
           "kk": "Жартылай қару",
-          "pt": "Meios Braços",
-          "detected_language": "ru"
+          "pt": "Meios Braços"
         }
       }
     },
     {
-      "id": 29737,
+      "id": 36460,
       "fields": {
         "name": {
           "ru": "Полная депиляция тела воском",
+          "detected_language": "en",
           "en": "Full Body Waxing",
           "ar": "تشميع الجسم بالكامل",
           "es": "Depilación con cera de cuerpo completo",
@@ -2107,16 +2108,16 @@
           "fr": "Épilation à la cire sur tout le corps",
           "hi": "पूरे शरीर की वैक्सिंग",
           "kk": "Толық денені балауыздандыру",
-          "pt": "Depilação Corporal Completa",
-          "detected_language": "ru"
+          "pt": "Depilação Corporal Completa"
         }
       }
     },
     {
-      "id": 29738,
+      "id": 36461,
       "fields": {
         "name": {
           "ru": "Эпиляция подмышек",
+          "detected_language": "en",
           "en": "Underarms Waxing",
           "ar": "تشميع تحت الإبطين",
           "es": "Depilación de axilas",
@@ -2124,16 +2125,16 @@
           "fr": "Epilation des aisselles",
           "hi": "अंडरआर्म्स वैक्सिंग",
           "kk": "Қолтық астындағы балауыз",
-          "pt": "Depilação de axilas",
-          "detected_language": "ru"
+          "pt": "Depilação de axilas"
         }
       }
     },
     {
-      "id": 29739,
+      "id": 36462,
       "fields": {
         "name": {
           "ru": "Полная депиляция лица",
+          "detected_language": "en",
           "en": "Full Face Waxing",
           "ar": "واكس لكامل الوجه",
           "es": "Depilación facial completa",
@@ -2141,16 +2142,16 @@
           "fr": "Épilation complète du visage",
           "hi": "पूरे चेहरे पर वैक्सिंग",
           "kk": "Бетке толық майлау",
-          "pt": "Depilação facial completa",
-          "detected_language": "ru"
+          "pt": "Depilação facial completa"
         }
       }
     },
     {
-      "id": 29740,
+      "id": 36463,
       "fields": {
         "name": {
           "ru": "Щеки воском",
+          "detected_language": "en",
           "en": "Cheeks Waxing",
           "ar": "تشميع الخدود",
           "es": "Depilación de mejillas",
@@ -2158,16 +2159,16 @@
           "fr": "Epilation des Joues",
           "hi": "गालों की वैक्सिंग",
           "kk": "Беттерді балауыз",
-          "pt": "Depilação de bochechas",
-          "detected_language": "ru"
+          "pt": "Depilação de bochechas"
         }
       }
     },
     {
-      "id": 29741,
+      "id": 36464,
       "fields": {
         "name": {
           "ru": "Депиляция верхней губы воском",
+          "detected_language": "en",
           "en": "Upper Lip Waxing",
           "ar": "تشميع الشفة العليا",
           "es": "Depilación del labio superior",
@@ -2175,16 +2176,16 @@
           "fr": "Épilation de la lèvre supérieure",
           "hi": "ऊपरी होंठ वैक्सिंग",
           "kk": "Жоғарғы ерінге арналған балауыз",
-          "pt": "Depilação labial superior",
-          "detected_language": "ru"
+          "pt": "Depilação labial superior"
         }
       }
     },
     {
-      "id": 29742,
+      "id": 36465,
       "fields": {
         "name": {
           "ru": "Эпиляция подбородка",
+          "detected_language": "en",
           "en": "Chin Waxing",
           "ar": "تشميع الذقن",
           "es": "Depilación de mentón",
@@ -2192,16 +2193,16 @@
           "fr": "Épilation du menton",
           "hi": "चिन वैक्सिंग",
           "kk": "Иекті балауыз",
-          "pt": "Depilação com cera de queixo",
-          "detected_language": "ru"
+          "pt": "Depilação com cera de queixo"
         }
       }
     },
     {
-      "id": 29743,
+      "id": 36466,
       "fields": {
         "name": {
           "ru": "Глубокая чистка лица",
+          "detected_language": "en",
           "en": "Deep Facial Cleaning",
           "ar": "تنظيف عميق للوجه",
           "es": "Limpieza Facial Profunda",
@@ -2209,16 +2210,16 @@
           "fr": "Nettoyage du visage en profondeur",
           "hi": "चेहरे की गहरी सफाई",
           "kk": "Бет терісін терең тазалау",
-          "pt": "Limpeza Facial Profunda",
-          "detected_language": "ru"
+          "pt": "Limpeza Facial Profunda"
         }
       }
     },
     {
-      "id": 29744,
+      "id": 36467,
       "fields": {
         "name": {
           "ru": "Медицинский уход за лицом (проблемная кожа)",
+          "detected_language": "en",
           "en": "Medical Facial (Problem Skin)",
           "ar": "الوجه الطبي (مشكلة الجلد)",
           "es": "Facial Médico (Piel Problemática)",
@@ -2226,16 +2227,16 @@
           "fr": "Facial Médical (Peaux à Problèmes)",
           "hi": "मेडिकल फेशियल (समस्याग्रस्त त्वचा)",
           "kk": "Медициналық бет күтімі (проблемалы тері)",
-          "pt": "Tratamento facial médico (pele problemática)",
-          "detected_language": "ru"
+          "pt": "Tratamento facial médico (pele problemática)"
         }
       }
     },
     {
-      "id": 29745,
+      "id": 36468,
       "fields": {
         "name": {
           "ru": "Лифтинг-массаж + маска",
+          "detected_language": "en",
           "en": "Lifting Massage + Mask",
           "ar": "مساج رفع + قناع",
           "es": "Masaje Lifting + Mascarilla",
@@ -2243,16 +2244,16 @@
           "fr": "Massage Liftant + Masque",
           "hi": "भारोत्तोलन मालिश + मास्क",
           "kk": "Лифтинг массажы + маска",
-          "pt": "Massagem Lifting + Máscara",
-          "detected_language": "ru"
+          "pt": "Massagem Lifting + Máscara"
         }
       }
     },
     {
-      "id": 29746,
+      "id": 36469,
       "fields": {
         "name": {
-          "ru": "пилинг",
+          "ru": "Пилинг",
+          "detected_language": "en",
           "en": "Peeling",
           "ar": "تقشير",
           "es": "Peladura",
@@ -2260,16 +2261,16 @@
           "fr": "Peeling",
           "hi": "छीलना",
           "kk": "Пиллинг",
-          "pt": "Peeling",
-          "detected_language": "mk"
+          "pt": "Peeling"
         }
       }
     },
     {
-      "id": 29747,
+      "id": 36470,
       "fields": {
         "name": {
           "ru": "Классическое наращивание ресниц",
+          "detected_language": "en",
           "en": "Classic Lash Extensions",
           "ar": "ملحقات لاش الكلاسيكية",
           "es": "Extensiones de pestañas clásicas",
@@ -2277,16 +2278,16 @@
           "fr": "Extensions de cils classiques",
           "hi": "क्लासिक लैश एक्सटेंशन",
           "kk": "Классикалық кірпік ұзартқыштары",
-          "pt": "Extensões de cílios clássicas",
-          "detected_language": "ru"
+          "pt": "Extensões de cílios clássicas"
         }
       }
     },
     {
-      "id": 29748,
+      "id": 36471,
       "fields": {
         "name": {
           "ru": "2D наращивание ресниц",
+          "detected_language": "en",
           "en": "2D Lash Extensions",
           "ar": "ملحقات رموش ثنائية الأبعاد",
           "es": "Extensiones de pestañas 2D",
@@ -2294,16 +2295,16 @@
           "fr": "Extensions de cils 2D",
           "hi": "2डी लैश एक्सटेंशन",
           "kk": "2D кірпік кеңейтімдері",
-          "pt": "Extensões de cílios 2D",
-          "detected_language": "ru"
+          "pt": "Extensões de cílios 2D"
         }
       }
     },
     {
-      "id": 29749,
+      "id": 36472,
       "fields": {
         "name": {
           "ru": "3D наращивание ресниц",
+          "detected_language": "en",
           "en": "3D Lash Extensions",
           "ar": "ملحقات رموش ثلاثية الأبعاد",
           "es": "Extensiones de pestañas 3D",
@@ -2311,16 +2312,16 @@
           "fr": "Extensions de cils 3D",
           "hi": "3डी लैश एक्सटेंशन",
           "kk": "3D кірпік кеңейтімдері",
-          "pt": "Extensões de cílios 3D",
-          "detected_language": "ru"
+          "pt": "Extensões de cílios 3D"
         }
       }
     },
     {
-      "id": 29750,
+      "id": 36473,
       "fields": {
         "name": {
           "ru": "Наращивание ресниц 4-5D (Мега)",
+          "detected_language": "en",
           "en": "4-5D Lash Extensions (Mega)",
           "ar": "وصلات رموش 4-5D (ميجا)",
           "es": "Extensiones de pestañas 4-5D (Mega)",
@@ -2328,16 +2329,16 @@
           "fr": "Extensions de cils 4-5D (méga)",
           "hi": "4-5D लैश एक्सटेंशन (मेगा)",
           "kk": "4-5D кірпік ұзартулары (мега)",
-          "pt": "Extensões de cílios 4-5D (Mega)",
-          "detected_language": "ru"
+          "pt": "Extensões de cílios 4-5D (Mega)"
         }
       }
     },
     {
-      "id": 29751,
+      "id": 36474,
       "fields": {
         "name": {
           "ru": "Эффект стиля Кима / Кривые L, M",
+          "detected_language": "en",
           "en": "Kim Style Effect / L, M Curves",
           "ar": "تأثير أسلوب كيم / منحنيات L وM",
           "es": "Efecto estilo Kim / Curvas L, M",
@@ -2345,16 +2346,16 @@
           "fr": "Effet Style Kim / Courbes L, M",
           "hi": "किम स्टाइल इफ़ेक्ट / एल, एम कर्व्स",
           "kk": "Kim Style Effect / L, M Curves",
-          "pt": "Efeito Estilo Kim / Curvas L, M",
-          "detected_language": "ru"
+          "pt": "Efeito Estilo Kim / Curvas L, M"
         }
       }
     },
     {
-      "id": 29752,
+      "id": 36475,
       "fields": {
         "name": {
           "ru": "Удалить ресницы",
+          "detected_language": "en",
           "en": "Remove Lashes",
           "ar": "إزالة الرموش",
           "es": "quitar pestañas",
@@ -2362,16 +2363,16 @@
           "fr": "Supprimer les cils",
           "hi": "पलकें हटाएँ",
           "kk": "Кірпіктерді алып тастаңыз",
-          "pt": "Remover cílios",
-          "detected_language": "ru"
+          "pt": "Remover cílios"
         }
       }
     },
     {
-      "id": 29753,
+      "id": 36476,
       "fields": {
         "name": {
           "ru": "Ламинирование бровей",
+          "detected_language": "en",
           "en": "Brow Lamination",
           "ar": "تصفيح الحاجب",
           "es": "Laminación de cejas",
@@ -2379,16 +2380,16 @@
           "fr": "Stratification des sourcils",
           "hi": "भौंह लेमिनेशन",
           "kk": "Қастарды ламинациялау",
-          "pt": "Laminação de sobrancelha",
-          "detected_language": "ru"
+          "pt": "Laminação de sobrancelha"
         }
       }
     },
     {
-      "id": 29754,
+      "id": 36477,
       "fields": {
         "name": {
           "ru": "Ламинирование ресниц",
+          "detected_language": "en",
           "en": "Lash Lamination",
           "ar": "رفع الرموش",
           "es": "Laminación de pestañas",
@@ -2396,16 +2397,16 @@
           "fr": "Stratification des cils",
           "hi": "लैश लैमिनेशन",
           "kk": "Кірпікті ламинациялау",
-          "pt": "Laminação de cílios",
-          "detected_language": "ru"
+          "pt": "Laminação de cílios"
         }
       }
     },
     {
-      "id": 29755,
+      "id": 36478,
       "fields": {
         "name": {
           "ru": "Комбинированные ресницы + брови Лами",
+          "detected_language": "en",
           "en": "Combo Lash + Brow Lami",
           "ar": "كومبو لاش + حواجب لامي",
           "es": "Combo Pestañas + Cejas Lami",
@@ -2413,16 +2414,16 @@
           "fr": "Combo Cils + Sourcils Lami",
           "hi": "कॉम्बो लैश + ब्रो लैमी",
           "kk": "Аралас кірпік + қас лами",
-          "pt": "Combo Lash + Brow Lami",
-          "detected_language": "ru"
+          "pt": "Combo Lash + Brow Lami"
         }
       }
     },
     {
-      "id": 29756,
+      "id": 36479,
       "fields": {
         "name": {
           "ru": "Окрашивание бровей",
+          "detected_language": "en",
           "en": "Brow Coloring",
           "ar": "تلوين الحاجب",
           "es": "Coloración de cejas",
@@ -2430,16 +2431,16 @@
           "fr": "Coloration des sourcils",
           "hi": "भौंहों का रंग",
           "kk": "Қас бояуы",
-          "pt": "Coloração de sobrancelha",
-          "detected_language": "ru"
+          "pt": "Coloração de sobrancelha"
         }
       }
     },
     {
-      "id": 29757,
+      "id": 36480,
       "fields": {
         "name": {
           "ru": "Коррекция бровей",
+          "detected_language": "en",
           "en": "Brow Correction",
           "ar": "تصحيح الحاجب",
           "es": "Corrección de cejas",
@@ -2447,16 +2448,16 @@
           "fr": "Correction des sourcils",
           "hi": "भौंह सुधार",
           "kk": "Қастарды түзету",
-          "pt": "Correção de sobrancelha",
-          "detected_language": "ru"
+          "pt": "Correção de sobrancelha"
         }
       }
     },
     {
-      "id": 29758,
+      "id": 36481,
       "fields": {
         "name": {
           "ru": "Перманент губ",
+          "detected_language": "en",
           "en": "Permanent Lips",
           "ar": "الشفاه الدائمة",
           "es": "Labios Permanentes",
@@ -2464,16 +2465,16 @@
           "fr": "Lèvres permanentes",
           "hi": "स्थायी होंठ",
           "kk": "Тұрақты еріндер",
-          "pt": "Lábios Permanentes",
-          "detected_language": "uk"
+          "pt": "Lábios Permanentes"
         }
       }
     },
     {
-      "id": 29759,
+      "id": 36482,
       "fields": {
         "name": {
           "ru": "Перманентные брови",
+          "detected_language": "en",
           "en": "Permanent Brows",
           "ar": "الحواجب الدائمة",
           "es": "Cejas Permanentes",
@@ -2481,16 +2482,16 @@
           "fr": "Sourcils permanents",
           "hi": "स्थायी भौहें",
           "kk": "Тұрақты қастар",
-          "pt": "Sobrancelhas Permanentes",
-          "detected_language": "ru"
+          "pt": "Sobrancelhas Permanentes"
         }
       }
     },
     {
-      "id": 29760,
+      "id": 36483,
       "fields": {
         "name": {
           "ru": "Лашлайнер",
+          "detected_language": "en",
           "en": "Lashliner",
           "ar": "لاشلينر",
           "es": "Delineador de pestañas",
@@ -2498,16 +2499,16 @@
           "fr": "Crayon à cils",
           "hi": "लैशलाइनर",
           "kk": "Кірпік лайнер",
-          "pt": "Delineador de cílios",
-          "detected_language": "ru"
+          "pt": "Delineador de cílios"
         }
       }
     },
     {
-      "id": 29761,
+      "id": 36484,
       "fields": {
         "name": {
           "ru": "Подводка для глаз",
+          "detected_language": "en",
           "en": "Eyeliner",
           "ar": "كحل",
           "es": "Lápiz de ojos",
@@ -2515,16 +2516,16 @@
           "fr": "Eye-liner",
           "hi": "आईलाइनर",
           "kk": "Көз контурлағышы",
-          "pt": "Delineador",
-          "detected_language": "ru"
+          "pt": "Delineador"
         }
       }
     },
     {
-      "id": 29762,
+      "id": 36485,
       "fields": {
         "name": {
           "ru": "Коррекция перманентного макияжа",
+          "detected_language": "en",
           "en": "Permanent Makeup Correction",
           "ar": "تصحيح المكياج الدائم",
           "es": "Corrección de maquillaje permanente",
@@ -2532,8 +2533,7 @@
           "fr": "Correction permanente du maquillage",
           "hi": "स्थायी मेकअप सुधार",
           "kk": "Тұрақты макияжды түзету",
-          "pt": "Correção de maquiagem permanente",
-          "detected_language": "ru"
+          "pt": "Correção de maquiagem permanente"
         }
       }
     }
@@ -2552,7 +2552,7 @@
           "hi": "Shop 13, Amwaj 2, Plaza Level, JBR, Dubai",
           "kk": "13 дүкен, Amwaj 2, Plaza Level, JBR, Дубай",
           "pt": "Loja 13, Amwaj 2, Plaza Level, JBR, Dubai",
-          "detected_language": "ru"
+          "detected_language": "hi"
         },
         "hours_weekdays": {
           "ru": "10:30 - 21:00",

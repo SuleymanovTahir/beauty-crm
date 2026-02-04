@@ -3,9 +3,12 @@
   "admin_panel": "Админ панель",
   "all_notifications_cleared": "Все уведомления удалены",
   "calls": {
+    "accept": "Принять",
     "audio_call": "",
     "click_to_answer": "Нажмите, чтобы ответить",
     "incoming_call": "Входящий звонок!",
+    "missed_auto": "Звонок пропущен (авто-отклонение)",
+    "missed_call": "Пропущенный звонок",
     "video_call": ""
   },
   "clear_all": "Очистить все",

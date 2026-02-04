@@ -3,9 +3,12 @@
   "admin_panel": "Painel de administração",
   "all_notifications_cleared": "Todas as notificações excluídas",
   "calls": {
+    "accept": "Aceitar",
     "audio_call": "",
     "click_to_answer": "Clique para atender",
     "incoming_call": "Chamada recebida!",
+    "missed_auto": "Chamada perdida (rejeitar automaticamente)",
+    "missed_call": "Chamada perdida",
     "video_call": ""
   },
   "clear_all": "Limpar tudo",

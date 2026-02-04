@@ -2,35 +2,35 @@
   "items": [
     {
       "bio": "Servicio de uñas de maquillaje experimentado. Manicura y pedicura ideales de cualquier complejidad.",
-      "id": 798,
+      "id": 671,
       "name": "Kasymova Gulcehre",
       "photo": "",
-      "position": "Maestro de uñas y depilación"
+      "position": "Estilista"
     },
     {
       "bio": "Maestro universal de la más alta categoría. Realiza con maestría cualquier tipo de corte y estilismo.",
-      "id": 799,
+      "id": 672,
       "name": "Jennifer Peradilla",
       "photo": "",
       "position": "Maestro de belleza universal"
     },
     {
       "bio": "Estilista de primer nivel con experiencia internacional. Un experto en técnicas complejas de restauración y coloración del cabello.",
-      "id": 800,
+      "id": 673,
       "name": "Amandurdyyeva Mestan",
       "photo": "",
       "position": "Estilista y maquillador permanente"
     },
     {
       "bio": "Un estilista talentoso que crea looks únicos. Especialista en cortes de pelo de hombre y mujer.",
-      "id": 801,
-      "name": "Mohammed Sabri",
+      "id": 674,
+      "name": "Mohamed Sabri",
       "photo": "",
       "position": "Estilista"
     },
     {
       "bio": "Un maestro pulcro y atento. Se especializa en manicura estética y diseño.",
-      "id": 802,
+      "id": 675,
       "name": "Kozhabay Lyazat",
       "photo": "",
       "position": "Nail Master"

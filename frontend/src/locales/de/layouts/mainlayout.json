@@ -3,9 +3,12 @@
   "admin_panel": "Administrator Panel",
   "all_notifications_cleared": "Alle Benachrichtigungen gelöscht",
   "calls": {
+    "accept": "Annehmen",
     "audio_call": "",
     "click_to_answer": "Zum Antworten klicken",
     "incoming_call": "Eingehender Anruf!",
+    "missed_auto": "Anruf verpasst (automatische Ablehnung)",
+    "missed_call": "Anruf verpasst",
     "video_call": ""
   },
   "clear_all": "Alle löschen",
