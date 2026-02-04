@@ -218,18 +218,21 @@ BEAUTY_SALON_TERMS = {
     
     # Должности (en->ru) - добавлены для отображения на сайте
     'nail master': 'мастер маникюра',
-    'hair stylist': 'парикмахер-стилист',
+    'hair stylist': 'стилист по волосам',
+    'barber': 'стилист по волосам',
+    'hairdresser': 'стилист по волосам',
     'makeup artist': 'визажист',
     'spa therapist': 'SPA-терапевт',
     'director': 'директор',
     'owner': 'владелец',
     'owner / director': 'владелец / директор',
     'nail & waxing master': 'мастер маникюра и депиляции',
-    'hair stylist & permanent makeup artist': 'стилист и мастер перманента',
+    'hair stylist & permanent makeup artist': 'стилист по волосам и мастер перманента',
     'universal beauty master': 'мастер-универсал',
     'aesthetician': 'косметолог-эстетист',
     'top stylist': 'топ-стилист',
     'art director': 'арт-директор',
+    'permanent makeup': 'перманентный макияж',
 }
 
 class BeautySalonTranslator:
