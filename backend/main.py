@@ -58,6 +58,7 @@ from api.reports import router as reports_router
 from api.audit import router as audit_router
 from api.webrtc_signaling import router as webrtc_router
 from api.notifications_ws import router as notifications_ws_router
+from api.ringtones import router as ringtones_router
 from api.notifications import router as notifications_router
 from api.chat_ws import router as chat_ws_router
 from api.reminders import router as reminders_router
@@ -297,6 +298,7 @@ app.include_router(invoices_router, prefix="/api")
 app.include_router(contracts_router, prefix="/api")
 app.include_router(telephony_router, prefix="/api")
 app.include_router(recordings_router, prefix="/api")
+app.include_router(ringtones_router, prefix="/api")
 app.include_router(reminders_router, prefix="/api")
 app.include_router(notifications_router, prefix="/api")
 

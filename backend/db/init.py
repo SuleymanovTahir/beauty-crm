@@ -254,6 +254,40 @@ def init_database():
         )''')
         add_column_if_not_exists('deleted_items', 'deleted_by', 'INTEGER REFERENCES users(id)')
 
+        # --- 3. RINGTONES (New) ---
+        c.execute('''CREATE TABLE IF NOT EXISTS ringtones (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            url TEXT NOT NULL,
+            is_system BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        
+        # Seed default ringtones if empty
+        c.execute("SELECT COUNT(*) FROM ringtones")
+        if c.fetchone()[0] == 0:
+            default_ringtones = [
+                ('Классика', '/audio/ringtones/default_classic.mp3'),
+                ('Apple iOS', '/audio/ringtones/apple_default.mp3'),
+                ('iPhone old', '/audio/ringtones/iphone_xylophone.mp3'),
+                ('Marimba', '/audio/ringtones/marimba.mp3'),
+                ('Samsung Galaxy', '/audio/ringtones/samsung_galaxy.mp3'),
+                ('Huawei Tune', '/audio/ringtones/huawei.mp3'),
+                ('MIUI 8', '/audio/ringtones/miui.mp3'),
+                ('Nokia Guitar', '/audio/ringtones/nokia_guitar.mp3'),
+                ('Motorola', '/audio/ringtones/motorola_c350.mp3'),
+                ('Sony Ericsson', '/audio/ringtones/sony_ericsson.mp3'),
+                ('LG Prada', '/audio/ringtones/lg_prada.mp3'),
+                ('Lumia Retro', '/audio/ringtones/lumia_retro.mp3'),
+                ('Viber', '/audio/ringtones/viber.mp3'),
+                ('Hangouts', '/audio/ringtones/hangouts.mp3'),
+                ('Xperia Breeze', '/audio/ringtones/xperia_breeze.mp3'),
+                ('Пульс', '/audio/ringtones/standard_7.mp3')
+            ]
+            for name, url in default_ringtones:
+                c.execute("INSERT INTO ringtones (name, url, is_system) VALUES (%s, %s, TRUE)", (name, url))
+            log_info("🎵 Ringtone defaults seeded.", "db")
+
         # --- END BASE COLUMNS (MOVED TO END) ---
         
         # Schema initialization for salon_settings

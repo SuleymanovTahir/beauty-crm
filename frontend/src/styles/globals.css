@@ -563,3 +563,19 @@ html {
 .service-show-more-btn {
   @apply rounded-full px-8 border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground;
 }
+
+/* Marquee Animation for Ringtones */
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 8s linear infinite;
+  min-width: 100%;
+}
