@@ -299,5 +299,12 @@
   "whatsapp_desc": "Рассылки через WhatsApp Business API, напоминания о записи.",
   "working_masters": "Работающие мастера",
   "years_of_experience": "Лет опыта",
-  "your_password": "Ваш пароль"
+  "your_password": "Ваш пароль",
+  "my_ringtone": "Моя мелодия",
+  "ringtone_saved": "Мелодия сохранена",
+  "ringtone": "Мелодия звонка",
+  "ringtone_classic": "Классика",
+  "ringtone_pulse": "Пульс",
+  "upload_custom": "Загрузить свою",
+  "save_failed": "Ошибка сохранения"
 }

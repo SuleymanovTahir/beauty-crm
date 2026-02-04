@@ -299,5 +299,12 @@
   "whatsapp_desc": "Mailings via WhatsApp Business API, appointment reminders.",
   "working_masters": "Working craftsmen",
   "years_of_experience": "Years experience",
-  "your_password": "Your password"
+  "your_password": "Your password",
+  "my_ringtone": "My ringtone",
+  "ringtone_saved": "Ringtone saved",
+  "ringtone": "Ringtone",
+  "ringtone_classic": "Classic",
+  "ringtone_pulse": "Pulse",
+  "upload_custom": "Upload custom",
+  "save_failed": "Save failed"
 }
