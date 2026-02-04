@@ -3,9 +3,12 @@
   "admin_panel": "Әкімші тақтасы",
   "all_notifications_cleared": "Барлық хабарландырулар жойылды",
   "calls": {
+    "accept": "Қабылдау",
     "audio_call": "",
     "click_to_answer": "Жауап беру үшін түртіңіз",
     "incoming_call": "Кіріс қоңырау!",
+    "missed_auto": "Қабылданбаған қоңырау (автоматты түрде қабылдамау)",
+    "missed_call": "Қабылданбаған қоңырау",
     "video_call": ""
   },
   "clear_all": "Барлығын өшіру",

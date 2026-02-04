@@ -33,6 +33,7 @@ import {
   History as HistoryIcon,
   ArrowDownLeft,
   ArrowUpRight,
+  Scissors,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -156,6 +157,10 @@ export default function InternalChat() {
     }
   }, []);
 
+  const [trimmingRingtoneId, setTrimmingRingtoneId] = useState<number | null>(null);
+  const [trimParams, setTrimParams] = useState({ startTime: 0, endTime: 30 }); // Default 30s
+  const [previewCurrentTime, setPreviewCurrentTime] = useState(0);
+
   useEffect(() => {
     if (showSettings) {
       fetchRingtones();
@@ -275,7 +280,7 @@ export default function InternalChat() {
     } finally {
       setLoading(false);
     }
-  }, [i18n.language, users.length, loading]); // Added 'loading' to dependencies for the guard condition
+  }, [i18n.language]); // Removed users.length and loading to prevent infinite loop
 
   useEffect(() => {
     loadData(true);
@@ -502,6 +507,10 @@ export default function InternalChat() {
         toast.error(error);
       };
 
+      const handleProgress = (data: { url: string, currentTime: number }) => {
+        setPreviewCurrentTime(data.currentTime);
+      };
+
       // Redundant safely handled listener for InternalChat specifically
       const handleIncomingCallLocal = (fromId: number, type: CallType, _status: string, name?: string) => {
         console.log('☎️ [InternalChat] Redundant incoming call listener caught event', { fromId, type, name });
@@ -518,6 +527,7 @@ export default function InternalChat() {
       webrtcService.addEventListener('hold', handleHold);
       webrtcService.addEventListener('resume', handleResume);
       webrtcService.addEventListener('error', handleError);
+      webrtcService.addEventListener('previewProgress', handleProgress);
 
       return () => {
         webrtcService.stopRingtone();
@@ -529,6 +539,7 @@ export default function InternalChat() {
         webrtcService.removeEventListener('remoteStream', handleRemoteStream);
         webrtcService.removeEventListener('callEnded', handleCallEnded);
         webrtcService.removeEventListener('error', handleError);
+        webrtcService.removeEventListener('previewProgress', handleProgress);
       };
     }
   }, [currentUserData?.id, users.length > 0]); // Dependency on users to sync selectedUser if already in call
@@ -1871,8 +1882,18 @@ export default function InternalChat() {
       {/* Settings Modal */}
       {
         showSettings && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center">
-            <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center"
+            onClick={() => {
+              setShowSettings(false);
+              webrtcService.stopRingtone();
+              setPlayingPreviewUrl(null);
+            }}
+          >
+            <div
+              className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold flex items-center gap-2">
                   <Settings className="w-6 h-6 text-primary" />
@@ -1914,80 +1935,244 @@ export default function InternalChat() {
 
                   {/* Preset Choices with Scrollbar */}
                   <div className="max-h-72 overflow-y-scroll pr-2">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-3 items-start">
                       {ringtones.map(preset => (
-                        <div key={preset.id} className="relative group overflow-hidden rounded-2xl">
-                          <button
-                            onClick={() => {
-                              webrtcService.setRingtone(preset.full_url);
-                              setCustomRingtone(preset.full_url);
-                              if (preset.full_url) {
-                                setPlayingPreviewUrl(preset.full_url);
-                                webrtcService.playPreview(preset.full_url, () => setPlayingPreviewUrl(null));
-                              } else {
-                                webrtcService.stopRingtone();
-                                setPlayingPreviewUrl(null);
-                              }
-                              // toast.success(`${t('settings.updated', 'Обновлено')}: ${preset.name}`);
-                            }}
-                            className={`w-full p-4 text-xs font-bold border text-center transition-all h-14 flex items-center justify-center relative overflow-hidden ${((customRingtone === preset.full_url))
-                              ? 'bg-primary/10 border-primary text-primary shadow-sm'
-                              : 'bg-card border-border hover:bg-accent'}`}
-                          >
-                            <div className={`w-full text-left pl-4 pr-20 ${preset.name.length > 10 ? (playingPreviewUrl === preset.full_url ? 'animate-marquee whitespace-nowrap' : 'truncate') : 'whitespace-nowrap'}`}>
-                              {preset.name}
-                            </div>
-                          </button>
-
-                          {/* Play/Pause Button */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (playingPreviewUrl === preset.full_url) {
-                                webrtcService.stopRingtone();
-                                setPlayingPreviewUrl(null);
-                              } else {
-                                console.log('▶️ Playing preview:', preset.full_url);
-                                setPlayingPreviewUrl(preset.full_url);
-                                webrtcService.playPreview(preset.full_url, () => setPlayingPreviewUrl(null));
-                              }
-                            }}
-                            className={`absolute top-1/2 -translate-y-1/2 right-2 p-1.5 rounded-full transition-all hover:scale-110 z-10 ${playingPreviewUrl === preset.full_url ? 'bg-primary text-white' : 'bg-primary/5 text-primary opacity-60 group-hover:opacity-100'}`}
-                            title={playingPreviewUrl === preset.full_url ? t('common:pause', 'Пауза') : t('common:play', 'Прослушать')}
-                          >
-                            {playingPreviewUrl === preset.full_url ? (
-                              <Pause className="w-3.5 h-3.5 fill-current" />
-                            ) : (
-                              <Play className="w-3.5 h-3.5 fill-current" />
-                            )}
-                          </button>
-
-                          {/* Delete Button (Only for non-system) */}
-                          {!preset.is_system && (
+                        <div key={preset.id} className={`relative group overflow-hidden rounded-2xl border transition-all ${trimmingRingtoneId === preset.id ? 'col-span-2 border-primary ring-1 ring-primary/20 shadow-sm' : (customRingtone === preset.full_url ? 'border-primary ring-1 ring-primary/20 shadow-sm' : 'border-border/50 hover:border-primary/30')}`}>
+                          <div className="relative flex items-center h-14">
                             <button
-                              onClick={async (e) => {
-                                e.stopPropagation();
-                                if (playingPreviewUrl === preset.full_url) {
+                              onClick={() => {
+                                webrtcService.setRingtone(preset.full_url, preset.start_time || 0, preset.end_time);
+                                setCustomRingtone(preset.full_url);
+                                if (preset.full_url) {
+                                  setPlayingPreviewUrl(preset.full_url);
+                                  webrtcService.playPreview(
+                                    preset.full_url,
+                                    () => setPlayingPreviewUrl(null),
+                                    preset.start_time || 0,
+                                    preset.end_time
+                                  );
+                                } else {
                                   webrtcService.stopRingtone();
                                   setPlayingPreviewUrl(null);
                                 }
-                                try {
-                                  await api.deleteRingtone(preset.id);
-                                  if (customRingtone === preset.full_url) {
-                                    setCustomRingtone(null);
-                                    webrtcService.setRingtone('');
-                                  }
-                                  toast.success(t('settings.ringtone_deleted', 'Мелодия удалена'));
-                                  fetchRingtones();
-                                } catch (err) {
-                                  toast.error('Failed to delete');
-                                }
                               }}
-                              className="absolute top-1/2 -translate-y-1/2 right-9 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all z-10"
-                              title={t('common:delete', 'Удалить')}
+                              className={`flex-1 h-full text-xs font-bold transition-all relative overflow-hidden ${((customRingtone === preset.full_url))
+                                ? 'bg-primary/20 text-primary'
+                                : 'bg-card hover:bg-muted/50'}`}
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <div className="flex items-center w-full h-full pr-28 overflow-hidden text-left pl-4">
+                                <div className={`w-full ${preset.name.length > 10 ? (playingPreviewUrl === preset.full_url ? 'animate-marquee whitespace-nowrap' : 'truncate') : 'whitespace-nowrap'}`}>
+                                  {preset.name}
+                                </div>
+                              </div>
                             </button>
+
+                            {/* Controls Container with background to hide scrolling text */}
+                            <div className="absolute right-0 top-0 bottom-0 flex items-center gap-1.5 pr-2 pl-4 bg-gradient-to-l from-card via-card to-transparent z-10 group-hover:from-muted/80 group-hover:via-muted/80 transition-all">
+                              {/* Trim Button (Only for non-system) */}
+                              {!preset.is_system && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (trimmingRingtoneId === preset.id) {
+                                      setTrimmingRingtoneId(null);
+                                    } else {
+                                      setTrimmingRingtoneId(preset.id);
+                                      setTrimParams({
+                                        startTime: preset.start_time || 0,
+                                        endTime: preset.end_time || 30
+                                      });
+                                    }
+                                  }}
+                                  className={`p-1.5 rounded-full transition-all hover:scale-110 ${trimmingRingtoneId === preset.id ? 'bg-primary text-white' : 'text-muted-foreground hover:text-primary'}`}
+                                  title={t('settings.trim', 'Обрезать')}
+                                >
+                                  <Scissors className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+
+                              {/* Play/Pause Button */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (playingPreviewUrl === preset.full_url) {
+                                    webrtcService.stopRingtone();
+                                    setPlayingPreviewUrl(null);
+                                  } else {
+                                    console.log('▶️ Playing preview:', preset.full_url);
+                                    setPlayingPreviewUrl(preset.full_url);
+                                    webrtcService.playPreview(
+                                      preset.full_url,
+                                      () => setPlayingPreviewUrl(null),
+                                      preset.start_time || 0,
+                                      preset.end_time
+                                    );
+                                  }
+                                }}
+                                className={`p-1.5 rounded-full transition-all hover:scale-110 ${playingPreviewUrl === preset.full_url ? 'bg-primary text-white' : 'bg-primary/10 text-primary'}`}
+                                title={playingPreviewUrl === preset.full_url ? t('common:pause', 'Пауза') : t('common:play', 'Прослушать')}
+                              >
+                                {playingPreviewUrl === preset.full_url ? (
+                                  <Pause className="w-3.5 h-3.5 fill-current" />
+                                ) : (
+                                  <Play className="w-3.5 h-3.5 fill-current" />
+                                )}
+                              </button>
+
+                              {/* Delete Button (Only for non-system) */}
+                              {!preset.is_system && (
+                                <button
+                                  onClick={async (e) => {
+                                    e.stopPropagation();
+                                    if (playingPreviewUrl === preset.full_url) {
+                                      webrtcService.stopRingtone();
+                                      setPlayingPreviewUrl(null);
+                                    }
+                                    try {
+                                      await api.deleteRingtone(preset.id);
+                                      if (customRingtone === preset.full_url) {
+                                        setCustomRingtone(null);
+                                        webrtcService.setRingtone('');
+                                      }
+                                      toast.success(t('settings.ringtone_deleted', 'Мелодия удалена'));
+                                      fetchRingtones();
+                                    } catch (err) {
+                                      toast.error('Failed to delete');
+                                    }
+                                  }}
+                                  className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all"
+                                  title={t('common:delete', 'Удалить')}
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Trimming UI Expansion */}
+                          {trimmingRingtoneId === preset.id && (
+                            <div className="p-4 bg-muted/30 border-t border-border space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                              <div className="flex items-center justify-between text-[10px] font-bold uppercase opacity-50">
+                                <span>{t('settings.trim_range', 'Интервал')}</span>
+                                <span className="text-primary">{trimParams.startTime.toFixed(1)}s - {trimParams.endTime.toFixed(1)}s</span>
+                              </div>
+
+                              <div className="space-y-4">
+                                <div className="group relative pt-6 pb-2">
+                                  {/* Visual Track */}
+                                  <div className="audio-trimmer-track">
+                                    {/* Mock Waveform Bars */}
+                                    <div className="absolute inset-0 flex items-center justify-between gap-[2px] px-2 opacity-30">
+                                      {[...Array(30)].map((_, i) => (
+                                        <div
+                                          key={i}
+                                          className="waveform-bar"
+                                          style={{ height: `${20 + Math.abs(Math.sin(i * 0.5) * 60) + (i % 4 === 0 ? 15 : 0)}%` }}
+                                        />
+                                      ))}
+                                    </div>
+
+                                    {/* Selection Highlight */}
+                                    <div
+                                      className="trim-selection"
+                                      style={{
+                                        left: `${(trimParams.startTime / 60) * 100}%`,
+                                        width: `${((trimParams.endTime - trimParams.startTime) / 60) * 100}%`
+                                      }}
+                                    />
+
+                                    {/* Playhead Indicator */}
+                                    {playingPreviewUrl === preset.full_url && (
+                                      <div
+                                        className="absolute top-0 bottom-0 w-[2px] bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] z-40 transition-all duration-100 ease-linear"
+                                        style={{ left: `${(previewCurrentTime / 60) * 100}%` }}
+                                      />
+                                    )}
+
+                                    {/* Start Handle (Range Input) */}
+                                    <input
+                                      type="range"
+                                      min="0"
+                                      max="60"
+                                      step="0.1"
+                                      value={trimParams.startTime}
+                                      onChange={(e) => {
+                                        const val = parseFloat(e.target.value);
+                                        setTrimParams(prev => ({
+                                          ...prev,
+                                          startTime: Math.min(val, prev.endTime - 1)
+                                        }));
+                                      }}
+                                      className="dual-range-input z-30"
+                                    />
+
+                                    {/* End Handle (Range Input) */}
+                                    <input
+                                      type="range"
+                                      min="0"
+                                      max="60"
+                                      step="0.1"
+                                      value={trimParams.endTime}
+                                      onChange={(e) => {
+                                        const val = parseFloat(e.target.value);
+                                        setTrimParams(prev => ({
+                                          ...prev,
+                                          endTime: Math.max(val, prev.startTime + 1)
+                                        }));
+                                      }}
+                                      className="dual-range-input z-20"
+                                    />
+
+                                    {/* Floating Time Labels */}
+                                    <span
+                                      className="time-marker"
+                                      style={{ left: `${(trimParams.startTime / 60) * 100}%`, transform: 'translateX(-50%)' }}
+                                    >
+                                      {trimParams.startTime.toFixed(1)}s
+                                    </span>
+                                    <span
+                                      className="time-marker"
+                                      style={{ left: `${(trimParams.endTime / 60) * 100}%`, transform: 'translateX(-50%)' }}
+                                    >
+                                      {trimParams.endTime.toFixed(1)}s
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex gap-2 mt-2">
+                                <button
+                                  onClick={() => {
+                                    setPreviewCurrentTime(trimParams.startTime);
+                                    webrtcService.playPreview(preset.full_url, () => { }, trimParams.startTime, trimParams.endTime);
+                                  }}
+                                  className="flex-1 py-1.5 bg-primary/10 text-primary text-[10px] font-bold rounded-lg hover:bg-primary/20 transition-all"
+                                >
+                                  {t('common:test', 'Тест')}
+                                </button>
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      console.log(`💾 Saving trim for ringtone ${preset.id}:`, trimParams);
+                                      await api.updateRingtoneTrim(preset.id, trimParams.startTime, trimParams.endTime);
+
+                                      // Crucial: Update the service immediately so the "old" melody doesn't stick
+                                      webrtcService.setRingtone(preset.full_url, trimParams.startTime, trimParams.endTime);
+
+                                      toast.success(t('common:saved', 'Сохранено'));
+                                      fetchRingtones();
+                                      setTrimmingRingtoneId(null);
+                                    } catch (e: any) {
+                                      console.error('❌ Save trim failed:', e);
+                                      toast.error(e.message || 'Save failed');
+                                    }
+                                  }}
+                                  className="flex-1 py-1.5 bg-primary text-white text-[10px] font-bold rounded-lg hover:opacity-90 transition-all"
+                                >
+                                  {t('common:save', 'Сохранить')}
+                                </button>
+                              </div>
+                            </div>
                           )}
                         </div>
                       ))}
@@ -2073,8 +2258,14 @@ export default function InternalChat() {
       {/* Invite Modal */}
       {
         isInviteModalOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
-            <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4"
+            onClick={() => setIsInviteModalOpen(false)}
+          >
+            <div
+              className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold flex items-center gap-2">
                   <UserPlus className="w-6 h-6 text-primary" />
@@ -2136,8 +2327,14 @@ export default function InternalChat() {
       {/* Transfer Call Modal */}
       {
         isTransferModalOpen && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
-            <div className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4"
+            onClick={() => setIsTransferModalOpen(false)}
+          >
+            <div
+              className="bg-card w-full max-w-md p-6 rounded-2xl shadow-2xl border border-border"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold flex items-center gap-2">
                   <Share2 className="w-6 h-6 text-primary" />
@@ -2232,8 +2429,14 @@ export default function InternalChat() {
       {/* Call History Side Sheet */}
       {
         showCallHistory && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
-            <div className="bg-card w-full max-w-xl p-6 rounded-2xl shadow-2xl border border-border">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70] flex items-center justify-center p-4"
+            onClick={() => setShowCallHistory(false)}
+          >
+            <div
+              className="bg-card w-full max-w-xl p-6 rounded-2xl shadow-2xl border border-border"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold flex items-center gap-2">
                   <Clock className="w-6 h-6 text-primary" />

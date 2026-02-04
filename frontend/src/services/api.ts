@@ -2268,6 +2268,13 @@ export class ApiClient {
   async deleteRingtone(id: number) {
     return this.request<any>(`/api/ringtones/${id}`, { method: 'DELETE' })
   }
+
+  async updateRingtoneTrim(id: number, startTime: number, endTime?: number) {
+    return this.request<any>(`/api/ringtones/${id}/trim`, {
+      method: 'POST',
+      body: JSON.stringify({ start_time: startTime, end_time: endTime })
+    })
+  }
 }
 
 export const api = new ApiClient()

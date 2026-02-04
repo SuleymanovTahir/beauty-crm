@@ -64,8 +64,11 @@ export class WebRTCService {
   private activeOscillators: OscillatorNode[] = [];
   private ringtoneAudio: HTMLAudioElement | null = null;
   private previewAudio: HTMLAudioElement | null = null;
-  private currentRingtoneUrl: string = localStorage.getItem('webrtc_ringtone_url') ?? '/audio/ringtones/default_classic.mp3';
-  private ringtoneVolume: number = Number(localStorage.getItem('webrtc_ringtone_volume') ?? '0.5');
+  private static DEFAULT_RINGTONE = '/audio/ringtones/default_classic.mp3';
+  private currentRingtoneUrl: string = localStorage.getItem('webrtc_ringtone_url') || WebRTCService.DEFAULT_RINGTONE;
+  private currentRingtoneStartTime: number = Number(localStorage.getItem('webrtc_ringtone_start_time') || '0');
+  private currentRingtoneEndTime: number | null = localStorage.getItem('webrtc_ringtone_end_time') ? Number(localStorage.getItem('webrtc_ringtone_end_time')) : null;
+  private ringtoneVolume: number = Number(localStorage.getItem('webrtc_ringtone_volume') || '0.5');
   private isRinging: boolean = false;
   private isCallActive: boolean = false;
   private isDndEnabled: boolean = false;
@@ -105,19 +108,32 @@ export class WebRTCService {
    * Resume AudioContext on user gesture to comply with browser autoplay policies
    */
   public async resumeAudioContext(): Promise<void> {
-    if (this.audioContext && (this.audioContext.state === 'suspended' || this.audioContext.state === 'interrupted')) {
-      try {
+    try {
+      if (!this.audioContext) {
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        if (AudioCtx) {
+          this.audioContext = new AudioCtx();
+          console.log('🔊 [WebRTC] AudioContext created');
+        }
+      }
+
+      if (this.audioContext && (this.audioContext.state === 'suspended' || this.audioContext.state === 'interrupted')) {
         await this.audioContext.resume();
-        console.log('🔊 [WebRTC] AudioContext resumed successfully');
-      } catch (err) {
-        console.error('❌ [WebRTC] Failed to resume AudioContext:', err);
+        console.log('🔊 [WebRTC] AudioContext resumed');
       }
-    } else if (!this.audioContext) {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (AudioCtx) {
-        this.audioContext = new AudioCtx();
-        console.log('🔊 [WebRTC] AudioContext created on gesture');
+
+      // "Warm up" the audio context with a near-silent burst to unblock autoplay
+      if (this.audioContext && this.audioContext.state === 'running') {
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        gain.gain.setValueAtTime(0.001, this.audioContext.currentTime);
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+        osc.start();
+        osc.stop(this.audioContext.currentTime + 0.01);
       }
+    } catch (err) {
+      console.error('❌ [WebRTC] Failed to initialize/resume AudioContext:', err);
     }
   }
 
@@ -203,10 +219,19 @@ export class WebRTCService {
     }
   }
 
-  setRingtone(url: string) {
-    this.currentRingtoneUrl = url;
-    localStorage.setItem('webrtc_ringtone_url', url);
-    // Also sync with chat_ringtone if needed, but we'll use webrtc_ringtone_url as SSOT
+  setRingtone(url: string | null | undefined, startTime: number = 0, endTime: number | null = null) {
+    const finalUrl = url || WebRTCService.DEFAULT_RINGTONE;
+    this.currentRingtoneUrl = finalUrl;
+    this.currentRingtoneStartTime = startTime;
+    this.currentRingtoneEndTime = endTime;
+    localStorage.setItem('webrtc_ringtone_url', finalUrl);
+    localStorage.setItem('webrtc_ringtone_start_time', startTime.toString());
+    if (endTime !== null) {
+      localStorage.setItem('webrtc_ringtone_end_time', endTime.toString());
+    } else {
+      localStorage.removeItem('webrtc_ringtone_end_time');
+    }
+    console.log(`🎵 [Ringtone] Set to: ${finalUrl}, Start: ${startTime}, End: ${endTime}`);
   }
 
   setDnd(enabled: boolean) {
@@ -220,7 +245,7 @@ export class WebRTCService {
   /**
    * Play a short preview of a ringtone
    */
-  public async playPreview(url: string, onEnd?: () => void): Promise<void> {
+  public async playPreview(url: string, onEnd?: () => void, startTime: number = 0, endTime?: number | null): Promise<void> {
     try {
       // If same URL is playing, stop it
       if (this.previewAudio && this.previewAudio.src === url && !this.previewAudio.paused) {
@@ -232,9 +257,28 @@ export class WebRTCService {
       this.stopRingtone();
       await this.resumeAudioContext();
 
-      const audioUrl = url || 'https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3';
+      const audioUrl = url;
       this.previewAudio = new Audio(audioUrl);
       this.previewAudio.volume = this.ringtoneVolume;
+
+      this.previewAudio.onloadedmetadata = () => {
+        if (this.previewAudio) {
+          this.previewAudio.currentTime = startTime;
+        }
+      };
+
+      this.previewAudio.ontimeupdate = () => {
+        if (this.previewAudio) {
+          const currentTime = this.previewAudio.currentTime;
+          this.emit('previewProgress', { url, currentTime });
+
+          if (endTime && currentTime >= endTime) {
+            this.previewAudio.pause();
+            this.previewAudio = null;
+            if (onEnd) onEnd();
+          }
+        }
+      };
 
       this.previewAudio.onended = () => {
         this.previewAudio = null;
@@ -277,146 +321,119 @@ export class WebRTCService {
   /**
    * Play ringtone sounds
    */
-  playRingtone(type: 'incoming' | 'outgoing' | 'end'): void {
+  async playRingtone(type: 'incoming' | 'outgoing' | 'end'): Promise<void> {
     try {
-      // Don't play if already ringing (prevent overlap)
+      console.log(`🎵 [WebRTC:Ringtone] playRingtone called: type=${type}, isRinging=${this.isRinging}`);
+
       if (this.isRinging && type !== 'end') {
-        console.debug(`🎵 [WebRTC:Ringtone] Already ringing, ignoring '${type}'`);
+        console.log('🎵 [WebRTC:Ringtone] Already ringing, skipping...');
         return;
       }
 
-      console.info(`🎵 [WebRTC:Ringtone] Attempting to play '${type}'`);
+      // Ensure AudioContext is ready (critical for browser autoplay policies)
+      await this.resumeAudioContext();
+      const ctx = this.audioContext;
 
-      // 1. If we have a custom or preset URL-based ringtone, use HTMLAudioElement
       if (type === 'incoming' && this.currentRingtoneUrl) {
+        console.log('🔔 [WebRTC:Ringtone] Playing incoming custom ringtone:', this.currentRingtoneUrl);
         this.stopRingtone();
-        this.isRinging = true;
-        this.ringtoneAudio = new Audio(this.currentRingtoneUrl);
-        this.ringtoneAudio.loop = true;
-        this.ringtoneAudio.volume = this.ringtoneVolume;
-        this.ringtoneAudio.play().catch(e => console.warn("Failed to play custom ringtone:", e));
-        return;
+
+        try {
+          this.ringtoneAudio = new Audio(this.currentRingtoneUrl);
+          this.ringtoneAudio.loop = true;
+          this.ringtoneAudio.volume = this.ringtoneVolume;
+
+          const startTime = this.currentRingtoneStartTime;
+          const endTime = this.currentRingtoneEndTime;
+
+          this.ringtoneAudio.onloadedmetadata = () => {
+            if (this.ringtoneAudio) {
+              console.log(`🎵 [WebRTC:Ringtone] Metadata loaded, setting start time to ${startTime}s`);
+              this.ringtoneAudio.currentTime = startTime;
+            }
+          };
+
+          if (endTime) {
+            this.ringtoneAudio.ontimeupdate = () => {
+              if (this.ringtoneAudio && this.ringtoneAudio.currentTime >= endTime) {
+                console.debug(`🎵 [WebRTC:Ringtone] End time ${endTime}s reached, looping to ${startTime}s`);
+                this.ringtoneAudio.currentTime = startTime;
+              }
+            };
+          }
+
+          this.isRinging = true;
+          await this.ringtoneAudio.play();
+          console.log('🎵 [WebRTC:Ringtone] Custom ringtone started playing');
+          return;
+        } catch (e) {
+          console.warn("⚠️ [WebRTC:Ringtone] Failed to play custom ringtone, falling back to oscillators:", e);
+          this.isRinging = false; // Reset so fallback can set it
+          // Continue to oscillator fallback
+        }
       }
 
-      // 2. Fallback to Oscillator-based sound if no URL or for other sounds
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioCtx) {
-        console.error('❌ [Ringtone] AudioContext NOT supported');
+        console.error('❌ [WebRTC:Ringtone] AudioContext not supported');
         return;
       }
 
-      if (!this.audioContext) {
-        this.audioContext = new AudioCtx();
-        console.info('🔊 [Ringtone] Created new AudioContext');
-      }
-      const ctx = this.audioContext;
-      console.info(`🔊 [Ringtone] AudioContext state: ${ctx.state}`);
-
-      // Resume context if suspended
-      if (ctx.state === 'suspended') {
-        console.warn('⚠️ [Ringtone] Context suspended, attempting resume...');
-        ctx.resume().then(() => {
-          console.info('✅ [Ringtone] Context resumed');
-        }).catch(e => {
-          console.error('❌ [Ringtone] Resume failed:', e);
-        });
+      if (!ctx) {
+        console.error('❌ [WebRTC:Ringtone] AudioContext still not available after resume');
+        return;
       }
 
-      this.stopRingtone(); // Stop previous sounds
-
-      // Explicitly try to resume before playing
-      if (ctx.state === 'suspended') {
-        ctx.resume().catch(() => {
-          console.warn('[WebRTC] AudioContext resume failed - waiting for user gesture');
-        });
-      }
+      this.stopRingtone();
+      console.log(`🎵 [WebRTC:Ringtone] Playing fallback/pattern for type: ${type}`);
 
       if (type === 'incoming') {
         this.isRinging = true;
-
-        // Digital Phone Trill (Very distinct from beeps)
         const playRingPattern = (startTime: number) => {
           const osc1 = ctx.createOscillator();
-          const osc2 = ctx.createOscillator(); // Modulator
+          const osc2 = ctx.createOscillator();
           const gain = ctx.createGain();
           const modGain = ctx.createGain();
-
-          osc1.type = 'square'; // Square wave for "digital" sound
-          osc1.frequency.setValueAtTime(600, startTime);
-
-          osc2.type = 'square';
-          osc2.frequency.setValueAtTime(25, startTime); // 25Hz modulation (the "trill")
-
-          modGain.gain.value = 100; // Depth of modulation
-
-          // FM Synthesis: Modulator -> ModGain -> Carrier.frequency
+          osc1.type = 'square'; osc1.frequency.setValueAtTime(600, startTime);
+          osc2.type = 'square'; osc2.frequency.setValueAtTime(25, startTime);
+          modGain.gain.value = 100;
           osc2.connect(modGain);
           modGain.connect(osc1.frequency);
-
+          const vol = this.ringtoneVolume * 0.4; // Scale down slightly as oscillators are loud
           gain.gain.setValueAtTime(0, startTime);
-          gain.gain.linearRampToValueAtTime(0.2, startTime + 0.1);
-          gain.gain.setValueAtTime(0.2, startTime + 1.8);
+          gain.gain.linearRampToValueAtTime(vol, startTime + 0.1);
+          gain.gain.setValueAtTime(vol, startTime + 1.8);
           gain.gain.linearRampToValueAtTime(0, startTime + 2.0);
-
-          osc1.connect(gain);
-          gain.connect(ctx.destination);
-
-          osc1.start(startTime);
-          osc2.start(startTime);
-          osc1.stop(startTime + 2.0);
-          osc2.stop(startTime + 2.0);
-
-          this.activeOscillators.push(osc1);
-          this.activeOscillators.push(osc2);
+          osc1.connect(gain); gain.connect(ctx.destination);
+          osc1.start(startTime); osc2.start(startTime);
+          osc1.stop(startTime + 2.0); osc2.stop(startTime + 2.0);
+          this.activeOscillators.push(osc1, osc2);
         };
-
-        // Schedule for 60 seconds (Loop every 3 seconds)
-        for (let i = 0; i < 20; i++) {
-          playRingPattern(ctx.currentTime + i * 3);
-        }
+        for (let i = 0; i < 20; i++) playRingPattern(ctx.currentTime + i * 3);
       } else if (type === 'outgoing') {
         this.isRinging = true;
-
-        // Outgoing "tuuu... tuuu..." pattern
         const playOutgoingPattern = (startTime: number) => {
-          const o = ctx.createOscillator();
-          const g = ctx.createGain();
-          o.type = 'sine';
-          o.frequency.setValueAtTime(425, startTime);
-
+          const o = ctx.createOscillator(); const g = ctx.createGain();
+          o.type = 'sine'; o.frequency.setValueAtTime(425, startTime);
+          const vol = this.ringtoneVolume * 0.15;
           g.gain.setValueAtTime(0, startTime);
-          g.gain.linearRampToValueAtTime(0.08, startTime + 0.1);
-          g.gain.setValueAtTime(0.08, startTime + 1.5);
+          g.gain.linearRampToValueAtTime(vol, startTime + 0.1);
+          g.gain.setValueAtTime(vol, startTime + 1.5);
           g.gain.linearRampToValueAtTime(0, startTime + 1.6);
-
-          o.connect(g);
-          g.connect(ctx.destination);
-          o.start(startTime);
-          o.stop(startTime + 1.7);
+          o.connect(g); g.connect(ctx.destination);
+          o.start(startTime); o.stop(startTime + 1.7);
           this.activeOscillators.push(o);
         };
-
-        // Schedule for 60 seconds
-        for (let i = 0; i < 12; i++) {
-          playOutgoingPattern(ctx.currentTime + i * 6);
-        }
-
+        for (let i = 0; i < 12; i++) playOutgoingPattern(ctx.currentTime + i * 6);
       } else if (type === 'end') {
-        // Disconnect tone
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
+        const osc = ctx.createOscillator(); const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
         osc.frequency.setValueAtTime(300, ctx.currentTime);
         gain.gain.setValueAtTime(0.1, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.3);
+        osc.start(); osc.stop(ctx.currentTime + 0.3);
       }
-    } catch (e) {
-      console.error('Audio playback failed', e);
-    }
+    } catch (e) { console.error('Audio playback failed', e); }
   }
 
   async initialize(userId: number): Promise<void> {

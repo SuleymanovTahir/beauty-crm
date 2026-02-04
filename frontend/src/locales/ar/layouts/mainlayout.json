@@ -3,9 +3,12 @@
   "admin_panel": "لوحة الإدارة",
   "all_notifications_cleared": "تم حذف جميع الإشعارات",
   "calls": {
+    "accept": "قبول",
     "audio_call": "",
     "click_to_answer": "انقر للرد",
     "incoming_call": "مكالمة واردة!",
+    "missed_auto": "مكالمة لم يرد عليها (تم الإلغاء تلقائي)",
+    "missed_call": "مكالمة لم يرد عليها",
     "video_call": ""
   },
   "clear_all": "مسح الكل",

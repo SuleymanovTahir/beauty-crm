@@ -3,9 +3,12 @@
   "admin_panel": "Admin panel",
   "all_notifications_cleared": "All notifications have been deleted",
   "calls": {
+    "accept": "Accept",
     "audio_call": "",
     "click_to_answer": "Click to answer",
     "incoming_call": "Incoming call!",
+    "missed_auto": "Call missed (auto-reject)",
+    "missed_call": "Missed call",
     "video_call": ""
   },
   "clear_all": "Clear all",

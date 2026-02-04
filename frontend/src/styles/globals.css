@@ -564,6 +564,35 @@ html {
   @apply rounded-full px-8 border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground;
 }
 
+/* Audio Trimmer Styles */
+.audio-trimmer-track {
+  @apply relative h-12 bg-muted/20 rounded-xl overflow-hidden flex items-center px-0 border border-border/50;
+}
+
+.waveform-bar {
+  @apply w-1 bg-primary/40 rounded-full transition-all duration-300;
+}
+
+.trim-selection {
+  @apply absolute h-full bg-primary/10 border-x-2 border-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)];
+}
+
+.dual-range-input {
+  @apply absolute w-full top-1/2 -translate-y-1/2 bg-transparent appearance-none pointer-events-none z-20 h-6 cursor-pointer;
+}
+
+.dual-range-input::-webkit-slider-thumb {
+  @apply appearance-none w-1 h-8 bg-primary cursor-ew-resize pointer-events-auto shadow-lg border border-white/20 hover:scale-y-110 active:scale-y-125 transition-all;
+}
+
+.dual-range-input::-moz-range-thumb {
+  @apply w-1 h-8 bg-primary cursor-ew-resize pointer-events-auto border-none shadow-lg transition-all;
+}
+
+.time-marker {
+  @apply absolute top-1 text-[8px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-background/80 px-1 rounded border border-border/50;
+}
+
 /* Marquee Animation for Ringtones */
 @keyframes marquee {
   0% {
