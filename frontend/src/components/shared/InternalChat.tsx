@@ -1934,7 +1934,7 @@ export default function InternalChat() {
                               ? 'bg-primary/10 border-primary text-primary shadow-sm'
                               : 'bg-card border-border hover:bg-accent'}`}
                           >
-                            <div className={`w-full text-left pl-4 pr-20 ${playingPreviewUrl === preset.full_url && preset.name.length > 10 ? 'animate-marquee whitespace-nowrap' : 'truncate'}`}>
+                            <div className={`w-full text-left pl-4 pr-20 ${preset.name.length > 10 ? (playingPreviewUrl === preset.full_url ? 'animate-marquee whitespace-nowrap' : 'truncate') : 'whitespace-nowrap'}`}>
                               {preset.name}
                             </div>
                           </button>
