@@ -114,6 +114,14 @@ SALON_TERMINOLOGY = {
         'гель-лак': 'гель-лак',
         'гель-лаками': 'гель-лак',
         'гель-лаком': 'гель-лак',
+        'парикмахер': 'стилист по волосам',
+        'hair stylist': 'стилист по волосам',
+        'барбер': 'стилист по волосам',
+        'barber': 'стилист по волосам',
+        'стилист по волосам': 'стилист по волосам',
+        'senior stylist': 'Топ-стилист',
+        'постоянно верно': 'перманентный макияж',
+        'permanent makeup': 'перманентный макияж',
     },
     # Corrections for English (when EN is the target language)
     'en': {
@@ -484,8 +492,8 @@ class Translator:
             with urllib.request.urlopen(req, timeout=10, context=context) as response:
                 data = response.read().decode('utf-8')
                 parsed = json.loads(data)
-                if parsed and parsed[0] and parsed[0][0] and parsed[0][0][0]:
-                    translated = parsed[0][0][0]
+                if parsed and parsed[0]:
+                    translated = "".join([segment[0] for segment in parsed[0] if segment and segment[0]])
                     if context_prefix:
                         prefixes = ["[Beauty salon service]", "[Услуга салона красоты]", "[خدمة صالون التجميل]", "[Servicio de salón de belleza]", "[Service de salon de beauté]", "[Schönheitssalon-Service]", "[सौंदर्य सैलून सेवा]", "[Сұлулық салоны қызметі]", "[Serviço de salão de beleza]"]
                         for prefix in prefixes: translated = translated.replace(prefix, "").strip()

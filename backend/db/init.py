@@ -277,7 +277,6 @@ def init_database():
         c.execute("SELECT COUNT(*) FROM ringtones")
         if c.fetchone()[0] == 0:
             default_ringtones = [
-                ('Классика', '/audio/ringtones/default_classic.mp3'),
                 ('Apple iOS', '/audio/ringtones/apple_default.mp3'),
                 ('iPhone old', '/audio/ringtones/iphone_xylophone.mp3'),
                 ('Marimba', '/audio/ringtones/marimba.mp3'),

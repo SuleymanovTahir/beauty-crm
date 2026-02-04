@@ -18,6 +18,14 @@ from utils.logger import log_info, log_error, log_debug, log_warning
 # ===== ДИРЕКТОРИИ И ФАЙЛЫ =====
 
 from core.config import UPLOAD_DIR, BASE_DIR
+import time
+
+def _add_v(url: str) -> str:
+    """Добавить параметр версии для обхода кеша браузера (всегда свежее)"""
+    if not url: return url
+    ts = int(time.time()) # Секундная точность для мгновенного обновления
+    sep = '&' if '?' in url else '?'
+    return f"{url}{sep}v={ts}"
 
 def ensure_upload_directories():
     """Создать все необходимые директории для загрузок"""
@@ -115,45 +123,45 @@ def map_image_path(url: str) -> str:
 
     for old_path, new_path in path_mappings.items():
         if url.startswith(old_path):
-            return url.replace(old_path, new_path, 1)
+            url = url.replace(old_path, new_path, 1)
+            break
 
-    # Дополнительная защита: если путь все еще содержит кириллицу в /landing-images/ (от старых данных)
-    cyrillic_mapping = {
-        '/landing-images/Фото салона/': '/landing-images/salon/',
-        '/landing-images/Портфолио/': '/landing-images/portfolio/',
-        '/landing-images/Баннер/': '/landing-images/banners/',
-        '/landing-images/Услуги/': '/landing-images/services/',
-        '/landing-images/Красивые лица/': '/landing-images/faces/',
-        '/landing-images/Сотрудники/': '/landing-images/staff/',
-    }
-
-    for old, new in cyrillic_mapping.items():
-        if url.startswith(old):
-            url = url.replace(old, new, 1)
-
-    # Защита от кириллических ИМЕН файлов (если папка уже латинская)
     file_mappings = {
-        '/landing-images/portfolio/СПА3.webp': '/landing-images/portfolio/SPA3.webp',
-        '/landing-images/portfolio/Спа2.webp': '/landing-images/portfolio/Spa2.webp',
-        '/landing-images/portfolio/Перманент губ.webp': '/landing-images/portfolio/Permanent_lips.webp',
-        '/landing-images/portfolio/Волосы блондинка.webp': '/landing-images/portfolio/Hair_blonde.webp',
-        '/landing-images/portfolio/Маникюр.webp': '/landing-images/portfolio/Manicure.webp',
-        '/landing-images/portfolio/Маникюр3.webp': '/landing-images/portfolio/Manikjur3.webp',
-        '/landing-images/portfolio/Ногти2.webp': '/landing-images/portfolio/Nogti2.webp',
-        '/landing-images/portfolio/Волосы2.webp': '/landing-images/portfolio/Hair2.webp',
-        '/landing-images/portfolio/Ногти до после.webp': '/landing-images/portfolio/Nogti_do_posle.webp',
-        '/landing-images/portfolio/Кератин блондинка.webp': '/landing-images/portfolio/Keratin_blonde.webp',
-        '/landing-images/portfolio/Волосы.webp': '/landing-images/portfolio/Hair.webp',
-        # Services
         '/landing-images/services/Массаж лица.webp': '/landing-images/services/Face_massage.webp',
-        '/landing-images/services/Стрижка .webp': '/landing-images/services/Haircut.webp',
+        '/landing-images/services/Стрижка .webp': '/landing-images/services/Haircut.webp', 
         '/landing-images/services/Маникюр 4.webp': '/landing-images/services/Manicure_4.webp',
         '/landing-images/services/Перманент ресниц.webp': '/landing-images/services/Permanent_lashes.webp',
         '/landing-images/services/Спа.webp': '/landing-images/services/Spa.webp',
+        '/landing-images/services/SPA.webp': '/landing-images/services/Spa.webp',
+        '/landing-images/portfolio/Волосы.webp': '/landing-images/portfolio/Hair.webp',
+        '/landing-images/portfolio/Волосы2.webp': '/landing-images/portfolio/Hair2.webp',
+        '/landing-images/portfolio/Маникюр.webp': '/landing-images/portfolio/Manicure.webp',
+        '/landing-images/portfolio/Перманент губ.webp': '/landing-images/portfolio/Permanent_lips.webp',
+        '/landing-images/portfolio/Волосы блондинка.webp': '/landing-images/portfolio/Hair_blonde.webp',
+        '/landing-images/portfolio/Кератин блондинка.webp': '/landing-images/portfolio/Keratin_blonde.webp',
+        '/landing-images/portfolio/Ногти до после.webp': '/landing-images/portfolio/Nogti_do_posle.webp',
+        '/landing-images/portfolio/СПА3.webp': '/landing-images/portfolio/SPA3.webp',
+        '/landing-images/portfolio/Спа2.webp': '/landing-images/portfolio/Spa2.webp',
     }
 
     if url in file_mappings:
         return file_mappings[url]
+
+    # Автоматическая транслитерация для кириллических имен, если маппинг не найден
+    if any(ord(c) > 127 for c in url):
+        from utils.language_utils import get_transliterated_name
+        # Транслитерируем только имя файла, сохраняя путь
+        dir_name = os.path.dirname(url)
+        base_name = os.path.basename(url)
+        name_only, ext = os.path.splitext(base_name)
+        
+        # Очищаем от пробелов и транслитерируем
+        clean_name = name_only.replace(' ', '_')
+        trans_name = get_transliterated_name(clean_name, 'en').lower()
+        if trans_name:
+            # Убираем возможные префиксы "master_" если они добавились (get_transliterated_name может это делать)
+            trans_name = trans_name.replace('master_', '')
+            return f"{dir_name}/{trans_name.capitalize()}{ext}"
 
     return url
 

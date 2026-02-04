@@ -34,6 +34,8 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   Scissors,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -159,7 +161,11 @@ export default function InternalChat() {
 
   const [trimmingRingtoneId, setTrimmingRingtoneId] = useState<number | null>(null);
   const [trimParams, setTrimParams] = useState({ startTime: 0, endTime: 30 }); // Default 30s
+  const [totalDuration, setTotalDuration] = useState(30);
   const [previewCurrentTime, setPreviewCurrentTime] = useState(0);
+  const [isDraggingPlayhead, setIsDraggingPlayhead] = useState(false);
+  const trimmerScrollRef = useRef<HTMLDivElement>(null);
+  const trimmerTrackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (showSettings) {
@@ -1977,10 +1983,16 @@ export default function InternalChat() {
                                     if (trimmingRingtoneId === preset.id) {
                                       setTrimmingRingtoneId(null);
                                     } else {
-                                      setTrimmingRingtoneId(preset.id);
-                                      setTrimParams({
-                                        startTime: preset.start_time || 0,
-                                        endTime: preset.end_time || 30
+                                      // Pre-load audio to get duration
+                                      const tempAudio = new Audio(preset.full_url);
+                                      tempAudio.addEventListener('loadedmetadata', () => {
+                                        const duration = tempAudio.duration;
+                                        setTotalDuration(duration);
+                                        setTrimmingRingtoneId(preset.id);
+                                        setTrimParams({
+                                          startTime: preset.start_time || 0,
+                                          endTime: preset.end_time || Math.min(duration, 30)
+                                        });
                                       });
                                     }
                                   }}
@@ -2058,85 +2070,150 @@ export default function InternalChat() {
                               </div>
 
                               <div className="space-y-4">
-                                <div className="group relative pt-6 pb-2">
-                                  {/* Visual Track */}
-                                  <div className="audio-trimmer-track">
-                                    {/* Mock Waveform Bars */}
-                                    <div className="absolute inset-0 flex items-center justify-between gap-[2px] px-2 opacity-30">
-                                      {[...Array(30)].map((_, i) => (
-                                        <div
-                                          key={i}
-                                          className="waveform-bar"
-                                          style={{ height: `${20 + Math.abs(Math.sin(i * 0.5) * 60) + (i % 4 === 0 ? 15 : 0)}%` }}
-                                        />
-                                      ))}
-                                    </div>
+                                <div className="flex items-center gap-1">
+                                  {/* Left Arrow */}
+                                  <button
+                                    onClick={() => {
+                                      if (trimmerScrollRef.current) {
+                                        trimmerScrollRef.current.scrollBy({ left: -100, behavior: 'smooth' });
+                                      }
+                                    }}
+                                    className="p-1 text-muted-foreground hover:text-primary transition-colors"
+                                  >
+                                    <ChevronLeft className="w-4 h-4" />
+                                  </button>
 
-                                    {/* Selection Highlight */}
+                                  <div className="flex-1 relative group py-6 overflow-hidden">
                                     <div
-                                      className="trim-selection"
-                                      style={{
-                                        left: `${(trimParams.startTime / 60) * 100}%`,
-                                        width: `${((trimParams.endTime - trimParams.startTime) / 60) * 100}%`
-                                      }}
-                                    />
-
-                                    {/* Playhead Indicator */}
-                                    {playingPreviewUrl === preset.full_url && (
+                                      ref={trimmerScrollRef}
+                                      className="audio-trimmer-scroll-container hide-scrollbar overflow-x-auto"
+                                    >
+                                      {/* Visual Track */}
                                       <div
-                                        className="absolute top-0 bottom-0 w-[2px] bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] z-40 transition-all duration-100 ease-linear"
-                                        style={{ left: `${(previewCurrentTime / 60) * 100}%` }}
-                                      />
-                                    )}
+                                        ref={trimmerTrackRef}
+                                        className="audio-trimmer-track cursor-pointer select-none bg-black/40"
+                                        style={{ minWidth: `${totalDuration * 20}px` }}
+                                        onMouseDown={(e) => {
+                                          if (trimmerTrackRef.current) {
+                                            const rect = trimmerTrackRef.current.getBoundingClientRect();
+                                            const x = e.clientX - rect.left;
+                                            const percentage = x / rect.width;
+                                            const seekTime = Math.max(0, Math.min(totalDuration, percentage * totalDuration));
+                                            setPreviewCurrentTime(seekTime);
+                                            webrtcService.seekPreview(seekTime);
+                                            setIsDraggingPlayhead(true);
 
-                                    {/* Start Handle (Range Input) */}
-                                    <input
-                                      type="range"
-                                      min="0"
-                                      max="60"
-                                      step="0.1"
-                                      value={trimParams.startTime}
-                                      onChange={(e) => {
-                                        const val = parseFloat(e.target.value);
-                                        setTrimParams(prev => ({
-                                          ...prev,
-                                          startTime: Math.min(val, prev.endTime - 1)
-                                        }));
-                                      }}
-                                      className="dual-range-input z-30"
-                                    />
+                                            if (playingPreviewUrl !== preset.full_url) {
+                                              setPlayingPreviewUrl(preset.full_url);
+                                              webrtcService.playPreview(preset.full_url, () => setPlayingPreviewUrl(null), seekTime, trimParams.endTime);
+                                            }
+                                          }
+                                        }}
+                                        onMouseMove={(e) => {
+                                          if (isDraggingPlayhead && trimmerTrackRef.current) {
+                                            const rect = trimmerTrackRef.current.getBoundingClientRect();
+                                            const x = e.clientX - rect.left;
+                                            const percentage = x / rect.width;
+                                            const seekTime = Math.max(0, Math.min(60, percentage * 60));
+                                            setPreviewCurrentTime(seekTime);
+                                            webrtcService.seekPreview(seekTime);
+                                          }
+                                        }}
+                                        onMouseUp={() => setIsDraggingPlayhead(false)}
+                                        onMouseLeave={() => setIsDraggingPlayhead(false)}
+                                      >
+                                        {/* Mock Waveform Bars */}
+                                        <div className="absolute inset-0 flex items-center justify-between gap-[2px] px-2 opacity-20 pointer-events-none">
+                                          {[...Array(Math.floor(totalDuration * 2))].map((_, i) => (
+                                            <div
+                                              key={i}
+                                              className="waveform-bar"
+                                              style={{ height: `${20 + Math.abs(Math.sin(i * 0.5) * 60) + (i % 4 === 0 ? 15 : 0)}%`, width: '3px' }}
+                                            />
+                                          ))}
+                                        </div>
 
-                                    {/* End Handle (Range Input) */}
-                                    <input
-                                      type="range"
-                                      min="0"
-                                      max="60"
-                                      step="0.1"
-                                      value={trimParams.endTime}
-                                      onChange={(e) => {
-                                        const val = parseFloat(e.target.value);
-                                        setTrimParams(prev => ({
-                                          ...prev,
-                                          endTime: Math.max(val, prev.startTime + 1)
-                                        }));
-                                      }}
-                                      className="dual-range-input z-20"
-                                    />
+                                        {/* Selection Highlight */}
+                                        <div
+                                          className="trim-selection pointer-events-none"
+                                          style={{
+                                            left: `${(trimParams.startTime / totalDuration) * 100}%`,
+                                            width: `${((trimParams.endTime - trimParams.startTime) / totalDuration) * 100}%`
+                                          }}
+                                        />
 
-                                    {/* Floating Time Labels */}
-                                    <span
-                                      className="time-marker"
-                                      style={{ left: `${(trimParams.startTime / 60) * 100}%`, transform: 'translateX(-50%)' }}
-                                    >
-                                      {trimParams.startTime.toFixed(1)}s
-                                    </span>
-                                    <span
-                                      className="time-marker"
-                                      style={{ left: `${(trimParams.endTime / 60) * 100}%`, transform: 'translateX(-50%)' }}
-                                    >
-                                      {trimParams.endTime.toFixed(1)}s
-                                    </span>
+                                        {/* Playhead Indicator (The Stick) */}
+                                        <div
+                                          className="absolute top-0 bottom-0 w-[4px] bg-slate-800 shadow-[0_0_10px_rgba(0,0,0,0.4)] z-40 transition-all duration-100 ease-linear pointer-events-none"
+                                          style={{ left: `${(previewCurrentTime / totalDuration) * 100}%` }}
+                                        >
+                                          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-primary shadow-2xl border-2 border-white pointer-events-auto cursor-grab active:cursor-grabbing hover:scale-125 transition-transform" />
+                                        </div>
+
+                                        {/* Start Handle (Range Input) */}
+                                        <input
+                                          type="range"
+                                          min="0"
+                                          max={totalDuration}
+                                          step="0.1"
+                                          value={trimParams.startTime}
+                                          onChange={(e) => {
+                                            const val = parseFloat(e.target.value);
+                                            setTrimParams(prev => ({
+                                              ...prev,
+                                              startTime: Math.min(val, prev.endTime - 1)
+                                            }));
+                                          }}
+                                          className="dual-range-input z-30"
+                                          onClick={(e) => e.stopPropagation()}
+                                        />
+
+                                        {/* End Handle (Range Input) */}
+                                        <input
+                                          type="range"
+                                          min="0"
+                                          max={totalDuration}
+                                          step="0.1"
+                                          value={trimParams.endTime}
+                                          onChange={(e) => {
+                                            const val = parseFloat(e.target.value);
+                                            setTrimParams(prev => ({
+                                              ...prev,
+                                              endTime: Math.max(val, prev.startTime + 1)
+                                            }));
+                                          }}
+                                          className="dual-range-input z-20"
+                                          onClick={(e) => e.stopPropagation()}
+                                        />
+
+                                        {/* Floating Time Labels */}
+                                        <span
+                                          className="time-marker"
+                                          style={{ left: `${(trimParams.startTime / totalDuration) * 100}%`, transform: 'translateX(-50%)' }}
+                                        >
+                                          {trimParams.startTime.toFixed(1)}s
+                                        </span>
+                                        <span
+                                          className="time-marker px-2 py-0.5 bg-primary text-white text-[9px] rounded-full shadow-lg font-bold"
+                                          style={{ left: `${(trimParams.endTime / totalDuration) * 100}%`, transform: 'translateX(-50%)' }}
+                                        >
+                                          {trimParams.endTime.toFixed(1)}s
+                                        </span>
+                                      </div>
+                                    </div>
                                   </div>
+
+                                  {/* Right Arrow */}
+                                  <button
+                                    onClick={() => {
+                                      if (trimmerScrollRef.current) {
+                                        trimmerScrollRef.current.scrollBy({ left: 100, behavior: 'smooth' });
+                                      }
+                                    }}
+                                    className="p-1 text-muted-foreground hover:text-primary transition-colors"
+                                  >
+                                    <ChevronRight className="w-4 h-4" />
+                                  </button>
                                 </div>
                               </div>
 

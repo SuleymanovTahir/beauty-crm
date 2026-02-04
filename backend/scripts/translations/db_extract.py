@@ -160,11 +160,13 @@ def merge_with_existing(extracted: Dict, existing: Dict) -> Dict:
                 for field_name, field_data in record["fields"].items():
                     existing_field = existing_record.get("fields", {}).get(field_name, {})
 
-                    # Copy existing translations for other languages
-                    for lang in LANGUAGES:
-                        if lang != SOURCE_LANGUAGE and lang in existing_field:
-                            field_data[lang] = existing_field[lang]
-                            preserved += 1
+                    # ONLY copy existing translations if the source text matches!
+                    # This ensures that if the content changed, it will be re-translated.
+                    if existing_field.get(SOURCE_LANGUAGE) == field_data.get(SOURCE_LANGUAGE):
+                        for lang in LANGUAGES:
+                            if lang != SOURCE_LANGUAGE and lang in existing_field:
+                                field_data[lang] = existing_field[lang]
+                                preserved += 1
 
     if preserved:
         print(f"  ✅ Preserved {preserved} existing translations")

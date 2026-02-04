@@ -1,3 +1,16 @@
+## [2026-02-05] Public Page Personalization & Translation Precision
+- 👤 **Employee Personalization**:
+  - **Nickname Integration**: Implemented nicknames for all active staff members (ID 671-675) across the public landing page.
+  - **Dynamic Bio Updates**: Refreshed employee bios in the database to include their nicknames (e.g., "Simo", "Gulya", "Mestan") for a more friendly and personal touch.
+  - **Unified Naming Policy**: Ensured that nicknames take precedence or are prominently displayed alongside full names on the public-facing website.
+- 🌍 **Translation Engine Fixes**:
+  - **Multi-Sentence Support**: Fixed a critical bug in `translator.py` where only the first sentence of a multi-sentence bio was being translated. Now correctly joins all translated segments from the Google Translate response.
+  - **Extraction Intelligence**: Enhanced `db_extract.py` to detect changes in source text. It now automatically triggers re-translation for other languages if the Russian source content has changed, preventing stale or incorrect translations from being preserved.
+  - **Global Synchronization**: Executed a full 9-language sync (`npm run db:i18n:auto`) to apply corrected bios and nickname formatting across EN, AR, KK, DE, ES, FR, PT, HI, and RU.
+- 🎵 **Audio Trimmer UX**:
+  - **Enhanced Visibility**: Improved the audio trimmer's playhead visibility in `InternalChat.tsx` by making the indicator line darker and adding a prominent shadow.
+  - **Visual Contrast**: Darkened the trimmer track background and adjusted waveform colors for better readability in various lighting conditions.
+
 ## [2026-02-04] Chat Stability, Staff Activation & Assets Mapping
 - 📞 **Internal Chat Enhancements**:
   - **Staff Visibility Fix**: Activated operational staff members (Jennifer, Sabri, Gulcehre) in the database to ensure a full team presence in the chat list.

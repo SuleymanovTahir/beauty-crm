@@ -62,6 +62,7 @@ async def get_gallery_images(
     """
     start_time = time.time()
     try:
+        from utils.utils import map_image_path, _add_v
         log_info(f"📸 [Gallery] Fetching images for category: {category}", "api")
 
         conn = get_db_connection()
@@ -85,10 +86,11 @@ async def get_gallery_images(
         images = []
         for row in rows:
             raw_path = sanitize_url(row[1]) if row[1] else ''
-            mapped_path = _map_gallery_path(raw_path, category)
+            # Используем глобальный map_image_path вместо локального костыля
+            mapped_path = map_image_path(raw_path)
             images.append({
                 "id": row[0],
-                "image_path": mapped_path,
+                "image_path": _add_v(mapped_path),
                 "title": row[2],
                 "description": row[3],
                 "sort_order": row[4] or 0,
