@@ -8,17 +8,12 @@ from datetime import datetime, timedelta, date
 from db.settings import get_salon_settings
 from db.services import get_all_services, get_service
 from db.connection import get_db_connection
-from utils.utils import sanitize_url, map_image_path
+from utils.utils import sanitize_url, map_image_path, _add_v
 from utils.cache import cache
 from utils.logger import log_info, log_error
 from core.config import is_localhost
 
-def _add_v(url: str) -> str:
-    """Добавить параметр версии для обхода кеша браузера (всегда свежее)"""
-    if not url: return url
-    ts = int(time.time()) # Секундная точность для мгновенного обновления
-    sep = '&' if '?' in url else '?'
-    return f"{url}{sep}v={ts}"
+# Helper moved to utils.utils
 
 
 import re

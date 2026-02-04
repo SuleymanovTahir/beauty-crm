@@ -64,10 +64,10 @@ export class WebRTCService {
   private activeOscillators: OscillatorNode[] = [];
   private ringtoneAudio: HTMLAudioElement | null = null;
   private previewAudio: HTMLAudioElement | null = null;
-  private static DEFAULT_RINGTONE = '/audio/ringtones/default_classic.mp3';
-  private currentRingtoneUrl: string = localStorage.getItem('webrtc_ringtone_url') || WebRTCService.DEFAULT_RINGTONE;
-  private currentRingtoneStartTime: number = Number(localStorage.getItem('webrtc_ringtone_start_time') || '0');
-  private currentRingtoneEndTime: number | null = localStorage.getItem('webrtc_ringtone_end_time') ? Number(localStorage.getItem('webrtc_ringtone_end_time')) : null;
+  private static DEFAULT_RINGTONE = '/audio/ringtones/apple_default.mp3';
+  private currentRingtoneUrl: string = WebRTCService.DEFAULT_RINGTONE;
+  private currentRingtoneStartTime: number = 0;
+  private currentRingtoneEndTime: number | null = null;
   private ringtoneVolume: number = Number(localStorage.getItem('webrtc_ringtone_volume') || '0.5');
   private isRinging: boolean = false;
   private isCallActive: boolean = false;
@@ -113,24 +113,23 @@ export class WebRTCService {
         const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
         if (AudioCtx) {
           this.audioContext = new AudioCtx();
-          console.log('🔊 [WebRTC] AudioContext created');
+          console.log('🔊 [WebRTC] AudioContext created. State:', this.audioContext.state);
         }
       }
 
       if (this.audioContext && (this.audioContext.state === 'suspended' || this.audioContext.state === 'interrupted')) {
         await this.audioContext.resume();
-        console.log('🔊 [WebRTC] AudioContext resumed');
+        console.log('🔊 [WebRTC] AudioContext resumed. State:', this.audioContext.state);
       }
 
-      // "Warm up" the audio context with a near-silent burst to unblock autoplay
+      // "Warm up" the audio context more substantively
       if (this.audioContext && this.audioContext.state === 'running') {
-        const osc = this.audioContext.createOscillator();
-        const gain = this.audioContext.createGain();
-        gain.gain.setValueAtTime(0.001, this.audioContext.currentTime);
-        osc.connect(gain);
-        gain.connect(this.audioContext.destination);
-        osc.start();
-        osc.stop(this.audioContext.currentTime + 0.01);
+        const buffer = this.audioContext.createBuffer(1, 1, 22050);
+        const source = this.audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.connect(this.audioContext.destination);
+        source.start(0);
+        console.log('🔊 [WebRTC] Audio system "warmed up" with silent buffer');
       }
     } catch (err) {
       console.error('❌ [WebRTC] Failed to initialize/resume AudioContext:', err);
@@ -191,25 +190,29 @@ export class WebRTCService {
   /**
    * Stop all playing ringtones/sounds
    */
-  stopRingtone(): void {
+  public stopRingtone(): void {
+    this.isRinging = false;
+
+    // Stop oscillators
     this.activeOscillators.forEach((osc) => {
       try {
         osc.stop();
-        osc.disconnect();
+        osc.disconnect(); // Ensure disconnection
       } catch (e) { /* ignore */ }
     });
     this.activeOscillators = [];
-    this.isRinging = false;
 
+    // Stop MP3 ringtone
     if (this.ringtoneAudio) {
       this.ringtoneAudio.pause();
       this.ringtoneAudio.currentTime = 0;
       this.ringtoneAudio = null;
     }
 
+    // Stop Preview
     if (this.previewAudio) {
       this.previewAudio.pause();
-      this.previewAudio.currentTime = 0;
+      this.previewAudio.currentTime = 0; // Reset time
       this.previewAudio = null;
     }
 
@@ -232,6 +235,16 @@ export class WebRTCService {
       localStorage.removeItem('webrtc_ringtone_end_time');
     }
     console.log(`🎵 [Ringtone] Set to: ${finalUrl}, Start: ${startTime}, End: ${endTime}`);
+  }
+
+  /**
+   * Seek to a specific time in the preview
+   */
+  public seekPreview(time: number) {
+    if (this.previewAudio) {
+      console.log(`🎵 [WebRTC:Preview] Seeking to ${time}s`);
+      this.previewAudio.currentTime = time;
+    }
   }
 
   setDnd(enabled: boolean) {
@@ -323,53 +336,86 @@ export class WebRTCService {
    */
   async playRingtone(type: 'incoming' | 'outgoing' | 'end'): Promise<void> {
     try {
-      console.log(`🎵 [WebRTC:Ringtone] playRingtone called: type=${type}, isRinging=${this.isRinging}`);
 
-      if (this.isRinging && type !== 'end') {
-        console.log('🎵 [WebRTC:Ringtone] Already ringing, skipping...');
+      // If we are already ringing for an incoming call, don't interrupt it with the same request
+      if (this.isRinging && type === 'incoming' && this.ringtoneAudio && !this.ringtoneAudio.paused) {
+        console.log('🎵 [WebRTC:Ringtone] Already playing incoming ringtone, skipping redundant request.');
         return;
       }
 
-      // Ensure AudioContext is ready (critical for browser autoplay policies)
+      if (this.isRinging && type !== 'end' && type === 'outgoing') {
+        console.log('🎵 [WebRTC:Ringtone] Already playing outgoing pattern, skipping.');
+        return;
+      }
+
+      // Mark as ringing immediately
+      if (type !== 'end') {
+        this.isRinging = true;
+      }
+
+      // Ensure AudioContext is ready
       await this.resumeAudioContext();
       const ctx = this.audioContext;
 
-      if (type === 'incoming' && this.currentRingtoneUrl) {
-        console.log('🔔 [WebRTC:Ringtone] Playing incoming custom ringtone:', this.currentRingtoneUrl);
-        this.stopRingtone();
+      if (type === 'incoming') {
+        // Double check URL - if it's the old classic or missing, use iPhone
+        let urlToPlay = this.currentRingtoneUrl;
+        if (!urlToPlay || urlToPlay.includes('default_classic')) {
+          urlToPlay = WebRTCService.DEFAULT_RINGTONE;
+          this.currentRingtoneUrl = urlToPlay;
+        }
+
+        console.log('🔔 [WebRTC:Ringtone] Starting playback:', urlToPlay);
+
+        // Stop any previous audio safely
+        if (this.ringtoneAudio) {
+          this.ringtoneAudio.pause();
+          this.ringtoneAudio = null;
+        }
 
         try {
-          this.ringtoneAudio = new Audio(this.currentRingtoneUrl);
-          this.ringtoneAudio.loop = true;
-          this.ringtoneAudio.volume = this.ringtoneVolume;
+          const audio = new Audio();
+          audio.src = urlToPlay.includes('?')
+            ? `${urlToPlay}&cb=${Date.now()}`
+            : `${urlToPlay}?cb=${Date.now()}`;
+
+          audio.loop = true;
+          audio.volume = this.ringtoneVolume;
+          this.ringtoneAudio = audio;
 
           const startTime = this.currentRingtoneStartTime;
           const endTime = this.currentRingtoneEndTime;
 
-          this.ringtoneAudio.onloadedmetadata = () => {
-            if (this.ringtoneAudio) {
-              console.log(`🎵 [WebRTC:Ringtone] Metadata loaded, setting start time to ${startTime}s`);
-              this.ringtoneAudio.currentTime = startTime;
+          audio.onloadedmetadata = () => {
+            if (audio === this.ringtoneAudio) {
+              console.log(`🎵 [WebRTC:Ringtone] MP3 Loaded. Duration: ${audio.duration}, Start: ${startTime}s`);
+              audio.currentTime = startTime;
             }
           };
 
           if (endTime) {
-            this.ringtoneAudio.ontimeupdate = () => {
-              if (this.ringtoneAudio && this.ringtoneAudio.currentTime >= endTime) {
-                console.debug(`🎵 [WebRTC:Ringtone] End time ${endTime}s reached, looping to ${startTime}s`);
-                this.ringtoneAudio.currentTime = startTime;
+            audio.ontimeupdate = () => {
+              if (audio === this.ringtoneAudio && audio.currentTime >= endTime) {
+                console.debug(`🎵 [WebRTC:Ringtone] Loop point reached (${endTime}s), jumping to ${startTime}s`);
+                audio.currentTime = startTime;
               }
             };
           }
 
-          this.isRinging = true;
-          await this.ringtoneAudio.play();
-          console.log('🎵 [WebRTC:Ringtone] Custom ringtone started playing');
+          // Capture the play promise to handle interruptions
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(e => {
+              if (e.name === 'AbortError') {
+                console.log('🎵 [WebRTC:Ringtone] Playback was interrupted (normal during rapid signals)');
+              } else {
+                console.warn('⚠️ [WebRTC:Ringtone] Playback failed:', e);
+              }
+            });
+          }
           return;
         } catch (e) {
-          console.warn("⚠️ [WebRTC:Ringtone] Failed to play custom ringtone, falling back to oscillators:", e);
-          this.isRinging = false; // Reset so fallback can set it
-          // Continue to oscillator fallback
+          console.warn("⚠️ [WebRTC:Ringtone] Fatal playback error, using silent fallback:", e);
         }
       }
 
@@ -383,33 +429,12 @@ export class WebRTCService {
         console.error('❌ [WebRTC:Ringtone] AudioContext still not available after resume');
         return;
       }
-
       this.stopRingtone();
       console.log(`🎵 [WebRTC:Ringtone] Playing fallback/pattern for type: ${type}`);
 
       if (type === 'incoming') {
-        this.isRinging = true;
-        const playRingPattern = (startTime: number) => {
-          const osc1 = ctx.createOscillator();
-          const osc2 = ctx.createOscillator();
-          const gain = ctx.createGain();
-          const modGain = ctx.createGain();
-          osc1.type = 'square'; osc1.frequency.setValueAtTime(600, startTime);
-          osc2.type = 'square'; osc2.frequency.setValueAtTime(25, startTime);
-          modGain.gain.value = 100;
-          osc2.connect(modGain);
-          modGain.connect(osc1.frequency);
-          const vol = this.ringtoneVolume * 0.4; // Scale down slightly as oscillators are loud
-          gain.gain.setValueAtTime(0, startTime);
-          gain.gain.linearRampToValueAtTime(vol, startTime + 0.1);
-          gain.gain.setValueAtTime(vol, startTime + 1.8);
-          gain.gain.linearRampToValueAtTime(0, startTime + 2.0);
-          osc1.connect(gain); gain.connect(ctx.destination);
-          osc1.start(startTime); osc2.start(startTime);
-          osc1.stop(startTime + 2.0); osc2.stop(startTime + 2.0);
-          this.activeOscillators.push(osc1, osc2);
-        };
-        for (let i = 0; i < 20; i++) playRingPattern(ctx.currentTime + i * 3);
+        // No synth fallback for incoming - strictly MP3
+        console.log('🎵 [WebRTC:Ringtone] Incoming call playback ended/failed.');
       } else if (type === 'outgoing') {
         this.isRinging = true;
         const playOutgoingPattern = (startTime: number) => {
@@ -437,6 +462,18 @@ export class WebRTCService {
   }
 
   async initialize(userId: number): Promise<void> {
+    // Aggressive cleanup of old settings
+    const savedUrl = localStorage.getItem('webrtc_ringtone_url');
+    if (!savedUrl || savedUrl.includes('default_classic')) {
+      localStorage.setItem('webrtc_ringtone_url', WebRTCService.DEFAULT_RINGTONE);
+      this.currentRingtoneUrl = WebRTCService.DEFAULT_RINGTONE;
+    } else {
+      this.currentRingtoneUrl = savedUrl;
+    }
+
+    this.currentRingtoneStartTime = Number(localStorage.getItem('webrtc_ringtone_start_time') || '0');
+    this.currentRingtoneEndTime = localStorage.getItem('webrtc_ringtone_end_time') ? Number(localStorage.getItem('webrtc_ringtone_end_time')) : null;
+
     // Skip if already initialized or connecting
     if (this.currentUserId === userId && this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
       console.log('🔌 [WebRTC] Already initialized or connecting, skipping...');
@@ -732,22 +769,18 @@ export class WebRTCService {
   endCall(): void {
     if (this.remoteUserId) {
       console.log(`Ending call with user ${this.remoteUserId}`);
+      const duration = this.startTime ? Math.floor((Date.now() - this.startTime) / 1000) : 0;
       this.sendSignal({
         type: 'hangup',
         from: this.currentUserId,
-        to: this.remoteUserId
+        to: this.remoteUserId,
+        duration: duration
       });
     } else {
       console.warn('Attempted to end call but remoteUserId is null');
     }
     this.stopRingtone();
-    const duration = this.startTime ? Math.floor((Date.now() - this.startTime) / 1000) : 0;
-    this.sendSignal({
-      type: 'hangup',
-      from: this.currentUserId,
-      to: this.remoteUserId,
-      duration: duration
-    });
+    this.emit('callEnded');
     this.cleanup();
   }
 
