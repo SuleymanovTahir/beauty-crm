@@ -96,7 +96,15 @@
         },
         "specialization": {
           "ru": "Универсальный мастер красоты",
-          "key": "users.jennifer.specialization"
+          "key": "users.jennifer.specialization",
+          "en": "Universal beauty master",
+          "ar": "خبير تجميل عالمي",
+          "es": "Maestro de belleza universal",
+          "de": "Universal Beauty Master",
+          "fr": "Maître beauté universel",
+          "hi": "यूनिवर्सल ब्यूटी मास्टर",
+          "kk": "Әмбебап сұлулық шебері",
+          "pt": "Mestre de beleza universal"
         }
       }
     },
@@ -142,7 +150,15 @@
         },
         "specialization": {
           "ru": "Стилист по волосам, Перманентный макияж",
-          "key": "users.mestan.specialization"
+          "key": "users.mestan.specialization",
+          "en": "Hair stylist, Permanent makeup",
+          "ar": "مصفف شعر، مكياج دائم",
+          "es": "Estilista, maquillaje permanente",
+          "de": "Friseur, Permanent Make-up",
+          "fr": "Coiffeur, Maquillage permanent",
+          "hi": "हेयर स्टाइलिस्ट, परमानेंट मेकअप",
+          "kk": "Шаштараз, Тұрақты макияж",
+          "pt": "Cabeleireiro, Maquiagem permanente"
         }
       }
     },
@@ -188,7 +204,15 @@
         },
         "specialization": {
           "ru": "Топ-стилист, Колорист",
-          "key": "users.sabri.specialization"
+          "key": "users.sabri.specialization",
+          "en": "Top stylist, Colorist",
+          "ar": "أفضل مصفف شعر، ملون",
+          "es": "Estilista superior, colorista",
+          "de": "Top Stylist, Colorist",
+          "fr": "Top styliste, Coloriste",
+          "hi": "टॉप स्टाइलिस्ट, कलरिस्ट",
+          "kk": "Үздік стилист, Бояғыш",
+          "pt": "Estilista de ponta, Colorista"
         }
       }
     },
@@ -234,7 +258,15 @@
         },
         "specialization": {
           "ru": "Ногтевой сервис",
-          "key": "users.lyazat.specialization"
+          "key": "users.lyazat.specialization",
+          "en": "Nail service",
+          "ar": "خدمة أظافر",
+          "es": "Servicio de uñas",
+          "de": "Nagelservice",
+          "fr": "Service d'ongles",
+          "hi": "नेल सर्विस",
+          "kk": "Тырнақ күтімі",
+          "pt": "Serviço de unhas"
         }
       }
     }
@@ -1223,7 +1255,7 @@
   ],
   "services": [
     {
-      "id": 42966,
+      "id": 44424,
       "stable_key": "manicure_pil_classic",
       "fields": {
         "name": {
@@ -1233,7 +1265,7 @@
       }
     },
     {
-      "id": 42967,
+      "id": 44425,
       "stable_key": "polish_classic",
       "fields": {
         "name": {
@@ -1243,7 +1275,7 @@
       }
     },
     {
-      "id": 42968,
+      "id": 44426,
       "stable_key": "gel_polish_only",
       "fields": {
         "name": {
@@ -1253,7 +1285,7 @@
       }
     },
     {
-      "id": 42969,
+      "id": 44427,
       "stable_key": "french_polish",
       "fields": {
         "name": {
@@ -1263,7 +1295,7 @@
       }
     },
     {
-      "id": 42970,
+      "id": 44428,
       "stable_key": "japanese_manicure",
       "fields": {
         "name": {
@@ -1273,7 +1305,7 @@
       }
     },
     {
-      "id": 42971,
+      "id": 44429,
       "stable_key": "overlay_biogel",
       "fields": {
         "name": {
@@ -1283,7 +1315,7 @@
       }
     },
     {
-      "id": 42972,
+      "id": 44430,
       "stable_key": "remove_gel",
       "fields": {
         "name": {
@@ -1293,7 +1325,7 @@
       }
     },
     {
-      "id": 42973,
+      "id": 44431,
       "stable_key": "remove_classic",
       "fields": {
         "name": {
@@ -1303,7 +1335,7 @@
       }
     },
     {
-      "id": 42974,
+      "id": 44432,
       "stable_key": "remove_extensions",
       "fields": {
         "name": {
@@ -1313,7 +1345,7 @@
       }
     },
     {
-      "id": 42975,
+      "id": 44433,
       "stable_key": "nail_extensions",
       "fields": {
         "name": {
@@ -1323,7 +1355,7 @@
       }
     },
     {
-      "id": 42976,
+      "id": 44434,
       "stable_key": "nail_correction",
       "fields": {
         "name": {
@@ -1333,7 +1365,7 @@
       }
     },
     {
-      "id": 42977,
+      "id": 44435,
       "stable_key": "repair_extension",
       "fields": {
         "name": {
@@ -1343,7 +1375,7 @@
       }
     },
     {
-      "id": 42978,
+      "id": 44436,
       "stable_key": "repair_gel",
       "fields": {
         "name": {
@@ -1353,7 +1385,7 @@
       }
     },
     {
-      "id": 42979,
+      "id": 44437,
       "stable_key": "manicure_combined",
       "fields": {
         "name": {
@@ -1363,7 +1395,7 @@
       }
     },
     {
-      "id": 42980,
+      "id": 44438,
       "stable_key": "manicure_gel_polish",
       "fields": {
         "name": {
@@ -1373,7 +1405,7 @@
       }
     },
     {
-      "id": 42981,
+      "id": 44439,
       "stable_key": "nail_shaping",
       "fields": {
         "name": {
@@ -1383,7 +1415,7 @@
       }
     },
     {
-      "id": 42982,
+      "id": 44440,
       "stable_key": "pedicure_smart",
       "fields": {
         "name": {
@@ -1393,7 +1425,7 @@
       }
     },
     {
-      "id": 42983,
+      "id": 44441,
       "stable_key": "pedicure_smart_polish",
       "fields": {
         "name": {
@@ -1403,7 +1435,7 @@
       }
     },
     {
-      "id": 42984,
+      "id": 44442,
       "stable_key": "pedicure_gel",
       "fields": {
         "name": {
@@ -1413,7 +1445,7 @@
       }
     },
     {
-      "id": 42985,
+      "id": 44443,
       "stable_key": "change_gel_pedicure",
       "fields": {
         "name": {
@@ -1423,7 +1455,7 @@
       }
     },
     {
-      "id": 42986,
+      "id": 44444,
       "stable_key": "change_classic_pedicure",
       "fields": {
         "name": {
@@ -1433,7 +1465,7 @@
       }
     },
     {
-      "id": 42987,
+      "id": 44445,
       "stable_key": "combo_mani_pedi_gel",
       "fields": {
         "name": {
@@ -1443,7 +1475,7 @@
       }
     },
     {
-      "id": 42988,
+      "id": 44446,
       "stable_key": "blowdry_short",
       "fields": {
         "name": {
@@ -1453,7 +1485,7 @@
       }
     },
     {
-      "id": 42989,
+      "id": 44447,
       "stable_key": "blowdry_medium",
       "fields": {
         "name": {
@@ -1463,7 +1495,7 @@
       }
     },
     {
-      "id": 42990,
+      "id": 44448,
       "stable_key": "blowdry_long",
       "fields": {
         "name": {
@@ -1473,7 +1505,7 @@
       }
     },
     {
-      "id": 42991,
+      "id": 44449,
       "stable_key": "styling_short",
       "fields": {
         "name": {
@@ -1483,7 +1515,7 @@
       }
     },
     {
-      "id": 42992,
+      "id": 44450,
       "stable_key": "styling_medium",
       "fields": {
         "name": {
@@ -1493,7 +1525,7 @@
       }
     },
     {
-      "id": 42993,
+      "id": 44451,
       "stable_key": "styling_long",
       "fields": {
         "name": {
@@ -1503,7 +1535,7 @@
       }
     },
     {
-      "id": 42994,
+      "id": 44452,
       "stable_key": "evening_hairstyle",
       "fields": {
         "name": {
@@ -1513,7 +1545,7 @@
       }
     },
     {
-      "id": 42995,
+      "id": 44453,
       "stable_key": "hair_wash",
       "fields": {
         "name": {
@@ -1523,7 +1555,7 @@
       }
     },
     {
-      "id": 42996,
+      "id": 44454,
       "stable_key": "hair_trim",
       "fields": {
         "name": {
@@ -1533,7 +1565,7 @@
       }
     },
     {
-      "id": 42997,
+      "id": 44455,
       "stable_key": "hair_cut_full",
       "fields": {
         "name": {
@@ -1543,7 +1575,7 @@
       }
     },
     {
-      "id": 42998,
+      "id": 44456,
       "stable_key": "hair_cut_wash",
       "fields": {
         "name": {
@@ -1553,7 +1585,7 @@
       }
     },
     {
-      "id": 42999,
+      "id": 44457,
       "stable_key": "express_hair_form",
       "fields": {
         "name": {
@@ -1563,7 +1595,7 @@
       }
     },
     {
-      "id": 43000,
+      "id": 44458,
       "stable_key": "bangs_cut",
       "fields": {
         "name": {
@@ -1573,7 +1605,7 @@
       }
     },
     {
-      "id": 43001,
+      "id": 44459,
       "stable_key": "kids_cut",
       "fields": {
         "name": {
@@ -1583,7 +1615,7 @@
       }
     },
     {
-      "id": 43002,
+      "id": 44460,
       "stable_key": "roots_color",
       "fields": {
         "name": {
@@ -1593,7 +1625,7 @@
       }
     },
     {
-      "id": 43003,
+      "id": 44461,
       "stable_key": "toning",
       "fields": {
         "name": {
@@ -1603,7 +1635,7 @@
       }
     },
     {
-      "id": 43004,
+      "id": 44462,
       "stable_key": "one_tone_short",
       "fields": {
         "name": {
@@ -1613,7 +1645,7 @@
       }
     },
     {
-      "id": 43005,
+      "id": 44463,
       "stable_key": "one_tone_medium",
       "fields": {
         "name": {
@@ -1623,7 +1655,7 @@
       }
     },
     {
-      "id": 43006,
+      "id": 44464,
       "stable_key": "one_tone_long",
       "fields": {
         "name": {
@@ -1633,7 +1665,7 @@
       }
     },
     {
-      "id": 43007,
+      "id": 44465,
       "stable_key": "total_blonde",
       "fields": {
         "name": {
@@ -1643,7 +1675,7 @@
       }
     },
     {
-      "id": 43008,
+      "id": 44466,
       "stable_key": "complex_color",
       "fields": {
         "name": {
@@ -1653,7 +1685,7 @@
       }
     },
     {
-      "id": 43009,
+      "id": 44467,
       "stable_key": "massage_head",
       "fields": {
         "name": {
@@ -1663,7 +1695,7 @@
       }
     },
     {
-      "id": 43010,
+      "id": 44468,
       "stable_key": "massage_extremities",
       "fields": {
         "name": {
@@ -1673,7 +1705,7 @@
       }
     },
     {
-      "id": 43011,
+      "id": 44469,
       "stable_key": "massage_body",
       "fields": {
         "name": {
@@ -1683,7 +1715,7 @@
       }
     },
     {
-      "id": 43012,
+      "id": 44470,
       "stable_key": "massage_sculptural",
       "fields": {
         "name": {
@@ -1693,7 +1725,7 @@
       }
     },
     {
-      "id": 43013,
+      "id": 44471,
       "stable_key": "massage_anticellulite",
       "fields": {
         "name": {
@@ -1703,7 +1735,7 @@
       }
     },
     {
-      "id": 43014,
+      "id": 44472,
       "stable_key": "moroccan_bath",
       "fields": {
         "name": {
@@ -1713,7 +1745,7 @@
       }
     },
     {
-      "id": 43015,
+      "id": 44473,
       "stable_key": "full_bikini",
       "fields": {
         "name": {
@@ -1723,7 +1755,7 @@
       }
     },
     {
-      "id": 43016,
+      "id": 44474,
       "stable_key": "bikini_line",
       "fields": {
         "name": {
@@ -1733,7 +1765,7 @@
       }
     },
     {
-      "id": 43017,
+      "id": 44475,
       "stable_key": "full_legs",
       "fields": {
         "name": {
@@ -1743,7 +1775,7 @@
       }
     },
     {
-      "id": 43018,
+      "id": 44476,
       "stable_key": "half_legs",
       "fields": {
         "name": {
@@ -1753,7 +1785,7 @@
       }
     },
     {
-      "id": 43019,
+      "id": 44477,
       "stable_key": "full_arms",
       "fields": {
         "name": {
@@ -1763,7 +1795,7 @@
       }
     },
     {
-      "id": 43020,
+      "id": 44478,
       "stable_key": "half_arms",
       "fields": {
         "name": {
@@ -1773,7 +1805,7 @@
       }
     },
     {
-      "id": 43021,
+      "id": 44479,
       "stable_key": "full_body_wax",
       "fields": {
         "name": {
@@ -1783,7 +1815,7 @@
       }
     },
     {
-      "id": 43022,
+      "id": 44480,
       "stable_key": "underarms",
       "fields": {
         "name": {
@@ -1793,7 +1825,7 @@
       }
     },
     {
-      "id": 43023,
+      "id": 44481,
       "stable_key": "full_face_wax",
       "fields": {
         "name": {
@@ -1803,7 +1835,7 @@
       }
     },
     {
-      "id": 43024,
+      "id": 44482,
       "stable_key": "cheeks_wax",
       "fields": {
         "name": {
@@ -1813,7 +1845,7 @@
       }
     },
     {
-      "id": 43025,
+      "id": 44483,
       "stable_key": "upper_lip_wax",
       "fields": {
         "name": {
@@ -1823,7 +1855,7 @@
       }
     },
     {
-      "id": 43026,
+      "id": 44484,
       "stable_key": "chin_wax",
       "fields": {
         "name": {
@@ -1833,7 +1865,7 @@
       }
     },
     {
-      "id": 43027,
+      "id": 44485,
       "stable_key": "deep_facial_cleaning",
       "fields": {
         "name": {
@@ -1843,7 +1875,7 @@
       }
     },
     {
-      "id": 43028,
+      "id": 44486,
       "stable_key": "medical_facial",
       "fields": {
         "name": {
@@ -1853,7 +1885,7 @@
       }
     },
     {
-      "id": 43029,
+      "id": 44487,
       "stable_key": "face_lift_massage",
       "fields": {
         "name": {
@@ -1863,7 +1895,7 @@
       }
     },
     {
-      "id": 43030,
+      "id": 44488,
       "stable_key": "peeling",
       "fields": {
         "name": {
@@ -1873,7 +1905,7 @@
       }
     },
     {
-      "id": 43031,
+      "id": 44489,
       "stable_key": "lashes_classic",
       "fields": {
         "name": {
@@ -1883,7 +1915,7 @@
       }
     },
     {
-      "id": 43032,
+      "id": 44490,
       "stable_key": "lashes_2d",
       "fields": {
         "name": {
@@ -1893,7 +1925,7 @@
       }
     },
     {
-      "id": 43033,
+      "id": 44491,
       "stable_key": "lashes_3d",
       "fields": {
         "name": {
@@ -1903,7 +1935,7 @@
       }
     },
     {
-      "id": 43034,
+      "id": 44492,
       "stable_key": "lashes_mega",
       "fields": {
         "name": {
@@ -1913,7 +1945,7 @@
       }
     },
     {
-      "id": 43035,
+      "id": 44493,
       "stable_key": "kim_style_effect",
       "fields": {
         "name": {
@@ -1923,7 +1955,7 @@
       }
     },
     {
-      "id": 43036,
+      "id": 44494,
       "stable_key": "remove_lashes",
       "fields": {
         "name": {
@@ -1933,7 +1965,7 @@
       }
     },
     {
-      "id": 43037,
+      "id": 44495,
       "stable_key": "brow_lami",
       "fields": {
         "name": {
@@ -1943,7 +1975,7 @@
       }
     },
     {
-      "id": 43038,
+      "id": 44496,
       "stable_key": "lash_lami",
       "fields": {
         "name": {
@@ -1953,7 +1985,7 @@
       }
     },
     {
-      "id": 43039,
+      "id": 44497,
       "stable_key": "combo_lami",
       "fields": {
         "name": {
@@ -1963,7 +1995,7 @@
       }
     },
     {
-      "id": 43040,
+      "id": 44498,
       "stable_key": "brow_coloring",
       "fields": {
         "name": {
@@ -1973,7 +2005,7 @@
       }
     },
     {
-      "id": 43041,
+      "id": 44499,
       "stable_key": "brow_correction",
       "fields": {
         "name": {
@@ -1983,7 +2015,7 @@
       }
     },
     {
-      "id": 43042,
+      "id": 44500,
       "stable_key": "permanent_lips",
       "fields": {
         "name": {
@@ -1993,7 +2025,7 @@
       }
     },
     {
-      "id": 43043,
+      "id": 44501,
       "stable_key": "permanent_brows",
       "fields": {
         "name": {
@@ -2003,7 +2035,7 @@
       }
     },
     {
-      "id": 43044,
+      "id": 44502,
       "stable_key": "lashliner",
       "fields": {
         "name": {
@@ -2013,7 +2045,7 @@
       }
     },
     {
-      "id": 43045,
+      "id": 44503,
       "stable_key": "eyeliner",
       "fields": {
         "name": {
@@ -2023,7 +2055,7 @@
       }
     },
     {
-      "id": 43046,
+      "id": 44504,
       "stable_key": "permanent_correction",
       "fields": {
         "name": {

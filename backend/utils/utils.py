@@ -533,32 +533,38 @@ def is_valid_instagram_username(username: str) -> bool:
 def validate_password(password: str, min_length: int = 8) -> tuple:
     """
     Валидировать пароль (усиленная проверка)
-    
+
     Args:
         password: пароль для проверки
         min_length: минимальная длина (по умолчанию 8)
-        
+
     Returns:
-        tuple: (is_valid: bool, error_message: str or None)
+        tuple: (is_valid: bool, errors: list of str or None)
+        When is_valid is False, errors contains ALL validation errors (not just the first one)
     """
+    errors = []
+
     if not password:
-        return False, "password_empty"
-    
+        return False, ["password_empty"]
+
     if len(password) < min_length:
-        return False, "password_too_short"
-    
+        errors.append("password_too_short")
+
     if not re.search(r"[A-Z]", password):
-        return False, "password_no_upper"
+        errors.append("password_no_upper")
 
     if not re.search(r"[a-z]", password):
-        return False, "password_no_lower"
-        
+        errors.append("password_no_lower")
+
     if not re.search(r"[\d]", password):
-        return False, "password_no_digit"
-        
+        errors.append("password_no_digit")
+
     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-        return False, "password_no_special"
-    
+        errors.append("password_no_special")
+
+    if errors:
+        return False, errors
+
     return True, None
 
 def hash_password(password: str) -> str:

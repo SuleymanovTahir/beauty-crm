@@ -7,7 +7,7 @@
   "mock_achievement_title": "Жаңа жетістік",
   "mock_appointment_message": "Ертеңгі кездесуді {{time}} уақытында еске саламыз.",
   "mock_appointment_title": "Алдағы бару",
-  "mock_promotion_message": "Тек осы аптада: барлық бет күтіміне {{percent}}% жеңілдік.",
+  "mock_promotion_message": "Тек осы аптада: барлық бет күтімі қызметтеріне {{percent}}% жеңілдік.",
   "mock_promotion_title": "Арнайы ұсыныс",
   "no_notifications": "Ешқандай хабарландырулар жоқ",
   "no_notifications_desc": "Жаңалықтар мен маңызды еске салғыштар осы жерде пайда болады",

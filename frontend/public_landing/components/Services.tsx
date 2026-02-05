@@ -39,11 +39,12 @@ export function Services({ initialServices }: ServicesProps) {
 
       uniqueCategories.forEach(cat => {
         if (cat) {
+          const catKey = cat.toLowerCase().replace(/\s+/g, '_');
           // Try to get translation from dynamic or booking files
-          let label = t(`dynamic:categories.${cat}`, { defaultValue: "" });
+          let label = t(`dynamic:categories.${catKey}`, { defaultValue: "" });
 
           if (!label) {
-            label = t(`services.category_${cat}`, { ns: 'booking', defaultValue: "" });
+            label = t(`services.category_${catKey}`, { ns: 'booking', defaultValue: "" });
           }
 
           // If translation not found, use capitalized category name
@@ -219,7 +220,7 @@ export function Services({ initialServices }: ServicesProps) {
                     <span className="flex items-center gap-1.5">
                       <span>{service.duration && service.duration !== 0 ? `${service.duration} ` : ""}{t('min')}</span>
                     </span>
-                                          {/* <span className="text-muted-foreground/30">•</span>
+                    {/* <span className="text-muted-foreground/30">•</span>
                       <span className="text-[10px] uppercase tracking-wider opacity-70">
                         {categories.find(c => c.id === service.category)?.label}
                       </span> */}

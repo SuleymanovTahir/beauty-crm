@@ -457,19 +457,21 @@ async def api_register(
     
     current_stage = "Validation"
     try:
-        # Валидация
-        if len(username) < 3:
-            raise ValueError("error_login_too_short")
+        # Собираем ВСЕ ошибки валидации сразу
+        validation_errors = []
 
-        is_valid_pwd, pwd_error = validate_password(password)
+        if len(username) < 3:
+            validation_errors.append("error_login_too_short")
+
+        is_valid_pwd, pwd_errors = validate_password(password)
         if not is_valid_pwd:
-           raise ValueError(pwd_error)
+            validation_errors.extend(pwd_errors)
 
         if not full_name or len(full_name) < 2:
-            raise ValueError("error_name_too_short")
+            validation_errors.append("error_name_too_short")
 
         if not email or '@' not in email:
-            raise ValueError("error_invalid_email")
+            validation_errors.append("error_invalid_email")
 
         current_stage = "DB Existence Check"
         # Проверяем что логин и email не заняты
@@ -478,13 +480,16 @@ async def api_register(
 
         c.execute("SELECT id FROM users WHERE LOWER(username) = LOWER(%s)", (username,))
         if c.fetchone():
-            conn.close()
-            raise ValueError("error_username_exists")
+            validation_errors.append("error_username_exists")
 
         c.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(%s)", (email,))
         if c.fetchone():
+            validation_errors.append("error_email_exists")
+
+        # Если есть ошибки валидации - возвращаем их все сразу
+        if validation_errors:
             conn.close()
-            raise ValueError("error_email_exists")
+            raise ValueError(",".join(validation_errors))
 
         current_stage = "Подготовка данных"
         # Генерируем токены

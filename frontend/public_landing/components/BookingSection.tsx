@@ -225,19 +225,29 @@ export const BookingSection = () => {
   const getCategoryDisplayName = (category: string) => {
     if (!category) return category;
 
-    // Try translation from booking.json services section
-    // Format: services.category_Brows, services.category_Facial, etc.
-    // Note: "Permanent Makeup" has a space, so we keep it as is
-    const translationKey = `services.category_${category}`;
+    // 1. Try dynamic translation first (Preferred)
+    // Normalize key: "Hair Care" -> "hair_care"
+    const catKey = category.toLowerCase().replace(/\s+/g, '_');
+    const dynamicTranslation = t(`dynamic:categories.${catKey}`, { defaultValue: "" });
 
-    // Use t with booking namespace, same format as ServicesStep.tsx
+    if (dynamicTranslation) {
+      return dynamicTranslation;
+    }
+
+    // 2. Fallback to booking.json services section (Legacy)
+    // Format: services.category_Brows, services.category_Facial, etc.
+    const translationKey = `services.category_${category}`;
     const translated = t(translationKey, {
       ns: 'booking',
-      defaultValue: category
+      defaultValue: ""
     });
 
-    // Return translated value (if translation not found, defaultValue will be used)
-    return translated;
+    if (translated) {
+      return translated;
+    }
+
+    // 3. Fallback to capitalized original name
+    return category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
   };
 
   return (

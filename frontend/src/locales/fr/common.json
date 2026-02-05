@@ -25,9 +25,9 @@
     "error_username_exists": "Un utilisateur avec cette connexion existe déjà",
     "password_empty": "Le mot de passe ne peut pas être vide",
     "password_no_digit": "Le mot de passe doit contenir au moins un chiffre",
-    "password_no_lower": "Le mot de passe doit contenir au moins une lettre minuscule",
+    "password_no_lower": "Le mot de passe doit contenir au moins une lettre latine minuscule (a-z)",
     "password_no_special": "Le mot de passe doit contenir au moins un caractère spécial (!@#$%)",
-    "password_no_upper": "Le mot de passe doit contenir au moins une lettre majuscule",
+    "password_no_upper": "Le mot de passe doit contenir au moins une lettre latine majuscule (A-Z)",
     "password_too_short": "Le mot de passe est trop court (8 caractères minimum)"
   },
   "authorization_error": "Erreur d'autorisation",

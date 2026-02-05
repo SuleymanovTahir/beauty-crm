@@ -303,7 +303,9 @@ def get_public_employees(
                 "full_name": final_name,
                 "role": final_position,
                 "position": final_position,
-                "specialty": specialization or bio or "",
+                "specialty": bio or specialization or "", # Prefer Bio (rich description) over tags (scanty)
+                "bio": bio or "",
+                "specialization": specialization or "",
                 "image": final_photo,
                 "photo": final_photo,
                 "experience": exp_text.strip(),

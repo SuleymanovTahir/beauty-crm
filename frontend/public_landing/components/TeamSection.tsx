@@ -50,7 +50,7 @@ export function TeamSection() {
             const name = capitalizeName(emp.name);
             const stableKey = emp.username || emp.id;
             const role = t(`dynamic:users.${stableKey}.position`, { defaultValue: emp.role || "" });
-            const specialty = t(`dynamic:users.${stableKey}.specialization`, { defaultValue: emp.specialty || "" });
+            const specialty = t(`dynamic:users.${stableKey}.bio`, { defaultValue: emp.specialty || "" });
 
             return {
               id: emp.id,
