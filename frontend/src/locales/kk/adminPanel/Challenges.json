@@ -1,59 +1,59 @@
 {
   "buttons": {
     "cancel": "Болдырмау",
-    "create_challenge": "Мақсат жасау",
+    "create_challenge": "Создать цель",
     "update_challenge": "Өзгерістерді сақтау"
   },
   "card": {
     "check_progress": "Check Progress",
-    "completed": "аяқталды",
-    "progress": "Орындалу барысы",
-    "pts": "ұпайлар",
-    "reward": "Марапат",
-    "target": "Мақсат"
+    "completed": "завершено",
+    "progress": "Прогресс",
+    "pts": "баллов",
+    "reward": "Сыйақы",
+    "target": "Цель"
   },
-  "create_challenge": "Жаңа мақсат жасау",
+  "create_challenge": "Создать новую цель",
   "dialogs": {
     "create": {
-      "description": "Әрекет параметрлерін және аяқтау бонусын орнату",
+      "description": "Настройте параметры активности и бонус за выполнение",
       "form": {
-        "challenge_type": "Әрекет түрі",
-        "description": "Тапсырманың сипаттамасы",
-        "description_placeholder": "Мысалы: осы айда салонға {{count}} рет барыңыз",
+        "challenge_type": "Тип активности",
+        "description": "Описание задачи",
+        "description_placeholder": "Напр: Посетите салон {{count}} раза в этом месяце",
         "end_date": "Аяқтау күні",
         "reward_placeholder": "{{points}}",
-        "reward_points": "бонус ұпайлары",
+        "reward_points": "бонусных баллов",
         "start_date": "Бастау күні",
         "target_placeholder": "{{count}}",
-        "target_value": "Мақсатты сан",
-        "title": "Мақсат атауы",
-        "title_placeholder": "Мысалы: Жазғы макияж"
+        "target_value": "Целевое количество",
+        "title": "Название цели",
+        "title_placeholder": "Напр: Летнее преображение"
       },
-      "title": "Мақсат құру",
-      "title_edit": "Мақсатты өңдеу"
+      "title": "Создание цели",
+      "title_edit": "Редактирование цели"
     },
     "delete": {
-      "confirm": "Бұл әрекетті шынымен жойғыңыз келе ме? Қатысушылардың барлық үлгерімі жойылады."
+      "confirm": "Вы уверены, что хотите удалить эту активность? Весь прогресс участников будет потерян."
     }
   },
   "stats": {
     "active_challenges": "Белсенді мақсаттар",
-    "completions": "Аяқтады",
-    "total_participants": "Қатысушылар"
+    "completions": "Выполнений",
+    "total_participants": "Участников"
   },
   "statuses": {
-    "active": "Белсенді",
-    "completed": "Аяқталды",
+    "active": "Активный",
+    "completed": "Завершенный",
     "upcoming": "Алдағы"
   },
-  "subtitle": "Клиенттердің адалдығын арттыру үшін ойын механикасы мен мақсаттарын басқарыңыз",
+  "subtitle": "Тұтынушының адалдығын арттыру үшін ойын механикасы мен мақсаттарын басқару",
   "title": "Мақсаттар мен жетістіктер",
   "toasts": {
     "created": "Әрекет сәтті жасалды",
     "deleted": "Әрекет жойылды",
     "failed_check_progress": "Failed to check progress",
-    "failed_create": "Әрекетті жасау кезіндегі қате",
-    "failed_delete": "Пайдаланушыларды жою кезіндегі қате",
+    "failed_create": "Әрекетті жасау қатесі",
+    "failed_delete": "Жою кезіндегі қате",
     "failed_load": "Деректерді жүктеу мүмкін болмады",
     "progress_checked_few": "{{count}} мүшелері үшін орындалу барысы жаңартылды",
     "progress_checked_many": "{{count}} мүшелері үшін орындалу барысы жаңартылды",
@@ -63,7 +63,7 @@
   "types": {
     "referrals": "Референциялар",
     "services": "Қызметтер",
-    "spending": "Шығын жасау",
-    "visits": "Кіру"
+    "spending": "Шығындар",
+    "visits": "Кірулер"
   }
 }

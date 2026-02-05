@@ -29,9 +29,9 @@
     "title": "Zum Beispiel: Goldstatus"
   },
   "stats": {
-    "active_challenges": "AKTIV AUFGABEN",
+    "active_challenges": "AKTIVE AUFGABEN",
     "completed_today": "HEUTE ABGESCHLOSSEN",
-    "total_participants": "GESAMTTEILNEHMER"
+    "total_participants": "TEILNEHMER INSGESAMT"
   },
   "status": {
     "active": "AKTIV",

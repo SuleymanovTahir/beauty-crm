@@ -9,8 +9,7 @@ import { LIMITS } from "../utils/constants";
 interface Service {
   id: number;
   name: string;
-  name?: string;
-  name?: string;
+  service_key: string;
   price: number;
   duration: number;
   category: string;
@@ -208,7 +207,7 @@ export function Services({ initialServices }: ServicesProps) {
                 </div>
                 <div className="flex justify-between items-start mb-3 sm:mb-4 gap-2">
                   <h3 className="text-[13px] sm:text-base font-medium group-hover:text-primary transition-colors pr-2">
-                    {t(`dynamic:services.${service.id}.name`, { defaultValue: service.name || "" })}
+                    {t(`dynamic:services.${service.service_key}.name`, { defaultValue: service.name || "" })}
                   </h3>
                   <div className="service-badge flex-shrink-0 ">
                     {formatCurrency(service.price)}

@@ -40,9 +40,9 @@ export function Hero({ initialBanner, salonInfo }: HeroProps) {
     const translation = t(`dynamic:public_banners.${banner.id}.${field}`, {
       defaultValue: banner[field] || '',
       // Pass interpolation variables for placeholders
-      percent: banner.percent || 50,
-      max: banner.max || 5,
-      currency: currency || 'AED'
+      percent: banner.percent,
+      max: banner.max,
+      currency: currency
     });
     return typeof translation === 'string' ? translation : (banner[field] || '');
   };

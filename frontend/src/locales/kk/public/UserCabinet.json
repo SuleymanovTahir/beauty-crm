@@ -1,6 +1,6 @@
 {
   "backToHome": "← Вернуться на главную",
-  "fillAllFields": "Пожалуйста, заполните все поля",
+  "fillAllFields": "Барлық өрістерді толтырыңыз",
   "loggingIn": "запись...",
   "loginButton": "Войти в систему",
   "loginError": "Неверные учетные данные",
@@ -10,7 +10,7 @@
   "passwordPlaceholder": "••••••",
   "subtitle": "Войдите в систему управления салоном",
   "systemError": "Ошибка при входе",
-  "title": "Личный кабинет",
+  "title": "Жеке кабинет",
   "username": "Имя пользователя или email",
   "usernameHint": "Введите ваше имя пользователя",
   "usernamePlaceholder": "администратор"

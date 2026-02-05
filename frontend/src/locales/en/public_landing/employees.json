@@ -1,39 +1,39 @@
 {
   "items": [
     {
-      "bio": "Gulya is a recognized expert in the field of manicure, depilation and professional facial care with 8 years of experience. With her mastery of aesthetic transformation techniques and attention to detail, she creates flawless images, providing each client with the highest level of care and professional approach.",
       "id": 671,
       "name": "Kasymova Gulcehre",
-      "photo": "",
-      "position": "Master of manicure, depilation, facial care"
+      "position": "Stylist",
+      "bio": "Gulya is a recognized expert in the field of manicure, depilation and professional facial care with 8 years of experience. Through her mastery of aesthetic transformation techniques and attention to detail, she creates flawless images, providing each client with the highest level of care and professional approach.",
+      "photo": ""
     },
     {
-      "bio": "Jennifer embodies the talent of a multi-disciplinary specialist. She masterfully performs both basic and complex beauty procedures, providing a comprehensive and harmonious approach to your transformation.",
       "id": 672,
       "name": "Peradilla Jennifer",
-      "photo": "",
-      "position": "Universal Beauty Master"
+      "position": "Universal Beauty Master",
+      "bio": "Jennifer embodies the talent of a multidisciplinary professional. She masterfully performs both basic and complex beauty procedures, providing a comprehensive and harmonious approach to your transformation.",
+      "photo": ""
     },
     {
-      "bio": "Mestan is a unique master who combines the talent of a top stylist and a permanent makeup expert. Her deep knowledge allows you to create complete and flawless images that highlight your individuality.",
       "id": 673,
       "name": "Amandurdyyeva Mestan",
-      "photo": "",
-      "position": "Hair Stylist & Permanent Makeup Artist"
+      "position": "Hair Stylist & Permanent Makeup Artist",
+      "bio": "Mestan is a unique master who combines the talent of a top stylist and a permanent makeup expert. Her deep knowledge allows you to create complete and flawless images that highlight your individuality.",
+      "photo": ""
     },
     {
-      "bio": "Simo is our salon's leading expert in the field of premium care and complex coloring. His many years of international experience and proprietary techniques guarantee the highest class results.",
       "id": 674,
       "name": "Mohamed Sabri",
-      "photo": "",
-      "position": "Hair Stylist"
+      "position": "Hair Stylist",
+      "bio": "Simo is our salon's leading expert in the field of premium care and complex coloring. His many years of international experience and proprietary techniques guarantee results of the highest class.",
+      "photo": ""
     },
     {
-      "bio": "Lyazat is a true perfectionist in the nail service industry. With impeccable taste and attention to detail, she creates the perfect manicure and pedicure, taking care of the aesthetics and health of your hands.",
       "id": 675,
       "name": "Kozhabay Lyazat",
-      "photo": "",
-      "position": "Nail Master"
+      "position": "Nail Master",
+      "bio": "Lyazat is a true perfectionist in the nail service industry. With impeccable taste and attention to detail, she creates the perfect manicure and pedicure, taking care of the aesthetics and health of your hands.",
+      "photo": ""
     }
   ]
 }

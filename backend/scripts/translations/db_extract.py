@@ -75,7 +75,16 @@ def extract_translations() -> Dict[str, List[Dict]]:
             continue
 
         # Build query
-        select_fields = [id_field] + valid_fields
+        key_field = config.get("key_field")
+        id_field = config["id_field"]
+        
+        select_fields = [id_field]
+        if key_field and key_field != id_field:
+            select_fields.append(key_field)
+            
+        field_start_idx = len(select_fields)
+        select_fields.extend(valid_fields)
+        
         query = f"SELECT {', '.join(select_fields)} FROM {table_name}"
         if where_clause:
             query += f" WHERE {where_clause}"
@@ -96,18 +105,22 @@ def extract_translations() -> Dict[str, List[Dict]]:
 
         for row in rows:
             record_id = row[0]
+            stable_key = str(row[1]) if key_field and key_field != id_field else str(record_id)
+            
             record = {
                 "id": record_id,
+                "stable_key": stable_key,
                 "fields": {}
             }
 
             for i, field_name in enumerate(valid_fields):
-                value = row[i + 1]
+                value = row[field_start_idx + i]
                 if value and str(value).strip():
                     # Initialize with source language value
                     # Translations will be filled in by db_translate.py
                     record["fields"][field_name] = {
-                        SOURCE_LANGUAGE: str(value)
+                        SOURCE_LANGUAGE: str(value),
+                        "key": f"{table_name}.{stable_key}.{field_name}"
                     }
                     total_fields += 1
 
@@ -150,18 +163,22 @@ def merge_with_existing(extracted: Dict, existing: Dict) -> Dict:
 
     for table_name, records in extracted.items():
         existing_table = existing.get(table_name, [])
-        existing_by_id = {r["id"]: r for r in existing_table}
+        existing_by_id = {r.get("id"): r for r in existing_table}
+        # Also map by stable_key if available in existing
+        existing_by_stable = {r.get("stable_key"): r for r in existing_table if r.get("stable_key")}
 
         for record in records:
             record_id = record["id"]
-            existing_record = existing_by_id.get(record_id)
+            stable_key = record.get("stable_key")
+            
+            # Try to find existing by stable_key first, then by legacy ID
+            existing_record = existing_by_stable.get(stable_key) or existing_by_id.get(record_id)
 
             if existing_record:
                 for field_name, field_data in record["fields"].items():
                     existing_field = existing_record.get("fields", {}).get(field_name, {})
 
                     # ONLY copy existing translations if the source text matches!
-                    # This ensures that if the content changed, it will be re-translated.
                     if existing_field.get(SOURCE_LANGUAGE) == field_data.get(SOURCE_LANGUAGE):
                         for lang in LANGUAGES:
                             if lang != SOURCE_LANGUAGE and lang in existing_field:

@@ -1,39 +1,39 @@
 {
   "items": [
     {
-      "bio": "Gulya ist ein anerkannter Experte auf dem Gebiet der Maniküre, Enthaarung und professionellen Gesichtspflege mit 8 Jahren Erfahrung. Mit ihrer Beherrschung ästhetischer Transformationstechniken und ihrer Liebe zum Detail schafft sie makellose Bilder und bietet jedem Kunden ein Höchstmaß an Sorgfalt und professionellem Ansatz.",
       "id": 671,
       "name": "Kasymova Gulcehre",
-      "photo": "",
-      "position": "Meister der Maniküre, Enthaarung und Gesichtspflege"
+      "position": "Stylist",
+      "bio": "Gulya ist eine anerkannte Expertin auf dem Gebiet der Maniküre, Enthaarung und professionellen Gesichtspflege mit 8 Jahren Erfahrung. Durch ihre Beherrschung ästhetischer Transformationstechniken und ihre Liebe zum Detail schafft sie makellose Bilder und bietet jedem Kunden ein Höchstmaß an Sorgfalt und professionellem Ansatz.",
+      "photo": ""
     },
     {
-      "bio": "Jennifer verkörpert das Talent einer multidisziplinären Spezialistin. Sie führt sowohl grundlegende als auch komplexe Schönheitsbehandlungen meisterhaft durch und bietet einen umfassenden und harmonischen Ansatz für Ihre Transformation.",
       "id": 672,
       "name": "Peradilla Jennifer",
-      "photo": "",
-      "position": "Universal Beauty Master"
+      "position": "Universal Beauty Master",
+      "bio": "Jennifer verkörpert das Talent einer multidisziplinären Fachkraft. Sie führt sowohl grundlegende als auch komplexe Schönheitsbehandlungen meisterhaft durch und bietet so einen umfassenden und harmonischen Ansatz für Ihre Transformation.",
+      "photo": ""
     },
     {
-      "bio": "Mestan ist ein einzigartiger Meister, der das Talent eines Top-Stylisten und eines Permanent-Make-up-Experten vereint. Ihr umfassendes Wissen ermöglicht es Ihnen, vollständige und makellose Bilder zu erstellen, die Ihre Individualität hervorheben.",
       "id": 673,
       "name": "Amandurdyyeva Mestan",
-      "photo": "",
-      "position": "Friseur und Permanent Makeup Artist"
+      "position": "Friseur & Permanent Makeup Artist",
+      "bio": "Mestan ist ein einzigartiger Meister, der das Talent eines Top-Stylisten und eines Permanent-Make-up-Experten vereint. Ihr umfassendes Wissen ermöglicht es Ihnen, vollständige und makellose Bilder zu erstellen, die Ihre Individualität hervorheben.",
+      "photo": ""
     },
     {
-      "bio": "Simo ist der führende Experte unseres Salons auf dem Gebiet der Premium-Pflege und komplexen Färbung. Seine langjährige internationale Erfahrung und proprietäre Techniken garantieren erstklassige Ergebnisse.",
       "id": 674,
       "name": "Mohamed Sabri",
-      "photo": "",
-      "position": "Friseur"
+      "position": "Friseur",
+      "bio": "Simo ist der führende Experte unseres Salons im Bereich Premium-Pflege und komplexe Farbgebung. Seine langjährige internationale Erfahrung und proprietäre Techniken garantieren Ergebnisse der Spitzenklasse.",
+      "photo": ""
     },
     {
-      "bio": "Lyazat ist ein wahrer Perfektionist in der Nagelservicebranche. Mit tadellosem Geschmack und Liebe zum Detail kreiert sie die perfekte Maniküre und Pediküre und kümmert sich dabei um die Ästhetik und Gesundheit Ihrer Hände.",
       "id": 675,
       "name": "Kozhabay Lyazat",
-      "photo": "",
-      "position": "Nail Master"
+      "position": "Nail Master",
+      "bio": "Lyazat ist ein wahrer Perfektionist in der Nagelservicebranche. Mit tadellosem Geschmack und Liebe zum Detail kreiert sie die perfekte Maniküre und Pediküre und kümmert sich dabei um die Ästhetik und Gesundheit Ihrer Hände.",
+      "photo": ""
     }
   ]
 }

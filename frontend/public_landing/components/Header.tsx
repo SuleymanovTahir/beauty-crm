@@ -298,7 +298,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                 className="hero-button-primary h-8 text-xs"
                 size="sm"
               >
-                {t('bookingTag') || 'Записаться'}
+                {t('bookingTag')}
               </Button>
             </nav>
 
@@ -513,7 +513,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                       className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground h-11 text-sm font-bold rounded-xl transition-all active:scale-[0.98]"
                     >
                       <User className="w-4 h-4 mr-2" />
-                      {t('login', { defaultValue: 'Войти' })}
+                      {t('login')}
                     </Button>
                   )}
                   <Button
@@ -523,7 +523,7 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
                     }}
                     className="w-full hero-button-primary h-9 text-sm"
                   >
-                    {t('bookingTag') || 'Записаться'}
+                    {t('bookingTag')}
                   </Button>
                 </div>
               </div>

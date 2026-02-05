@@ -4,7 +4,7 @@
     "combo": "Комбо",
     "cosmetology": "Косметология",
     "hair_care": "Шаш күтімі",
-    "hair_color": "Шаш түсі",
+    "hair_color": "Шаш бояуы",
     "hair_cut": "Шаш қию",
     "hair_styling": "Шаш сәндеу",
     "lashes": "Ресницы",
@@ -13,7 +13,7 @@
     "pedicure": "Педикюр",
     "permanent_makeup": "Тұрақты макияж",
     "spa": "SPA",
-    "waxing": "балауыз"
+    "waxing": "балауызбен бояу"
   },
   "haircutsStyling": "",
   "items": {
@@ -24,7 +24,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Bangs Cut",
+      "name": "Төбешіктерді кесу",
       "price": 100.0
     },
     "bikini_line": {
@@ -34,7 +34,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Бикини желісі",
+      "name": "Бикини сызығы",
       "price": 100.0
     },
     "blowdry_long": {
@@ -44,7 +44,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Фен (ұзын)",
+      "name": "Үтікпен кептіргіш (ұзын)",
       "price": 280.0
     },
     "blowdry_medium": {
@@ -54,7 +54,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Фенмен кептіргіш (орташа)",
+      "name": "Үтікпен кептіргіш (орташа)",
       "price": 250.0
     },
     "blowdry_short": {
@@ -64,7 +64,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Фен (қысқа)",
+      "name": "Үтікпен кептіргіш (қысқа)",
       "price": 200.0
     },
     "brow_coloring": {
@@ -74,7 +74,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Қас бояуы",
+      "name": "Қастарды бояу",
       "price": 40.0
     },
     "brow_correction": {
@@ -84,7 +84,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Қастарды түзету",
+      "name": "Қасты түзету",
       "price": 40.0
     },
     "brow_lami": {
@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Лякты өзгерту (pedi)",
+      "name": "Лякты өзгерту (Pedi)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -114,7 +114,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Гель-лакты өзгерту (Pedi)",
+      "name": "Гель-лак ауыстыру (Pedi)",
       "price": 100.0
     },
     "cheeks_wax": {
@@ -124,7 +124,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Жақтарды балауыз",
+      "name": "Жақ бетке балауыз",
       "price": 40.0
     },
     "chin_wax": {
@@ -134,7 +134,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Эпиляция подбородка",
+      "name": "Иекті балауыз",
       "price": 30.0
     },
     "combo_lami": {
@@ -144,7 +144,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Біріккен кірпіктер + Лами қастар",
+      "name": "Біріктірілген кірпіктер + қастар",
       "price": 300.0
     },
     "combo_mani_pedi_gel": {
@@ -164,7 +164,7 @@
       "duration": "120",
       "max_price": 1500.0,
       "min_price": 1000.0,
-      "name": "Күрделі түс (омбре/балайаж)",
+      "name": "Күрделі бояу (омбре/балайаж)",
       "price": 1250.0
     },
     "deep_facial_cleaning": {
@@ -214,7 +214,7 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Лифтинг массажы + маска",
+      "name": "Көтеру массажы + маска",
       "price": 250.0
     },
     "french_polish": {
@@ -224,7 +224,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Француздық лак",
+      "name": "Французский лак",
       "price": 190.0
     },
     "full_arms": {
@@ -234,7 +234,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Толық қару",
+      "name": "Толық қолдар",
       "price": 80.0
     },
     "full_bikini": {
@@ -244,7 +244,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "толық бикини",
+      "name": "Толық бикини",
       "price": 150.0
     },
     "full_body_wax": {
@@ -264,7 +264,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Бетті толық бояу",
+      "name": "Бүкіл бетке балауыз",
       "price": 90.0
     },
     "full_legs": {
@@ -284,7 +284,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Тек гельдік лак",
+      "name": "Только гель-лак",
       "price": 100.0
     },
     "hair_cut_full": {
@@ -294,7 +294,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Қу + жуу + сәндеу",
+      "name": "Шаш қию + жуу + сәндеу",
       "price": 350.0
     },
     "hair_cut_wash": {
@@ -304,7 +304,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Шаш қию және шаю",
+      "name": "Кесу + жуу",
       "price": 200.0
     },
     "hair_trim": {
@@ -314,7 +314,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Тек шаш қию",
+      "name": "Тек кесу",
       "price": 150.0
     },
     "hair_wash": {
@@ -324,7 +324,7 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Шашты жуу",
+      "name": "Шаш жуу",
       "price": 70.0
     },
     "half_arms": {
@@ -334,7 +334,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Жартылай қару",
+      "name": "Жарты қол",
       "price": 50.0
     },
     "half_legs": {
@@ -344,7 +344,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Жарты аяқ (төменгі)",
+      "name": "Жарты аяқ (төменгі қолдар)",
       "price": 80.0
     },
     "japanese_manicure": {
@@ -354,7 +354,7 @@
       "duration": "90",
       "max_price": null,
       "min_price": null,
-      "name": "Жапондық маникюр",
+      "name": "Жапон маникюрі",
       "price": 150.0
     },
     "kids_cut": {
@@ -364,7 +364,7 @@
       "duration": "40",
       "max_price": null,
       "min_price": null,
-      "name": "Балаларға арналған шаш қию",
+      "name": "Балалардың шаш қиюы",
       "price": 100.0
     },
     "kim_style_effect": {
@@ -384,7 +384,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Қастарды ламинациялау",
+      "name": "Кірпіктерді ламинациялау",
       "price": 200.0
     },
     "lashes_2d": {
@@ -394,7 +394,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "2D кірпік ұзартқыштары",
+      "name": "2D кірпік ұзарту",
       "price": 250.0
     },
     "lashes_3d": {
@@ -404,7 +404,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "3D кірпік ұзартқыштары",
+      "name": "3D кірпік ұзарту",
       "price": 300.0
     },
     "lashes_classic": {
@@ -424,7 +424,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Кірпік ұзартқыштары 4-5D (Мега)",
+      "name": "Кірпік ұзарту 4-5D (Мега)",
       "price": 350.0
     },
     "lashliner": {
@@ -434,7 +434,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Кірпік сызғыш",
+      "name": "Көз контуры",
       "price": 800.0
     },
     "manicure_combined": {
@@ -444,7 +444,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Біріктірілген маникюр",
+      "name": "Комбинированный маникюр",
       "price": 110.0
     },
     "manicure_gel_polish": {
@@ -454,7 +454,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Біріктірілген маникюр + гель",
+      "name": "Комбинированный маникюр + гель",
       "price": 160.0
     },
     "manicure_pil_classic": {
@@ -524,7 +524,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Медициналық бет күтімі (проблемалы тері)",
+      "name": "Емдік бет күтімі (проблемалы тері)",
       "price": 450.0
     },
     "moroccan_bath": {
@@ -554,7 +554,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "тырнақ ұзарту (гель)",
+      "name": "наращивание ногтей (гель)",
       "price": 400.0
     },
     "nail_shaping": {
@@ -604,7 +604,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Биогельді қолдану",
+      "name": "Наложение биогеля",
       "price": 50.0
     },
     "pedicure_gel": {
@@ -614,7 +614,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Педикюр + гельдік лак",
+      "name": "Педикюр + гельдік бояу",
       "price": 190.0
     },
     "pedicure_smart": {
@@ -634,7 +634,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Смарт педикюр + лак",
+      "name": "Ақылды педикюр + жылтыратқыш",
       "price": 150.0
     },
     "peeling": {
@@ -644,7 +644,7 @@
       "duration": "60",
       "max_price": 400.0,
       "min_price": 300.0,
-      "name": "пилинг",
+      "name": "Пиллинг",
       "price": 350.0
     },
     "permanent_brows": {
@@ -654,7 +654,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Тұрақты қастар",
+      "name": "Қастарды бояу",
       "price": 800.0
     },
     "permanent_correction": {
@@ -674,7 +674,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Тұрақты еріндер",
+      "name": "Тұрақты ерін",
       "price": 800.0
     },
     "polish_classic": {
@@ -684,7 +684,7 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Тек классикалық лак",
+      "name": "Только классический лак",
       "price": 50.0
     },
     "remove_classic": {
@@ -694,7 +694,7 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Классикалық лак кетіру",
+      "name": "Классикалық жылтыратқышты жою",
       "price": 20.0
     },
     "remove_extensions": {
@@ -704,7 +704,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Кеңейтімдерді жою",
+      "name": "Жою кеңейтімдері",
       "price": 70.0
     },
     "remove_gel": {
@@ -734,7 +734,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "1 кеңейтімді қалпына келтіріңіз",
+      "name": "1 кеңейтімді жөндеу",
       "price": 40.0
     },
     "repair_gel": {
@@ -744,7 +744,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "1 гельді тырнақтарды жөндеу",
+      "name": "Ремонт 1 гелевого ногтей",
       "price": 20.0
     },
     "roots_color": {
@@ -754,7 +754,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Тамырды бояу",
+      "name": "Тамырдан бояу",
       "price": 250.0
     },
     "styling_long": {
@@ -764,7 +764,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Шаш үлгісі (орташа) (ұзын)",
+      "name": "Үтік/толқын (ұзын)",
       "price": 300.0
     },
     "styling_medium": {
@@ -774,7 +774,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Фен/толқынмен үтіктеу (орташа)",
+      "name": "Темір/толқын (орташа)",
       "price": 260.0
     },
     "styling_short": {
@@ -784,7 +784,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Шаш сәндеу (қысқа)",
+      "name": "Үтік/толқын (қысқа)",
       "price": 230.0
     },
     "toning": {
@@ -794,7 +794,7 @@
       "duration": "60",
       "max_price": 350.0,
       "min_price": 250.0,
-      "name": "Бояу",
+      "name": "Тондау",
       "price": 300.0
     },
     "total_blonde": {
@@ -814,7 +814,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Қолтық эпиляциясы",
+      "name": "Қолтық астына балауыз",
       "price": 50.0
     },
     "upper_lip_wax": {
@@ -824,7 +824,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Үстіңгі ерінді балауызбен депиляциялау",
+      "name": "Жоғарғы ерінді балауыз",
       "price": 30.0
     }
   },

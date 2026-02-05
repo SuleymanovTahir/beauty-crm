@@ -6,6 +6,7 @@ import { safeFetch } from "../utils/errorHandler";
 
 interface TeamMember {
   id: number;
+  username: string;
   name: string;
   role: string;
   specialty: string;
@@ -47,11 +48,13 @@ export function TeamSection() {
         if (Array.isArray(data)) {
           const teamMembers = data.map((emp: any) => {
             const name = capitalizeName(emp.name);
-            const role = t(`dynamic:users.${emp.id}.position`, { defaultValue: emp.role || "" });
-            const specialty = t(`dynamic:users.${emp.id}.specialization`, { defaultValue: emp.specialty || "" });
+            const stableKey = emp.username || emp.id;
+            const role = t(`dynamic:users.${stableKey}.position`, { defaultValue: emp.role || "" });
+            const specialty = t(`dynamic:users.${stableKey}.specialization`, { defaultValue: emp.specialty || "" });
 
             return {
               id: emp.id,
+              username: emp.username,
               name,
               // Prevent showing name twice if role/specialty is erroneously set to the name
               role: role.toLowerCase() === name.toLowerCase() ? "" : role,
