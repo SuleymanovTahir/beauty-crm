@@ -35,7 +35,7 @@
   "new_code_sent": "Новый код отправлен на вашу почту!",
   "or_register_with_email": "Или регистрация через email",
   "password": "Пароль",
-  "password_hint_requirements": "Минимум 8 символов: A-Z, a-z, 0-9 и спецсимвол (!@#$%)",
+  "password_hint_requirements": "Минимум 8 символов, заглавная буква (A-Z), строчная (a-z), цифра и спецсимвол (!@#$%)",
   "password_placeholder": "Придумайте пароль",
   "password_placeholder_one": "Минимум {{count}} символ",
   "password_placeholder_few": "Минимум {{count}} символа",

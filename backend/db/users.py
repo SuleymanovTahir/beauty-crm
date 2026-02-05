@@ -71,16 +71,22 @@ def create_user(username: str, password: str, full_name: str = None,
         return None
 
 def verify_user(username: str, password: str) -> Optional[Dict]:
-    """Проверить логин и пароль"""
+    """Проверить логин и пароль
+
+    Returns:
+        - None если пользователь не найден
+        - {"status": "inactive", "role": ...} если аккаунт не активирован
+        - {user data} если успешно
+    """
     from utils.logger import log_info, log_warning, log_error
 
     conn = get_db_connection()
     c = conn.cursor()
 
-    # Сначала проверяем существует ли пользователь вообще
+    # Сначала проверяем существует ли пользователь вообще (case-insensitive)
     c.execute("""SELECT id, username, full_name, email, role, employee_id, phone, password_hash, is_active
                  FROM users
-                 WHERE username = %s""",
+                 WHERE LOWER(username) = LOWER(%s)""",
               (username,))
 
     user_row = c.fetchone()
@@ -92,8 +98,9 @@ def verify_user(username: str, password: str) -> Optional[Dict]:
 
     is_active = user_row[8]
     if not is_active:
-        log_warning(f"[AUTH] User '{username}' exists but is_active=FALSE (deactivated account)", "auth")
-        return None
+        log_warning(f"[AUTH] User '{username}' exists but is_active=FALSE (pending approval)", "auth")
+        # Возвращаем специальный объект чтобы показать правильное сообщение
+        return {"status": "inactive", "role": user_row[4]}
 
     stored_hash = user_row[7]
     is_valid = False

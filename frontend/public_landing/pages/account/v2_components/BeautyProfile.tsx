@@ -39,18 +39,14 @@ export function BeautyProfile() {
 
   const requestConsultation = () => {
     const phone = salonPhone;
-    const message = encodeURIComponent(
-      t('beauty.consultation_message', 'Здравствуйте! Я хотел(а) бы получить консультацию по уходу за красотой. Меня интересуют рекомендации по процедурам.')
-    );
+    const message = t('beauty.consultation_message', 'Здравствуйте! Я хотел(а) бы получить консультацию по уходу за красотой. Меня интересуют рекомендации по процедурам.');
     window.open(formatWhatsAppUrlWithText(phone, message), '_blank');
     toast.success(t('beauty.consultation_requested', 'Запрос на консультацию отправлен'));
   };
 
   const viewAllRecommendations = () => {
     const phone = salonPhone;
-    const message = encodeURIComponent(
-      t('beauty.recommendations_message', 'Здравствуйте! Я хотел(а) бы получить полный список персональных рекомендаций по уходу.')
-    );
+    const message = t('beauty.recommendations_message', 'Здравствуйте! Я хотел(а) бы получить полный список персональных рекомендаций по уходу.');
     window.open(formatWhatsAppUrlWithText(phone, message), '_blank');
     toast.success(t('beauty.recommendations_requested', 'Запрос отправлен'));
   };

@@ -515,6 +515,7 @@ export class ApiClient {
     whatsapp?: string;
     instagram_link?: string;
     is_public_visible?: boolean;
+    sort_order?: number;
   }) {
     return this.request(`/api/users/${userId}/update-profile`, {
       method: 'POST',

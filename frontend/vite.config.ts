@@ -149,9 +149,9 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
-    host: true,
+    host: '0.0.0.0',
     port: 5173,
-    strictPort: true,
+    strictPort: false, // Allow fallback to next port if 5173 is in use
     watch: {
       usePolling: true,
     },

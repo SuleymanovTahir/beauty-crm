@@ -13,6 +13,7 @@ from utils.utils import require_auth, sanitize_url, map_image_path, hash_passwor
 from utils.logger import log_error
 from core.auth import get_current_user_or_redirect as get_current_user
 import psycopg2
+from utils.cache import cache
 
 router = APIRouter(tags=["Users"])
 
@@ -225,7 +226,7 @@ async def get_users(
         start_time = time.time()
         c.execute("""
             SELECT
-                u.id, u.username, 
+                u.id, u.username,
                 u.full_name,
                 u.email, u.role,
                 u.position,
@@ -234,9 +235,10 @@ async def get_users(
                 COALESCE(u.photo, u.photo_url) as photo,
                 u.position_id,
                 u.is_public_visible,
-                u.sort_order
+                u.sort_order,
+                u.is_service_provider
             FROM users u
-            WHERE u.deleted_at IS NULL
+            WHERE u.deleted_at IS NULL AND u.role != 'client'
             ORDER BY u.sort_order ASC, u.created_at DESC
         """)
 
@@ -258,7 +260,8 @@ async def get_users(
                 "photo": photo_url,
                 "position_id": row[10],
                 "is_public_visible": bool(row[11]),
-                "sort_order": row[12]
+                "sort_order": row[12],
+                "is_service_provider": bool(row[13])
             }
 
             users.append(user_data)
@@ -358,6 +361,58 @@ async def reject_user(
         conn.rollback()
         conn.close()
         log_error(f"Error rejecting user: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.post("/users/{user_id}/toggle-active")
+async def toggle_user_active(
+    user_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Заблокировать/разблокировать пользователя (без удаления данных)"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    if user["id"] == user_id:
+        return JSONResponse({"error": "Нельзя заблокировать самого себя"}, status_code=400)
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        # Получаем текущий статус
+        c.execute("SELECT is_active, username, full_name FROM users WHERE id = %s", (user_id,))
+        result = c.fetchone()
+        
+        if not result:
+            conn.close()
+            return JSONResponse({"error": "Пользователь не найден"}, status_code=404)
+        
+        current_status, username, full_name = result
+        new_status = not current_status
+        
+        # Обновляем статус
+        c.execute("UPDATE users SET is_active = %s WHERE id = %s", (new_status, user_id))
+        conn.commit()
+        
+        action = "activated" if new_status else "blocked"
+        log_activity(user["id"], f"toggle_user_active_{action}", "user", str(user_id), 
+                    f"User {username} {action}")
+        
+        conn.close()
+        
+        status_text = "активирован" if new_status else "заблокирован"
+        return {
+            "success": True, 
+            "message": f"Пользователь {full_name} успешно {status_text}",
+            "is_active": new_status
+        }
+        
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        log_error(f"Error toggling user active status: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/users/{user_id}/delete")
@@ -775,6 +830,12 @@ async def update_user_profile(
              base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, secondary_role, user_id))
         
         conn.commit()
+
+        # Invalidate Public Employees Cache
+        try:
+            cache.clear_by_pattern("public_employees_*")
+        except:
+            pass
         
         duration = time.time() - start_time
         from utils.logger import log_info

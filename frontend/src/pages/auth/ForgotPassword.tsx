@@ -126,7 +126,7 @@ export default function ForgotPassword() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="email">{t('email_label')}</Label>
+              <Label htmlFor="email" className="mb-2 block">{t('email_label')}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -140,7 +140,7 @@ export default function ForgotPassword() {
                   className="pl-10 pr-3"
                 />
               </div>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-gray-500 mt-3">
                 {t('email_hint')}
               </p>
             </div>

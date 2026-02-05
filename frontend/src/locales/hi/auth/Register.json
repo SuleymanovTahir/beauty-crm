@@ -35,7 +35,7 @@
   "new_code_sent": "आपके ईमेल पर एक नया कोड भेजा गया है!",
   "or_register_with_email": "या ईमेल के माध्यम से पंजीकरण करें",
   "password": "पासवर्ड",
-  "password_hint_requirements": "न्यूनतम 8 अक्षर: A-Z, a-z, 0-9 और विशेष वर्ण (!@#$%)",
+  "password_hint_requirements": "न्यूनतम 8 अक्षर, बड़े अक्षर (A-Z), छोटे अक्षर (a-z), संख्या और विशेष अक्षर (!@#$%)",
   "password_placeholder": "पासवर्ड के साथ आएं",
   "password_placeholder_few": "न्यूनतम {{count}} वर्ण",
   "password_placeholder_many": "न्यूनतम {{count}} वर्ण",

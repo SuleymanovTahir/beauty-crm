@@ -399,6 +399,7 @@ def init_database():
 
         add_column_if_not_exists('services', 'name', 'TEXT')
         add_column_if_not_exists('services', 'description', 'TEXT')
+        add_column_if_not_exists('services', 'recommended_interval_days', 'INTEGER DEFAULT 30')
 
         # Master-Service Mapping
         c.execute('''CREATE TABLE IF NOT EXISTS user_services (
@@ -481,6 +482,7 @@ def init_database():
         add_column_if_not_exists('clients', 'referral_code', 'TEXT')
         add_column_if_not_exists('clients', 'telegram_id', 'TEXT')
         add_column_if_not_exists('clients', 'pipeline_stage_id', 'INTEGER')
+        add_column_if_not_exists('clients', 'user_id', 'INTEGER')  # Связь с зарегистрированным пользователем
 
         # --- 3. OPERATIONAL LOGIC ---
 
@@ -1847,6 +1849,22 @@ def init_database():
                 VALUES (%s, %s, %s, %s, TRUE)
                 ON CONFLICT (key) DO NOTHING
             """, (key, role, name, desc))
+
+        # Seed default currencies
+        default_currencies = [
+            ('AED', 'UAE Dirham', 'AED'),
+            ('USD', 'US Dollar', '$'),
+            ('EUR', 'Euro', '€'),
+            ('RUB', 'Russian Ruble', '₽'),
+            ('KZT', 'Kazakhstani Tenge', '₸'),
+            ('GBP', 'British Pound', '£'),
+        ]
+        for code, name, symbol in default_currencies:
+            c.execute("""
+                INSERT INTO currencies (code, name, symbol, is_active)
+                VALUES (%s, %s, %s, TRUE)
+                ON CONFLICT (code) DO NOTHING
+            """, (code, name, symbol))
 
         conn.commit()
         log_info("✅ Unified schema initialized successfully", "db")
