@@ -37,10 +37,10 @@ export function ReviewsSection() {
 
             return {
               id: review.id,
-              name: t(`dynamic:public_reviews.${review.id}.author_name`, { defaultValue: review.name || review.author_name || t('common:client') }),
+              name: t(`dynamic:public_reviews.${review.id}.author_name`, { defaultValue: review.name || review.author_name || "" }),
               avatar_url: avatarUrl,
               rating: review.rating || 5,
-              employee_position: t(`dynamic:public_reviews.${review.id}.employee_position`, { defaultValue: review.employee_position || t('common:service') }),
+              employee_position: t(`dynamic:public_reviews.${review.id}.employee_position`, { defaultValue: review.employee_position || "" }),
               text: t(`dynamic:public_reviews.${review.id}.text`, { defaultValue: review.text || "" }),
               created_at: review.created_at || ""
             };

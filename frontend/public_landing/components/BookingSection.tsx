@@ -172,13 +172,13 @@ export const BookingSection = () => {
     const minDigits = 11;
     if (digitsOnly.length < minDigits) {
       setPhoneError(true);
-      toast.error(t('phone_too_short', { count: minDigits, defaultValue: `Номер телефона должен содержать минимум ${minDigits} цифр с учетом кода страны` }));
+      toast.error(t('phone_too_short', { count: minDigits }));
       return;
     }
     setPhoneError(false);
 
     if (formData.selectedServices.length === 0) {
-      toast.error(t('formServicePlaceholder', { defaultValue: 'Выберите хотя бы одну услугу' }));
+      toast.error(t('formServicePlaceholder'));
       return;
     }
 
@@ -205,14 +205,14 @@ export const BookingSection = () => {
         time: ''
       });
 
-      toast.success(t('bookingSuccess', { defaultValue: 'Заявка успешно отправлена! Мы свяжемся с вами для подтверждения.' }));
+      toast.success(t('bookingSuccess'));
     } catch (err: any) {
       console.error('Error creating booking:', err);
-      let errorMsg = err?.message || err?.detail || t('bookingError', { defaultValue: 'Ошибка при создании записи. Попробуйте позже.' });
+      let errorMsg = err?.message || err?.detail || t('bookingError');
 
       // Если сервер вернул ключ ошибки, переводим его
       if (errorMsg === 'phone_too_short') {
-        errorMsg = t('phone_too_short', { defaultValue: 'Номер телефона должен содержать минимум 11 цифр с учетом кода страны' });
+        errorMsg = t('phone_too_short');
       }
 
       toast.error(errorMsg);
@@ -245,19 +245,19 @@ export const BookingSection = () => {
       <div className="max-w-2xl mx-auto px-3 sm:px-4 lg:px-6">
         <div className="text-center mb-8 sm:mb-12">
           <p className="text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-muted-foreground mb-3">
-            {t('bookingTag', { defaultValue: 'Онлайн запись' })}
+            {t('bookingTag')}
           </p>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl mb-3 sm:mb-4 text-[var(--heading)]">
-            {t('bookingTitlePart1', { defaultValue: 'Запишитесь' })} <span className="text-primary">{t('bookingTitlePart2', { defaultValue: 'на прием' })}</span>
+            {t('bookingTitlePart1')} <span className="text-primary">{t('bookingTitlePart2')}</span>
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-foreground/70">
-            {t('bookingDesc', { defaultValue: 'Выберите удобное время для визита' })}
+            {t('bookingDesc')}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="glass-panel lg:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-xl border border-primary/20 space-y-4 sm:space-y-6">
           <div>
-            <label className="form-label-custom">{t('formName', { defaultValue: 'Имя' })}</label>
+            <label className="form-label-custom">{t('formName')}</label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -265,20 +265,20 @@ export const BookingSection = () => {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder={t('formNamePlaceholder', { defaultValue: 'Ваше имя' })}
+                placeholder={t('formNamePlaceholder')}
                 className="h-10 sm:h-11 pl-10 form-input-custom"
               />
             </div>
           </div>
 
           <div>
-            <label className="form-label-custom">{t('formPhone', { defaultValue: 'Телефон' })}</label>
+            <label className="form-label-custom">{t('formPhone')}</label>
             <PhoneInputWithSearch
               defaultCountry={defaultCountry}
               value={formData.phone}
               onChange={handlePhoneChange}
               error={phoneError}
-              searchPlaceholder={t('searchCountry', { defaultValue: 'Поиск страны...' })}
+              searchPlaceholder={t('searchCountry')}
             />
             {phoneError && (
               <p className="text-xs text-destructive mt-1">
@@ -288,7 +288,7 @@ export const BookingSection = () => {
           </div>
 
           <div>
-            <label className="form-label-custom">{t('formService', { defaultValue: 'Услуги' })}</label>
+            <label className="form-label-custom">{t('formService')}</label>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -311,7 +311,7 @@ export const BookingSection = () => {
                         );
                       })
                     ) : (
-                      <span className="text-muted-foreground">{t('formServicePlaceholder', { defaultValue: 'Выберите услуги' })}</span>
+                      <span className="text-muted-foreground">{t('formServicePlaceholder')}</span>
                     )}
                   </div>
                   <ChevronsUpDown className="absolute right-3 top-3 h-4 w-4 shrink-0 opacity-50" />
@@ -319,9 +319,9 @@ export const BookingSection = () => {
               </PopoverTrigger>
               <PopoverContent className="w-[300px] p-0" align="start">
                 <Command>
-                  <CommandInput placeholder={t('searchService', { defaultValue: 'Найти услугу...' })} />
+                  <CommandInput placeholder={t('searchService')} />
                   <CommandList>
-                    <CommandEmpty>{t('noServicesFound', { defaultValue: 'Услуги не найдены.' })}</CommandEmpty>
+                    <CommandEmpty>{t('noServicesFound')}</CommandEmpty>
                     {availableCategories.map((category: string) => (
                       <CommandGroup key={category} heading={getCategoryDisplayName(category)}>
                         {services
@@ -371,7 +371,7 @@ export const BookingSection = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="form-label-custom">{t('formDate', { defaultValue: 'Дата' })}</label>
+              <label className="form-label-custom">{t('formDate')}</label>
               <div className="relative">
                 <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
                 <DatePicker
@@ -399,14 +399,14 @@ export const BookingSection = () => {
                                   i18n.language === 'pt' ? pt :
                                     ru
                   }
-                  placeholderText={t('formDatePlaceholder', { defaultValue: 'Выберите дату' })}
+                  placeholderText={t('formDatePlaceholder')}
                   className="w-full h-10 sm:h-11 pl-10 form-input-custom !bg-muted/20"
                   required
                 />
               </div>
             </div>
             <div>
-              <label className="form-label-custom">{t('formTime', { defaultValue: 'Время' })}</label>
+              <label className="form-label-custom">{t('formTime')}</label>
               <div className="relative">
                 <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -422,13 +422,13 @@ export const BookingSection = () => {
 
           <Button type="submit" disabled={loading} className="w-full hero-button-primary h-11 sm:h-12 text-sm sm:text-base">
             {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CalendarIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />}
-            {t('submitBooking', { defaultValue: 'Отправить заявку' })}
+            {t('submitBooking')}
           </Button>
 
           <p className="text-xs text-center text-muted-foreground">
-            {t('privacyAgreementStart', { defaultValue: 'Нажимая кнопку, вы соглашаетесь с' })}{' '}
+            {t('privacyAgreementStart')}{' '}
             <a href="/privacy-policy" className="text-primary hover:underline">
-              {t('privacyPolicy', { defaultValue: 'политикой конфиденциальности' })}
+              {t('privacyPolicy')}
             </a>
           </p>
         </form>

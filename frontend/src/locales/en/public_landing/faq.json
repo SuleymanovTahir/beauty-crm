@@ -1,84 +1,84 @@
 {
   "items": [
     {
-      "answer": "You can sign up for the procedure through the form on our website, by calling, or writing to us on Instagram. ",
-      "question": "How to sign up for the procedure"
+      "question": "How to sign up for the procedure",
+      "answer": "You can sign up for the procedure through the form on our website, by calling, or writing to us on Instagram. We will contact you to confirm your appointment."
     },
     {
-      "answer": "We accept payment in cash and cards (Visa, MasterCard, American Express). ",
-      "question": "What payment methods do you accept?"
+      "question": "What payment methods do you accept?",
+      "answer": "We accept payment in cash and cards (Visa, MasterCard, American Express). Payment is made after the service is provided."
     },
     {
-      "answer": "Yes, you can cancel or reschedule your appointment up to 24 hours before your scheduled time. ",
-      "question": "Can I cancel or reschedule an appointment?"
+      "question": "Can I cancel or reschedule an appointment?",
+      "answer": "Yes, you can cancel or reschedule your appointment up to 24 hours before your scheduled time. If canceled less than 24 hours in advance, a penalty of 50% of the cost of the service may be charged."
     },
     {
-      "answer": "Мы используем только сертифицированные премиальные материалы от ведущих мировых брендов. Все пигменты гипоаллергенны и безопасны для здоровья.",
-      "question": "What materials do you use"
+      "question": "What materials do you use",
+      "answer": "We use only certified premium materials from the world's leading brands. All pigments are hypoallergenic and safe for health."
     },
     {
-      "answer": "Да, все наши мастера имеют международные сертификаты и регулярно проходят курсы повышения квалификации.",
-      "question": "Есть ли у ваших мастеров сертификаты"
+      "question": "Do your craftsmen have certificates?",
+      "answer": "Yes, all our masters have international certificates and regularly take advanced training courses."
     },
     {
-      "answer": "Да, для некоторых процедур требуется подготовка. Детальные рекомендации мы предоставляем при записи.",
-      "question": "Нужна ли подготовка перед процедурой"
+      "question": "Is preparation necessary before the procedure?",
+      "answer": "Yes, some procedures require preparation. We provide detailed recommendations upon registration."
     },
     {
-      "answer": "Да, у каждой процедуры есть свои противопоказания. Основные: беременность, лактация, острые воспалительные процессы, заболевания крови, онкология. Перед процедурой обязательна консультация с мастером.",
-      "question": "Are there any contraindications to the procedures?"
+      "question": "Are there any contraindications to the procedures?",
+      "answer": "Yes, each procedure has its own contraindications. Main: pregnancy, lactation, acute inflammatory processes, blood diseases, oncology. Before the procedure, consultation with a specialist is required."
     },
     {
-      "answer": "Да, мы гарантируем качество всех наших услуг. Если вы не удовлетворены результатом, свяжитесь с нами в течение 7 дней, и мы найдем решение.",
-      "question": "Do you provide a guarantee for services"
+      "question": "Do you provide a guarantee for services",
+      "answer": "Yes, we guarantee the quality of all our services. If you are not satisfied with the result, contact us within 7 days and we will find a solution."
     },
     {
-      "answer": "Да, у нас есть накопительная программа лояльности. После каждого посещения вы получаете бонусы, которые можно использовать для оплаты следующих визитов.",
-      "question": "Есть ли у вас программа лояльности"
+      "question": "Do you have a loyalty program",
+      "answer": "Yes, we have a cumulative loyalty program. After each visit you receive bonuses that can be used to pay for future visits."
     },
     {
-      "answer": "Yes, we work 7 days a week.",
-      "question": "Do you work on weekends"
+      "question": "Do you work on weekends",
+      "answer": "Yes, we work 7 days a week."
     },
     {
-      "answer": "Да, мы предлагаем подарочные сертификаты на любую сумму или на конкретные услуги. Свяжитесь с нами для оформления сертификата.",
-      "question": "Можно ли подарить сертификат на услуги"
+      "question": "Is it possible to give a certificate for services?",
+      "answer": "Yes, we offer gift certificates for any amount or for specific services. Contact us to obtain a certificate."
     },
     {
-      "answer": "We are located in the center of Dubai. ",
-      "question": "Where is your showroom"
+      "question": "Where is your salon located?",
+      "answer": "We are located in the center of Dubai. Detailed information on how to get there can be found on the Contacts page."
     },
     {
-      "answer": "You can sign up online through the form on our website, by calling or writing to us on WhatsApp, Instagram.",
-      "question": "How to sign up for the procedure?"
+      "question": "How to sign up for the procedure?",
+      "answer": "You can sign up online through the form on our website, by calling or writing to us on WhatsApp, Instagram."
     },
     {
-      "answer": "Да, вы можете отменить или перенести запись, предупредив нас не менее чем за 24 часа. Просьба сообщать об изменениях заранее.",
-      "question": "Can I cancel or reschedule an appointment?"
+      "question": "Can I cancel or reschedule an appointment?",
+      "answer": "Yes, you can cancel or reschedule your appointment by giving us at least 24 hours notice. Please notify us of changes in advance."
     },
     {
-      "answer": "Мы используем только профессиональные материалы премиум-класса. Все инструменты проходят медицинскую стерилизацию.",
-      "question": "Какие материалы вы используете?"
+      "question": "What materials do you use?",
+      "answer": "We use only professional premium materials. All instruments undergo medical sterilization."
     },
     {
-      "answer": "Да, мы ценим ваше время и можем организовать одновременное выполнение нескольких процедур.",
-      "question": "Делаете ли вы процедуры в 4 руки?"
+      "question": "Do you do procedures with 4 hands?",
+      "answer": "Yes, we value your time and can arrange for multiple procedures to be performed simultaneously."
     },
     {
-      "answer": "Наш салон расположен в удобном месте с прекрасным видом и уютной атмосферой. Точный адрес вы найдете в разделе контактов.",
-      "question": "Where are you?"
+      "question": "Where are you located?",
+      "answer": "Our salon is located in a convenient location with a beautiful view and a cozy atmosphere. You will find the exact address in the contacts section."
     },
     {
-      "answer": "You can sign up via the website or WhatsApp.",
-      "question": "How to sign up?"
+      "question": "How to sign up?",
+      "answer": "You can sign up via the website or WhatsApp."
     },
     {
-      "answer": "Yes, we have free parking for customers.",
-      "question": "Is there parking?"
+      "question": "Is there parking?",
+      "answer": "Yes, we have free parking for customers."
     },
     {
-      "answer": "We use Luxio, Fedua and other premium brands.",
-      "question": "What brands do you use?"
+      "question": "What brands do you use?",
+      "answer": "We use Luxio, Fedua and other premium brands."
     }
   ]
 }

@@ -63,7 +63,7 @@
       "category": "Manicure"
     },
     "japanese_manicure": {
-      "name": "Manicura japonesa",
+      "name": "Manicura Japonesa",
       "description": "",
       "price": 150.0,
       "duration": "90",
@@ -73,7 +73,7 @@
       "category": "Manicure"
     },
     "overlay_biogel": {
-      "name": "Superposición de biogel",
+      "name": "Overlay Biogel",
       "description": "",
       "price": 50.0,
       "duration": "60",
@@ -83,7 +83,7 @@
       "category": "Manicure"
     },
     "remove_gel": {
-      "name": "Quitar esmalte en gel",
+      "name": "Quitar Esmalte en Gel",
       "description": "",
       "price": 30.0,
       "duration": "30",
@@ -93,7 +93,7 @@
       "category": "Manicure"
     },
     "remove_classic": {
-      "name": "Quitar esmalte clásico",
+      "name": "Quitar Esmalte Clásico",
       "description": "",
       "price": 20.0,
       "duration": "30",
@@ -103,7 +103,7 @@
       "category": "Manicure"
     },
     "remove_extensions": {
-      "name": "Quitar extensiones",
+      "name": "Quitar Extensiones",
       "description": "",
       "price": 70.0,
       "duration": "60",
@@ -113,7 +113,7 @@
       "category": "Manicure"
     },
     "nail_extensions": {
-      "name": "Extensiones de uñas (gel)",
+      "name": "Extensiones de Uñas (Gel)",
       "description": "",
       "price": 400.0,
       "duration": "120",
@@ -123,7 +123,7 @@
       "category": "Manicure"
     },
     "nail_correction": {
-      "name": "Corrección de extensiones",
+      "name": "Corrección de Extensiones",
       "description": "",
       "price": 400.0,
       "duration": "120",
@@ -133,7 +133,7 @@
       "category": "Manicure"
     },
     "repair_extension": {
-      "name": "Reparación 1 extensión",
+      "name": "Reparación 1 Extensión",
       "description": "",
       "price": 40.0,
       "duration": "60",
@@ -143,7 +143,7 @@
       "category": "Manicure"
     },
     "repair_gel": {
-      "name": "Reparar 1 Uña de Gel",
+      "name": "Reparación 1 Uña Gel",
       "description": "",
       "price": 20.0,
       "duration": "60",
@@ -153,7 +153,7 @@
       "category": "Manicure"
     },
     "manicure_combined": {
-      "name": "Manicura combinada",
+      "name": "Manicura Combinada",
       "description": "",
       "price": 110.0,
       "duration": "60",
@@ -163,7 +163,7 @@
       "category": "Manicure"
     },
     "manicure_gel_polish": {
-      "name": "Manicura Combinada + Gel",
+      "name": "Manicura + Gel Combinada",
       "description": "",
       "price": 160.0,
       "duration": "60",
@@ -173,7 +173,7 @@
       "category": "Manicure"
     },
     "nail_shaping": {
-      "name": "modelado de uñas",
+      "name": "Modelado de uñas",
       "description": "",
       "price": 45.0,
       "duration": "60",
@@ -183,7 +183,7 @@
       "category": "Manicure"
     },
     "pedicure_smart": {
-      "name": "Pedicura inteligente básica",
+      "name": "Smart Pedicure Basic",
       "description": "",
       "price": 130.0,
       "duration": "60",
@@ -193,7 +193,7 @@
       "category": "Pedicure"
     },
     "pedicure_smart_polish": {
-      "name": "Pedicura inteligente + esmalte",
+      "name": "Smart Pedicure + Esmalte",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -203,7 +203,7 @@
       "category": "Pedicure"
     },
     "pedicure_gel": {
-      "name": "Pedicura + Esmalte en gel",
+      "name": "Pedicura + Esmalte en Gel",
       "description": "",
       "price": 190.0,
       "duration": "60",
@@ -223,7 +223,7 @@
       "category": "Pedicure"
     },
     "change_classic_pedicure": {
-      "name": "Cambiar polaco (Pedi)",
+      "name": "Cambiar esmalte (Pedi)",
       "description": "",
       "price": 50.0,
       "duration": "60",
@@ -243,7 +243,7 @@
       "category": "Combo"
     },
     "blowdry_short": {
-      "name": "Secar con secador (corto)",
+      "name": "Secado con secador (corto)",
       "description": "",
       "price": 200.0,
       "duration": "60",
@@ -253,7 +253,7 @@
       "category": "Hair Styling"
     },
     "blowdry_medium": {
-      "name": "Secar con secador (medio)",
+      "name": "Secado con secador (medio)",
       "description": "",
       "price": 250.0,
       "duration": "60",
@@ -263,7 +263,7 @@
       "category": "Hair Styling"
     },
     "blowdry_long": {
-      "name": "Secar con secador (largo)",
+      "name": "Secado con secador (largo)",
       "description": "",
       "price": 280.0,
       "duration": "60",
@@ -273,7 +273,7 @@
       "category": "Hair Styling"
     },
     "styling_short": {
-      "name": "Plancha de peinado/ondas (corta)",
+      "name": "Plancha para peinar/ondas (corta)",
       "description": "",
       "price": 230.0,
       "duration": "60",
@@ -283,7 +283,7 @@
       "category": "Hair Styling"
     },
     "styling_medium": {
-      "name": "Plancha de peinado/ondas (mediana)",
+      "name": "Peinado Plancha/Ondas (Mediana)",
       "description": "",
       "price": 260.0,
       "duration": "60",
@@ -293,7 +293,7 @@
       "category": "Hair Styling"
     },
     "styling_long": {
-      "name": "Plancha de peinado/ondas (larga)",
+      "name": "Peinado Plancha/Ondas (Larga)",
       "description": "",
       "price": 300.0,
       "duration": "60",
@@ -313,7 +313,7 @@
       "category": "Hair Styling"
     },
     "hair_wash": {
-      "name": "lavado de cabello",
+      "name": "Lavado de cabello",
       "description": "",
       "price": 70.0,
       "duration": "30",
@@ -323,7 +323,7 @@
       "category": "Hair Care"
     },
     "hair_trim": {
-      "name": "Sólo corte de cabello",
+      "name": "Solo recorte",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -333,7 +333,7 @@
       "category": "Hair Cut"
     },
     "hair_cut_full": {
-      "name": "Cortar + Lavar + Peinar",
+      "name": "Corte + Lavado + Peinado",
       "description": "",
       "price": 350.0,
       "duration": "60",
@@ -343,7 +343,7 @@
       "category": "Hair Cut"
     },
     "hair_cut_wash": {
-      "name": "Cortar + Lavar",
+      "name": "Corte + Lavado",
       "description": "",
       "price": 200.0,
       "duration": "60",
@@ -353,7 +353,7 @@
       "category": "Hair Cut"
     },
     "express_hair_form": {
-      "name": "Formulario Express (Sin Lavado)",
+      "name": "Forma exprés (No Lavado)",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -363,7 +363,7 @@
       "category": "Hair Cut"
     },
     "bangs_cut": {
-      "name": "corte de flequillo",
+      "name": "Corte Flequillo",
       "description": "",
       "price": 100.0,
       "duration": "60",
@@ -373,7 +373,7 @@
       "category": "Hair Cut"
     },
     "kids_cut": {
-      "name": "Corte para niños",
+      "name": "Corte Niños",
       "description": "",
       "price": 100.0,
       "duration": "40",
@@ -383,7 +383,7 @@
       "category": "Hair Cut"
     },
     "roots_color": {
-      "name": "Coloración de raíces",
+      "name": "Coloración de Raíces",
       "description": "",
       "price": 250.0,
       "duration": "60",
@@ -393,7 +393,7 @@
       "category": "Hair Color"
     },
     "toning": {
-      "name": "Viraje",
+      "name": "Tonificación",
       "description": "",
       "price": 300.0,
       "duration": "60",
@@ -403,7 +403,7 @@
       "category": "Hair Color"
     },
     "one_tone_short": {
-      "name": "Un tono (corto)",
+      "name": "Un Tono (Corto)",
       "description": "",
       "price": 350.0,
       "duration": "120",
@@ -413,7 +413,7 @@
       "category": "Hair Color"
     },
     "one_tone_medium": {
-      "name": "Un tono (medio)",
+      "name": "Un Tono (Medio)",
       "description": "",
       "price": 400.0,
       "duration": "120",
@@ -423,7 +423,7 @@
       "category": "Hair Color"
     },
     "one_tone_long": {
-      "name": "Un tono (largo)",
+      "name": "Un Tono (Largo)",
       "description": "",
       "price": 675.0,
       "duration": "120",
@@ -433,7 +433,7 @@
       "category": "Hair Color"
     },
     "total_blonde": {
-      "name": "rubia total",
+      "name": "Total Rubio",
       "description": "",
       "price": 1250.0,
       "duration": "120",
@@ -443,7 +443,7 @@
       "category": "Hair Color"
     },
     "complex_color": {
-      "name": "Color complejo (Ombre/Balayage)",
+      "name": "Color Complejo (Ombre/Balayage)",
       "description": "",
       "price": 1250.0,
       "duration": "120",
@@ -453,7 +453,7 @@
       "category": "Hair Color"
     },
     "massage_head": {
-      "name": "Masaje de cabeza (60 min)",
+      "name": "Masaje de Cabeza (60 min)",
       "description": "",
       "price": 100.0,
       "duration": "60",
@@ -503,7 +503,7 @@
       "category": "Massage"
     },
     "moroccan_bath": {
-      "name": "Baño marroquí SPA",
+      "name": "SPA de baño marroquí",
       "description": "",
       "price": 250.0,
       "duration": "30",
@@ -513,7 +513,7 @@
       "category": "SPA"
     },
     "full_bikini": {
-      "name": "bikini completo",
+      "name": "Bikini completo",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -523,7 +523,7 @@
       "category": "Waxing"
     },
     "bikini_line": {
-      "name": "línea del bikini",
+      "name": "Contorno de bikini",
       "description": "",
       "price": 100.0,
       "duration": "60",
@@ -533,7 +533,7 @@
       "category": "Waxing"
     },
     "full_legs": {
-      "name": "Piernas Completas",
+      "name": "Piernas completas",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -553,7 +553,7 @@
       "category": "Waxing"
     },
     "full_arms": {
-      "name": "Armas completas",
+      "name": "Brazos completos",
       "description": "",
       "price": 80.0,
       "duration": "60",
@@ -573,7 +573,7 @@
       "category": "Waxing"
     },
     "full_body_wax": {
-      "name": "Depilación con cera de cuerpo completo",
+      "name": "Cuerpo completo Depilación",
       "description": "",
       "price": 400.0,
       "duration": "60",
@@ -593,7 +593,7 @@
       "category": "Waxing"
     },
     "full_face_wax": {
-      "name": "Depilación facial completa",
+      "name": "Depilación de rostro completo",
       "description": "",
       "price": 90.0,
       "duration": "60",
@@ -613,7 +613,7 @@
       "category": "Waxing"
     },
     "upper_lip_wax": {
-      "name": "Depilación del labio superior",
+      "name": "Depilación de labio superior",
       "description": "",
       "price": 30.0,
       "duration": "60",
@@ -633,7 +633,7 @@
       "category": "Waxing"
     },
     "deep_facial_cleaning": {
-      "name": "Limpieza Facial Profunda",
+      "name": "Limpieza facial profunda",
       "description": "",
       "price": 400.0,
       "duration": "60",
@@ -643,7 +643,7 @@
       "category": "Cosmetology"
     },
     "medical_facial": {
-      "name": "Facial Médico (Piel Problemática)",
+      "name": "Facial médico (piel problemática)",
       "description": "",
       "price": 450.0,
       "duration": "60",
@@ -663,7 +663,7 @@
       "category": "Cosmetology"
     },
     "peeling": {
-      "name": "Peladura",
+      "name": "Peeling",
       "description": "",
       "price": 350.0,
       "duration": "60",
@@ -713,7 +713,7 @@
       "category": "Lashes"
     },
     "kim_style_effect": {
-      "name": "Efecto estilo Kim / Curvas L, M",
+      "name": "Efecto estilo Kim / L, M Curvas",
       "description": "",
       "price": 30.0,
       "duration": "60",
@@ -723,7 +723,7 @@
       "category": "Lashes"
     },
     "remove_lashes": {
-      "name": "quitar pestañas",
+      "name": "Quitar pestañas",
       "description": "",
       "price": 50.0,
       "duration": "60",
@@ -753,7 +753,7 @@
       "category": "Lashes"
     },
     "combo_lami": {
-      "name": "Combo Pestañas + Cejas Lami",
+      "name": "Combo Lash + Brow Lami",
       "description": "",
       "price": 300.0,
       "duration": "60",
@@ -783,7 +783,7 @@
       "category": "Brows"
     },
     "permanent_lips": {
-      "name": "Labios Permanentes",
+      "name": "Labios permanentes",
       "description": "",
       "price": 800.0,
       "duration": "120",
@@ -793,7 +793,7 @@
       "category": "Permanent Makeup"
     },
     "permanent_brows": {
-      "name": "Cejas Permanentes",
+      "name": "Cejas permanentes",
       "description": "",
       "price": 800.0,
       "duration": "120",
@@ -813,7 +813,7 @@
       "category": "Permanent Makeup"
     },
     "eyeliner": {
-      "name": "Lápiz de ojos",
+      "name": "Delineador de ojos",
       "description": "",
       "price": 800.0,
       "duration": "120",

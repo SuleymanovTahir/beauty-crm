@@ -23,7 +23,7 @@
   "service3Title": "",
   "items": {
     "manicure_pil_classic": {
-      "name": "Manucure Classique + Vernis",
+      "name": "Manucure classique + vernis",
       "description": "",
       "price": 130.0,
       "duration": "60",
@@ -73,7 +73,7 @@
       "category": "Manicure"
     },
     "overlay_biogel": {
-      "name": "Superposition Biogel",
+      "name": "Overlay Biogel",
       "description": "",
       "price": 50.0,
       "duration": "60",
@@ -163,7 +163,7 @@
       "category": "Manicure"
     },
     "manicure_gel_polish": {
-      "name": "Manucure Combinée + Gel",
+      "name": "Manucure combinée + gel",
       "description": "",
       "price": 160.0,
       "duration": "60",
@@ -173,7 +173,7 @@
       "category": "Manicure"
     },
     "nail_shaping": {
-      "name": "Mise en forme des ongles",
+      "name": "Formation des ongles",
       "description": "",
       "price": 45.0,
       "duration": "60",
@@ -183,7 +183,7 @@
       "category": "Manicure"
     },
     "pedicure_smart": {
-      "name": "Pédicure intelligente de base",
+      "name": "Smart Pedicure Basic",
       "description": "",
       "price": 130.0,
       "duration": "60",
@@ -193,7 +193,7 @@
       "category": "Pedicure"
     },
     "pedicure_smart_polish": {
-      "name": "Pédicure intelligente + vernis",
+      "name": "Smart Pédicure + Vernis",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -203,7 +203,7 @@
       "category": "Pedicure"
     },
     "pedicure_gel": {
-      "name": "Pédicure + Vernis Gel",
+      "name": "Pédicure + Vernis gel",
       "description": "",
       "price": 190.0,
       "duration": "60",
@@ -223,7 +223,7 @@
       "category": "Pedicure"
     },
     "change_classic_pedicure": {
-      "name": "Changer le polonais (Pedi)",
+      "name": "Changer de vernis (Pedi)",
       "description": "",
       "price": 50.0,
       "duration": "60",
@@ -243,7 +243,7 @@
       "category": "Combo"
     },
     "blowdry_short": {
-      "name": "Sécher au sèche-cheveux (court)",
+      "name": "Blow Dry (court)",
       "description": "",
       "price": 200.0,
       "duration": "60",
@@ -253,7 +253,7 @@
       "category": "Hair Styling"
     },
     "blowdry_medium": {
-      "name": "Séchage au sèche-cheveux (moyen)",
+      "name": "Blow Dry (Moyen)",
       "description": "",
       "price": 250.0,
       "duration": "60",
@@ -263,7 +263,7 @@
       "category": "Hair Styling"
     },
     "blowdry_long": {
-      "name": "Sécher au sèche-cheveux (long)",
+      "name": "Blow Dry (Long)",
       "description": "",
       "price": 280.0,
       "duration": "60",
@@ -273,7 +273,7 @@
       "category": "Hair Styling"
     },
     "styling_short": {
-      "name": "Fer à coiffer/vagues (court)",
+      "name": "Fer à coiffer/Ondulations (court)",
       "description": "",
       "price": 230.0,
       "duration": "60",
@@ -283,7 +283,7 @@
       "category": "Hair Styling"
     },
     "styling_medium": {
-      "name": "Fer à coiffer/vagues (moyen)",
+      "name": "Fer à coiffer/Ondulations (Moyen)",
       "description": "",
       "price": 260.0,
       "duration": "60",
@@ -293,7 +293,7 @@
       "category": "Hair Styling"
     },
     "styling_long": {
-      "name": "Fer à Coiffer/Vagues (Long)",
+      "name": "Fer à coiffer/Ondulations (Long)",
       "description": "",
       "price": 300.0,
       "duration": "60",
@@ -303,7 +303,7 @@
       "category": "Hair Styling"
     },
     "evening_hairstyle": {
-      "name": "Coiffure de soirée",
+      "name": "Coiffure du soir",
       "description": "",
       "price": 625.0,
       "duration": "60",
@@ -323,7 +323,7 @@
       "category": "Hair Care"
     },
     "hair_trim": {
-      "name": "Coupe de cheveux uniquement",
+      "name": "Coupe des cheveux uniquement",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -333,7 +333,7 @@
       "category": "Hair Cut"
     },
     "hair_cut_full": {
-      "name": "Couper + Lavage + Coiffage",
+      "name": "Coupe + Lavage + Coiffage",
       "description": "",
       "price": 350.0,
       "duration": "60",
@@ -343,7 +343,7 @@
       "category": "Hair Cut"
     },
     "hair_cut_wash": {
-      "name": "Couper + Laver",
+      "name": "Coupe + Lavage",
       "description": "",
       "price": 200.0,
       "duration": "60",
@@ -353,7 +353,7 @@
       "category": "Hair Cut"
     },
     "express_hair_form": {
-      "name": "Formulaire express (sans lavage)",
+      "name": "Formulaire express (Non Wash)",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -363,7 +363,7 @@
       "category": "Hair Cut"
     },
     "bangs_cut": {
-      "name": "Frange coupée",
+      "name": "Coupe Frange",
       "description": "",
       "price": 100.0,
       "duration": "60",
@@ -373,7 +373,7 @@
       "category": "Hair Cut"
     },
     "kids_cut": {
-      "name": "Coupe Enfants",
+      "name": "Coupe Enfant",
       "description": "",
       "price": 100.0,
       "duration": "40",
@@ -383,7 +383,7 @@
       "category": "Hair Cut"
     },
     "roots_color": {
-      "name": "Coloration des racines",
+      "name": "Coloration Racines",
       "description": "",
       "price": 250.0,
       "duration": "60",
@@ -393,7 +393,7 @@
       "category": "Hair Color"
     },
     "toning": {
-      "name": "Tonifiant",
+      "name": "Tonification",
       "description": "",
       "price": 300.0,
       "duration": "60",
@@ -433,7 +433,7 @@
       "category": "Hair Color"
     },
     "total_blonde": {
-      "name": "Blonde totale",
+      "name": "Total Blonde",
       "description": "",
       "price": 1250.0,
       "duration": "120",
@@ -473,7 +473,7 @@
       "category": "Massage"
     },
     "massage_body": {
-      "name": "Massage corporel (60 min)",
+      "name": "Massage du corps (60 min)",
       "description": "",
       "price": 250.0,
       "duration": "60",
@@ -483,7 +483,7 @@
       "category": "Massage"
     },
     "massage_sculptural": {
-      "name": "Massage corporel sculptural",
+      "name": "Massage sculptural du corps",
       "description": "",
       "price": 370.0,
       "duration": "60",
@@ -493,7 +493,7 @@
       "category": "Massage"
     },
     "massage_anticellulite": {
-      "name": "Massage Anti-cellulite (60 min)",
+      "name": "Massage anti-cellulite (60 min)",
       "description": "",
       "price": 300.0,
       "duration": "60",
@@ -503,7 +503,7 @@
       "category": "Massage"
     },
     "moroccan_bath": {
-      "name": "Bain SPA Marocain",
+      "name": "Bain marocain SPA",
       "description": "",
       "price": 250.0,
       "duration": "30",
@@ -533,7 +533,7 @@
       "category": "Waxing"
     },
     "full_legs": {
-      "name": "Jambes entières",
+      "name": "Jambes complètes",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -573,7 +573,7 @@
       "category": "Waxing"
     },
     "full_body_wax": {
-      "name": "Épilation à la cire sur tout le corps",
+      "name": "Corps complet Épilation à la cire",
       "description": "",
       "price": 400.0,
       "duration": "60",
@@ -583,7 +583,7 @@
       "category": "Waxing"
     },
     "underarms": {
-      "name": "Epilation des aisselles",
+      "name": "Épilation des aisselles",
       "description": "",
       "price": 50.0,
       "duration": "60",
@@ -593,7 +593,7 @@
       "category": "Waxing"
     },
     "full_face_wax": {
-      "name": "Épilation complète du visage",
+      "name": "Épilation du visage complet",
       "description": "",
       "price": 90.0,
       "duration": "60",
@@ -603,7 +603,7 @@
       "category": "Waxing"
     },
     "cheeks_wax": {
-      "name": "Epilation des Joues",
+      "name": "Épilation des joues",
       "description": "",
       "price": 40.0,
       "duration": "60",
@@ -613,7 +613,7 @@
       "category": "Waxing"
     },
     "upper_lip_wax": {
-      "name": "Épilation de la lèvre supérieure",
+      "name": "Épilation des lèvres supérieures",
       "description": "",
       "price": 30.0,
       "duration": "60",
@@ -643,7 +643,7 @@
       "category": "Cosmetology"
     },
     "medical_facial": {
-      "name": "Facial Médical (Peaux à Problèmes)",
+      "name": "Soin médical (peau à problèmes)",
       "description": "",
       "price": 450.0,
       "duration": "60",
@@ -703,7 +703,7 @@
       "category": "Lashes"
     },
     "lashes_mega": {
-      "name": "Extensions de cils 4-5D (méga)",
+      "name": "Extensions de cils 4-5D (Mega)",
       "description": "",
       "price": 350.0,
       "duration": "120",
@@ -713,7 +713,7 @@
       "category": "Lashes"
     },
     "kim_style_effect": {
-      "name": "Effet Style Kim / Courbes L, M",
+      "name": "Effet style Kim / L, M Courbes",
       "description": "",
       "price": 30.0,
       "duration": "60",
@@ -733,7 +733,7 @@
       "category": "Lashes"
     },
     "brow_lami": {
-      "name": "Stratification des sourcils",
+      "name": "Laminage des sourcils",
       "description": "",
       "price": 200.0,
       "duration": "60",
@@ -743,7 +743,7 @@
       "category": "Brows"
     },
     "lash_lami": {
-      "name": "Stratification des cils",
+      "name": "Laminage des cils",
       "description": "",
       "price": 200.0,
       "duration": "60",
@@ -753,7 +753,7 @@
       "category": "Lashes"
     },
     "combo_lami": {
-      "name": "Combo Cils + Sourcils Lami",
+      "name": "Combo Lash + Brow Lami",
       "description": "",
       "price": 300.0,
       "duration": "60",
@@ -803,7 +803,7 @@
       "category": "Permanent Makeup"
     },
     "lashliner": {
-      "name": "Crayon à cils",
+      "name": "Lashliner",
       "description": "",
       "price": 800.0,
       "duration": "120",
@@ -813,7 +813,7 @@
       "category": "Permanent Makeup"
     },
     "eyeliner": {
-      "name": "Eye-liner",
+      "name": "Eyeliner",
       "description": "",
       "price": 800.0,
       "duration": "120",

@@ -17,19 +17,19 @@
     {
       "author_name": "Елена Смирнова",
       "employee_name": "",
-      "employee_position": "Маникюр и педикюр",
+      "employee_position": "Маникюр және педикюр",
       "rating": 5,
       "text": "Хожу сюда уже год на маникюр и педикюр. Всегда идеально чисто, стерильно и качественно. Рекомендую всем подругам!"
     },
     {
       "author_name": "Мария Гонсалес",
       "employee_name": "",
-      "employee_position": "Бет күтімі",
+      "employee_position": "Уход за лицом",
       "rating": 5,
       "text": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!"
     },
     {
-      "author_name": "Фатима Аль-Сайед",
+      "author_name": "Фатима Әл-Сайед",
       "employee_name": "",
       "employee_position": "Microblading",
       "rating": 5,
@@ -38,19 +38,19 @@
     {
       "author_name": "Мария Гонсалес",
       "employee_name": "",
-      "employee_position": "Бет күтімі",
+      "employee_position": "Уход за лицом",
       "rating": 5,
       "text": "Потрясающий салон! Мастера настоящие профессионалы. Маникюр держится больше 3 недель, а результат превосходит все ожидания. Обязательно вернусь!"
     },
     {
-      "author_name": "Фатима Аль-Сайед",
+      "author_name": "Фатима Әл-Сайед",
       "employee_name": "",
       "employee_position": "Microblading",
       "rating": 5,
       "text": "Делала окрашивание волос - результат просто шикарный! Цвет получился именно такой, как я хотела. Спасибо за профессионализм!"
     },
     {
-      "author_name": "Фатима Аль-Сайед",
+      "author_name": "Фатима Әл-Сайед",
       "employee_name": "",
       "employee_position": "Microblading",
       "rating": 5,
@@ -59,9 +59,9 @@
     {
       "author_name": "Мария Гонсалес",
       "employee_name": "",
-      "employee_position": "Бет күтімі",
+      "employee_position": "Уход за лицом",
       "rating": 5,
-      "text": "Дубайдағы ең жақсы салон! Шеберлер керемет."
+      "text": "Лучший салон в Дубае! Мастера супер."
     }
   ]
 }

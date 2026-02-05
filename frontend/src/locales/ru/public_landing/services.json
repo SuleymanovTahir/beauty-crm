@@ -18,17 +18,17 @@
   "haircutsStyling": "",
   "items": {
     "bangs_cut": {
-      "category": "Стрижка Волос",
+      "category": "Стрижка",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "стрижка челки",
+      "name": "Стрижка челки",
       "price": 100.0
     },
     "bikini_line": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -44,7 +44,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Укладка феном (длинная)",
+      "name": "Сушка феном (длинная)",
       "price": 280.0
     },
     "blowdry_medium": {
@@ -54,7 +54,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Укладка феном (средняя)",
+      "name": "Сушка феном (средняя)",
       "price": 250.0
     },
     "blowdry_short": {
@@ -64,7 +64,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Укладка феном (короткометражка)",
+      "name": "Сушка феном (короткая)",
       "price": 200.0
     },
     "brow_coloring": {
@@ -74,7 +74,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Окрашивание бровей",
+      "name": "Брови Окрашивание",
       "price": 40.0
     },
     "brow_correction": {
@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Смена полировки (педи)",
+      "name": "Смена лака (Pedi)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -114,27 +114,27 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Смена гель-лака (Педи)",
+      "name": "Смена гель-лака (Pedi)",
       "price": 100.0
     },
     "cheeks_wax": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Щеки воском",
+      "name": "Ваксация щек",
       "price": 40.0
     },
     "chin_wax": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Эпиляция подбородка",
+      "name": "Ваксация подбородка",
       "price": 30.0
     },
     "combo_lami": {
@@ -144,7 +144,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Комбинированные ресницы + брови Лами",
+      "name": "Комбинированные ресницы + брови",
       "price": 300.0
     },
     "combo_mani_pedi_gel": {
@@ -158,13 +158,13 @@
       "price": 350.0
     },
     "complex_color": {
-      "category": "Цвет Волос",
+      "category": "Цвет волос",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": 1500.0,
       "min_price": 1000.0,
-      "name": "Сложный цвет (Омбре/балаяж)",
+      "name": "Комплексное окрашивание (Омбре/балаяж)",
       "price": 1250.0
     },
     "deep_facial_cleaning": {
@@ -188,13 +188,13 @@
       "price": 625.0
     },
     "express_hair_form": {
-      "category": "Стрижка Волос",
+      "category": "Стрижка",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Экспресс-форма (без стирки)",
+      "name": "Экспресс-форма (без смывки)",
       "price": 150.0
     },
     "eyeliner": {
@@ -228,47 +228,47 @@
       "price": 190.0
     },
     "full_arms": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Полное оружие",
+      "name": "Полные руки",
       "price": 80.0
     },
     "full_bikini": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "полное бикини",
+      "name": "Полное бикини",
       "price": 150.0
     },
     "full_body_wax": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Полная депиляция тела воском",
+      "name": "Ваксация всего тела",
       "price": 400.0
     },
     "full_face_wax": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Полная депиляция лица",
+      "name": "Ваксация всего лица",
       "price": 90.0
     },
     "full_legs": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -288,7 +288,7 @@
       "price": 100.0
     },
     "hair_cut_full": {
-      "category": "Стрижка Волос",
+      "category": "Стрижка",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -298,23 +298,23 @@
       "price": 350.0
     },
     "hair_cut_wash": {
-      "category": "Стрижка Волос",
+      "category": "Стрижка",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Вырезать + промыть",
+      "name": "Стрижка + Смывка",
       "price": 200.0
     },
     "hair_trim": {
-      "category": "Стрижка Волос",
+      "category": "Стрижка",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Только стрижка волос",
+      "name": "Только стрижка",
       "price": 150.0
     },
     "hair_wash": {
@@ -328,23 +328,23 @@
       "price": 70.0
     },
     "half_arms": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Половина оружия",
+      "name": "Половина рук",
       "price": 50.0
     },
     "half_legs": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Полуноги (нижние)",
+      "name": "Полуноги (нижняя часть)",
       "price": 80.0
     },
     "japanese_manicure": {
@@ -354,11 +354,11 @@
       "duration": "90",
       "max_price": null,
       "min_price": null,
-      "name": "Японский маникюр",
+      "name": "Японский Маникюр",
       "price": 150.0
     },
     "kids_cut": {
-      "category": "Стрижка Волос",
+      "category": "Стрижка",
       "currency": "AED",
       "description": "",
       "duration": "40",
@@ -374,7 +374,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Эффект стиля Кима / Кривые L, M",
+      "name": "Эффект Кима / Изгибы L, M",
       "price": 30.0
     },
     "lash_lami": {
@@ -434,7 +434,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Лашлайнер",
+      "name": "Подводка для ресниц",
       "price": 800.0
     },
     "manicure_combined": {
@@ -464,7 +464,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Классический маникюр + лак",
+      "name": "Маникюр классический + лак",
       "price": 130.0
     },
     "massage_anticellulite": {
@@ -524,7 +524,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Медицинский уход за лицом (проблемная кожа)",
+      "name": "Лечебный уход за лицом (проблемная кожа)",
       "price": 450.0
     },
     "moroccan_bath": {
@@ -534,7 +534,7 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Марокканская баня СПА",
+      "name": "Марокканская баня SPA",
       "price": 250.0
     },
     "nail_correction": {
@@ -544,7 +544,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Исправление расширений",
+      "name": "Коррекция наращивания",
       "price": 400.0
     },
     "nail_extensions": {
@@ -564,21 +564,21 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Формирование ногтей",
+      "name": "Придание формы ногтям",
       "price": 45.0
     },
     "one_tone_long": {
-      "category": "Цвет Волос",
+      "category": "Цвет волос",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": 800.0,
       "min_price": 550.0,
-      "name": "Один тон (длинный)",
+      "name": "Один Тон (Длинный)",
       "price": 675.0
     },
     "one_tone_medium": {
-      "category": "Цвет Волос",
+      "category": "Цвет волос",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -588,13 +588,13 @@
       "price": 400.0
     },
     "one_tone_short": {
-      "category": "Цвет Волос",
+      "category": "Цвет волос",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Один тон (короткометражный)",
+      "name": "Один тон (Короткий)",
       "price": 350.0
     },
     "overlay_biogel": {
@@ -624,7 +624,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Умный педикюр Базовый",
+      "name": "Смарт-педикюр базовый",
       "price": 130.0
     },
     "pedicure_smart_polish": {
@@ -634,7 +634,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Smart-педикюр + лак",
+      "name": "Смарт-педикюр + лак",
       "price": 150.0
     },
     "peeling": {
@@ -644,7 +644,7 @@
       "duration": "60",
       "max_price": 400.0,
       "min_price": 300.0,
-      "name": "пилинг",
+      "name": "Пилинг",
       "price": 350.0
     },
     "permanent_brows": {
@@ -654,7 +654,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "Перманентные брови",
+      "name": "Перманент бровей",
       "price": 800.0
     },
     "permanent_correction": {
@@ -694,7 +694,7 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Удаление классического лака",
+      "name": "Снятие классического лака",
       "price": 20.0
     },
     "remove_extensions": {
@@ -704,7 +704,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Удаление наращивания",
+      "name": "Снятие наращивания",
       "price": 70.0
     },
     "remove_gel": {
@@ -714,7 +714,7 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "Удаление гель-лака",
+      "name": "Снятие гель-лака",
       "price": 30.0
     },
     "remove_lashes": {
@@ -724,7 +724,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Удалить ресницы",
+      "name": "Удаление ресниц",
       "price": 50.0
     },
     "repair_extension": {
@@ -734,7 +734,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Восстановить 1 расширение",
+      "name": "Ремонт 1 наращивания",
       "price": 40.0
     },
     "repair_gel": {
@@ -748,13 +748,13 @@
       "price": 20.0
     },
     "roots_color": {
-      "category": "Цвет Волос",
+      "category": "Цвет волос",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Окрашивание корней",
+      "name": "Окрашивание от корней",
       "price": 250.0
     },
     "styling_long": {
@@ -764,7 +764,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Утюжок для укладки/волны (длинный)",
+      "name": "Укладка утюжком/волны (длинная)",
       "price": 300.0
     },
     "styling_medium": {
@@ -774,7 +774,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Утюжок для укладки/волны (средний)",
+      "name": "Укладка утюжком/волны (средняя)",
       "price": 260.0
     },
     "styling_short": {
@@ -784,11 +784,11 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Утюжок для укладки/волны (короткий)",
+      "name": "Укладка утюжком/волны (короткая)",
       "price": 230.0
     },
     "toning": {
-      "category": "Цвет Волос",
+      "category": "Цвет волос",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -798,33 +798,33 @@
       "price": 300.0
     },
     "total_blonde": {
-      "category": "Цвет Волос",
+      "category": "Цвет волос",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": 1500.0,
       "min_price": 1000.0,
-      "name": "Тотальная блондинка",
+      "name": "Тотальный блондин",
       "price": 1250.0
     },
     "underarms": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Эпиляция подмышек",
+      "name": "Ваксация подмышек",
       "price": 50.0
     },
     "upper_lip_wax": {
-      "category": "депиляция воском",
+      "category": "Депиляция",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Депиляция верхней губы воском",
+      "name": "Ваксация верхней губы",
       "price": 30.0
     }
   },

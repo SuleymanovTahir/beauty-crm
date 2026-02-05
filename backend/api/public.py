@@ -177,7 +177,7 @@ def get_public_salon_settings(language: str = "ru"):
             "custom_settings": settings.get("custom_settings", {})
         }
         
-        cache.set(cache_key, result, expire=CACHE_TTL_MEDIUM)
+        cache.set(cache_key, result, expire=CACHE_TTL_LONG)
         return result
     except Exception as e:
         log_error(f"Error in get_public_salon_settings: {e}", "public_api")
@@ -211,6 +211,7 @@ def get_public_employees(
         query = """
             SELECT
                 u.id,
+                u.username,
                 u.full_name,
                 u.position,
                 u.bio,
@@ -297,6 +298,7 @@ def get_public_employees(
 
             employees.append({
                 "id": emp_id,
+                "username": row_dict.get("username"),
                 "name": final_name,
                 "full_name": final_name,
                 "role": final_position,

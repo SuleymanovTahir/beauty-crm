@@ -384,7 +384,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Lamination of eyelashes",
+      "name": "Eyelash lamination",
       "price": 200.0
     },
     "lashes_2d": {
@@ -644,7 +644,7 @@
       "duration": "60",
       "max_price": 400.0,
       "min_price": 300.0,
-      "name": "peeling",
+      "name": "Peeling",
       "price": 350.0
     },
     "permanent_brows": {

@@ -1,7 +1,7 @@
 {
   "actions": "Әрекеттер",
   "addInvoice": "Шот-фактура жасау",
-  "addPayment": "Төлем қосу",
+  "addPayment": "Төлемді қосу",
   "allInvoices": "Барлық тіркелгілер",
   "allStatuses": "Барлық күйлер",
   "board": "Басқарма",
@@ -9,11 +9,11 @@
   "delete": "Жою",
   "dueDate": "Төлемнің аяқталу күні",
   "errors": {
-    "createError": "Шот-фактураны жасау қатесі.",
+    "createError": "Шот-фактураны жасау қателігі.",
     "deleteError": "Есептік жазбаны жою қатесі.",
     "paymentError": "Төлемді қосу қатесі",
     "sendError": "Шот-фактураны жіберу қатесі",
-    "updateError": "Күйді жаңарту орындалмады"
+    "updateError": "Күйін жаңарту орындалмады"
   },
   "form": {
     "addItem": "Элемент қосу",
@@ -22,23 +22,23 @@
     "itemName": "Аты",
     "itemPrice": "Баға",
     "itemQuantity": "Саны",
-    "items": "Элемент тіркелгілері",
+    "items": "Шот-фактура элементтері",
     "notes": "Ескертпелер",
     "save": "Сақтау",
-    "selectClient": "Клиент таңдау"
+    "selectClient": "Клиентті таңдау"
   },
-  "invoiceNumber": "Тіркелгі нөмірі",
+  "invoiceNumber": "Шот-фактура нөмірі",
   "manage_stages": "Бағандар",
   "messages": {
     "confirmDelete": "Бұл есептік жазбаны шынымен жойғыңыз келе ме?",
-    "invoiceCreated": "Тіркелгі жасалды",
-    "invoiceDeleted": "Тіркелгі жойылды",
+    "invoiceCreated": "Шот-фактура жасалды",
+    "invoiceDeleted": "Шот-фактура жойылды",
     "invoiceSent": "Шот-фактура жіберілді",
     "invoiceUpdated": "Шот-фактура жаңартылды",
     "paymentAdded": "Төлем қосылды"
   },
   "noInvoices": "Әлі шот-фактуралар жоқ",
-  "paidAmount": "Төленді",
+  "paidAmount": "Ақылы",
   "payment": {
     "add": "Қосу",
     "amount": "Сома",
@@ -50,7 +50,7 @@
       "transfer": "Аударма"
     },
     "notes": "Ескертпелер",
-    "title": "Төлем қосу"
+    "title": "Төлемді қосу"
   },
   "search_placeholder": "Нөмір немесе клиент бойынша іздеу...",
   "sendButton": "Жіберу",
@@ -63,14 +63,14 @@
     "title": "Шот-фактураны жіберу",
     "whatsapp": "WhatsApp"
   },
-  "status": "Күйі",
+  "status": "Күй",
   "statuses": {
-    "cancelled": "Бас тартылды",
+    "cancelled": "Тоқтатылды",
     "draft": "Жоба",
     "overdue": "Мерзімі өткен",
     "paid": "Төленді",
-    "partial": "Ішінара төленді",
-    "partially_paid": "Ішінара төленді",
+    "partial": "Ішінара төленген",
+    "partially_paid": "Ішінара төленген",
     "sent": "Жіберілді"
   },
   "subtitle": "Шот-фактуралар мен төлемдерді басқару",

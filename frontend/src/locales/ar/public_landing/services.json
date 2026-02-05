@@ -24,7 +24,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "قطع الانفجارات",
+      "name": "قص الغرة",
       "price": 100.0
     },
     "bikini_line": {
@@ -34,37 +34,37 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "خط بيكيني",
+      "name": "خط البيكيني",
       "price": 100.0
     },
     "blowdry_long": {
-      "category": "الشعر التصميم",
+      "category": "تصفيف الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تجفيف بالسيشوار (طويل)",
+      "name": "سشوار (طويل)",
       "price": 280.0
     },
     "blowdry_medium": {
-      "category": "الشعر التصميم",
+      "category": "تصفيف الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تجفيف بالسيشوار (متوسط)",
+      "name": "سشوار (متوسط)",
       "price": 250.0
     },
     "blowdry_short": {
-      "category": "الشعر التصميم",
+      "category": "تصفيف الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تجفيف بالسيشوار (قصير)",
+      "name": "سشوار (قصير)",
       "price": 200.0
     },
     "brow_coloring": {
@@ -74,7 +74,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تلوين الحاجب",
+      "name": "تلوين الحواجب",
       "price": 40.0
     },
     "brow_correction": {
@@ -84,7 +84,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تصحيح الحاجب",
+      "name": "حواجب تصحيح",
       "price": 40.0
     },
     "brow_lami": {
@@ -94,7 +94,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تصفيح الحاجب",
+      "name": "تصفيح الحواجب",
       "price": 200.0
     },
     "change_classic_pedicure": {
@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تغيير البولندية (بيدي)",
+      "name": "تغيير طلاء الأظافر (بيدي)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -124,7 +124,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تشميع الخدود",
+      "name": "واكس للخدود",
       "price": 40.0
     },
     "chin_wax": {
@@ -134,7 +134,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تشميع الذقن",
+      "name": "واكس للذقن",
       "price": 30.0
     },
     "combo_lami": {
@@ -164,7 +164,7 @@
       "duration": "120",
       "max_price": 1500.0,
       "min_price": 1000.0,
-      "name": "لون معقد (أومبير/بالياج)",
+      "name": "ألوان مركبة (أومبري/بالياج)",
       "price": 1250.0
     },
     "deep_facial_cleaning": {
@@ -178,13 +178,13 @@
       "price": 400.0
     },
     "evening_hairstyle": {
-      "category": "الشعر التصميم",
+      "category": "تصفيف الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": 800.0,
       "min_price": 450.0,
-      "name": "تصفيفة الشعر المسائية",
+      "name": "تسريحة شعر للسهرة",
       "price": 625.0
     },
     "express_hair_form": {
@@ -194,7 +194,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "النموذج السريع (بدون غسيل)",
+      "name": "نموذج سريع (بدون غسل)",
       "price": 150.0
     },
     "eyeliner": {
@@ -204,7 +204,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "كحل",
+      "name": "كحل العيون",
       "price": 800.0
     },
     "face_lift_massage": {
@@ -234,7 +234,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "الأسلحة الكاملة",
+      "name": "ذراعان كاملتان",
       "price": 80.0
     },
     "full_bikini": {
@@ -254,7 +254,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تشميع الجسم بالكامل",
+      "name": "واكس لكامل الجسم",
       "price": 400.0
     },
     "full_face_wax": {
@@ -294,7 +294,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "قص + غسيل + تصفيف",
+      "name": "قص + غسل + تصفيف",
       "price": 350.0
     },
     "hair_cut_wash": {
@@ -304,7 +304,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "قطع + غسل",
+      "name": "قص + غسل",
       "price": 200.0
     },
     "hair_trim": {
@@ -314,7 +314,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "قص الشعر فقط",
+      "name": "تشذيب الشعر فقط",
       "price": 150.0
     },
     "hair_wash": {
@@ -334,7 +334,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "نصف الأسلحة",
+      "name": "نصف الذراعين",
       "price": 50.0
     },
     "half_legs": {
@@ -344,7 +344,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "نصف الأرجل (سفلي)",
+      "name": "نصف ساقين (سفلية)",
       "price": 80.0
     },
     "japanese_manicure": {
@@ -354,7 +354,7 @@
       "duration": "90",
       "max_price": null,
       "min_price": null,
-      "name": "مانيكير ياباني",
+      "name": "المناكير الياباني",
       "price": 150.0
     },
     "kids_cut": {
@@ -364,7 +364,7 @@
       "duration": "40",
       "max_price": null,
       "min_price": null,
-      "name": "قطع الاطفال",
+      "name": "قص للأطفال",
       "price": 100.0
     },
     "kim_style_effect": {
@@ -374,7 +374,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تأثير أسلوب كيم / منحنيات L وM",
+      "name": "تأثير كيم ستايل / منحنيات L وM",
       "price": 30.0
     },
     "lash_lami": {
@@ -394,7 +394,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "ملحقات رموش ثنائية الأبعاد",
+      "name": "وصلات رموش ثنائية الأبعاد",
       "price": 250.0
     },
     "lashes_3d": {
@@ -404,7 +404,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "ملحقات رموش ثلاثية الأبعاد",
+      "name": "وصلات رموش ثلاثية الأبعاد",
       "price": 300.0
     },
     "lashes_classic": {
@@ -414,7 +414,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "ملحقات لاش الكلاسيكية",
+      "name": "وصلات رموش كلاسيكية",
       "price": 200.0
     },
     "lashes_mega": {
@@ -444,7 +444,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "مانيكير مجتمعة",
+      "name": "مانيكير مدمج",
       "price": 110.0
     },
     "manicure_gel_polish": {
@@ -454,7 +454,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "مانيكير + جل مدمج",
+      "name": "مانيكير مدمج + جل",
       "price": 160.0
     },
     "manicure_pil_classic": {
@@ -498,7 +498,7 @@
       "price": 150.0
     },
     "massage_head": {
-      "category": "التدليك",
+      "category": "تدليك",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -508,13 +508,13 @@
       "price": 100.0
     },
     "massage_sculptural": {
-      "category": "التدليك",
+      "category": "تدليك",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تدليك الجسم النحتي",
+      "name": "تدليك منحوت للجسم",
       "price": 370.0
     },
     "medical_facial": {
@@ -524,7 +524,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "الوجه الطبي (مشكلة الجلد)",
+      "name": "علاج الوجه الطبي (مشكلة الجلد)",
       "price": 450.0
     },
     "moroccan_bath": {
@@ -534,7 +534,7 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "سبا الحمام المغربي",
+      "name": "حمام مغربي سبا",
       "price": 250.0
     },
     "nail_correction": {
@@ -554,7 +554,7 @@
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "وصلات الأظافر (جل)",
+      "name": "تمديدات الأظافر (جل)",
       "price": 400.0
     },
     "nail_shaping": {
@@ -574,7 +574,7 @@
       "duration": "120",
       "max_price": 800.0,
       "min_price": 550.0,
-      "name": "نغمة واحدة (طويلة)",
+      "name": "نغمة واحدة (طويل)",
       "price": 675.0
     },
     "one_tone_medium": {
@@ -614,7 +614,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "باديكير + جل بوليش",
+      "name": "باديكير + جل طلاء",
       "price": 190.0
     },
     "pedicure_smart": {
@@ -624,7 +624,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "باديكير الذكية الأساسية",
+      "name": "أساسية ذكية للباديكير",
       "price": 130.0
     },
     "pedicure_smart_polish": {
@@ -634,7 +634,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "باديكير ذكي + بوليش",
+      "name": "باديكير ذكي + طلاء",
       "price": 150.0
     },
     "peeling": {
@@ -658,7 +658,7 @@
       "price": 800.0
     },
     "permanent_correction": {
-      "category": "المكياج الدائم",
+      "category": "الدائم مكياج",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -668,13 +668,13 @@
       "price": 800.0
     },
     "permanent_lips": {
-      "category": "المكياج الدائم",
+      "category": "مكياج دائم",
       "currency": "AED",
       "description": "",
       "duration": "120",
       "max_price": null,
       "min_price": null,
-      "name": "الشفاه الدائمة",
+      "name": "شفاه دائمة",
       "price": 800.0
     },
     "polish_classic": {
@@ -694,7 +694,7 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "إزالة طلاء أظافر كلاسيكي",
+      "name": "إزالة الطلاء الكلاسيكي",
       "price": 20.0
     },
     "remove_extensions": {
@@ -714,7 +714,7 @@
       "duration": "30",
       "max_price": null,
       "min_price": null,
-      "name": "إزالة جل البولندية",
+      "name": "إزالة طلاء الجل",
       "price": 30.0
     },
     "remove_lashes": {
@@ -734,7 +734,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "إصلاح 1 التمديد",
+      "name": "إصلاح 1 وصلة",
       "price": 40.0
     },
     "repair_gel": {
@@ -744,7 +744,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "إصلاح 1 جل الأظافر",
+      "name": "إصلاح 1 جل للأظافر",
       "price": 20.0
     },
     "roots_color": {
@@ -758,33 +758,33 @@
       "price": 250.0
     },
     "styling_long": {
-      "category": "الشعر التصميم",
+      "category": "تسريحة الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "مكواة/موجات تصفيف الشعر (طويلة)",
+      "name": "مكواة تصفيف/تموجات (طويلة)",
       "price": 300.0
     },
     "styling_medium": {
-      "category": "الشعر التصميم",
+      "category": "تسريحة الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "مكواة/تموجات التصفيف (متوسطة)",
+      "name": "مكواة تصفيف/تموجات (متوسطة)",
       "price": 260.0
     },
     "styling_short": {
-      "category": "الشعر التصميم",
+      "category": "تسريحة الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "مكواة/موجات تصفيف (قصيرة)",
+      "name": "مكواة/تموجات (قصير)",
       "price": 230.0
     },
     "toning": {
@@ -794,7 +794,7 @@
       "duration": "60",
       "max_price": 350.0,
       "min_price": 250.0,
-      "name": "التنغيم",
+      "name": "تنعيم",
       "price": 300.0
     },
     "total_blonde": {
@@ -804,7 +804,7 @@
       "duration": "120",
       "max_price": 1500.0,
       "min_price": 1000.0,
-      "name": "مجموع شقراء",
+      "name": "أشقر كامل",
       "price": 1250.0
     },
     "underarms": {
@@ -814,7 +814,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تشميع تحت الإبطين",
+      "name": "واكس تحت الإبطين",
       "price": 50.0
     },
     "upper_lip_wax": {
@@ -824,7 +824,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تشميع الشفة العليا",
+      "name": "واكس للشفة العليا",
       "price": 30.0
     }
   },

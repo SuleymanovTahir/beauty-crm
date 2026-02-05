@@ -36,9 +36,9 @@ export function LandingPage() {
     const keywords = t('seo.keywords', 'beauty salon, manicure, pedicure, hair, cosmetology');
 
     if (salonName) {
-      document.title = `${salonName} - ${t('seo.title', 'Luxury Beauty Salon')}`;
+      document.title = t('seo.title', 'M Le Diamant - Premium Beauty Salon in Dubai | Spa, Nails, Hair, Keratin, Brows, Lashes, Waxing, Permanent Makeup');
     } else {
-      document.title = t('seo.title', 'Luxury Beauty Salon');
+      document.title = t('seo.title', 'M Le Diamant - Premium Beauty Salon in Dubai | Spa, Nails, Hair, Keratin, Brows, Lashes, Waxing, Permanent Makeup');
     }
 
     const updateMeta = (name: string, content: string) => {

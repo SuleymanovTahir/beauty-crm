@@ -29,12 +29,12 @@
     "title": "à la date exemple : Statut Or"
   },
   "stats": {
-    "active_challenges": "TÂCHES ACTIVES",
+    "active_challenges": "TÂCHES ACTIFS",
     "completed_today": "TERMINÉES AUJOURD'HUI",
-    "total_participants": "TOTAL PARTICIPANTS"
+    "total_participants": "TOTAL DES PARTICIPANTS"
   },
   "status": {
-    "active": "ACTIF",
+    "active": "ACTIFS",
     "inactive": "PAUSE"
   },
   "subtitle": "Augmentez la fidélité des clients grâce aux mécanismes de jeu et aux récompenses automatiques.",

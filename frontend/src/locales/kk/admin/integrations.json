@@ -1,8 +1,8 @@
 {
   "errors": {
     "createLinkFailed": "Сілтеме жасау қатесі",
-    "loadFailed": "Ошибка загрузки данных",
-    "loadServicesFailed": "Қызметтерді жүктеу қатесі",
+    "loadFailed": "Деректерді жүктеу қатесі",
+    "loadServicesFailed": "Қызметті жүктеу қатесі",
     "saveFailed": "Сақтау қатесі",
     "syncFailed": "Синхрондау қатесі"
   },
@@ -19,13 +19,13 @@
     "daysAgo_many": "{{count}} күн бұрын",
     "daysAgo_one": "{{count}} күн бұрын",
     "daysAgo_other": "{{count}} күн бұрын",
-    "enableProvider": "Интеграцияны қосу",
-    "hoursAgo_few": "{{count}} сағат бұрын",
-    "hoursAgo_many": "{{count}} сағат бұрын",
-    "hoursAgo_one": "{{count}} сағат бұрын",
-    "hoursAgo_other": "{{count}} сағат бұрын",
-    "inactive": "Конфигурацияланбаған",
-    "justNow": "Дәл қазір",
+    "enableProvider": "Интеграцияны қосыңыз",
+    "hoursAgo_few": "{{count}} сағ бұрын",
+    "hoursAgo_many": "{{count}} сағ бұрын",
+    "hoursAgo_one": "{{count}} сағ бұрын",
+    "hoursAgo_other": "{{count}} сағ бұрын",
+    "inactive": "Конфигурацияланбады",
+    "justNow": "Жаңа ғана",
     "lastSync": "Соңғы синхрондау",
     "mappingHint": "Синхрондау үшін нарықтан қызмет идентификаторын көрсетіңіз.",
     "minutesAgo_few": "{{count}} мин бұрын",
@@ -43,11 +43,11 @@
         "name": "Amazon"
       },
       "booksy": {
-        "description": "Онлайн тіркеу платформасы",
+        "description": "Онлайн жазу платформасы",
         "name": "Booksy"
       },
       "google_business": {
-        "description": "Google-дағы жазбалар мен пікірлер",
+        "description": "Google-дағы жазбалар мен шолулар",
         "name": "Google Business"
       },
       "ozon": {
@@ -59,27 +59,27 @@
         "name": "Wildberry"
       },
       "yandex_maps": {
-        "description": "Yandex.Maps сайтындағы жазбалар мен шолулар",
+        "description": "Yandex.Maps қолданбасынан жазбалар мен шолулар",
         "name": "Yandex.Maps"
       },
       "yclients": {
-        "description": "Онлайн тіркеу платформасы",
-        "name": "КЛИЕНТТЕР"
+        "description": "Онлайн жазу платформасы",
+        "name": "АҚШ КЛИЕНТТЕРІ"
       }
     },
-    "reviews": "Пікірлер",
-    "serviceMapping": "Қызметті картаға түсіру",
+    "reviews": "Шолулар",
+    "serviceMapping": "Қызметті салыстыру",
     "settings": "Параметрлер",
-    "status": "Күйі",
-    "subtitle": "Онлайн брондау және шолу қызметтерімен интеграция",
+    "status": "Күй",
+    "subtitle": "Онлайн тіркеу және шолу қызметтерімен біріктіру",
     "sync": "Синхрондау",
     "syncStarted": "Синхрондау басталды",
     "syncing": "Синхрондау...",
     "title": "Брондау платформалары",
-    "totalBookings": "Всего записей",
+    "totalBookings": "Жалпы жазбалар",
     "urlCopied": "URL көшірілді",
-    "viewBookings": "Хабарламаларға өтіңіз",
-    "webhookHint": "Платформада вебхуктарды қамтамасыз ету үшін осы URL мекенжайын көрсетіңіз",
+    "viewBookings": "Жазбаларға өту",
+    "webhookHint": "Платформада веб-ілмектерді қамтамасыз ету үшін осы URL мекенжайын көрсетіңіз",
     "webhookUrl": "Webhook үшін URL <z6>"
   },
   "payment": {
@@ -94,12 +94,12 @@
     "currency": "Валюта",
     "descriptionPlaceholder": "Мысалы: Маникюр үшін алдын ала төлем",
     "enableProvider": "Провайдерді қосу",
-    "inactive": "Конфигурацияланбаған",
+    "inactive": "Конфигурацияланбады",
     "linkCreated": "Сілтеме сәтті жасалды",
     "secretKey": "Құпия кілт",
     "setup": "Қосылу",
-    "status": "Күйі",
-    "subtitle": "Төлем жеткізушілерін қосу",
+    "status": "Күй",
+    "subtitle": "Төлем провайдерлерін қосу",
     "title": "Төлем жүйелері",
     "viewTransactions": "Транзакция тарихы",
     "webhookSecret": "Webhook Secret",
