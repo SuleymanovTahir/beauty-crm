@@ -123,7 +123,7 @@ export default function ResetPassword() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="newPassword">{t('new_password_label', "Новый пароль")}</Label>
+              <Label htmlFor="newPassword" className="mb-2 block">{t('new_password_label', "Новый пароль")}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
@@ -141,7 +141,7 @@ export default function ResetPassword() {
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword">{t('confirm_password_label', "Подтвердите пароль")}</Label>
+              <Label htmlFor="confirmPassword" className="mb-2 block">{t('confirm_password_label', "Подтвердите пароль")}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input

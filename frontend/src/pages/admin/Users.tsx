@@ -18,6 +18,24 @@ import { useCurrency } from '../../hooks/useSalonSettings';
 import { Switch } from '../../components/ui/switch';
 
 import { getPhotoUrl } from '../../utils/photoUtils';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { GripVertical } from 'lucide-react';
 
 type DateFilter = 'last7days' | 'last30days' | 'last90days' | 'allTime';
 type UserTab = 'clients' | 'employees';
@@ -47,6 +65,214 @@ interface User {
   first_contact?: string;
   last_contact?: string;
   is_public_visible?: boolean;
+  sort_order?: number;
+}
+
+// Sortable Row Component
+function SortableUserRow({
+  user,
+  activeTab,
+  roleConfig,
+  permissions,
+  handleToggleVisibility,
+  handleDeleteUser,
+  navigate,
+  t,
+  setSelectedUser,
+  setShowScheduleDialog,
+  setShowPermissionsDialog,
+  setShowRoleDialog,
+  formatCurrency,
+  getPhotoUrl,
+  getDynamicAvatar
+}: any) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: user.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : 1,
+    opacity: isDragging ? 0.8 : 1,
+    position: isDragging ? 'relative' : undefined,
+  } as React.CSSProperties;
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      className={`hover:bg-gray-50 transition-colors ${isDragging ? 'bg-gray-50 shadow-md' : ''}`}
+    >
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-3">
+          {activeTab === 'employees' && (
+            <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600">
+              <GripVertical className="w-4 h-4" />
+            </div>
+          )}
+
+          <img
+            src={
+              activeTab === 'employees'
+                ? getPhotoUrl((user as any).photo) || getDynamicAvatar((user as any).full_name || 'User', 'cold')
+                : user.profile_pic || getDynamicAvatar(user.name || user.username || 'User', 'cold')
+            }
+            alt={activeTab === 'employees' ? (user as any).full_name : user.name}
+            className="w-10 h-10 rounded-full bg-gray-100 object-cover"
+          />
+          <div>
+            <p className="text-sm text-gray-900 font-medium">
+              {activeTab === 'employees' ? ((user as any).full_name || t('no_name')) : (user.name || user.username || t('no_name'))}
+            </p>
+            <p className="text-xs text-gray-400">
+              {activeTab === 'employees' ? ((user as any).username || '-') : `@${user.username || 'user'} `}
+            </p>
+          </div>
+        </div>
+      </td>
+      {activeTab === 'clients' && (
+        <td className="px-6 py-4 text-sm text-gray-900">{user.phone || '-'}</td>
+      )}
+      <td className="px-6 py-4 text-sm text-gray-600">{user.email || '-'}</td>
+      {activeTab === 'employees' ? (
+        <>
+          <td className="px-6 py-4">
+            <Badge className={roleConfig[(user as any).role]?.color || 'bg-gray-100 text-gray-800'}>
+              {roleConfig[(user as any).role]?.label || (user as any).role}
+            </Badge>
+          </td>
+          <td className="px-6 py-4 text-sm text-gray-900">{(user as any).position || '-'}</td>
+          <td className="px-6 py-4">
+            <Switch
+              checked={!!(user as any).is_public_visible}
+              onCheckedChange={(checked) => handleToggleVisibility(user, checked)}
+              disabled={!permissions.canEditUsers}
+            />
+          </td>
+          <td className="px-6 py-4">
+            <Badge className={(user as any).is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+              {(user as any).is_active ? t('active') : t('inactive')}
+            </Badge>
+          </td>
+        </>
+      ) : (
+        <>
+          <td className="px-6 py-4">
+            <Badge className={
+              user.status === 'new' ? 'bg-green-100 text-green-800' :
+                user.status === 'active' ? 'bg-blue-100 text-blue-800' :
+                  user.status === 'lead' ? 'bg-blue-100 text-blue-800' :
+                    'bg-gray-100 text-gray-800'
+            }>
+              {t(`common:status_${user.status} `)}
+            </Badge>
+          </td>
+          <td className="px-6 py-4 text-sm text-gray-900">
+            {formatCurrency(user.total_spend || 0)}
+          </td>
+          <td className="px-6 py-4 text-sm text-gray-900">
+            {user.created_at ? new Date(user.created_at).toLocaleDateString('ru-RU') : '-'}
+          </td>
+        </>
+      )}
+      <td className="px-6 py-4">
+        {activeTab === 'employees' ? (
+          <div className="flex items-center gap-2">
+            {permissions.canEditUsers && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    const path = `/crm/users/${(user as any).id}`;
+                    navigate(path);
+                  }}
+                  className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                  title={t('action_edit_title')}
+                >
+                  <Edit className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setShowScheduleDialog(true);
+                  }}
+                  className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
+                  title={t('action_manage_schedule_title')}
+                >
+                  <Calendar className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setShowPermissionsDialog(true);
+                  }}
+                  className="h-8 w-8 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                  title={t('action_manage_permissions_title')}
+                >
+                  <Key className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setShowRoleDialog(true);
+                  }}
+                  className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                  title={t('action_change_role_title')}
+                >
+                  <Shield className="w-4 h-4" />
+                </Button>
+              </>
+            )}
+
+            {permissions.canDeleteUsers && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleDeleteUser((user as any).id)}
+                className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                title={t('action_delete_title')}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            {permissions.canEditUsers && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  const path = `/crm/clients/${user.instagram_id}`;
+                  navigate(path);
+                }}
+                className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                title={t('view_details')}
+              >
+                <Edit className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+        )}
+      </td>
+    </tr>
+  );
 }
 
 export default function Users() {
@@ -57,6 +283,52 @@ export default function Users() {
 
   // Используем централизованную систему прав
   const permissions = usePermissions(currentUser?.role || 'employee');
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = users.findIndex((user) => user.id === active.id);
+      const newIndex = users.findIndex((user) => user.id === over.id);
+
+      const newUsers = arrayMove(users, oldIndex, newIndex);
+
+      // Update sort order optimistically
+      const updatedUsers = newUsers.map((user, index) => ({
+        ...user,
+        sort_order: index
+      }));
+
+      setUsers(updatedUsers);
+      setFilteredUsers(updatedUsers);
+
+      try {
+        // Send updates to backend
+        // Update sort_order for each user that changed position
+        const updates = updatedUsers.map(async (user, index) => {
+          if (users.find(u => u.id === user.id)?.sort_order !== index) {
+            await api.updateUserProfile(user.id, { sort_order: index });
+          }
+        });
+
+        await Promise.all(updates);
+
+        toast.success(t('order_saved'));
+      } catch (error) {
+        console.error('Error saving order:', error);
+        toast.error(t('error_saving_order'));
+        // Revert on error would be complex here, usually just reload
+        loadUsers();
+      }
+    }
+  };
 
   // Цвета для ролей (статичные)
   const roleColors: Record<string, string> = {
@@ -471,11 +743,12 @@ export default function Users() {
               <Button
                 variant="outline"
                 className="text-gray-700 hover:text-gray-900 border-gray-300"
-                onClick={() => navigate('/crm/employees')}
+                onClick={() => navigate('/crm/users/pending')}
               >
                 <UsersIcon className="w-4 h-4 mr-2" />
-                {t('manage_public_order')}
+                {t('pending_registrations')}
               </Button>
+
               <Button
                 className="bg-pink-600 hover:bg-pink-700"
                 onClick={() => navigate('/crm/users/create')}
@@ -491,198 +764,69 @@ export default function Users() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {filteredUsers.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                    {activeTab === 'employees' ? t('table_employee') : t('table_client')}
-                  </th>
-                  {activeTab === 'clients' && (
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_phone')}</th>
-                  )}
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_email')}</th>
-                  {activeTab === 'employees' ? (
-                    <>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_role')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_position')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_public')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_is_active')}</th>
-                    </>
-                  ) : (
-                    <>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_status')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_spent')}</th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_created')}</th>
-                    </>
-                  )}
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_actions')}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredUsers.map((user) => (
-                  <tr key={(user as any).id || user.instagram_id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={
-                            activeTab === 'employees'
-                              ? getPhotoUrl((user as any).photo) || getDynamicAvatar((user as any).full_name || 'User', 'cold')
-                              : user.profile_pic || getDynamicAvatar(user.name || user.username || 'User', 'cold')
-                          }
-                          alt={activeTab === 'employees' ? (user as any).full_name : user.name}
-                          className="w-10 h-10 rounded-full bg-gray-100 object-cover"
-                        />
-                        <div>
-                          <p className="text-sm text-gray-900 font-medium">
-                            {activeTab === 'employees' ? ((user as any).full_name || t('no_name')) : (user.name || user.username || t('no_name'))}
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            {activeTab === 'employees' ? ((user as any).username || '-') : `@${user.username || 'user'} `}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                      {activeTab === 'employees' ? t('table_employee') : t('table_client')}
+                    </th>
                     {activeTab === 'clients' && (
-                      <td className="px-6 py-4 text-sm text-gray-900">{user.phone || '-'}</td>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_phone')}</th>
                     )}
-                    <td className="px-6 py-4 text-sm text-gray-600">{user.email || '-'}</td>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_email')}</th>
                     {activeTab === 'employees' ? (
                       <>
-                        <td className="px-6 py-4">
-                          <Badge className={roleConfig[(user as any).role]?.color || 'bg-gray-100 text-gray-800'}>
-                            {roleConfig[(user as any).role]?.label || (user as any).role}
-                          </Badge>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">{(user as any).position || '-'}</td>
-                        <td className="px-6 py-4">
-                          <Switch
-                            checked={!!(user as any).is_public_visible}
-                            onCheckedChange={(checked) => handleToggleVisibility(user, checked)}
-                            disabled={!permissions.canEditUsers}
-                          />
-                        </td>
-                        <td className="px-6 py-4">
-                          <Badge className={(user as any).is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                            {(user as any).is_active ? t('active') : t('inactive')}
-                          </Badge>
-                        </td>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_role')}</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_position')}</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_public')}</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_is_active')}</th>
                       </>
                     ) : (
                       <>
-                        <td className="px-6 py-4">
-                          <Badge className={
-                            user.status === 'new' ? 'bg-green-100 text-green-800' :
-                              user.status === 'active' ? 'bg-blue-100 text-blue-800' :
-                                user.status === 'lead' ? 'bg-blue-100 text-blue-800' :
-                                  'bg-gray-100 text-gray-800'
-                          }>
-                            {t(`common:status_${user.status} `)}
-                          </Badge>
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {formatCurrency(user.total_spend || 0)}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          {user.created_at ? new Date(user.created_at).toLocaleDateString('ru-RU') : '-'}
-                        </td>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_status')}</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_spent')}</th>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_created')}</th>
                       </>
                     )}
-                    <td className="px-6 py-4">
-                      {activeTab === 'employees' ? (
-                        <div className="flex items-center gap-2">
-                          {permissions.canEditUsers && (
-                            <>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => {
-                                  const path = `/crm/users/${(user as any).id}`;
-                                  console.log('Navigating to user edit:', path);
-                                  navigate(path);
-                                }}
-                                className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                title={t('action_edit_title')}
-                              >
-                                <Edit className="w-4 h-4" />
-                              </Button>
-
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => {
-                                  setSelectedUser(user);
-                                  setShowScheduleDialog(true);
-                                }}
-                                className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
-                                title={t('action_manage_schedule_title')}
-                              >
-                                <Calendar className="w-4 h-4" />
-                              </Button>
-
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => {
-                                  setSelectedUser(user);
-                                  setShowPermissionsDialog(true);
-                                }}
-                                className="h-8 w-8 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                                title={t('action_manage_permissions_title')}
-                              >
-                                <Key className="w-4 h-4" />
-                              </Button>
-
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => {
-                                  setSelectedUser(user);
-                                  setShowRoleDialog(true);
-                                }}
-                                className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                title={t('action_change_role_title')}
-                              >
-                                <Shield className="w-4 h-4" />
-                              </Button>
-                            </>
-                          )}
-
-                          {permissions.canDeleteUsers && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDeleteUser((user as any).id)}
-                              className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                              title={t('action_delete_title')}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          {permissions.canEditUsers && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => {
-                                const path = `/crm/clients/${user.instagram_id}`;
-                                console.log('Navigating to client details:', path);
-                                navigate(path);
-                              }}
-                              className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                              title={t('view_details')}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      )}
-                    </td>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('table_actions')}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table >
+                </thead>
+
+                <SortableContext
+                  items={filteredUsers.map((u) => u.id)}
+                  strategy={verticalListSortingStrategy}
+                  disabled={activeTab !== 'employees'} // Disable sorting for clients
+                >
+                  <tbody className="divide-y divide-gray-200">
+                    {filteredUsers.map((user) => (
+                      <SortableUserRow
+                        key={(user as any).id || user.instagram_id} // Should be unique
+                        user={user}
+                        activeTab={activeTab}
+                        roleConfig={roleConfig}
+                        permissions={permissions}
+                        handleToggleVisibility={handleToggleVisibility}
+                        handleDeleteUser={handleDeleteUser}
+                        navigate={navigate}
+                        t={t}
+                        setSelectedUser={setSelectedUser}
+                        setShowScheduleDialog={setShowScheduleDialog}
+                        setShowPermissionsDialog={setShowPermissionsDialog}
+                        setShowRoleDialog={setShowRoleDialog}
+                        formatCurrency={formatCurrency}
+                        getPhotoUrl={getPhotoUrl} // Pass helper functions
+                        getDynamicAvatar={getDynamicAvatar}
+                      />
+                    ))}
+                  </tbody>
+                </SortableContext>
+              </table >
+            </DndContext>
           </div >
         ) : (
           <div className="py-20 text-center text-gray-500">

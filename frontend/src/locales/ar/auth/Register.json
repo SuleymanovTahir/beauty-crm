@@ -39,7 +39,7 @@
   "new_code_sent": "تم إرسال رمز جديد إلى بريدك الإلكتروني!",
   "or_register_with_email": "أو حجز عبر البريد الإلكتروني",
   "password": "كلمة المرور",
-  "password_hint_requirements": "الحد الأدنى 8 أحرف: A-Z، a-z، 0-9 وشخصية خاصة (!@#$%)",
+  "password_hint_requirements": "الحد الأدنى 8 أحرف، حرف كبير (A-Z)، حرف صغير (a-z)، رقم وحرف خاص (!@#$%)",
   "password_placeholder": "اختر كلمة المرور",
   "password_placeholder_few": "الحد الأدنى {{count}} الحرف",
   "password_placeholder_many": "الحد الأدنى {{count}} الأحرف",

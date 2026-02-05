@@ -35,7 +35,7 @@
   "new_code_sent": "Ein neues Der Code wurde an Ihre E-Mail-Adresse gesendet!",
   "or_register_with_email": "Oder registrieren Sie sich per E-Mail",
   "password": "Passwort",
-  "password_hint_requirements": "Mindestens 8 Zeichen: A-Z, a-z, 0-9 und Sonderzeichen (!@#$%)",
+  "password_hint_requirements": "Mindestens 8 Zeichen, Großbuchstaben Buchstabe (A-Z), Kleinbuchstabe (a-z), Zahl und Sonderzeichen (!@#$%)",
   "password_placeholder": "Erstellen Sie ein Passwort",
   "password_placeholder_few": "Mindest {{count}} Zeichen",
   "password_placeholder_many": "Mindest {{count}} Zeichen",

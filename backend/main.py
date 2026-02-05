@@ -81,6 +81,8 @@ from api.internal_chat import router as internal_chat_router
 from api.statuses import router as statuses_router
 from api.gallery import router as gallery_router
 from api.public_admin import router as public_admin_router
+from api.client_auth import router as client_auth_router
+from api.admin_registrations import router as admin_registrations_router
 from utils.redis_pubsub import redis_pubsub
 import asyncio
 
@@ -202,6 +204,11 @@ async def lifespan(app: FastAPI):
         # Регистрация еженедельного отчета (PN 09:00)
         from scheduler.weekly_report_checker import start_weekly_report_checker
         start_weekly_report_checker(cron)
+        
+        # Регистрация автоматического бэкапа БД (проверка каждый день в 4:00)
+        from scheduler.database_backup_checker import check_database_backup
+        cron.add_job(check_database_backup, 'cron', hour=4, minute=0, id='database_backup')
+        log_info("📦 Database backup scheduler registered (runs at 04:00 daily)", "boot")
         
         cron.start()
         log_info("✅ Планировщики (Mission-control) активны", "boot")
@@ -325,6 +332,8 @@ app.include_router(internal_chat_router)  # already has /api/internal-chat prefi
 app.include_router(statuses_router, prefix="/api")
 app.include_router(gallery_router, prefix="/api")
 app.include_router(public_admin_router, prefix="/api")  # already has /public-admin prefix
+app.include_router(client_auth_router, prefix="/api/client")  # Client portal endpoints
+app.include_router(admin_registrations_router, prefix="/api")  # Admin registration management
 app.include_router(proxy_router, prefix="/api")
 app.include_router(sitemap_router)
 app.include_router(seo_metadata_router)

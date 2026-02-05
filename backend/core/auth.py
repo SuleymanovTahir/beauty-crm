@@ -2,7 +2,7 @@
 """
 API Endpoints для авторизации и админ-панели
 """
-from fastapi import APIRouter, Form, Cookie, Request
+from fastapi import APIRouter, Form, Cookie, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
 from typing import Optional
 from pydantic import BaseModel
@@ -54,13 +54,21 @@ async def api_login(request: Request, username: str = Form(...), password: str =
         # Case-insensitive username search
         username_clean = username.strip().lower()
         user = verify_user(username_clean, password)
-        
+
         if not user:
             log_warning(f"Invalid credentials for '{username}' (cleaned: '{username_clean}')", "auth")
             return JSONResponse(
-                {"error": "invalid_credentials"}, 
+                {"error": "invalid_credentials"},
                 status_code=401
             )
+
+        # Проверяем, не ожидает ли аккаунт подтверждения
+        if user.get("status") == "inactive":
+            log_warning(f"User '{username}' account pending approval", "auth")
+            return JSONResponse({
+                "error": "account_not_activated",
+                "message": "registration_pending"
+            }, status_code=403)
         
         # ============================================================================
         # 🔒 EMAIL VERIFICATION AND ADMIN APPROVAL CHECKS (NOW ENABLED)
@@ -460,7 +468,11 @@ async def api_register(
         # Собираем ВСЕ ошибки валидации сразу
         validation_errors = []
 
-        if len(username) < 3:
+        # Логин - только латинские буквы, цифры, точки, подчеркивания
+        import re
+        if not re.match(r'^[a-zA-Z0-9._]+$', username):
+            validation_errors.append("error_login_invalid_chars")
+        elif len(username) < 3:
             validation_errors.append("error_login_too_short")
 
         is_valid_pwd, pwd_errors = validate_password(password)
@@ -509,8 +521,10 @@ async def api_register(
         if username.lower() == 'admin' and role == 'director':
             c.execute("SELECT COUNT(*) FROM users WHERE LOWER(username) = 'admin' AND role = 'director'")
             is_first_admin = (c.fetchone()[0] == 0)
-        
-        auto_verify = is_first_admin
+
+        # Клиенты активируются автоматически, сотрудникам нужно подтверждение админа
+        auto_activate = is_first_admin or (role == 'client')
+        auto_verify = is_first_admin  # Email verification всё равно нужен
 
         current_stage = "Сохранение пользователя"
         c.execute("""INSERT INTO users
@@ -519,7 +533,7 @@ async def api_register(
                       email_verification_token, privacy_accepted, privacy_accepted_at)
                      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
                   (username, password_hash, full_name, email, phone, role, position, now,
-                   True if auto_verify else False,
+                   auto_activate,  # Клиенты активируются сразу, сотрудники ждут одобрения
                    True if auto_verify else False,
                    verification_code, code_expires,
                    verification_token,
@@ -536,6 +550,17 @@ async def api_register(
                       (full_name, position or role, email, phone, now, now))
             employee_id = c.fetchone()[0]
             c.execute("UPDATE users SET assigned_employee_id = %s WHERE id = %s", (employee_id, user_id))
+
+        # Если это клиент - создаем запись в clients
+        if role == 'client':
+            current_stage = "Создание записи клиента"
+            # Используем user_{id} как instagram_id для зарегистрированных клиентов
+            client_id = f"user_{user_id}"
+            c.execute("""INSERT INTO clients
+                         (instagram_id, username, name, email, phone, status, source, user_id, created_at, updated_at)
+                         VALUES (%s, %s, %s, %s, %s, 'new', 'registration', %s, %s, %s)
+                         ON CONFLICT (instagram_id) DO NOTHING""",
+                      (client_id, username, full_name, email, phone, user_id, now, now))
 
         conn.commit()
         conn.close()
@@ -607,12 +632,16 @@ async def verify_email(
         user_id, full_name, code_expires, email_verified = result
 
         # Проверяем, не истек ли код
-        if datetime.now().isoformat() > code_expires:
-            conn.close()
-            return JSONResponse(
-                {"error": "Код подтверждения истек. Запросите новый код."},
-                status_code=400
-            )
+        if code_expires:
+            # Если code_expires это строка - конвертируем в datetime
+            if isinstance(code_expires, str):
+                code_expires = datetime.fromisoformat(code_expires)
+            if datetime.now() > code_expires:
+                conn.close()
+                return JSONResponse(
+                    {"error": "Код подтверждения истек. Запросите новый код."},
+                    status_code=400
+                )
 
         # Проверяем, не подтвержден ли уже email
         if email_verified:
@@ -840,7 +869,7 @@ async def get_positions():
 # ===== ВОССТАНОВЛЕНИЕ ПАРОЛЯ =====
 
 @router.post("/forgot-password")
-async def forgot_password(email: str = Form(...)):
+async def forgot_password(email: str = Form(...), background_tasks: BackgroundTasks = None):
     """API: Запрос на восстановление пароля"""
     try:
         log_info(f"Password reset request for email: {email}", "auth")
@@ -878,22 +907,25 @@ async def forgot_password(email: str = Form(...)):
         conn.commit()
         conn.close()
 
-        # Отправляем email с ссылкой на сброс
+        # Отправляем email в фоне для быстрого ответа
         from utils.email import send_password_reset_email
-        email_sent = send_password_reset_email(email, reset_token, full_name)
+        if background_tasks:
+            background_tasks.add_task(send_password_reset_email, email, reset_token, full_name)
+            email_sent = True  # Assume it will be sent
+        else:
+            email_sent = send_password_reset_email(email, reset_token, full_name)
 
         response_data = {
             "success": True,
             "message": "Если email существует в системе, на него будет отправлено письмо с инструкциями"
         }
 
-        # В development режиме возвращаем токен в ответе если email не отправлен
+        # В development режиме возвращаем токен в ответе
         import os
-        if not email_sent and os.getenv("ENVIRONMENT") != "production":
-            log_warning(f"SMTP not configured - showing reset token in response", "auth")
+        if os.getenv("ENVIRONMENT") != "production":
+            log_warning(f"Development mode - showing reset token in response", "auth")
             response_data["reset_token"] = reset_token
             response_data["reset_url"] = f"{PUBLIC_URL}/reset-password?token={reset_token}"
-            response_data["message"] = f"⚠️ SMTP не настроен. Ссылка для сброса: {PUBLIC_URL}/reset-password?token={reset_token}"
 
         log_info(f"Password reset token generated for user {username} (ID: {user_id})", "auth")
 

@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "@beauty-crm/shared": "*",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@radix-ui/react-accordion": "*",
     "@radix-ui/react-alert-dialog": "*",
     "@radix-ui/react-aspect-ratio": "*",
@@ -91,7 +94,7 @@
     "prerender:public": "npm run build:seo && node scripts/prerender-public.mjs",
     "postinstall": "patch-package || true",
     "i18n:setup": "node scripts/i18n/setup-i18n.js",
-    "i18n:extract": "node node_modules/i18next-parser/bin/cli.js --config scripts/i18n/i18next-parser.config.js && node scripts/i18n/cleanup-duplicates.js > /dev/null 2>&1 && node scripts/i18n/fix-nested-keys.js > /dev/null 2>&1 && echo '✅ Extraction complete'",
+    "i18n:extract": "node ../node_modules/i18next-parser/bin/cli.js --config scripts/i18n/i18next-parser.config.js && node scripts/i18n/cleanup-duplicates.js > /dev/null 2>&1 && node scripts/i18n/fix-nested-keys.js > /dev/null 2>&1 && echo '✅ Extraction complete'",
     "i18n:check": "node scripts/check-translations.js",
     "i18n:check-only": "node scripts/check-translations.js",
     "i18n:sync": "node scripts/i18n-sync.js",

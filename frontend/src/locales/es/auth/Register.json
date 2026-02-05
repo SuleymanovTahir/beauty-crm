@@ -35,7 +35,7 @@
   "new_code_sent": "¡Se ha enviado un nuevo código a tu correo electrónico!",
   "or_register_with_email": "O regístrate hasta fecha correo electrónico",
   "password": "Contraseña",
-  "password_hint_requirements": "Mínimo 8 caracteres: A-Z, a-z, 0-9 y carácter especial (!@#$%)",
+  "password_hint_requirements": "Mínimo 8 caracteres, letra mayúscula (A-Z), letra minúscula (a-z), número y carácter especial (!@#$%)",
   "password_placeholder": "Crea una contraseña",
   "password_placeholder_few": "Caracteres {{count}} mínimos",
   "password_placeholder_many": "Caracteres {{count}} mínimos",
