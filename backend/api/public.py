@@ -318,8 +318,8 @@ def get_public_employees(
         def _get_norm_name(name):
             if not name: return ""
             # Simple normalization: lower case, only alphanumeric
-            import re
-            return re.sub(r'[^a-zA-Z\u0400-\u04FF]', '', name.lower())
+            # Simple normalization: lower case, only alphanumeric (supports all languages)
+            return "".join(c for c in name.lower() if c.isalnum())
 
         for emp in employees:
             norm = _get_norm_name(emp['name'])

@@ -218,11 +218,11 @@ export function Services({ initialServices }: ServicesProps) {
                     <Clock className="w-3.5 h-3.5 mr-1.5 opacity-60" />
                     <span className="flex items-center gap-1.5">
                       <span>{service.duration && service.duration !== 0 ? `${service.duration} ` : ""}{t('min')}</span>
-                      <span className="text-muted-foreground/30">•</span>
+                    </span>
+                                          {/* <span className="text-muted-foreground/30">•</span>
                       <span className="text-[10px] uppercase tracking-wider opacity-70">
                         {categories.find(c => c.id === service.category)?.label}
-                      </span>
-                    </span>
+                      </span> */}
                   </div>
                   <Button
                     size="sm"
