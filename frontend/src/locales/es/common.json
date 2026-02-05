@@ -25,9 +25,9 @@
     "error_username_exists": "Ya existe un usuario con este inicio de sesión",
     "password_empty": "La contraseña no puede estar vacía",
     "password_no_digit": "La contraseña debe contener al menos un número",
-    "password_no_lower": "La contraseña debe contener al menos una letra minúscula",
+    "password_no_lower": "La contraseña debe contener al menos una letra latina minúscula (a-z)",
     "password_no_special": "La contraseña debe contener al menos un carácter especial (!@#$%)",
-    "password_no_upper": "La contraseña debe contener al menos una letra mayúscula",
+    "password_no_upper": "La contraseña debe contener al menos una letra latina mayúscula (A-Z)",
     "password_too_short": "La contraseña es demasiado corta (mínimo 8 caracteres)"
   },
   "authorization_error": "error de autorización",

@@ -245,6 +245,12 @@ def init_database():
         add_column_if_not_exists('users', 'phone', 'TEXT')
         add_column_if_not_exists('users', 'telegram_username', 'TEXT')
         add_column_if_not_exists('users', 'nickname', 'TEXT')
+        add_column_if_not_exists('users', 'email_verification_token', 'TEXT')
+        add_column_if_not_exists('users', 'privacy_accepted', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('users', 'privacy_accepted_at', 'TIMESTAMP')
+        add_column_if_not_exists('users', 'password_reset_token', 'TEXT')
+        add_column_if_not_exists('users', 'password_reset_expires', 'TIMESTAMP')
+        add_column_if_not_exists('users', 'assigned_employee_id', 'INTEGER')
 
         # Soft Delete Tracking (Trash) - REQUIRED by housekeeping
         c.execute('''CREATE TABLE IF NOT EXISTS deleted_items (

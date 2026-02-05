@@ -25,9 +25,9 @@
     "error_username_exists": "A user with this login already exists",
     "password_empty": "Password cannot be empty",
     "password_no_digit": "Password must contain at least one number",
-    "password_no_lower": "Password must contain at least one lowercase letter",
+    "password_no_lower": "The password must contain at least one lowercase Latin letter (a-z)",
     "password_no_special": "The password must contain at least one special character (!@#$%)",
-    "password_no_upper": "Password must contain at least one uppercase letter",
+    "password_no_upper": "The password must contain at least one uppercase Latin letter (A-Z)",
     "password_too_short": "Password is too short (minimum 8 characters)"
   },
   "authorization_error": "Authorization error",

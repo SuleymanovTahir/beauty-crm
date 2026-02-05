@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Change Polish (Pedi)",
+      "name": "Changing polish (Pedi)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -334,7 +334,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Half Arms",
+      "name": "Half hands",
       "price": 50.0
     },
     "half_legs": {
@@ -634,7 +634,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Smart Pedicure + Polish",
+      "name": "Smart pedicure + polish",
       "price": 150.0
     },
     "peeling": {
