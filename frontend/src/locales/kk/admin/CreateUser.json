@@ -11,7 +11,7 @@
   "full_name_placeholder": "Ахметов Алихан",
   "full_name_required": "Аты қажет",
   "no_position_found": "Орын табылмады",
-  "password_hint": "Кемінде {{count}} таңба",
+  "password_hint": "Кем дегенде {{count}} таңба",
   "password_hint_few": "",
   "password_hint_many": "",
   "password_hint_one": "",

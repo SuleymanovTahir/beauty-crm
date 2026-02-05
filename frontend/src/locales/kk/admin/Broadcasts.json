@@ -83,7 +83,7 @@
   "recipients_hint": "Тізімнен нақты алушыларды таңдаңыз",
   "recipients_selected": "Таңдалды: {{count}}",
   "recipients_selected_few": "Reci тізімнен алушылар</z74> <z75>Таңдалды: {{count}}</z75> <z76>{{count}} алушы таңдалды</z76> <z77>{{count}} алушы таңдалды",
-  "recipients_selected_many": "{{count}} алушы таңдалды",
+  "recipients_selected_many": "{{count}} таңдалған алушы",
   "recipients_selected_one": "{{count}} алушы таңдалды",
   "recipients_selected_other": "{{count}} таңдалған алушы",
   "role_label": "Рол",

@@ -20,7 +20,7 @@
   "step_3_title": "3-қадам: Уақыт",
   "subtitle_few": "Табылды {{count}} маман",
   "subtitle_many": "{{count}} мамандар табылды",
-  "subtitle_one": "[[VAR0]]] маманы табылды",
+  "subtitle_one": "{{count}} маман табылды",
   "subtitle_other": "{{count}} мамандар табылды",
   "title": "Біздің сарапшылар"
 }

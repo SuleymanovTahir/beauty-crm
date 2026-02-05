@@ -1,10 +1,10 @@
 //new/pages/LoginPage.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { User, Lock, Mail, AlertCircle } from 'lucide-react';
+import { User, Lock, Mail, AlertCircle, Eye, EyeOff,Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { api } from '../../src/services/api';
@@ -20,12 +20,26 @@ interface LoginPageProps {
 export function LoginPage({ initialView = 'login' }: LoginPageProps) {
   const { t } = useTranslation(['public_landing', 'auth/login', 'auth/register', 'common']);
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
-  const [isLogin, setIsLogin] = useState(initialView === 'login');
+  // Определяем режим на основе пропса или текущего URL, если компонент переиспользуется
+  const isRegisterRoute = location.pathname === '/register';
+  const [isLogin, setIsLogin] = useState(!isRegisterRoute);
+
+  // Sync state with URL/prop changes
+  useEffect(() => {
+    setIsLogin(!isRegisterRoute);
+    setErrors([]); // Clear errors on mode switch
+  }, [isRegisterRoute]);
+
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState<string[]>([]);
   const { settings: salonSettings } = useSalonSettings();
+
+  // Password visibility states
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -40,7 +54,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setErrors([]);
 
     if (isLogin) {
       await handleLogin();
@@ -49,9 +63,17 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
     }
   };
 
+  const handleModeSwitch = (mode: 'login' | 'register') => {
+    if (mode === 'login') {
+      navigate('/login');
+    } else {
+      navigate('/register');
+    }
+  };
+
   const handleLogin = async () => {
     if (!formData.username || !formData.password) {
-      setError(t('auth/login:fill_both_fields', 'Пожалуйста, заполните оба поля'));
+      setErrors([t('auth/login:fill_both_fields', 'Пожалуйста, заполните оба поля')]);
       return;
     }
 
@@ -77,41 +99,45 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
           setTimeout(() => navigate("/verify-email", { state: { email: response.email } }), 1500);
           return;
         }
-        setError(t('auth/login:authorization_error', 'Ошибка авторизации'));
+        setErrors([t('auth/login:authorization_error', 'Ошибка авторизации')]);
       }
     } catch (err: any) {
       // Clean error handling without detailed stack traces in the console
       const errorStr = String(err.error || err.message || (typeof err === 'string' ? err : ''));
 
       if (errorStr.includes('invalid_credentials') || errorStr.includes('user_not_found')) {
-        setError('auth/login:invalid_credentials');
-        toast.error(t('auth/login:invalid_credentials', 'Неверный логин или пароль ❌'));
+        setErrors([t('auth/login:invalid_credentials', 'Неверный логин или пароль')]);
+        toast.error(t('auth/login:invalid_credentials', 'Неверный логин или пароль'));
         return;
       }
 
       if (errorStr.includes('account_not_activated') || errorStr.includes('not_approved')) {
-        setError('auth/login:account_pending');
+        setErrors([t('auth/login:account_pending', 'Аккаунт ожидает подтверждения')]);
         return;
       }
 
-      setError(errorStr);
+      setErrors([errorStr]);
     } finally {
       setLoading(false);
     }
   };
 
   const handleRegister = async () => {
-    // Basic validation matches Register.tsx
+    // Basic validation - collect all errors at once
+    const validationErrors: string[] = [];
+
     if (!formData.username || !formData.password || !formData.full_name || !formData.email) {
-      setError(t('auth/register:error_fill_all_fields', 'All fields are required'));
-      return;
+      validationErrors.push(t('auth/register:error_fill_all_fields', 'All fields are required'));
     }
     if (formData.password !== formData.confirmPassword) {
-      setError(t('auth/register:error_passwords_dont_match', 'Passwords do not match'));
-      return;
+      validationErrors.push(t('auth/register:error_passwords_dont_match', 'Passwords do not match'));
     }
     if (!formData.agreedToTerms) {
-      setError(t('auth/register:error_accept_privacy', 'You must accept the terms'));
+      validationErrors.push(t('auth/register:error_accept_privacy', 'You must accept the terms'));
+    }
+
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
       return;
     }
 
@@ -133,12 +159,26 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
         // Navigate to existing verification page
         setTimeout(() => navigate("/verify-email", { state: { email: formData.email } }), 1000);
       } else {
-        setError(response.error || t('auth/register:error_registration', 'Registration failed'));
+        setErrors([response.error || t('auth/register:error_registration', 'Registration failed')]);
       }
     } catch (err: any) {
       console.error("Register error:", err);
-      const errorStr = String(err.error || err.message || (typeof err === 'string' ? err : ''));
-      setError(t(errorStr, t('auth/register:error_registration', 'Ошибка регистрации')));
+      const errorKey = String(err.error || err.message || (typeof err === 'string' ? err : ''));
+
+      // Backend returns multiple errors separated by comma
+      const errorKeys = errorKey.split(',').map(e => e.trim()).filter(Boolean);
+
+      // Translate each error
+      const translatedErrors = errorKeys.map(key =>
+        t([
+          `common:auth_errors.${key}`,
+          `auth/register:${key}`,
+          `auth/register:error_${key}`,
+          key
+        ], key)
+      );
+
+      setErrors(translatedErrors.length > 0 ? translatedErrors : [t('auth/register:error_registration', 'Ошибка регистрации')]);
     } finally {
       setLoading(false);
     }
@@ -166,14 +206,14 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
         <div className="bg-card rounded-2xl p-6 sm:p-8 shadow-lg border border-border">
           <div className="flex gap-2 mb-6">
             <button
-              onClick={() => { setIsLogin(true); setError(""); }}
+              onClick={() => handleModeSwitch('login')}
               className={`flex-1 py-2 rounded-lg transition-colors ${isLogin ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
                 }`}
             >
               {t('auth/login:login', 'Войти')}
             </button>
             <button
-              onClick={() => { setIsLogin(false); setError(""); }}
+              onClick={() => handleModeSwitch('register')}
               className={`flex-1 py-2 rounded-lg transition-colors ${!isLogin ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
                 }`}
             >
@@ -181,10 +221,16 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
             </button>
           </div>
 
-          {error && (
-            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2 text-destructive text-sm">
-              <AlertCircle className="w-4 h-4" />
-              {t(error, error === 'auth/login:invalid_credentials' ? 'Неверный логин или пароль ❌' : error)}
+          {errors.length > 0 && (
+            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <ul className={errors.length > 1 ? "list-disc list-inside space-y-1" : ""}>
+                  {errors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           )}
 
@@ -234,84 +280,135 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
                   />
                 </div>
               </div>
+            
             )}
-
-            <div>
-              <label className="block text-sm font-medium mb-2">{t('auth/login:password', 'Пароль')}</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="••••••••"
-                  className="pl-10"
-                />
-              </div>
-            </div>
-
-            {!isLogin && (
-              <div className="flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  checked={formData.agreedToTerms}
-                  onChange={(e) => setFormData({ ...formData, agreedToTerms: e.target.checked })}
-                  className="mt-1"
-                />
-                <label htmlFor="terms" className="text-xs text-muted-foreground">
-                  {t('auth/register:agree_with', 'I agree to the')}{' '}
-                  <a href="/terms" className="text-primary hover:underline">
-                    {t('auth/register:terms_of_use', 'Terms of Use')}
-                  </a>{' '}
-                  {t('common:and', 'and')}{' '}
-                  <a href="/privacy-policy" className="text-primary hover:underline">
-                    {t('auth/register:privacy_policy', 'Privacy Policy')}
-                  </a>
-                </label>
-              </div>
-            )}
-
-            {isLogin && (
-              <div className="text-right">
-                <a href="/forgot-password" className="text-sm text-primary hover:underline">
-                  {t('auth/login:forgot_password', 'Забыли пароль?')}
-                </a>
-              </div>
-            )}
-
-            <Button type="submit" disabled={loading} className="w-full hero-button-primary h-11">
-              {loading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>{isLogin ? t('auth/login:logging_in', 'Вход...') : t('auth/register:registering', 'Регистрация...')}</span>
-                </div>
-              ) : (
-                isLogin ? t('auth/login:submit', 'Войти') : t('auth/register:submit', 'Зарегистрироваться')
-              )}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <a href="/" className="text-sm text-muted-foreground hover:text-primary">
-              ← {t('common:back_to_home', 'Back to home')}
-            </a>
-          </div>
-        </div>
 
         {!isLogin && (
-          <div className="mt-6 p-4 bg-card rounded-lg border border-border">
-            <h3 className="font-semibold mb-2 text-sm">{t('auth/register:terms_title', 'Terms of Use')}</h3>
-            <div className="text-xs text-muted-foreground space-y-2 max-h-40 overflow-y-auto">
-              <p>1. {t('auth/register:terms_1', 'You agree to provide only accurate information.')}</p>
-              <p>2. {t('auth/register:terms_2', 'We guarantee the confidentiality of your data.')}</p>
-              <p>3. {t('auth/register:terms_3', 'You can cancel a booking up to 24 hours before the appointment.')}</p>
-              <p>4. {t('auth/register:terms_4', 'A commission may be applied for no-shows without notice.')}</p>
+          <div>
+            <label className="block text-sm font-medium mb-2">{t('auth/register:phone', 'Phone')}</label>
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type="tel"
+                required
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder={t('auth/register:phone_placeholder', '+7 (999) 000-00-00')}
+                className="pl-10"
+              />
             </div>
           </div>
         )}
+
+        <div>
+          <label className="block text-sm font-medium mb-2">{t('auth/login:password', 'Пароль')}</label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type={showPassword ? "text" : "password"}
+              required
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              placeholder="••••••••"
+              className="pl-10 pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+            >
+              {showPassword ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+          {!isLogin && (
+            <p className="text-xs text-muted-foreground mt-1 ml-1">{t('auth/register:password_hint_requirements', 'Минимум 8 символов: A-Z, a-z, 0-9 и спецсимвол (!@#$%)')}</p>
+          )}
+        </div>
+
+        {/* Confirm Password Field for Registration */}
+        {!isLogin && (
+          <div>
+            <label className="block text-sm font-medium mb-2">{t('auth/register:confirm_password', 'Подтвердите пароль')}</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type={showConfirmPassword ? "text" : "password"}
+                required
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                placeholder="••••••••"
+                className="pl-10 pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!isLogin && (
+          <div className="flex items-start gap-2">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={formData.agreedToTerms}
+              onChange={(e) => setFormData({ ...formData, agreedToTerms: e.target.checked })}
+              className="mt-1"
+            />
+            <label htmlFor="terms" className="text-xs text-muted-foreground">
+              {t('auth/register:agree_with', 'I agree to the')}{' '}
+              <a href="/terms" className="text-primary hover:underline">
+                {t('auth/register:terms_of_use', 'Terms of Use')}
+              </a>{' '}
+              {t('common:and', 'and')}{' '}
+              <a href="/privacy-policy" className="text-primary hover:underline">
+                {t('auth/register:privacy_policy', 'Privacy Policy')}
+              </a>
+            </label>
+          </div>
+        )}
+
+        {isLogin && (
+          <div className="text-right">
+            <a href="/forgot-password" className="text-sm text-primary hover:underline">
+              {t('auth/login:forgot_password', 'Забыли пароль?')}
+            </a>
+          </div>
+        )}
+
+        <Button type="submit" disabled={loading} className="w-full hero-button-primary h-11">
+          {loading ? (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>{isLogin ? t('auth/login:logging_in', 'Вход...') : t('auth/register:registering', 'Регистрация...')}</span>
+            </div>
+          ) : (
+            isLogin ? t('auth/login:submit', 'Войти') : t('auth/register:submit', 'Зарегистрироваться')
+          )}
+        </Button>
+      </form>
+
+      <div className="mt-6 text-center">
+        <a href="/" className="text-sm text-muted-foreground hover:text-primary">
+          ← {t('common:back_to_home', 'Back to home')}
+        </a>
       </div>
     </div>
+
+
+      </div >
+    </div >
   );
 }

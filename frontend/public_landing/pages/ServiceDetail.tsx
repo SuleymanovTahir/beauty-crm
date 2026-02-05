@@ -10,16 +10,16 @@ import { getApiUrl } from "../utils/apiUtils";
 import { BookingSection } from "../components/BookingSection";
 import { safeFetch } from "../utils/errorHandler";
 import {
-  getLocalizedServiceName,
-  getSafeString,
-  getSalonName,
-  getSalonCity,
-  getBaseUrl,
-  getMasterName,
-  getMasterSpecialization,
-  getMasterImageUrl,
-  getInitialLetter,
-  slugifyAscii,
+    getLocalizedServiceName,
+    getSafeString,
+    getSalonName,
+    getSalonCity,
+    getBaseUrl,
+    getMasterName,
+    getMasterSpecialization,
+    getMasterImageUrl,
+    getInitialLetter,
+    slugifyAscii,
 } from "../utils/dataHelpers";
 
 type SeoMetadata = {
@@ -182,7 +182,7 @@ export function ServiceDetail() {
         const routeCategory = getSafeString(category);
         let title = routeCategory;
         let description = "";
-        
+
         if (routeCategory === "nails") {
             title = t("manicurePedicure", { ns: "public_landing/services" });
             description = t("service1Desc", { ns: "public_landing/services" });
@@ -192,8 +192,16 @@ export function ServiceDetail() {
         } else if (routeCategory === "makeup") {
             title = t("service3Title", { ns: "public_landing/services" });
             description = t("service3Desc", { ns: "public_landing/services" });
+        } else {
+            // Dynamic translation fallback
+            const dynamicTitle = t(`categories.${routeCategory.toLowerCase().replace(/\s+/g, '_')}`, { ns: 'dynamic', defaultValue: "" });
+            if (dynamicTitle) {
+                title = dynamicTitle;
+            } else {
+                title = routeCategory.charAt(0).toUpperCase() + routeCategory.slice(1);
+            }
         }
-        
+
         return {
             title,
             description,
@@ -475,10 +483,11 @@ export function ServiceDetail() {
                                                 )}
                                             </div>
                                             <h4 className="font-medium mb-1">{masterName}</h4>
-                                            <p className="text-sm text-muted-foreground">
-                                                {specialization.length > 0
-                                                    ? specialization
-                                                    : t("master", { ns: "public_landing" })}
+                                            <p className="text-sm text-muted-foreground line-clamp-3">
+                                                {master.bio && master.bio.length > 0
+                                                    ? master.bio
+                                                    : (specialization.length > 0 ? specialization : t("master", { ns: "public_landing" }))
+                                                }
                                             </p>
                                         </div>
                                     );
@@ -497,8 +506,8 @@ export function ServiceDetail() {
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                 {portfolioImages.slice(0, 8).map((img: any) => {
                                     const apiBase = getApiUrl();
-                                    const imageUrl = img.image_path?.startsWith('http') 
-                                        ? img.image_path 
+                                    const imageUrl = img.image_path?.startsWith('http')
+                                        ? img.image_path
                                         : `${apiBase}${img.image_path?.startsWith('/') ? '' : '/'}${img.image_path || ''}`;
                                     return (
                                         <div key={img.id} className="relative aspect-[3/4] rounded-2xl overflow-hidden group">
