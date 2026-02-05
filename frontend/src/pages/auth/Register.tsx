@@ -247,7 +247,7 @@ export default function Register() {
                   maxLength={6}
                   className="text-center text-2xl tracking-widest"
                 />
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm text-gray-500 mt-3">
                   {t('verification_code_hint')}
                 </p>
               </div>
@@ -433,7 +433,7 @@ export default function Register() {
                   className="pl-10 pr-3"
                 />
               </div>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-3">
                 {t('email_hint')}
               </p>
             </div>
@@ -472,7 +472,7 @@ export default function Register() {
                 <option value="sales">{t('role_sales')}</option>
                 <option value="marketer">{t('role_marketer')}</option>
               </select>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-3">
                 {t('role_hint')}
               </p>
             </div>
@@ -496,7 +496,7 @@ export default function Register() {
                   </option>
                 ))}
               </select>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-3">
                 {t('position_hint')}
               </p>
             </div>

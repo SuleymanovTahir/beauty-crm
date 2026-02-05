@@ -35,7 +35,7 @@
   "new_code_sent": "Жаңа код электрондық поштаңызға жіберілді!",
   "or_register_with_email": "Немесе электрондық пошта арқылы тіркелу",
   "password": "Password",
-  "password_hint_requirements": "Кемінде 8 таңба: A-Z, a-z, 0-9 және арнайы таңба (!@#$%)",
+  "password_hint_requirements": "Кемінде 8 таңба, бас әріп (A-Z), кіші әріп (a-z), сан және арнайы таңба (!@#$%)",
   "password_placeholder": "Create a password",
   "password_placeholder_few": "Minimum {{count}} character",
   "password_placeholder_many": "Minimum {{count}} characters",

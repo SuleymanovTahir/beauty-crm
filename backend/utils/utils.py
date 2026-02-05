@@ -126,26 +126,51 @@ def map_image_path(url: str) -> str:
             url = url.replace(old_path, new_path, 1)
             break
 
+    # Маппинг на реальные файлы в styles/img (английские имена)
     file_mappings = {
-        '/landing-images/services/Массаж лица.webp': '/landing-images/services/Face_massage.webp',
-        '/landing-images/services/Стрижка .webp': '/landing-images/services/Haircut.webp', 
-        '/landing-images/services/Маникюр 4.webp': '/landing-images/services/Manicure_4.webp',
-        '/landing-images/services/Перманент ресниц.webp': '/landing-images/services/Permanent_lashes.webp',
-        '/landing-images/services/Спа.webp': '/landing-images/services/Spa.webp',
-        '/landing-images/services/SPA.webp': '/landing-images/services/Spa.webp',
+        # Services -> portfolio
+        '/landing-images/services/Массаж лица.webp': '/landing-images/portfolio/Hair.webp',
+        '/landing-images/services/Face_massage.webp': '/landing-images/portfolio/Hair.webp',
+        '/landing-images/services/Стрижка .webp': '/landing-images/portfolio/Hair.webp',
+        '/landing-images/services/Haircut.webp': '/landing-images/portfolio/Hair.webp',
+        '/landing-images/services/Маникюр 4.webp': '/landing-images/portfolio/Manicure.webp',
+        '/landing-images/services/Manicure_4.webp': '/landing-images/portfolio/Manicure.webp',
+        '/landing-images/services/Перманент ресниц.webp': '/landing-images/portfolio/Permanent_lips.webp',
+        '/landing-images/services/Permanent_lashes.webp': '/landing-images/portfolio/Permanent_lips.webp',
+        '/landing-images/services/Спа.webp': '/landing-images/portfolio/Spa2.webp',
+        '/landing-images/services/Spa.webp': '/landing-images/portfolio/Spa2.webp',
+        '/landing-images/services/SPA.webp': '/landing-images/portfolio/Spa2.webp',
+        # Portfolio - русские -> английские файлы
         '/landing-images/portfolio/Волосы.webp': '/landing-images/portfolio/Hair.webp',
+        '/landing-images/portfolio/волосы.webp': '/landing-images/portfolio/Hair.webp',
         '/landing-images/portfolio/Волосы2.webp': '/landing-images/portfolio/Hair2.webp',
+        '/landing-images/portfolio/волосы2.webp': '/landing-images/portfolio/Hair2.webp',
         '/landing-images/portfolio/Маникюр.webp': '/landing-images/portfolio/Manicure.webp',
+        '/landing-images/portfolio/маникюр.webp': '/landing-images/portfolio/Manicure.webp',
         '/landing-images/portfolio/Перманент губ.webp': '/landing-images/portfolio/Permanent_lips.webp',
+        '/landing-images/portfolio/перманент_губ.webp': '/landing-images/portfolio/Permanent_lips.webp',
         '/landing-images/portfolio/Волосы блондинка.webp': '/landing-images/portfolio/Hair_blonde.webp',
+        '/landing-images/portfolio/волосы_блондинка.webp': '/landing-images/portfolio/Hair_blonde.webp',
         '/landing-images/portfolio/Кератин блондинка.webp': '/landing-images/portfolio/Keratin_blonde.webp',
+        '/landing-images/portfolio/кератин_блондинка.webp': '/landing-images/portfolio/Keratin_blonde.webp',
         '/landing-images/portfolio/Ногти до после.webp': '/landing-images/portfolio/Nogti_do_posle.webp',
+        '/landing-images/portfolio/ногти_до_после.webp': '/landing-images/portfolio/Nogti_do_posle.webp',
         '/landing-images/portfolio/СПА3.webp': '/landing-images/portfolio/SPA3.webp',
+        '/landing-images/portfolio/спа3.webp': '/landing-images/portfolio/SPA3.webp',
         '/landing-images/portfolio/Спа2.webp': '/landing-images/portfolio/Spa2.webp',
+        '/landing-images/portfolio/спа2.webp': '/landing-images/portfolio/Spa2.webp',
+        '/landing-images/portfolio/воксинг.webp': '/landing-images/portfolio/Waxing.webp',
+        '/landing-images/portfolio/маникюр3.webp': '/landing-images/portfolio/Manikjur3.webp',
+        '/landing-images/portfolio/ногти2.webp': '/landing-images/portfolio/Nogti2.webp',
+        '/landing-images/portfolio/кератин_блондинка_2.webp': '/landing-images/portfolio/Keratin_blonde_2.webp',
     }
 
     if url in file_mappings:
         return file_mappings[url]
+
+    # Для landing-images НЕ транслитерируем - файлы имеют русские имена
+    if '/landing-images/' in url:
+        return url
 
     # Автоматическая транслитерация для кириллических имен, если маппинг не найден
     if any(ord(c) > 127 for c in url):

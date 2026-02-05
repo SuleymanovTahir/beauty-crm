@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "पोलिश बदलना (पेडी)",
+      "name": "पोलिश बदलें (पेडी)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -334,7 +334,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "आधे हाथ",
+      "name": "आधी बांहें",
       "price": 50.0
     },
     "half_legs": {

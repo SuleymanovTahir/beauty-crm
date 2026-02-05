@@ -1572,7 +1572,7 @@ export default function AdminSettings() {
                             <SelectValue placeholder={t('settings:select_currency')} />
                           </SelectTrigger>
                           <SelectContent>
-                            {currencies.map((curr) => (
+                            {currencies.filter(c => c.is_active !== false).map((curr) => (
                               <SelectItem key={curr.code} value={curr.code}>
                                 {curr.code} - {curr.name} ({curr.symbol})
                               </SelectItem>
@@ -1770,7 +1770,7 @@ export default function AdminSettings() {
                         className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <Bell className={`w - 5 h - 5 ${setting.is_enabled ? 'settings-text-pink' : 'text-gray-400'} `} />
+                          <Bell className={`w-5 h-5 ${setting.is_enabled ? 'settings-text-pink' : 'text-gray-400'}`} />
                           <div>
                             <p className="text-sm font-medium text-gray-900">
                               {t('settings:reminder_label')} {setting.days_before > 0 && `${setting.days_before} ${t('settings:days')} `}{setting.days_before > 0 && setting.hours_before > 0 && ' '}{setting.hours_before > 0 && `${setting.hours_before} ${t('settings:hours')} `}

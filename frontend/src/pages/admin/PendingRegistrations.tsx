@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, X, Trash2, RefreshCw, User, Mail, Briefcase, Calendar, AlertCircle } from 'lucide-react';
+import { Check, X, Trash2, RefreshCw, User, Mail, Briefcase, Calendar, AlertCircle, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface PendingUser {
@@ -181,11 +181,19 @@ const PendingRegistrations: React.FC = () => {
             {/* Header */}
             <div className="mb-8">
                 <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-                        <p className="text-gray-600 mt-2">
-                            {t('subtitle')}
-                        </p>
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => window.history.back()}
+                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        >
+                            <ArrowLeft className="w-6 h-6 text-gray-600" />
+                        </button>
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+                            <p className="text-gray-600 mt-2">
+                                {t('subtitle')}
+                            </p>
+                        </div>
                     </div>
                     <button
                         onClick={fetchPendingUsers}
@@ -265,8 +273,8 @@ const PendingRegistrations: React.FC = () => {
                                                 <span className="text-sm">{formatDate(user.created_at)}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <span className={`px - 3 py - 1 rounded - full text - xs font - medium ${getRoleBadgeColor(user.role)} `}>
-                                                    {t(`common:role_${user.role} `, user.role)}
+                                                <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
+                                                    {t(`common:role_${user.role}`, user.role)}
                                                 </span>
                                                 {user.email_verified && (
                                                     <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex items-center gap-1">

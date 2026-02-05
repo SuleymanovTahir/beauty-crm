@@ -61,7 +61,8 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
                 c.created_at,
                 COALESCE(b.total_spend, 0) as total_spend,
                 COALESCE(b.total_bookings, 0) as total_bookings,
-                c.temperature
+                c.temperature,
+                c.email
             FROM clients c
             LEFT JOIN (
                 SELECT instagram_id,
@@ -88,7 +89,8 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
                 c.created_at,
                 COALESCE(b.total_spend, 0) as total_spend,
                 COALESCE(b.total_bookings, 0) as total_bookings,
-                c.temperature
+                c.temperature,
+                c.email
             FROM clients c
             LEFT JOIN (
                 SELECT instagram_id,
@@ -245,12 +247,13 @@ def get_clients_all():
         SELECT DISTINCT
             c.instagram_id, c.username, c.phone, c.name, c.first_contact,
             c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
-            c.profile_pic, c.notes, c.is_pinned, c.gender, 
+            c.profile_pic, c.notes, c.is_pinned, c.gender,
             CASE WHEN EXISTS (SELECT 1 FROM chat_history ch WHERE ch.instagram_id = c.instagram_id) THEN 1 ELSE 0 END as has_messages,
             c.created_at,
             COALESCE(b.total_spend, 0) as total_spend,
             COALESCE(b.total_bookings, 0) as total_bookings,
-            c.temperature
+            c.temperature,
+            c.email
         FROM clients c
         LEFT JOIN (
             SELECT instagram_id,
@@ -344,6 +347,7 @@ async def list_clients(
                 "total_spend": c[16] if len(c) > 16 else (c[9] if len(c) > 9 else 0),
                 "total_bookings": c[17] if len(c) > 17 else 0,
                 "temperature": c[18] if len(c) > 18 else "cold",
+                "email": c[19] if len(c) > 19 else None,
                 "messenger": messenger
             }
             for c in clients
@@ -1171,31 +1175,49 @@ async def get_current_client_profile(session_token: Optional[str] = Cookie(None)
 
         # Если пользователь - клиент, получаем дополнительные данные
         if user.get("role") == "client":
-            # Получаем информацию о лояльности
+            # Находим client_id в таблице clients
             c.execute("""
-                SELECT total_points, current_tier, total_visits, total_spent
-                FROM loyalty_program
-                WHERE client_email = %s OR client_instagram = %s
+                SELECT instagram_id FROM clients
+                WHERE user_id = %s OR email = %s OR username = %s
                 LIMIT 1
-            """, (email, username))
+            """, (user_id, email, username))
+            client_row = c.fetchone()
+            client_id = client_row[0] if client_row else f"user_{user_id}"
+
+            # Получаем информацию о лояльности из client_loyalty_points
+            c.execute("""
+                SELECT total_points, loyalty_level, available_points
+                FROM client_loyalty_points
+                WHERE client_id = %s
+                LIMIT 1
+            """, (client_id,))
 
             loyalty_data = c.fetchone()
 
-            if loyalty_data:
-                return {
-                    "success": True,
-                    "profile": {
-                        "id": user_id,
-                        "name": full_name or username,
-                        "email": email,
-                        "phone": phone,
-                        "username": username,
-                        "tier": loyalty_data[1] if loyalty_data[1] else "bronze",
-                        "points": loyalty_data[0] if loyalty_data[0] else 0,
-                        "visits": loyalty_data[2] if loyalty_data[2] else 0,
-                        "spent": loyalty_data[3] if loyalty_data[3] else 0
-                    }
+            # Считаем визиты и потраченную сумму из bookings
+            c.execute("""
+                SELECT COUNT(*), COALESCE(SUM(revenue), 0)
+                FROM bookings
+                WHERE (instagram_id = %s OR user_id = %s) AND status = 'completed'
+            """, (client_id, user_id))
+            visits_data = c.fetchone()
+            total_visits = visits_data[0] if visits_data else 0
+            total_spent = visits_data[1] if visits_data else 0
+
+            return {
+                "success": True,
+                "profile": {
+                    "id": user_id,
+                    "name": full_name or username,
+                    "email": email,
+                    "phone": phone,
+                    "username": username,
+                    "tier": loyalty_data[1] if loyalty_data else "bronze",
+                    "points": loyalty_data[0] if loyalty_data else 0,
+                    "visits": total_visits,
+                    "spent": float(total_spent)
                 }
+            }
 
         # Для всех остальных пользователей
         return {

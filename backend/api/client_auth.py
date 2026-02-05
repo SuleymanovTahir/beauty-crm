@@ -562,12 +562,49 @@ async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None))
                 "change": change
             })
             
-        recommended = [
-            {"service": "Signature Manicure", "days_left": 5, "recommended": True},
-            {"service": "Facial Basic", "days_left": 14, "recommended": False},
-        ]
+        # Get recommended procedures based on last visits and service-specific intervals from DB
+        c.execute("""
+            SELECT 
+                b.service_name,
+                MAX(b.datetime::timestamp) as last_visit,
+                s.duration_minutes,
+                COALESCE(s.recommended_interval_days, 30) as interval_days
+            FROM bookings b
+            JOIN services s ON LOWER(b.service_name) = LOWER(s.name)
+            WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
+            AND b.status = 'completed'
+            GROUP BY b.service_name, s.duration_minutes, s.recommended_interval_days
+            ORDER BY last_visit DESC
+            LIMIT 10
+        """, (client_id, user_phone, user_id))
         
-        return {"success": True, "metrics": metrics, "recommended_procedures": recommended}
+        recommended = []
+        from datetime import datetime, timedelta
+        now = datetime.now()
+        
+        for row in c.fetchall():
+            service_name = row[0]
+            last_visit = row[1]
+            interval_days = row[3]  # From database
+            
+            # Calculate days since last visit
+            days_since = (now - last_visit).days
+            days_left = interval_days - days_since
+            
+            # Recommend if overdue or due soon (within 7 days)
+            is_recommended = days_left <= 7
+            
+            recommended.append({
+                "service": service_name,
+                "days_left": max(0, days_left),
+                "recommended": is_recommended,
+                "interval_days": interval_days
+            })
+        
+        # Sort: recommended first, then by days_left
+        recommended.sort(key=lambda x: (not x['recommended'], x['days_left']))
+        
+        return {"success": True, "metrics": metrics, "recommended_procedures": recommended[:5]}
     except Exception as e:
         log_error(f"Error in beauty metrics: {e}")
         return {"success": False, "error": str(e)}
@@ -980,7 +1017,7 @@ async def get_fav_masters(
         name_field = f'full_name_{language}'
         spec_field = f'specialization_{language}'
 
-        # Get all service providers (masters) with their favorite status and ratings
+        # Get only masters where the client had completed bookings
         c.execute(f"""
             SELECT
                 u.id,
@@ -990,15 +1027,19 @@ async def get_fav_masters(
                 COALESCE(u.{spec_field}, u.specialization) as specialization,
                 CASE WHEN cfm.master_id IS NOT NULL THEN true ELSE false END as is_favorite,
                 COALESCE(AVG(r.rating), 0) as rating,
-                COUNT(DISTINCT r.id) as reviews_count
+                COUNT(DISTINCT r.id) as reviews_count,
+                COUNT(DISTINCT b.id) as total_bookings
             FROM users u
+            INNER JOIN bookings b ON b.master_id = u.id
             LEFT JOIN client_favorite_masters cfm ON cfm.master_id = u.id AND cfm.client_id = %s
-            LEFT JOIN bookings b ON b.master_id = u.id
             LEFT JOIN ratings r ON r.booking_id = b.id
-            WHERE u.is_service_provider = true AND u.is_active = true
+            WHERE u.is_service_provider = true 
+            AND u.is_active = true
+            AND (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
+            AND b.status = 'completed'
             GROUP BY u.id, u.{name_field}, u.full_name, u.{position_field}, u.position, u.photo, u.photo_url, u.{spec_field}, u.specialization, cfm.master_id
-            ORDER BY u.full_name
-        """, (client_id,))
+            ORDER BY total_bookings DESC, u.full_name
+        """, (client_id, client_id, user.get("phone"), user.get("id")))
 
         masters = []
         default_specialty = "Специалист" if language == 'ru' else "Specialist"
@@ -1016,7 +1057,8 @@ async def get_fav_masters(
                 "specialization": row[4],
                 "is_favorite": row[5],
                 "rating": round(row[6], 1) if row[6] else 5.0,
-                "reviews_count": row[7] or 0
+                "reviews_count": row[7] or 0,
+                "total_bookings": row[8] or 0
             })
 
         conn.close()

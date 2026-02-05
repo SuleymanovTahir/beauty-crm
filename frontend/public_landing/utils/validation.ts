@@ -13,8 +13,8 @@ export const validatePhone = (phone: string): { valid: boolean; error?: string }
   // Удаляем все нецифровые символы для проверки
   const digitsOnly = phone.replace(/\D/g, '');
 
-  // Минимальная длина - 5 цифр, максимальная - 15
-  if (digitsOnly.length < 5) {
+  // Минимальная длина - 10 цифр (для СНГ), максимальная - 15 (международный стандарт)
+  if (digitsOnly.length < 10) {
     return { valid: false, error: 'Phone number is too short' };
   }
 

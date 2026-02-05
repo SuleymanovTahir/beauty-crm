@@ -687,14 +687,26 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                     {/* Header */}
                     <div className="p-6 border-b border-gray-200">
                         <div className="flex items-center gap-3">
-                            <div className="flex-shrink-0">
-                                {salonSettings?.logo_url && (
-                                    <img
-                                        src={salonSettings.logo_url}
-                                        alt={salonSettings?.name || 'Logo'}
-                                        className="w-10 h-10 rounded-lg object-contain shadow-sm"
-                                    />
-                                )}
+                            <div className="flex-shrink-0 relative w-10 h-10">
+                                <img
+                                    src={salonSettings?.logo_url ? getPhotoUrl(salonSettings.logo_url) : '/logo.webp'}
+                                    alt={salonSettings?.name || 'Logo'}
+                                    className="w-full h-full rounded-lg object-contain shadow-sm bg-white"
+                                    onError={(e) => {
+                                        const target = e.target as HTMLImageElement;
+                                        // Try fallback to logo.png
+                                        if (!target.src.includes('/logo.png')) {
+                                            target.src = '/logo.png';
+                                        } else {
+                                            target.style.display = 'none';
+                                            const fallback = target.parentElement?.querySelector('.logo-fallback');
+                                            if (fallback) fallback.classList.remove('hidden');
+                                        }
+                                    }}
+                                />
+                                <div className="logo-fallback hidden w-full h-full bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center shadow-sm text-white font-bold text-lg absolute inset-0">
+                                    {salonSettings?.name?.[0] || 'C'}
+                                </div>
                             </div>
                             <div className="min-w-0">
                                 <span className="text-sm text-gray-900 block font-semibold truncate leading-tight">

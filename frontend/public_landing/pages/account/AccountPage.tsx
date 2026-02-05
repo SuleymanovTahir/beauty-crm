@@ -20,6 +20,7 @@ import LanguageSwitcher from '../../../src/components/LanguageSwitcher';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useSalonSettings } from '../../hooks/useSalonSettings';
+import { getPhotoUrl } from '../../../src/utils/photoUtils';
 
 type Tab = 'dashboard' | 'appointments' | 'gallery' | 'loyalty' | 'achievements' | 'masters' | 'beauty' | 'notifications' | 'settings';
 
@@ -35,7 +36,9 @@ export function AccountPage() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
 
-  const { salonName, logoUrl } = useSalonSettings();
+  const { settings } = useSalonSettings();
+  const salonName = settings?.name || 'Beauty Salon';
+  const logoUrl = settings?.logo_url ? getPhotoUrl(settings.logo_url) : null;
   const [features, setFeatures] = useState<Record<string, boolean>>({
     loyalty_program: true, // default to true until loaded to avoid flickering
     referral_program: true,
@@ -408,11 +411,25 @@ export function AccountPage() {
           </Sheet>
 
           <div className="flex items-center gap-2">
-            {logoUrl ? (
-              <img src={logoUrl} alt={salonName} className="w-6 h-6 object-contain" />
-            ) : (
-              <Sparkles className="w-6 h-6 text-pink-500" />
-            )}
+            <div className="w-6 h-6 relative">
+              <img
+                src={logoUrl || '/logo.webp'}
+                alt={salonName}
+                className="w-full h-full object-contain rounded bg-white shadow-sm"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.src.includes('/logo.png')) {
+                    target.src = '/logo.png';
+                  } else {
+                    target.style.display = 'none';
+                    document.getElementById('mobile-logo-fallback')?.classList.remove('hidden');
+                  }
+                }}
+              />
+              <div id="mobile-logo-fallback" className="hidden w-full h-full bg-gradient-to-br from-pink-500 to-purple-600 rounded flex items-center justify-center text-white text-xs font-bold absolute inset-0">
+                {salonName?.[0] || 'C'}
+              </div>
+            </div>
             <span className="font-bold">{salonName}</span>
           </div>
 
@@ -428,11 +445,25 @@ export function AccountPage() {
         <aside className="hidden lg:flex lg:flex-col w-[280px] bg-white border-r flex-shrink-0">
           <div className="p-6 border-b flex-shrink-0">
             <div className="flex items-center gap-2">
-              {logoUrl ? (
-                <img src={logoUrl} alt={salonName} className="w-8 h-8 object-contain" />
-              ) : (
-                <Sparkles className="w-8 h-8 text-pink-500" />
-              )}
+              <div className="w-8 h-8 relative">
+                <img
+                  src={logoUrl || '/logo.webp'}
+                  alt={salonName}
+                  className="w-full h-full object-contain rounded-lg bg-white shadow-sm"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.src.includes('/logo.png')) {
+                      target.src = '/logo.png';
+                    } else {
+                      target.style.display = 'none';
+                      document.getElementById('desktop-logo-fallback')?.classList.remove('hidden');
+                    }
+                  }}
+                />
+                <div id="desktop-logo-fallback" className="hidden w-full h-full bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold absolute inset-0">
+                  {salonName?.[0] || 'C'}
+                </div>
+              </div>
               <span className="text-sm font-semibold truncate">{salonName}</span>
             </div>
           </div>

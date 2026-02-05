@@ -310,7 +310,8 @@ def get_public_employees(
                 "photo": final_photo,
                 "experience": exp_text.strip(),
                 "age": calculate_age(row_dict.get("birthday")),
-                "service_ids": services_map.get(emp_id, [])
+                "service_ids": services_map.get(emp_id, []),
+                "sort_order": row_dict.get("sort_order") or 0
             })
             
         # De-duplicate by normalized name to handle cases where multiple records 
@@ -354,15 +355,20 @@ def get_public_employees(
                 if ext_has_bio: ext_score += 5
                 ext_score += ext_services * 0.1
                 
+                # Preserve lowest sort_order between duplicates
+                min_sort_order = min(emp.get('sort_order', 0), existing.get('sort_order', 0))
+
                 if score > ext_score:
                     # Merge data: take services from both
                     all_services = list(set(emp.get('service_ids', []) + existing.get('service_ids', [])))
                     emp['service_ids'] = all_services
+                    emp['sort_order'] = min_sort_order
                     unique_employees[norm] = emp
                 else:
                     # Merge data back to existing
                     all_services = list(set(emp.get('service_ids', []) + existing.get('service_ids', [])))
                     existing['service_ids'] = all_services
+                    existing['sort_order'] = min_sort_order
                     # Take bio/photo from emp if existing is missing it
                     if not ext_has_photo and has_photo:
                         existing['image'] = emp['image']

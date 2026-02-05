@@ -193,7 +193,7 @@ export default function VerifyEmail() {
 
           <form onSubmit={handleVerify} className="space-y-6">
             <div>
-              <Label htmlFor="code">{t('verification_code_label', "Код подтверждения")}</Label>
+              <Label htmlFor="code" className="mb-2 block">{t('verification_code_label', "Код подтверждения")}</Label>
               <Input
                 id="code"
                 required
@@ -204,7 +204,7 @@ export default function VerifyEmail() {
                 maxLength={6}
                 className="text-center text-2xl tracking-widest"
               />
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-gray-500 mt-3">
                 {t('enter_6_digit_code', "Введите 6-значный код из письма")}
               </p>
             </div>

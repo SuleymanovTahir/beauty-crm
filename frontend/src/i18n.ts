@@ -39,6 +39,7 @@ const namespaces = [
   'admin/contracts',
   'admin/integrations',
   'admin/menucustomization',
+  'admin/pending_registrations',
   'manager/chat',
   'manager/dashboard',
   'manager/funnel',
@@ -63,6 +64,8 @@ const namespaces = [
   'auth/login',
   'auth/register',
   'auth/forgotpassword',
+  'auth/reset_password',
+  'auth/verify_email',
   'layouts/adminlayout',
   'layouts/mainlayout',
   'layouts/adminpanellayout',
@@ -168,6 +171,8 @@ for (const lang of languages) {
   resources[lang]['login'] = resources[lang]['auth/login'];
   resources[lang]['register'] = resources[lang]['auth/register'];
   resources[lang]['forgotPassword'] = resources[lang]['auth/forgotpassword'];
+  resources[lang]['resetPassword'] = resources[lang]['auth/reset_password'];
+  resources[lang]['verifyEmail'] = resources[lang]['auth/verify_email'];
 
   // Public pages - add both full path and short aliases
   resources[lang]['about'] = resources[lang]['public/about'];
