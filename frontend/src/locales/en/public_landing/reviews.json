@@ -1,67 +1,67 @@
 {
   "items": [
     {
+      "text": "Amazing salon! The masters are true professionals. I did permanent eyebrow makeup, the result exceeded all expectations. Very natural and beautiful.",
       "author_name": "Anna Petrova",
       "employee_name": "",
       "employee_position": "Permanent makeup",
-      "rating": 5,
-      "text": "Потрясающий салон! Мастера - настоящие профессионалы. Делала перманентный макияж бровей, результат превзошел все ожидания. Очень естественно и красиво."
+      "rating": 5
     },
     {
+      "text": "The best beauty salon in Dubai!",
       "author_name": "Sarah Jenkins",
       "employee_name": "",
       "employee_position": "Eyelashes",
-      "rating": 5,
-      "text": "Лучший салон красоты в Дубае!"
+      "rating": 5
     },
     {
+      "text": "I've been going here for manicures and pedicures for a year now. Always perfectly clean, sterile and high quality. I recommend it to all my friends!",
       "author_name": "Elena Smirnova",
       "employee_name": "",
-      "employee_position": "Manicure and pedicure",
-      "rating": 5,
-      "text": "Хожу сюда уже год на маникюр и педикюр. Всегда идеально чисто, стерильно и качественно. Рекомендую всем подругам!"
+      "employee_position": "Manicure and Pedicure",
+      "rating": 5
     },
     {
+      "text": "Incredible service. I had a facial and my skin is glowing. I will definitely be back!",
       "author_name": "Mariya Gonsales",
       "employee_name": "",
-      "employee_position": "Facial treatment",
-      "rating": 5,
-      "text": "Невероятный сервис. Мне сделали чистку лица, и моя кожа сияет. Я обязательно вернусь!"
+      "employee_position": "Facial care",
+      "rating": 5
     },
     {
+      "text": "Excellent service and professional staff.",
       "author_name": "Fatima Al-Sayed",
       "employee_name": "",
       "employee_position": "Microblading",
-      "rating": 5,
-      "text": "Отличный сервис и профессиональный персонал."
+      "rating": 5
     },
     {
+      "text": "Amazing salon! The masters are true professionals. The manicure lasts more than 3 weeks, and the result exceeds all expectations. I'll definitely be back!",
       "author_name": "Mariya Gonsales",
       "employee_name": "",
-      "employee_position": "Facial treatment",
-      "rating": 5,
-      "text": "Потрясающий салон! Мастера настоящие профессионалы. Маникюр держится больше 3 недель, а результат превосходит все ожидания. Обязательно вернусь!"
+      "employee_position": "Facial care",
+      "rating": 5
     },
     {
+      "text": "I had my hair dyed and the results were simply gorgeous! The color turned out exactly how I wanted. Thanks for your professionalism!",
       "author_name": "Fatima Al-Sayed",
       "employee_name": "",
       "employee_position": "Microblading",
-      "rating": 5,
-      "text": "Делала окрашивание волос - результат просто шикарный! Цвет получился именно такой, как я хотела. Спасибо за профессионализм!"
+      "rating": 5
     },
     {
+      "text": "Great service! I made an appointment online in a couple of minutes, arrived on time, without waiting. The master did everything quickly and efficiently. Very pleased!",
       "author_name": "Fatima Al-Sayed",
       "employee_name": "",
       "employee_position": "Microblading",
-      "rating": 5,
-      "text": "Great service! I made an appointment online in a couple of minutes, arrived on time, without waiting. The master did everything quickly and efficiently. Very pleased!"
+      "rating": 5
     },
     {
+      "text": "The best salon in Dubai! The masters are super.",
       "author_name": "Mariya Gonsales",
       "employee_name": "",
-      "employee_position": "Facial treatment",
-      "rating": 5,
-      "text": "The best salon in Dubai! "
+      "employee_position": "Facial care",
+      "rating": 5
     }
   ]
 }

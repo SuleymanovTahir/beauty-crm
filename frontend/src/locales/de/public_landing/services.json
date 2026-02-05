@@ -23,7 +23,7 @@
   "service3Title": "",
   "items": {
     "manicure_pil_classic": {
-      "name": "Maniküre Klassisch + Nagellack",
+      "name": "Manicure Classic + Polish",
       "description": "",
       "price": 130.0,
       "duration": "60",
@@ -63,7 +63,7 @@
       "category": "Manicure"
     },
     "japanese_manicure": {
-      "name": "Japanische Maniküre",
+      "name": "Japanisch Maniküre",
       "description": "",
       "price": 150.0,
       "duration": "90",
@@ -123,7 +123,7 @@
       "category": "Manicure"
     },
     "nail_correction": {
-      "name": "Korrektur der Erweiterungen",
+      "name": "Verlängerungskorrektur",
       "description": "",
       "price": 400.0,
       "duration": "120",
@@ -133,7 +133,7 @@
       "category": "Manicure"
     },
     "repair_extension": {
-      "name": "Repariere 1 Erweiterung",
+      "name": "1 Verlängerung reparieren",
       "description": "",
       "price": 40.0,
       "duration": "60",
@@ -143,7 +143,7 @@
       "category": "Manicure"
     },
     "repair_gel": {
-      "name": "Repariere 1 Gelnagel",
+      "name": "Reparatur 1 Gel-Nagel",
       "description": "",
       "price": 20.0,
       "duration": "60",
@@ -183,7 +183,7 @@
       "category": "Manicure"
     },
     "pedicure_smart": {
-      "name": "Intelligente Pediküre Basic",
+      "name": "Smart Pedicure Basic",
       "description": "",
       "price": 130.0,
       "duration": "60",
@@ -193,7 +193,7 @@
       "category": "Pedicure"
     },
     "pedicure_smart_polish": {
-      "name": "Intelligente Pediküre + Lack",
+      "name": "Smart Pedicure + Nagellack",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -223,7 +223,7 @@
       "category": "Pedicure"
     },
     "change_classic_pedicure": {
-      "name": "Polnisch ändern (Pedi)",
+      "name": "Lack ändern (Pedi)",
       "description": "",
       "price": 50.0,
       "duration": "60",
@@ -253,7 +253,7 @@
       "category": "Hair Styling"
     },
     "blowdry_medium": {
-      "name": "Föhnen (mittel)",
+      "name": "Föhnen (Mittel)",
       "description": "",
       "price": 250.0,
       "duration": "60",
@@ -273,7 +273,7 @@
       "category": "Hair Styling"
     },
     "styling_short": {
-      "name": "Styling-Eisen/Wellen (kurz)",
+      "name": "Stylingeisen/Wellen (kurz)",
       "description": "",
       "price": 230.0,
       "duration": "60",
@@ -283,7 +283,7 @@
       "category": "Hair Styling"
     },
     "styling_medium": {
-      "name": "Styling-Eisen/Wellen (mittel)",
+      "name": "Stylingeisen/Wellen (Mittel)",
       "description": "",
       "price": 260.0,
       "duration": "60",
@@ -293,7 +293,7 @@
       "category": "Hair Styling"
     },
     "styling_long": {
-      "name": "Styling-Eisen/Wellen (lang)",
+      "name": "Stylingeisen/Wellen (lang)",
       "description": "",
       "price": 300.0,
       "duration": "60",
@@ -323,7 +323,7 @@
       "category": "Hair Care"
     },
     "hair_trim": {
-      "name": "Nur Haarschnitt",
+      "name": "Nur Haarschneiden",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -353,7 +353,7 @@
       "category": "Hair Cut"
     },
     "express_hair_form": {
-      "name": "Expressform (keine Wäsche)",
+      "name": "Express-Form (Nr Wash)",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -363,7 +363,7 @@
       "category": "Hair Cut"
     },
     "bangs_cut": {
-      "name": "Pony geschnitten",
+      "name": "Bangs Cut",
       "description": "",
       "price": 100.0,
       "duration": "60",
@@ -373,7 +373,7 @@
       "category": "Hair Cut"
     },
     "kids_cut": {
-      "name": "Kinderschnitt",
+      "name": "Kids Cut",
       "description": "",
       "price": 100.0,
       "duration": "40",
@@ -383,7 +383,7 @@
       "category": "Hair Cut"
     },
     "roots_color": {
-      "name": "Wurzelfärbung",
+      "name": "Roots Coloring",
       "description": "",
       "price": 250.0,
       "duration": "60",
@@ -393,7 +393,7 @@
       "category": "Hair Color"
     },
     "toning": {
-      "name": "Tonung",
+      "name": "Toning",
       "description": "",
       "price": 300.0,
       "duration": "60",
@@ -403,7 +403,7 @@
       "category": "Hair Color"
     },
     "one_tone_short": {
-      "name": "Ein Ton (kurz)",
+      "name": "Einfarbig (kurz)",
       "description": "",
       "price": 350.0,
       "duration": "120",
@@ -413,7 +413,7 @@
       "category": "Hair Color"
     },
     "one_tone_medium": {
-      "name": "Einfarbig (Mittel)",
+      "name": "Einfarbig (mittel)",
       "description": "",
       "price": 400.0,
       "duration": "120",
@@ -423,7 +423,7 @@
       "category": "Hair Color"
     },
     "one_tone_long": {
-      "name": "Ein Ton (lang)",
+      "name": "Einfarbig (lang)",
       "description": "",
       "price": 675.0,
       "duration": "120",
@@ -433,7 +433,7 @@
       "category": "Hair Color"
     },
     "total_blonde": {
-      "name": "Total blond",
+      "name": "Totales Blond",
       "description": "",
       "price": 1250.0,
       "duration": "120",
@@ -483,7 +483,7 @@
       "category": "Massage"
     },
     "massage_sculptural": {
-      "name": "Skulpturale Körpermassage",
+      "name": "Skulptuelle Körpermassage",
       "description": "",
       "price": 370.0,
       "duration": "60",
@@ -523,7 +523,7 @@
       "category": "Waxing"
     },
     "bikini_line": {
-      "name": "Bikinizone",
+      "name": "Bikini-Linie",
       "description": "",
       "price": 100.0,
       "duration": "60",
@@ -533,7 +533,7 @@
       "category": "Waxing"
     },
     "full_legs": {
-      "name": "Volle Beine",
+      "name": "Ganze Beine",
       "description": "",
       "price": 150.0,
       "duration": "60",
@@ -553,7 +553,7 @@
       "category": "Waxing"
     },
     "full_arms": {
-      "name": "Volle Waffen",
+      "name": "Volle Arme",
       "description": "",
       "price": 80.0,
       "duration": "60",
@@ -563,7 +563,7 @@
       "category": "Waxing"
     },
     "half_arms": {
-      "name": "Halbarme",
+      "name": "Halbe Arme",
       "description": "",
       "price": 50.0,
       "duration": "60",
@@ -573,7 +573,7 @@
       "category": "Waxing"
     },
     "full_body_wax": {
-      "name": "Ganzkörper-Waxing",
+      "name": "Ganzer Körper Wachsen",
       "description": "",
       "price": 400.0,
       "duration": "60",
@@ -583,7 +583,7 @@
       "category": "Waxing"
     },
     "underarms": {
-      "name": "Wachsen der Achselhöhlen",
+      "name": "Achseln wachsen",
       "description": "",
       "price": 50.0,
       "duration": "60",
@@ -593,7 +593,7 @@
       "category": "Waxing"
     },
     "full_face_wax": {
-      "name": "Vollgesichts-Waxing",
+      "name": "Ganzgesichts-Wachsen",
       "description": "",
       "price": 90.0,
       "duration": "60",
@@ -603,7 +603,7 @@
       "category": "Waxing"
     },
     "cheeks_wax": {
-      "name": "Wangen wachsen",
+      "name": "Wangen-Wachsen",
       "description": "",
       "price": 40.0,
       "duration": "60",
@@ -613,7 +613,7 @@
       "category": "Waxing"
     },
     "upper_lip_wax": {
-      "name": "Wachsen der Oberlippe",
+      "name": "Oberlippen-Wachsen",
       "description": "",
       "price": 30.0,
       "duration": "60",
@@ -623,7 +623,7 @@
       "category": "Waxing"
     },
     "chin_wax": {
-      "name": "Kinnentfernung",
+      "name": "Kinn-Wachsen",
       "description": "",
       "price": 30.0,
       "duration": "60",
@@ -633,7 +633,7 @@
       "category": "Waxing"
     },
     "deep_facial_cleaning": {
-      "name": "Tiefenreinigung des Gesichts",
+      "name": "Tiefengesichtsreinigung",
       "description": "",
       "price": 400.0,
       "duration": "60",
@@ -703,7 +703,7 @@
       "category": "Lashes"
     },
     "lashes_mega": {
-      "name": "4-5D Wimpernverlängerung (Mega)",
+      "name": "4-5D-Wimpernverlängerungen (Mega)",
       "description": "",
       "price": 350.0,
       "duration": "120",
@@ -733,7 +733,7 @@
       "category": "Lashes"
     },
     "brow_lami": {
-      "name": "Augenbrauenlaminierung",
+      "name": "Brauenlaminierung",
       "description": "",
       "price": 200.0,
       "duration": "60",
@@ -743,7 +743,7 @@
       "category": "Brows"
     },
     "lash_lami": {
-      "name": "Wimpernlaminierung",
+      "name": "Lash-Laminierung",
       "description": "",
       "price": 200.0,
       "duration": "60",
@@ -753,7 +753,7 @@
       "category": "Lashes"
     },
     "combo_lami": {
-      "name": "Kombiniertes Wimpern- und Augenbrauen-Lami",
+      "name": "Combo Lash + Brow Lami",
       "description": "",
       "price": 300.0,
       "duration": "60",
@@ -763,7 +763,7 @@
       "category": "Combo"
     },
     "brow_coloring": {
-      "name": "Augenbrauen färben",
+      "name": "Brauen färben",
       "description": "",
       "price": 40.0,
       "duration": "60",
@@ -773,7 +773,7 @@
       "category": "Brows"
     },
     "brow_correction": {
-      "name": "Augenbrauenkorrektur",
+      "name": "Brauenkorrektur",
       "description": "",
       "price": 40.0,
       "duration": "60",
@@ -803,7 +803,7 @@
       "category": "Permanent Makeup"
     },
     "lashliner": {
-      "name": "Wimpernliner",
+      "name": "Lashliner",
       "description": "",
       "price": 800.0,
       "duration": "120",

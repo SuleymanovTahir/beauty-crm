@@ -1,24 +1,24 @@
 {
-  "addProduct": "Өнімді қосу",
+  "addProduct": "Өнімді қосыңыз",
   "allCategories": "Барлық санаттар",
   "analytics": {
-    "avgPrice": "Орт. баға",
+    "avgPrice": "Орт. бағасы",
     "last30Days": "{{count}} күн ішінде",
     "last30Days_few": "",
     "last30Days_many": "",
     "last30Days_one": "",
     "last30Days_other": "",
     "revenue": "Табыс",
-    "totalSold": "Барлығы сатылған"
+    "totalSold": "Жалпы сатылған"
   },
   "createFirst": "Жүйеге бірінші өнімді қосу",
   "delete": "Жою",
   "detail": {
     "costPriceLabel": "Құны: {{price}} {{currency}}",
-    "inStock_few": "Қоймада {{count}} дана.",
-    "inStock_many": "Қоймада {{count}} дана.",
-    "inStock_one": "Қоймада {{count}} дана.",
-    "inStock_other": "Қоймада {{count}} дана.",
+    "inStock_few": "Қойымда {{count}} дана.",
+    "inStock_many": "Қойымда {{count}} дана.",
+    "inStock_one": "Қойымда {{count}} дана.",
+    "inStock_other": "Қойымда {{count}} дана.",
     "loadingData": "Деректер жүктелуде...",
     "movementAdjustment": "Реттеу",
     "movementHistory": "Қозғалыстардың тарихы",
@@ -30,7 +30,7 @@
   "edit": "Өңдеу",
   "form": {
     "cancel": "Болдырмау",
-    "category": "Санат",
+    "category": "Санатты",
     "costPrice": "Құн бағасы",
     "isActive": "Белсенді",
     "minStockLevel": "Ең төменгі теңгерім",
@@ -39,14 +39,14 @@
     "photos": "Өнім фотосы",
     "price": "Сату бағасы",
     "save": "Сақтау",
-    "sku": "Мақаланың нөмірі",
+    "sku": "Мақала",
     "stockQuantity": "Қалған қор",
-    "upload": "Жүктеу балансы",
+    "upload": "Жүктеп алу",
     "uploadError": "Фотосуретті жүктеу қатесі"
   },
   "messages": {
-    "confirmDelete": "Бұл өнімді шынымен жойғыңыз келе ме?",
-    "noResults": "Сұранысыңыз бойынша ешнәрсе табылмады"
+    "confirmDelete": "Осы өнімді шынымен жойғыңыз келе ме?",
+    "noResults": "Сұранысыңыз бойынша ештеңе табылмады"
   },
   "movement": {
     "quantity": "Саны",
@@ -55,18 +55,18 @@
     "type": "Қозғалыс түрі",
     "types": {
       "adjustment": "Реттеу",
-      "in": "Түбіртек",
-      "out": "Тұтыну"
+      "in": "Кіріс",
+      "out": "Шығыс"
     }
   },
-  "noProducts": "Әзірге өнім жоқ",
-  "search_placeholder": "Тақырып немесе санат бойынша іздеу...",
+  "noProducts": "Әлі өнім жоқ",
+  "search_placeholder": "Аты немесе санаты бойынша іздеу...",
   "stock_status": {
-    "in_stock": "Қоймада бар",
-    "low_stock": "Аз",
-    "out_of_stock": "Қоймада жоқ"
+    "in_stock": "Қойымда бар",
+    "low_stock": "Аз өнім",
+    "out_of_stock": "Жоқ"
   },
-  "subtitle": "Тауарлар мен баланстарды басқару",
-  "title": "Өнімдерді және қойманы",
-  "unit_pcs": "дана"
+  "subtitle": "Өнімдер мен қорларды басқару",
+  "title": "Өнімдер мен қойма",
+  "unit_pcs": "дана."
 }

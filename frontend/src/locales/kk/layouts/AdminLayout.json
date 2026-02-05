@@ -1,12 +1,12 @@
 {
   "admin": "Әкімші",
-  "admin_panel": "Әкімші тақтасы",
+  "admin_panel": "Басқару тақтасы",
   "crm": "CRM тақтасы",
   "logout": "Шығу",
   "logout_success": "Сіз жүйеден сәтті шықтыңыз",
   "menu": {
     "analytics": "Analytics",
-    "audit_log": "Тексеру журналдары",
+    "audit_log": "Тексеру журналдарын",
     "bookings": "Жазбалар",
     "bot_settings": "Бот параметрлері",
     "calendar": "Күнтізбе",

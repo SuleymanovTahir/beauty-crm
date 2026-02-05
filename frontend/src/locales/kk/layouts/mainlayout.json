@@ -1,6 +1,6 @@
 {
   "admin": "Әкімші",
-  "admin_panel": "Әкімші тақтасы",
+  "admin_panel": "Басқару тақтасы",
   "all_notifications_cleared": "Барлық хабарландырулар жойылды",
   "calls": {
     "accept": "Қабылдау",
@@ -11,12 +11,12 @@
     "missed_call": "Қабылданбаған қоңырау",
     "video_call": ""
   },
-  "clear_all": "Барлығын өшіру",
+  "clear_all": "Барлығын өшіріңіз",
   "close": "Жабу",
-  "confirm_clear_all": "Барлық хабарландыруларды шынымен жойғыңыз келе ме?",
+  "confirm_clear_all": "Таңдалған барлық хабарландыруларды шынымен жойғыңыз келе ме?",
   "crm": "CRM тақтасы",
   "employee": "Қызметкер",
-  "error_clearing": "Хабарландыруларды жою кезіндегі қате",
+  "error_clearing": "Хабарландыруларды жою қатесі",
   "error_deleting_notification": "Хабарламаларды жою кезіндегі қате",
   "logout": "Шығу",
   "logout_success": "Сіз жүйеден сәтті шықтыңыз",
@@ -24,7 +24,7 @@
   "mark_as_read": "Оқу",
   "menu": {
     "analytics": "Analytics",
-    "audit_log": "Тексеру журналдары",
+    "audit_log": "Тексеру журналдарын",
     "bookings": "Жазбалар",
     "bot_settings": "Бот параметрлері",
     "broadcasts": "Жаңалықтар",
@@ -37,7 +37,7 @@
     "finance": "Қаржы",
     "funnel": "Шұңқыр",
     "integrations": "Интеграциялар",
-    "internal_chat": "Ішкі байланыс",
+    "internal_chat": "Домофон",
     "invoices": "Тіркелгілер",
     "management": "Каталог",
     "marketplace_integrations": "Базарлар",
@@ -45,7 +45,7 @@
     "my_bookings": "Менің жазбаларым",
     "notifications": "Хабарландырулар",
     "payment_integrations": "Төлем жүйелері",
-    "products": "Өнімдер",
+    "products": "Тауарлар",
     "public_content": "Жалпыға ортақ мазмұн",
     "service_requests": "Қызмет сұраулары",
     "services": "Қызметтер",
@@ -57,8 +57,8 @@
     "users": "Пайдаланушылар",
     "visitors": "Келушілер"
   },
-  "no_new_notifications": "Хабарландырулар жоқ",
-  "notification_deleted": "Хабарландырулар жойылды",
+  "no_new_notifications": "Ешбір хабарландыру жоқ",
+  "notification_deleted": "Хабарлама жойылды",
   "notifications": "Хабарландырулар",
   "roles": {
     "director": "Директор",

@@ -583,6 +583,16 @@ def init_database():
         add_column_if_not_exists('audit_log', 'user_role', 'TEXT')
         add_column_if_not_exists('audit_log', 'username', 'TEXT')
 
+        # Critical Actions (Actions that require director notification)
+        c.execute('''CREATE TABLE IF NOT EXISTS critical_actions (
+            id SERIAL PRIMARY KEY,
+            audit_log_id INTEGER REFERENCES audit_log(id) ON DELETE CASCADE,
+            notified BOOLEAN DEFAULT FALSE,
+            notification_sent_at TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_critical_actions_notified ON critical_actions (notified)")
+
         # Visitor Tracking
         c.execute('''CREATE TABLE IF NOT EXISTS visitor_tracking (
             id SERIAL PRIMARY KEY,

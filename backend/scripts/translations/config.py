@@ -11,7 +11,8 @@ SOURCE_LANGUAGE = "ru"  # Default source language
 TRANSLATION_CONFIG = {
     "users": {
         "id_field": "id",
-        "fields": ["full_name", "position", "bio"],
+        "key_field": "username",
+        "fields": ["full_name", "position", "bio", "specialization"],
         "where": "is_service_provider = TRUE AND is_active = TRUE"
     },
     "public_reviews": {
@@ -26,6 +27,7 @@ TRANSLATION_CONFIG = {
     },
     "services": {
         "id_field": "id",
+        "key_field": "service_key",
         "fields": ["name", "description"],
         "where": "is_active = TRUE"
     },

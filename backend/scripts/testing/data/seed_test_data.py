@@ -145,11 +145,11 @@ def seed_data():
     # 1. Masters & Users (Ensure they exist)
     required_users = [
         {'username': 'admin', 'full_name': 'Admin', 'role': 'director', 'is_service_provider': False, 'position': 'Owner'},
-        {'username': 'sabri', 'full_name': 'Mohamed Sabri', 'role': 'employee', 'is_service_provider': True, 'position': 'Senior Stylist'},
-        {'username': 'mestan', 'full_name': 'Amandurdyyeva Mestan', 'role': 'employee', 'is_service_provider': True, 'position': 'Senior Stylist'},
-        {'username': 'jennifer', 'full_name': 'Peradilla Jennifer', 'role': 'employee', 'is_service_provider': True, 'position': 'Nail Master'},
-        {'username': 'gulcehre', 'full_name': 'Kasymova Gulcehre', 'role': 'employee', 'is_service_provider': True, 'position': 'Stylist'},
-        {'username': 'lyazat', 'full_name': 'Kozhabay Lyazat', 'role': 'employee', 'is_service_provider': True, 'position': 'Stylist'},
+        {'username': 'sabri', 'full_name': 'Мохаммед Сабри', 'role': 'employee', 'is_service_provider': True, 'position': 'Топ-стилист'},
+        {'username': 'mestan', 'full_name': 'Amandurdyyeva Mestan', 'role': 'employee', 'is_service_provider': True, 'position': 'Стилист по волосам и Мастер по перманентному макияжу'},
+        {'username': 'jennifer', 'full_name': 'Перадилья Дженнифер', 'role': 'employee', 'is_service_provider': True, 'position': 'Мастер универсальной красоты'},
+        {'username': 'gulcehre', 'full_name': 'Касымова Гульчехре', 'role': 'employee', 'is_service_provider': True, 'position': 'Мастер маникюра и депиляции, ухода за лицом'},
+        {'username': 'lyazat', 'full_name': 'Kozhabay Lyazat', 'role': 'employee', 'is_service_provider': True, 'position': 'Мастер маникюра'},
         {'username': 'tursunay', 'full_name': 'Турсунай', 'role': 'director', 'is_service_provider': False, 'position': 'Owner'}
     ]
 
@@ -183,38 +183,56 @@ def seed_data():
         'tursunay': 'hZ&!Ci1P6K'
     }
 
+    # 1.8. User Sync logic improved to avoid duplicates
     for u in required_users:
-        c.execute("SELECT id, password_hash FROM users WHERE username = %s OR full_name = %s", (u['username'], u['full_name']))
-        existing_user = c.fetchone()
-
-        # Используем фиксированный пароль или из файла
-        raw_password = FIXED_PASSWORDS.get(u['username']) or existing_passwords.get(u['username'])
+        # Check by ID first (if we have a known ID map) or by specific unique criteria
+        # For this script we rely on username as the primary unique key for staff
+        c.execute("SELECT id, password_hash, full_name, username FROM users WHERE username = %s OR full_name = %s ORDER BY id ASC", (u['username'], u['full_name']))
+        matches = c.fetchall()
         
+        main_user = None
+        if matches:
+            # If multiple matches, find the best one (usually the one with the correct username)
+            for m in matches:
+                if m['username'] == u['username']:
+                    main_user = m
+                    break
+            if not main_user:
+                main_user = matches[0]
+            
+            # Deactivate other duplicates if they exist
+            if len(matches) > 1:
+                duplicate_ids = [m['id'] for m in matches if m['id'] != main_user['id']]
+                c.execute("UPDATE users SET is_active = FALSE, is_public_visible = FALSE WHERE id IN %s", (tuple(duplicate_ids),))
+                print(f"⚠️  Deactivated {len(duplicate_ids)} duplicates for {u['full_name']}")
+
+        # Map password
+        raw_password = FIXED_PASSWORDS.get(u['username']) or existing_passwords.get(u['username'])
         if not raw_password:
             # Только для совершенно новых пользователей, которых нет в списке выше
             chars = string.ascii_letters + string.digits + "!@#$%^&*"
             raw_password = ''.join(random.choice(chars) for _ in range(12))
-            print(f"🎲 Generated password for unknown user: {u['username']}")
             
         hashed_pwd = hash_password(raw_password)
 
-        if not existing_user:
+        if not main_user:
             c.execute("""
                 INSERT INTO users (username, full_name, email, role, password_hash, is_service_provider, is_active, email_verified, position)
                 VALUES (%s, %s, %s, %s, %s, %s, TRUE, TRUE, %s)
             """, (u['username'], u['full_name'], f"{u['username']}@example.com", u['role'], hashed_pwd, u['is_service_provider'], u['position']))
             print(f"➕ Created user: {u['full_name']} ({u['position']})")
         else:
-            # Всегда синхронизируем пароль и роль, если они отличаются
-            # Это гарантирует, что фиксированные пароли будут работать
             c.execute("""
                 UPDATE users SET 
+                    full_name = %s,
                     password_hash = %s,
                     role = %s,
-                    position = %s
+                    position = %s,
+                    is_active = TRUE,
+                    is_service_provider = %s
                 WHERE id = %s
-            """, (hashed_pwd, u['role'], u['position'], existing_user['id']))
-            print(f"🔄 Synced credentials for: {u['full_name']}")
+            """, (u['full_name'], hashed_pwd, u['role'], u['position'], u['is_service_provider'], main_user['id']))
+            print(f"🔄 Synced: {u['full_name']} (ID: {main_user['id']})")
 
     # Обновляем файл staff_credentials.txt актуальными данными
     with open(credentials_path, "w", encoding="utf-8") as cred_file:
@@ -235,6 +253,10 @@ def seed_data():
         master_ids[row['full_name']] = row['id']
     
     # 2. Add Services
+    # c.execute("DELETE FROM user_services") # No, don't delete everything blindly if we want to be safe
+    # Better: just sync
+    
+    # Check if we should delete all services first (standard for this script)
     c.execute("DELETE FROM user_services")
     c.execute("DELETE FROM services")
     
@@ -255,10 +277,10 @@ def seed_data():
 
     # 3. Master Mapping
     service_map = {
-        'Mohamed Sabri': hair_keys,
+        'Мохаммед Сабри': hair_keys,
         'Amandurdyyeva Mestan': hair_keys + lash_keys + pmu_keys,
-        'Peradilla Jennifer': wax_keys + mani_keys + pedi_keys + spa_keys,
-        'Kasymova Gulcehre': mani_keys + pedi_keys + wax_keys + spa_keys,
+        'Перадилья Дженнифер': wax_keys + mani_keys + pedi_keys + spa_keys,
+        'Касымова Гульчехре': mani_keys + pedi_keys + wax_keys + spa_keys,
         'Kozhabay Lyazat': mani_keys + pedi_keys,
         'Турсунай': [] # Director
     }

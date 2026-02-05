@@ -31,10 +31,10 @@
   "stats": {
     "active_challenges": "TAREAS ACTIVAS",
     "completed_today": "COMPLETADAS HOY",
-    "total_participants": "TOTAL PARTICIPANTES"
+    "total_participants": "TOTAL DE PARTICIPANTES"
   },
   "status": {
-    "active": "ACTIVOS",
+    "active": "ACTIVAS",
     "inactive": "PAUSA"
   },
   "subtitle": "Aumenta la fidelidad de los clientes con mecánicas de juego y recompensas automáticas.",

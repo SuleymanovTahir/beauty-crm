@@ -147,28 +147,26 @@ def get_dynamic_translation(table: str, item_id: int, field: str, language: str,
     if not matches:
         return default_value
 
-    # Эвристика выбора: приоритет ключам с хешем (длинным) или содержащим '_ru.'
+    # Priority 1: Exact match with shortest key (no hash/suffix)
+    # Sort matches by key length to find the cleanest one
+    matches.sort(key=lambda x: len(x[0]))
+    
+    # Priority 2: If we have an exact match with the prefix, use it
     for key, value in matches:
-        if "." in key and len(key.split('.')[-1]) > 5:
+        if key == prefix:
             return value
+            
+    # Priority 3: Keys containing '_ru.' (legacy support)
+    for key, value in matches:
         if "_ru." in key:
             return value
 
-    # Если спец-ключей нет, возвращаем первое попавшееся (обычно точное совпадение)
+    # Priority 4: Keys with hash suffixes (backwards compatibility)
+    for key, value in matches:
+        if "." in key and len(key.split('.')[-1]) > 5:
+            return value
+
     return matches[0][1]
-
-    # Fallback: Dictionary check for EN if result contains Cyrillic
-    if language == 'en' and _has_cyrillic(result):
-        try:
-            from utils.beauty_translator import RU_TO_EN_TERMS
-            val_lower = result.lower().strip()
-            if val_lower in RU_TO_EN_TERMS:
-                tr = RU_TO_EN_TERMS[val_lower]
-                return tr[0].upper() + tr[1:]
-        except ImportError:
-            pass
-
-    return result
 
 def _has_cyrillic(text: str) -> bool:
     """Проверка на наличие кириллицы"""

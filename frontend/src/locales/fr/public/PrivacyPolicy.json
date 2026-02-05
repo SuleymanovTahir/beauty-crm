@@ -1,6 +1,6 @@
 {
   "back": "Retour",
-  "contact_content": "Téléphone : {{телефон}}\nE-mail : {{email}}",
+  "contact_content": "Téléphone : {{телефон}}\nEmail : {{email}}",
   "contact_title": "Contactez-nous à propos de la confidentialité",
   "data_booking_info": "Informations de courrier",
   "data_email": "Adresse e-mail",
