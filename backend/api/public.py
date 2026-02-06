@@ -739,9 +739,9 @@ def notify_admin_new_booking(data: BookingCreate, booking_id: int, services_str:
     
     if admin_email:
         try:
-             send_email_sync([admin_email], subject, message)
-        except: pass
-             
+            send_email_sync([admin_email], subject, message)
+        except Exception as e:
+            log_error(f"Booking notification email failed: {e}", "public")
     try:
         tg_msg = (
             f"📅 <b>NEW BOOKING REQUEST</b>\n"
@@ -757,7 +757,8 @@ def notify_admin_new_booking(data: BookingCreate, booking_id: int, services_str:
         asyncio.set_event_loop(loop)
         loop.run_until_complete(send_telegram_alert(tg_msg))
         loop.close()
-    except: pass
+    except Exception as e:
+        log_error(f"Booking Telegram alert failed: {e}", "public")
 
 def process_contact_notifications(form: ContactForm):
     """Обработка уведомлений о сообщении"""
@@ -773,12 +774,13 @@ def process_contact_notifications(form: ContactForm):
         msg = f"Имя: {form.name}\nEmail: {form.email}\nСообщение:\n{form.message}"
         try:
             send_email_sync([admin_email], subject, msg)
-        except: pass
-    
+        except Exception as e:
+            log_error(f"Contact form notification email failed: {e}", "public")
     try:
         tg_msg = f"📩 <b>New Message</b>\n\n<b>From:</b> {form.name}\n<b>Email:</b> {form.email}\n\n<b>Message:</b>\n{form.message}"
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         loop.run_until_complete(send_telegram_alert(tg_msg))
         loop.close()
-    except: pass
+    except Exception as e:
+        log_error(f"Contact form Telegram alert failed: {e}", "public")

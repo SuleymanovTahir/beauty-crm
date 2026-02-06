@@ -13,7 +13,7 @@ import LanguageSwitcher from "../../components/LanguageSwitcher";
 import GoogleLoginButton from "../../components/GoogleLoginButton";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 
-// hCaptcha сайт-ключ (тестовый - для production замените на реальный с hcaptcha.com)
+// hCaptcha Site Key: задайте VITE_HCAPTCHA_SITE_KEY в .env. Без ключа — тестовый. Инструкция: docs/HCAPTCHA_KEYS.md
 const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY || "10000000-ffff-ffff-ffff-000000000001";
 
 // Типы ошибок для каждого поля

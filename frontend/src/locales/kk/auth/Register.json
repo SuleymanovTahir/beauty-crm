@@ -12,6 +12,8 @@
   "email_placeholder": "email@example.com",
   "email_verified": "Расталды! Әкімшінің мақұлдауын күтіңіз.",
   "error_accept_privacy": "You must accept the terms",
+  "error_captcha_failed": "Растау қатесі. Әрекетті қайталаңыз",
+  "error_captcha_required": "Қауіпсіздік тексерісін аяқтаңыз",
   "error_fill_all_fields": "All fields are required",
   "error_invalid_code": "Жарамсыз растау коды",
   "error_invalid_email": "Дұрыс электрондық поштаны енгізіңіз",

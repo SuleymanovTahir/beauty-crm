@@ -12,6 +12,8 @@
   "email_placeholder": "Ваш email",
   "email_verified": "Email подтвержден! Ожидайте одобрения администратора.",
   "error_accept_privacy": "Необходимо принять политику конфиденциальности",
+  "error_captcha_failed": "Ошибка проверки. Попробуйте еще раз",
+  "error_captcha_required": "Пожалуйста, пройдите проверку безопасности",
   "error_fill_all_fields": "Заполните все обязательные поля",
   "error_invalid_code": "Неверный код подтверждения",
   "error_invalid_email": "Введите корректный email",
