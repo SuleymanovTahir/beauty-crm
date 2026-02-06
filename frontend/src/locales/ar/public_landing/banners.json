@@ -1,10 +1,10 @@
 {
   "items": [
     {
-      "image": "/landing-images/banners/banner2.webp",
-      "link": "",
+      "title": "صالون تجميل في دبي",
       "subtitle": "فن التحول",
-      "title": "صالون تجميل في دبي"
+      "image": "/landing-images/banners/banner2.webp",
+      "link": ""
     }
   ]
 }

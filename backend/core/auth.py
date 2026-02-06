@@ -8,15 +8,12 @@ from typing import Optional
 from pydantic import BaseModel
 import psycopg2
 
-from db import (
-    verify_user, create_session, delete_session,
-)
 from core.config import DATABASE_NAME, PUBLIC_URL
 from db.connection import get_db_connection
+from db.users import verify_user, create_session, delete_session
 from utils.logger import log_info, log_error, log_warning
 from utils.utils import require_auth, validate_password
 import httpx
-from db.users import verify_user, create_session, delete_session
 import os
 
 router = APIRouter(tags=["Auth"])

@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Лякты өзгерту (Pedi)",
+      "name": "Польша өзгерісі (Pedi)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -334,7 +334,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Жарты қол",
+      "name": "Жартылай қолдар",
       "price": 50.0
     },
     "half_legs": {
@@ -644,7 +644,7 @@
       "duration": "60",
       "max_price": 400.0,
       "min_price": 300.0,
-      "name": "Пиллинг",
+      "name": "пилинг",
       "price": 350.0
     },
     "permanent_brows": {

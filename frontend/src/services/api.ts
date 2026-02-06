@@ -47,21 +47,21 @@ export class ApiClient {
       clearTimeout(timeoutId)
       const durationFormatted = duration.toFixed(2) + 'ms'
 
-      // Track longest request
-      if (duration > ApiClient.longestRequest.duration) {
+      // Track longest request (dev only)
+      if (import.meta.env.DEV && duration > ApiClient.longestRequest.duration) {
         ApiClient.longestRequest = { url: endpoint, duration: duration }
-        console.log(`🐢 NEW RECORD: Slowest request so far is ${endpoint} (${durationFormatted})`)
       }
-
-      // Log only non-auth requests to be less verbose
+      // Log: in dev every request; in prod only slow (>1s) and non-login
       if (endpoint !== '/api/login') {
-        if (duration > 1000) {
-          console.warn(`⚠️ SLOW REQUEST: ${endpoint} took ${durationFormatted}`, {
-            url: url,
-            duration: duration
-          })
-        } else {
-          console.log(`⏱️ API Request: ${endpoint} took ${durationFormatted}`)
+        const isSlow = duration > 1000
+        if (import.meta.env.DEV) {
+          if (isSlow) {
+            console.warn(`⚠️ SLOW: ${endpoint} (${durationFormatted})`)
+          } else {
+            console.log(`⏱️ ${endpoint} (${durationFormatted})`)
+          }
+        } else if (isSlow) {
+          console.warn(`⚠️ SLOW REQUEST: ${endpoint} took ${durationFormatted}`)
         }
       }
 

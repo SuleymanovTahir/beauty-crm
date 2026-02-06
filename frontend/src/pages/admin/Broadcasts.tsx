@@ -1,6 +1,7 @@
 // /frontend/src/pages/admin/Broadcasts.tsx
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield, Bell, Settings, Plus, Trash2, Edit, X, UserCheck, UserX, Newspaper } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -48,6 +49,14 @@ interface PreviewData {
 export default function Broadcasts() {
   const { t, i18n } = useTranslation(['admin/broadcasts', 'common']);
   const { user: currentUser } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Получаем активную вкладку из URL или используем 'compose' по умолчанию
+  const activeTab = searchParams.get('tab') || 'compose';
+
+  const handleTabChange = (value: string) => {
+    setSearchParams({ tab: value });
+  };
 
   // Используем централизованную систему прав
   const userPermissions = usePermissions(currentUser?.role || 'employee');
@@ -97,6 +106,13 @@ export default function Broadcasts() {
       console.error('Error loading broadcasts data:', error);
     });
   }, []);
+
+  // Загружаем подписчиков при переходе на вкладку
+  useEffect(() => {
+    if (activeTab === 'subscribers' && subscribers.length === 0) {
+      loadSubscribers();
+    }
+  }, [activeTab]);
 
   const loadRoles = async () => {
     try {
@@ -353,7 +369,7 @@ export default function Broadcasts() {
         <p className="text-gray-600">{t('subtitle')}</p>
       </div>
 
-      <Tabs defaultValue="compose" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
         <TabsList>
           <TabsTrigger value="compose" className="flex items-center gap-2">
             <Send className="w-4 h-4" />
@@ -365,7 +381,7 @@ export default function Broadcasts() {
           </TabsTrigger>
           <TabsTrigger value="subscribers" className="flex items-center gap-2" onClick={() => loadSubscribers()}>
             <Newspaper className="w-4 h-4" />
-            {t('subscribers', 'Подписчики')}
+            {t('subscribers')}
           </TabsTrigger>
         </TabsList>
 

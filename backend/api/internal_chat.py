@@ -730,7 +730,7 @@ async def stop_recording(
             folder_row = c.fetchone()
             if folder_row:
                 folder_id = folder_row[0]
-        except:
+        except Exception:
             pass
 
         # Генерируем автоматическое название
