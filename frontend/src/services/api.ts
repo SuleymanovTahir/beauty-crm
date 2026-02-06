@@ -187,7 +187,7 @@ export class ApiClient {
     })
   }
 
-  async registerClient(username: string, password: string, full_name: string, email: string, phone: string, privacy_accepted: boolean) {
+  async registerClient(username: string, password: string, full_name: string, email: string, phone: string, privacy_accepted: boolean, captcha_token?: string) {
     const formData = new URLSearchParams()
     formData.append('username', username)
     formData.append('password', password)
@@ -195,6 +195,9 @@ export class ApiClient {
     formData.append('email', email)
     formData.append('phone', phone)
     formData.append('privacy_accepted', privacy_accepted.toString())
+    if (captcha_token) {
+      formData.append('captcha_token', captcha_token)
+    }
 
     return this.request<any>('/api/register/client', {
       method: 'POST',
@@ -205,7 +208,7 @@ export class ApiClient {
     })
   }
 
-  async registerEmployee(username: string, password: string, full_name: string, email: string, phone: string, role: string, position: string, privacy_accepted: boolean) {
+  async registerEmployee(username: string, password: string, full_name: string, email: string, phone: string, role: string, privacy_accepted: boolean, newsletter_subscribed: boolean = true, captcha_token?: string) {
     const formData = new URLSearchParams()
     formData.append('username', username)
     formData.append('password', password)
@@ -213,8 +216,11 @@ export class ApiClient {
     formData.append('email', email)
     formData.append('phone', phone)
     formData.append('role', role)
-    formData.append('position', position)
     formData.append('privacy_accepted', privacy_accepted.toString())
+    formData.append('newsletter_subscribed', newsletter_subscribed.toString())
+    if (captcha_token) {
+      formData.append('captcha_token', captcha_token)
+    }
 
     return this.request<any>('/api/register/employee', {
       method: 'POST',
@@ -2274,6 +2280,41 @@ export class ApiClient {
     return this.request<any>(`/api/ringtones/${id}/trim`, {
       method: 'POST',
       body: JSON.stringify({ start_time: startTime, end_time: endTime })
+    })
+  }
+
+  // ===== NEWSLETTER SUBSCRIBERS =====
+  async getNewsletterSubscribers(includeInactive: boolean = false) {
+    return this.request<{
+      subscribers: Array<{
+        id: number;
+        email: string;
+        is_active: boolean;
+        created_at: string;
+      }>;
+      total: number;
+      active: number;
+    }>(`/api/newsletter/subscribers?include_inactive=${includeInactive}`)
+  }
+
+  async updateNewsletterSubscriber(subscriberId: number, isActive: boolean) {
+    return this.request(`/api/newsletter/subscribers/${subscriberId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ is_active: isActive }),
+    })
+  }
+
+  async deleteNewsletterSubscriber(subscriberId: number) {
+    return this.request(`/api/newsletter/subscribers/${subscriberId}`, {
+      method: 'DELETE',
+    })
+  }
+
+  // ===== PENDING REGISTRATIONS EDIT =====
+  async updatePendingUser(userId: number, data: { full_name?: string; email?: string; role?: string; phone?: string }) {
+    return this.request(`/api/admin/registrations/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
     })
   }
 }

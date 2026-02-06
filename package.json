@@ -13,5 +13,8 @@
     "build:web": "npm run build -w frontend",
     "build:shared": "npm run build -w shared",
     "install:all": "npm install"
+  },
+  "dependencies": {
+    "@hcaptcha/react-hcaptcha": "^2.0.2"
   }
 }

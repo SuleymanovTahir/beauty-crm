@@ -8,6 +8,26 @@ from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from utils.audit import get_pending_critical_actions, mark_critical_as_notified
 
+
+def _get_salon_info():
+    """Получить информацию о салоне (название и логотип)"""
+    try:
+        from db.settings import get_salon_settings
+        from core.config import PUBLIC_URL
+        salon_settings = get_salon_settings()
+        salon_name = salon_settings.get('name', 'Beauty CRM')
+        logo_url = salon_settings.get('logo_url', '/static/uploads/images/salon/logo.webp')
+        base_url = salon_settings.get('base_url', PUBLIC_URL)
+
+        # Формируем полный URL логотипа
+        if not logo_url.startswith('http'):
+            logo_url = f"{base_url.rstrip('/')}{logo_url}"
+
+        return salon_name, logo_url
+    except Exception as e:
+        log_error(f"Could not get salon info: {e}", "notifications")
+        return "Beauty CRM", ""
+
 async def send_critical_action_notification(action_data: Dict[str, Any]):
     """
     Отправить email уведомление о критичном действии
@@ -67,14 +87,18 @@ async def send_critical_action_notification(action_data: Dict[str, Any]):
         entity_name = entity_names.get(entity_type, entity_type)
         
         subject = f"{emoji} Критичное действие: {action_name} {entity_name}"
-        
+
+        # Получаем информацию о салоне
+        salon_name, logo_url = _get_salon_info()
+        logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 50px; max-width: 150px; margin-bottom: 10px;" /><br/>' if logo_url else ""
+
         body = f"""
 <html>
 <head>
     <style>
         body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
         .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-        .header {{ background: #dc2626; color: white; padding: 20px; border-radius: 8px 8px 0 0; }}
+        .header {{ background: #dc2626; color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }}
         .content {{ background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }}
         .info-row {{ margin: 10px 0; padding: 10px; background: white; border-radius: 4px; }}
         .label {{ font-weight: bold; color: #374151; }}
@@ -85,6 +109,7 @@ async def send_critical_action_notification(action_data: Dict[str, Any]):
 <body>
     <div class="container">
         <div class="header">
+            {logo_html}
             <h2>{emoji} Критичное действие в системе</h2>
         </div>
         <div class="content">
@@ -132,10 +157,10 @@ async def send_critical_action_notification(action_data: Dict[str, Any]):
             </div>
 """
         
-        body += """
+        body += f"""
         </div>
         <div class="footer">
-            <p>Это автоматическое уведомление из Beauty CRM.</p>
+            <p>Это автоматическое уведомление из {salon_name}.</p>
             <p>Если вы не ожидали этого действия, немедленно проверьте систему.</p>
         </div>
     </div>

@@ -1,5 +1,5 @@
 // /frontend/src/pages/auth/Register.tsx
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Lock, User, Mail, UserPlus, Loader, CheckCircle, ShieldCheck } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -11,6 +11,34 @@ import { api } from "../../services/api";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
 import GoogleLoginButton from "../../components/GoogleLoginButton";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
+
+// hCaptcha сайт-ключ (тестовый - для production замените на реальный с hcaptcha.com)
+const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY || "10000000-ffff-ffff-ffff-000000000001";
+
+// Типы ошибок для каждого поля
+interface FieldErrors {
+  full_name?: string[];
+  username?: string[];
+  email?: string[];
+  phone?: string[];
+  password?: string[];
+  confirmPassword?: string[];
+  terms?: string[];
+  general?: string[];
+}
+
+// Компонент для отображения ошибок под полем
+function FieldError({ errors }: { errors?: string[] }) {
+  if (!errors || errors.length === 0) return null;
+  return (
+    <div className="mt-1 space-y-0.5">
+      {errors.map((error, index) => (
+        <p key={index} className="text-xs text-red-600">{error}</p>
+      ))}
+    </div>
+  );
+}
 
 export default function Register() {
   const navigate = useNavigate();
@@ -23,26 +51,23 @@ export default function Register() {
     email: "",
     phone: "",
     role: "employee",
-    position: "",
   });
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(true);
   const [verificationCode, setVerificationCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [step, setStep] = useState<"register" | "verify" | "success">("register");
-  const [positions, setPositions] = useState<any[]>([]);
   const [salonSettings, setSalonSettings] = useState<any>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptcha>(null);
 
-  // Load positions and salon settings
+  // Load salon settings
   React.useEffect(() => {
     const loadData = async () => {
       try {
-        const [posRes, salonRes] = await Promise.all([
-          api.getPositions(),
-          api.getSalonSettings()
-        ]);
-        if (posRes.positions) setPositions(posRes.positions);
+        const salonRes = await api.getSalonSettings();
         setSalonSettings(salonRes);
       } catch (err) {
         console.error("Error loading register data:", err);
@@ -51,37 +76,152 @@ export default function Register() {
     loadData();
   }, []);
 
+  // Валидация пароля (те же правила что и на публичной странице)
+  const validatePassword = (password: string): string[] => {
+    const errors: string[] = [];
+    if (password.length < 8) {
+      errors.push(t('common:auth_errors.password_too_short', 'Пароль слишком короткий (минимум 8 символов)'));
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push(t('common:auth_errors.password_no_upper', 'Нужна заглавная буква (A-Z)'));
+    }
+    if (!/[a-z]/.test(password)) {
+      errors.push(t('common:auth_errors.password_no_lower', 'Нужна строчная буква (a-z)'));
+    }
+    if (!/\d/.test(password)) {
+      errors.push(t('common:auth_errors.password_no_digit', 'Нужна цифра (0-9)'));
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      errors.push(t('common:auth_errors.password_no_special', 'Нужен спецсимвол (!@#$%)'));
+    }
+    return errors;
+  };
+
+  // Валидация телефона
+  const validatePhone = (phone: string): boolean => {
+    const digitsOnly = phone.replace(/\D/g, '');
+    return digitsOnly.length >= 10 && digitsOnly.length <= 15;
+  };
+
+  // Обработка ошибок с сервера и распределение по полям
+  const handleServerErrors = (errorMessage: string) => {
+    const errors: FieldErrors = {};
+    const errorCodes = errorMessage.split(',').map(e => e.trim());
+
+    const fieldMapping: Record<string, keyof FieldErrors> = {
+      'error_username_exists': 'username',
+      'error_email_exists': 'email',
+      'error_phone_exists': 'phone',
+      'error_login_invalid_chars': 'username',
+      'error_login_too_short': 'username',
+      'error_name_too_short': 'full_name',
+      'error_invalid_email': 'email',
+    };
+
+    const translatedErrors: string[] = [];
+
+    errorCodes.forEach(code => {
+      const field = fieldMapping[code];
+      const translated = t(`common:auth_errors.${code}`, code);
+
+      if (field) {
+        if (!errors[field]) errors[field] = [];
+        errors[field]!.push(translated);
+      } else {
+        // Если поле не определено, добавляем в общие ошибки
+        translatedErrors.push(translated);
+      }
+    });
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+    }
+
+    if (translatedErrors.length > 0) {
+      const message = translatedErrors.join(', ');
+      setError(message);
+      toast.error(message);
+    } else if (Object.keys(errors).length > 0) {
+      // Показываем первую ошибку в toast
+      const firstError = Object.values(errors).flat()[0];
+      toast.error(firstError || t('error_registration'));
+    }
+  };
+
+  // Полная валидация формы
+  const validateForm = (): FieldErrors => {
+    const errors: FieldErrors = {};
+    const requiredFieldError = t('common:field_required', 'Обязательное поле');
+
+    // Имя
+    if (!formData.full_name || !formData.full_name.trim()) {
+      errors.full_name = [requiredFieldError];
+    } else if (formData.full_name.trim().length < 2) {
+      errors.full_name = [t('common:auth_errors.error_name_too_short', 'Имя слишком короткое (минимум 2 символа)')];
+    }
+
+    // Логин - только латинские буквы, цифры, точки, подчеркивания
+    if (!formData.username || !formData.username.trim()) {
+      errors.username = [requiredFieldError];
+    } else if (!/^[a-zA-Z0-9._]+$/.test(formData.username)) {
+      errors.username = [t('common:auth_errors.error_login_invalid_chars', 'Логин может содержать только латинские буквы (a-z), цифры, точки и подчёркивания')];
+    } else if (formData.username.trim().length < 3) {
+      errors.username = [t('common:auth_errors.error_login_too_short', 'Логин слишком короткий (минимум 3 символа)')];
+    }
+
+    // Email
+    if (!formData.email || !formData.email.trim()) {
+      errors.email = [requiredFieldError];
+    } else if (!formData.email.includes('@')) {
+      errors.email = [t('common:auth_errors.error_invalid_email', 'Неверный формат email')];
+    }
+
+    // Телефон
+    if (!formData.phone || !formData.phone.trim()) {
+      errors.phone = [requiredFieldError];
+    } else if (!validatePhone(formData.phone)) {
+      errors.phone = [t('common:auth_errors.error_invalid_phone', 'Неверный формат телефона')];
+    }
+
+    // Пароль
+    if (!formData.password) {
+      errors.password = [requiredFieldError];
+    } else {
+      const passwordErrors = validatePassword(formData.password);
+      if (passwordErrors.length > 0) {
+        errors.password = passwordErrors;
+      }
+    }
+
+    // Подтверждение пароля
+    if (!formData.confirmPassword) {
+      errors.confirmPassword = [requiredFieldError];
+    } else if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = [t('error_passwords_dont_match', 'Пароли не совпадают')];
+    }
+
+    // Согласие с условиями
+    if (!privacyAccepted) {
+      errors.terms = [t('error_accept_privacy', 'Необходимо принять условия')];
+    }
+
+    // Проверка капчи
+    if (!captchaToken) {
+      errors.general = [...(errors.general || []), t('error_captcha_required', 'Пожалуйста, пройдите проверку безопасности')];
+    }
+
+    return errors;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFieldErrors({});
+    setError("");
 
-    // Валидация
-    if (!formData.username || !formData.password || !formData.full_name || !formData.email || !formData.phone) {
-      setError(t('error_fill_all_fields'));
-      return;
-    }
-
-    if (formData.username.length < 3) {
-      setError(t('error_username_too_short', { count: 3 }));
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError(t('error_password_too_short', { count: 6 }));
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError(t('error_passwords_dont_match'));
-      return;
-    }
-
-    if (!formData.email.includes("@")) {
-      setError(t('error_invalid_email'));
-      return;
-    }
-
-    if (!privacyAccepted) {
-      setError(t('error_accept_privacy'));
+    // Валидация на фронтенде
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
       return;
     }
 
@@ -96,8 +236,9 @@ export default function Register() {
         formData.email,
         formData.phone,
         formData.role,
-        formData.position,
-        privacyAccepted
+        privacyAccepted,
+        newsletterSubscribed,
+        captchaToken || undefined
       );
 
 
@@ -120,26 +261,19 @@ export default function Register() {
           toast.success(t('code_sent_to_email'));
         }
       } else {
-        const messageKey = response.error;
-        const translatedError = t(`common:auth_errors.${messageKey}`);
-        const finalMessage = translatedError && translatedError !== `common:auth_errors.${messageKey}`
-          ? translatedError
-          : (typeof response.error === 'string' ? response.error : t('error_registration'));
-
-        setError(finalMessage);
-        toast.error(finalMessage);
+        // Парсим ошибки с сервера и распределяем по полям
+        handleServerErrors(response.error);
+        // Сбрасываем капчу при ошибке
+        captchaRef.current?.resetCaptcha();
+        setCaptchaToken(null);
       }
     } catch (err: any) {
       console.error("Registration error:", err);
-      const messageKey = err.error || (err instanceof Error ? err.message : 'error_registration');
-
-      const translatedError = t(`common:auth_errors.${messageKey}`);
-      const finalMessage = translatedError && translatedError !== `common:auth_errors.${messageKey}`
-        ? translatedError
-        : (typeof err.error === 'string' ? err.error : messageKey);
-
-      setError(finalMessage);
-      toast.error(finalMessage);
+      const errorMessage = err.error || (err instanceof Error ? err.message : 'error_registration');
+      handleServerErrors(errorMessage);
+      // Сбрасываем капчу при ошибке
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -236,7 +370,7 @@ export default function Register() {
 
             <form onSubmit={handleVerify} className="space-y-6">
               <div>
-                <Label htmlFor="code">{t('verification_code')}</Label>
+                <Label htmlFor="code" className="mb-2 block">{t('verification_code')}</Label>
                 <Input
                   id="code"
                   required
@@ -379,82 +513,86 @@ export default function Register() {
             </div>
           </div>
 
+          {/* Общие ошибки */}
+          <FieldError errors={fieldErrors.general} />
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="full_name">{t('full_name')} *</Label>
+              <Label htmlFor="full_name" className="mb-2 block">{t('full_name')} *</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   id="full_name"
-                  required
                   disabled={loading}
                   value={formData.full_name}
                   onChange={(e) =>
                     setFormData({ ...formData, full_name: e.target.value })
                   }
                   placeholder={t('full_name_placeholder')}
-                  className="pl-10 pr-3"
+                  className={`pl-10 pr-3 ${fieldErrors.full_name ? 'border-red-500' : ''}`}
                 />
               </div>
+              <FieldError errors={fieldErrors.full_name} />
             </div>
 
             <div>
-              <Label htmlFor="username">{t('username')} *</Label>
+              <Label htmlFor="username" className="mb-2 block">{t('username')} *</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   id="username"
-                  required
                   disabled={loading}
                   value={formData.username}
                   onChange={(e) =>
                     setFormData({ ...formData, username: e.target.value })
                   }
                   placeholder={t('username_placeholder')}
-                  className="pl-10 pr-3"
+                  className={`pl-10 pr-3 ${fieldErrors.username ? 'border-red-500' : ''}`}
                 />
               </div>
+              <FieldError errors={fieldErrors.username} />
             </div>
 
             <div>
-              <Label htmlFor="email">{t('email')} *</Label>
+              <Label htmlFor="email" className="mb-2 block">{t('email')} *</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   id="email"
                   type="email"
-                  required
                   disabled={loading}
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
                   placeholder={t('email_placeholder')}
-                  className="pl-10 pr-3"
+                  className={`pl-10 pr-3 ${fieldErrors.email ? 'border-red-500' : ''}`}
                 />
               </div>
+              <FieldError errors={fieldErrors.email} />
               <p className="text-sm text-gray-500 mt-3">
                 {t('email_hint')}
               </p>
             </div>
 
             <div>
-              <Label htmlFor="phone">{t('phone', 'Phone Number')} *</Label>
+              <Label htmlFor="phone" className="mb-2 block">{t('phone', 'Phone Number')} *</Label>
               <Input
                 id="phone"
                 type="tel"
-                required
                 disabled={loading}
                 value={formData.phone}
                 onChange={(e) =>
                   setFormData({ ...formData, phone: e.target.value })
                 }
                 placeholder="+971 50 123 4567"
+                className={fieldErrors.phone ? 'border-red-500' : ''}
               />
+              <FieldError errors={fieldErrors.phone} />
             </div>
 
             <div>
-              <Label htmlFor="role">{t('role_label')}</Label>
+              <Label htmlFor="role" className="mb-2 block">{t('role_label')}</Label>
               <select
                 id="role"
                 required
@@ -478,87 +616,71 @@ export default function Register() {
             </div>
 
             <div>
-              <Label htmlFor="position">{t('position_label')}</Label>
-              <select
-                id="position"
-                required
-                disabled={loading}
-                value={formData.position}
-                onChange={(e) =>
-                  setFormData({ ...formData, position: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-              >
-                <option value="">{t('position_placeholder')}</option>
-                {positions.map((pos) => (
-                  <option key={pos.id} value={pos.name}>
-                    {pos.name}
-                  </option>
-                ))}
-              </select>
-              <p className="text-sm text-gray-500 mt-3">
-                {t('position_hint')}
-              </p>
-            </div>
-
-            <div>
-              <Label htmlFor="password">{t('password')} *</Label>
+              <Label htmlFor="password" className="mb-2 block">{t('password')} *</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   id="password"
                   type="password"
-                  required
                   disabled={loading}
                   value={formData.password}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
                   placeholder={t('password_placeholder')}
-                  className="pl-10 pr-3"
+                  className={`pl-10 pr-3 ${fieldErrors.password ? 'border-red-500' : ''}`}
                 />
               </div>
+              {!fieldErrors.password && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {t('password_hint_requirements', 'Минимум 8 символов: A-Z, a-z, 0-9 и спецсимвол (!@#$%)')}
+                </p>
+              )}
+              <FieldError errors={fieldErrors.password} />
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword">{t('confirm_password')} *</Label>
+              <Label htmlFor="confirmPassword" className="mb-2 block">{t('confirm_password')} *</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   id="confirmPassword"
                   type="password"
-                  required
                   disabled={loading}
                   value={formData.confirmPassword}
                   onChange={(e) =>
                     setFormData({ ...formData, confirmPassword: e.target.value })
                   }
                   placeholder={t('confirm_password_placeholder')}
-                  className="pl-10 pr-3"
+                  className={`pl-10 pr-3 ${fieldErrors.confirmPassword ? 'border-red-500' : ''}`}
                 />
               </div>
+              <FieldError errors={fieldErrors.confirmPassword} />
             </div>
 
             {/* Privacy and Newsletter Checkboxes */}
             <div className="space-y-4 border-t border-gray-200 pt-4">
-              <div className="flex items-start space-x-3">
-                <Checkbox
-                  id="privacy"
-                  checked={privacyAccepted}
-                  onCheckedChange={(checked) => setPrivacyAccepted(checked as boolean)}
-                  className="mt-1"
-                />
-                <label htmlFor="privacy" className="text-sm text-gray-700 cursor-pointer">
-                  {t('i_accept')}{' '}
-                  <Link to="/privacy-policy" className="text-pink-600 hover:underline" target="_blank">
-                    {t('privacy_policy')}
-                  </Link>{' '}
-                  {t('and')}{' '}
-                  <Link to="/terms" className="text-pink-600 hover:underline" target="_blank">
-                    {t('terms_of_service')}
-                  </Link>
-                  {' *'}
-                </label>
+              <div>
+                <div className="flex items-start space-x-3">
+                  <Checkbox
+                    id="privacy"
+                    checked={privacyAccepted}
+                    onCheckedChange={(checked) => setPrivacyAccepted(checked as boolean)}
+                    className="mt-1"
+                  />
+                  <label htmlFor="privacy" className="text-sm text-gray-700 cursor-pointer">
+                    {t('i_accept')}{' '}
+                    <Link to="/privacy-policy" className="text-pink-600 hover:underline" target="_blank">
+                      {t('privacy_policy')}
+                    </Link>{' '}
+                    {t('and')}{' '}
+                    <Link to="/terms" className="text-pink-600 hover:underline" target="_blank">
+                      {t('terms_of_service')}
+                    </Link>
+                    {' *'}
+                  </label>
+                </div>
+                <FieldError errors={fieldErrors.terms} />
               </div>
 
               <div className="flex items-start space-x-3">
@@ -572,6 +694,20 @@ export default function Register() {
                   {t('subscribe_to_newsletter')}
                 </label>
               </div>
+            </div>
+
+            {/* hCaptcha */}
+            <div className="flex justify-center">
+              <HCaptcha
+                ref={captchaRef}
+                sitekey={HCAPTCHA_SITE_KEY}
+                onVerify={(token) => setCaptchaToken(token)}
+                onExpire={() => setCaptchaToken(null)}
+                onError={() => {
+                  setCaptchaToken(null);
+                  toast.error(t('error_captcha_failed', 'Ошибка проверки. Попробуйте еще раз'));
+                }}
+              />
             </div>
 
             <Button
