@@ -1,5 +1,5 @@
 //new/pages/LoginPage.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { User, Lock, Mail, AlertCircle, Eye, EyeOff, Phone } from 'lucide-react';
@@ -13,7 +13,11 @@ import { DEFAULT_VALUES } from '../utils/constants';
 import logo from '../styles/img/logo.png';
 import PublicLanguageSwitcher from '../../src/components/PublicLanguageSwitcher';
 import { validatePhone } from '../utils/validation';
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import '../styles/css/index.css';
+
+// hCaptcha сайт-ключ (тестовый - для production замените на реальный с hcaptcha.com)
+const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY || "10000000-ffff-ffff-ffff-000000000001";
 
 interface LoginPageProps {
   initialView?: 'login' | 'register';
@@ -77,6 +81,10 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
     phone: '',
     agreedToTerms: false
   });
+
+  // Captcha state
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptcha>(null);
 
   // Валидация пароля на фронтенде
   const validatePassword = (password: string): string[] => {
@@ -159,6 +167,11 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
       errors.terms = [t('auth/register:error_accept_privacy', 'Необходимо принять условия')];
     }
 
+    // Проверка капчи
+    if (!captchaToken) {
+      errors.general = [...(errors.general || []), t('auth/register:error_captcha_required', 'Пожалуйста, пройдите проверку безопасности')];
+    }
+
     return errors;
   };
 
@@ -179,6 +192,8 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
         errors.username = [...(errors.username || []), translatedError];
       } else if (key.includes('email')) {
         errors.email = [...(errors.email || []), translatedError];
+      } else if (key.includes('phone')) {
+        errors.phone = [...(errors.phone || []), translatedError];
       } else if (key.includes('name')) {
         errors.full_name = [...(errors.full_name || []), translatedError];
       } else if (key.includes('password')) {
@@ -274,7 +289,8 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
         formData.full_name,
         formData.email,
         formData.phone,
-        formData.agreedToTerms
+        formData.agreedToTerms,
+        captchaToken || undefined
       );
 
       if (response.success) {
@@ -282,6 +298,9 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
         setTimeout(() => navigate("/verify-email", { state: { email: formData.email } }), 1000);
       } else {
         setFieldErrors({ general: [response.error || t('auth/register:error_registration', 'Registration failed')] });
+        // Сбрасываем капчу при ошибке
+        captchaRef.current?.resetCaptcha();
+        setCaptchaToken(null);
       }
     } catch (err: any) {
       console.error("Register error:", err);
@@ -298,6 +317,9 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
       } else {
         setFieldErrors({ general: [t('auth/register:error_registration', 'Ошибка регистрации')] });
       }
+      // Сбрасываем капчу при ошибке
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -485,6 +507,22 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
                   </label>
                 </div>
                 <FieldError errors={fieldErrors.terms} />
+              </div>
+            )}
+
+            {/* hCaptcha для регистрации */}
+            {!isLogin && (
+              <div className="flex justify-center">
+                <HCaptcha
+                  ref={captchaRef}
+                  sitekey={HCAPTCHA_SITE_KEY}
+                  onVerify={(token) => setCaptchaToken(token)}
+                  onExpire={() => setCaptchaToken(null)}
+                  onError={() => {
+                    setCaptchaToken(null);
+                    toast.error(t('auth/register:error_captcha_failed', 'Ошибка проверки. Попробуйте еще раз'));
+                  }}
+                />
               </div>
             )}
 

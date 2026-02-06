@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, X, Trash2, RefreshCw, User, Mail, Briefcase, Calendar, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Check, X, Trash2, RefreshCw, User, Mail, Briefcase, Calendar, AlertCircle, ArrowLeft, Edit, Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface PendingUser {
@@ -22,6 +22,9 @@ const PendingRegistrations: React.FC = () => {
     const [actionLoading, setActionLoading] = useState<number | null>(null);
     const [rejectReason, setRejectReason] = useState<{ [key: number]: string }>({});
     const [showRejectModal, setShowRejectModal] = useState<number | null>(null);
+    const [editingUser, setEditingUser] = useState<PendingUser | null>(null);
+    const [editForm, setEditForm] = useState<{ full_name: string; email: string; role: string; phone: string }>({ full_name: '', email: '', role: '', phone: '' });
+    const [savingEdit, setSavingEdit] = useState(false);
 
     const fetchPendingUsers = async () => {
         setLoading(true);
@@ -110,6 +113,44 @@ const PendingRegistrations: React.FC = () => {
             alert(`${t('error_rejecting')}: ` + (err instanceof Error ? err.message : 'Unknown error'));
         } finally {
             setActionLoading(null);
+        }
+    };
+
+    const handleEdit = (user: PendingUser) => {
+        setEditForm({
+            full_name: user.full_name,
+            email: user.email,
+            role: user.role,
+            phone: ''
+        });
+        setEditingUser(user);
+    };
+
+    const handleSaveEdit = async () => {
+        if (!editingUser) return;
+
+        setSavingEdit(true);
+        try {
+            const response = await fetch(`/api/admin/registrations/${editingUser.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(editForm)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update user');
+            }
+
+            await fetchPendingUsers();
+            setEditingUser(null);
+            alert(t('edit_success', 'Данные обновлены'));
+        } catch (err) {
+            alert(`${t('error_editing', 'Ошибка редактирования')}: ` + (err instanceof Error ? err.message : 'Unknown error'));
+        } finally {
+            setSavingEdit(false);
         }
     };
 
@@ -302,6 +343,15 @@ const PendingRegistrations: React.FC = () => {
                                     </button>
 
                                     <button
+                                        onClick={() => handleEdit(user)}
+                                        disabled={actionLoading === user.id}
+                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                        <Edit className="w-4 h-4" />
+                                        {t('edit', 'Редактировать')}
+                                    </button>
+
+                                    <button
                                         onClick={() => setShowRejectModal(user.id)}
                                         disabled={actionLoading === user.id}
                                         className="flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -360,6 +410,108 @@ const PendingRegistrations: React.FC = () => {
                                         return newState;
                                     });
                                 }}
+                                className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                            >
+                                {t('cancel')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Modal */}
+            {editingUser && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-lg max-w-md w-full p-6">
+                        <h3 className="text-lg font-semibold mb-4">{t('edit_user', 'Редактировать пользователя')}</h3>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t('full_name', 'ФИО')}
+                                </label>
+                                <div className="flex items-center gap-2">
+                                    <User className="w-4 h-4 text-gray-400" />
+                                    <input
+                                        type="text"
+                                        value={editForm.full_name}
+                                        onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                                        className="flex-1 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t('common:email', 'Email')}
+                                </label>
+                                <div className="flex items-center gap-2">
+                                    <Mail className="w-4 h-4 text-gray-400" />
+                                    <input
+                                        type="email"
+                                        value={editForm.email}
+                                        onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                                        className="flex-1 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t('phone', 'Телефон')}
+                                </label>
+                                <div className="flex items-center gap-2">
+                                    <Phone className="w-4 h-4 text-gray-400" />
+                                    <input
+                                        type="tel"
+                                        value={editForm.phone}
+                                        onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                                        placeholder="+7..."
+                                        className="flex-1 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t('role', 'Роль')}
+                                </label>
+                                <div className="flex items-center gap-2">
+                                    <Briefcase className="w-4 h-4 text-gray-400" />
+                                    <select
+                                        value={editForm.role}
+                                        onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
+                                        className="flex-1 border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                        <option value="employee">{t('common:role_employee', 'Сотрудник')}</option>
+                                        <option value="manager">{t('common:role_manager', 'Менеджер')}</option>
+                                        <option value="admin">{t('common:role_admin', 'Администратор')}</option>
+                                        <option value="director">{t('common:role_director', 'Директор')}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={handleSaveEdit}
+                                disabled={savingEdit}
+                                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                            >
+                                {savingEdit ? (
+                                    <>
+                                        <RefreshCw className="w-4 h-4 animate-spin" />
+                                        {t('saving', 'Сохранение...')}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Check className="w-4 h-4" />
+                                        {t('save', 'Сохранить')}
+                                    </>
+                                )}
+                            </button>
+                            <button
+                                onClick={() => setEditingUser(null)}
                                 className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
                             >
                                 {t('cancel')}

@@ -1,7 +1,7 @@
 // /frontend/src/pages/admin/Broadcasts.tsx
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield, Bell, Settings, Plus, Trash2, Edit, X } from 'lucide-react';
+import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield, Bell, Settings, Plus, Trash2, Edit, X, UserCheck, UserX, Newspaper } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -80,6 +80,12 @@ export default function Broadcasts() {
   const [roles, setRoles] = useState<Array<{ key: string; name: string }>>([]);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
 
+  // Newsletter subscribers state
+  const [subscribers, setSubscribers] = useState<Array<{ id: number; email: string; is_active: boolean; created_at: string }>>([]);
+  const [loadingSubscribers, setLoadingSubscribers] = useState(false);
+  const [subscribersCount, setSubscribersCount] = useState({ total: 0, active: 0 });
+  const [showInactive, setShowInactive] = useState(false);
+
   useEffect(() => {
     // Параллельная загрузка для ускорения
     Promise.all([
@@ -98,6 +104,40 @@ export default function Broadcasts() {
       setRoles(response.roles);
     } catch (err) {
       console.error('Error loading roles:', err);
+    }
+  };
+
+  const loadSubscribers = async (includeInactive: boolean = showInactive) => {
+    try {
+      setLoadingSubscribers(true);
+      const response = await api.getNewsletterSubscribers(includeInactive);
+      setSubscribers(response.subscribers);
+      setSubscribersCount({ total: response.total, active: response.active });
+    } catch (err) {
+      console.error('Error loading subscribers:', err);
+    } finally {
+      setLoadingSubscribers(false);
+    }
+  };
+
+  const handleToggleSubscriber = async (subscriberId: number, isActive: boolean) => {
+    try {
+      await api.updateNewsletterSubscriber(subscriberId, !isActive);
+      toast.success(isActive ? t('subscriber_deactivated', 'Подписчик отключен') : t('subscriber_activated', 'Подписчик активирован'));
+      loadSubscribers();
+    } catch (err) {
+      toast.error(t('error_updating_subscriber', 'Ошибка обновления подписчика'));
+    }
+  };
+
+  const handleDeleteSubscriber = async (subscriberId: number) => {
+    if (!confirm(t('confirm_delete_subscriber', 'Удалить подписчика?'))) return;
+    try {
+      await api.deleteNewsletterSubscriber(subscriberId);
+      toast.success(t('subscriber_deleted', 'Подписчик удален'));
+      loadSubscribers();
+    } catch (err) {
+      toast.error(t('error_deleting_subscriber', 'Ошибка удаления подписчика'));
     }
   };
 
@@ -322,6 +362,10 @@ export default function Broadcasts() {
           <TabsTrigger value="history" className="flex items-center gap-2">
             <History className="w-4 h-4" />
             {t('history')}
+          </TabsTrigger>
+          <TabsTrigger value="subscribers" className="flex items-center gap-2" onClick={() => loadSubscribers()}>
+            <Newspaper className="w-4 h-4" />
+            {t('subscribers', 'Подписчики')}
           </TabsTrigger>
         </TabsList>
 
@@ -838,6 +882,125 @@ export default function Broadcasts() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Subscribers Tab */}
+        <TabsContent value="subscribers">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <Newspaper className="w-5 h-5 text-pink-600" />
+                  {t('newsletter_subscribers', 'Подписчики рассылки')}
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  {t('subscribers_stats', 'Активных: {{active}} из {{total}}', { active: subscribersCount.active, total: subscribersCount.total })}
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showInactive}
+                    onChange={(e) => {
+                      setShowInactive(e.target.checked);
+                      loadSubscribers(e.target.checked);
+                    }}
+                    className="w-4 h-4 text-pink-600 rounded"
+                  />
+                  {t('show_inactive', 'Показать неактивных')}
+                </label>
+                <Button
+                  onClick={() => loadSubscribers()}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <History className="w-4 h-4" />
+                  {t('refresh', 'Обновить')}
+                </Button>
+              </div>
+            </div>
+
+            {loadingSubscribers ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+              </div>
+            ) : subscribers.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <Mail className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p>{t('no_subscribers', 'Подписчиков пока нет')}</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">{t('common:email', 'Email')}</th>
+                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">{t('common:status', 'Статус')}</th>
+                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">{t('subscribed_at', 'Дата подписки')}</th>
+                      <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">{t('common:actions', 'Действия')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {subscribers.map((subscriber) => (
+                      <tr key={subscriber.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-2">
+                            <Mail className="w-4 h-4 text-gray-400" />
+                            <span className="text-sm font-medium text-gray-900">{subscriber.email}</span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          {subscriber.is_active ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              <UserCheck className="w-3 h-3" />
+                              {t('active', 'Активен')}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                              <UserX className="w-3 h-3" />
+                              {t('inactive', 'Неактивен')}
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-600">
+                          {subscriber.created_at ? new Date(subscriber.created_at).toLocaleString('ru-RU', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          }) : '-'}
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleToggleSubscriber(subscriber.id, subscriber.is_active)}
+                              className={`p-1.5 rounded-lg transition-colors ${subscriber.is_active
+                                ? 'text-yellow-600 hover:bg-yellow-50'
+                                : 'text-green-600 hover:bg-green-50'
+                                }`}
+                              title={subscriber.is_active ? t('deactivate', 'Отключить') : t('activate', 'Активировать')}
+                            >
+                              {subscriber.is_active ? <UserX className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSubscriber(subscriber.id)}
+                              className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                              title={t('common:delete', 'Удалить')}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>

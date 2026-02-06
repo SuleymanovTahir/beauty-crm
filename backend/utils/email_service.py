@@ -30,6 +30,29 @@ def get_salon_name() -> str:
         return os.getenv('SALON_NAME') or 'Beauty Salon'
 
 
+def get_logo_url() -> str:
+    """
+    Получить полный URL логотипа салона
+    Returns: URL логотипа или пустая строка
+    """
+    try:
+        from db import get_salon_settings
+        from core.config import PUBLIC_URL
+        salon_settings = get_salon_settings()
+        logo_url = salon_settings.get('logo_url', '/static/uploads/images/salon/logo.webp')
+        base_url = salon_settings.get('base_url', PUBLIC_URL)
+
+        # Если logo_url уже полный URL, возвращаем как есть
+        if logo_url.startswith('http'):
+            return logo_url
+
+        # Иначе формируем полный URL
+        return f"{base_url.rstrip('/')}{logo_url}"
+    except Exception as e:
+        log_warning(f"Could not get logo URL: {e}", "email")
+        return ""
+
+
 
 def configure_smtp() -> dict:
     """
@@ -73,6 +96,23 @@ def get_code_expiry(minutes: int = 15) -> str:
     return expiry.isoformat()
 
 
+def is_fake_email(email: str) -> bool:
+    """
+    Проверяет, является ли email тестовым/фейковым
+    """
+    if not email:
+        return True
+
+    fake_domains = ['example.com', 'example.org', 'example.net', 'test.com', 'localhost']
+    email_lower = email.lower()
+
+    for domain in fake_domains:
+        if email_lower.endswith(f'@{domain}'):
+            return True
+
+    return False
+
+
 def send_email(
     to_email: str,
     subject: str,
@@ -81,17 +121,22 @@ def send_email(
 ) -> bool:
     """
     Универсальная функция отправки email
-    
+
     Args:
         to_email: Email получателя
         subject: Тема письма
         html_body: HTML содержимое письма
         text_body: Текстовое содержимое (fallback)
-    
+
     Returns: True если отправлено успешно
     """
+    # Проверка на тестовые/фейковые email
+    if is_fake_email(to_email):
+        log_warning(f"Skipping email to fake/test address: {to_email}", "email")
+        return False
+
     smtp_config = configure_smtp()
-    
+
     if not smtp_config:
         log_warning(f"Cannot send email to {to_email}: SMTP not configured", "email")
         return False
@@ -129,18 +174,20 @@ def send_email(
 def send_verification_code_email(email: str, code: str, name: str, user_type: str = "user") -> bool:
     """
     Отправить код верификации на email
-    
+
     Args:
         email: Email получателя
         code: Код верификации
         name: Имя пользователя
         user_type: Тип пользователя ('user' или 'client')
-    
+
     Returns: True если отправлено успешно
     """
     salon_name = get_salon_name()
+    logo_url = get_logo_url()
+    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
     subject = f"Подтверждение email - {salon_name}"
-    
+
     html_body = f"""
     <!DOCTYPE html>
     <html>
@@ -149,34 +196,35 @@ def send_verification_code_email(email: str, code: str, name: str, user_type: st
         <style>
             body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
             .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-            .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                        color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
             .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
-            .code-box {{ background: white; border: 2px dashed #667eea; padding: 20px; 
-                         text-align: center; font-size: 32px; font-weight: bold; 
-                         color: #667eea; margin: 20px 0; border-radius: 8px; 
+            .code-box {{ background: white; border: 2px dashed #667eea; padding: 20px;
+                         text-align: center; font-size: 32px; font-weight: bold;
+                         color: #667eea; margin: 20px 0; border-radius: 8px;
                          letter-spacing: 8px; }}
             .footer {{ text-align: center; margin-top: 20px; color: #666; font-size: 12px; }}
-            .button {{ display: inline-block; padding: 12px 30px; background: #667eea; 
+            .button {{ display: inline-block; padding: 12px 30px; background: #667eea;
                       color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
         </style>
     </head>
     <body>
         <div class="container">
             <div class="header">
+                {logo_html}
                 <h1>{salon_name}</h1>
                 <p>Подтверждение регистрации</p>
             </div>
             <div class="content">
                 <h2>Здравствуйте, {name}!</h2>
                 <p>Спасибо за регистрацию в нашей системе. Для завершения регистрации введите код подтверждения:</p>
-                
+
                 <div class="code-box">{code}</div>
-                
+
                 <p><strong>Код действителен в течение 15 минут.</strong></p>
-                
+
                 <p>Если вы не регистрировались в {salon_name}, просто проигнорируйте это письмо.</p>
-                
+
                 <div class="footer">
                     <p>С уважением,<br>Команда {salon_name}</p>
                     <p>Это автоматическое письмо, пожалуйста, не отвечайте на него.</p>
@@ -211,19 +259,21 @@ def send_verification_code_email(email: str, code: str, name: str, user_type: st
 def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
     """
     Уведомить админа о новой регистрации
-    
+
     Args:
         admin_email: Email администратора
         user_data: Данные пользователя (username, email, full_name, role)
-    
+
     Returns: True если отправлено успешно
     """
     salon_name = get_salon_name()
+    logo_url = get_logo_url()
+    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
     subject = f"Новая регистрация: {user_data.get('full_name', 'Unknown')}"
-    
+
     from core.config import PUBLIC_URL
     admin_panel_url = os.getenv('ADMIN_PANEL_URL', f'{PUBLIC_URL}/admin/registrations')
-    
+
     html_body = f"""
     <!DOCTYPE html>
     <html>
@@ -235,18 +285,19 @@ def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
             .header {{ background: #f59e0b; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }}
             .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
             .info-box {{ background: white; padding: 15px; margin: 15px 0; border-left: 4px solid #f59e0b; }}
-            .button {{ display: inline-block; padding: 12px 30px; background: #f59e0b; 
+            .button {{ display: inline-block; padding: 12px 30px; background: #f59e0b;
                       color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
         </style>
     </head>
     <body>
         <div class="container">
             <div class="header">
+                {logo_html}
                 <h1>Новая регистрация!</h1>
             </div>
             <div class="content">
                 <p>Новый пользователь зарегистрировался в системе и ожидает одобрения:</p>
-                
+
                 <div class="info-box">
                     <strong>Имя:</strong> {user_data.get('full_name', 'Не указано')}<br>
                     <strong>Email:</strong> {user_data.get('email', 'Не указан')}<br>
@@ -255,9 +306,9 @@ def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
                     <strong>Должность:</strong> {user_data.get('position', 'Не указана')}<br>
                     <strong>Дата регистрации:</strong> {datetime.now().strftime('%d.%m.%Y %H:%M')}
                 </div>
-                
+
                 <p>Пожалуйста, перейдите в админ-панель для одобрения или отклонения регистрации:</p>
-                
+
                 <a href="{admin_panel_url}" class="button">Перейти в админ-панель</a>
             </div>
         </div>
@@ -287,19 +338,21 @@ def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
 def send_registration_approved_email(email: str, name: str) -> bool:
     """
     Уведомить пользователя что его регистрация одобрена
-    
+
     Args:
         email: Email пользователя
         name: Имя пользователя
-    
+
     Returns: True если отправлено успешно
     """
     salon_name = get_salon_name()
+    logo_url = get_logo_url()
+    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
     subject = f"Регистрация одобрена - {salon_name}"
-    
+
     from core.config import PUBLIC_URL
     login_url = os.getenv('APP_URL', PUBLIC_URL) + '/login'
-    
+
     html_body = f"""
     <!DOCTYPE html>
     <html>
@@ -308,25 +361,26 @@ def send_registration_approved_email(email: str, name: str) -> bool:
         <style>
             body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
             .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-            .header {{ background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+            .header {{ background: linear-gradient(135deg, #10b981 0%, #059669 100%);
                        color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
             .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
-            .button {{ display: inline-block; padding: 12px 30px; background: #10b981; 
+            .button {{ display: inline-block; padding: 12px 30px; background: #10b981;
                       color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
         </style>
     </head>
     <body>
         <div class="container">
             <div class="header">
+                {logo_html}
                 <h1>Регистрация одобрена!</h1>
             </div>
             <div class="content">
                 <h2>Здравствуйте, {name}!</h2>
                 <p>Ваша регистрация в {salon_name} была одобрена администратором.</p>
                 <p>Теперь вы можете войти в систему используя свои учетные данные:</p>
-                
+
                 <a href="{login_url}" class="button">Войти в систему</a>
-                
+
                 <p>Добро пожаловать в {salon_name}!</p>
             </div>
         </div>
@@ -353,20 +407,22 @@ def send_registration_approved_email(email: str, name: str) -> bool:
 def send_registration_rejected_email(email: str, name: str, reason: str = "") -> bool:
     """
     Уведомить пользователя что его регистрация отклонена
-    
+
     Args:
         email: Email пользователя
         name: Имя пользователя
         reason: Причина отклонения (опционально)
-    
+
     Returns: True если отправлено успешно
     """
     salon_name = get_salon_name()
+    logo_url = get_logo_url()
+    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
     subject = f"Регистрация отклонена - {salon_name}"
-    
+
     reason_text = f"<p><strong>Причина:</strong> {reason}</p>" if reason else ""
     reason_plain = f"\nПричина: {reason}\n" if reason else ""
-    
+
     html_body = f"""
     <!DOCTYPE html>
     <html>
@@ -382,6 +438,7 @@ def send_registration_rejected_email(email: str, name: str, reason: str = "") ->
     <body>
         <div class="container">
             <div class="header">
+                {logo_html}
                 <h1>Регистрация отклонена</h1>
             </div>
             <div class="content">
@@ -413,8 +470,10 @@ def send_newsletter_welcome_email(email: str) -> bool:
     Отправить приветственное письмо подписчику рассылки
     """
     salon_name = get_salon_name()
+    logo_url = get_logo_url()
+    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
     subject = f"Welcome to {salon_name} Newsletter!"
-    
+
     html_body = f"""
     <!DOCTYPE html>
     <html>
@@ -430,6 +489,7 @@ def send_newsletter_welcome_email(email: str) -> bool:
     <body>
         <div class="container">
             <div class="header">
+                {logo_html}
                 <h1>Welcome to {salon_name}!</h1>
             </div>
             <div class="content">

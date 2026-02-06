@@ -30,6 +30,13 @@ class RejectRequest(BaseModel):
     reason: Optional[str] = ""
 
 
+class UpdatePendingUserRequest(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    role: Optional[str] = None
+    phone: Optional[str] = None
+
+
 @router.get("/pending")
 async def get_pending_users(session_token: Optional[str] = Cookie(None)):
     """Получить список всех ожидающих одобрения пользователей"""
@@ -182,6 +189,83 @@ async def delete_registration(
         raise
     except Exception as e:
         log_error(f"Failed to delete registration: {e}", "admin_registrations")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/{user_id}")
+async def update_pending_user(
+    user_id: int,
+    data: UpdatePendingUserRequest,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить данные ожидающего пользователя"""
+    # Проверка авторизации
+    user = require_auth(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    # Проверка прав (только директора и админы)
+    if user.get("role") not in ["director", "admin"]:
+        raise HTTPException(status_code=403, detail="Access denied. Director or Admin role required.")
+
+    try:
+        from db.connection import get_db_connection
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        # Проверяем что пользователь существует и неактивен
+        c.execute("SELECT id, is_active FROM users WHERE id = %s", (user_id,))
+        target_user = c.fetchone()
+
+        if not target_user:
+            conn.close()
+            raise HTTPException(status_code=404, detail="User not found")
+
+        if target_user[1]:  # is_active = True
+            conn.close()
+            raise HTTPException(status_code=400, detail="Cannot edit active user through this endpoint")
+
+        # Формируем запрос на обновление
+        update_fields = []
+        values = []
+
+        if data.full_name is not None:
+            update_fields.append("full_name = %s")
+            values.append(data.full_name)
+
+        if data.email is not None:
+            update_fields.append("email = %s")
+            values.append(data.email)
+
+        if data.role is not None:
+            update_fields.append("role = %s")
+            values.append(data.role)
+
+        if data.phone is not None:
+            update_fields.append("phone = %s")
+            values.append(data.phone)
+
+        if not update_fields:
+            conn.close()
+            return {"success": True, "message": "No changes to apply"}
+
+        values.append(user_id)
+        query = f"UPDATE users SET {', '.join(update_fields)} WHERE id = %s"
+        c.execute(query, values)
+        conn.commit()
+        conn.close()
+
+        log_info(f"Admin {user['username']} updated pending user ID {user_id}: {data.dict(exclude_none=True)}", "admin_registrations")
+
+        return {
+            "success": True,
+            "message": "User updated successfully"
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_error(f"Failed to update pending user: {e}", "admin_registrations")
         raise HTTPException(status_code=500, detail=str(e))
 
 

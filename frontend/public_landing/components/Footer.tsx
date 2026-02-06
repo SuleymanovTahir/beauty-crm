@@ -45,15 +45,15 @@ export function Footer({ salonInfo }: FooterProps) {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
           <h3 className="text-2xl font-bold mb-4 text-foreground">{t('subscribeTitle')}</h3>
           <p className="text-foreground/80 mb-6">{t('subscribeDesc')}</p>
-          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto w-full px-2 sm:px-0">
+          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto w-full">
             <input
               type="email"
               name="email"
               required
               placeholder={t('emailPlaceholder')}
-              className="flex-1 min-w-0 h-10 px-3 rounded-md border border-primary/20 bg-muted/20 w-full text-sm sm:text-base"
+              className="w-full sm:flex-1 h-11 px-4 rounded-lg form-input-custom text-sm outline-none"
             />
-            <button type="submit" className="h-10 px-4 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 w-full sm:w-auto flex-shrink-0 text-sm sm:text-base">
+            <button type="submit" className="h-11 px-6 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 w-full sm:w-auto flex-shrink-0 text-sm transition-all">
               {t('subscribe')}
             </button>
           </form>

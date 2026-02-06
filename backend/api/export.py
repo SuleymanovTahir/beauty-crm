@@ -1257,7 +1257,9 @@ def export_dashboard_report_pdf(stats, bot_analytics, bookings, lang='en'):
     )
     
     # --- HEADER ---
-    elements.append(Paragraph(t(lang, 'adminPanel.dashboard.report', 'Beauty CRM Report'), title_style))
+    salon = get_salon_settings()
+    salon_name = salon.get('name', 'Salon')
+    elements.append(Paragraph(t(lang, 'adminPanel.dashboard.report', f'{salon_name} Report'), title_style))
     elements.append(Paragraph(f"{t(lang, 'adminPanel.dashboard.datetime', 'Generated')}: {datetime.now().strftime('%d.%m.%Y %H:%M')}", subtitle_style))
     
     # --- KPI ANALYTICS SECTION ---
@@ -1397,7 +1399,7 @@ def export_dashboard_report_pdf(stats, bot_analytics, bookings, lang='en'):
         textColor=colors.gray,
         alignment=TA_CENTER
     )
-    elements.append(Paragraph(f"Beauty CRM • {datetime.now().year}", footer_style))
+    elements.append(Paragraph(f"{salon_name} • {datetime.now().year}", footer_style))
     
     doc.build(elements)
     buffer.seek(0)

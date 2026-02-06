@@ -496,3 +496,19 @@ textarea::placeholder {
 .popular-link-tag {
   @apply px-4 py-2 rounded-full bg-background border border-border text-sm text-muted-foreground hover:text-primary hover:border-primary/20 transition-all shadow-sm;
 }
+
+/* Date & Time Input Styles */
+.react-datepicker__input-container input,
+input[type="time"] {
+  font-size: 14px !important;
+}
+
+.react-datepicker__input-container input::placeholder {
+  font-size: 14px;
+}
+
+/* Booking form date/time fields */
+#booking input[type="time"],
+#booking .react-datepicker__input-container input {
+  @apply text-sm;
+}

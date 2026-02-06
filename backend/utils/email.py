@@ -9,6 +9,76 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
 from utils.logger import log_info, log_error
 
+
+def _get_salon_name() -> str:
+    """Получить название салона из базы данных с fallback на переменную окружения"""
+    try:
+        from db.settings import get_salon_settings
+        salon_settings = get_salon_settings()
+        salon_name = salon_settings.get('name')
+        if salon_name:
+            return salon_name
+    except Exception as e:
+        log_error(f"Could not get salon name from database: {e}", "email")
+
+    # Fallback to environment variable
+    return os.getenv('SALON_NAME', 'Salon')
+
+
+def _get_logo_url() -> str:
+    """Получить полный URL логотипа салона"""
+    try:
+        from db.settings import get_salon_settings
+        from core.config import PUBLIC_URL
+        salon_settings = get_salon_settings()
+        logo_url = salon_settings.get('logo_url', '/static/uploads/images/salon/logo.webp')
+        base_url = salon_settings.get('base_url', PUBLIC_URL)
+
+        # Если logo_url уже полный URL, возвращаем как есть
+        if logo_url.startswith('http'):
+            return logo_url
+
+        # Иначе формируем полный URL
+        return f"{base_url.rstrip('/')}{logo_url}"
+    except Exception as e:
+        log_error(f"Could not get logo URL: {e}", "email")
+        return ""
+
+
+def _get_email_header_html(salon_name: str = None) -> str:
+    """Генерирует HTML заголовок письма с логотипом и названием салона"""
+    if not salon_name:
+        salon_name = _get_salon_name()
+    logo_url = _get_logo_url()
+
+    if logo_url:
+        return f'''
+            <div style="background: #000; padding: 20px; text-align: center;">
+              <img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" />
+              <h1 style="color: white; margin: 0; font-size: 24px;">{salon_name}</h1>
+            </div>'''
+    else:
+        return f'''
+            <div style="background: #000; padding: 20px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 24px;">{salon_name}</h1>
+            </div>'''
+
+
+def _is_fake_email(email: str) -> bool:
+    """Проверяет, является ли email тестовым/фейковым"""
+    if not email:
+        return True
+
+    fake_domains = ['example.com', 'example.org', 'example.net', 'test.com', 'localhost']
+    email_lower = email.lower()
+
+    for domain in fake_domains:
+        if email_lower.endswith(f'@{domain}'):
+            return True
+
+    return False
+
+
 def generate_verification_code():
     """Генерация 6-значного кода верификации"""
     return ''.join([str(secrets.randbelow(10)) for _ in range(6)])
@@ -29,6 +99,11 @@ def send_verification_email(to_email: str, code: str, full_name: str) -> bool:
     Returns:
         bool: True если отправлено успешно
     """
+    # Проверка на тестовые email
+    if _is_fake_email(to_email):
+        log_error(f"Skipping email to fake/test address: {to_email}", "email")
+        return False
+
     try:
         # SMTP настройки из переменных окружения
         smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
@@ -48,12 +123,12 @@ def send_verification_email(to_email: str, code: str, full_name: str) -> bool:
         msg['To'] = to_email
 
         # HTML версия письма
+        salon_name = _get_salon_name()
+        header_html = _get_email_header_html(salon_name)
         html = f"""
         <html>
           <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: #000; padding: 20px; text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 24px;">{os.getenv('SALON_NAME', 'Beauty Salon')}</h1>
-            </div>
+            {header_html}
             <div style="padding: 30px; background-color: #f7f7f7;">
               <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
               <p style="color: #666; font-size: 16px;">Ваш код подтверждения для регистрации:</p>
@@ -110,6 +185,11 @@ def send_verification_link_email(to_email: str, verification_token: str, full_na
     Returns:
         bool: True если отправлено успешно
     """
+    # Проверка на тестовые email
+    if _is_fake_email(to_email):
+        log_error(f"Skipping email to fake/test address: {to_email}", "email")
+        return False
+
     try:
         # SMTP настройки из переменных окружения
         smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
@@ -133,12 +213,12 @@ def send_verification_link_email(to_email: str, verification_token: str, full_na
         msg['To'] = to_email
 
         # HTML версия письма
+        salon_name = _get_salon_name()
+        header_html = _get_email_header_html(salon_name)
         html = f"""
         <html>
           <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: #000; padding: 20px; text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 24px;">{os.getenv('SALON_NAME', 'Beauty Salon')}</h1>
-            </div>
+            {header_html}
             <div style="padding: 30px; background-color: #f7f7f7;">
               <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
               <p style="color: #666; font-size: 16px;">Добро пожаловать!</p>
@@ -205,6 +285,11 @@ def send_approval_notification(to_email: str, full_name: str, approved: bool) ->
     Returns:
         bool: True если отправлено успешно
     """
+    # Проверка на тестовые email
+    if _is_fake_email(to_email):
+        log_error(f"Skipping email to fake/test address: {to_email}", "email")
+        return False
+
     try:
         smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
         smtp_port = int(os.getenv('SMTP_PORT', '587'))
@@ -220,14 +305,15 @@ def send_approval_notification(to_email: str, full_name: str, approved: bool) ->
         msg['From'] = smtp_from
         msg['To'] = to_email
 
+        salon_name = _get_salon_name()
+        header_html = _get_email_header_html(salon_name)
+
         if approved:
             msg['Subject'] = 'Ваша регистрация одобрена'
             html = f"""
             <html>
               <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: #000; padding: 20px; text-align: center;">
-                  <h1 style="color: white; margin: 0; font-size: 24px;">{os.getenv('SALON_NAME', 'Beauty Salon')}</h1>
-                </div>
+                {header_html}
                 <div style="padding: 30px; background-color: #f7f7f7;">
                   <h2 style="color: #333;">Поздравляем, {full_name}!</h2>
                   <p style="color: #666; font-size: 16px;">Ваша регистрация была одобрена администратором.</p>
@@ -247,9 +333,7 @@ def send_approval_notification(to_email: str, full_name: str, approved: bool) ->
             html = f"""
             <html>
               <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: #000; padding: 20px; text-align: center;">
-                  <h1 style="color: white; margin: 0; font-size: 24px;">{os.getenv('SALON_NAME', 'Beauty Salon')}</h1>
-                </div>
+                {header_html}
                 <div style="padding: 30px; background-color: #f7f7f7;">
                   <h2 style="color: #333;">{full_name},</h2>
                   <p style="color: #666; font-size: 16px;">К сожалению, ваша регистрация была отклонена администратором.</p>
@@ -289,6 +373,11 @@ def send_password_reset_email(to_email: str, reset_token: str, full_name: str) -
     Returns:
         bool: True если отправлено успешно
     """
+    # Проверка на тестовые email
+    if _is_fake_email(to_email):
+        log_error(f"Skipping email to fake/test address: {to_email}", "email")
+        return False
+
     try:
         # SMTP настройки из переменных окружения
         smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
@@ -312,12 +401,12 @@ def send_password_reset_email(to_email: str, reset_token: str, full_name: str) -
         msg['To'] = to_email
 
         # HTML версия письма
+        salon_name = _get_salon_name()
+        header_html = _get_email_header_html(salon_name)
         html = f"""
         <html>
           <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: #000; padding: 20px; text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 24px;">{os.getenv('SALON_NAME', 'Beauty Salon')}</h1>
-            </div>
+            {header_html}
             <div style="padding: 30px; background-color: #f7f7f7;">
               <h2 style="color: #333;">Здравствуйте, {full_name}!</h2>
               <p style="color: #666; font-size: 16px;">Вы запросили сброс пароля для вашего аккаунта.</p>
@@ -385,6 +474,18 @@ def send_email_sync(recipients: list, subject: str, message: str, html: str = No
     Returns:
         bool: True если отправлено успешно
     """
+    # Фильтруем тестовые email адреса
+    valid_recipients = [r for r in recipients if not _is_fake_email(r)]
+    if not valid_recipients:
+        log_error(f"All recipients are fake/test addresses: {recipients}", "email")
+        return False
+
+    if len(valid_recipients) < len(recipients):
+        skipped = [r for r in recipients if _is_fake_email(r)]
+        log_error(f"Skipped fake/test addresses: {skipped}", "email")
+
+    recipients = valid_recipients
+
     try:
         # Быстрый выход для тестов (если установлено SKIP_REAL_MAIL=true)
         if os.getenv('SKIP_REAL_MAIL', '').lower() == 'true':
@@ -464,6 +565,11 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
     Returns:
         bool: True если отправлено успешно
     """
+    # Проверка на тестовые email
+    if _is_fake_email(to_email):
+        log_error(f"Skipping broadcast email to fake/test address: {to_email}", "email")
+        return False
+
     try:
         # SMTP настройки из переменных окружения
         smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
@@ -502,6 +608,10 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
         # Определяем URL для отписки
         from core.config import PUBLIC_URL
         unsubscribe_url = f"{PUBLIC_URL}{unsubscribe_link}"
+
+        # Получаем URL логотипа
+        logo_url = _get_logo_url()
+        logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
 
         if not smtp_user or not smtp_password:
             log_error("SMTP credentials not configured in .env", "email")
@@ -550,6 +660,7 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
                     <!-- Header -->
                     <tr>
                       <td style="padding: 40px 40px 20px 40px; text-align: center;">
+                        {logo_html}
                         <h1 style="margin: 0; font-size: 28px; font-weight: 800; color: #111827; letter-spacing: -0.5px;">
                           {salon_name}
                         </h1>
