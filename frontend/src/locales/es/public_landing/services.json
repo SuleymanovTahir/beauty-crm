@@ -634,7 +634,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Pedicura inteligente + barniz",
+      "name": "Pedicura + esmalte inteligente",
       "price": 150.0
     },
     "peeling": {
@@ -644,7 +644,7 @@
       "duration": "60",
       "max_price": 400.0,
       "min_price": 300.0,
-      "name": "pelar",
+      "name": "Peeling",
       "price": 350.0
     },
     "permanent_brows": {

@@ -1,10 +1,11 @@
 // /frontend/src/pages/auth/Register.tsx
 import React, { useState, useRef } from "react";
-import { Lock, User, Mail, UserPlus, Loader, CheckCircle, ShieldCheck } from "lucide-react";
+import { Lock, User, Mail, UserPlus, Loader, CheckCircle, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Checkbox } from "../../components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
@@ -61,6 +62,8 @@ export default function Register() {
   const [step, setStep] = useState<"register" | "verify" | "success">("register");
   const [salonSettings, setSalonSettings] = useState<any>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const captchaRef = useRef<HCaptcha>(null);
 
   // Load salon settings
@@ -513,9 +516,6 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Общие ошибки */}
-          <FieldError errors={fieldErrors.general} />
-
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <Label htmlFor="full_name" className="mb-2 block">{t('full_name')} *</Label>
@@ -593,23 +593,23 @@ export default function Register() {
 
             <div>
               <Label htmlFor="role" className="mb-2 block">{t('role_label')}</Label>
-              <select
-                id="role"
-                required
-                disabled={loading}
+              <Select
                 value={formData.role}
-                onChange={(e) =>
-                  setFormData({ ...formData, role: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+                onValueChange={(value) => setFormData({ ...formData, role: value })}
+                disabled={loading}
               >
-                <option value="employee">{t('role_employee')}</option>
-                <option value="manager">{t('role_manager')}</option>
-                <option value="admin">{t('role_admin')}</option>
-                <option value="director">{t('role_director')}</option>
-                <option value="sales">{t('role_sales')}</option>
-                <option value="marketer">{t('role_marketer')}</option>
-              </select>
+                <SelectTrigger id="role" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="employee">{t('role_employee')}</SelectItem>
+                  <SelectItem value="manager">{t('role_manager')}</SelectItem>
+                  <SelectItem value="admin">{t('role_admin')}</SelectItem>
+                  <SelectItem value="director">{t('role_director')}</SelectItem>
+                  <SelectItem value="sales">{t('role_sales')}</SelectItem>
+                  <SelectItem value="marketer">{t('role_marketer')}</SelectItem>
+                </SelectContent>
+              </Select>
               <p className="text-sm text-gray-500 mt-3">
                 {t('role_hint')}
               </p>
@@ -621,15 +621,22 @@ export default function Register() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   disabled={loading}
                   value={formData.password}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
                   placeholder={t('password_placeholder')}
-                  className={`pl-10 pr-3 ${fieldErrors.password ? 'border-red-500' : ''}`}
+                  className={`pl-10 pr-10 ${fieldErrors.password ? 'border-red-500' : ''}`}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
               {!fieldErrors.password && (
                 <p className="text-xs text-gray-500 mt-1">
@@ -645,15 +652,22 @@ export default function Register() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   id="confirmPassword"
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   disabled={loading}
                   value={formData.confirmPassword}
                   onChange={(e) =>
                     setFormData({ ...formData, confirmPassword: e.target.value })
                   }
                   placeholder={t('confirm_password_placeholder')}
-                  className={`pl-10 pr-3 ${fieldErrors.confirmPassword ? 'border-red-500' : ''}`}
+                  className={`pl-10 pr-10 ${fieldErrors.confirmPassword ? 'border-red-500' : ''}`}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
               <FieldError errors={fieldErrors.confirmPassword} />
             </div>
@@ -697,8 +711,10 @@ export default function Register() {
             </div>
 
             {/* hCaptcha */}
-            <div className="flex justify-center">
-              <HCaptcha
+            <div className="space-y-2">
+              <FieldError errors={fieldErrors.general} />
+              <div className="flex justify-center">
+                <HCaptcha
                 ref={captchaRef}
                 sitekey={HCAPTCHA_SITE_KEY}
                 onVerify={(token) => setCaptchaToken(token)}
@@ -707,7 +723,8 @@ export default function Register() {
                   setCaptchaToken(null);
                   toast.error(t('error_captcha_failed', 'Ошибка проверки. Попробуйте еще раз'));
                 }}
-              />
+                />
+              </div>
             </div>
 
             <Button

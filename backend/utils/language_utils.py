@@ -6,7 +6,7 @@ import time
 
 # Поддерживаемые языки - единый источник истины
 SUPPORTED_LANGUAGES = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
-DEFAULT_LANGUAGE = 'ru'
+DEFAULT_LANGUAGE = 'en'
 FALLBACK_LANGUAGE = 'en'
 
 # Cache for dynamic translations (language -> {translations dict, load_time})

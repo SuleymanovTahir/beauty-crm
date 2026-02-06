@@ -560,7 +560,7 @@ async def get_user_profile(
     
     c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo,
                         years_of_experience, bio, specialization, phone, birthday, position,
-                        base_salary, commission_rate, secondary_role
+                        base_salary, commission_rate, secondary_role, is_active
                  FROM users WHERE id = %s""", (user_id,))
 
     result = c.fetchone()
@@ -586,7 +586,8 @@ async def get_user_profile(
         "position": result[13],
         "base_salary": result[14],
         "commission_rate": result[15],
-        "secondary_role": result[16]
+        "secondary_role": result[16],
+        "is_active": result[17]
     }
 
 @router.get("/users/by-username/{username}/profile")
@@ -604,7 +605,7 @@ async def get_user_profile_by_username(
     
     c.execute("""SELECT id, username, full_name, email, role, created_at, last_login, photo,
                         years_of_experience, bio, specialization, phone, birthday, position,
-                        base_salary, commission_rate, secondary_role
+                        base_salary, commission_rate, secondary_role, is_active
                  FROM users WHERE username = %s""", (username,))
 
     result = c.fetchone()
@@ -634,7 +635,8 @@ async def get_user_profile_by_username(
         "position": result[13],
         "base_salary": result[14],
         "commission_rate": result[15],
-        "secondary_role": result[16]
+        "secondary_role": result[16],
+        "is_active": result[17]
     }
 
 @router.post("/users/{user_id}/change-password")

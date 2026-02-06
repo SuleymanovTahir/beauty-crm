@@ -22,14 +22,14 @@ def get_pending_registrations() -> List[Dict]:
     
     try:
         c.execute("""
-            SELECT 
-                id, username, full_name, email, role, position, 
+            SELECT
+                id, username, full_name, email, phone, role, position,
                 created_at, email_verified, is_active
             FROM users
             WHERE email_verified = TRUE AND is_active = FALSE
             ORDER BY created_at DESC
         """)
-        
+
         pending_users = []
         for row in c.fetchall():
             pending_users.append({
@@ -37,11 +37,12 @@ def get_pending_registrations() -> List[Dict]:
                 'username': row[1],
                 'full_name': row[2],
                 'email': row[3],
-                'role': row[4],
-                'position': row[5],
-                'created_at': row[6],
-                'email_verified': row[7],
-                'is_active': row[8]
+                'phone': row[4],
+                'role': row[5],
+                'position': row[6],
+                'created_at': row[7],
+                'email_verified': row[8],
+                'is_active': row[9]
             })
         
         log_info(f"Retrieved {len(pending_users)} pending registrations", "pending_registrations")
@@ -112,10 +113,17 @@ def approve_registration(user_id: int, approved_by: int) -> bool:
             log_error(f"Failed to log audit for approval: {audit_err}", "audit")
 
         conn.commit()
-        
-        # Отправляем email уведомление
-        send_registration_approved_email(email, full_name)
-        
+
+        # Отправляем email уведомление в фоновом режиме
+        import threading
+        def send_email_async():
+            try:
+                send_registration_approved_email(email, full_name)
+            except Exception as e:
+                log_error(f"Failed to send approval email to {email}: {e}", "email")
+
+        threading.Thread(target=send_email_async, daemon=True).start()
+
         log_info(f"Registration approved for user {user_id} by admin {approved_by}", "pending_registrations")
         return True
         
@@ -186,10 +194,17 @@ def reject_registration(user_id: int, rejected_by: int, reason: str = "") -> boo
         """, (datetime.now().isoformat(), user_id))
         
         conn.commit()
-        
-        # Отправляем email уведомление
-        send_registration_rejected_email(email, full_name, reason)
-        
+
+        # Отправляем email уведомление в фоновом режиме
+        import threading
+        def send_email_async():
+            try:
+                send_registration_rejected_email(email, full_name, reason)
+            except Exception as e:
+                log_error(f"Failed to send rejection email to {email}: {e}", "email")
+
+        threading.Thread(target=send_email_async, daemon=True).start()
+
         log_info(f"Registration rejected for user {user_id} by admin {rejected_by}. Reason: {reason}", "pending_registrations")
         return True
         
