@@ -425,9 +425,41 @@ def cleanup_expired_sessions():
         conn.commit()
         if affected > 0:
             from utils.logger import log_info
-            log_info(f"🧹 Cleaned up {affected} expired sessions", "auth")
+            log_info(f"Cleaned up {affected} expired sessions", "auth")
     except Exception as e:
         from utils.logger import log_error
         log_error(f"Error cleaning up sessions: {e}", "auth")
+    finally:
+        if conn: conn.close()
+
+
+def cleanup_unverified_users():
+    """
+    Удалить неподтверждённых пользователей с истёкшим кодом верификации.
+    Освобождает логины, email и телефоны для новых регистраций.
+    """
+    conn = None
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        # Удаляем пользователей где:
+        # - email_verified = FALSE (не подтвердили email)
+        # - verification_code_expires истёк (код уже недействителен)
+        c.execute("""
+            DELETE FROM users
+            WHERE email_verified = FALSE
+            AND verification_code_expires IS NOT NULL
+            AND verification_code_expires < NOW()
+        """)
+        affected = c.rowcount
+        conn.commit()
+
+        if affected > 0:
+            from utils.logger import log_info
+            log_info(f"Cleaned up {affected} unverified users with expired codes", "auth")
+    except Exception as e:
+        from utils.logger import log_error
+        log_error(f"Error cleaning up unverified users: {e}", "auth")
     finally:
         if conn: conn.close()

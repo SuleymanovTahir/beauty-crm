@@ -1507,9 +1507,13 @@ export class ApiClient {
     return this.request<any>('/api/pending-users')
   }
 
-  async approveUser(userId: number) {
+  async approveUser(userId: number, position?: string) {
     return this.request(`/api/users/${userId}/approve`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ position }),
     })
   }
 
@@ -1544,6 +1548,18 @@ export class ApiClient {
 
   async rejectUser(userId: number) {
     return this.request(`/api/users/${userId}/reject`, {
+      method: 'POST',
+    })
+  }
+
+  async deactivateUser(userId: number) {
+    return this.request(`/api/users/${userId}/deactivate`, {
+      method: 'POST',
+    })
+  }
+
+  async activateUser(userId: number) {
+    return this.request(`/api/users/${userId}/activate`, {
       method: 'POST',
     })
   }

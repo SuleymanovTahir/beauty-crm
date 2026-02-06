@@ -263,6 +263,7 @@ def get_clients_all():
             WHERE status = 'completed'
             GROUP BY instagram_id
         ) b ON c.instagram_id = b.instagram_id
+        WHERE c.deleted_at IS NULL
         ORDER BY c.is_pinned DESC, c.last_contact DESC
     """)
 
@@ -558,8 +559,23 @@ async def create_client_api(
                 notes=data.get('notes')
             )
         
-        log_activity(user["id"], "create_client", "client", instagram_id, 
+        log_activity(user["id"], "create_client", "client", instagram_id,
                     f"Client: {data.get('name')}")
+
+        # Уведомляем админов/директоров о новом клиенте
+        try:
+            from notifications.admin_notifications import notify_new_client
+            notify_new_client(
+                client_name=data.get('name') or instagram_id,
+                client_phone=data.get('phone'),
+                client_email=data.get('email'),
+                client_id=instagram_id,
+                created_by_user_id=user["id"]
+            )
+        except Exception as e:
+            from utils.logger import log_error
+            log_error(f"Failed to send admin client notification: {e}", "api")
+
         return {"success": True, "message": "Client created", "id": instagram_id}
     except Exception as e:
         log_error(f"Error creating client: {e}", "api")
@@ -729,9 +745,9 @@ async def delete_client_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Удалить клиента (Soft Delete)"""
+    """Удалить клиента (Hard Delete - полное удаление из БД)"""
     from urllib.parse import unquote
-    from utils.soft_delete import soft_delete_client
+    from utils.soft_delete import delete_client
     from utils.audit import log_audit
     
     decoded_id = unquote(client_id)
@@ -744,15 +760,15 @@ async def delete_client_api(
         # Получаем данные клиента перед удалением для аудита
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute("SELECT id, name, phone, instagram_id FROM clients WHERE id = %s", (decoded_id,))
+        c.execute("SELECT instagram_id, name, phone FROM clients WHERE instagram_id = %s", (decoded_id,))
         client_data = c.fetchone()
         conn.close()
 
         if not client_data:
              return JSONResponse({"error": "Client not found"}, status_code=404)
 
-        success = soft_delete_client(decoded_id, user)
-        
+        success = delete_client(decoded_id, user)
+
         if success:
             # Логируем в аудит
             log_audit(
@@ -761,9 +777,9 @@ async def delete_client_api(
                 entity_type='client',
                 entity_id=decoded_id,
                 old_value={
+                    "instagram_id": client_data[0],
                     "name": client_data[1],
-                    "phone": client_data[2],
-                    "instagram_id": client_data[3]
+                    "phone": client_data[2]
                 },
                 ip_address=request.client.host
             )

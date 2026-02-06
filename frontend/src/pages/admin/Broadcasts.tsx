@@ -993,25 +993,13 @@ export default function Broadcasts() {
                           }) : '-'}
                         </td>
                         <td className="py-3 px-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => handleToggleSubscriber(subscriber.id, subscriber.is_active)}
-                              className={`p-1.5 rounded-lg transition-colors ${subscriber.is_active
-                                ? 'text-yellow-600 hover:bg-yellow-50'
-                                : 'text-green-600 hover:bg-green-50'
-                                }`}
-                              title={subscriber.is_active ? t('deactivate', 'Отключить') : t('activate', 'Активировать')}
-                            >
-                              {subscriber.is_active ? <UserX className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
-                            </button>
-                            <button
-                              onClick={() => handleDeleteSubscriber(subscriber.id)}
-                              className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
-                              title={t('common:delete', 'Удалить')}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
+                          <button
+                            onClick={() => handleDeleteSubscriber(subscriber.id)}
+                            className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                            title={t('common:delete', 'Удалить')}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </td>
                       </tr>
                     ))}

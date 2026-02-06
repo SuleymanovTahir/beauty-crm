@@ -209,6 +209,10 @@ async def lifespan(app: FastAPI):
         from scheduler.database_backup_checker import check_database_backup
         cron.add_job(check_database_backup, 'cron', hour=4, minute=0, id='database_backup')
         log_info("📦 Database backup scheduler registered (runs at 04:00 daily)", "boot")
+
+        # Регистрация автоочистки корзины (каждый день в 03:00)
+        from scheduler.trash_cleanup import start_trash_cleanup_scheduler
+        start_trash_cleanup_scheduler(cron)
         
         cron.start()
         log_info("✅ Планировщики (Mission-control) активны", "boot")

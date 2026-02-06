@@ -36,6 +36,14 @@ async def subscribe_newsletter(data: SubscribeRequest, background_tasks: Backgro
             # Отправить приветственное письмо в фоне
             background_tasks.add_task(send_newsletter_welcome_email, data.email)
             log_info(f"📧 Новый подписчик: {data.email}", "newsletter")
+
+            # Уведомляем админов/директоров о новой подписке
+            try:
+                from notifications.admin_notifications import notify_newsletter_subscription
+                notify_newsletter_subscription(data.email)
+            except Exception as e:
+                log_error(f"Failed to send admin notification: {e}", "newsletter")
+
             return {"success": True, "message": "Successfully subscribed"}
         else:
             return JSONResponse(

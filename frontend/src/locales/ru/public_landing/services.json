@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Польское изменение (Pedi)",
+      "name": "Смена лака (Pedi)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -334,7 +334,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Полуруки",
+      "name": "Половина рук",
       "price": 50.0
     },
     "half_legs": {
@@ -634,7 +634,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "Умный педикюр + лак",
+      "name": "Смарт-педикюр + лак",
       "price": 150.0
     },
     "peeling": {
@@ -644,7 +644,7 @@
       "duration": "60",
       "max_price": 400.0,
       "min_price": 300.0,
-      "name": "пилинг",
+      "name": "Пилинг",
       "price": 350.0
     },
     "permanent_brows": {

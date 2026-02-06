@@ -339,7 +339,8 @@ async def register_client_api(
     email: str = Form(...),
     phone: str = Form(""),
     privacy_accepted: bool = Form(False),
-    captcha_token: str = Form(None)
+    captcha_token: str = Form(None),
+    preferred_language: str = Form("en")
 ):
     """API: Регистрация клиента (упрощенная)"""
     import os
@@ -381,7 +382,8 @@ async def register_client_api(
         role="client",
         position="Клиент",
         phone=phone,
-        privacy_accepted=privacy_accepted
+        privacy_accepted=privacy_accepted,
+        preferred_language=preferred_language
     )
 
 @router.post("/register/employee")
@@ -394,7 +396,8 @@ async def register_employee_api(
     phone: str = Form(""),
     privacy_accepted: bool = Form(False),
     newsletter_subscribed: bool = Form(True),
-    captcha_token: str = Form(None)
+    captcha_token: str = Form(None),
+    preferred_language: str = Form("en")
 ):
     """API: Регистрация сотрудника (с выбором роли)"""
     from db.newsletter import add_subscriber
@@ -459,7 +462,8 @@ async def register_employee_api(
         role=role,
         position="",
         phone=phone,
-        privacy_accepted=privacy_accepted
+        privacy_accepted=privacy_accepted,
+        preferred_language=preferred_language
     )
 
 
@@ -521,7 +525,8 @@ async def api_register(
     position: str = Form(""),
     phone: str = Form(""),
     privacy_accepted: bool = Form(False),
-    newsletter_subscribed: bool = Form(True)
+    newsletter_subscribed: bool = Form(True),
+    preferred_language: str = Form("en")
 ):
     """API: Регистрация нового пользователя (базовый метод)"""
     user_info = {
@@ -530,7 +535,8 @@ async def api_register(
         'full_name': full_name,
         'role': role,
         'position': position,
-        'phone': phone
+        'phone': phone,
+        'preferred_language': preferred_language
     }
     
     current_stage = "Validation"
@@ -557,14 +563,34 @@ async def api_register(
 
         current_stage = "DB Existence Check"
         # Проверяем что логин и email не заняты
+        # Исключаем неподтверждённых пользователей с истёкшим кодом - их данные "освобождаются"
         conn = get_db_connection()
         c = conn.cursor()
 
-        c.execute("SELECT id FROM users WHERE LOWER(username) = LOWER(%s)", (username,))
+        # Сначала удаляем "мёртвые" регистрации с этими данными (неподтверждённые с истёкшим кодом)
+        c.execute("""
+            DELETE FROM users
+            WHERE (LOWER(username) = LOWER(%s) OR LOWER(email) = LOWER(%s))
+            AND email_verified = FALSE
+            AND verification_code_expires IS NOT NULL
+            AND verification_code_expires < NOW()
+        """, (username, email))
+        conn.commit()
+
+        # Теперь проверяем уникальность (исключая неподтверждённых с истёкшим кодом)
+        c.execute("""
+            SELECT id FROM users
+            WHERE LOWER(username) = LOWER(%s)
+            AND NOT (email_verified = FALSE AND verification_code_expires IS NOT NULL AND verification_code_expires < NOW())
+        """, (username,))
         if c.fetchone():
             validation_errors.append("error_username_exists")
 
-        c.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(%s)", (email,))
+        c.execute("""
+            SELECT id FROM users
+            WHERE LOWER(email) = LOWER(%s)
+            AND NOT (email_verified = FALSE AND verification_code_expires IS NOT NULL AND verification_code_expires < NOW())
+        """, (email,))
         if c.fetchone():
             validation_errors.append("error_email_exists")
 
@@ -573,10 +599,22 @@ async def api_register(
             # Очищаем телефон от всех символов кроме цифр для сравнения
             phone_digits = re.sub(r'\D', '', phone)
             if len(phone_digits) >= 10:
+                # Удаляем "мёртвые" регистрации с этим телефоном
+                c.execute("""
+                    DELETE FROM users
+                    WHERE REGEXP_REPLACE(phone, '[^0-9]', '', 'g') = %s
+                    AND phone IS NOT NULL AND phone != ''
+                    AND email_verified = FALSE
+                    AND verification_code_expires IS NOT NULL
+                    AND verification_code_expires < NOW()
+                """, (phone_digits,))
+                conn.commit()
+
                 c.execute("""
                     SELECT id FROM users
                     WHERE REGEXP_REPLACE(phone, '[^0-9]', '', 'g') = %s
                     AND phone IS NOT NULL AND phone != ''
+                    AND NOT (email_verified = FALSE AND verification_code_expires IS NOT NULL AND verification_code_expires < NOW())
                 """, (phone_digits,))
                 if c.fetchone():
                     validation_errors.append("error_phone_exists")
@@ -613,26 +651,17 @@ async def api_register(
         c.execute("""INSERT INTO users
                      (username, password_hash, full_name, email, phone, role, position, created_at,
                       is_active, email_verified, verification_code, verification_code_expires,
-                      email_verification_token, privacy_accepted, privacy_accepted_at)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
+                      email_verification_token, privacy_accepted, privacy_accepted_at, preferred_language)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
                   (username, password_hash, full_name, email, phone, role, position, now,
                    auto_activate,  # Клиенты активируются сразу, сотрудники ждут одобрения
                    True if auto_verify else False,
                    verification_code, code_expires,
                    verification_token,
-                   int(privacy_accepted), now if privacy_accepted else None))
+                   int(privacy_accepted), now if privacy_accepted else None,
+                   preferred_language))
 
         user_id = c.fetchone()[0]
-
-        # Если это сотрудник - создаем запись в employees
-        if role in ['employee', 'manager', 'director', 'admin', 'sales', 'marketer']:
-            current_stage = "Создание записи сотрудника"
-            c.execute("""INSERT INTO employees
-                         (full_name, position, email, phone, is_active, created_at, updated_at)
-                         VALUES (%s, %s, %s, %s, TRUE, %s, %s) RETURNING id""",
-                      (full_name, position or role, email, phone, now, now))
-            employee_id = c.fetchone()[0]
-            c.execute("UPDATE users SET assigned_employee_id = %s WHERE id = %s", (employee_id, user_id))
 
         # Если это клиент - создаем запись в clients
         if role == 'client':
@@ -652,6 +681,13 @@ async def api_register(
         # Уведомляем админа об успешной регистрации
         import asyncio
         asyncio.create_task(notify_admin_registration(user_info, success=True))
+
+        # Уведомляем админов/директоров о новой регистрации (in-app уведомление)
+        try:
+            from notifications.admin_notifications import notify_new_registration_pending
+            notify_new_registration_pending(full_name, email, role)
+        except Exception as e:
+            log_error(f"Failed to send admin in-app notification: {e}", "auth")
 
         if auto_verify:
             return {"success": True, "message": "Первый администратор создан", "user_id": user_id}
@@ -745,6 +781,13 @@ async def verify_email(
         conn.close()
 
         log_info(f"Email verified for user {user_id} ({email})", "auth")
+
+        # Уведомляем админов что пользователь подтвердил email
+        try:
+            from notifications.admin_notifications import notify_email_verified
+            notify_email_verified(full_name, email)
+        except Exception as e:
+            log_error(f"Failed to send admin notification: {e}", "auth")
 
         return {
             "success": True,

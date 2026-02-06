@@ -21,6 +21,14 @@ from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["User Management"])
 
+# ===== REQUEST MODELS =====
+
+class ApproveUserRequest(BaseModel):
+    position: Optional[str] = None
+
+class RejectUserRequest(BaseModel):
+    reason: Optional[str] = None
+
 # ===== ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ =====
 
 class UpdateProfileRequest(BaseModel):
@@ -269,9 +277,9 @@ async def get_pending_users(session_token: Optional[str] = Cookie(None)):
         c = conn.cursor()
 
         c.execute("""
-            SELECT id, username, full_name, email, role, created_at, email_verified, photo
+            SELECT id, username, full_name, email, phone, role, created_at, email_verified, photo
             FROM users
-            WHERE approved = FALSE AND is_active = TRUE
+            WHERE is_active = FALSE AND email_verified = TRUE
             ORDER BY created_at DESC
         """)
 
@@ -282,9 +290,10 @@ async def get_pending_users(session_token: Optional[str] = Cookie(None)):
                 "username": row[1],
                 "full_name": row[2],
                 "email": row[3],
-                "role": row[4],
-                "created_at": row[5],
-                "email_verified": bool(row[6])
+                "phone": row[4],
+                "role": row[5],
+                "created_at": row[6],
+                "email_verified": bool(row[7])
             })
 
         conn.close()
@@ -297,26 +306,34 @@ async def get_pending_users(session_token: Optional[str] = Cookie(None)):
 @router.post("/api/users/{user_id}/approve")
 async def approve_user(
     user_id: int,
+    request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Одобрить пользователя"""
+    """Одобрить пользователя с возможностью указать должность"""
     user = require_auth(session_token)
     if not user or not can_approve_users(user["id"]):
         return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    # Получаем данные из тела запроса (если есть)
+    try:
+        body = await request.json()
+        position = body.get("position")
+    except:
+        position = None
 
     try:
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Получаем email и имя пользователя
-        c.execute("SELECT email, full_name, email_verified FROM users WHERE id = %s", (user_id,))
+        # Получаем email, имя и язык пользователя
+        c.execute("SELECT email, full_name, email_verified, COALESCE(preferred_language, 'en') FROM users WHERE id = %s", (user_id,))
         result = c.fetchone()
 
         if not result:
             conn.close()
             return JSONResponse({"error": "User not found"}, status_code=404)
 
-        email, full_name, email_verified = result
+        email, full_name, email_verified, preferred_language = result
 
         # Проверяем что email подтвержден
         if not email_verified:
@@ -326,19 +343,34 @@ async def approve_user(
                 status_code=400
             )
 
-        # Одобряем пользователя (is_active = TRUE)
-        c.execute("""
-            UPDATE users
-            SET approved = TRUE, is_active = TRUE, approved_by = %s, approved_at = NOW()
-            WHERE id = %s
-        """, (user["id"], user_id))
+        # Одобряем пользователя (is_active = TRUE) и обновляем должность если указана
+        if position:
+            c.execute("""
+                UPDATE users
+                SET approved = TRUE, is_active = TRUE, approved_by = %s, approved_at = NOW(), position = %s
+                WHERE id = %s
+            """, (user["id"], position, user_id))
+        else:
+            c.execute("""
+                UPDATE users
+                SET approved = TRUE, is_active = TRUE, approved_by = %s, approved_at = NOW()
+                WHERE id = %s
+            """, (user["id"], user_id))
 
         conn.commit()
         conn.close()
 
-        # Отправляем уведомление на email
+        # Отправляем уведомление на email в фоновом режиме
+        import threading
         from utils.email import send_approval_notification
-        send_approval_notification(email, full_name, approved=True)
+
+        def send_email_async():
+            try:
+                send_approval_notification(email, full_name, approved=True, language=preferred_language)
+            except Exception as e:
+                log_error(f"Failed to send approval email to {email}: {e}", "email")
+
+        threading.Thread(target=send_email_async, daemon=True).start()
 
         log_info(f"User {user['id']} approved user {user_id}", "api")
         return {"success": True, "message": "Пользователь одобрен"}
@@ -361,15 +393,15 @@ async def reject_user(
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Получаем email и имя пользователя
-        c.execute("SELECT email, full_name FROM users WHERE id = %s", (user_id,))
+        # Получаем email, имя и язык пользователя
+        c.execute("SELECT email, full_name, COALESCE(preferred_language, 'en') FROM users WHERE id = %s", (user_id,))
         result = c.fetchone()
 
         if not result:
             conn.close()
             return JSONResponse({"error": "User not found"}, status_code=404)
 
-        email, full_name = result
+        email, full_name, preferred_language = result
 
         # Деактивируем пользователя
         c.execute("""
@@ -381,9 +413,17 @@ async def reject_user(
         conn.commit()
         conn.close()
 
-        # Отправляем уведомление на email
+        # Отправляем уведомление на email в фоновом режиме
+        import threading
         from utils.email import send_approval_notification
-        send_approval_notification(email, full_name, approved=False)
+
+        def send_email_async():
+            try:
+                send_approval_notification(email, full_name, approved=False, language=preferred_language)
+            except Exception as e:
+                log_error(f"Failed to send rejection email to {email}: {e}", "email")
+
+        threading.Thread(target=send_email_async, daemon=True).start()
 
         log_info(f"User {user['id']} rejected user {user_id}", "api")
         return {"success": True, "message": "Пользователь отклонен"}
@@ -440,3 +480,107 @@ async def revoke_permission_api(
         return {"success": True}
     else:
         return JSONResponse({"error": "Failed to revoke permission"}, status_code=500)
+
+# ===== ДЕАКТИВАЦИЯ/АКТИВАЦИЯ =====
+
+@router.post("/api/users/{user_id}/deactivate")
+async def deactivate_user(
+    user_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Деактивировать пользователя (временная блокировка)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    # Только админ/директор может деактивировать
+    if user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    # Нельзя деактивировать себя
+    if user["id"] == user_id:
+        return JSONResponse({"error": "Cannot deactivate yourself"}, status_code=400)
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        # Проверяем существование пользователя
+        c.execute("SELECT full_name, is_active FROM users WHERE id = %s", (user_id,))
+        result = c.fetchone()
+
+        if not result:
+            conn.close()
+            return JSONResponse({"error": "User not found"}, status_code=404)
+
+        full_name, is_active = result
+
+        if not is_active:
+            conn.close()
+            return JSONResponse({"error": "User is already deactivated"}, status_code=400)
+
+        # Деактивируем пользователя (сохраняем approved для возможности реактивации)
+        c.execute("""
+            UPDATE users
+            SET is_active = FALSE
+            WHERE id = %s
+        """, (user_id,))
+
+        conn.commit()
+        conn.close()
+
+        log_info(f"User {user['id']} deactivated user {user_id} ({full_name})", "api")
+        return {"success": True, "message": f"User {full_name} deactivated"}
+
+    except Exception as e:
+        log_error(f"Error deactivating user: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.post("/api/users/{user_id}/activate")
+async def activate_user(
+    user_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Активировать пользователя (снять блокировку)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    # Только админ/директор может активировать
+    if user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        # Проверяем существование пользователя
+        c.execute("SELECT full_name, is_active, approved FROM users WHERE id = %s", (user_id,))
+        result = c.fetchone()
+
+        if not result:
+            conn.close()
+            return JSONResponse({"error": "User not found"}, status_code=404)
+
+        full_name, is_active, approved = result
+
+        if is_active:
+            conn.close()
+            return JSONResponse({"error": "User is already active"}, status_code=400)
+
+        # Активируем пользователя
+        c.execute("""
+            UPDATE users
+            SET is_active = TRUE, approved = TRUE
+            WHERE id = %s
+        """, (user_id,))
+
+        conn.commit()
+        conn.close()
+
+        log_info(f"User {user['id']} activated user {user_id} ({full_name})", "api")
+        return {"success": True, "message": f"User {full_name} activated"}
+
+    except Exception as e:
+        log_error(f"Error activating user: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
