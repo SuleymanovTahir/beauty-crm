@@ -12,6 +12,7 @@ import base64
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
+from db.settings import get_salon_settings
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from utils.email import send_email_async
@@ -31,6 +32,9 @@ async def send_chat_email_notification(sender_name: str, recipient_email: str, r
         return
 
     try:
+        salon = get_salon_settings()
+        salon_name = salon.get('name', 'CRM')
+
         subject = f"💬 Новое сообщение от {sender_name}"
 
         text_message = f"""
@@ -40,7 +44,7 @@ async def send_chat_email_notification(sender_name: str, recipient_email: str, r
 
 "{message}"
 
-Войдите в систему Beauty CRM чтобы ответить.
+Войдите в систему {salon_name} чтобы ответить.
         """
 
         html_message = f"""
@@ -56,7 +60,7 @@ async def send_chat_email_notification(sender_name: str, recipient_email: str, r
                 <p style="color: #333; font-size: 14px; margin: 0;">"{message}"</p>
               </div>
               <p style="color: #999; font-size: 14px; margin-top: 20px;">
-                Войдите в систему Beauty CRM чтобы ответить.
+                Войдите в систему {salon_name} чтобы ответить.
               </p>
             </div>
           </body>

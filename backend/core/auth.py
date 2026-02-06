@@ -341,9 +341,41 @@ async def register_client_api(
     full_name: str = Form(...),
     email: str = Form(...),
     phone: str = Form(""),
-    privacy_accepted: bool = Form(False)
+    privacy_accepted: bool = Form(False),
+    captcha_token: str = Form(None)
 ):
     """API: Регистрация клиента (упрощенная)"""
+    import os
+    import httpx
+
+    # Проверка hCaptcha (если включена)
+    hcaptcha_secret = os.getenv('HCAPTCHA_SECRET_KEY')
+    if hcaptcha_secret and hcaptcha_secret != '0x0000000000000000000000000000000000000000':
+        if not captcha_token:
+            return JSONResponse(
+                {"error": "error_captcha_required"},
+                status_code=400
+            )
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    'https://hcaptcha.com/siteverify',
+                    data={
+                        'secret': hcaptcha_secret,
+                        'response': captcha_token
+                    }
+                )
+                result = response.json()
+                if not result.get('success'):
+                    log_warning(f"hCaptcha verification failed for {email}: {result}", "auth")
+                    return JSONResponse(
+                        {"error": "error_captcha_failed"},
+                        status_code=400
+                    )
+        except Exception as e:
+            log_error(f"hCaptcha verification error: {e}", "auth")
+            # В случае ошибки сети - пропускаем проверку, чтобы не блокировать регистрацию
+
     return await api_register(
         username=username,
         password=password,
@@ -362,11 +394,44 @@ async def register_employee_api(
     full_name: str = Form(...),
     email: str = Form(...),
     role: str = Form("employee"),
-    position: str = Form(""),
     phone: str = Form(""),
-    privacy_accepted: bool = Form(False)
+    privacy_accepted: bool = Form(False),
+    newsletter_subscribed: bool = Form(True),
+    captcha_token: str = Form(None)
 ):
-    """API: Регистрация сотрудника (с выбором должности/роли)"""
+    """API: Регистрация сотрудника (с выбором роли)"""
+    from db.newsletter import add_subscriber
+    import os
+    import httpx
+
+    # Проверка hCaptcha (если включена)
+    hcaptcha_secret = os.getenv('HCAPTCHA_SECRET_KEY')
+    if hcaptcha_secret and hcaptcha_secret != '0x0000000000000000000000000000000000000000':
+        if not captcha_token:
+            return JSONResponse(
+                {"error": "error_captcha_required"},
+                status_code=400
+            )
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    'https://hcaptcha.com/siteverify',
+                    data={
+                        'secret': hcaptcha_secret,
+                        'response': captcha_token
+                    }
+                )
+                result = response.json()
+                if not result.get('success'):
+                    log_warning(f"hCaptcha verification failed for {email}: {result}", "auth")
+                    return JSONResponse(
+                        {"error": "error_captcha_failed"},
+                        status_code=400
+                    )
+        except Exception as e:
+            log_error(f"hCaptcha verification error: {e}", "auth")
+            # В случае ошибки сети - пропускаем проверку, чтобы не блокировать регистрацию
+
     # Запрещаем регистрировать директора через общую форму из соображений безопасности
     # (хотя подтверждение все равно нужно, лучше перестраховаться)
     if role == "director" and username.lower() != "admin":
@@ -381,13 +446,21 @@ async def register_employee_api(
                  {"error": "Регистрация роли Директор через общую форму запрещена."},
                  status_code=403
              )
+
+    # Подписка на рассылку
+    if newsletter_subscribed and email:
+        try:
+            add_subscriber(email, source='registration')
+        except Exception as e:
+            log_error(f"Failed to subscribe {email} to newsletter: {e}", "auth")
+
     return await api_register(
         username=username,
         password=password,
         full_name=full_name,
         email=email,
         role=role,
-        position=position,
+        position="",
         phone=phone,
         privacy_accepted=privacy_accepted
     )
@@ -497,6 +570,19 @@ async def api_register(
         c.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(%s)", (email,))
         if c.fetchone():
             validation_errors.append("error_email_exists")
+
+        # Проверяем что телефон не занят (если указан)
+        if phone and phone.strip():
+            # Очищаем телефон от всех символов кроме цифр для сравнения
+            phone_digits = re.sub(r'\D', '', phone)
+            if len(phone_digits) >= 10:
+                c.execute("""
+                    SELECT id FROM users
+                    WHERE REGEXP_REPLACE(phone, '[^0-9]', '', 'g') = %s
+                    AND phone IS NOT NULL AND phone != ''
+                """, (phone_digits,))
+                if c.fetchone():
+                    validation_errors.append("error_phone_exists")
 
         # Если есть ошибки валидации - возвращаем их все сразу
         if validation_errors:
