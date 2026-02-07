@@ -524,6 +524,20 @@ def create_booking_api(
         cache.clear_by_pattern("dashboard_*")
         cache.clear_by_pattern("funnel_*")
 
+        # Уведомляем админов/директоров о новой записи
+        try:
+            from notifications.admin_notifications import notify_new_booking
+            notify_new_booking(
+                client_name=name or instagram_id,
+                service_name=service,
+                master_name=master or "Не указан",
+                booking_datetime=datetime_str,
+                booking_id=booking_id,
+                created_by_user_id=user_id
+            )
+        except Exception as e:
+            log_error(f"Failed to send admin booking notification: {e}", "api")
+
         return {"success": True, "message": "Booking created", "booking_id": booking_id}
     except Exception as e:
         log_error(f"Booking creation error: {e}", "api")

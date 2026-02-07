@@ -251,6 +251,7 @@ def init_database():
         add_column_if_not_exists('users', 'password_reset_token', 'TEXT')
         add_column_if_not_exists('users', 'password_reset_expires', 'TIMESTAMP')
         add_column_if_not_exists('users', 'assigned_employee_id', 'INTEGER')
+        add_column_if_not_exists('users', 'preferred_language', "TEXT DEFAULT 'en'")
 
         # Soft Delete Tracking (Trash) - REQUIRED by housekeeping
         c.execute('''CREATE TABLE IF NOT EXISTS deleted_items (
@@ -260,11 +261,15 @@ def init_database():
             data JSONB,
             reason TEXT,
             deleted_by INTEGER REFERENCES users(id),
+            deleted_by_role TEXT,
             can_restore BOOLEAN DEFAULT TRUE,
             restored_at TIMESTAMP,
+            restored_by INTEGER REFERENCES users(id),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
         add_column_if_not_exists('deleted_items', 'deleted_by', 'INTEGER REFERENCES users(id)')
+        add_column_if_not_exists('deleted_items', 'deleted_by_role', 'TEXT')
+        add_column_if_not_exists('deleted_items', 'restored_by', 'INTEGER REFERENCES users(id)')
 
         # --- 3. RINGTONES (New) ---
         c.execute('''CREATE TABLE IF NOT EXISTS ringtones (
@@ -450,7 +455,7 @@ def init_database():
             instagram_id TEXT PRIMARY KEY,
             username TEXT, phone TEXT, name TEXT, email TEXT,
             password_hash TEXT, status TEXT DEFAULT 'new',
-            language TEXT DEFAULT 'ru',
+            language TEXT DEFAULT 'en',
             pipeline_stage_id INTEGER REFERENCES workflow_stages(id),
             loyalty_points INTEGER DEFAULT 0,
             lifetime_value REAL DEFAULT 0,

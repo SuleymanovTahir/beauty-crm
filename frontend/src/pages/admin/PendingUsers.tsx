@@ -1,8 +1,18 @@
 // /frontend/src/pages/admin/PendingUsers.tsx
 import React, { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
-import { CheckCircle, XCircle, Mail, User, Calendar, Loader, Shield } from "lucide-react";
+import { CheckCircle, XCircle, Mail, User, Calendar, Loader, Shield, Phone, Briefcase } from "lucide-react";
 import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../../components/ui/dialog";
 import { toast } from "sonner";
 import { api } from "../../services/api";
 
@@ -11,16 +21,25 @@ interface PendingUser {
   username: string;
   full_name: string;
   email: string;
+  phone?: string;
   role: string;
+  position?: string;
   created_at: string;
   email_verified: boolean;
 }
 
 export default function PendingUsers() {
-  const { t, i18n } = useTranslation('admin/pending_registrations');
+  const { t } = useTranslation('admin/pending_registrations');
   const [users, setUsers] = useState<PendingUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
+
+  // Modal states
+  const [approveModalOpen, setApproveModalOpen] = useState(false);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<PendingUser | null>(null);
+  const [position, setPosition] = useState("");
+  const [rejectReason, setRejectReason] = useState("");
 
   const loadUsers = async () => {
     try {
@@ -39,15 +58,29 @@ export default function PendingUsers() {
     loadUsers();
   }, []);
 
-  const handleApprove = async (userId: number, fullName: string) => {
+  const openApproveModal = (user: PendingUser) => {
+    setSelectedUser(user);
+    setPosition(user.position || "");
+    setApproveModalOpen(true);
+  };
+
+  const openRejectModal = (user: PendingUser) => {
+    setSelectedUser(user);
+    setRejectReason("");
+    setRejectModalOpen(true);
+  };
+
+  const handleApprove = async () => {
+    if (!selectedUser) return;
+
     try {
-      setActionLoading(userId);
-      const response: any = await api.approveUser(userId);
+      setActionLoading(selectedUser.id);
+      const response: any = await api.approveUser(selectedUser.id, position || undefined);
 
       if (response.success) {
-        toast.success(t('user_approved', { name: fullName }));
-        // Удаляем из списка
-        setUsers(users.filter((u) => u.id !== userId));
+        toast.success(t('user_approved', { name: selectedUser.full_name }));
+        setUsers(users.filter((u) => u.id !== selectedUser.id));
+        setApproveModalOpen(false);
       } else {
         toast.error(response.error || t('error_approving'));
       }
@@ -59,19 +92,17 @@ export default function PendingUsers() {
     }
   };
 
-  const handleReject = async (userId: number, fullName: string) => {
-    if (!confirm(t('confirm_reject_user', { name: fullName }))) {
-      return;
-    }
+  const handleReject = async () => {
+    if (!selectedUser) return;
 
     try {
-      setActionLoading(userId);
-      const response: any = await api.rejectUser(userId);
+      setActionLoading(selectedUser.id);
+      const response: any = await api.rejectUser(selectedUser.id);
 
       if (response.success) {
-        toast.success(t('user_rejected', { name: fullName }));
-        // Удаляем из списка
-        setUsers(users.filter((u) => u.id !== userId));
+        toast.success(t('user_rejected', { name: selectedUser.full_name }));
+        setUsers(users.filter((u) => u.id !== selectedUser.id));
+        setRejectModalOpen(false);
       } else {
         toast.error(response.error || t('error_rejecting'));
       }
@@ -133,15 +164,27 @@ export default function PendingUsers() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Mail className="w-4 h-4" />
                       <span>{user.email}</span>
                     </div>
+                    {user.phone && (
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Phone className="w-4 h-4" />
+                        <span>{user.phone}</span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Shield className="w-4 h-4" />
-                      <span className="capitalize">{user.role}</span>
+                      <span className="capitalize">{t(`role_${user.role}`, user.role)}</span>
                     </div>
+                    {user.position && (
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Briefcase className="w-4 h-4" />
+                        <span>{user.position}</span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Calendar className="w-4 h-4" />
                       <span>
@@ -164,9 +207,9 @@ export default function PendingUsers() {
                   </div>
                 </div>
 
-                <div className="flex gap-2 ml-4">
+                <div className="flex flex-col gap-2 ml-4">
                   <Button
-                    onClick={() => handleApprove(user.id, user.full_name)}
+                    onClick={() => openApproveModal(user)}
                     disabled={!user.email_verified || actionLoading === user.id}
                     className="bg-green-500 hover:bg-green-600 text-white"
                     size="sm"
@@ -186,7 +229,7 @@ export default function PendingUsers() {
                     )}
                   </Button>
                   <Button
-                    onClick={() => handleReject(user.id, user.full_name)}
+                    onClick={() => openRejectModal(user)}
                     disabled={actionLoading === user.id}
                     variant="destructive"
                     size="sm"
@@ -206,6 +249,100 @@ export default function PendingUsers() {
           ))}
         </div>
       )}
+
+      {/* Approve Modal with Position */}
+      <Dialog open={approveModalOpen} onOpenChange={setApproveModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              {t('approve_modal_title', 'Approve Registration')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('approve_modal_desc', 'Specify the position for user {{name}}').replace('{{name}}', selectedUser?.full_name || '')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="position">{t('position', 'Position')}</Label>
+              <Input
+                id="position"
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
+                placeholder={t('position_placeholder', 'e.g., Nail Technician')}
+              />
+              <p className="text-xs text-gray-500">
+                {t('position_hint', 'The position will be displayed in the employee profile')}
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setApproveModalOpen(false)}>
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={handleApprove}
+              disabled={actionLoading === selectedUser?.id}
+              className="bg-green-500 hover:bg-green-600"
+            >
+              {actionLoading === selectedUser?.id ? (
+                <Loader className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <CheckCircle className="w-4 h-4 mr-2" />
+              )}
+              {t('approve')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reject Modal */}
+      <Dialog open={rejectModalOpen} onOpenChange={setRejectModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <XCircle className="w-5 h-5" />
+              {t('reject_modal_title')}
+            </DialogTitle>
+            <DialogDescription>
+              {t('reject_modal_desc')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="p-3 bg-red-50 rounded-lg">
+              <p className="text-sm text-red-800">
+                <strong>{selectedUser?.full_name}</strong> ({selectedUser?.email})
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reason">{t('reject_reason', 'Rejection reason')}</Label>
+              <Input
+                id="reason"
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                placeholder={t('reject_reason_placeholder')}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRejectModalOpen(false)}>
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={handleReject}
+              disabled={actionLoading === selectedUser?.id}
+              variant="destructive"
+            >
+              {actionLoading === selectedUser?.id ? (
+                <Loader className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <XCircle className="w-4 h-4 mr-2" />
+              )}
+              {t('reject')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

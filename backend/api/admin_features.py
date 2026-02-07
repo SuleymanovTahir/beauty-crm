@@ -1507,9 +1507,9 @@ async def export_report(request: Request, session_token: Optional[str] = Cookie(
                             ws[f'B{row}'] = v['value']
                             row += 1
                 
-                # Auto-size columns
-                ws.column_dimensions['A'].width = 30
-                ws.column_dimensions['B'].width = 20
+                # Auto-size columns (openpyxl: type stubs may not expose column_dimensions)
+                ws.column_dimensions['A'].width = 30  # type: ignore[union-attr]
+                ws.column_dimensions['B'].width = 20  # type: ignore[union-attr]
                 
                 output = io.BytesIO()
                 wb.save(output)

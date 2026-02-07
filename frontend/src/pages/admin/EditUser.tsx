@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/EditUser.tsx
 import React, { useState, useEffect } from 'react';
-import { UserCog, ArrowLeft, Loader, Key, User as UserIcon, Shield, AlertTriangle } from 'lucide-react';
+import { UserCog, ArrowLeft, Loader, Key, User as UserIcon, Shield, AlertTriangle, UserX, UserCheck } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,8 @@ export default function EditUser() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isActive, setIsActive] = useState(true);
+  const [userRole, setUserRole] = useState('');
 
   const [profileData, setProfileData] = useState({
     username: '',
@@ -61,6 +63,8 @@ export default function EditUser() {
       }
 
       setUserId(data.id);
+      setIsActive(data.is_active !== false);
+      setUserRole(data.role || '');
 
       // Fix photo URL - add API URL if it's a relative path
       const photoUrl = getPhotoUrl(data.photo);
@@ -134,6 +138,38 @@ export default function EditUser() {
     } catch (err) {
       const message = err instanceof Error ? err.message : t('users:error_changing_password');
       toast.error(`❌ ${message}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeactivate = async () => {
+    if (!confirm(t('edituser:confirm_deactivate'))) return;
+
+    try {
+      setSaving(true);
+      await api.deactivateUser(userId);
+      setIsActive(false);
+      toast.success(t('edituser:user_deactivated'));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : t('edituser:error_deactivating');
+      toast.error(`${message}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleActivate = async () => {
+    if (!confirm(t('edituser:confirm_activate'))) return;
+
+    try {
+      setSaving(true);
+      await api.activateUser(userId);
+      setIsActive(true);
+      toast.success(t('edituser:user_activated'));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : t('edituser:error_activating');
+      toast.error(`${message}`);
     } finally {
       setSaving(false);
     }
@@ -470,6 +506,61 @@ export default function EditUser() {
             <PermissionsTab userId={userId} />
           </TabsContent>
         </Tabs>
+
+        {/* Status Section */}
+        <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-xl text-gray-900 mb-4 font-semibold flex items-center gap-2">
+            {isActive ? (
+              <UserCheck className="w-5 h-5 text-green-600" />
+            ) : (
+              <UserX className="w-5 h-5 text-orange-600" />
+            )}
+            {t('edituser:account_status')}
+          </h2>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <p className={`font-medium ${isActive ? 'text-green-600' : 'text-orange-600'}`}>
+                {isActive ? t('edituser:status_active') : t('edituser:status_inactive')}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                {isActive
+                  ? t('edituser:status_active_desc')
+                  : t('edituser:status_inactive_desc')}
+              </p>
+            </div>
+
+            {isActive ? (
+              <Button
+                variant="outline"
+                className="border-orange-300 text-orange-600 hover:bg-orange-50 hover:text-orange-700"
+                onClick={handleDeactivate}
+                disabled={saving}
+              >
+                {saving ? (
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <UserX className="w-4 h-4 mr-2" />
+                )}
+                {t('edituser:deactivate')}
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                className="border-green-300 text-green-600 hover:bg-green-50 hover:text-green-700"
+                onClick={handleActivate}
+                disabled={saving}
+              >
+                {saving ? (
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <UserCheck className="w-4 h-4 mr-2" />
+                )}
+                {t('edituser:activate')}
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

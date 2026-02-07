@@ -14,6 +14,120 @@ from datetime import datetime, timedelta
 
 from utils.logger import log_info, log_error, log_warning
 
+# Email translations for multi-language support
+EMAIL_TRANSLATIONS = {
+    'ru': {
+        'registration_approved_subject': 'Регистрация одобрена',
+        'registration_approved_title': 'Регистрация одобрена!',
+        'registration_approved_greeting': 'Здравствуйте',
+        'registration_approved_body': 'Ваша регистрация в {salon_name} была одобрена администратором.',
+        'registration_approved_login_prompt': 'Теперь вы можете войти в систему используя свои учетные данные:',
+        'registration_approved_button': 'Войти в систему',
+        'registration_approved_welcome': 'Добро пожаловать в {salon_name}!',
+        'registration_rejected_subject': 'Регистрация отклонена',
+        'registration_rejected_title': 'Регистрация отклонена',
+        'registration_rejected_greeting': 'Здравствуйте',
+        'registration_rejected_body': 'К сожалению, ваша регистрация в {salon_name} была отклонена администратором.',
+        'registration_rejected_reason': 'Причина',
+        'registration_rejected_contact': 'Если у вас есть вопросы, пожалуйста, свяжитесь с администратором.',
+    },
+    'en': {
+        'registration_approved_subject': 'Registration Approved',
+        'registration_approved_title': 'Registration Approved!',
+        'registration_approved_greeting': 'Hello',
+        'registration_approved_body': 'Your registration at {salon_name} has been approved by the administrator.',
+        'registration_approved_login_prompt': 'You can now log in using your credentials:',
+        'registration_approved_button': 'Log In',
+        'registration_approved_welcome': 'Welcome to {salon_name}!',
+        'registration_rejected_subject': 'Registration Rejected',
+        'registration_rejected_title': 'Registration Rejected',
+        'registration_rejected_greeting': 'Hello',
+        'registration_rejected_body': 'Unfortunately, your registration at {salon_name} has been rejected by the administrator.',
+        'registration_rejected_reason': 'Reason',
+        'registration_rejected_contact': 'If you have any questions, please contact the administrator.',
+    },
+    'ar': {
+        'registration_approved_subject': 'تمت الموافقة على التسجيل',
+        'registration_approved_title': 'تمت الموافقة على التسجيل!',
+        'registration_approved_greeting': 'مرحباً',
+        'registration_approved_body': 'تمت الموافقة على تسجيلك في {salon_name} من قبل المسؤول.',
+        'registration_approved_login_prompt': 'يمكنك الآن تسجيل الدخول باستخدام بياناتك:',
+        'registration_approved_button': 'تسجيل الدخول',
+        'registration_approved_welcome': 'أهلاً بك في {salon_name}!',
+        'registration_rejected_subject': 'تم رفض التسجيل',
+        'registration_rejected_title': 'تم رفض التسجيل',
+        'registration_rejected_greeting': 'مرحباً',
+        'registration_rejected_body': 'للأسف، تم رفض تسجيلك في {salon_name} من قبل المسؤول.',
+        'registration_rejected_reason': 'السبب',
+        'registration_rejected_contact': 'إذا كانت لديك أي أسئلة، يرجى الاتصال بالمسؤول.',
+    },
+    'es': {
+        'registration_approved_subject': 'Registro aprobado',
+        'registration_approved_title': '¡Registro aprobado!',
+        'registration_approved_greeting': 'Hola',
+        'registration_approved_body': 'Tu registro en {salon_name} ha sido aprobado por el administrador.',
+        'registration_approved_login_prompt': 'Ahora puedes iniciar sesión con tus credenciales:',
+        'registration_approved_button': 'Iniciar sesión',
+        'registration_approved_welcome': '¡Bienvenido a {salon_name}!',
+        'registration_rejected_subject': 'Registro rechazado',
+        'registration_rejected_title': 'Registro rechazado',
+        'registration_rejected_greeting': 'Hola',
+        'registration_rejected_body': 'Lamentablemente, tu registro en {salon_name} ha sido rechazado por el administrador.',
+        'registration_rejected_reason': 'Razón',
+        'registration_rejected_contact': 'Si tienes alguna pregunta, por favor contacta al administrador.',
+    },
+    'de': {
+        'registration_approved_subject': 'Registrierung genehmigt',
+        'registration_approved_title': 'Registrierung genehmigt!',
+        'registration_approved_greeting': 'Hallo',
+        'registration_approved_body': 'Ihre Registrierung bei {salon_name} wurde vom Administrator genehmigt.',
+        'registration_approved_login_prompt': 'Sie können sich jetzt mit Ihren Zugangsdaten anmelden:',
+        'registration_approved_button': 'Anmelden',
+        'registration_approved_welcome': 'Willkommen bei {salon_name}!',
+        'registration_rejected_subject': 'Registrierung abgelehnt',
+        'registration_rejected_title': 'Registrierung abgelehnt',
+        'registration_rejected_greeting': 'Hallo',
+        'registration_rejected_body': 'Leider wurde Ihre Registrierung bei {salon_name} vom Administrator abgelehnt.',
+        'registration_rejected_reason': 'Grund',
+        'registration_rejected_contact': 'Bei Fragen wenden Sie sich bitte an den Administrator.',
+    },
+    'fr': {
+        'registration_approved_subject': 'Inscription approuvée',
+        'registration_approved_title': 'Inscription approuvée !',
+        'registration_approved_greeting': 'Bonjour',
+        'registration_approved_body': 'Votre inscription chez {salon_name} a été approuvée par l\'administrateur.',
+        'registration_approved_login_prompt': 'Vous pouvez maintenant vous connecter avec vos identifiants :',
+        'registration_approved_button': 'Se connecter',
+        'registration_approved_welcome': 'Bienvenue chez {salon_name} !',
+        'registration_rejected_subject': 'Inscription refusée',
+        'registration_rejected_title': 'Inscription refusée',
+        'registration_rejected_greeting': 'Bonjour',
+        'registration_rejected_body': 'Malheureusement, votre inscription chez {salon_name} a été refusée par l\'administrateur.',
+        'registration_rejected_reason': 'Raison',
+        'registration_rejected_contact': 'Si vous avez des questions, veuillez contacter l\'administrateur.',
+    },
+    'pt': {
+        'registration_approved_subject': 'Registro aprovado',
+        'registration_approved_title': 'Registro aprovado!',
+        'registration_approved_greeting': 'Olá',
+        'registration_approved_body': 'Seu registro em {salon_name} foi aprovado pelo administrador.',
+        'registration_approved_login_prompt': 'Agora você pode fazer login com suas credenciais:',
+        'registration_approved_button': 'Entrar',
+        'registration_approved_welcome': 'Bem-vindo ao {salon_name}!',
+        'registration_rejected_subject': 'Registro rejeitado',
+        'registration_rejected_title': 'Registro rejeitado',
+        'registration_rejected_greeting': 'Olá',
+        'registration_rejected_body': 'Infelizmente, seu registro em {salon_name} foi rejeitado pelo administrador.',
+        'registration_rejected_reason': 'Motivo',
+        'registration_rejected_contact': 'Se você tiver alguma dúvida, entre em contato com o administrador.',
+    },
+}
+
+def get_email_translation(key: str, language: str = 'en') -> str:
+    """Get email translation for a key in the specified language"""
+    translations = EMAIL_TRANSLATIONS.get(language, EMAIL_TRANSLATIONS['en'])
+    return translations.get(key, EMAIL_TRANSLATIONS['en'].get(key, key))
+
 
 def get_salon_name() -> str:
     """
@@ -37,16 +151,27 @@ def get_logo_url() -> str:
     """
     try:
         from db import get_salon_settings
-        from core.config import PUBLIC_URL
+        from core.config import PUBLIC_URL, BASE_DIR
         salon_settings = get_salon_settings()
         logo_url = salon_settings.get('logo_url', '/static/uploads/images/salon/logo.webp')
         base_url = salon_settings.get('base_url', PUBLIC_URL)
+
+        # Если logo_url пустой или None
+        if not logo_url:
+            return ""
 
         # Если logo_url уже полный URL, возвращаем как есть
         if logo_url.startswith('http'):
             return logo_url
 
-        # Иначе формируем полный URL
+        # Проверяем существует ли файл локально
+        if logo_url.startswith('/static/'):
+            local_path = os.path.join(BASE_DIR, logo_url.lstrip('/'))
+            if not os.path.exists(local_path):
+                log_warning(f"Logo file not found at: {local_path}", "email")
+                return ""
+
+        # Формируем полный URL
         return f"{base_url.rstrip('/')}{logo_url}"
     except Exception as e:
         log_warning(f"Could not get logo URL: {e}", "email")
@@ -59,12 +184,13 @@ def configure_smtp() -> dict:
     Конфигурация SMTP из переменных окружения
     Returns: dict с настройками SMTP или None если не настроено
     """
+    smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER', '')
     smtp_config = {
-        'host': os.getenv('SMTP_HOST', 'smtp.gmail.com'),
+        'host': os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com'),
         'port': int(os.getenv('SMTP_PORT', 587)),
-        'user': os.getenv('SMTP_USER', ''),
+        'user': smtp_user,
         'password': os.getenv('SMTP_PASSWORD', ''),
-        'from_email': os.getenv('SMTP_FROM_EMAIL', os.getenv('SMTP_USER', '')),
+        'from_email': os.getenv('SMTP_FROM_EMAIL') or os.getenv('FROM_EMAIL') or smtp_user,
         'from_name': os.getenv('SMTP_FROM_NAME', get_salon_name())
     }
     
@@ -335,31 +461,39 @@ def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
     return send_email(admin_email, subject, html_body, text_body)
 
 
-def send_registration_approved_email(email: str, name: str) -> bool:
+def send_registration_approved_email(email: str, name: str, language: str = 'en') -> bool:
     """
     Уведомить пользователя что его регистрация одобрена
 
     Args:
         email: Email пользователя
         name: Имя пользователя
+        language: Язык пользователя (по умолчанию 'en')
 
     Returns: True если отправлено успешно
     """
     salon_name = get_salon_name()
     logo_url = get_logo_url()
     logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
-    subject = f"Регистрация одобрена - {salon_name}"
+
+    # Get translations
+    t = lambda key: get_email_translation(key, language)
+    subject = f"{t('registration_approved_subject')} - {salon_name}"
 
     from core.config import PUBLIC_URL
     login_url = os.getenv('APP_URL', PUBLIC_URL) + '/login'
 
+    # Text direction for RTL languages
+    rtl_style = 'dir="rtl"' if language == 'ar' else ''
+    text_align = 'text-align: right;' if language == 'ar' else ''
+
     html_body = f"""
     <!DOCTYPE html>
-    <html>
+    <html {rtl_style}>
     <head>
         <meta charset="utf-8">
         <style>
-            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; {text_align} }}
             .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
             .header {{ background: linear-gradient(135deg, #10b981 0%, #059669 100%);
                        color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
@@ -372,39 +506,39 @@ def send_registration_approved_email(email: str, name: str) -> bool:
         <div class="container">
             <div class="header">
                 {logo_html}
-                <h1>Регистрация одобрена!</h1>
+                <h1>{t('registration_approved_title')}</h1>
             </div>
             <div class="content">
-                <h2>Здравствуйте, {name}!</h2>
-                <p>Ваша регистрация в {salon_name} была одобрена администратором.</p>
-                <p>Теперь вы можете войти в систему используя свои учетные данные:</p>
+                <h2>{t('registration_approved_greeting')}, {name}!</h2>
+                <p>{t('registration_approved_body').format(salon_name=salon_name)}</p>
+                <p>{t('registration_approved_login_prompt')}</p>
 
-                <a href="{login_url}" class="button">Войти в систему</a>
+                <a href="{login_url}" class="button">{t('registration_approved_button')}</a>
 
-                <p>Добро пожаловать в {salon_name}!</p>
+                <p>{t('registration_approved_welcome').format(salon_name=salon_name)}</p>
             </div>
         </div>
     </body>
     </html>
     """
-    
+
     text_body = f"""
-    {salon_name} - Регистрация одобрена
-    
-    Здравствуйте, {name}!
-    
-    Ваша регистрация в {salon_name} была одобрена администратором.
-    Теперь вы можете войти в систему используя свои учетные данные:
-    
+    {salon_name} - {t('registration_approved_subject')}
+
+    {t('registration_approved_greeting')}, {name}!
+
+    {t('registration_approved_body').format(salon_name=salon_name)}
+    {t('registration_approved_login_prompt')}
+
     {login_url}
-    
-    Добро пожаловать в {salon_name}!
+
+    {t('registration_approved_welcome').format(salon_name=salon_name)}
     """
-    
+
     return send_email(email, subject, html_body, text_body)
 
 
-def send_registration_rejected_email(email: str, name: str, reason: str = "") -> bool:
+def send_registration_rejected_email(email: str, name: str, reason: str = "", language: str = 'en') -> bool:
     """
     Уведомить пользователя что его регистрация отклонена
 
@@ -412,24 +546,32 @@ def send_registration_rejected_email(email: str, name: str, reason: str = "") ->
         email: Email пользователя
         name: Имя пользователя
         reason: Причина отклонения (опционально)
+        language: Язык пользователя (по умолчанию 'en')
 
     Returns: True если отправлено успешно
     """
     salon_name = get_salon_name()
     logo_url = get_logo_url()
     logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
-    subject = f"Регистрация отклонена - {salon_name}"
 
-    reason_text = f"<p><strong>Причина:</strong> {reason}</p>" if reason else ""
-    reason_plain = f"\nПричина: {reason}\n" if reason else ""
+    # Get translations
+    t = lambda key: get_email_translation(key, language)
+    subject = f"{t('registration_rejected_subject')} - {salon_name}"
+
+    reason_text = f"<p><strong>{t('registration_rejected_reason')}:</strong> {reason}</p>" if reason else ""
+    reason_plain = f"\n{t('registration_rejected_reason')}: {reason}\n" if reason else ""
+
+    # Text direction for RTL languages
+    rtl_style = 'dir="rtl"' if language == 'ar' else ''
+    text_align = 'text-align: right;' if language == 'ar' else ''
 
     html_body = f"""
     <!DOCTYPE html>
-    <html>
+    <html {rtl_style}>
     <head>
         <meta charset="utf-8">
         <style>
-            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; {text_align} }}
             .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
             .header {{ background: #ef4444; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
             .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
@@ -439,29 +581,29 @@ def send_registration_rejected_email(email: str, name: str, reason: str = "") ->
         <div class="container">
             <div class="header">
                 {logo_html}
-                <h1>Регистрация отклонена</h1>
+                <h1>{t('registration_rejected_title')}</h1>
             </div>
             <div class="content">
-                <h2>Здравствуйте, {name}!</h2>
-                <p>К сожалению, ваша регистрация в {salon_name} была отклонена администратором.</p>
+                <h2>{t('registration_rejected_greeting')}, {name}!</h2>
+                <p>{t('registration_rejected_body').format(salon_name=salon_name)}</p>
                 {reason_text}
-                <p>Если у вас есть вопросы, пожалуйста, свяжитесь с администратором.</p>
+                <p>{t('registration_rejected_contact')}</p>
             </div>
         </div>
     </body>
     </html>
     """
-    
+
     text_body = f"""
-    {salon_name} - Регистрация отклонена
-    
-    Здравствуйте, {name}!
-    
-    К сожалению, ваша регистрация в {salon_name} была отклонена администратором.
+    {salon_name} - {t('registration_rejected_subject')}
+
+    {t('registration_rejected_greeting')}, {name}!
+
+    {t('registration_rejected_body').format(salon_name=salon_name)}
     {reason_plain}
-    Если у вас есть вопросы, пожалуйста, свяжитесь с администратором.
+    {t('registration_rejected_contact')}
     """
-    
+
     return send_email(email, subject, html_body, text_body)
 
 

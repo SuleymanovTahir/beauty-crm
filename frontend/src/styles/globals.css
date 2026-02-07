@@ -26,8 +26,8 @@
   --destructive: #d4183d;
   --destructive-foreground: #ffffff;
   --border: rgba(0, 0, 0, 0.1);
-  --input: transparent;
-  --input-background: #f5ede5;
+  --input: #e2e8f0;
+  --input-background: #f9fafb;
   --switch-background: #cbced4;
   --font-weight-medium: 500;
   --font-weight-normal: 400;

@@ -13,8 +13,10 @@ async def check_inactive_users():
         try:
             mark_inactive_users()
             # Also cleanup expired sessions to keep sessions table lean
-            from db.users import cleanup_expired_sessions
+            from db.users import cleanup_expired_sessions, cleanup_unverified_users
             cleanup_expired_sessions()
+            # Cleanup unverified users with expired verification codes
+            cleanup_unverified_users()
         except Exception as e:
             from utils.logger import log_error
             log_error(f"Error in user status checker: {e}", "scheduler")

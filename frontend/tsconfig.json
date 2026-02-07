@@ -28,16 +28,16 @@
         "./src/*"
       ],
       "@beauty-crm/shared": [
-        "../shared/src/index.ts"
+        "./shared/src/index.ts"
       ],
       "@beauty-crm/shared/*": [
-        "../shared/src/*"
+        "./shared/src/*"
       ]
     }
   },
   "include": [
     "src",
-    "../shared/src",
+    "./shared/src",
     "create-locale-structure.js",
     "public_landing"
   ],

@@ -14,6 +14,7 @@ from core.config import DATABASE_NAME, SALON_PHONE_DEFAULT
 from db.connection import get_db_connection
 from utils.logger import log_error, log_warning
 from utils.translation import t, register_fonts
+from utils.utils import require_auth
 
 # Попытка импортировать библиотеки для PDF и Excel
 try:
@@ -32,6 +33,7 @@ except ImportError:
 try:
     from openpyxl import Workbook
     from openpyxl.styles import Font, PatternFill, Alignment
+    from openpyxl.utils import get_column_letter
     EXCEL_AVAILABLE = True
 except ImportError:
     EXCEL_AVAILABLE = False
@@ -187,7 +189,7 @@ def export_clients_excel(clients, lang='en'):
         raise Exception("Excel экспорт недоступен")
     
     wb = Workbook()
-    ws = wb.active
+    ws = wb.active or wb.create_sheet("Data")
     ws.title = t(lang, 'admin/clients:title', 'Клиенты')
     
     # Headers translated if possible, or fallback to English as standard for Excel
@@ -246,18 +248,18 @@ def export_clients_excel(clients, lang='en'):
             'Yes' if len(c) > 19 and c[19] else 'No'  # Personal data
         ])
     
-    for col in ws.columns:
+    for col in ws.columns:  # type: ignore[union-attr]
         max_length = 0
-        col_letter = col[0].column_letter
+        col_letter = get_column_letter(col[0].column or 1)
         for cell in col:
             try:
                 if len(str(cell.value)) > max_length:
                     max_length = len(str(cell.value))
-            except:
+            except Exception:
                 pass
         adjusted_width = min(max_length + 2, 50)
-        ws.column_dimensions[col_letter].width = adjusted_width
-    
+        ws.column_dimensions[col_letter].width = adjusted_width  # type: ignore[union-attr]
+
     buffer = io.BytesIO()
     wb.save(buffer)
     buffer.seek(0)
@@ -344,9 +346,8 @@ def export_bookings_pdf(bookings, lang='en'):
         try:
             date_obj = datetime.fromisoformat(b[3])
             date_str = date_obj.strftime('%d.%m %H:%M')
-        except:
+        except Exception:
             date_str = str(b[3])[:16]
-        
         data.append([
             str(b[0]), (b[5] or 'N/A')[:20], (b[2] or 'N/A')[:25],
             date_str, (b[6] or '')[:10],
@@ -378,7 +379,7 @@ def export_bookings_excel(bookings, lang='en'):
         raise Exception("Excel экспорт недоступен")
     
     wb = Workbook()
-    ws = wb.active
+    ws = wb.active or wb.create_sheet("Data")
     ws.title = t(lang, 'adminPanel.dashboard.bookings', 'Записи')
     
     headers = [
@@ -407,18 +408,18 @@ def export_bookings_excel(bookings, lang='en'):
             b[6], b[8] if len(b) > 8 else 0, b[7]
         ])
     
-    for col in ws.columns:
+    for col in ws.columns:  # type: ignore[union-attr]
         max_length = 0
-        col_letter = col[0].column_letter
+        col_letter = get_column_letter(col[0].column or 1)
         for cell in col:
             try:
                 if len(str(cell.value)) > max_length:
                     max_length = len(str(cell.value))
-            except:
+            except Exception:
                 pass
         adjusted_width = min(max_length + 2, 50)
-        ws.column_dimensions[col_letter].width = adjusted_width
-    
+        ws.column_dimensions[col_letter].width = adjusted_width  # type: ignore[union-attr]
+
     buffer = io.BytesIO()
     wb.save(buffer)
     buffer.seek(0)
@@ -497,9 +498,8 @@ def export_full_data_excel(lang='en'):
     c = conn.cursor()
     
     wb = Workbook()
-    
     # ===== Лист 1: Клиенты =====
-    ws_clients = wb.active
+    ws_clients = wb.active or wb.create_sheet("Data")
     ws_clients.title = t(lang, 'admin/clients:title', 'Клиенты')
     
     headers = ['ID', 
@@ -577,18 +577,18 @@ def export_full_data_excel(lang='en'):
     
     # Автоширина колонок для всех листов
     for ws in [ws_clients, ws_messages, ws_bookings]:
-        for col in ws.columns:
+        for col in ws.columns:  # type: ignore[union-attr]
             max_length = 0
-            col_letter = col[0].column_letter
+            col_letter = get_column_letter(col[0].column or 1)
             for cell in col:
                 try:
                     if len(str(cell.value)) > max_length:
                         max_length = len(str(cell.value))
-                except:
+                except Exception:
                     pass
             adjusted_width = min(max_length + 2, 50)
-            ws.column_dimensions[col_letter].width = adjusted_width
-    
+            ws.column_dimensions[col_letter].width = adjusted_width  # type: ignore[union-attr]
+
     conn.close()
     
     buffer = io.BytesIO()
@@ -688,7 +688,7 @@ async def export_bookings(
                 
                 if start_date <= booking_date <= end_date:
                     filtered_bookings.append(b)
-            except:
+            except Exception:
                 continue
         bookings = filtered_bookings
     else:
@@ -763,7 +763,7 @@ async def export_analytics(
                                   status_code=500)
             
             wb = Workbook()
-            ws = wb.active
+            ws = wb.active or wb.create_sheet("Data")
             ws.title = t(lang, 'adminPanel.dashboard.analytics', 'Аналитика')
             
             ws.append([t(lang, 'booking.formDate', 'Дата'), t(lang, 'adminPanel.dashboard.bookings', 'Записи')])
@@ -870,7 +870,7 @@ async def export_messages(
                                   status_code=500)
             
             wb = Workbook()
-            ws = wb.active
+            ws = wb.active or wb.create_sheet("Data")
             ws.title = t(lang, 'manager/messages:title', 'Сообщения')
             
             headers = [
@@ -899,18 +899,18 @@ async def export_messages(
                     m[8] or m[9] or ''
                 ])
             
-            for col in ws.columns:
+            for col in ws.columns:  # type: ignore[union-attr]
                 max_length = 0
-                col_letter = col[0].column_letter
+                col_letter = get_column_letter(col[0].column or 1)
                 for cell in col:
                     try:
                         if len(str(cell.value)) > max_length:
                             max_length = len(str(cell.value))
-                    except:
+                    except Exception:
                         pass
                 adjusted_width = min(max_length + 2, 50)
-                ws.column_dimensions[col_letter].width = adjusted_width
-            
+                ws.column_dimensions[col_letter].width = adjusted_width  # type: ignore[union-attr]
+
             buffer = io.BytesIO()
             wb.save(buffer)
             buffer.seek(0)
@@ -991,7 +991,7 @@ async def download_import_template(
                                   status_code=500)
             
             wb = Workbook()
-            ws = wb.active
+            ws = wb.active or wb.create_sheet("Data")
             ws.title = "Записи"
             
             headers = ['instagram_id', 'name', 'phone', 'service', 'datetime', 
@@ -1071,9 +1071,8 @@ def export_dashboard_report_csv(stats, bot_analytics, bookings, lang='en'):
         try:
             date_obj = datetime.fromisoformat(b[3])
             date_str = date_obj.strftime('%d.%m.%Y %H:%M')
-        except:
+        except Exception:
             date_str = str(b[3])
-            
         writer.writerow([
             b[0], 
             b[5] or '', 
@@ -1093,9 +1092,8 @@ def export_dashboard_report_excel(stats, bot_analytics, bookings, lang='en'):
         raise Exception("Excel экспорт недоступен")
     
     wb = Workbook()
-    
     # --- Лист 1: Обзор (Overview) ---
-    ws = wb.active
+    ws = wb.active or wb.create_sheet("Data")
     ws.title = t(lang, 'adminPanel.dashboard.report', 'Обзор')
     
     # Стили
@@ -1165,9 +1163,8 @@ def export_dashboard_report_excel(stats, bot_analytics, bookings, lang='en'):
         try:
             date_obj = datetime.fromisoformat(b[3])
             date_str = date_obj.strftime('%d.%m.%Y %H:%M')
-        except:
+        except Exception:
             date_str = str(b[3])
-            
         ws_bookings.append([
             b[0], 
             b[5] or '', 
@@ -1180,16 +1177,17 @@ def export_dashboard_report_excel(stats, bot_analytics, bookings, lang='en'):
 
     # Автоширина колонок
     for sheet in [ws, ws_bookings]:
-        for col in sheet.columns:
+        for col in sheet.columns:  # type: ignore[union-attr]
             max_length = 0
-            col_letter = col[0].column_letter
+            col_letter = get_column_letter(col[0].column or 1)
             for cell in col:
                 try:
                     if len(str(cell.value)) > max_length:
                         max_length = len(str(cell.value))
-                except: pass
-            sheet.column_dimensions[col_letter].width = min(max_length + 2, 50)
-            
+                except Exception:
+                    pass
+            sheet.column_dimensions[col_letter].width = min(max_length + 2, 50)  # type: ignore[union-attr]
+
     buffer = io.BytesIO()
     wb.save(buffer)
     buffer.seek(0)
@@ -1347,9 +1345,8 @@ def export_dashboard_report_pdf(stats, bot_analytics, bookings, lang='en'):
         try:
             date_obj = datetime.fromisoformat(b[3])
             date_str = date_obj.strftime('%d.%m %H:%M')
-        except:
+        except Exception:
             date_str = str(b[3])[:11]
-            
         status_text = t(lang, f'adminPanel.dashboard.status_{b[6]}', b[6])
         
         data_bookings.append([

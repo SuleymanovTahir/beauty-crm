@@ -7,13 +7,16 @@ from .task_checker import start_task_checker
 from .user_status_checker import start_user_status_checker
 from .weekly_report_checker import start_weekly_report_checker
 from .database_backup_checker import check_database_backup
+from .trash_cleanup import start_trash_cleanup_scheduler, run_trash_cleanup
 
 __all__ = [
-    "start_birthday_checker", 
-    "start_client_birthday_checker", 
-    "start_booking_reminder_checker", 
-    "start_task_checker", 
+    "start_birthday_checker",
+    "start_client_birthday_checker",
+    "start_booking_reminder_checker",
+    "start_task_checker",
     "start_user_status_checker",
     "start_weekly_report_checker",
-    "check_database_backup"
+    "check_database_backup",
+    "start_trash_cleanup_scheduler",
+    "run_trash_cleanup"
 ]

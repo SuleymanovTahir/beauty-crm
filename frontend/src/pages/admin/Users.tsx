@@ -75,6 +75,7 @@ function SortableUserRow({
   roleConfig,
   permissions,
   handleToggleVisibility,
+  handleToggleActive,
   handleDeleteUser,
   navigate,
   t,
@@ -156,9 +157,11 @@ function SortableUserRow({
             />
           </td>
           <td className="px-6 py-4">
-            <Badge className={(user as any).is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-              {(user as any).is_active ? t('active') : t('inactive')}
-            </Badge>
+            <Switch
+              checked={!!(user as any).is_active}
+              onCheckedChange={(checked) => handleToggleActive(user, checked)}
+              disabled={!permissions.canEditUsers}
+            />
           </td>
         </>
       ) : (
@@ -170,7 +173,7 @@ function SortableUserRow({
                   user.status === 'lead' ? 'bg-blue-100 text-blue-800' :
                     'bg-gray-100 text-gray-800'
             }>
-              {t(`common:status_${user.status} `)}
+              {t(`common:status_${user.status}`)}
             </Badge>
           </td>
           <td className="px-6 py-4 text-sm text-gray-900">
@@ -266,6 +269,17 @@ function SortableUserRow({
                 title={t('view_details')}
               >
                 <Edit className="w-4 h-4" />
+              </Button>
+            )}
+            {permissions.canDeleteUsers && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleDeleteUser(user.instagram_id)}
+                className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                title={t('action_delete_title')}
+              >
+                <Trash2 className="w-4 h-4" />
               </Button>
             )}
           </div>
@@ -501,17 +515,25 @@ export default function Users() {
     }
   };
 
-  const handleDeleteUser = async (id: number) => {
+  const handleDeleteUser = async (id: number | string) => {
     if (!confirm(t('confirm_delete'))) return;
 
     try {
-      await api.deleteUser(id);
-      setUsers(users.filter(u => u.id !== id));
-      toast.success(t('user_deleted'));
+      if (activeTab === 'clients') {
+        // Delete client by instagram_id
+        await api.deleteClient(id as string);
+        setUsers(users.filter(u => u.instagram_id !== id));
+        toast.success(t('client_deleted'));
+      } else {
+        // Delete employee by id
+        await api.deleteUser(id as number);
+        setUsers(users.filter(u => u.id !== id));
+        toast.success(t('user_deleted'));
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : t('error_deleting_user');
       toast.error(`${t('error')}: ${message} `);
-      console.error('Error deleting user:', err);
+      console.error('Error deleting user/client:', err);
     }
   };
 
@@ -525,6 +547,26 @@ export default function Users() {
     } catch (err) {
       // Revert on error
       setUsers(users.map(u => u.id === user.id ? { ...u, is_public_visible: !newValue } : u));
+      const message = err instanceof Error ? err.message : t('error_updating_user');
+      toast.error(message);
+    }
+  };
+
+  const handleToggleActive = async (user: User, newValue: boolean) => {
+    try {
+      // Optimistic update
+      setUsers(users.map(u => u.id === user.id ? { ...u, is_active: newValue } : u));
+
+      if (newValue) {
+        await api.activateUser(user.id);
+        toast.success(t('user_activated'));
+      } else {
+        await api.deactivateUser(user.id);
+        toast.success(t('user_deactivated'));
+      }
+    } catch (err) {
+      // Revert on error
+      setUsers(users.map(u => u.id === user.id ? { ...u, is_active: !newValue } : u));
       const message = err instanceof Error ? err.message : t('error_updating_user');
       toast.error(message);
     }
@@ -811,6 +853,7 @@ export default function Users() {
                         roleConfig={roleConfig}
                         permissions={permissions}
                         handleToggleVisibility={handleToggleVisibility}
+                        handleToggleActive={handleToggleActive}
                         handleDeleteUser={handleDeleteUser}
                         navigate={navigate}
                         t={t}

@@ -16,7 +16,7 @@ import { validatePhone } from '../utils/validation';
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import '../styles/css/index.css';
 
-// hCaptcha сайт-ключ (тестовый - для production замените на реальный с hcaptcha.com)
+// hCaptcha Site Key: задайте VITE_HCAPTCHA_SITE_KEY в .env. Без ключа — тестовый. Инструкция: docs/HCAPTCHA_KEYS.md
 const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY || "10000000-ffff-ffff-ffff-000000000001";
 
 interface LoginPageProps {

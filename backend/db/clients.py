@@ -338,23 +338,21 @@ def delete_client(instagram_id: str) -> bool:
         c.execute("DELETE FROM client_notifications WHERE client_instagram_id = %s", (instagram_id,))
         
         # Удалить самого клиента
-        print(f"🧹 DEBUG: Deleting from clients table for id: {instagram_id!r}")
         c.execute("DELETE FROM clients WHERE instagram_id = %s", (instagram_id,))
-        deleted_count = c.rowcount  # Capture rowcount immediately after client DELETE
-        print(f"🧹 DEBUG: DELETE FROM clients rowcount: {deleted_count}")
-        
+        deleted_count = c.rowcount
+
         conn.commit()
         conn.close()
         
         success = deleted_count > 0
         if success:
-            print(f"✅ Клиент {instagram_id} и все его данные удалены")
+            log_info(f"Клиент {instagram_id} и все его данные удалены", "clients")
             return True
         else:
-             print(f"⚠️ DEBUG: Client delete returned success=False, rowcount={deleted_count}")
-             return False
+            log_info(f"Client delete: no row deleted for instagram_id={instagram_id!r}, rowcount={deleted_count}", "clients")
+            return False
     except Exception as e:
-        print(f"❌ Ошибка удаления клиента: {e}")
+        log_error(f"Ошибка удаления клиента {instagram_id}: {e}", "clients")
         conn.close()
         return False
 

@@ -84,8 +84,8 @@ def generate_verification_code():
     return ''.join([str(secrets.randbelow(10)) for _ in range(6)])
 
 def get_code_expiry():
-    """Получить время истечения кода (5 минут)"""
-    return (datetime.now() + timedelta(minutes=5)).isoformat()
+    """Получить время истечения кода (24 часа)"""
+    return (datetime.now() + timedelta(hours=24)).isoformat()
 
 def send_verification_email(to_email: str, code: str, full_name: str) -> bool:
     """
@@ -273,7 +273,7 @@ def send_verification_link_email(to_email: str, verification_token: str, full_na
         log_error(f"Failed to send verification link email: {e}", "email")
         return False
 
-def send_approval_notification(to_email: str, full_name: str, approved: bool) -> bool:
+def send_approval_notification(to_email: str, full_name: str, approved: bool, language: str = 'en', reason: str = '') -> bool:
     """
     Отправить уведомление об одобрении/отклонении регистрации
 
@@ -281,82 +281,20 @@ def send_approval_notification(to_email: str, full_name: str, approved: bool) ->
         to_email: Email получателя
         full_name: Имя пользователя
         approved: True если одобрено, False если отклонено
+        language: Язык пользователя (по умолчанию 'ru')
+        reason: Причина отклонения (только для rejected)
 
     Returns:
         bool: True если отправлено успешно
     """
-    # Проверка на тестовые email
-    if _is_fake_email(to_email):
-        log_error(f"Skipping email to fake/test address: {to_email}", "email")
-        return False
+    # Делегируем в email_service с поддержкой многоязычности
+    from utils.email_service import send_registration_approved_email, send_registration_rejected_email
 
     try:
-        smtp_host = os.getenv('SMTP_SERVER') or os.getenv('SMTP_HOST', 'smtp.gmail.com')
-        smtp_port = int(os.getenv('SMTP_PORT', '587'))
-        smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
-        smtp_password = os.getenv('SMTP_PASSWORD')
-        smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM', smtp_user)
-
-        if not smtp_user or not smtp_password:
-            log_error("SMTP credentials not configured in .env", "email")
-            return False
-
-        msg = MIMEMultipart('alternative')
-        msg['From'] = smtp_from
-        msg['To'] = to_email
-
-        salon_name = _get_salon_name()
-        header_html = _get_email_header_html(salon_name)
-
         if approved:
-            msg['Subject'] = 'Ваша регистрация одобрена'
-            html = f"""
-            <html>
-              <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                {header_html}
-                <div style="padding: 30px; background-color: #f7f7f7;">
-                  <h2 style="color: #333;">Поздравляем, {full_name}!</h2>
-                  <p style="color: #666; font-size: 16px;">Ваша регистрация была одобрена администратором.</p>
-                  <p style="color: #666; font-size: 16px;">Теперь вы можете войти в систему используя свои учетные данные.</p>
-                  <div style="text-align: center; margin: 30px 0;">
-                    <a href="#" style="background-color: #000; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                      Войти в систему
-                    </a>
-                  </div>
-                </div>
-              </body>
-            </html>
-            """
-            text = f"Поздравляем, {full_name}!\n\nВаша регистрация была одобрена администратором.\nТеперь вы можете войти в систему используя свои учетные данные."
+            return send_registration_approved_email(to_email, full_name, language)
         else:
-            msg['Subject'] = 'Ваша регистрация отклонена'
-            html = f"""
-            <html>
-              <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                {header_html}
-                <div style="padding: 30px; background-color: #f7f7f7;">
-                  <h2 style="color: #333;">{full_name},</h2>
-                  <p style="color: #666; font-size: 16px;">К сожалению, ваша регистрация была отклонена администратором.</p>
-                  <p style="color: #666; font-size: 16px;">Если у вас есть вопросы, пожалуйста, свяжитесь с администрацией.</p>
-                </div>
-              </body>
-            </html>
-            """
-            text = f"{full_name},\n\nК сожалению, ваша регистрация была отклонена администратором.\nЕсли у вас есть вопросы, пожалуйста, свяжитесь с администрацией."
-
-        part1 = MIMEText(text, 'plain')
-        part2 = MIMEText(html, 'html')
-        msg.attach(part1)
-        msg.attach(part2)
-
-        with smtplib.SMTP(smtp_host, smtp_port) as server:
-            server.starttls()
-            server.login(smtp_user, smtp_password)
-            server.send_message(msg)
-
-        log_info(f"Approval notification sent to {to_email} (approved={approved})", "email")
-        return True
-
+            return send_registration_rejected_email(to_email, full_name, reason, language)
     except Exception as e:
         log_error(f"Failed to send approval notification: {e}", "email")
         return False

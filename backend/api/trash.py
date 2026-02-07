@@ -3,7 +3,10 @@ from fastapi import APIRouter, Depends, HTTPException, Cookie, Query
 from typing import Optional, List, Dict, Any
 from fastapi.responses import JSONResponse
 from utils.utils import get_current_user
-from utils.soft_delete import get_deleted_items, restore_booking, restore_client, restore_user
+from utils.soft_delete import (
+    get_deleted_items, restore_booking, restore_client, restore_user,
+    auto_cleanup_trash, export_client_data, delete_client_with_export, bulk_delete_clients
+)
 from utils.audit import log_audit
 from db.connection import get_db_connection
 
@@ -76,7 +79,7 @@ async def permanent_delete_item(
             if entity_type == 'booking':
                 c.execute("DELETE FROM bookings WHERE id = %s", (entity_id,))
             elif entity_type == 'client':
-                c.execute("DELETE FROM clients WHERE id = %s", (entity_id,))
+                c.execute("DELETE FROM clients WHERE instagram_id = %s", (entity_id,))
             elif entity_type == 'user':
                 c.execute("DELETE FROM users WHERE id = %s", (entity_id,))
             c.execute("RELEASE SAVEPOINT single_trash_delete")
@@ -135,7 +138,7 @@ async def empty_trash(
                 if entity_type == 'booking':
                     c.execute("DELETE FROM bookings WHERE id = %s", (entity_id,))
                 elif entity_type == 'client':
-                    c.execute("DELETE FROM clients WHERE id = %s", (entity_id,))
+                    c.execute("DELETE FROM clients WHERE instagram_id = %s", (entity_id,))
                 elif entity_type == 'user':
                     c.execute("DELETE FROM users WHERE id = %s", (entity_id,))
                 
@@ -231,7 +234,7 @@ async def delete_items_batch(
                 if e_type == 'booking':
                     c.execute("DELETE FROM bookings WHERE id = %s", (e_id,))
                 elif e_type == 'client':
-                    c.execute("DELETE FROM clients WHERE id = %s", (e_id,))
+                    c.execute("DELETE FROM clients WHERE instagram_id = %s", (e_id,))
                 elif e_type == 'user':
                     c.execute("DELETE FROM users WHERE id = %s", (e_id,))
                 
@@ -260,3 +263,164 @@ async def delete_items_batch(
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         conn.close()
+
+
+# ============================================
+# Автоочистка корзины
+# ============================================
+
+@router.post("/admin/trash/auto-cleanup")
+async def run_auto_cleanup(
+    days: int = Query(30, ge=1, le=365),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Автоочистка корзины - удаляет элементы старше N дней
+    Только для Директора
+    """
+    if current_user["role"] != "director":
+        raise HTTPException(status_code=403, detail="Forbidden: Only Director can run auto cleanup")
+
+    result = auto_cleanup_trash(days)
+
+    log_audit(
+        user=current_user,
+        action='auto_cleanup',
+        entity_type='trash',
+        entity_id='all',
+        new_value={"days": days, "deleted": result},
+        success=True
+    )
+
+    total = sum(result.values())
+    return {
+        "success": True,
+        "message": f"Auto cleanup completed. {total} items older than {days} days deleted.",
+        "deleted": result
+    }
+
+
+# ============================================
+# Экспорт данных клиента
+# ============================================
+
+@router.get("/admin/clients/{client_id}/export")
+async def export_client(
+    client_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Экспортировать все данные клиента (для GDPR или перед удалением)
+    """
+    if current_user["role"] not in ["director", "admin"]:
+        raise HTTPException(status_code=403, detail="Forbidden: Only Director or Admin can export client data")
+
+    from urllib.parse import unquote
+    decoded_id = unquote(client_id)
+
+    export = export_client_data(decoded_id)
+
+    if export is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    log_audit(
+        user=current_user,
+        action='export',
+        entity_type='client',
+        entity_id=decoded_id,
+        success=True
+    )
+
+    return {"success": True, "data": export}
+
+
+@router.delete("/admin/clients/{client_id}/delete-with-export")
+async def delete_client_and_export(
+    client_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Удалить клиента с предварительным экспортом всех данных
+    """
+    if current_user["role"] != "director":
+        raise HTTPException(status_code=403, detail="Forbidden: Only Director can delete clients")
+
+    from urllib.parse import unquote
+    decoded_id = unquote(client_id)
+
+    result = delete_client_with_export(decoded_id, current_user)
+
+    if not result['success']:
+        raise HTTPException(status_code=404, detail=result.get('error', 'Delete failed'))
+
+    log_audit(
+        user=current_user,
+        action='delete_with_export',
+        entity_type='client',
+        entity_id=decoded_id,
+        new_value={"exported": True},
+        success=True
+    )
+
+    return result
+
+
+# ============================================
+# Массовое удаление клиентов
+# ============================================
+
+@router.post("/admin/clients/bulk-delete")
+async def bulk_delete_clients_endpoint(
+    request: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Массовое удаление клиентов с фильтрами
+
+    Request body:
+    {
+        "client_ids": ["id1", "id2"],  // ИЛИ используйте filters
+        "filters": {
+            "status": "inactive",      // Статус клиента
+            "no_bookings": true,       // Без записей
+            "no_messages_days": 90,    // Нет сообщений N дней
+            "created_before": "2024-01-01",  // Созданы до даты
+            "temperature": "cold"      // Температура клиента
+        },
+        "reason": "Очистка неактивных клиентов",
+        "export_before_delete": true   // Сохранить данные перед удалением
+    }
+    """
+    if current_user["role"] != "director":
+        raise HTTPException(status_code=403, detail="Forbidden: Only Director can bulk delete clients")
+
+    client_ids = request.get("client_ids")
+    filters = request.get("filters")
+    reason = request.get("reason", "Bulk delete")
+    export_before = request.get("export_before_delete", True)
+
+    if not client_ids and not filters:
+        raise HTTPException(status_code=400, detail="Either client_ids or filters must be provided")
+
+    result = bulk_delete_clients(
+        deleted_by_user=current_user,
+        filters=filters,
+        client_ids=client_ids,
+        reason=reason,
+        export_before_delete=export_before
+    )
+
+    log_audit(
+        user=current_user,
+        action='bulk_delete',
+        entity_type='client',
+        entity_id='multiple',
+        new_value={
+            "deleted_count": result.get('deleted_count'),
+            "filters": filters,
+            "ids_count": len(client_ids) if client_ids else 0
+        },
+        success=result.get('success', False)
+    )
+
+    return result
