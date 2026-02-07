@@ -54,6 +54,8 @@ export interface Booking {
   updated_at?: string;
   reminder_sent?: boolean;
   confirmation_sent?: boolean;
+  rating?: number;
+  rating_comment?: string;
 }
 
 export interface CreateBookingRequest {

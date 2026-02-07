@@ -1,8 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import path from "path";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { filterPreloadsPlugin } from "./vite-plugin-filter-preloads";
 import { VitePWA } from 'vite-plugin-pwa';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const BACKEND_PORT = process.env.BACKEND_PORT || "8000";
 const BACKEND_URL = `http://localhost:${BACKEND_PORT}`;
@@ -99,7 +103,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@beauty-crm/shared": path.resolve(__dirname, "../shared/src"),
+      "@beauty-crm/shared": path.resolve(__dirname, "./shared/src"),
     },
   },
   server: {
