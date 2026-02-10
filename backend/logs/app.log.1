@@ -1,195 +1,211 @@
-2026-02-11 02:57:00 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-11 02:57:00 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-11 02:57:00 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-11 02:57:00 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-11 02:57:00 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-11 02:57:00 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-11 02:57:00 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-11 02:57:03 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 02:57:03 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 02:57:03 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.42ms, count: 0
-2026-02-11 02:57:03 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.12ms (DB: 0.42ms)
-2026-02-11 02:57:04 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 02:57:04 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 02:57:04 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.5s)
-2026-02-11 02:57:04 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.79ms, count: 0
-2026-02-11 02:57:04 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.90ms (DB: 0.79ms)
-2026-02-11 02:57:14 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
-2026-02-11 02:57:14 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
-2026-02-11 02:57:14 - crm - ERROR - [cache] ❌ Redis connection failed: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-02-11 02:57:14 - crm - INFO - [cache] ⚠️ Continuing without Redis cache
-2026-02-11 02:57:14 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-02-11 02:57:15 - crm - INFO - [boot] ============================================================
-2026-02-11 02:57:15 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-02-11 02:57:15 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-02-11 02:57:15 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-02-11 02:57:15 - crm - INFO - [pubsub] 📡 Redis Pub/Sub connected to redis://127.0.0.1:6379/0
-2026-02-11 02:57:15 - crm - INFO - [boot] ✅ Redis Pub/Sub listener started
-2026-02-11 02:57:15 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-02-11 02:57:15 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-02-11 02:57:15 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-02-11 02:57:15 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-02-11 02:57:15 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 🚩 Verified banner images
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos, bios and status...
-2026-02-11 02:57:15 - crm - INFO - [maintenance]    ✅ Synchronized all employee detailed info
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 👥 Merging duplicate employees (Final Cleanup)...
-2026-02-11 02:57:15 - crm - INFO - [maintenance]    ✅ Finished deep cleanup and deletion of staff duplicates
-2026-02-11 02:57:15 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 👤 Synchronizing staff with credentials...
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 🎭 Synchronizing notification templates...
-2026-02-11 02:57:15 - crm - INFO - [maintenance]    ✅ Synchronized 7 system templates
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
-2026-02-11 02:57:15 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
-2026-02-11 02:57:15 - crm - INFO - [seeding] 🌱 Seeding production data...
-2026-02-11 02:57:15 - crm - INFO - [seeding]    📦 Seeding Services...
-2026-02-11 02:57:15 - crm - INFO - [seeding]    ✅ Added 81 services
-2026-02-11 02:57:15 - crm - INFO - [seeding]    🖼 Skipping Banners (CRM is source of truth)
-2026-02-11 02:57:15 - crm - INFO - [seeding]    📸 Seeding Gallery...
-2026-02-11 02:57:15 - crm - INFO - [seeding]    ⏭️ Gallery already has data, skipping seed
-2026-02-11 02:57:15 - crm - INFO - [seeding] 🎉 Seeding completed successfully!
-2026-02-11 02:57:15 - crm - INFO - [migrations] ✅ Production data seeded
-2026-02-11 02:57:15 - crm - INFO - [migrations] ✅ User data seeded (including admin)
-2026-02-11 02:57:15 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 🚩 Verified banner images
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos, bios and status...
-2026-02-11 02:57:15 - crm - INFO - [maintenance]    ✅ Synchronized all employee detailed info
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 👥 Merging duplicate employees (Final Cleanup)...
-2026-02-11 02:57:15 - crm - INFO - [maintenance]    ✅ Finished deep cleanup and deletion of staff duplicates
-2026-02-11 02:57:15 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 👤 Synchronizing staff with credentials...
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 🎭 Synchronizing notification templates...
-2026-02-11 02:57:15 - crm - INFO - [maintenance]    ✅ Synchronized 7 system templates
-2026-02-11 02:57:15 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
-2026-02-11 02:57:15 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-11 02:57:15 - crm - INFO - [modules] ======================================================================
-2026-02-11 02:57:15 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-02-11 02:57:15 - crm - INFO - [modules] ======================================================================
-2026-02-11 02:57:15 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-02-11 02:57:15 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-02-11 02:57:15 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-02-11 02:57:15 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-02-11 02:57:15 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-02-11 02:57:15 - crm - INFO - [modules] ======================================================================
-2026-02-11 02:57:15 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-02-11 02:57:15 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-11 02:57:15 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-11 02:57:15 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-11 02:57:15 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-11 02:57:15 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-11 02:57:15 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-11 02:57:15 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-11 02:57:20 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
-2026-02-11 02:57:20 - crm - ERROR - [cache] ❌ Redis connection failed: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-02-11 02:57:20 - crm - INFO - [cache] ⚠️ Continuing without Redis cache
-2026-02-11 02:57:20 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-02-11 02:57:21 - crm - INFO - [boot] ============================================================
-2026-02-11 02:57:21 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-02-11 02:57:21 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-02-11 02:57:21 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-02-11 02:57:21 - crm - INFO - [pubsub] 📡 Redis Pub/Sub connected to redis://127.0.0.1:6379/0
-2026-02-11 02:57:21 - crm - INFO - [boot] ✅ Redis Pub/Sub listener started
-2026-02-11 02:57:21 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-02-11 02:57:21 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-02-11 02:57:21 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-02-11 02:57:21 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-02-11 02:57:21 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 🚩 Verified banner images
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos, bios and status...
-2026-02-11 02:57:21 - crm - INFO - [maintenance]    ✅ Synchronized all employee detailed info
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 👥 Merging duplicate employees (Final Cleanup)...
-2026-02-11 02:57:21 - crm - INFO - [maintenance]    ✅ Finished deep cleanup and deletion of staff duplicates
-2026-02-11 02:57:21 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 👤 Synchronizing staff with credentials...
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 🎭 Synchronizing notification templates...
-2026-02-11 02:57:21 - crm - INFO - [maintenance]    ✅ Synchronized 7 system templates
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
-2026-02-11 02:57:21 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
-2026-02-11 02:57:21 - crm - INFO - [seeding] 🌱 Seeding production data...
-2026-02-11 02:57:21 - crm - INFO - [seeding]    📦 Seeding Services...
-2026-02-11 02:57:21 - crm - INFO - [seeding]    ✅ Added 81 services
-2026-02-11 02:57:21 - crm - INFO - [seeding]    🖼 Skipping Banners (CRM is source of truth)
-2026-02-11 02:57:21 - crm - INFO - [seeding]    📸 Seeding Gallery...
-2026-02-11 02:57:21 - crm - INFO - [seeding]    ⏭️ Gallery already has data, skipping seed
-2026-02-11 02:57:21 - crm - INFO - [seeding] 🎉 Seeding completed successfully!
-2026-02-11 02:57:21 - crm - INFO - [migrations] ✅ Production data seeded
-2026-02-11 02:57:21 - crm - INFO - [migrations] ✅ User data seeded (including admin)
-2026-02-11 02:57:21 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 🚩 Verified banner images
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos, bios and status...
-2026-02-11 02:57:21 - crm - INFO - [maintenance]    ✅ Synchronized all employee detailed info
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 👥 Merging duplicate employees (Final Cleanup)...
-2026-02-11 02:57:21 - crm - INFO - [maintenance]    ✅ Finished deep cleanup and deletion of staff duplicates
-2026-02-11 02:57:21 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 👤 Synchronizing staff with credentials...
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 🎭 Synchronizing notification templates...
-2026-02-11 02:57:21 - crm - INFO - [maintenance]    ✅ Synchronized 7 system templates
-2026-02-11 02:57:21 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
-2026-02-11 02:57:21 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-11 02:57:21 - crm - INFO - [modules] ======================================================================
-2026-02-11 02:57:21 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-02-11 02:57:21 - crm - INFO - [modules] ======================================================================
-2026-02-11 02:57:21 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-02-11 02:57:21 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-02-11 02:57:21 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-02-11 02:57:21 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-02-11 02:57:21 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-02-11 02:57:21 - crm - INFO - [modules] ======================================================================
-2026-02-11 02:57:21 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-02-11 02:57:21 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-11 02:57:21 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-11 02:57:21 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-11 02:57:21 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-11 02:57:21 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-11 02:57:21 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-11 02:57:21 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-11 02:57:21 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 02:57:21 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 02:57:21 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 02:57:21 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 02:57:21 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.35ms, count: 0
-2026-02-11 02:57:21 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.00ms (DB: 0.35ms)
-2026-02-11 02:57:21 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
-2026-02-11 02:57:21 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.42ms, count: 0
-2026-02-11 02:57:21 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.53ms (DB: 0.42ms)
-2026-02-11 02:57:35 - crm - INFO - [api] ⏱️ get_users took 0.0066s returning 7 users
-2026-02-11 02:57:35 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 02:57:35 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 13.7s)
-2026-02-11 02:57:35 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.78ms, count: 0
-2026-02-11 02:57:35 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.94ms (DB: 0.78ms)
-2026-02-11 02:57:35 - crm - INFO - [api] ⏱️ get_users took 0.0009s returning 7 users
-2026-02-11 02:57:35 - crm - INFO - [api] ⏱️ get_users took 0.0010s returning 7 users
-2026-02-11 02:57:35 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 02:57:35 - crm - INFO - [webrtc] 🔌 WebRTC WS: Connection accepted
-2026-02-11 02:57:35 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-11 02:57:35 - crm - INFO - [webrtc] User 21 registered for WebRTC and marked online
-2026-02-11 02:57:35 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
-2026-02-11 02:57:35 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.15ms, count: 0
-2026-02-11 02:57:35 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.53ms (DB: 1.15ms)
-2026-02-11 02:57:42 - crm - INFO - [webrtc] WebRTC: User 21 fully disconnected from THIS worker.
-2026-02-11 02:57:42 - crm - INFO - [webrtc] WebSocket disconnect cleanup for user 21
-2026-02-11 02:57:42 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-11 02:57:42 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-11 02:57:42 - crm - INFO - [webrtc] WebSocket disconnected: user 21
-2026-02-11 02:57:43 - crm - INFO - [api] ⏱️ get_users took 0.0313s returning 7 users
-2026-02-11 02:57:43 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 7.9s)
-2026-02-11 02:57:43 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.04ms, count: 0
-2026-02-11 02:57:43 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.49ms (DB: 2.04ms)
-2026-02-11 02:57:43 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 02:57:43 - crm - INFO - [api] ⏱️ get_users took 0.0014s returning 7 users
-2026-02-11 02:57:43 - crm - INFO - [api] ⏱️ get_users took 0.0030s returning 7 users
-2026-02-11 02:57:43 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 02:57:43 - crm - INFO - [webrtc] 🔌 WebRTC WS: Connection accepted
-2026-02-11 02:57:43 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-11 02:57:43 - crm - INFO - [webrtc] User 21 registered for WebRTC and marked online
-2026-02-11 02:57:43 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
-2026-02-11 02:57:43 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.53ms, count: 0
-2026-02-11 02:57:43 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.68ms (DB: 0.53ms)
-2026-02-11 02:57:45 - crm - INFO - [webrtc] WebRTC: User 21 fully disconnected from THIS worker.
-2026-02-11 02:57:45 - crm - INFO - [webrtc] WebSocket disconnect cleanup for user 21
-2026-02-11 02:57:45 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-11 02:57:45 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-11 02:57:45 - crm - INFO - [webrtc] WebSocket disconnected: user 21
+2026-02-11 02:57:46 - crm - INFO - [api] ⏱️ get_users took 0.0012s returning 7 users
+2026-02-11 02:57:46 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 02:57:46 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 3.4s)
+2026-02-11 02:57:46 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.46ms, count: 0
+2026-02-11 02:57:46 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.60ms (DB: 0.46ms)
+2026-02-11 02:57:46 - crm - INFO - [api] ⏱️ get_users took 0.0009s returning 7 users
+2026-02-11 02:57:46 - crm - INFO - [api] ⏱️ get_users took 0.0012s returning 7 users
+2026-02-11 02:57:46 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 02:57:46 - crm - INFO - [webrtc] 🔌 WebRTC WS: Connection accepted
+2026-02-11 02:57:46 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-11 02:57:46 - crm - INFO - [webrtc] User 21 registered for WebRTC and marked online
+2026-02-11 02:57:46 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
+2026-02-11 02:57:46 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.48ms, count: 0
+2026-02-11 02:57:46 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.59ms (DB: 0.48ms)
+2026-02-11 02:57:53 - crm - INFO - [webrtc] WebRTC: User 21 fully disconnected from THIS worker.
+2026-02-11 02:57:53 - crm - INFO - [webrtc] WebSocket disconnect cleanup for user 21
+2026-02-11 02:57:53 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-11 02:57:53 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-11 02:57:53 - crm - INFO - [webrtc] WebSocket disconnected: user 21
+2026-02-11 02:57:54 - crm - INFO - [api] ⏱️ get_users took 0.0009s returning 7 users
+2026-02-11 02:57:54 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 02:57:54 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 7.5s)
+2026-02-11 02:57:54 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.57ms, count: 0
+2026-02-11 02:57:54 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.87ms (DB: 0.57ms)
+2026-02-11 02:57:54 - crm - INFO - [api] ⏱️ get_users took 0.0008s returning 7 users
+2026-02-11 02:57:54 - crm - INFO - [api] ⏱️ get_users took 0.0010s returning 7 users
+2026-02-11 02:57:54 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 02:57:54 - crm - INFO - [webrtc] 🔌 WebRTC WS: Connection accepted
+2026-02-11 02:57:54 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-11 02:57:54 - crm - INFO - [webrtc] User 21 registered for WebRTC and marked online
+2026-02-11 02:57:54 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
+2026-02-11 02:57:54 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.43ms, count: 0
+2026-02-11 02:57:54 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.51ms (DB: 0.43ms)
+2026-02-11 02:57:56 - crm - INFO - [api] ⏱️ get_users took 0.0015s returning 7 users
+2026-02-11 02:57:57 - crm - INFO - [api] ⏱️ get_users took 0.0010s returning 7 users
+2026-02-11 02:57:59 - crm - INFO - [api] ⏱️ get_users took 0.0014s returning 7 users
+2026-02-11 02:58:02 - crm - INFO - [api] ⏱️ get_users took 0.0011s returning 7 users
+2026-02-11 02:58:05 - crm - INFO - [api] ⏱️ get_users took 0.0011s returning 7 users
+2026-02-11 03:00:00 - crm - INFO - [housekeeping] 🧹 Starting housekeeping tasks...
+2026-02-11 03:00:00 - crm - INFO - [scheduler] 🧹 Starting scheduled trash cleanup...
+2026-02-11 03:00:00 - crm - INFO - [soft_delete] 🧹 Auto cleanup: 0 items older than 30 days permanently deleted
+2026-02-11 03:00:00 - crm - INFO - [housekeeping] ✅ Housekeeping completed successfully
+2026-02-11 03:00:00 - crm - INFO - [scheduler] 🧹 Trash cleanup: no items older than 30 days found
+2026-02-11 03:01:32 - crm - INFO - [DEBUG_MOBILE] [InternalChat] Requesting users. Token present: True
+2026-02-11 03:01:32 - crm - INFO - [perf] ⏱️ get_chat_users query took 0.0022s
+2026-02-11 03:01:32 - crm - INFO - [webrtc] 🔌 WebRTC WS: Connection accepted
+2026-02-11 03:01:32 - crm - INFO - [webrtc] User 21 registered for WebRTC and marked online
+2026-02-11 03:07:21 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-11 03:09:23 - crm - INFO - [DEBUG_MOBILE] [InternalChat] Requesting users. Token present: True
+2026-02-11 03:09:23 - crm - INFO - [perf] ⏱️ get_chat_users query took 0.0010s
+2026-02-11 03:09:26 - crm - INFO - [DEBUG_MOBILE] [InternalChat] Requesting users. Token present: True
+2026-02-11 03:09:26 - crm - INFO - [perf] ⏱️ get_chat_users query took 0.0004s
+2026-02-11 03:09:54 - crm - INFO - [api] ⏱️ get_users took 0.0024s returning 7 users
+2026-02-11 03:11:21 - crm - INFO - [api] ⏱️ get_users took 0.0073s returning 7 users
+2026-02-11 03:11:32 - crm - INFO - [api] ⏱️ get_users took 0.0008s returning 7 users
+2026-02-11 03:14:28 - crm - INFO - [webrtc] WebRTC: User 21 disconnected one local session. Remaining: 1
+2026-02-11 03:14:28 - crm - INFO - [webrtc] WebSocket disconnect cleanup for user 21
+2026-02-11 03:14:28 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-11 03:14:28 - crm - INFO - [webrtc] WebSocket disconnected: user 21
+2026-02-11 03:14:29 - crm - INFO - [api] ⏱️ get_users took 0.0040s returning 7 users
+2026-02-11 03:14:29 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 995.1s)
+2026-02-11 03:14:29 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.66ms, count: 0
+2026-02-11 03:14:29 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.84ms (DB: 0.66ms)
+2026-02-11 03:14:29 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:14:29 - crm - INFO - [api] ⏱️ get_users took 0.0009s returning 7 users
+2026-02-11 03:14:29 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:14:29 - crm - INFO - [webrtc] 🔌 WebRTC WS: Connection accepted
+2026-02-11 03:14:29 - crm - INFO - [webrtc] User 21 registered for WebRTC and marked online
+2026-02-11 03:14:29 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
+2026-02-11 03:14:29 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.52ms, count: 0
+2026-02-11 03:14:29 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.62ms (DB: 0.52ms)
+2026-02-11 03:17:07 - crm - INFO - [api] ⏱️ get_users took 0.0014s returning 7 users
+2026-02-11 03:17:07 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 157.9s)
+2026-02-11 03:17:07 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.44ms, count: 0
+2026-02-11 03:17:07 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.84ms (DB: 0.44ms)
+2026-02-11 03:17:07 - crm - INFO - [api] ⏱️ get_users took 0.0019s returning 7 users
+2026-02-11 03:17:07 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:17:07 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:17:07 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
+2026-02-11 03:17:07 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.56ms, count: 0
+2026-02-11 03:17:07 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.73ms (DB: 0.56ms)
+2026-02-11 03:17:08 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:17:08 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.7s)
+2026-02-11 03:17:08 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.39ms, count: 0
+2026-02-11 03:17:08 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.54ms (DB: 0.39ms)
+2026-02-11 03:17:08 - crm - INFO - [api] ⏱️ get_users took 0.0012s returning 7 users
+2026-02-11 03:17:08 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:17:08 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
+2026-02-11 03:17:08 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.94ms, count: 0
+2026-02-11 03:17:08 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.09ms (DB: 0.94ms)
+2026-02-11 03:17:12 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:17:12 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:17:12 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 4.1s)
+2026-02-11 03:17:12 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.46ms, count: 0
+2026-02-11 03:17:12 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.53ms (DB: 0.46ms)
+2026-02-11 03:17:14 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:17:14 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:17:14 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 1.7s)
+2026-02-11 03:17:14 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.77ms, count: 0
+2026-02-11 03:17:14 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.88ms (DB: 0.77ms)
+2026-02-11 03:17:21 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-11 03:18:23 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 69.9s)
+2026-02-11 03:18:23 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.42ms, count: 0
+2026-02-11 03:18:23 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.94ms (DB: 1.42ms)
+2026-02-11 03:18:23 - crm - INFO - [api] ⏱️ get_users took 0.0014s returning 7 users
+2026-02-11 03:18:23 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:18:23 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:18:24 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
+2026-02-11 03:18:24 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.57ms, count: 0
+2026-02-11 03:18:24 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.89ms (DB: 0.57ms)
+2026-02-11 03:18:24 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:18:24 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
+2026-02-11 03:18:24 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.51ms, count: 0
+2026-02-11 03:18:24 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.06ms (DB: 0.51ms)
+2026-02-11 03:18:24 - crm - INFO - [api] ⏱️ get_users took 0.0012s returning 7 users
+2026-02-11 03:18:24 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:18:24 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
+2026-02-11 03:18:24 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.54ms, count: 0
+2026-02-11 03:18:24 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.73ms (DB: 0.54ms)
+2026-02-11 03:18:28 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:18:28 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:18:28 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 4.8s)
+2026-02-11 03:18:28 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.61ms, count: 0
+2026-02-11 03:18:28 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.72ms (DB: 0.61ms)
+2026-02-11 03:18:30 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:18:30 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:18:30 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 1.1s)
+2026-02-11 03:18:30 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.72ms, count: 0
+2026-02-11 03:18:30 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.85ms (DB: 0.72ms)
+2026-02-11 03:20:18 - crm - INFO - [DEBUG_MOBILE] [InternalChat] Requesting users. Token present: True
+2026-02-11 03:20:18 - crm - INFO - [perf] ⏱️ get_chat_users query took 0.0003s
+2026-02-11 03:20:42 - crm - INFO - [webrtc] WebRTC: User 21 disconnected one local session. Remaining: 1
+2026-02-11 03:20:42 - crm - INFO - [webrtc] WebSocket disconnect cleanup for user 21
+2026-02-11 03:20:42 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-11 03:20:42 - crm - INFO - [webrtc] WebSocket disconnected: user 21
+2026-02-11 03:20:43 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:20:43 - crm - ERROR - [main] Error in dashboard: column "total_saved" does not exist
+LINE 2:             SELECT loyalty_points, referral_code, total_save...
+                                                          ^
+HINT:  Perhaps you meant to reference the column "clients.total_spend".
+
+2026-02-11 03:20:43 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:20:54 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:20:54 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 144.0s)
+2026-02-11 03:20:54 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.61ms, count: 0
+2026-02-11 03:20:54 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.93ms (DB: 0.61ms)
+2026-02-11 03:20:54 - crm - INFO - [api] ⏱️ get_users took 0.0012s returning 7 users
+2026-02-11 03:20:54 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:20:54 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
+2026-02-11 03:20:54 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.53ms, count: 0
+2026-02-11 03:20:54 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.66ms (DB: 0.53ms)
+2026-02-11 03:21:00 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:21:00 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:21:00 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 5.9s)
+2026-02-11 03:21:00 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.79ms, count: 0
+2026-02-11 03:21:00 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.03ms (DB: 0.79ms)
+2026-02-11 03:21:13 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:21:44 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:22:14 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:22:44 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:22:53 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:22:53 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 113.8s)
+2026-02-11 03:22:53 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.40ms, count: 0
+2026-02-11 03:22:53 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.56ms (DB: 0.40ms)
+2026-02-11 03:22:53 - crm - INFO - [api] ⏱️ get_users took 0.0010s returning 7 users
+2026-02-11 03:22:53 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:22:53 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
+2026-02-11 03:22:53 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.63ms, count: 0
+2026-02-11 03:22:53 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.89ms (DB: 0.63ms)
+2026-02-11 03:22:58 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:22:58 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:22:58 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 5.0s)
+2026-02-11 03:22:58 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.73ms, count: 0
+2026-02-11 03:22:58 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.84ms (DB: 0.73ms)
+2026-02-11 03:23:08 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:23:08 - crm - ERROR - [main] Error in dashboard: column "total_saved" does not exist
+LINE 2:             SELECT loyalty_points, referral_code, total_save...
+                                                          ^
+HINT:  Perhaps you meant to reference the column "clients.total_spend".
+
+2026-02-11 03:23:08 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:23:14 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:23:44 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:24:14 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:24:36 - crm - INFO - [webrtc] WebRTC: User 21 fully disconnected from THIS worker.
+2026-02-11 03:24:36 - crm - INFO - [webrtc] WebSocket disconnect cleanup for user 21
+2026-02-11 03:24:36 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-11 03:24:36 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-11 03:24:36 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-11 03:24:36 - crm - INFO - [webrtc] WebSocket disconnected: user 21
+2026-02-11 03:24:38 - crm - INFO - [DEBUG_MOBILE] [InternalChat] Requesting users. Token present: True
+2026-02-11 03:24:38 - crm - INFO - [perf] ⏱️ get_chat_users query took 0.0006s
+2026-02-11 03:24:38 - crm - INFO - [webrtc] 🔌 WebRTC WS: Connection accepted
+2026-02-11 03:24:38 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 99.2s)
+2026-02-11 03:24:38 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.72ms, count: 0
+2026-02-11 03:24:38 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.01ms (DB: 0.72ms)
+2026-02-11 03:24:38 - crm - INFO - [api] ⏱️ get_users took 0.0012s returning 7 users
+2026-02-11 03:24:38 - crm - ERROR - [pubsub] Error publishing to crm:webrtc:broadcast: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-11 03:24:38 - crm - INFO - [webrtc] User 21 registered for WebRTC and marked online
+2026-02-11 03:24:38 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-11 03:24:38 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-11 03:24:38 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
+2026-02-11 03:24:38 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.41ms, count: 0
+2026-02-11 03:24:38 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.55ms (DB: 0.41ms)
+2026-02-11 03:24:44 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:25:14 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:26:41 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-11 03:26:41 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:26:43 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-11 03:26:47 - crm - INFO - [notifications] 🔔 New WS connection accepted
