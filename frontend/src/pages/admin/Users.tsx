@@ -591,18 +591,18 @@ export default function Users() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="mb-8">
-        <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-          <UsersIcon className="w-8 h-8 text-pink-600" />
+        <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-3">
+          <UsersIcon className="w-6 h-6 md:w-8 md:h-8 text-pink-600" />
           {t('title')}
         </h1>
-        <p className="text-gray-600">{filteredUsers.length} {t('user_count')}</p>
+        <p className="text-sm md:text-base text-gray-600">{filteredUsers.length} {t('user_count')}</p>
       </div>
 
       {/* Tabs Section */}
-      <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-        <div className="flex gap-2">
+      <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-2 md:p-4">
+        <div className="flex flex-wrap md:flex-nowrap gap-2">
           <button
             onClick={() => handleTabChange('employees')}
             className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'employees'
@@ -713,10 +713,10 @@ export default function Users() {
           </div>
           {/* Кнопка создания только для тех, у кого есть право */}
           {permissions.canCreateUsers && (
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button
                 variant="outline"
-                className="text-gray-700 hover:text-gray-900 border-gray-300"
+                className="w-full sm:w-auto text-gray-700 hover:text-gray-900 border-gray-300"
                 onClick={() => navigate('/crm/users/pending')}
               >
                 <UsersIcon className="w-4 h-4 mr-2" />
@@ -724,7 +724,7 @@ export default function Users() {
               </Button>
 
               <Button
-                className="bg-pink-600 hover:bg-pink-700"
+                className="w-full sm:w-auto bg-pink-600 hover:bg-pink-700"
                 onClick={() => navigate('/crm/users/create')}
               >
                 <UserPlus className="w-4 h-4 mr-2" />

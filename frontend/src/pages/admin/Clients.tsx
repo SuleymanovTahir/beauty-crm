@@ -78,7 +78,7 @@ export default function Clients() {
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { t, i18n } = useTranslation(['admin/clients', 'common']);
+  const { t } = useTranslation(['admin/clients', 'common']);
   const { formatCurrency } = useCurrency();
   const [statusFilter, setStatusFilter] = useState(() => {
     return localStorage.getItem('clients_status_filter') || 'all';
@@ -602,7 +602,7 @@ export default function Clients() {
   }
 
   return (
-    <div className="clients-container p-8">
+    <div className="clients-container p-4 md:p-8">
       <div className="clients-header mb-8 flex items-center justify-between">
         <div>
           <h1 className="clients-title text-3xl text-gray-900 mb-2 flex items-center gap-3">
