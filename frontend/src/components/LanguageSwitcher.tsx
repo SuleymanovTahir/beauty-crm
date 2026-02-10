@@ -17,7 +17,11 @@ const languages = [
   { code: 'de', name: 'Deutsch', flag: '🇩🇪' }
 ];
 
-export default function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+  variant?: 'default' | 'minimal';
+}
+
+export default function LanguageSwitcher({ variant = 'default' }: LanguageSwitcherProps) {
   const { i18n } = useTranslation('components/LanguageSwitcher');
   const [open, setOpen] = useState(false);
   const [sortedLanguages, setSortedLanguages] = useState(languages);
@@ -39,42 +43,32 @@ export default function LanguageSwitcher() {
     init();
   }, []);
 
-  // Calculate dropdown position when opening
   const updateDropdownPosition = useCallback(() => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const dropdownHeight = 300; // max-h-[300px]
-      const dropdownWidth = 160; // Approximate width
+      const dropdownHeight = 300;
+      const dropdownWidth = 160;
 
-      // Check if there's enough space above
       const spaceAbove = rect.top;
       const spaceBelow = window.innerHeight - rect.bottom;
 
       let top: number;
       if (spaceAbove >= dropdownHeight || spaceAbove > spaceBelow) {
-        // Open upward
         top = rect.top - Math.min(dropdownHeight, spaceAbove - 8);
-        // If opening upward, we need to adjust calculating max-height based on available space
-        // if not enough space for full height
       } else {
-        // Open downward
         top = rect.bottom + 8;
       }
 
-      // Ensure dropdown doesn't go off-screen horizontally
       let left = rect.left;
       if (left + dropdownWidth > window.innerWidth) {
         left = window.innerWidth - dropdownWidth - 8;
       }
-
-      // Also ensure it doesn't go off screen to the left
       if (left < 0) left = 8;
 
       setDropdownPosition({ top, left });
     }
   }, []);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -147,11 +141,14 @@ export default function LanguageSwitcher() {
         ref={buttonRef}
         onClick={() => setOpen(!open)}
         type="button"
-        className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg hover:bg-gray-50 transition-colors shadow-md border border-gray-200"
+        className={`flex items-center gap-2 transition-all ${variant === 'default'
+          ? "bg-white rounded-lg hover:bg-gray-50 shadow-md border border-gray-200 px-3 py-2"
+          : "bg-transparent border-none shadow-none hover:bg-black/5 rounded-xl w-full justify-center py-2"
+          }`}
       >
-        <Globe className="w-4 h-4 text-gray-600" />
-        <span className="text-lg">{currentLang.flag}</span>
-        <ChevronUp className={`w-4 h-4 text-gray-600 transition-transform ${open ? '' : 'rotate-180'}`} />
+        <Globe className={`${variant === 'default' ? "w-4 h-4 text-gray-600" : "w-[18px] h-[18px] text-gray-400"}`} />
+        <span className={variant === 'default' ? "text-lg" : "text-lg leading-none"}>{currentLang.flag}</span>
+        <ChevronUp className={`w-3.5 h-3.5 text-gray-400 transition-transform ${open ? '' : 'rotate-180'}`} />
       </button>
 
       {dropdown}

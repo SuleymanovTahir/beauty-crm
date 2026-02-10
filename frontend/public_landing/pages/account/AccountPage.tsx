@@ -1,11 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Calendar, Image, Award, Trophy, Users, Sparkles, Bell, Settings as SettingsIcon, Menu, LogOut, X, Ticket } from 'lucide-react';
+import {
+  Home,
+  Calendar,
+  Image,
+  Award,
+  Trophy,
+  Users,
+  Sparkles,
+  Bell,
+  Settings as SettingsIcon,
+  LogOut,
+  X,
+  Ticket,
+  MoreHorizontal
+} from 'lucide-react';
 import { Toaster } from '../../components/ui/sonner';
-import { Button } from './v2_components/ui/button';
-import { Badge } from './v2_components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './v2_components/ui/avatar';
-import { Sheet, SheetContent, SheetTrigger } from './v2_components/ui/sheet';
 import { Dashboard } from './v2_components/Dashboard';
 import { Appointments } from './v2_components/Appointments';
 import { Gallery } from './v2_components/Gallery';
@@ -22,6 +33,8 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useSalonSettings } from '../../hooks/useSalonSettings';
 import { getPhotoUrl } from '../../../src/utils/photoUtils';
+import { cn } from '../../../src/lib/utils';
+import '../../../src/components/layouts/MainLayout.css';
 
 type Tab = 'dashboard' | 'appointments' | 'gallery' | 'loyalty' | 'achievements' | 'masters' | 'beauty' | 'notifications' | 'settings' | 'promocodes';
 
@@ -31,7 +44,7 @@ export function AccountPage() {
   const { t } = useTranslation(['account', 'common']);
   const navigate = useNavigate();
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showMoreModal, setShowMoreModal] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [userData, setUserData] = useState<any>(null);
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -46,18 +59,26 @@ export function AccountPage() {
     challenges: true
   });
 
-  const menuItems = [
+  const menuItems = useMemo(() => [
     { id: 'dashboard' as Tab, label: t('tabs.dashboard', 'Главная'), icon: Home, path: '/account/dashboard' },
     { id: 'appointments' as Tab, label: t('tabs.appointments', 'Записи'), icon: Calendar, path: '/account/appointments' },
     { id: 'gallery' as Tab, label: t('tabs.gallery', 'Галерея'), icon: Image, path: '/account/gallery' },
-    { id: 'loyalty' as Tab, label: t('tabs.loyalty', 'Лояльность'), icon: Award, path: '/account/loyalty' },
-    { id: 'achievements' as Tab, label: t('tabs.achievements', 'Достижения'), icon: Trophy, path: '/account/achievements' },
+    { id: 'loyalty' as Tab, label: t('tabs.loyalty', 'Лояльность'), icon: Award, path: '/account/loyalty', hidden: !features.loyalty_program },
+    { id: 'achievements' as Tab, label: t('tabs.achievements', 'Достижения'), icon: Trophy, path: '/account/achievements', hidden: !features.challenges },
     { id: 'masters' as Tab, label: t('tabs.masters', 'Мастера'), icon: Users, path: '/account/masters' },
     { id: 'beauty' as Tab, label: t('tabs.beauty', 'Бьюти-профиль'), icon: Sparkles, path: '/account/beauty' },
-    { id: 'notifications' as Tab, label: t('tabs.notifications', 'Уведомления'), icon: Bell, path: '/account/notifications' },
+    { id: 'notifications' as Tab, label: t('tabs.notifications', 'Уведомления'), icon: Bell, path: '/account/notifications', badge: unreadCount },
     { id: 'promocodes' as Tab, label: t('tabs.promocodes', 'Промокоды'), icon: Ticket, path: '/account/promocodes' },
     { id: 'settings' as Tab, label: t('tabs.settings', 'Настройки'), icon: SettingsIcon, path: '/account/settings' },
-  ];
+  ], [t, features, unreadCount]);
+
+  const mainTabs = useMemo(() => [
+    { id: 'dashboard', icon: Home, label: t('tabs.dashboard'), path: '/account/dashboard' },
+    { id: 'appointments', icon: Calendar, label: t('tabs.appointments'), path: '/account/appointments' },
+    { id: 'loyalty', icon: Award, label: t('tabs.loyalty'), path: '/account/loyalty' },
+    { id: 'notifications', icon: Bell, label: t('tabs.notifications'), path: '/account/notifications', badge: unreadCount },
+    { id: 'more', icon: MoreHorizontal, label: t('tabs.more', 'Ещё') },
+  ], [t, unreadCount]);
 
   // Determine active tab from URL
   const getActiveTabFromPath = (): Tab => {
@@ -198,11 +219,10 @@ export function AccountPage() {
     }
   };
 
-  const unreadNotifications = unreadCount;
 
   const handleTabChange = (path: string) => {
     navigate(path);
-    setMobileMenuOpen(false);
+    setShowMoreModal(false);
   };
 
   const handleLogout = async () => {
@@ -257,77 +277,80 @@ export function AccountPage() {
 
 
 
-  const MenuItem = ({ item }: { item: typeof menuItems[0] }) => {
-    const Icon = item.icon;
-    const isActive = location.pathname === item.path;
-    const hasNotification = item.id === 'notifications' && unreadNotifications > 0;
-
-    // Check features
-    if (item.id === 'loyalty' && !features.loyalty_program) return null;
-    // Assuming 'achievements' corresponds to 'challenges' feature (or keep both? User asked for Challenges)
-    if (item.id === 'achievements' && !features.challenges) return null;
-    // If Referral is added later, check 'referral_program'
-
-    return (
-      <button
-        onClick={() => handleTabChange(item.path)}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
-          ? 'bg-pink-100 text-pink-600'
-          : 'text-gray-700 hover:bg-gray-100'
-          }`}
-      >
-        <Icon className="w-5 h-5 flex-shrink-0" />
-        <span className="flex-1 text-left">{item.label}</span>
-        {hasNotification && (
-          <Badge className="bg-red-500">{unreadNotifications}</Badge>
-        )}
-      </button>
-    );
-  };
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full">
-      {/* Профиль */}
-      <div className="p-6 border-b flex-shrink-0">
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Logo Section */}
+      <div className="sidebar-header-premium flex items-center gap-3">
+        <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+          {logoUrl ? (
+            <img src={logoUrl} alt="Logo" className="w-8 h-8 object-contain" />
+          ) : (
+            <Sparkles className="w-6 h-6 text-white" />
+          )}
+        </div>
+        <h1 className="text-lg font-bold text-gray-900 truncate">{salonName}</h1>
+      </div>
+
+      {/* User Profile Hook */}
+      <div className="user-card-sidebar shadow-sm border border-pink-50/50">
         <div className="flex items-center gap-3">
-          <Avatar className="w-12 h-12">
-            <AvatarImage src={userData?.avatar} alt={userData?.name} />
-            <AvatarFallback>{userData?.name?.[0] || 'G'}</AvatarFallback>
+          <Avatar className="w-10 h-10 rounded-xl">
+            <AvatarImage src={userData?.avatar} alt={userData?.name} className="object-cover" />
+            <AvatarFallback className="bg-pink-100 text-pink-600 font-bold">{userData?.name?.[0] || 'G'}</AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0">
-            <div className="font-semibold truncate">{userData?.name || 'Guest'}</div>
-            <Badge variant="outline" className="text-xs mt-1 capitalize">
-              {userData?.currentTier || 'bronze'}
-            </Badge>
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-bold text-gray-900 truncate">{userData?.name || 'Guest'}</div>
+            <div className="text-[11px] font-semibold text-pink-600 uppercase tracking-wider">{userData?.currentTier || 'bronze'}</div>
           </div>
         </div>
       </div>
 
-      {/* Меню - Scrollable */}
-      <nav className="flex-1 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-        <div className="space-y-1">
-          {menuItems.map((item) => (
-            <MenuItem key={item.id} item={item} />
-          ))}
-        </div>
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
+        {menuItems.map((item) => {
+          if (item.hidden) return null;
+          const isActive = location.pathname === item.path;
+          const Icon = item.icon;
+
+          return (
+            <li key={item.id} className="list-none mb-1">
+              <button
+                onClick={() => handleTabChange(item.path)}
+                className={cn(
+                  "w-full menu-item-premium",
+                  isActive && "active"
+                )}
+              >
+                <Icon size={20} />
+                <span className="flex-1 text-left">{item.label}</span>
+                {item.badge && item.badge > 0 ? (
+                  <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                    {item.badge}
+                  </span>
+                ) : null}
+              </button>
+            </li>
+          );
+        })}
       </nav>
 
-      {/* Футер - Fixed at bottom */}
-      <div className="p-4 border-t space-y-3 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <LanguageSwitcher />
+      {/* Sidebar Footer */}
+      <div className="sidebar-footer-premium mt-auto">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="flex-1 p-2 bg-gray-50 rounded-xl">
+            <LanguageSwitcher variant="minimal" />
+          </div>
           <button
             onClick={handleLogout}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors shadow-sm"
+            title={t('common:logout')}
           >
-            <LogOut size={16} />
-            <span>{t('common:logout', 'Выйти')}</span>
+            <LogOut size={20} />
           </button>
         </div>
-        <div className="text-xs text-center text-muted-foreground">
-          {salonName}
-          <br />
-          v1.0.0
+        <div className="text-[10px] text-center text-gray-400 font-medium">
+          {salonName} v1.0.1
         </div>
       </div>
     </div>
@@ -400,86 +423,120 @@ export function AccountPage() {
         </div>
       )}
 
-      {/* Мобильная шапка */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b">
-        <div className="flex items-center justify-between p-4">
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="w-6 h-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] p-0">
-              <SidebarContent />
-            </SheetContent>
-          </Sheet>
-
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 relative">
-              <img
-                src={logoUrl || '/logo.webp'}
-                alt={salonName}
-                className="w-full h-full object-contain rounded bg-white shadow-sm"
-                onError={(e) => {
-                  const target = e.currentTarget;
-                  if (!target.src.includes('/logo.png')) {
-                    target.src = '/logo.png';
-                  } else {
-                    target.style.display = 'none';
-                    document.getElementById('mobile-logo-fallback')?.classList.remove('hidden');
-                  }
-                }}
-              />
-              <div id="mobile-logo-fallback" className="hidden w-full h-full bg-gradient-to-br from-pink-500 to-purple-600 rounded flex items-center justify-center text-white text-xs font-bold absolute inset-0">
-                {salonName?.[0] || 'C'}
-              </div>
+      {/* Mobile Bottom Navigation */}
+      <div className="mobile-bottom-nav lg:hidden">
+        {mainTabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => {
+              if (tab.id === 'more') setShowMoreModal(true);
+              else navigate(tab.path!);
+            }}
+            className={cn(
+              "mobile-nav-btn",
+              location.pathname === tab.path && "active"
+            )}
+          >
+            <div className="mobile-nav-icon-container">
+              <tab.icon size={24} />
+              {tab.badge !== undefined && tab.badge > 0 && (
+                <span className="mobile-nav-badge">
+                  {tab.badge > 99 ? '99+' : tab.badge}
+                </span>
+              )}
             </div>
-            <span className="font-bold">{salonName}</span>
-          </div>
-
-          <Avatar className="w-8 h-8">
-            <AvatarImage src={userData?.avatar} alt={userData?.name} />
-            <AvatarFallback>{userData?.name?.[0] || 'G'}</AvatarFallback>
-          </Avatar>
-        </div>
+            <span className="mobile-nav-label">{tab.label}</span>
+          </button>
+        ))}
       </div>
 
-      <div className="flex h-screen pt-[73px] lg:pt-0">
-        {/* Десктопный сайдбар */}
-        <aside className="hidden lg:flex lg:flex-col w-[280px] bg-white border-r flex-shrink-0">
-          <div className="p-6 border-b flex-shrink-0">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 relative">
-                <img
-                  src={logoUrl || '/logo.webp'}
-                  alt={salonName}
-                  className="w-full h-full object-contain rounded-lg bg-white shadow-sm"
-                  onError={(e) => {
-                    const target = e.currentTarget;
-                    if (!target.src.includes('/logo.png')) {
-                      target.src = '/logo.png';
-                    } else {
-                      target.style.display = 'none';
-                      document.getElementById('desktop-logo-fallback')?.classList.remove('hidden');
-                    }
-                  }}
-                />
-                <div id="desktop-logo-fallback" className="hidden w-full h-full bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold absolute inset-0">
-                  {salonName?.[0] || 'C'}
+      {/* More Menu Modal */}
+      {showMoreModal && (
+        <div className="more-menu-modal animate-in fade-in" onClick={() => setShowMoreModal(false)}>
+          <div className="more-menu-content animate-in slide-in-from-bottom" onClick={e => e.stopPropagation()}>
+            <div className="more-menu-header">
+              <span className="more-menu-title">{t('tabs.more', 'Ещё')}</span>
+              <button onClick={() => setShowMoreModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="more-menu-items">
+              {menuItems.map((item: any) => {
+                if (mainTabs.some(t => t.id === item.id)) return null;
+                if (item.hidden) return null;
+
+                const Icon = item.icon;
+                return (
+                  <div key={item.id} className="menu-group">
+                    <button
+                      onClick={() => { navigate(item.path); setShowMoreModal(false); }}
+                      className="menu-item-link"
+                    >
+                      <Icon size={20} className="text-gray-700" />
+                      <span className="font-medium text-gray-700">{item.label}</span>
+                    </button>
+                  </div>
+                );
+              })}
+
+              <div className="user-profile-section">
+                <div className="quick-actions-row">
+                  <div className="quick-action-item justify-center">
+                    <LanguageSwitcher variant="minimal" />
+                  </div>
+                  <button
+                    onClick={() => { navigate('/account/notifications'); setShowMoreModal(false); }}
+                    className="quick-action-btn"
+                  >
+                    <div className="quick-action-text-part">
+                      <span className="quick-action-label">{t('tabs.notifications')}</span>
+                    </div>
+                    <div className="quick-action-icon-wrapper">
+                      <Bell size={20} className="text-gray-700" />
+                      {unreadCount > 0 && <span className="quick-action-badge">{unreadCount}</span>}
+                    </div>
+                  </button>
+                </div>
+
+                <div className="profile-logout-row">
+                  <div className="user-card-premium flex-1">
+                    <div className="user-card-content">
+                      <div className="user-avatar-wrapper">
+                        <Avatar className="w-10 h-10 rounded-xl">
+                          <AvatarImage src={userData?.avatar} alt={userData?.name} className="object-cover" />
+                          <AvatarFallback className="bg-pink-100 text-pink-600 font-bold">{userData?.name?.[0] || 'G'}</AvatarFallback>
+                        </Avatar>
+                        <div className="user-status-indicator" />
+                      </div>
+                      <div className="user-info-text">
+                        <div className="user-name-premium">{userData?.name}</div>
+                        <div className="user-role-premium">{userData?.currentTier}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button onClick={() => { handleLogout(); setShowMoreModal(false); }} className="logout-btn-minimal">
+                    <LogOut size={22} />
+                  </button>
                 </div>
               </div>
-              <span className="text-sm font-semibold truncate">{salonName}</span>
             </div>
           </div>
-          <div className="flex-1 flex flex-col min-h-0">
-            <SidebarContent />
-          </div>
+        </div>
+      )}
+
+      <div className="flex h-screen">
+        {/* Sidebar Desktop */}
+        <aside className="fixed lg:sticky top-0 left-0 z-30 h-screen w-64 desktop-sidebar sidebar-premium shadow-sm hidden lg:block">
+          <SidebarContent />
         </aside>
 
         {/* Основной контент */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto p-4 lg:p-8">
-            {renderContent()}
+        <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+          <div className="flex-1 overflow-y-auto pb-[80px] lg:pb-0">
+            <div className="max-w-7xl mx-auto p-4 lg:p-8">
+              {renderContent()}
+            </div>
           </div>
         </main>
       </div>
