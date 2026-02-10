@@ -15,7 +15,7 @@
   "client": "क्लाइंट",
   "confirm_delete_selected_one": "चयनित कॉल हटाएं?",
   "confirm_delete_selected_few": "{{count}} चयनित कॉल हटाएं?",
-  "confirm_delete_selected_many": "[[V0]]] चयनित कॉल हटाएं?",
+  "confirm_delete_selected_many": "{{count}} चयनित कॉल हटाएं?",
   "confirm_delete_selected_other": "{{count}} चयनित कॉल हटाएं?",
   "connection_error": "कनेक्शन त्रुटि",
   "connection_success": "कनेक्शन सफल",

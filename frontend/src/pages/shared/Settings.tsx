@@ -7,8 +7,6 @@ import {
   Bell,
   Globe,
   Camera,
-  MessageCircle,
-  Instagram,
   Mail,
   Smartphone,
   Calendar,
@@ -21,16 +19,10 @@ import {
   Edit,
   Save,
   Menu,
-  Users,
-  Send,
-  Eye,
-  History,
   Loader,
   Bot,
   BookOpen,
   Shield,
-  ShieldAlert,
-  X,
   User,
   Download,
 } from 'lucide-react';
@@ -47,8 +39,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/ta
 import { toast } from 'sonner';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
-import { languages } from '../../i18n';
-import { InstagramIcon, WhatsAppIcon, TelegramIcon } from '../../components/icons/SocialIcons';
+import { InstagramIcon, TelegramIcon } from '../../components/icons/SocialIcons';
 import { ManageCurrenciesDialog } from '../../components/admin/ManageCurrenciesDialog';
 import './Settings.css';
 
@@ -57,7 +48,7 @@ export default function AdminSettings() {
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
-  const userPermissions = usePermissions(currentUser?.role || 'employee');
+  const userPermissions = usePermissions(currentUser?.role || 'employee', currentUser?.secondary_role);
 
   const [generalSettings, setGeneralSettings] = useState({
     salonName: '',
@@ -66,7 +57,6 @@ export default function AdminSettings() {
     phone: '',
     email: '',
     instagram: '',
-    language: '',
     telegram_manager_chat_id: '',
     currency: '',
     timezone_offset: '',
@@ -136,38 +126,7 @@ export default function AdminSettings() {
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [deletingAccount, setDeletingAccount] = useState(false);
 
-  // Broadcasts state
-  const [broadcastForm, setBroadcastForm] = useState({
-    subscription_type: '',
-    channels: [] as string[],
-    subject: '',
-    message: '',
-    target_role: '',
-    user_ids: [] as number[],
-    force_send: false,
-  });
-  const [broadcastPreview, setBroadcastPreview] = useState<any>(null);
-  const [loadingBroadcastPreview, setLoadingBroadcastPreview] = useState(false);
-  const [sendingBroadcast, setSendingBroadcast] = useState(false);
-  const [broadcastHistory, setBroadcastHistory] = useState<any[]>([]);
-  const [loadingBroadcastHistory, setLoadingBroadcastHistory] = useState(false);
-  const [broadcastUsers, setBroadcastUsers] = useState<Array<{
-    id: number;
-    username: string;
-    full_name: string;
-    role: string;
-    email: string | null;
-    telegram_id: string | null;
-    instagram_username: string | null;
-    is_subscribed: boolean;
-    channels: {
-      email: boolean;
-      telegram: boolean;
-      instagram: boolean;
-    };
-  }>>([]);
-  const [loadingBroadcastUsers, setLoadingBroadcastUsers] = useState(false);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
 
   // Roles state
   const [roles, setRoles] = useState<Array<{ key: string; name: string; level: number }>>([]);
@@ -233,18 +192,13 @@ export default function AdminSettings() {
     loadProfile();
     loadNotificationSettings();
     loadSubscriptions();
-    loadBroadcastHistory();
     loadBookingReminderSettings();
     loadHolidays();
     loadCurrencies();
     loadUsers();
   }, []);
 
-  useEffect(() => {
-    if (broadcastForm.subscription_type) {
-      loadBroadcastUsers(broadcastForm.subscription_type, broadcastForm.target_role);
-    }
-  }, [broadcastForm.subscription_type, broadcastForm.target_role]);
+
 
 
   const loadSalonSettings = async () => {
@@ -258,18 +212,17 @@ export default function AdminSettings() {
         phone: data.phone || '',
         email: data.email || '',
         instagram: data.instagram || '',
-        language: data.language || 'ru',
         telegram_manager_chat_id: data.telegram_manager_chat_id || '',
         currency: data.currency,
-        timezone_offset: data.timezone_offset || 'UTC+4',
-        birthday_discount: data.birthday_discount || '15%',
+        timezone_offset: data.timezone_offset || '',
+        birthday_discount: data.birthday_discount || '',
         working_hours: {
           weekdays: data.hours_weekdays || '',
           weekends: data.hours_weekends || ''
         },
         lunch_time: {
-          start: data.lunch_start || '13:00',
-          end: data.lunch_end || '14:00'
+          start: data.lunch_start || '',
+          end: data.lunch_end || ''
         }
       });
       setBotGloballyEnabled(data.bot_globally_enabled ?? true);
@@ -321,7 +274,7 @@ export default function AdminSettings() {
         console.warn('⚠️ [Profile] Пользователь не привязан к сотруднику (employee_id отсутствует)');
         toast.error(t('profile_not_available_not_linked'));
       } else {
-        toast.error(`${t('settings:error_loading_profile')}: ${err.message || t('common:unknown_error')} `);
+        toast.error(`${t('settings:error_loading_profile')}: ${err.message || t('common:unknown_error')}`);
       }
     }
   };
@@ -487,6 +440,28 @@ export default function AdminSettings() {
 
   const handleSaveGeneral = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Validation
+    if (!generalSettings.salonName.trim()) {
+      toast.error(t('settings:error_salon_name_required'));
+      return;
+    }
+    if (!generalSettings.phone.trim()) {
+      toast.error(t('settings:error_phone_required'));
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (generalSettings.email && !emailRegex.test(generalSettings.email)) {
+      toast.error(t('settings:error_invalid_email'));
+      return;
+    }
+
+    if (generalSettings.lunch_time.start && generalSettings.lunch_time.end) {
+      if (generalSettings.lunch_time.start >= generalSettings.lunch_time.end) {
+        toast.error(t('settings:error_invalid_lunch_time'));
+        return;
+      }
+    }
     try {
       await api.updateSalonSettings({
         name: generalSettings.salonName,
@@ -495,7 +470,6 @@ export default function AdminSettings() {
         phone: generalSettings.phone,
         email: generalSettings.email,
         instagram: generalSettings.instagram,
-        language: generalSettings.language,
         telegram_manager_chat_id: generalSettings.telegram_manager_chat_id,
         currency: generalSettings.currency,
         timezone_offset: generalSettings.timezone_offset,
@@ -721,32 +695,6 @@ export default function AdminSettings() {
     }
   };
 
-  // Broadcasts functions
-  const loadBroadcastHistory = async () => {
-    try {
-      setLoadingBroadcastHistory(true);
-      const response = await api.getBroadcastHistory();
-      setBroadcastHistory(response.history);
-    } catch (err) {
-      console.error('Error loading broadcast history:', err);
-    } finally {
-      setLoadingBroadcastHistory(false);
-    }
-  };
-
-  const loadBroadcastUsers = async (type?: string, role?: string) => {
-    if (!type) return;
-    try {
-      setLoadingBroadcastUsers(true);
-      console.log('🔍 Loading eligible users for broadcast...', type, role);
-      const response = await api.getBroadcastUsers(type, role);
-      setBroadcastUsers(response.users);
-    } catch (err) {
-      console.error('❌ Error loading broadcast users:', err);
-    } finally {
-      setLoadingBroadcastUsers(false);
-    }
-  };
 
   const loadBookingReminderSettings = async () => {
     try {
@@ -809,87 +757,7 @@ export default function AdminSettings() {
 
 
 
-  const handleBroadcastUserToggle = (userId: number) => {
-    const currentIds = broadcastForm.user_ids || [];
-    if (currentIds.includes(userId)) {
-      setBroadcastForm({ ...broadcastForm, user_ids: currentIds.filter(id => id !== userId) });
-    } else {
-      setBroadcastForm({ ...broadcastForm, user_ids: [...currentIds, userId] });
-    }
-  };
 
-
-  const handleBroadcastChannelToggle = (channel: string) => {
-    if (broadcastForm.channels.includes(channel)) {
-      setBroadcastForm({ ...broadcastForm, channels: broadcastForm.channels.filter(c => c !== channel) });
-    } else {
-      setBroadcastForm({ ...broadcastForm, channels: [...broadcastForm.channels, channel] });
-    }
-  };
-
-  const handleBroadcastPreview = async () => {
-    if (!broadcastForm.subscription_type) {
-      toast.error(t('settings:select_subscription_type'));
-      return;
-    }
-
-    if (broadcastForm.channels.length === 0) {
-      toast.error(t('settings:select_at_least_one_channel'));
-      return;
-    }
-
-    try {
-      setLoadingBroadcastPreview(true);
-      const data = await api.previewBroadcast(broadcastForm);
-      setBroadcastPreview(data);
-      toast.success(`${t('common:found')} ${data.total_users} ${t('common:recipients')} `);
-    } catch (err: any) {
-      toast.error(err.message || t('settings:preview_error'));
-    } finally {
-      setLoadingBroadcastPreview(false);
-    }
-  };
-
-  const handleSendBroadcast = async () => {
-    if (!broadcastForm.subscription_type || !broadcastForm.subject || !broadcastForm.message) {
-      toast.error(t('settings:fill_all_required_fields'));
-      return;
-    }
-
-    if (broadcastForm.channels.length === 0) {
-      toast.error(t('settings:select_at_least_one_channel'));
-      return;
-    }
-
-    if (!window.confirm(t('settings:confirm_send_broadcast'))) {
-      return;
-    }
-
-    try {
-      setSendingBroadcast(true);
-      const response = await api.sendBroadcast(broadcastForm);
-      toast.success(response.message);
-
-      // Reset form
-      setBroadcastForm({
-        subscription_type: '',
-        channels: [] as string[],
-        subject: '',
-        message: '',
-        target_role: '',
-        user_ids: [] as number[],
-        force_send: false,
-      });
-      setBroadcastPreview(null);
-
-      // Reload history
-      await loadBroadcastHistory();
-    } catch (err: any) {
-      toast.error(err.message || t('settings:send_error'));
-    } finally {
-      setSendingBroadcast(false);
-    }
-  };
 
   // Holidays functions
   const loadHolidays = async () => {
@@ -974,14 +842,13 @@ export default function AdminSettings() {
   // Список всех вкладок с условиями отображения
   const allTabs = useMemo(() => [
     { id: 'profile', icon: User, label: t('settings:profile'), show: true },
-    { id: 'general', icon: Globe, label: t('settings:general'), show: userPermissions.canEditSettings || userPermissions.roleLevel >= 70 },
+    { id: 'general', icon: Globe, label: t('settings:general'), show: userPermissions.canEditSettings || userPermissions.canEditBranding || userPermissions.canEditFinancialSettings || userPermissions.canEditSchedule || userPermissions.canEditLoyalty },
     { id: 'notifications', icon: Bell, label: t('settings:notifications'), show: true },
-    { id: 'security', icon: Shield, label: t('settings:security'), show: true },
-    { id: 'diagnostics', icon: AlertCircle, label: t('settings:diagnostics'), show: userPermissions.roleLevel >= 90 },
-    { id: 'subscriptions', icon: Mail, label: t('subscriptions'), show: true },
-    { id: 'broadcasts', icon: Send, label: t('settings:broadcasts'), show: userPermissions.canSendBroadcasts },
-    { id: 'holidays', icon: Calendar, label: t('settings:holidays'), show: userPermissions.canEditSettings },
-    { id: 'danger', icon: Trash2, label: t('danger_zone'), show: userPermissions.roleLevel >= 90 },
+    { id: 'subscriptions', icon: Mail, label: t('subscriptions'), show: userPermissions.canEditIntegrations || userPermissions.canEditSettings },
+    { id: 'holidays', icon: Calendar, label: t('settings:holidays'), show: userPermissions.canEditSchedule || userPermissions.canEditSettings },
+    { id: 'roles', icon: Shield, label: t('settings:manage_roles'), show: userPermissions.canViewRoles || userPermissions.canEditRoles },
+    { id: 'security', icon: Shield, label: t('settings:security'), show: userPermissions.roleLevel >= 80 || userPermissions.canEditSettings },
+    { id: 'danger', icon: Trash2, label: t('danger_zone'), show: userPermissions.role === 'director' || userPermissions.secondaryRole === 'director' },
   ], [userPermissions, t]);
 
   const visibleTabs = useMemo(() => allTabs.filter(t => t.show), [allTabs]);
@@ -1027,7 +894,7 @@ export default function AdminSettings() {
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
         <TabsList className="flex flex-nowrap overflow-x-auto w-full gap-1 pb-2 mb-2 hide-scrollbar border-b border-gray-100 bg-transparent h-auto justify-start items-center">
           {visibleTabs.map((tab) => (
-            <TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-2 whitespace-nowrap settings-tab-trigger-active shrink-0">
+            <TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-2 whitespace-nowrap settings-tab-trigger-active shrink-0 border border-gray-200 rounded-lg px-4 py-2">
               <tab.icon className="w-4 h-4" />
               <span className="hidden sm:inline">{tab.label}</span>
             </TabsTrigger>
@@ -1106,7 +973,7 @@ export default function AdminSettings() {
                   <div className="space-y-2">
                     <Label htmlFor="full_name" className="flex items-center gap-2 settings-label-spacing">
                       <User className="w-3.5 h-3.5 text-muted-foreground" />
-                      {t('settings:full_name')} *
+                      {t('settings:full_name')}*
                     </Label>
                     <Input
                       id="full_name"
@@ -1120,7 +987,7 @@ export default function AdminSettings() {
                   <div className="space-y-2">
                     <Label htmlFor="username" className="flex items-center gap-2 settings-label-spacing">
                       <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
-                      {t('settings:username')} *
+                      {t('settings:username')}*
                     </Label>
                     <Input
                       id="username"
@@ -1230,7 +1097,7 @@ export default function AdminSettings() {
                     {t('settings:social_links')}
                   </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="instagram" className="flex items-center gap-2">
                         <InstagramIcon className="w-4 h-4" colorful={true} />
@@ -1244,18 +1111,7 @@ export default function AdminSettings() {
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="whatsapp" className="flex items-center gap-2">
-                        <WhatsAppIcon className="w-4 h-4" colorful={true} />
-                        WhatsApp
-                      </Label>
-                      <Input
-                        id="whatsapp"
-                        value={profileForm.whatsapp}
-                        onChange={(e) => setProfileForm({ ...profileForm, whatsapp: e.target.value })}
-                        placeholder="+7..."
-                      />
-                    </div>
+
 
                     <div className="space-y-2">
                       <Label htmlFor="telegram" className="flex items-center gap-2">
@@ -1297,6 +1153,7 @@ export default function AdminSettings() {
                 <Switch
                   checked={botGloballyEnabled}
                   onCheckedChange={handleUpdateBotEnabled}
+                  disabled={!userPermissions.canViewBotSettings && !userPermissions.canEditSettings}
                 />
               </div>
             </div>
@@ -1309,36 +1166,18 @@ export default function AdminSettings() {
               <form onSubmit={handleSaveGeneral} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="salonName" className="settings-label-spacing">{t('settings:salon_name')} *</Label>
+                    <Label htmlFor="salonName" className="settings-label-spacing">{t('settings:salon_name')}*</Label>
                     <Input
                       id="salonName"
                       value={generalSettings.salonName}
                       onChange={(e) => setGeneralSettings({ ...generalSettings, salonName: e.target.value })}
                       required
                       className="px-3"
+                      disabled={!userPermissions.canEditBranding && !userPermissions.canEditSettings}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="language" className="settings-label-spacing">{t('settings:system_language')}</Label>
-                    <Select
-                      value={generalSettings.language}
-                      onValueChange={(value: string) =>
-                        setGeneralSettings({ ...generalSettings, language: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {languages.map((lang) => (
-                          <SelectItem key={lang} value={lang}>
-                            {t(`settings:${lang}`, lang.toUpperCase())}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1349,6 +1188,7 @@ export default function AdminSettings() {
                       value={generalSettings.city}
                       onChange={(e) => setGeneralSettings({ ...generalSettings, city: e.target.value })}
                       className="px-3"
+                      disabled={!userPermissions.canEditBranding && !userPermissions.canEditSettings}
                     />
                   </div>
 
@@ -1360,6 +1200,8 @@ export default function AdminSettings() {
                       value={generalSettings.phone}
                       onChange={(e) => setGeneralSettings({ ...generalSettings, phone: e.target.value })}
                       className="px-3"
+                      required
+                      disabled={!userPermissions.canEditBranding && !userPermissions.canEditSettings}
                     />
                   </div>
                 </div>
@@ -1371,6 +1213,7 @@ export default function AdminSettings() {
                     value={generalSettings.address}
                     onChange={(e) => setGeneralSettings({ ...generalSettings, address: e.target.value })}
                     className="px-3"
+                    disabled={!userPermissions.canEditBranding && !userPermissions.canEditSettings}
                   />
                 </div>
 
@@ -1383,6 +1226,7 @@ export default function AdminSettings() {
                       value={generalSettings.email}
                       onChange={(e) => setGeneralSettings({ ...generalSettings, email: e.target.value })}
                       className="px-3"
+                      disabled={!userPermissions.canEditBranding && !userPermissions.canEditSettings}
                     />
                   </div>
 
@@ -1394,6 +1238,7 @@ export default function AdminSettings() {
                       onChange={(e) => setGeneralSettings({ ...generalSettings, instagram: e.target.value })}
                       placeholder="@username"
                       className="px-3"
+                      disabled={!userPermissions.canEditBranding && !userPermissions.canEditSettings}
                     />
                   </div>
 
@@ -1405,6 +1250,7 @@ export default function AdminSettings() {
                       onChange={(e) => setGeneralSettings({ ...generalSettings, telegram_manager_chat_id: e.target.value })}
                       placeholder="-1001234567890"
                       className="px-3"
+                      disabled={!userPermissions.canEditBranding && !userPermissions.canEditSettings}
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       {t('settings:telegram_chat_id_hint')}
@@ -1412,63 +1258,74 @@ export default function AdminSettings() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="weekdays" className="settings-label-spacing">{t('settings:weekdays_hours')}</Label>
-                    <Input
-                      id="weekdays"
-                      value={generalSettings.working_hours.weekdays}
-                      onChange={(e) => setGeneralSettings({
-                        ...generalSettings,
-                        working_hours: { ...generalSettings.working_hours, weekdays: e.target.value }
-                      })}
-                      placeholder="9:00 - 21:30"
-                      className="px-3"
-                    />
+                <div className="space-y-4 pt-4">
+                  <h3 className="text-lg font-medium text-gray-900 border-b pb-2 flex items-center gap-2">
+                    <Calendar className="w-5 h-5 settings-text-primary" />
+                    {t('settings:working_schedule')}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="weekdays" className="settings-label-spacing">{t('settings:weekdays_hours')}</Label>
+                      <Input
+                        id="weekdays"
+                        value={generalSettings.working_hours.weekdays}
+                        onChange={(e) => setGeneralSettings({
+                          ...generalSettings,
+                          working_hours: { ...generalSettings.working_hours, weekdays: e.target.value }
+                        })}
+                        placeholder={t('settings:placeholder_working_hours')}
+                        className="px-3"
+                        disabled={!userPermissions.canEditSchedule && !userPermissions.canEditSettings}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="weekends" className="settings-label-spacing">{t('settings:weekends_hours')}</Label>
+                      <Input
+                        id="weekends"
+                        value={generalSettings.working_hours.weekends}
+                        onChange={(e) => setGeneralSettings({
+                          ...generalSettings,
+                          working_hours: { ...generalSettings.working_hours, weekends: e.target.value }
+                        })}
+                        placeholder={t('settings:placeholder_working_hours')}
+                        className="px-3"
+                        disabled={!userPermissions.canEditSchedule && !userPermissions.canEditSettings}
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="weekends" className="settings-label-spacing">{t('settings:weekends_hours')}</Label>
-                    <Input
-                      id="weekends"
-                      value={generalSettings.working_hours.weekends}
-                      onChange={(e) => setGeneralSettings({
-                        ...generalSettings,
-                        working_hours: { ...generalSettings.working_hours, weekends: e.target.value }
-                      })}
-                      placeholder="10:30 - 21:30"
-                      className="px-3"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="lunch_start" className="settings-label-spacing">{t('settings:lunch_start')}</Label>
+                      <Input
+                        id="lunch_start"
+                        type="time"
+                        value={generalSettings.lunch_time.start}
+                        onChange={(e) => setGeneralSettings({
+                          ...generalSettings,
+                          lunch_time: { ...generalSettings.lunch_time, start: e.target.value }
+                        })}
+                        className="px-3"
+                        disabled={!userPermissions.canEditSchedule && !userPermissions.canEditSettings}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lunch_end" className="settings-label-spacing">{t('settings:lunch_end')}</Label>
+                      <Input
+                        id="lunch_end"
+                        type="time"
+                        value={generalSettings.lunch_time.end}
+                        onChange={(e) => setGeneralSettings({
+                          ...generalSettings,
+                          lunch_time: { ...generalSettings.lunch_time, end: e.target.value }
+                        })}
+                        className="px-3"
+                        disabled={!userPermissions.canEditSchedule && !userPermissions.canEditSettings}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="lunch_start" className="settings-label-spacing">{t('settings:lunch_start')}</Label>
-                    <Input
-                      id="lunch_start"
-                      type="time"
-                      value={generalSettings.lunch_time.start}
-                      onChange={(e) => setGeneralSettings({
-                        ...generalSettings,
-                        lunch_time: { ...generalSettings.lunch_time, start: e.target.value }
-                      })}
-                      className="px-3"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lunch_end" className="settings-label-spacing">{t('settings:lunch_end')}</Label>
-                    <Input
-                      id="lunch_end"
-                      type="time"
-                      value={generalSettings.lunch_time.end}
-                      onChange={(e) => setGeneralSettings({
-                        ...generalSettings,
-                        lunch_time: { ...generalSettings.lunch_time, end: e.target.value }
-                      })}
-                      className="px-3"
-                    />
-                  </div>
                 </div>
 
                 {/* Universal Settings Section */}
@@ -1484,7 +1341,7 @@ export default function AdminSettings() {
                         id="city"
                         value={generalSettings.city}
                         onChange={(e) => setGeneralSettings({ ...generalSettings, city: e.target.value })}
-                        placeholder="Dubai"
+                        placeholder={t('settings:placeholder_city')}
                       />
                     </div>
 
@@ -1501,7 +1358,7 @@ export default function AdminSettings() {
                           <SelectContent>
                             {currencies.map((curr) => (
                               <SelectItem key={curr.code} value={curr.code}>
-                                {curr.code} - {curr.name} ({curr.symbol})
+                                {curr.code}-{curr.name}({curr.symbol})
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -1512,6 +1369,7 @@ export default function AdminSettings() {
                           size="icon"
                           onClick={() => setShowCurrencyDialog(true)}
                           title={t('settings:manage_currencies')}
+                          disabled={!userPermissions.canEditFinancialSettings && !userPermissions.canEditSettings}
                         >
                           <SettingsIcon className="w-4 h-4" />
                         </Button>
@@ -1523,6 +1381,7 @@ export default function AdminSettings() {
                       <Select
                         value={generalSettings.timezone_offset}
                         onValueChange={(value) => setGeneralSettings({ ...generalSettings, timezone_offset: value })}
+                        disabled={!userPermissions.canEditFinancialSettings && !userPermissions.canEditSettings}
                       >
                         <SelectTrigger id="timezone_offset">
                           <SelectValue placeholder={t('settings:select_timezone')} />
@@ -1549,6 +1408,7 @@ export default function AdminSettings() {
                         value={generalSettings.birthday_discount}
                         onChange={(e) => setGeneralSettings({ ...generalSettings, birthday_discount: e.target.value })}
                         placeholder="15%"
+                        disabled={!userPermissions.canEditLoyalty && !userPermissions.canEditFinancialSettings && !userPermissions.canEditSettings}
                       />
                       <p className="text-xs text-gray-500 mt-1">
                         {t('settings:birthday_discount_hint', { currency: generalSettings.currency })}
@@ -1662,153 +1522,157 @@ export default function AdminSettings() {
                 </div>
               </div>
 
-              <div className="border-t border-gray-200 pt-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg text-gray-900">{t('settings:booking_reminders')}</h3>
-                  <Button
-                    type="button"
-                    onClick={() => setShowCreateReminderDialog(true)}
-                    variant="outline"
-                    size="sm"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    {t('settings:add_reminder')}
-                  </Button>
+              {userPermissions.roleLevel >= 80 && (
+                <div className="border-t border-gray-200 pt-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg text-gray-900">{t('settings:booking_reminders')}</h3>
+                    <Button
+                      type="button"
+                      onClick={() => setShowCreateReminderDialog(true)}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      {t('settings:add_reminder')}
+                    </Button>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    {t('settings:configure_auto_reminders')}
+                  </p>
+
+                  {loadingReminderSettings ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Loader className="w-6 h-6 settings-loader animate-spin" />
+                    </div>
+                  ) : bookingReminderSettings.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                      <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                      <p>{t('settings:no_reminders_configured')}</p>
+                      <p className="text-sm mt-1">{t('settings:add_reminder_hint')}</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {bookingReminderSettings.map((setting) => (
+                        <div
+                          key={setting.id}
+                          className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Bell className={`w-5 h-5 ${setting.is_enabled ? 'settings-text-pink' : 'text-gray-400'}`} />
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">
+                                {t('settings:reminder_label')}
+                                {setting.days_before > 0 && ` ${setting.days_before}${t('settings:days')}`}
+                                {setting.days_before > 0 && setting.hours_before > 0 && ' '}
+                                {setting.hours_before > 0 && ` ${setting.hours_before}${t('settings:hours')}`}
+                              </p>
+                              <p className="text-xs text-gray-600">
+                                {t('settings:before_booking')}·{setting.notification_type === 'email' ? 'Email' : 'SMS'}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={setting.is_enabled}
+                              onCheckedChange={() => handleToggleReminderSetting(setting.id)}
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteReminderSetting(setting.id)}
+                              className="settings-text-red settings-text-red-hover settings-bg-red-light-hover"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <p className="text-sm text-gray-600 mb-4">
-                  {t('settings:configure_auto_reminders')}
-                </p>
+              )}
 
-                {loadingReminderSettings ? (
-                  <div className="flex items-center justify-center py-12">
-                    <Loader className="w-6 h-6 settings-loader animate-spin" />
-                  </div>
-                ) : bookingReminderSettings.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
-                    <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p>{t('settings:no_reminders_configured')}</p>
-                    <p className="text-sm mt-1">{t('settings:add_reminder_hint')}</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {bookingReminderSettings.map((setting) => (
-                      <div
-                        key={setting.id}
-                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Bell className={`w-5 h-5 ${setting.is_enabled ? 'settings-text-pink' : 'text-gray-400'}`} />
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">
-                              {t('settings:reminder_label')} {setting.days_before > 0 && `${setting.days_before} ${t('settings:days')} `}{setting.days_before > 0 && setting.hours_before > 0 && ' '}{setting.hours_before > 0 && `${setting.hours_before} ${t('settings:hours')} `}
-                            </p>
-                            <p className="text-xs text-gray-600">
-                              {t('settings:before_booking')} · {setting.notification_type === 'email' ? 'Email' : 'SMS'}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Switch
-                            checked={setting.is_enabled}
-                            onCheckedChange={() => handleToggleReminderSetting(setting.id)}
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteReminderSetting(setting.id)}
-                            className="settings-text-red settings-text-red-hover settings-bg-red-light-hover"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
+              {/* Create Reminder Dialog */}
+              {showCreateReminderDialog && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                  <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">{t('settings:new_reminder')}</h3>
+
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="reminder-name">{t('settings:name')}*</Label>
+                        <Input
+                          id="reminder-name"
+                          value={reminderForm.name}
+                          onChange={(e) => setReminderForm({ ...reminderForm, name: e.target.value })}
+                          placeholder={t('settings:placeholder_reminder_example')}
+                        />
                       </div>
-                    ))}
-                  </div>
-                )}
 
-                {/* Create Reminder Dialog */}
-                {showCreateReminderDialog && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">{t('settings:new_reminder')}</h3>
-
-                      <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="reminder-name">{t('settings:name')} *</Label>
+                          <Label htmlFor="days-before">{t('settings:days_before_booking')}</Label>
                           <Input
-                            id="reminder-name"
-                            value={reminderForm.name}
-                            onChange={(e) => setReminderForm({ ...reminderForm, name: e.target.value })}
-                            placeholder={t('settings:placeholder_reminder_example')}
+                            id="days-before"
+                            type="number"
+                            min="0"
+                            value={reminderForm.days_before}
+                            onChange={(e) => setReminderForm({ ...reminderForm, days_before: parseInt(e.target.value) || 0 })}
                           />
                         </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="days-before">{t('settings:days_before_booking')}</Label>
-                            <Input
-                              id="days-before"
-                              type="number"
-                              min="0"
-                              value={reminderForm.days_before}
-                              onChange={(e) => setReminderForm({ ...reminderForm, days_before: parseInt(e.target.value) || 0 })}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="hours-before">{t('settings:hours_before_booking')}</Label>
-                            <Input
-                              id="hours-before"
-                              type="number"
-                              min="0"
-                              value={reminderForm.hours_before}
-                              onChange={(e) => setReminderForm({ ...reminderForm, hours_before: parseInt(e.target.value) || 0 })}
-                            />
-                          </div>
-                        </div>
-
                         <div>
-                          <Label htmlFor="notification-type">{t('settings:notification_type')}</Label>
-                          <Select
-                            value={reminderForm.notification_type}
-                            onValueChange={(value) => setReminderForm({ ...reminderForm, notification_type: value })}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="email">Email</SelectItem>
-                              <SelectItem value="sms">SMS</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <Label htmlFor="hours-before">{t('settings:hours_before_booking')}</Label>
+                          <Input
+                            id="hours-before"
+                            type="number"
+                            min="0"
+                            value={reminderForm.hours_before}
+                            onChange={(e) => setReminderForm({ ...reminderForm, hours_before: parseInt(e.target.value) || 0 })}
+                          />
                         </div>
                       </div>
 
-                      <div className="flex gap-3 mt-6">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => {
-                            setShowCreateReminderDialog(false);
-                            setReminderForm({ name: '', days_before: 0, hours_before: 2, notification_type: 'email' });
-                          }}
-                          className="flex-1"
+                      <div>
+                        <Label htmlFor="notification-type">{t('settings:notification_type')}</Label>
+                        <Select
+                          value={reminderForm.notification_type}
+                          onValueChange={(value) => setReminderForm({ ...reminderForm, notification_type: value })}
                         >
-                          {t('settings:cancel')}
-                        </Button>
-                        <Button
-                          type="button"
-                          onClick={handleCreateReminderSetting}
-                          className="flex-1 settings-button-gradient"
-                        >
-                          {t('settings:create')}
-                        </Button>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="email">Email</SelectItem>
+                            <SelectItem value="sms">SMS</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
 
+                    <div className="flex gap-3 mt-6">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowCreateReminderDialog(false);
+                          setReminderForm({ name: '', days_before: 0, hours_before: 2, notification_type: 'email' });
+                        }}
+                        className="flex-1"
+                      >
+                        {t('settings:cancel')}
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={handleCreateReminderSetting}
+                        className="flex-1 settings-button-gradient"
+                      >
+                        {t('settings:create')}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
               <Button
                 type="submit"
                 className="settings-button-gradient"
@@ -1842,7 +1706,7 @@ export default function AdminSettings() {
                   <p className="text-blue-800 font-medium text-sm mb-2">{t('settings:about_roles_system')}:</p>
                   <ul className="text-blue-700 text-sm space-y-1 list-disc list-inside">
                     <li>{t('settings:create_custom_roles_for_your_business')}</li>
-                    <li>{t('settings:assign_detailed_permissions')}: {t('permission_details')}</li>
+                    <li>{t('settings:assign_detailed_permissions')}:{t('permission_details')}</li>
                     <li>{t('settings:builtin_roles_cannot_be_deleted')}</li>
                   </ul>
                 </div>
@@ -1912,11 +1776,11 @@ export default function AdminSettings() {
                   <div>
                     <h3 className="text-sm text-gray-900 mb-2 font-semibold">{t('settings:security_recommendations')}</h3>
                     <ul className="text-sm text-gray-700 space-y-2">
-                      <li>• {t('settings:use_strong_passwords')}</li>
-                      <li>• {t('settings:regularly_change_passwords')}</li>
-                      <li>• {t('settings:do_not_share_credentials')}</li>
-                      <li>• {t('settings:check_active_sessions')}</li>
-                      <li>• {t('settings:regularly_backup_data')}</li>
+                      <li>•{t('settings:use_strong_passwords')}</li>
+                      <li>•{t('settings:regularly_change_passwords')}</li>
+                      <li>•{t('settings:do_not_share_credentials')}</li>
+                      <li>•{t('settings:check_active_sessions')}</li>
+                      <li>•{t('settings:regularly_backup_data')}</li>
                     </ul>
                   </div>
                 </div>
@@ -1957,77 +1821,14 @@ export default function AdminSettings() {
                     }
                   }}
                 >
-                  <Download className="w-4 h-4 mr-2" /> {t('settings:download_backup')}
+                  <Download className="w-4 h-4 mr-2" />{t('settings:download_backup')}
                 </Button>
               </div>
             </div>
 
           </div>
         </TabsContent>
-        {/* Diagnostics */}
-        <TabsContent value="diagnostics">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-3">
-              {t('settings:system_diagnostics')}
-            </h2>
 
-            <div className="space-y-6">
-              <div className="settings-info-box">
-                <p className="settings-text-blue-dark font-medium mb-2">{t('settings:what_is_checked')}:</p>
-                <ul className="settings-text-blue text-sm space-y-1 list-disc list-inside">
-                  <li>{t('settings:check_database')}</li>
-                  <li>{t('settings:check_bot_settings')}</li>
-                  <li>{t('settings:check_masters_services')}</li>
-                  <li>{t('settings:check_relations')}</li>
-                </ul>
-              </div>
-
-              <Button
-                size="lg"
-                className="settings-button-gradient"
-                onClick={async () => {
-                  const loadingToast = toast.loading(t('settings:starting_diagnostics'));
-
-                  try {
-                    const response = await fetch('/api/diagnostics/full', {
-                      credentials: 'include'
-                    });
-                    const data = await response.json();
-
-                    console.log('🔍 РЕЗУЛЬТАТЫ ДИАГНОСТИКИ:', data);
-
-                    toast.dismiss(loadingToast);
-
-                    const issues = data.issues || [];
-                    if (issues.length === 0) {
-                      toast.success(t('settings:diagnostics_success'));
-                    } else {
-                      toast.warning(
-                        `${t('settings:issues_found')}: ${issues.length}. 
-                        ${t('settings:check_console')} `
-                      );
-                    }
-
-                    // Дополнительно выводим проблемы
-                    if (issues.length > 0) {
-                      console.error('❌ ПРОБЛЕМЫ:', issues);
-                    }
-                  } catch (error) {
-                    toast.dismiss(loadingToast);
-                    console.error('Ошибка диагностики:', error);
-                    toast.error(t('settings:error_starting_diagnostics'));
-                  }
-                }}
-              >
-                {t('settings:run_full_diagnostics')}
-              </Button>
-
-              <div className="text-sm text-gray-600">
-                {t('settings:results_in_console')}
-              </div>
-            </div>
-          </div>
-        </TabsContent>
 
         {/* Subscriptions */}
         <TabsContent value="subscriptions">
@@ -2116,476 +1917,6 @@ export default function AdminSettings() {
           </div>
         </TabsContent>
 
-        {/* Broadcasts */}
-        <TabsContent value="broadcasts">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h2 className="text-2xl text-gray-900 mb-6 flex items-center gap-3">
-              <Send className="w-6 h-6 settings-text-pink" />
-              {t('settings:mass_broadcasts')}
-            </h2>
-            <p className="text-gray-600 mb-6">{t('settings:broadcast_description')}</p>
-
-            <Tabs defaultValue="compose" className="space-y-6">
-              <TabsList>
-                <TabsTrigger value="compose" className="flex items-center gap-2">
-                  <Send className="w-4 h-4" />
-                  {t('settings:create_broadcast')}
-                </TabsTrigger>
-                <TabsTrigger value="history" className="flex items-center gap-2">
-                  <History className="w-4 h-4" />
-                  {t('settings:history')}
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Compose Tab */}
-              <TabsContent value="compose">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Form */}
-                  <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">{t('settings:broadcast_parameters')}</h2>
-
-                    <div className="space-y-6">
-                      {/* Subscription Type */}
-                      <div className="space-y-2">
-                        <Label htmlFor="subscription_type" className="settings-label-spacing">{t('settings:subscription_type')} *</Label>
-                        <Select
-                          value={broadcastForm.subscription_type}
-                          onValueChange={(value) => setBroadcastForm({ ...broadcastForm, subscription_type: value })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('settings:placeholder_select_type')} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.entries(availableSubscriptions).map(([key, info]) => (
-                              <SelectItem key={key} value={key}>
-                                {info.name} - {info.description}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Channels */}
-                      <div className="space-y-2">
-                        <Label className="settings-label-spacing">{t('settings:sending_channels')} *</Label>
-                        <div className="flex gap-4 mt-2">
-                          <button
-                            type="button"
-                            onClick={() => handleBroadcastChannelToggle('email')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('email')
-                              ? 'border-blue-500 bg-blue-50 text-blue-700'
-                              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              }`}
-                          >
-                            <Mail className="w-5 h-5" />
-                            {t('settings:channel_email', 'Email')}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleBroadcastChannelToggle('telegram')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('telegram')
-                              ? 'border-green-500 bg-green-50 text-green-700'
-                              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              }`}
-                          >
-                            <MessageCircle className="w-5 h-5" />
-                            {t('settings:channel_telegram', 'Telegram')}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleBroadcastChannelToggle('instagram')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${broadcastForm.channels.includes('instagram')
-                              ? 'border-blue-500 bg-blue-50 text-blue-700'
-                              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                              }`}
-                          >
-                            <Instagram className="w-5 h-5" />
-                            {t('settings:channel_instagram', 'Instagram')}
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Target Role (optional) */}
-                      <div>
-                        <Label htmlFor="target_role">{t('settings:target_role_optional')}</Label>
-                        <Select
-                          value={broadcastForm.target_role}
-                          onValueChange={(value) => {
-                            setBroadcastForm({ ...broadcastForm, target_role: value, user_ids: [] });
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('settings:placeholder_all_users')} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">{t('settings:all_users')}</SelectItem>
-                            <SelectItem value="admin">{t('settings:admins')}</SelectItem>
-                            <SelectItem value="manager">{t('settings:managers')}</SelectItem>
-                            <SelectItem value="employee">{t('settings:employees')}</SelectItem>
-                            <SelectItem value="client">{t('settings:clients')}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Force Send Toggle */}
-                      <div className="flex items-center justify-between p-4 bg-amber-50 rounded-lg border border-amber-200">
-                        <div className="flex items-center gap-3">
-                          <ShieldAlert className="w-5 h-5 text-amber-600" />
-                          <div>
-                            <p className="text-sm font-medium text-amber-900">{t('settings:important_message')}</p>
-                            <p className="text-xs text-amber-700">{t('settings:force_send_description')}</p>
-                          </div>
-                        </div>
-                        <Switch
-                          checked={broadcastForm.force_send}
-                          onCheckedChange={(checked) => setBroadcastForm({ ...broadcastForm, force_send: checked })}
-                        />
-                      </div>
-
-                      {/* User Selection */}
-                      <div>
-                        <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                          {t('settings:select_recipients')}
-                        </Label>
-                        <div className="relative">
-                          <button
-                            type="button"
-                            onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                            className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
-                          >
-                            {(() => {
-                              const filteredUsers = broadcastUsers.filter(u =>
-                                !broadcastForm.target_role || broadcastForm.target_role === 'all' || u.role === broadcastForm.target_role
-                              );
-                              return (
-                                <span className="text-sm text-gray-700">
-                                  {(broadcastForm.user_ids || []).length === 0
-                                    ? t('settings:all_subscribed_users')
-                                    : `${t('settings:selected')}: ${(broadcastForm.user_ids || []).length} ${t('settings:of')} ${filteredUsers.length} `}
-                                </span>
-                              );
-                            })()}
-                            <Users className="w-4 h-4 text-gray-500" />
-                          </button>
-
-                          {userDropdownOpen && (() => {
-                            const filteredUsers = broadcastUsers.filter(u =>
-                              !broadcastForm.target_role || broadcastForm.target_role === 'all' || u.role === broadcastForm.target_role
-                            );
-                            return (
-                              <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
-                                <div className="p-3 border-b border-gray-200">
-                                  <label className="flex items-center gap-2 cursor-pointer">
-                                    <input
-                                      type="checkbox"
-                                      checked={(broadcastForm.user_ids || []).length === filteredUsers.filter(u => u.is_subscribed || broadcastForm.force_send).length && filteredUsers.length > 0}
-                                      onChange={() => {
-                                        if ((broadcastForm.user_ids || []).length === filteredUsers.filter(u => u.is_subscribed || broadcastForm.force_send).length) {
-                                          setBroadcastForm({ ...broadcastForm, user_ids: [] });
-                                        } else {
-                                          setBroadcastForm({ ...broadcastForm, user_ids: filteredUsers.filter(u => u.is_subscribed || broadcastForm.force_send).map(u => u.id) });
-                                        }
-                                      }}
-                                      className="w-4 h-4 settings-accent-pink rounded"
-                                    />
-                                    <span className="text-sm font-medium text-gray-700">
-                                      {t('settings:select_all')} ({filteredUsers.length})
-                                    </span>
-                                  </label>
-                                </div>
-                                <div className="max-h-64 overflow-y-auto">
-                                  {loadingBroadcastUsers ? (
-                                    <div className="flex justify-center py-8">
-                                      <Loader className="w-5 h-5 animate-spin settings-loader" />
-                                    </div>
-                                  ) : !broadcastForm.subscription_type ? (
-                                    <div className="flex justify-center py-8 text-gray-500 text-sm">
-                                      {t('settings:select_type_first')}
-                                    </div>
-                                  ) : filteredUsers.length === 0 ? (
-                                    <div className="flex justify-center py-8 text-gray-500 text-sm">
-                                      {t('settings:no_users_found')}
-                                    </div>
-                                  ) : (
-                                    <div className="p-2">
-                                      {filteredUsers.map((user) => {
-                                        const isUnsubscribed = !user.is_subscribed && !broadcastForm.force_send;
-                                        return (
-                                          <label
-                                            key={user.id}
-                                            className={`flex items-start gap-3 p-2 rounded cursor-pointer transition-colors ${isUnsubscribed ? 'opacity-50 grayscale' : 'hover:bg-gray-50'}`}
-                                          >
-                                            <input
-                                              type="checkbox"
-                                              disabled={isUnsubscribed}
-                                              checked={(broadcastForm.user_ids || []).includes(user.id)}
-                                              onChange={() => handleBroadcastUserToggle(user.id)}
-                                              className="w-4 h-4 mt-1 settings-accent-pink rounded"
-                                            />
-                                            <div className="flex-1">
-                                              <div className="flex items-center justify-between">
-                                                <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
-                                                {!user.is_subscribed && (
-                                                  <span className="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-600 rounded-full flex items-center gap-1">
-                                                    <X className="w-2.5 h-2.5" />
-                                                    {t('settings:unsubscribed')}
-                                                  </span>
-                                                )}
-                                              </div>
-                                              <p className="text-xs text-gray-500">@{user.username} · {user.role}</p>
-                                              <div className="flex gap-2 mt-1">
-                                                {broadcastForm.channels.includes('email') && (
-                                                  <span className={`text-[10px] ${user.email ? 'text-blue-600' : 'text-gray-400'}`}>
-                                                    {user.email ? '✓ Email' : '✗ Email'}
-                                                  </span>
-                                                )}
-                                                {broadcastForm.channels.includes('telegram') && (
-                                                  <span className={`text-[10px] ${user.telegram_id ? 'text-green-600' : 'text-gray-400'}`}>
-                                                    {user.telegram_id ? '✓ TG' : '✗ TG'}
-                                                  </span>
-                                                )}
-                                              </div>
-                                            </div>
-                                          </label>
-                                        );
-                                      })}
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="p-3 border-t border-gray-200 bg-gray-50">
-                                  <button
-                                    type="button"
-                                    onClick={() => setUserDropdownOpen(false)}
-                                    className="w-full px-4 py-2 text-sm font-medium text-white settings-danger-button rounded-lg transition-colors"
-                                  >
-                                    {t('settings:done')}
-                                  </button>
-                                </div>
-                              </div>
-                            );
-                          })()}
-                        </div>
-                        <p className="text-xs text-gray-500 mt-2">
-                          {t('settings:recipients_hint')}
-                        </p>
-                      </div>
-
-                      {/* Subject */}
-                      <div>
-                        <Label htmlFor="subject">{t('settings:subject_email')} *</Label>
-                        <Input
-                          id="subject"
-                          value={broadcastForm.subject}
-                          onChange={(e) => setBroadcastForm({ ...broadcastForm, subject: e.target.value })}
-                          placeholder={t('settings:placeholder_special_offer')}
-                          className="px-3"
-                        />
-                      </div>
-
-                      {/* Message */}
-                      <div>
-                        <Label htmlFor="message">{t('settings:message')} *</Label>
-                        <Textarea
-                          id="message"
-                          value={broadcastForm.message}
-                          onChange={(e) => setBroadcastForm({ ...broadcastForm, message: e.target.value })}
-                          rows={8}
-                          placeholder={t('settings:placeholder_enter_message')}
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          {broadcastForm.message.length} {t('settings:chars')}
-                        </p>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex gap-3">
-                        <Button
-                          onClick={handleBroadcastPreview}
-                          disabled={loadingBroadcastPreview}
-                          variant="outline"
-                          className="flex-1"
-                        >
-                          {loadingBroadcastPreview ? (
-                            <>
-                              <Loader className="w-4 h-4 mr-2 animate-spin" />
-                              {t('settings:loading')}...
-                            </>
-                          ) : (
-                            <>
-                              <Eye className="w-4 h-4 mr-2" />
-                              {t('settings:preview')}
-                            </>
-                          )}
-                        </Button>
-
-                        <Button
-                          onClick={handleSendBroadcast}
-                          disabled={sendingBroadcast || !broadcastPreview}
-                          className="flex-1 settings-button-gradient"
-                        >
-                          {sendingBroadcast ? (
-                            <>
-                              <Loader className="w-4 h-4 mr-2 animate-spin" />
-                              {t('settings:sending')}...
-                            </>
-                          ) : (
-                            <>
-                              <Send className="w-4 h-4 mr-2" />
-                              {t('settings:send')}
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Preview Panel */}
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <Users className="w-5 h-5 settings-text-pink" />
-                      {t('settings:recipients')}
-                    </h2>
-
-                    {!broadcastPreview ? (
-                      <div className="text-center py-12">
-                        <Eye className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                        <p className="text-gray-500 text-sm">
-                          {t('settings:click_preview_to_see_recipients')}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {/* Total */}
-                        <div className="settings-card-gradient border rounded-lg p-4">
-                          <p className="text-sm text-gray-600 mb-1">{t('settings:total_recipients')}</p>
-                          <p className="text-3xl font-bold settings-text-pink">{broadcastPreview.total_users}</p>
-                        </div>
-
-                        {/* By Channel */}
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium text-gray-700">{t('settings:by_channels')}:</p>
-
-                          {broadcastPreview.by_channel.email > 0 && (
-                            <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                              <div className="flex items-center gap-2">
-                                <Mail className="w-4 h-4 text-blue-600" />
-                                <span className="text-sm text-gray-700">{t('settings:channel_email')}</span>
-                              </div>
-                              <span className="font-bold text-blue-600">{broadcastPreview.by_channel.email}</span>
-                            </div>
-                          )}
-
-                          {broadcastPreview.by_channel.telegram > 0 && (
-                            <div className="flex items-center justify-between p-2 bg-green-50 rounded">
-                              <div className="flex items-center gap-2">
-                                <MessageCircle className="w-4 h-4 text-green-600" />
-                                <span className="text-sm text-gray-700">{t('settings:channel_telegram')}</span>
-                              </div>
-                              <span className="font-bold text-green-600">{broadcastPreview.by_channel.telegram}</span>
-                            </div>
-                          )}
-
-                          {broadcastPreview.by_channel.instagram > 0 && (
-                            <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                              <div className="flex items-center gap-2">
-                                <Camera className="w-4 h-4 text-blue-600" />
-                                <span className="text-sm text-gray-700">{t('settings:channel_instagram')}</span>
-                              </div>
-                              <span className="font-bold text-blue-600">{broadcastPreview.by_channel.instagram}</span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Sample Users */}
-                        {broadcastPreview.users_sample.length > 0 && (
-                          <div className="mt-4">
-                            <p className="text-sm font-medium text-gray-700 mb-2">{t('settings:sample_recipients')}:</p>
-                            <div className="space-y-2">
-                              {broadcastPreview.users_sample.map((user: any, idx: number) => (
-                                <div key={idx} className="text-xs p-2 bg-gray-50 rounded">
-                                  <p className="font-medium text-gray-900">{user.full_name}</p>
-                                  <p className="text-gray-600">{user.channel}: {user.contact}</p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Warning */}
-                        {broadcastPreview.total_users === 0 && (
-                          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                            <div className="flex items-start gap-2">
-                              <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                              <p className="text-sm text-yellow-800">
-                                {t('settings:no_recipients_found')}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
-
-              {/* History Tab */}
-              <TabsContent value="history">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">{t('settings:broadcast_history')}</h2>
-
-                  {loadingBroadcastHistory ? (
-                    <div className="flex items-center justify-center py-12">
-                      <Loader className="w-8 h-8 settings-loader animate-spin" />
-                    </div>
-                  ) : broadcastHistory.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
-                      <History className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p>{t('settings:no_broadcasts_yet')}</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {broadcastHistory.map((item) => (
-                        <div key={item.id} className="border border-gray-200 rounded-lg p-4 hover:border-pink-300 transition-colors">
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <h3 className="font-medium text-gray-900">{item.subject}</h3>
-                              <p className="text-sm text-gray-600">
-                                {availableSubscriptions[item.subscription_type]?.name || item.subscription_type}
-                              </p>
-                            </div>
-                            <span className="text-xs text-gray-500">
-                              {new Date(item.created_at).toLocaleString('ru-RU')}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-4 text-sm">
-                            <div className="flex items-center gap-2">
-                              <Users className="w-4 h-4 text-gray-400" />
-                              <span className="text-gray-600">{t('settings:sent')}: {item.total_sent}</span>
-                            </div>
-
-                            <div className="flex gap-2">
-                              {item.channels.map((channel: string) => (
-                                <span
-                                  key={channel}
-                                  className="px-2 py-1 rounded text-xs bg-gray-100 text-gray-700"
-                                >
-                                  {channel}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </TabsContent>
 
 
 
@@ -2673,111 +2004,113 @@ export default function AdminSettings() {
           </div>
 
           {/* Create Holiday Dialog */}
-          {showCreateHolidayDialog && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-                <h3 className="text-xl font-bold mb-4">{t('add_holiday')}</h3>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="holidayDate">{t('settings:date')} *</Label>
-                    <Input
-                      id="holidayDate"
-                      type="date"
-                      value={holidayForm.date}
-                      onChange={(e) => setHolidayForm({ ...holidayForm, date: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="holidayName">{t('settings:holiday_name')} *</Label>
-                    <Input
-                      id="holidayName"
-                      value={holidayForm.name}
-                      onChange={(e) => setHolidayForm({ ...holidayForm, name: e.target.value })}
-                      placeholder={t('settings:holiday_name_placeholder')}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
+          {
+            showCreateHolidayDialog && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+                  <h3 className="text-xl font-bold mb-4">{t('add_holiday')}</h3>
+                  <div className="space-y-4">
                     <div>
-                      <Label>{t('settings:salon_closed')}</Label>
-                      <p className="text-xs text-gray-500">{t('settings:block_all_bookings')}</p>
+                      <Label htmlFor="holidayDate">{t('settings:date')}*</Label>
+                      <Input
+                        id="holidayDate"
+                        type="date"
+                        value={holidayForm.date}
+                        onChange={(e) => setHolidayForm({ ...holidayForm, date: e.target.value })}
+                      />
                     </div>
-                    <Switch
-                      checked={holidayForm.is_closed}
-                      onCheckedChange={(checked) => setHolidayForm({ ...holidayForm, is_closed: checked })}
-                    />
-                  </div>
-
-                  {/* Master Exceptions Selector */}
-                  {holidayForm.is_closed && (
-                    <div className="border-t pt-4">
-                      <Label className="mb-2 block">
-                        {t('settings:master_exceptions')}
-                      </Label>
-                      <p className="text-xs text-gray-500 mb-3">
-                        {t('settings:master_exceptions_hint')}
-                      </p>
-                      <div className="max-h-48 overflow-y-auto border rounded-lg p-2 space-y-2">
-                        {Array.isArray(users) && users
-                          .filter(u => u.is_service_provider || u.role === 'employee')
-                          .map((user) => (
-                            <label
-                              key={user.id}
-                              className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer transition-colors"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={holidayForm.master_exceptions.includes(user.id)}
-                                onChange={(e) => {
-                                  if (e.target.checked) {
-                                    setHolidayForm({
-                                      ...holidayForm,
-                                      master_exceptions: [...holidayForm.master_exceptions, user.id]
-                                    });
-                                  } else {
-                                    setHolidayForm({
-                                      ...holidayForm,
-                                      master_exceptions: holidayForm.master_exceptions.filter(id => id !== user.id)
-                                    });
-                                  }
-                                }}
-                                className="w-4 h-4 settings-accent-pink rounded"
-                              />
-                              <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
-                                <p className="text-xs text-gray-500">@{user.username}</p>
-                              </div>
-                            </label>
-                          ))}
+                    <div>
+                      <Label htmlFor="holidayName">{t('settings:holiday_name')}*</Label>
+                      <Input
+                        id="holidayName"
+                        value={holidayForm.name}
+                        onChange={(e) => setHolidayForm({ ...holidayForm, name: e.target.value })}
+                        placeholder={t('settings:holiday_name_placeholder')}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label>{t('settings:salon_closed')}</Label>
+                        <p className="text-xs text-gray-500">{t('settings:block_all_bookings')}</p>
                       </div>
-                      {holidayForm.master_exceptions.length > 0 && (
-                        <p className="text-xs text-green-600 mt-2">
-                          ✓ {holidayForm.master_exceptions.length} {t('settings:masters_selected')}
-                        </p>
-                      )}
+                      <Switch
+                        checked={holidayForm.is_closed}
+                        onCheckedChange={(checked) => setHolidayForm({ ...holidayForm, is_closed: checked })}
+                      />
                     </div>
-                  )}
-                </div>
-                <div className="flex gap-2 mt-6">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setShowCreateHolidayDialog(false);
-                      setHolidayForm({ date: '', name: '', is_closed: true, master_exceptions: [] });
-                    }}
-                    className="flex-1"
-                  >
-                    {t('common:cancel')}
-                  </Button>
-                  <Button
-                    onClick={handleCreateHoliday}
-                    className="flex-1 settings-button-gradient"
-                  >
-                    {t('common:create')}
-                  </Button>
+
+                    {/* Master Exceptions Selector */}
+                    {holidayForm.is_closed && (
+                      <div className="border-t pt-4">
+                        <Label className="mb-2 block">
+                          {t('settings:master_exceptions')}
+                        </Label>
+                        <p className="text-xs text-gray-500 mb-3">
+                          {t('settings:master_exceptions_hint')}
+                        </p>
+                        <div className="max-h-48 overflow-y-auto border rounded-lg p-2 space-y-2">
+                          {Array.isArray(users) && users
+                            .filter(u => u.is_service_provider || u.role === 'employee')
+                            .map((user) => (
+                              <label
+                                key={user.id}
+                                className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer transition-colors"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={holidayForm.master_exceptions.includes(user.id)}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setHolidayForm({
+                                        ...holidayForm,
+                                        master_exceptions: [...holidayForm.master_exceptions, user.id]
+                                      });
+                                    } else {
+                                      setHolidayForm({
+                                        ...holidayForm,
+                                        master_exceptions: holidayForm.master_exceptions.filter(id => id !== user.id)
+                                      });
+                                    }
+                                  }}
+                                  className="w-4 h-4 settings-accent-pink rounded"
+                                />
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
+                                  <p className="text-xs text-gray-500">@{user.username}</p>
+                                </div>
+                              </label>
+                            ))}
+                        </div>
+                        {holidayForm.master_exceptions.length > 0 && (
+                          <p className="text-xs text-green-600 mt-2">
+                            ✓{holidayForm.master_exceptions.length}{t('settings:masters_selected')}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-2 mt-6">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowCreateHolidayDialog(false);
+                        setHolidayForm({ date: '', name: '', is_closed: true, master_exceptions: [] });
+                      }}
+                      className="flex-1"
+                    >
+                      {t('common:cancel')}
+                    </Button>
+                    <Button
+                      onClick={handleCreateHoliday}
+                      className="flex-1 settings-button-gradient"
+                    >
+                      {t('common:create')}
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )
+          }
         </TabsContent>
 
         {/* Danger Zone */}
@@ -2799,7 +2132,7 @@ export default function AdminSettings() {
 
               <div className="space-y-4 max-w-md">
                 <div>
-                  <Label htmlFor="deletePassword">{t('your_password')} *</Label>
+                  <Label htmlFor="deletePassword">{t('your_password')}*</Label>
                   <Input
                     id="deletePassword"
                     type="password"
@@ -2857,7 +2190,7 @@ export default function AdminSettings() {
 
               <div className="p-6 space-y-4">
                 <div>
-                  <Label htmlFor="roleKey">{t('settings:role_key')} *</Label>
+                  <Label htmlFor="roleKey">{t('settings:role_key')}*</Label>
                   <Input
                     id="roleKey"
                     placeholder="senior_master"
@@ -2867,7 +2200,7 @@ export default function AdminSettings() {
                 </div>
 
                 <div>
-                  <Label htmlFor="roleName">{t('settings:role_name')} *</Label>
+                  <Label htmlFor="roleName">{t('settings:role_name')}*</Label>
                   <Input
                     id="roleName"
                     placeholder={t('settings:senior_master')}
@@ -2938,7 +2271,7 @@ export default function AdminSettings() {
                         <tr key={key} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="p-3 text-sm font-medium text-gray-900">{name as string}</td>
                           {['can_view', 'can_create', 'can_edit', 'can_delete'].map(action => (
-                            <td key={`${key} -${action} `} className="p-3 text-center">
+                            <td key={`${key}-${action}`} className="p-3 text-center">
                               <input
                                 type="checkbox"
                                 checked={

@@ -107,6 +107,8 @@ CSS_VERSION = datetime.now().strftime('%Y%m%d%H%M%S')
 # === SALON CONTACTS (SSOT) ===
 SALON_PHONE_DEFAULT = "971526961100"
 SALON_EMAIL_DEFAULT = "mladiamontuae@gmail.com"
+SALON_CITY = os.getenv("SALON_CITY", "Dubai")
+SALON_CURRENCY_DEFAULT = os.getenv("SALON_CURRENCY", "AED")
 
 # ===== ТОКЕНЫ И КЛЮЧИ (из .env) =====
 SALON_LAT = float(os.getenv("SALON_LAT", "25.07398834046777"))
@@ -206,15 +208,19 @@ ROLES = {
     'admin': {
         'name': 'Администратор',
         'permissions': [
-            'clients_view', 'clients_create', 'clients_edit', 'clients_delete',
+            'clients_view', 'clients_create', 'clients_edit', 'clients_delete', 'clients_export', 'clients_view_phone',
             'bookings_view', 'bookings_create', 'bookings_edit', 'bookings_delete',
-            'services_view', 'services_edit',
+            'services_view', 'services_edit', 'services_edit_pricing',
             'users_view', 'users_create', 'users_edit',
             'analytics_view_anonymized',
             'staff_chat_own',
             'calendar_view_all',
             'bot_settings_view',
-            'broadcasts_send'
+            'settings_view',
+            'settings_edit_branding',
+            'broadcasts_send',
+            'roles_view',
+            'roles_edit'
         ],
         'can_manage_roles': ['manager', 'sales', 'marketer', 'employee'],
         'hierarchy_level': 80
@@ -232,18 +238,20 @@ ROLES = {
         'can_manage_roles': [],
         'hierarchy_level': 60
     },
-    'sales': {
-        'name': 'Продажник',
+    'saler': {
+        'name': 'Менеджер по продажам',
         'permissions': [
             'instagram_chat_view',
             'clients_view_limited',
             'analytics_view_stats_only',
             'staff_chat_own',
-            'calendar_view_all',           # Полный доступ к календарю (для просмотра и записи)
+            'calendar_view_all',
             'bot_settings_view',
-            'bookings_create',             # Право создавать записи
-            'bookings_view',               # Право просматривать записи
-            'telephony_access'             # Доступ к телефонии для звонков
+            'bookings_create',
+            'bookings_view',
+            'telephony_access',
+            'services_view',
+            'broadcasts_send'
         ],
         'can_manage_roles': [],
         'hierarchy_level': 40
@@ -253,7 +261,10 @@ ROLES = {
         'permissions': [
             'analytics_view_anonymized',
             'clients_view_stats_only',
-            'staff_chat_own'
+            'staff_chat_own',
+            'broadcasts_send',
+            'services_view',
+            'settings_edit_loyalty'
         ],
         'can_manage_roles': [],
         'hierarchy_level': 30
@@ -273,6 +284,62 @@ ROLES = {
     }
 }
 
+def has_permission(user_role: str, permission: str, secondary_role: str = None) -> bool:
+    """
+    Проверка наличия права у роли (основной или вторичной)
+    """
+    if user_role == 'director' or secondary_role == 'director':
+        return True
+        
+    role_data = ROLES.get(user_role, {})
+    permissions = role_data.get('permissions', [])
+    
+    if permissions == '*':
+        return True
+    
+    if permission in permissions:
+        return True
+        
+    # Проверка вторичной роли
+    if secondary_role:
+        sec_role_data = ROLES.get(secondary_role, {})
+        sec_permissions = sec_role_data.get('permissions', [])
+        
+        if sec_permissions == '*':
+            return True
+            
+        if permission in sec_permissions:
+            return True
+    
+    return False
+
+def can_manage_role(manager_role: str, target_role: str, secondary_role: str = None) -> bool:
+    """
+    Может ли менеджер управлять целевой ролью (с учетом вторичной роли)
+    
+    Правила:
+    - Директор может управлять всеми ролями (включая других директоров)
+    - Админ может управлять только ролями из своего списка (НЕ director)
+    - Другие роли не могут управлять никем
+    """
+    if manager_role == 'director' or secondary_role == 'director':
+        return True
+    
+    # Проверяем основную роль
+    manager_data = ROLES.get(manager_role, {})
+    can_manage_list = manager_data.get('can_manage_roles', [])
+    if target_role in can_manage_list:
+        return True
+        
+    # Проверяем вторичную роль
+    if secondary_role:
+        sec_manager_data = ROLES.get(secondary_role, {})
+        sec_manage_list = sec_manager_data.get('can_manage_roles', [])
+        if target_role in sec_manage_list:
+            return True
+    
+    return False
+
 PERMISSION_DESCRIPTIONS = {
     # Клиенты
     'clients_view': 'Просмотр всех клиентов (с контактами)',
@@ -282,6 +349,7 @@ PERMISSION_DESCRIPTIONS = {
     'clients_create': 'Создание клиентов',
     'clients_edit': 'Редактирование клиентов',
     'clients_delete': 'Удаление клиентов',
+    'clients_export': 'Экспорт базы клиентов (Excel/CSV)',
     
     # Записи
     'bookings_view': 'Просмотр всех записей',
@@ -295,6 +363,17 @@ PERMISSION_DESCRIPTIONS = {
     'calendar_view_all_readonly': 'Просмотр календаря всех (только чтение)',
     'calendar_view_own': 'Просмотр только своего календаря',
     
+    # Настройки
+    'settings_view': 'Просмотр настроек салона',
+    'settings_edit': 'Полное управление настройками',
+    'settings_edit_branding': 'Изменение брендинга (лого, описание)',
+    'settings_edit_finance': 'Изменение финансовых настроек (валюта, налоги)',
+    'settings_edit_integrations': 'Управление интеграциями и API',
+    'settings_edit_loyalty': 'Управление программой лояльности и рефералами',
+    'settings_edit_schedule': 'Управление графиком работы и праздниками',
+    'bot_settings_view': 'Просмотр настроек бота',
+    'bot_settings_edit': 'Настройки бота',
+    
     # Услуги
     'services_view': 'Просмотр услуг',
     'services_edit': 'Редактирование услуг',
@@ -304,6 +383,10 @@ PERMISSION_DESCRIPTIONS = {
     'users_create': 'Создание пользователей',
     'users_edit': 'Редактирование пользователей',
     'users_delete': 'Удаление пользователей',
+    
+    # Роли
+    'roles_view': 'Просмотр ролей и прав доступа',
+    'roles_edit': 'Управление ролями и правами',
     
     # Аналитика
     'analytics_view': 'Полный доступ к аналитике',
@@ -319,12 +402,6 @@ PERMISSION_DESCRIPTIONS = {
     # Чат сотрудников
     'staff_chat_own': 'Свои диалоги с другими сотрудниками',
     'staff_chat_view_all': 'Просмотр всех чатов сотрудников',
-    
-    # Настройки
-    'settings_view': 'Просмотр настроек',
-    'settings_edit': 'Изменение настроек',
-    'bot_settings_view': 'Просмотр настроек бота',
-    'bot_settings_edit': 'Настройки бота',
 
     # Телефония
     'telephony_access': 'Доступ к телефонии для звонков клиентам',
@@ -339,36 +416,12 @@ PERMISSION_DESCRIPTIONS = {
     # Рассылки
     'broadcasts_send': 'Отправка рассылок клиентам',
     'broadcasts_view': 'Просмотр рассылок',
+
+    # Гранулярные права (Дополнительно)
+    'analytics_view_financial': 'Просмотр финансовой аналитики',
+    'clients_view_phones': 'Просмотр полных номеров телефонов',
+    'services_edit_prices': 'Редактирование цен на услуги',
 }
-
-def has_permission(user_role: str, permission: str) -> bool:
-    """Проверка наличия права у роли"""
-    role_data = ROLES.get(user_role, {})
-    permissions = role_data.get('permissions', [])
-    
-    if permissions == '*':
-        return True
-    
-    return permission in permissions
-
-def can_manage_role(manager_role: str, target_role: str) -> bool:
-    """
-    Может ли менеджер управлять целевой ролью
-    
-    Правила:
-    - Директор может управлять всеми ролями (включая других директоров)
-    - Админ может управлять только ролями из своего списка (НЕ director)
-    - Другие роли не могут управлять никем
-    """
-    # Директор может управлять всеми (включая других директоров)
-    if manager_role == 'director':
-        return True
-    
-    # Получаем список ролей, которыми может управлять manager
-    manager_data = ROLES.get(manager_role, {})
-    can_manage_list = manager_data.get('can_manage_roles', [])
-    
-    return target_role in can_manage_list
 
 # ===== КОНСТАНТЫ САЛОНА (ДЕФОЛТНЫЕ ЗНАЧЕНИЯ) =====
 # Единый источник истины для всех дефолтных значений настроек салона

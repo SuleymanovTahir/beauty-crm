@@ -1,4 +1,5 @@
 {
+  "apply": "Apply",
   "auth": {
     "birthday": "Birthday",
     "complete_profile": "Complete Profile",
@@ -31,10 +32,14 @@
   "common": {
     "cancel": "Cancel",
     "change": "Change",
+    "copy_code": "Copiar código",
+    "discount": "OFF",
     "edit": "Edit",
+    "expires": "Data de expiração",
     "reschedule": "Reschedule",
     "resetAll": "Reset all",
     "save": "Save",
+    "search": "Pesquisa...",
     "select": "Select"
   },
   "confirm": {
@@ -64,6 +69,10 @@
     "selectDateFirst": "Select a date first",
     "time": "2. Pick Time",
     "title": "Date & Time"
+  },
+  "discount": "Discount",
+  "errors": {
+    "fetch_promocodes": "Falha ao carregar códigos promocionais"
   },
   "formDate": "Data",
   "formDatePlaceholder": "Selecione a data",
@@ -103,6 +112,19 @@
     "notAvailableToday": "Não há disponibilidade hoje",
     "title": "Selecione um especialista"
   },
+  "promotions": {
+    "applied": "Promo code applied!",
+    "copied": "Promo code copied to clipboard!",
+    "enter_code": "Enter code",
+    "error": "Error validating promo code",
+    "invalid": "Invalid promo code",
+    "min_order": "Min. order",
+    "no_active_codes": "No active promo codes available right now.",
+    "no_desc": "No description",
+    "offer_desc": "Use these codes to get discounts on your next visit",
+    "offer_title": "Special Offers",
+    "title": "Promo Code"
+  },
   "searchCountry": "Pesquisar país...",
   "searchService": "Encontrar um serviço...",
   "select_to_continue": "Select service or master to continue",
@@ -117,5 +139,6 @@
     "total": "Total"
   },
   "submitBooking": "Enviar request",
+  "subtotal": "Subtotal",
   "totalDuration": "Total duration"
 }

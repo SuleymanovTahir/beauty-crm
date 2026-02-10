@@ -535,15 +535,20 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
         ]
     }
 
+from utils.permissions import require_permission
+from utils.utils import require_auth, get_total_unread, get_client_display_name, hash_password, get_current_user_from_token
+
+# ... (existing imports and functions)
+
 @router.post("/clients")
+@require_permission("clients_create")
 async def create_client_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Создать нового клиента вручную"""
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     data = await request.json()
     
@@ -582,15 +587,15 @@ async def create_client_api(
         return JSONResponse({"error": str(e)}, status_code=400)
 
 @router.post("/clients/{client_id}/update")
+@require_permission("clients_edit")
 async def update_client_api(
     client_id: str,
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Обновить информацию клиента"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     data = await request.json()
     
@@ -620,15 +625,15 @@ async def update_client_api(
     return JSONResponse({"error": "Update failed"}, status_code=400)
 
 @router.post("/clients/{client_id}/status")
+@require_permission("clients_edit")
 async def update_client_status_api(
     client_id: str,
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Изменить статус клиента"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     data = await request.json()
     status = data.get('status')
@@ -643,15 +648,15 @@ async def update_client_status_api(
     return {"success": True, "message": "Client status updated"}
 
 @router.post("/clients/{client_id}/temperature")
+@require_permission("clients_edit")
 async def update_client_temperature_api(
     client_id: str,
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Изменить температуру клиента"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     data = await request.json()
     temperature = data.get('temperature')
@@ -673,15 +678,15 @@ async def update_client_temperature_api(
     return JSONResponse({"error": "Update failed"}, status_code=500)
 
 @router.post("/clients/{client_id}/preferred-messenger")
+@require_permission("clients_edit")
 async def update_preferred_messenger_api(
     client_id: str,
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Обновить предпочтительный мессенджер для клиента"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
 
     data = await request.json()
     preferred_messenger = data.get('preferred_messenger')
@@ -714,14 +719,14 @@ async def update_preferred_messenger_api(
         conn.close()
 
 @router.post("/clients/{client_id}/pin")
+@require_permission("clients_edit")
 async def pin_client_api(
     client_id: str,
     session_token: Optional[str] = Cookie(None)
 ):
     """Закрепить/открепить клиента"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
 
     client = get_client_by_id(client_id)
     if not client:
@@ -740,6 +745,7 @@ async def pin_client_api(
     }
 
 @router.post("/clients/{client_id:path}/delete")
+@require_permission("clients_delete")
 async def delete_client_api(
     client_id: str,
     request: Request,
@@ -749,12 +755,11 @@ async def delete_client_api(
     from urllib.parse import unquote
     from utils.soft_delete import delete_client
     from utils.audit import log_audit
+    from utils.utils import get_current_user_from_token
     
     decoded_id = unquote(client_id)
     
-    user = require_auth(session_token)
-    if not user or user["role"] != "director":
-        return JSONResponse({"error": "Forbidden: Only Director can delete clients"}, status_code=403)
+    user = get_current_user_from_token(session_token)
     
     try:
         # Получаем данные клиента перед удалением для аудита

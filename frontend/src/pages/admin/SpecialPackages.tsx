@@ -15,6 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useCurrency } from '../../hooks/useSalonSettings';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePermissions } from '../../utils/permissions';
 
 interface SpecialPackage {
   id: number;
@@ -57,6 +59,8 @@ export default function SpecialPackages() {
   const [packages, setPackages] = useState<SpecialPackage[]>([]);
   const { t } = useTranslation(['admin/specialpackages', 'common']);
   const { currency, formatCurrency } = useCurrency();
+  const { user } = useAuth();
+  const permissions = usePermissions(user?.role || '');
   const [filteredPackages, setFilteredPackages] = useState<SpecialPackage[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
@@ -105,8 +109,7 @@ export default function SpecialPackages() {
   // Load campaigns when switching to referrals tab
   useEffect(() => {
     if (activeSection === 'referrals') {
-      fetch('/api/referral-campaigns')
-        .then(res => res.json())
+      api.getReferralCampaigns()
         .then(data => setCampaigns(data.campaigns || []))
         .catch(() => toast.error(t('error_loading_campaigns')));
     }
@@ -258,11 +261,7 @@ export default function SpecialPackages() {
 
   const handleToggleCampaignActive = async (campaign: ReferralCampaign) => {
     try {
-      await fetch(`/api/referral-campaigns/${campaign.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ is_active: !campaign.is_active })
-      });
+      await api.patchReferralCampaign(campaign.id, { is_active: !campaign.is_active });
       setCampaigns(campaigns.map(c =>
         c.id === campaign.id ? { ...c, is_active: !c.is_active } : c
       ));
@@ -357,13 +356,15 @@ export default function SpecialPackages() {
                   <SelectItem value="inactive">{t('specialpackages:inactive')}</SelectItem>
                 </SelectContent>
               </Select>
-              <Button
-                className="bg-pink-600 hover:bg-pink-700"
-                onClick={handleOpenAddModal}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                {t('specialpackages:create_package')}
-              </Button>
+              {permissions.canEditLoyalty && (
+                <Button
+                  className="bg-pink-600 hover:bg-pink-700"
+                  onClick={handleOpenAddModal}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {t('specialpackages:create_package')}
+                </Button>
+              )}
             </div>
           </div>
 
@@ -444,34 +445,35 @@ export default function SpecialPackages() {
                   </div>
                 )}
 
-                {/* Actions */}
-                <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleEditPackage(pkg)}
-                    className="flex-1"
-                  >
-                    <Edit className="w-4 h-4 mr-1" />
-                    {t('specialpackages:edit')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleToggleActive(pkg)}
-                    className={pkg.is_active ? 'text-orange-600' : 'text-green-600'}
-                  >
-                    {pkg.is_active ? t('specialpackages:disable') : t('specialpackages:enable')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDeletePackage(pkg.id)}
-                    className="text-red-600"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
+                {permissions.canEditLoyalty && (
+                  <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEditPackage(pkg)}
+                      className="flex-1"
+                    >
+                      <Edit className="w-4 h-4 mr-1" />
+                      {t('specialpackages:edit')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleToggleActive(pkg)}
+                      className={pkg.is_active ? 'text-orange-600' : 'text-green-600'}
+                    >
+                      {pkg.is_active ? t('specialpackages:disable') : t('specialpackages:enable')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDeletePackage(pkg.id)}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -672,27 +674,29 @@ export default function SpecialPackages() {
 
           {/* Create Button */}
           <div className="flex justify-end">
-            <Button
-              className="bg-blue-600 hover:bg-blue-700"
-              onClick={() => {
-                setEditingCampaign(null);
-                setReferralFormData({
-                  name: '',
-                  description: '',
-                  bonus_points: 200,
-                  referrer_bonus: 200,
-                  is_active: true,
-                  target_type: 'all',
-                  days_inactive: 30,
-                  start_date: '',
-                  end_date: ''
-                });
-                setIsReferralModalOpen(true);
-              }}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              {t('create_campaign_button')}
-            </Button>
+            {permissions.canEditLoyalty && (
+              <Button
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={() => {
+                  setEditingCampaign(null);
+                  setReferralFormData({
+                    name: '',
+                    description: '',
+                    bonus_points: 200,
+                    referrer_bonus: 200,
+                    is_active: true,
+                    target_type: 'all',
+                    days_inactive: 30,
+                    start_date: '',
+                    end_date: ''
+                  });
+                  setIsReferralModalOpen(true);
+                }}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                {t('create_campaign_button')}
+              </Button>
+            )}
           </div>
 
           {/* Campaigns List */}
@@ -734,56 +738,58 @@ export default function SpecialPackages() {
                   </Badge>
                 </div>
 
-                <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setEditingCampaign(campaign);
-                      setReferralFormData({
-                        name: campaign.name,
-                        description: campaign.description || '',
-                        bonus_points: campaign.bonus_points,
-                        referrer_bonus: campaign.referrer_bonus,
-                        is_active: campaign.is_active,
-                        target_type: campaign.target_type,
-                        days_inactive: campaign.target_criteria?.days_inactive || 30,
-                        start_date: campaign.start_date || '',
-                        end_date: campaign.end_date || ''
-                      });
-                      setIsReferralModalOpen(true);
-                    }}
-                    className="flex-1"
-                  >
-                    <Edit className="w-4 h-4 mr-1" />
-                    {t('edit_campaign')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleToggleCampaignActive(campaign)}
-                    className={campaign.is_active ? 'text-orange-600' : 'text-green-600'}
-                  >
-                    {campaign.is_active ? t('disable') : t('enable')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={async () => {
-                      if (!confirm(t('delete_campaign_confirm'))) return;
-                      try {
-                        await fetch(`/api/referral-campaigns/${campaign.id}`, { method: 'DELETE' });
-                        setCampaigns(campaigns.filter(c => c.id !== campaign.id));
-                        toast.success(t('campaign_deleted'));
-                      } catch (e) {
-                        toast.error(t('error_deleting_campaign'));
-                      }
-                    }}
-                    className="text-red-600"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
+                {permissions.canEditLoyalty && (
+                  <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setEditingCampaign(campaign);
+                        setReferralFormData({
+                          name: campaign.name,
+                          description: campaign.description || '',
+                          bonus_points: campaign.bonus_points,
+                          referrer_bonus: campaign.referrer_bonus,
+                          is_active: campaign.is_active,
+                          target_type: campaign.target_type,
+                          days_inactive: campaign.target_criteria?.days_inactive || 30,
+                          start_date: campaign.start_date || '',
+                          end_date: campaign.end_date || ''
+                        });
+                        setIsReferralModalOpen(true);
+                      }}
+                      className="flex-1"
+                    >
+                      <Edit className="w-4 h-4 mr-1" />
+                      {t('edit_campaign')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleToggleCampaignActive(campaign)}
+                      className={campaign.is_active ? 'text-orange-600' : 'text-green-600'}
+                    >
+                      {campaign.is_active ? t('disable') : t('enable')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={async () => {
+                        if (!confirm(t('delete_campaign_confirm'))) return;
+                        try {
+                          await api.deleteReferralCampaign(campaign.id);
+                          setCampaigns(campaigns.filter(c => c.id !== campaign.id));
+                          toast.success(t('campaign_deleted'));
+                        } catch (e) {
+                          toast.error(t('error_deleting_campaign'));
+                        }
+                      }}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -941,24 +947,15 @@ export default function SpecialPackages() {
                       };
 
                       if (editingCampaign) {
-                        await fetch(`/api/referral-campaigns/${editingCampaign.id}`, {
-                          method: 'PUT',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify(payload)
-                        });
+                        await api.updateReferralCampaign(editingCampaign.id, payload);
                         toast.success(t('campaign_updated'));
                       } else {
-                        await fetch('/api/referral-campaigns', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify(payload)
-                        });
+                        await api.createReferralCampaign(payload);
                         toast.success(t('campaign_created'));
                       }
 
                       // Reload campaigns
-                      const res = await fetch('/api/referral-campaigns');
-                      const data = await res.json();
+                      const data = await api.getReferralCampaigns();
                       setCampaigns(data.campaigns || []);
                       setIsReferralModalOpen(false);
                     } catch (e) {

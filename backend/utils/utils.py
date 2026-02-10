@@ -243,6 +243,19 @@ def require_auth(session_token: Optional[str] = Cookie(None)):
     
     return user if user else None
 
+def get_current_user_from_token(session_token: Optional[str] = Cookie(None)):
+    """
+    Alias for require_auth - get current user from session token
+    
+    Returns:
+        dict: User data or raises HTTPException if not authenticated
+    """
+    from fastapi import HTTPException
+    user = require_auth(session_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return user
+
 # После функции require_auth (строка ~60)
 
 def check_permission(user: dict, permission: str) -> bool:
@@ -421,11 +434,33 @@ def get_client_display_name(client) -> str:
     else:
         return client[0][:15] + "..."
 
-def get_total_unread() -> int:
+def get_total_unread(user_id: int = None) -> int:
     """
-    Получить общее количество непрочитанных сообщений (оптимизировано)
+    Получить общее количество непрочитанных сообщений и уведомлений
     """
-    return get_global_unread_count()
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        # 1. Считаем чаты
+        c.execute("SELECT COUNT(*) FROM chat_history WHERE is_read = FALSE AND sender = 'client'")
+        chat_count = c.fetchone()[0] or 0
+        
+        # 2. Считаем уведомления (если передан user_id)
+        notification_count = 0
+        if user_id:
+            c.execute("""
+                SELECT COUNT(*) 
+                FROM unified_communication_log 
+                WHERE user_id = %s AND is_read = FALSE AND medium = 'in_app'
+            """, (user_id,))
+            notification_count = c.fetchone()[0] or 0
+            
+        return chat_count + notification_count
+    except Exception as e:
+        log_error(f"Error in get_total_unread: {e}")
+        return 0
+    finally:
+        conn.close()
 
 
 # ===== СТАТУСЫ =====

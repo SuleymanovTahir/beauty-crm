@@ -1114,7 +1114,7 @@ export default function InternalChat() {
   }
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex bg-background">
+    <div className="h-[calc(100vh-4rem)] w-full flex bg-background overflow-hidden relative">
       {/* Incoming Call Modal is now handled globally in MainLayout */}
 
       {/* Call Overlay or Minimized View */}
@@ -1451,7 +1451,7 @@ export default function InternalChat() {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className={`flex-1 flex flex-col min-w-0 ${(!selectedUser || showMobileUserList) ? 'hidden md:flex' : 'flex'}`}>
         {!selectedUser ? (
           <div className="flex-1 flex items-center justify-center text-center">
             <div>

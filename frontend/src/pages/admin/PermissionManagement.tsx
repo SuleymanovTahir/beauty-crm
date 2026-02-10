@@ -90,11 +90,11 @@ export default function PermissionManagement() {
 
       if (currentValue) {
         // Revoke permission
-        await api.revokePermission(selectedUser.id, resource);
+        await api.revokePermission(selectedUser.id, resource, action);
         toast.success(t('permission_revoked', 'Право отозвано'));
       } else {
         // Grant permission
-        await api.grantPermission(selectedUser.id, resource);
+        await api.grantPermission(selectedUser.id, resource, action);
         toast.success(t('permission_granted', 'Право предоставлено'));
       }
 

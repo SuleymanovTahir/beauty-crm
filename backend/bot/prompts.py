@@ -168,7 +168,13 @@ class PromptBuilder:
         }
         client_tone = analyze_client_tone(history)
         
-        # 1. Базовая информация о салоне
+        # 1. Базовая информация о салоне (включая режим работы для примеров)
+        hours_weekdays = self.salon.get('hours_weekdays', '')
+        hours_weekends = self.salon.get('hours_weekends', '')
+        hours_display = hours_weekdays
+        if hours_weekends and hours_weekends != hours_weekdays:
+            hours_display = f"{hours_weekdays} (Weekdays), {hours_weekends} (Weekends)" if client_language != 'ru' else f"{hours_weekdays} (Будни), {hours_weekends} (Выходные)"
+            
         base_info = self._build_salon_info(client_language)
         
         # 2. Список услуг (ДИНАМИЧЕСКИЙ) с локализацией
@@ -329,7 +335,7 @@ Generate an [ACTION] block - it is invisible to the client.
 Example ({client_language}):
 "Great! I've booked you for [service] with [master] on [date] at [time]. 💅
 Location: {self.salon.get('address', '')}
-Hours: {self.salon.get('hours_weekdays', '')}
+Hours: {hours_display}
 See you soon! 😊
 
 [ACTION]
@@ -413,7 +419,7 @@ See you soon! 😊
 Пример ({client_language}):
 "Отлично! Записала вас на [название] к мастеру [имя] на [дата] в [время]. 💅
 Адрес: {self.salon.get('address', '')}
-Режим работы: {self.salon.get('hours_weekdays', '')}
+Режим работы: {hours_display}
 До встречи! 😊
 
 [ACTION]
@@ -446,11 +452,16 @@ See you soon! 😊
         wifi_val = ("Yes, free" if wifi_available else "No") if language != 'ru' else ("Да, бесплатный" if wifi_available else "Нет")
 
         address = self.salon.get('address', '')
-        hours = self.salon.get('hours_weekdays', self.salon.get('hours', ''))
+        hours_weekdays = self.salon.get('hours_weekdays', '')
+        hours_weekends = self.salon.get('hours_weekends', '')
+        
+        hours_display = hours_weekdays
+        if hours_weekends and hours_weekends != hours_weekdays:
+            hours_display = f"{hours_weekdays} (Weekdays), {hours_weekends} (Weekends)" if language != 'ru' else f"{hours_weekdays} (Будни), {hours_weekends} (Выходные)"
 
         return f"""{self.prompt_headers.get('SALON_INFO', PROMPT_HEADERS['SALON_INFO'])}
 {addr_label}: {address}
-{hours_label}: {hours}
+{hours_label}: {hours_display}
 {phone_label}: {self.salon.get('phone', self.salon.get('whatsapp', ''))}
 Google Maps: {self.salon.get('google_maps', '')}
 
@@ -540,7 +551,8 @@ Google Maps: {self.salon.get('google_maps', '')}
             shown_services = services_list[:15]
             hidden_count = len(services_list) - 15
             
-            currency = self.salon.get('currency', 'AED')
+            from utils.currency import get_salon_currency
+            currency = self.salon.get('currency', get_salon_currency())
             for service in shown_services:
                 price_str = format_service_price_for_bot(service, currency_fallback=currency)
                 # Получаем название услуги на языке клиента
@@ -656,7 +668,8 @@ Google Maps: {self.salon.get('google_maps', '')}
                 continue
 
             # ✅ ОПТИМИЗАЦИЯ: Краткий формат мастеров
-            currency = self.salon.get('currency', 'AED')
+            from utils.currency import get_salon_currency
+            currency = self.salon.get('currency', get_salon_currency())
             masters_text += f"👤 {emp_name_display}\n"
             position_label = "Position" if client_language != 'ru' else "Должность"
             exp_label = "Experience" if client_language != 'ru' else "Опыт"
@@ -1421,7 +1434,8 @@ Google Maps: {self.salon.get('google_maps', '')}
             price_min = emp[-2]
             price_max = emp[-1]
             price_val = emp[-4]
-            currency = self.salon.get('currency', 'AED')
+            from utils.currency import get_salon_currency
+            currency = self.salon.get('currency', get_salon_currency())
             
             price_display = ""
             if price_min and price_max:
@@ -1591,7 +1605,10 @@ def analyze_client_tone(history: List[Tuple]) -> str:
     
     return 'neutral'
 
-def format_service_price_for_bot(service, currency_fallback: str = 'AED') -> str:
+def format_service_price_for_bot(service, currency_fallback: str = None) -> str:
+    if currency_fallback is None:
+        from utils.currency import get_salon_currency
+        currency_fallback = get_salon_currency()
     """Helper formatting using correct schema indices or dict keys"""
     if isinstance(service, dict):
         price = service.get('price', 0)

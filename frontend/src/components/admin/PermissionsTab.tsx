@@ -243,69 +243,116 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
             </p>
           </div>
         )}
+        {/* Список прав с группировкой, фиксированной высотой и скроллом */}
+        <div className="mt-4 border border-gray-100 rounded-xl overflow-hidden shadow-inner bg-gray-50/50">
+          <div className="max-h-[500px] overflow-y-auto p-4 custom-scrollbar space-y-6">
+            {Object.entries(
+              Object.entries(permissionDescriptions).reduce((acc, [permKey, permDescription]) => {
+                let category = 'other';
+                if (permKey.startsWith('clients_')) category = 'clients';
+                else if (permKey.startsWith('services_')) category = 'services';
+                else if (permKey.startsWith('users_')) category = 'users';
+                else if (permKey.startsWith('roles_')) category = 'system';
+                else if (permKey.startsWith('analytics_')) category = 'analytics';
+                else if (permKey.startsWith('instagram_')) category = 'integration';
+                else if (permKey.startsWith('staff_chat_')) category = 'communication';
+                else if (permKey.startsWith('telephony_')) category = 'communication';
+                else if (permKey.startsWith('tasks_')) category = 'tasks';
+                else if (permKey.startsWith('broadcasts_')) category = 'marketing';
 
-        <div className="space-y-2">
-          {Object.entries(permissionDescriptions).map(([permKey, permDescription]) => {
-            const hasRolePermission = currentPermissions.includes(permKey);
-            const hasCustomPermission = customPermissions[permKey];
-            const finalPermission = hasCustomPermission !== undefined ? hasCustomPermission : hasRolePermission;
-            const isCustomized = hasCustomPermission !== undefined;
-            const canEdit = currentUser?.role === 'director';
+                if (!acc[category]) acc[category] = [];
+                acc[category].push({ permKey, permDescription });
+                return acc;
+              }, {} as Record<string, Array<{ permKey: string; permDescription: string }>>)
+            ).map(([category, perms]) => (
+              <div key={category} className="space-y-3">
+                <div className="flex items-center gap-2 px-1">
+                  <div className="h-px flex-1 bg-gray-200"></div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                    {t(`common:category_${category}`)}
+                  </span>
+                  <div className="h-px flex-1 bg-gray-200"></div>
+                </div>
 
-            return (
-              <div
-                key={permKey}
-                className={`p-4 rounded-lg border transition-colors ${finalPermission
-                  ? 'bg-green-50 border-green-200'
-                  : isCustomized
-                    ? 'bg-red-50 border-red-200'
-                    : 'bg-gray-50 border-gray-200'
-                  }`}
-              >
+                <div className="grid grid-cols-1 gap-3">
+                  {perms.map(({ permKey, permDescription }) => {
+                    const hasRolePermission = currentPermissions.includes(permKey);
+                    const hasCustomPermission = customPermissions[permKey];
+                    const finalPermission = hasCustomPermission !== undefined ? hasCustomPermission : hasRolePermission;
+                    const isCustomized = hasCustomPermission !== undefined;
+                    const canEdit = currentUser?.role === 'director';
 
+                    return (
+                      <div
+                        key={permKey}
+                        className={`p-4 rounded-xl border-2 transition-all duration-200 ${finalPermission
+                          ? 'bg-white border-green-200 shadow-sm'
+                          : isCustomized
+                            ? 'bg-red-50 border-red-100'
+                            : 'bg-white border-gray-100 opacity-75'
+                          }`}
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="pt-1">
+                            {canEdit ? (
+                              <div
+                                className={`w-6 h-6 rounded-md border-2 flex items-center justify-center cursor-pointer transition-colors ${finalPermission ? 'bg-pink-600 border-pink-600' : 'bg-white border-gray-300'
+                                  }`}
+                                onClick={() => togglePermission(permKey)}
+                              >
+                                {finalPermission && <Check className="w-4 h-4 text-white" />}
+                              </div>
+                            ) : (
+                              <div className={`p-1 rounded-full ${finalPermission ? 'bg-green-100' : 'bg-gray-100'}`}>
+                                {finalPermission ? (
+                                  <Check className="w-4 h-4 text-green-600" />
+                                ) : (
+                                  <X className="w-4 h-4 text-gray-400" />
+                                )}
+                              </div>
+                            )}
+                          </div>
 
-                <div className="flex items-start gap-3">
-                  {canEdit ? (
-                    <input
-                      type="checkbox"
-                      checked={finalPermission}
-                      onChange={() => togglePermission(permKey)}
-                      className="w-5 h-5 mt-0.5 text-pink-600 rounded border-gray-300 focus:ring-pink-500 cursor-pointer"
-                    />
-                  ) : (
-                    finalPermission ? (
-                      <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    ) : (
-                      <X className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
-                    )
-                  )}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      {isCustomized && (
-                        <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
-                          {t('modified')}
-                        </span>
-                      )}
-                    </div>
-                    <p
-                      className={`text-sm ${finalPermission ? 'text-gray-900' : 'text-gray-500'
-                        }`}
-                    >
-                      {t(`common:perm_${permKey}`) || permDescription}
-                    </p>
-                    {isCustomized && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        {hasRolePermission
-                          ? `${t('by_role')}: ${finalPermission ? t('was_granted') : t('granted_revoked')}`
-                          : `${t('by_role')}: ${finalPermission ? t('not_was_granted') : t('not_granted')}`
-                        }
-                      </p>
-                    )}
-                  </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`font-semibold text-sm ${finalPermission ? 'text-gray-900' : 'text-gray-500'}`}>
+                                {t(`common:perm_${permKey}`) || permDescription}
+                              </span>
+                              {isCustomized && (
+                                <span className="px-2 py-0.5 bg-pink-100 text-pink-700 text-[10px] uppercase font-bold tracking-wider rounded-full">
+                                  {t('common:modified')}
+                                </span>
+                              )}
+                            </div>
+
+                            <p className="text-[10px] text-gray-400 font-mono mb-1">
+                              {permKey}
+                            </p>
+
+                            <p className="text-xs text-gray-500 leading-relaxed">
+                              {permDescription}
+                            </p>
+
+                            {isCustomized && (
+                              <div className="mt-2 flex items-center gap-1.5 py-1 px-2 bg-gray-100 rounded-md w-fit">
+                                <Info className="w-3 h-3 text-gray-400" />
+                                <p className="text-[10px] text-gray-500 italic">
+                                  {hasRolePermission
+                                    ? t('common:granted_by_role_but_overridden')
+                                    : t('common:not_granted_by_role_but_forced')
+                                  }
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </div>
 

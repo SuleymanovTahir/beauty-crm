@@ -406,7 +406,7 @@ async def public_unsubscribe(req: PublicUnsubscribeRequest):
         conn = get_db_connection()
         c = conn.cursor()
         
-        # Determine column to update
+        # 1. Update user_subscriptions (soft update for existing users)
         channel_col = None
         if req.channel == 'email':
             channel_col = "email_enabled"
@@ -416,7 +416,6 @@ async def public_unsubscribe(req: PublicUnsubscribeRequest):
             channel_col = "instagram_enabled"
         
         if channel_col:
-            # Update specific channel
             c.execute(f"""
                 INSERT INTO user_subscriptions
                 (user_id, subscription_type, is_subscribed, {channel_col}, updated_at)
@@ -428,7 +427,6 @@ async def public_unsubscribe(req: PublicUnsubscribeRequest):
                 datetime.now().isoformat()
             ))
         else:
-            # Full unsubscribe
             c.execute(f"""
                 INSERT INTO user_subscriptions
                 (user_id, subscription_type, is_subscribed, updated_at)
@@ -439,6 +437,14 @@ async def public_unsubscribe(req: PublicUnsubscribeRequest):
                 req.user_id, req.subscription_type, datetime.now().isoformat(),
                 datetime.now().isoformat()
             ))
+
+        # 2. Log to global unsubscriptions table (the "Memory" the user requested)
+        c.execute("""
+            INSERT INTO marketing_unsubscriptions (user_id, mailing_type, reason)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (user_id, mailing_type) DO UPDATE SET
+                unsubscribed_at = CURRENT_TIMESTAMP
+        """, (req.user_id, req.subscription_type, f"Unsubscribed via link ({req.channel})"))
 
         conn.commit()
         conn.close()

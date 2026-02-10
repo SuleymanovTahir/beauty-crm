@@ -12,6 +12,7 @@ from utils.utils import sanitize_url, map_image_path, _add_v
 from utils.cache import cache
 from utils.logger import log_info, log_error
 from core.config import is_localhost
+from utils.currency import get_salon_currency
 
 # Helper moved to utils.utils
 
@@ -171,7 +172,7 @@ def get_public_salon_settings(language: str = "ru"):
             "google_maps_embed_url": gm_embed,
             "map_url": gm_raw,
             "booking_url": settings.get("booking_url"),
-            "currency": settings.get("currency", "AED"),
+            "currency": settings.get("currency", get_salon_currency()),
             "faq": faq_items,
             "reviews": reviews,
             "custom_settings": settings.get("custom_settings", {})
@@ -652,7 +653,7 @@ def get_initial_load(language: str = "ru"):
             "instagram": settings.get("instagram"),
             "whatsapp": settings.get("whatsapp"),
             "logo_url": _add_v(settings.get("logo_url")),
-            "currency": settings.get("currency", "AED"),
+            "currency": settings.get("currency", get_salon_currency()),
             "google_maps": settings.get("google_maps"),
             "map_url": settings.get("google_maps"),
             "google_maps_embed_url": _get_google_maps_embed_url(localized_address, settings.get("google_maps")),

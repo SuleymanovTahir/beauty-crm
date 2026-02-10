@@ -11,16 +11,18 @@ from db import (
     check_user_permission, AVAILABLE_PERMISSIONS, log_activity
 )
 from utils.utils import require_auth
+from utils.permissions import require_permission
 from utils.logger import log_error
 
 router = APIRouter(tags=["Roles"])
 
 @router.get("/roles")
+@require_permission("roles_view")
 async def list_roles(session_token: Optional[str] = Cookie(None)):
     """Получить все роли (с учетом иерархии)"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    # require_permission already validates token
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
 
     from core.config import ROLES, can_manage_role
 
@@ -58,14 +60,14 @@ async def list_roles(session_token: Optional[str] = Cookie(None)):
     }
 
 @router.post("/roles")
+@require_permission("roles_edit")
 async def create_role(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Создать кастомную роль"""
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     data = await request.json()
     
@@ -87,14 +89,14 @@ async def create_role(
         return JSONResponse({"error": "Role already exists"}, status_code=400)
 
 @router.delete("/roles/{role_key}")
+@require_permission("roles_edit")
 async def delete_role(
     role_key: str,
     session_token: Optional[str] = Cookie(None)
 ):
     """Удалить кастомную роль"""
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     success = delete_custom_role(role_key)
     
@@ -106,15 +108,12 @@ async def delete_role(
                           status_code=400)
 
 @router.get("/roles/{role_key}/permissions")
+@require_permission("roles_view")
 async def get_role_permissions_api(
     role_key: str,
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить права роли"""
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
     permissions = get_role_permissions(role_key)
     
     return {
@@ -122,17 +121,19 @@ async def get_role_permissions_api(
         "permissions": permissions,
         "available_permissions": AVAILABLE_PERMISSIONS
     }
+    
+
 
 @router.post("/roles/{role_key}/permissions")
+@require_permission("roles_edit")
 async def update_role_permissions_api(
     role_key: str,
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Обновить права роли"""
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     data = await request.json()
     permissions = data.get('permissions', {})
@@ -147,15 +148,13 @@ async def update_role_permissions_api(
         return JSONResponse({"error": "Update failed"}, status_code=400)
 
 @router.get("/roles/permissions/available")
+@require_permission("roles_view")
 async def list_available_permissions(session_token: Optional[str] = Cookie(None)):
     """Получить список всех доступных прав"""
-    user = require_auth(session_token)
-    if not user or user["role"] != "admin":
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
     return {
         "permissions": [
             {"key": key, "name": name}
             for key, name in AVAILABLE_PERMISSIONS.items()
         ]
     }
+    

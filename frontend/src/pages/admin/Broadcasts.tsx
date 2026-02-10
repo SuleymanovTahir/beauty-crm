@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
-import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield, Bell, Settings, Plus, Trash2, Edit, X, UserCheck, UserX, Newspaper } from 'lucide-react';
+import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield, Bell, Settings, Plus, Trash2, Edit, X, UserCheck, UserX, Newspaper, UserMinus } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -29,8 +29,9 @@ interface BroadcastForm {
   subject: string;
   message: string;
   target_role?: string;
-  user_ids?: number[];
+  user_ids?: (number | string)[]; // Can be number (staff) or string (client instagram_id)
   attachment_urls?: string[];
+  additional_emails?: string[];
 }
 
 interface PreviewData {
@@ -72,7 +73,10 @@ export default function Broadcasts() {
     target_role: '',
     user_ids: [],
     attachment_urls: [],
+    additional_emails: [],
   });
+
+  const [manualEmailsText, setManualEmailsText] = useState("");
 
   const [uploadingFile, setUploadingFile] = useState(false);
 
@@ -89,19 +93,41 @@ export default function Broadcasts() {
   const [roles, setRoles] = useState<Array<{ key: string; name: string }>>([]);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
 
+  // Новые состояния для добавления контактов вручную
+  const [showAddManualContacts, setShowAddManualContacts] = useState(false);
+  const [manualContacts, setManualContacts] = useState<Array<{ name?: string; email?: string; telegram?: string; instagram?: string; whatsapp?: string }>>([]);
+  const [manualContactForm, setManualContactForm] = useState<{ name?: string; email?: string; telegram?: string; instagram?: string; whatsapp?: string }>({});
+  const [showImportContactsFile, setShowImportContactsFile] = useState(false);
+  const [importFileText, setImportFileText] = useState("");
+
   // Newsletter subscribers state
-  const [subscribers, setSubscribers] = useState<Array<{ id: number; email: string; is_active: boolean; created_at: string }>>([]);
+  const [subscribers, setSubscribers] = useState<Array<{ id: number; email: string; name?: string; is_active: boolean; created_at: string }>>([]);
   const [loadingSubscribers, setLoadingSubscribers] = useState(false);
   const [subscribersCount, setSubscribersCount] = useState({ total: 0, active: 0 });
   const [showInactive, setShowInactive] = useState(false);
+
+  // Unsubscribed users state
+  const [unsubscribed, setUnsubscribed] = useState<any[]>([]);
+  const [loadingUnsubscribed, setLoadingUnsubscribed] = useState(false);
+  const [clearPeriod, setClearPeriod] = useState('all');
+
+  const [showAddSubscriber, setShowAddSubscriber] = useState(false);
+  const [showImportSubscribers, setShowImportSubscribers] = useState(false);
+  const [editingSubscriber, setEditingSubscriber] = useState<any | null>(null);
+  const [importText, setImportText] = useState("");
+  const [subscriberForm, setSubscriberForm] = useState({ email: '', name: '' });
 
   useEffect(() => {
     // Параллельная загрузка для ускорения
     Promise.all([
       loadSubscriptions(),
       loadHistory(),
-      loadUsers(),
-      loadRoles()
+      loadSubscriptions(),
+      loadHistory(),
+      // loadUsers(), // Loading users depends on selected type now
+      loadRoles(),
+      loadRoles(),
+      loadUnsubscribed()
     ]).catch(error => {
       console.error('Error loading broadcasts data:', error);
     });
@@ -112,7 +138,27 @@ export default function Broadcasts() {
     if (activeTab === 'subscribers' && subscribers.length === 0) {
       loadSubscribers();
     }
+    if (activeTab === 'unsubscribed' && unsubscribed.length === 0) {
+      loadUnsubscribed();
+    }
   }, [activeTab]);
+
+  const loadUnsubscribed = async () => {
+    try {
+      setLoadingUnsubscribed(true);
+      const response = await api.getUnsubscribedUsers();
+      setUnsubscribed(response.unsubscribed || []);
+    } catch (err) {
+      console.error('Error loading unsubscribed users:', err);
+    } finally {
+      setLoadingUnsubscribed(false);
+    }
+  };
+
+  // Перезагружаем пользователей при смене языка
+  useEffect(() => {
+    loadUsers();
+  }, [i18n.language]);
 
   const loadRoles = async () => {
     try {
@@ -157,6 +203,76 @@ export default function Broadcasts() {
     }
   };
 
+  const handleAddSubscriber = async () => {
+    if (!subscriberForm.email) return toast.error(t('error_fill_all_fields'));
+    try {
+      setSending(true);
+      await api.addNewsletterSubscriber({
+        email: subscriberForm.email,
+        name: subscriberForm.name,
+        source: 'admin_manual'
+      });
+      toast.success(t('subscriber_added', 'Подписчик добавлен'));
+      setShowAddSubscriber(false);
+      setSubscriberForm({ email: '', name: '' });
+      loadSubscribers();
+    } catch (err: any) {
+      toast.error(err.message || t('error_adding_subscriber'));
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleUpdateSubscriberData = async () => {
+    if (!subscriberForm.email || !editingSubscriber) return;
+    try {
+      setSending(true);
+      await api.updateNewsletterSubscriberData(editingSubscriber.id, {
+        email: subscriberForm.email,
+        name: subscriberForm.name
+      });
+      toast.success(t('subscriber_updated', 'Данные обновлены'));
+      setEditingSubscriber(null);
+      setSubscriberForm({ email: '', name: '' });
+      loadSubscribers();
+    } catch (err: any) {
+      toast.error(err.message || t('error_updating_subscriber'));
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleImportSubscribers = async () => {
+    if (!importText.trim()) return;
+    try {
+      setSending(true);
+      const lines = importText.split('\n').filter(l => l.trim());
+      const subs = lines.map(line => {
+        // Support formats: "Email", "Email, Name", "Name, Email"
+        const parts = line.split(/[,\t]/).map(p => p.trim());
+        if (parts.length >= 2) {
+          // Check which part is email
+          if (parts[0].includes('@')) return { email: parts[0], name: parts[1] };
+          if (parts[1].includes('@')) return { email: parts[1], name: parts[0] };
+          return { email: parts[0], name: parts[1] }; // Fallback
+        }
+        return { email: parts[0] };
+      }).filter(s => s.email && s.email.includes('@'));
+
+      if (subs.length === 0) return toast.error(t('no_valid_emails', 'Не найдено корректных email'));
+
+      const result = await api.importNewsletterSubscribers(subs) as any;
+      toast.success(t('imported_count', 'Импортировано {{count}} подписчиков', { count: result.count }));
+      setShowImportSubscribers(false);
+      setImportText("");
+      loadSubscribers();
+    } catch (err: any) {
+      toast.error(err.message || t('error_importing'));
+    } finally {
+      setSending(false);
+    }
+  };
+
   const loadSubscriptions = async () => {
     try {
       // For admins on the broadcast page, we want ALL types, not just their own role types
@@ -186,6 +302,17 @@ export default function Broadcasts() {
     }
   };
 
+  const handleClearHistory = async (period: string) => {
+    if (!confirm(t('confirm_clear_history', 'Вы уверены, что хотите очистить историю за выбранный период?'))) return;
+    try {
+      await api.delete(`/api/broadcasts/history/clear?period=${period}`);
+      toast.success(t('history_cleared', 'История очищена'));
+      loadHistory();
+    } catch (err: any) {
+      toast.error(err.message || t('error_clearing_history', 'Ошибка при очистке истории'));
+    }
+  };
+
   const loadHistory = async () => {
     try {
       setLoadingHistory(true);
@@ -199,20 +326,39 @@ export default function Broadcasts() {
   };
 
   const loadUsers = async () => {
+    // We need subscription type ONLY if we are targeting 'client' or 'all' to check unsubscriptions.
+    // However, backend now handles optional subscription_type for staff.
+    // But for clarity, let's allow fetching if target_role is set (even without sub type) OR if sub type is set.
+
+    // If target is 'client' or 'all', we really should have a subscription type for accurate filtering, 
+    // but let's allow "raw" listing if user insists (backend handles it).
+    // if (!form.subscription_type && !form.target_role) {
+    //   // If nothing selected, don't load everyone immediately to avoid spam/load
+    //   setUsers([]);
+    //   return;
+    // }
+
     try {
       setLoadingUsers(true);
-      console.log('Loading users for broadcast selection...');
-      const response = await api.getUsers(i18n.language);
-      console.log('Users response:', response);
-      const usersArray = Array.isArray(response) ? response : (response?.users || []);
-      console.log('Users array:', usersArray);
+      console.log('Loading users for broadcast selection:', form.subscription_type, form.target_role);
+
+      const response = await api.getBroadcastUsers(form.subscription_type || '', form.target_role || undefined, i18n.language);
+      console.log('Broadcast users response:', response);
+
+      const usersArray = response.users || [];
       setUsers(usersArray);
     } catch (err) {
       console.error('Error loading users:', err);
+      setUsers([]);
     } finally {
       setLoadingUsers(false);
     }
   };
+
+  // Reload users when subscription type or role changes
+  useEffect(() => {
+    loadUsers();
+  }, [form.subscription_type, form.target_role]);
 
   // Filter users by target role (do NOT auto-select - let user manually choose)
   // This effect is disabled to prevent overriding manual user selection
@@ -246,17 +392,13 @@ export default function Broadcasts() {
   };
 
   const handleSelectAllUsers = () => {
-    const visibleUsers = users.filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role);
-    const visibleUserIds = visibleUsers.map(u => u.id);
-    const currentSelectedInVisible = (form.user_ids || []).filter(id => visibleUserIds.includes(id));
+    const allUserIds = users.map(u => u.id);
+    const areAllSelected = allUserIds.length > 0 && allUserIds.every(id => (form.user_ids || []).includes(id));
 
-    if (currentSelectedInVisible.length === visibleUsers.length && visibleUsers.length > 0) {
-      // If all visible are selected, deselect them
-      setForm({ ...form, user_ids: (form.user_ids || []).filter(id => !visibleUserIds.includes(id)) });
+    if (areAllSelected) {
+      setForm({ ...form, user_ids: [] });
     } else {
-      // Otherwise, select all visible (keeping others that might be selected but hidden)
-      const otherSelected = (form.user_ids || []).filter(id => !visibleUserIds.includes(id));
-      setForm({ ...form, user_ids: [...otherSelected, ...visibleUserIds] });
+      setForm({ ...form, user_ids: allUserIds });
     }
   };
 
@@ -284,6 +426,14 @@ export default function Broadcasts() {
   };
 
   const handleSendClick = async () => {
+    // Process manual emails
+    const emailsList = manualEmailsText
+      .split(/[\n,]/)
+      .map(e => e.trim())
+      .filter(e => e && e.includes('@'));
+
+    setForm(prev => ({ ...prev, additional_emails: emailsList }));
+
     const newErrors: Record<string, boolean> = {};
     if (!form.subscription_type) newErrors.subscription_type = true;
     if (!form.message) newErrors.message = true;
@@ -318,7 +468,14 @@ export default function Broadcasts() {
   const performSend = async () => {
     try {
       setSending(true);
-      const response = await api.sendBroadcast(form);
+
+      // Добавляем ручные контакты в форму перед отправкой
+      const formWithManualContacts = {
+        ...form,
+        manual_contacts: manualContacts
+      };
+
+      const response = await api.sendBroadcast(formWithManualContacts);
       toast.success(response.message);
 
       // Триггерим событие для обновления уведомлений у всех пользователей
@@ -334,6 +491,7 @@ export default function Broadcasts() {
         user_ids: [],
         attachment_urls: [],
       });
+      setManualContacts([]); // Очищаем ручные контакты
       setPreview(null);
       setShowConfirmDialog(false);
       await loadHistory();
@@ -382,6 +540,10 @@ export default function Broadcasts() {
           <TabsTrigger value="subscribers" className="flex items-center gap-2" onClick={() => loadSubscribers()}>
             <Newspaper className="w-4 h-4" />
             {t('subscribers')}
+          </TabsTrigger>
+          <TabsTrigger value="unsubscribed" className="flex items-center gap-2" onClick={() => loadUnsubscribed()}>
+            <UserMinus className="w-4 h-4" />
+            {t('unsubscribed_tab', 'Отписавшиеся')}
           </TabsTrigger>
         </TabsList>
 
@@ -465,7 +627,7 @@ export default function Broadcasts() {
                   <Select
                     value={form.subscription_type}
                     onValueChange={(value) => {
-                      setForm({ ...form, subscription_type: value });
+                      setForm({ ...form, subscription_type: value, user_ids: [] }); // this triggers useEffect([form.subscription_type])
                       if (errors.subscription_type) setErrors({ ...errors, subscription_type: false });
                     }}
                   >
@@ -506,16 +668,19 @@ export default function Broadcasts() {
                   <Label htmlFor="target_role" className="block mb-2.5 text-sm font-semibold text-gray-700">{t('target_role')}</Label>
                   <Select
                     value={form.target_role || 'all'}
-                    onValueChange={(value) => setForm({ ...form, target_role: value === 'all' ? '' : value })}
+                    onValueChange={(value) => {
+                      setForm({ ...form, target_role: value === 'all' ? '' : value, user_ids: [] });
+                      // Trigger reload of users is handled by useEffect dependency on form.target_role
+                    }}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder={t('all_users')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t('all_users')}</SelectItem>
+                      <SelectItem value="client" className="font-semibold text-pink-600">{t('role_client', 'Клиент')}</SelectItem>
                       {roles.map((role) => (
                         <SelectItem key={role.key} value={role.key}>
-                          {/* Try to translate using common:role_[key], fallback to role name from DB */}
                           {t(`common:role_${role.key}`, role.name)}
                         </SelectItem>
                       ))}
@@ -546,16 +711,13 @@ export default function Broadcasts() {
                           <input
                             type="checkbox"
                             checked={
-                              (() => {
-                                const visibleUsers = users.filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role);
-                                return visibleUsers.length > 0 && visibleUsers.every(u => (form.user_ids || []).includes(u.id));
-                              })()
+                              users.length > 0 && users.every(u => (form.user_ids || []).includes(u.id))
                             }
                             onChange={handleSelectAllUsers}
                             className="w-4 h-4 text-pink-600 rounded"
                           />
                           <span className="text-sm font-medium text-gray-700">
-                            {t('select_all', { count: users.filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role).length })}
+                            {t('select_all', { count: users.length })}
                           </span>
                         </label>
                       </div>
@@ -566,7 +728,11 @@ export default function Broadcasts() {
                       ) : (
                         <div className="space-y-2">
                           {users
-                            .filter(u => !form.target_role || form.target_role === 'all' || u.role === form.target_role)
+                            .filter(user => {
+                              // Фильтруем по выбранной роли
+                              if (!form.target_role || form.target_role === 'all') return true;
+                              return user.role === form.target_role;
+                            })
                             .map((user) => (
                               <label
                                 key={user.id}
@@ -584,6 +750,38 @@ export default function Broadcasts() {
                                 </div>
                               </label>
                             ))}
+                          {/* Показываем добавленные вручную контакты */}
+                          {manualContacts.map((contact, idx) => (
+                            <label
+                              key={`manual-${idx}`}
+                              className="flex items-center gap-3 p-2 hover:bg-white rounded cursor-pointer transition-colors bg-blue-50 border border-blue-200"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={true}
+                                className="w-4 h-4 text-pink-600 rounded"
+                                readOnly
+                              />
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-900">{contact.name || t('manual_contact', 'Ручной контакт')}</p>
+                                <p className="text-xs text-gray-500">
+                                  {contact.email && `Email: ${contact.email}`}
+                                  {contact.telegram && ` · Telegram: ${contact.telegram}`}
+                                  {contact.instagram && ` · Instagram: ${contact.instagram}`}
+                                  {contact.whatsapp && ` · WhatsApp: ${contact.whatsapp}`}
+                                </p>
+                              </div>
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setManualContacts(prev => prev.filter((_, i) => i !== idx));
+                                }}
+                                className="text-red-500 hover:text-red-700 transition-colors"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </label>
+                          ))}
                         </div>
                       )}
                     </div>
@@ -591,6 +789,59 @@ export default function Broadcasts() {
                   <p className="text-xs text-gray-500 mt-2">
                     {t('optional_recipients_hint')}
                   </p>
+                </div>
+
+                {/* Добавление контактов вручную */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <Label className="text-sm font-semibold text-gray-700">
+                      {t('manual_contacts', 'Добавить контакты вручную')}
+                    </Label>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowImportContactsFile(true)}
+                        className="text-xs"
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        {t('import_file', 'Загрузить файл')}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowAddManualContacts(true)}
+                        className="text-xs"
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        {t('add_contact', 'Добавить контакт')}
+                      </Button>
+                    </div>
+                  </div>
+                  {manualContacts.length > 0 && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-xs text-blue-700 font-medium mb-2">
+                        {t('manual_contacts_added', 'Добавлено контактов: {{count}}', { count: manualContacts.length })}
+                      </p>
+                      <div className="space-y-1">
+                        {manualContacts.slice(0, 3).map((contact, idx) => (
+                          <p key={idx} className="text-xs text-blue-600">
+                            {contact.name || t('no_name', 'Без имени')} -
+                            {contact.email && ` ${contact.email}`}
+                            {contact.telegram && ` · @${contact.telegram}`}
+                            {contact.instagram && ` · IG: ${contact.instagram}`}
+                          </p>
+                        ))}
+                        {manualContacts.length > 3 && (
+                          <p className="text-xs text-blue-500 italic">
+                            {t('and_more', '...и еще {{count}}', { count: manualContacts.length - 3 })}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Message */}
@@ -852,7 +1103,34 @@ export default function Broadcasts() {
         {/* History Tab */}
         <TabsContent value="history">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">{t('history_title')}</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">{t('history_title')}</h2>
+
+              <div className="flex items-center gap-2">
+                <Select value={clearPeriod} onValueChange={setClearPeriod}>
+                  <SelectTrigger className="w-[180px] h-9 text-xs">
+                    <SelectValue placeholder={t('select_period', 'Период')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="last_hour">{t('period_last_hour', 'Последний час')}</SelectItem>
+                    <SelectItem value="today">{t('period_today', 'Сегодня')}</SelectItem>
+                    <SelectItem value="3_days">{t('period_3_days', '3 дня')}</SelectItem>
+                    <SelectItem value="week">{t('period_week', 'Неделя')}</SelectItem>
+                    <SelectItem value="month">{t('period_month', 'Месяц')}</SelectItem>
+                    <SelectItem value="all">{t('period_all', 'Все время')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleClearHistory(clearPeriod)}
+                  className="h-9 text-red-600 border-red-100 hover:bg-red-50"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  {t('clear_history', 'Очистить')}
+                </Button>
+              </div>
+            </div>
 
             {loadingHistory ? (
               <div className="flex items-center justify-center py-12">
@@ -917,7 +1195,7 @@ export default function Broadcasts() {
                 </p>
               </div>
               <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <label className="flex items-center gap-2 text-sm cursor-pointer border-r pr-4 border-gray-100">
                   <input
                     type="checkbox"
                     checked={showInactive}
@@ -929,15 +1207,20 @@ export default function Broadcasts() {
                   />
                   {t('show_inactive', 'Показать неактивных')}
                 </label>
-                <Button
-                  onClick={() => loadSubscribers()}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  <History className="w-4 h-4" />
-                  {t('refresh', 'Обновить')}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setShowImportSubscribers(true)}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    {t('import', 'Импорт')}
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => setShowAddSubscriber(true)}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    {t('add', 'Добавить')}
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => loadSubscribers()} disabled={loadingSubscribers}>
+                    {loadingSubscribers ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <History className="w-4 h-4 mr-2" />}
+                    {t('refresh', 'Обновить')}
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -954,30 +1237,42 @@ export default function Broadcasts() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">{t('common:email', 'Email')}</th>
-                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">{t('common:status', 'Статус')}</th>
-                      <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">{t('subscribed_at', 'Дата подписки')}</th>
-                      <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">{t('common:actions', 'Действия')}</th>
+                    <tr className="border-b border-gray-200 text-left">
+                      <th className="py-3 px-4 text-sm font-semibold text-gray-700">{t('common:name', 'Имя')}</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-gray-700">{t('common:email', 'Email')}</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-gray-700">{t('common:status', 'Статус')}</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-gray-700">{t('subscribed_at', 'Дата подписки')}</th>
+                      <th className="py-3 px-4 text-sm font-semibold text-gray-700 text-right">{t('common:actions', 'Действия')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {subscribers.map((subscriber) => (
-                      <tr key={subscriber.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <tr key={subscriber.id} className="border-b border-gray-100 hover:bg-gray-50 group">
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-gray-900">{subscriber.name || '-'}</span>
+                          </div>
+                        </td>
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2">
                             <Mail className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm font-medium text-gray-900">{subscriber.email}</span>
+                            <span className="text-sm text-gray-600">{subscriber.email}</span>
                           </div>
                         </td>
                         <td className="py-3 px-4">
                           {subscriber.is_active ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <span
+                              onClick={() => handleToggleSubscriber(subscriber.id, subscriber.is_active)}
+                              className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 cursor-pointer hover:bg-green-200 transition-colors"
+                            >
                               <UserCheck className="w-3 h-3" />
                               {t('active', 'Активен')}
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                            <span
+                              onClick={() => handleToggleSubscriber(subscriber.id, subscriber.is_active)}
+                              className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 cursor-pointer hover:bg-gray-200 transition-colors"
+                            >
                               <UserX className="w-3 h-3" />
                               {t('inactive', 'Неактивен')}
                             </span>
@@ -993,13 +1288,101 @@ export default function Broadcasts() {
                           }) : '-'}
                         </td>
                         <td className="py-3 px-4 text-right">
-                          <button
-                            onClick={() => handleDeleteSubscriber(subscriber.id)}
-                            className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
-                            title={t('common:delete', 'Удалить')}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex justify-end items-center gap-2">
+                            <button
+                              onClick={() => {
+                                setEditingSubscriber(subscriber);
+                                setSubscriberForm({ email: subscriber.email, name: subscriber.name || '' });
+                              }}
+                              className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors opacity-0 group-hover:opacity-100"
+                              title={t('common:edit', 'Изменить')}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSubscriber(subscriber.id)}
+                              className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                              title={t('common:delete', 'Удалить')}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Unsubscribed Tab */}
+        <TabsContent value="unsubscribed">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">{t('unsubscribed_title', 'Отписавшиеся пользователи')}</h2>
+                <p className="text-gray-500 text-sm mt-1">{t('unsubscribed_subtitle', 'Список тех, кто отказался от получения рассылок')}</p>
+              </div>
+              <Button variant="outline" onClick={loadUnsubscribed} disabled={loadingUnsubscribed}>
+                {loadingUnsubscribed ? <Loader className="w-4 h-4 animate-spin" /> : <History className="w-4 h-4 mr-2" />}
+                {t('refresh', 'Обновить')}
+              </Button>
+            </div>
+
+            {loadingUnsubscribed ? (
+              <div className="flex justify-center py-20">
+                <Loader className="w-10 h-10 animate-spin text-pink-600" />
+              </div>
+            ) : unsubscribed.length === 0 ? (
+              <div className="text-center py-20 border-2 border-dashed border-gray-100 rounded-2xl">
+                <UserCheck className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">{t('no_unsubscribed', 'Отписавшихся пользователей пока нет. Все ваши клиенты довольны! 😊')}</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-100 text-left">
+                      <th className="py-4 px-4 font-semibold text-sm text-gray-700">{t('user', 'Пользователь')}</th>
+                      <th className="py-4 px-4 font-semibold text-sm text-gray-700">{t('mailing_type', 'Тип рассылки')}</th>
+                      <th className="py-4 px-4 font-semibold text-sm text-gray-700">{t('unsubscribed_at', 'Дата отписки')}</th>
+                      <th className="py-4 px-4 font-semibold text-sm text-gray-700">{t('reason', 'Причина')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {unsubscribed.map((unsub) => (
+                      <tr key={unsub.id} className="hover:bg-gray-50 transition-colors group">
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-pink-600 font-bold text-xs">
+                              {unsub.full_name?.charAt(0) || '?'}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">
+                                {unsub.full_name === 'Newsletter Subscriber' ? t('newsletter_subscriber', 'Подписчик рассылки') : unsub.full_name}
+                              </p>
+                              <p className="text-xs text-gray-500">@{unsub.username || unsub.email}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                            {t(unsub.mailing_type) || unsub.mailing_type}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-sm text-gray-600">
+                          {unsub.unsubscribed_at ? new Date(unsub.unsubscribed_at).toLocaleString('ru-RU', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          }) : '-'}
+                        </td>
+                        <td className="py-4 px-4 text-sm text-gray-500 italic">
+                          {unsub.reason || '-'}
                         </td>
                       </tr>
                     ))}
@@ -1054,7 +1437,7 @@ export default function Broadcasts() {
                           {user.full_name?.charAt(0) || '?'}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{user.full_name || 'No Name'}</p>
+                          <p className="font-medium text-gray-900">{user.full_name || t('no_name', 'No Name')}</p>
                           <div className="flex items-center gap-1 text-xs text-gray-500">
                             <span className="capitalize">{user.role}</span>
                           </div>
@@ -1211,6 +1594,396 @@ export default function Broadcasts() {
               }}
             >
               {t('save')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Subscriber Dialog */}
+      <Dialog open={showAddSubscriber || !!editingSubscriber} onOpenChange={(open) => {
+        if (!open) {
+          setShowAddSubscriber(false);
+          setEditingSubscriber(null);
+          setSubscriberForm({ email: '', name: '' });
+        }
+      }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingSubscriber ? t('edit_subscriber', 'Редактировать подписчика') : t('add_subscriber', 'Добавить подписчика')}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="sub-name">{t('common:name', 'Имя')}</Label>
+              <Input
+                id="sub-name"
+                value={subscriberForm.name}
+                onChange={(e) => setSubscriberForm({ ...subscriberForm, name: e.target.value })}
+                placeholder={t('name_placeholder', 'Иван Иванов')}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="sub-email">{t('common:email', 'Email')}</Label>
+              <Input
+                id="sub-email"
+                type="email"
+                value={subscriberForm.email}
+                onChange={(e) => setSubscriberForm({ ...subscriberForm, email: e.target.value })}
+                placeholder="email@example.com"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setShowAddSubscriber(false);
+              setEditingSubscriber(null);
+            }}>
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={editingSubscriber ? handleUpdateSubscriberData : handleAddSubscriber}
+              disabled={sending}
+              className="bg-pink-600 hover:bg-pink-700 text-white"
+            >
+              {sending ? <Loader className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
+              {editingSubscriber ? t('save') : t('add')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Import Subscribers Dialog */}
+      <Dialog open={showImportSubscribers} onOpenChange={setShowImportSubscribers}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle>{t('import_subscribers', 'Импорт подписчиков')}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg">
+              <p className="text-sm text-blue-800 font-medium mb-1">{t('import_format_title', 'Формат данных:')}</p>
+              <p className="text-xs text-blue-600">
+                {t('import_format_desc', 'Введите список email или "Имя, email" (по одному на строку). Можно вставить из Excel.')}
+              </p>
+            </div>
+            <Textarea
+              className="min-h-[200px] font-mono text-sm"
+              placeholder="ivan@example.com&#10;Maria, marya@test.ru&#10;john.doe@gmail.com, John"
+              value={importText}
+              onChange={(e) => setImportText(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowImportSubscribers(false)}>
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={handleImportSubscribers}
+              disabled={sending || !importText.trim()}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              {sending ? <Loader className="w-4 h-4 animate-spin mr-2" /> : <Users className="w-4 h-4 mr-2" />}
+              {t('import', 'Импорт')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Manual Contact Dialog */}
+      <Dialog open={showAddManualContacts} onOpenChange={setShowAddManualContacts}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('add_manual_contact', 'Добавить контакт вручную')}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="bg-blue-50 border border-blue-100 p-3 rounded-lg">
+              <p className="text-xs text-blue-700">
+                {t('manual_contact_hint', 'Заполните поля в зависимости от выбранных каналов рассылки')}
+              </p>
+            </div>
+
+            {/* Имя (всегда показываем) */}
+            <div className="space-y-2">
+              <Label htmlFor="manual-name">{t('common:name', 'Имя')} <span className="text-gray-400 text-xs">({t('optional', 'опционально')})</span></Label>
+              <Input
+                id="manual-name"
+                value={manualContactForm.name || ''}
+                onChange={(e) => setManualContactForm({ ...manualContactForm, name: e.target.value })}
+                placeholder={t('name_placeholder', 'Иван Иванов')}
+              />
+            </div>
+
+            {/* Email - показываем если выбран канал email */}
+            {form.channels.includes('email') && (
+              <div className="space-y-2">
+                <Label htmlFor="manual-email">Email</Label>
+                <Input
+                  id="manual-email"
+                  type="email"
+                  value={manualContactForm.email || ''}
+                  onChange={(e) => setManualContactForm({ ...manualContactForm, email: e.target.value })}
+                  placeholder="user@example.com"
+                />
+              </div>
+            )}
+
+            {/* Telegram - показываем если выбран канал telegram */}
+            {form.channels.includes('telegram') && (
+              <div className="space-y-2">
+                <Label htmlFor="manual-telegram">{t('telegram_username', 'Telegram username')}</Label>
+                <Input
+                  id="manual-telegram"
+                  value={manualContactForm.telegram || ''}
+                  onChange={(e) => setManualContactForm({ ...manualContactForm, telegram: e.target.value })}
+                  placeholder="@username"
+                />
+                <p className="text-xs text-gray-500">
+                  {t('telegram_hint', 'Введите username без @ или Telegram ID')}
+                </p>
+              </div>
+            )}
+
+            {/* Instagram - показываем если выбран канал instagram */}
+            {form.channels.includes('instagram') && (
+              <div className="space-y-2">
+                <Label htmlFor="manual-instagram">{t('instagram_username', 'Instagram username')}</Label>
+                <Input
+                  id="manual-instagram"
+                  value={manualContactForm.instagram || ''}
+                  onChange={(e) => setManualContactForm({ ...manualContactForm, instagram: e.target.value })}
+                  placeholder="username"
+                />
+              </div>
+            )}
+
+            {form.channels.length === 0 && (
+              <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                <p className="text-xs text-yellow-700">
+                  {t('select_channels_first', 'Сначала выберите каналы рассылки')}
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setShowAddManualContacts(false);
+              setManualContactForm({});
+            }}>
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                // Проверяем что хотя бы одно поле заполнено
+                const hasData = manualContactForm.email || manualContactForm.telegram || manualContactForm.instagram;
+                if (!hasData) {
+                  toast.error(t('fill_at_least_one_field', 'Заполните хотя бы одно поле контакта'));
+                  return;
+                }
+
+                setManualContacts(prev => [...prev, { ...manualContactForm }]);
+                setManualContactForm({});
+                setShowAddManualContacts(false);
+                toast.success(t('contact_added', 'Контакт добавлен'));
+              }}
+              className="bg-pink-600 hover:bg-pink-700 text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {t('add')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Import Contacts File Dialog */}
+      <Dialog open={showImportContactsFile} onOpenChange={setShowImportContactsFile}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{t('import_contacts_file', 'Импорт контактов из файла')}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            {/* Инструкция с таблицей столбцов */}
+            <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg space-y-3">
+              <p className="text-sm text-blue-800 font-medium">{t('file_format_title', 'Формат файла:')}</p>
+
+              {/* Таблица с названиями столбцов */}
+              <div className="bg-white rounded-lg border border-blue-200 overflow-hidden">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="bg-blue-100">
+                      <th className="px-3 py-2 text-left font-semibold text-blue-900 border-r border-blue-200">
+                        {t('column', 'Столбец')} 1
+                      </th>
+                      <th className="px-3 py-2 text-left font-semibold text-blue-900 border-r border-blue-200">
+                        {t('column', 'Столбец')} 2
+                      </th>
+                      <th className="px-3 py-2 text-left font-semibold text-blue-900 border-r border-blue-200">
+                        {t('column', 'Столбец')} 3
+                      </th>
+                      <th className="px-3 py-2 text-left font-semibold text-blue-900 border-r border-blue-200">
+                        {t('column', 'Столбец')} 4
+                      </th>
+                      <th className="px-3 py-2 text-left font-semibold text-blue-900">
+                        {t('column', 'Столбец')} 5
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="bg-white">
+                      <td className="px-3 py-2 font-mono text-gray-700 border-r border-blue-100">
+                        {t('common:name', 'Имя')}
+                      </td>
+                      <td className="px-3 py-2 font-mono text-gray-700 border-r border-blue-100">
+                        Email
+                      </td>
+                      <td className="px-3 py-2 font-mono text-gray-700 border-r border-blue-100">
+                        Telegram
+                      </td>
+                      <td className="px-3 py-2 font-mono text-gray-700 border-r border-blue-100">
+                        Instagram
+                      </td>
+                      <td className="px-3 py-2 font-mono text-gray-700">
+                        WhatsApp
+                      </td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="px-3 py-2 text-gray-500 italic text-xs border-r border-blue-100">
+                        {t('optional', 'опционально')}
+                      </td>
+                      <td className="px-3 py-2 text-gray-500 italic text-xs border-r border-blue-100">
+                        {t('optional', 'опционально')}
+                      </td>
+                      <td className="px-3 py-2 text-gray-500 italic text-xs border-r border-blue-100">
+                        {t('optional', 'опционально')}
+                      </td>
+                      <td className="px-3 py-2 text-gray-500 italic text-xs border-r border-blue-100">
+                        {t('optional', 'опционально')}
+                      </td>
+                      <td className="px-3 py-2 text-gray-500 italic text-xs">
+                        {t('optional', 'опционально')}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Пример данных */}
+              <div className="bg-white p-3 rounded border border-blue-200">
+                <p className="text-xs font-semibold text-gray-700 mb-2">{t('example', 'Пример')}:</p>
+                <div className="space-y-1">
+                  <p className="text-xs font-mono text-gray-600">Иван Иванов, ivan@mail.ru, @ivanov, ivanov_insta, +79991234567</p>
+                  <p className="text-xs font-mono text-gray-600">Мария,, @maria_tg,, +79997654321</p>
+                  <p className="text-xs font-mono text-gray-600">, john@test.com, @john_tg, john_ig,</p>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-xs text-blue-700">
+                  • {t('file_format_note', 'Поля разделяются запятой. Пустые поля можно оставить пустыми (две запятые подряд).')}
+                </p>
+                <p className="text-xs text-blue-700">
+                  • {t('file_format_note2', 'Имя опционально. Если имени нет - оставьте первое поле пустым или начните с запятой.')}
+                </p>
+                <p className="text-xs text-blue-700">
+                  • {t('file_format_note3', 'Можно скопировать данные прямо из Excel или Google Sheets')}
+                </p>
+              </div>
+            </div>
+
+            {/* Кнопка загрузки файла */}
+            <div className="flex items-center gap-3">
+              <input
+                type="file"
+                id="import-contacts-file"
+                className="hidden"
+                accept=".csv,.txt,.xls,.xlsx"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+
+                  try {
+                    const text = await file.text();
+                    setImportFileText(text);
+                    toast.success(t('file_loaded', 'Файл загружен'));
+                  } catch (error) {
+                    console.error('File read error:', error);
+                    toast.error(t('error_reading_file', 'Ошибка чтения файла'));
+                  }
+                  e.target.value = '';
+                }}
+              />
+              <label
+                htmlFor="import-contacts-file"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer border border-blue-200"
+              >
+                <Plus className="w-4 h-4" />
+                {t('upload_file', 'Загрузить файл CSV/Excel')}
+              </label>
+              <span className="text-xs text-gray-500">{t('or', 'или')}</span>
+              <span className="text-xs text-gray-600">{t('paste_below', 'вставьте данные ниже')}</span>
+            </div>
+
+            {/* Текстовое поле для вставки */}
+            <Textarea
+              className="min-h-[200px] font-mono text-sm"
+              placeholder="Имя, Email, Telegram, Instagram, WhatsApp&#10;Иван, ivan@mail.ru, @ivanov, ivanov_ig, +79991234567&#10;, maria@test.ru, @maria,,"
+              value={importFileText}
+              onChange={(e) => setImportFileText(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowImportContactsFile(false)}>
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                if (!importFileText.trim()) {
+                  toast.error(t('no_data', 'Нет данных для импорта'));
+                  return;
+                }
+
+                try {
+                  const lines = importFileText.split('\n').filter(l => l.trim());
+                  const contacts: Array<{ name?: string; email?: string; telegram?: string; instagram?: string; whatsapp?: string }> = [];
+
+                  lines.forEach((line, idx) => {
+                    // Пропускаем заголовок если он есть
+                    if (idx === 0 && line.toLowerCase().includes('имя') && line.toLowerCase().includes('email')) {
+                      return;
+                    }
+
+                    const parts = line.split(',').map(p => p.trim());
+                    const contact: any = {};
+
+                    // Формат: Имя, Email, Telegram, Instagram, WhatsApp
+                    if (parts[0] && !parts[0].includes('@')) contact.name = parts[0];
+                    if (parts[1] && parts[1].includes('@')) contact.email = parts[1];
+                    if (parts[2]) contact.telegram = parts[2].replace('@', '');
+                    if (parts[3]) contact.instagram = parts[3];
+                    if (parts[4]) contact.whatsapp = parts[4];
+
+                    // Добавляем только если есть хотя бы один контакт
+                    if (contact.email || contact.telegram || contact.instagram || contact.whatsapp) {
+                      contacts.push(contact);
+                    }
+                  });
+
+                  if (contacts.length === 0) {
+                    toast.error(t('no_valid_contacts', 'Не найдено корректных контактов'));
+                    return;
+                  }
+
+                  setManualContacts(prev => [...prev, ...contacts]);
+                  setImportFileText('');
+                  setShowImportContactsFile(false);
+                  toast.success(t('contacts_imported', 'Импортировано контактов: {{count}}', { count: contacts.length }));
+                } catch (error) {
+                  console.error('Import error:', error);
+                  toast.error(t('import_error', 'Ошибка импорта данных'));
+                }
+              }}
+              disabled={!importFileText.trim()}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              {t('import', 'Импорт')}
             </Button>
           </DialogFooter>
         </DialogContent>

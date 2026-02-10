@@ -29,6 +29,7 @@
     "bot_settings": "Настройки бота",
     "broadcasts": "Рассылки",
     "calendar": "Календарь",
+    "catalog": "Каталог",
     "chat": "Чат",
     "clients": "Клиенты",
     "contracts": "Договоры",
@@ -37,15 +38,19 @@
     "finance": "Финансы",
     "funnel": "Воронка",
     "integrations": "Интеграции",
-    "internal_chat": "Внутренняя связь",
+    "internal_chat": "Внутренний чат",
     "invoices": "Счета",
-    "management": "Каталог",
+    "loyalty": "Лояльность",
+    "management": "Управление",
     "marketplace_integrations": "Маркетплейсы",
+    "marketplaces": "Маркетплейсы",
     "messengers": "Мессенджеры",
     "my_bookings": "Мои записи",
     "notifications": "Уведомления",
     "payment_integrations": "Платежные системы",
+    "payments": "Платежные системы",
     "products": "Товары",
+    "promo_codes": "Промокоды",
     "public_content": "Публичный контент",
     "service_requests": "Запросы услуг",
     "services": "Услуги",
@@ -63,7 +68,7 @@
   "roles": {
     "director": "Директор",
     "marketer": "Маркетолог",
-    "sales": "Продажи"
+    "saler": "Менеджер по продажам"
   },
   "user": "Пользователь",
   "view_all": "Посмотреть все"

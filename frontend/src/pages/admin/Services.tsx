@@ -1015,7 +1015,7 @@ export default function Services() {
                   </SelectContent>
                 </Select>
                 {/* Кнопка создания только если есть право */}
-                {permissions.canEditServices && (
+                {permissions.canEditLoyalty && (
                   <Button
                     className="bg-pink-600 hover:bg-pink-700"
                     onClick={handleOpenAddPackage}
@@ -1106,7 +1106,7 @@ export default function Services() {
                   )}
 
                   {/* Actions */}
-                  {permissions.canEditServices && (
+                  {permissions.canEditLoyalty && (
                     <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
                       <Button
                         size="sm"
@@ -1134,7 +1134,8 @@ export default function Services() {
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
-                  )}
+                  )
+                  }
                 </div>
               ))}
             </div>
@@ -1143,9 +1144,11 @@ export default function Services() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 text-center">
                 <Gift className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-500 mb-4">{t('services:special_packages_not_found')}</p>
-                <Button onClick={handleOpenAddPackage} className="bg-pink-600 hover:bg-pink-700">
-                  {t('services:create_first_package')}
-                </Button>
+                {permissions.canEditLoyalty && (
+                  <Button onClick={handleOpenAddPackage} className="bg-pink-600 hover:bg-pink-700">
+                    {t('services:create_first_package')}
+                  </Button>
+                )}
               </div>
             )}
           </>

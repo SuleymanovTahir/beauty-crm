@@ -66,3 +66,26 @@
 .settings-icon-instagram {
   color: #2563eb;
 }
+.settings-text-primary {
+  color: #ec4899; /* pink-500 */
+}
+
+.settings-icon-primary {
+  color: #db2777; /* pink-600 */
+}
+
+.settings-tab-trigger-active[data-state="active"] {
+  border-color: #ec4899;
+  background-color: #fdf2f8;
+  color: #db2777;
+}
+
+.settings-label-spacing {
+  margin-bottom: 0.25rem;
+  display: block;
+  font-weight: 500;
+}
+
+.settings-loader {
+  color: #ec4899;
+}

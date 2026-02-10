@@ -153,26 +153,15 @@ def get_logo_url() -> str:
         from db import get_salon_settings
         from core.config import PUBLIC_URL, BASE_DIR
         salon_settings = get_salon_settings()
-        logo_url = salon_settings.get('logo_url', '/static/uploads/images/salon/logo.webp')
+        logo_url = salon_settings.get('logo_url') or '/logo.webp'
         base_url = salon_settings.get('base_url', PUBLIC_URL)
 
-        # Если logo_url пустой или None
-        if not logo_url:
-            return ""
-
         # Если logo_url уже полный URL, возвращаем как есть
-        if logo_url.startswith('http'):
+        if str(logo_url).startswith('http'):
             return logo_url
 
-        # Проверяем существует ли файл локально
-        if logo_url.startswith('/static/'):
-            local_path = os.path.join(BASE_DIR, logo_url.lstrip('/'))
-            if not os.path.exists(local_path):
-                log_warning(f"Logo file not found at: {local_path}", "email")
-                return ""
-
         # Формируем полный URL
-        return f"{base_url.rstrip('/')}{logo_url}"
+        return f"{base_url.rstrip('/')}/{str(logo_url).lstrip('/')}"
     except Exception as e:
         log_warning(f"Could not get logo URL: {e}", "email")
         return ""
@@ -243,7 +232,8 @@ def send_email(
     to_email: str,
     subject: str,
     html_body: str,
-    text_body: Optional[str] = None
+    text_body: Optional[str] = None,
+    unsubscribe_link: Optional[str] = None
 ) -> bool:
     """
     Универсальная функция отправки email
@@ -253,6 +243,7 @@ def send_email(
         subject: Тема письма
         html_body: HTML содержимое письма
         text_body: Текстовое содержимое (fallback)
+        unsubscribe_link: Ссылка для отписки (для футера)
 
     Returns: True если отправлено успешно
     """
@@ -266,6 +257,10 @@ def send_email(
     if not smtp_config:
         log_warning(f"Cannot send email to {to_email}: SMTP not configured", "email")
         return False
+    
+    # Если html_body не содержит тегов <html> или <!DOCTYPE, оборачиваем его в стандартный лейаут
+    if not (html_body.lower().startswith('<!doctype') or '<html' in html_body.lower()):
+        html_body = wrap_email_html(subject, html_body, unsubscribe_link=unsubscribe_link)
     
     try:
         # Создаем сообщение
@@ -297,89 +292,175 @@ def send_email(
         return False
 
 
-def send_verification_code_email(email: str, code: str, name: str, user_type: str = "user") -> bool:
-    """
-    Отправить код верификации на email
+def get_premium_icon(name: str, color: str = "db2777", size: int = 20) -> str:
+    """Возвращает высококачественную PNG иконку (Icons8) для максимальной совместимости в Email"""
+    # Очищаем цвет от # для URL
+    clean_color = color.replace("#", "")
+    
+    # Маппинг на стабильные PNG иконки
+    icon_urls = {
+        'calendar': f'https://img.icons8.com/ios-filled/50/{clean_color}/calendar.png',
+        'clock': f'https://img.icons8.com/ios-filled/50/{clean_color}/clock.png',
+        'user': f'https://img.icons8.com/ios-filled/50/{clean_color}/user.png',
+        'gift': f'https://img.icons8.com/ios-filled/50/{clean_color}/gift.png',
+        'sparkles': f'https://img.icons8.com/ios-filled/50/{clean_color}/sparkling.png',
+        'service': f'https://img.icons8.com/ios-filled/50/{clean_color}/spa.png',
+        'phone': f'https://img.icons8.com/ios-filled/50/{clean_color}/phone.png',
+        'mail': f'https://img.icons8.com/ios-filled/50/{clean_color}/mail.png',
+        'map-pin': f'https://img.icons8.com/ios-filled/50/{clean_color}/marker.png',
+        'check': f'https://img.icons8.com/ios-filled/50/{clean_color}/checked.png',
+        'star': f'https://img.icons8.com/ios-filled/50/{clean_color}/star.png',
+        'bell': f'https://img.icons8.com/ios-filled/50/{clean_color}/bell.png',
+        'clipboard': f'https://img.icons8.com/ios-filled/50/{clean_color}/clipboard.png'
+    }
+    
+    url = icon_urls.get(name)
+    if not url: return ""
+    
+    return f'<img src="{url}" width="{size}" height="{size}" style="vertical-align: middle; display: inline-block; margin-right: 8px; margin-bottom: 2px;" alt="{name}" />'
 
-    Args:
-        email: Email получателя
-        code: Код верификации
-        name: Имя пользователя
-        user_type: Тип пользователя ('user' или 'client')
-
-    Returns: True если отправлено успешно
-    """
+def wrap_email_html(title: str, content: str, unsubscribe_link: Optional[str] = None) -> str:
+    """Оборачивает контент письма в премиальный лейаут (Weekly Report Style)"""
+    from datetime import datetime
     salon_name = get_salon_name()
     logo_url = get_logo_url()
-    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
-    subject = f"Подтверждение email - {salon_name}"
+    brand_color = "#db2777" # Weekly Report Brand Accent
+    bg_color = "#fdf2f8"    # Weekly Report Background
+    year = datetime.now().year
+    
+    # 1. Расширенная автозамена эмодзи (с учетом вариаций)
+    emoji_map = {
+        '🗓': get_premium_icon('calendar', brand_color),
+        '⏰': get_premium_icon('clock', brand_color),
+        '👤': get_premium_icon('user', brand_color),
+        '🎁': get_premium_icon('gift', brand_color),
+        '🎉': get_premium_icon('sparkles', brand_color),
+        '✨': get_premium_icon('sparkles', brand_color),
+        '💆': get_premium_icon('service', brand_color),
+        '💆‍♂️': get_premium_icon('service', brand_color),
+        '💆‍♀️': get_premium_icon('service', brand_color),
+        '💆♀️': get_premium_icon('service', brand_color),
+        '💆♂️': get_premium_icon('service', brand_color),
+        '📱': get_premium_icon('phone', brand_color),
+        '📞': get_premium_icon('phone', brand_color),
+        '📬': get_premium_icon('mail', brand_color),
+        '✉️': get_premium_icon('mail', brand_color),
+        '📍': get_premium_icon('map-pin', brand_color),
+        '✅': get_premium_icon('check', brand_color),
+        '⭐': get_premium_icon('star', brand_color),
+        '🏆': get_premium_icon('star', brand_color),
+        '💅': get_premium_icon('sparkles', brand_color),
+        '💎': get_premium_icon('sparkles', brand_color),
+        '🔔': get_premium_icon('bell', brand_color),
+        '📅': get_premium_icon('calendar', brand_color),
+        '📋': get_premium_icon('clipboard', brand_color)
+    }
+    
+    for emoji, icon_svg in emoji_map.items():
+        content = content.replace(emoji, icon_svg)
+    
+    # 2. Форматирование контента (Weekly Report Style Spacing)
+    if '<p' not in content.lower():
+        # Сплитим по двойному переносу для параграфов
+        paragraphs = content.split('\n\n')
+        formatted_content = ""
+        for p in paragraphs:
+            if p.strip():
+                # Внутри параграфа заменяем \n на <br>
+                text = p.strip().replace('\n', '<br>')
+                formatted_content += f'<p style="margin: 0 0 30px 0; color: #333333; font-size: 18px; line-height: 1.7;">{text}</p>'
+        content = formatted_content
 
-    html_body = f"""
+    # Weekly Report Logo / Title
+    # Force usage of PNG for emails as it renders better in most clients
+    logo_src = logo_url.replace('.webp', '.png') if logo_url and logo_url.endswith('.webp') else logo_url
+    logo_html = f'<img src="{logo_src}" alt="{salon_name}" style="max-height: 80px; width: auto; height: auto; border: 0; display: block; margin: 0 auto 20px auto;" />' if logo_url else f'<h1 style="margin: 0; font-size: 26px; letter-spacing: 1px; color: #ffffff;">{salon_name}</h1>'
+    
+    # Unsubscribe link logic
+    from core.config import PUBLIC_URL
+    final_unsubscribe = unsubscribe_link or f"{PUBLIC_URL.rstrip('/')}/crm/settings"
+    
+    html = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
-            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-            .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                       color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
-            .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }}
-            .code-box {{ background: white; border: 2px dashed #667eea; padding: 20px;
-                         text-align: center; font-size: 32px; font-weight: bold;
-                         color: #667eea; margin: 20px 0; border-radius: 8px;
-                         letter-spacing: 8px; }}
-            .footer {{ text-align: center; margin-top: 20px; color: #666; font-size: 12px; }}
-            .button {{ display: inline-block; padding: 12px 30px; background: #667eea;
-                      color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+            body {{ font-family: 'Segoe UI', Inter, Arial, sans-serif; -webkit-font-smoothing: antialiased; }}
         </style>
     </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                {logo_html}
-                <h1>{salon_name}</h1>
-                <p>Подтверждение регистрации</p>
-            </div>
-            <div class="content">
-                <h2>Здравствуйте, {name}!</h2>
-                <p>Спасибо за регистрацию в нашей системе. Для завершения регистрации введите код подтверждения:</p>
-
-                <div class="code-box">{code}</div>
-
-                <p><strong>Код действителен в течение 15 минут.</strong></p>
-
-                <p>Если вы не регистрировались в {salon_name}, просто проигнорируйте это письмо.</p>
-
-                <div class="footer">
-                    <p>С уважением,<br>Команда {salon_name}</p>
-                    <p>Это автоматическое письмо, пожалуйста, не отвечайте на него.</p>
-                </div>
-            </div>
-        </div>
+    <body style="margin: 0; padding: 0; background-color: {bg_color}; padding: 40px 20px;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td align="center">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <!-- Weekly Report Style Header -->
+                        <tr>
+                            <td align="center" style="background: #000000; color: #ffffff; padding: 40px 30px; text-align: center;">
+                                {logo_html}
+                                <div style="width: 40px; height: 3px; background-color: {brand_color}; margin: 20px auto 0;"></div>
+                                <p style="margin: 15px 0 0; opacity: 0.8; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">{title}</p>
+                            </td>
+                        </tr>
+                        
+                        <!-- Content -->
+                        <tr>
+                            <td style="padding: 50px 40px; background-color: #ffffff;">
+                                {content}
+                            </td>
+                        </tr>
+                        
+                        <!-- Footer -->
+                        <tr>
+                            <td style="background: #f9f9f9; padding: 30px; text-align: center; color: #999999; font-size: 12px; border-top: 1px solid #eeeeee;">
+                                <p style="margin: 0 0 10px 0; color: #666666; font-weight: bold;">{salon_name}</p>
+                                <p style="margin: 0 0 20px 0;">Professional Beauty Management System</p>
+                                
+                                {"<div style='margin-bottom: 20px;'><a href='" + final_unsubscribe + "' style='color: " + brand_color + "; text-decoration: none;'>Отписаться от рассылки</a></div>"}
+                                
+                                <p style="margin: 0; opacity: 0.7;">
+                                    Это автоматическое уведомление. Пожалуйста, не отвечайте на него.<br>
+                                    © {year} {salon_name}. Все права защищены.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
     </body>
     </html>
     """
-    
-    text_body = f"""
-    {salon_name} - Подтверждение email
-    
-    Здравствуйте, {name}!
-    
-    Спасибо за регистрацию в нашей системе.
-    Для завершения регистрации введите код подтверждения:
-    
-    {code}
-    
-    Код действителен в течение 15 минут.
-    
-    Если вы не регистрировались в {salon_name}, просто проигнорируйте это письмо.
-    
-    С уважением,
-    Команда {salon_name}
+    return html
+
+
+def send_verification_code_email(email: str, code: str, name: str, user_type: str = "user") -> bool:
+    """
+    Отправить код верификации на email
+    """
+    salon_name = get_salon_name()
+    subject = f"Подтверждение email - {salon_name}"
+
+    content = f"""
+    <div style="text-align: center;">
+        <h2>Здравствуйте, {name}!</h2>
+        <p>Спасибо за регистрацию в нашей системе. Для завершения верификации введите код подтверждения:</p>
+        
+        <div style="background: white; border: 2px dashed #FF6B6B; padding: 20px;
+                    text-align: center; font-size: 32px; font-weight: bold;
+                    color: #FF6B6B; margin: 20px 0; border-radius: 8px;
+                    letter-spacing: 8px;">{code}</div>
+
+        <p><strong>Код действителен в течение 15 минут.</strong></p>
+        <p>Если вы не регистрировались в {salon_name}, просто проигнорируйте это письмо.</p>
+    </div>
     """
     
-    return send_email(email, subject, html_body, text_body)
+    text_body = f"Здравствуйте, {name}! Ваш код подтверждения: {code}. Код действителен 15 минут."
+    
+    return send_email(email, subject, content, text_body)
 
 
 def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
@@ -394,7 +475,12 @@ def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
     """
     salon_name = get_salon_name()
     logo_url = get_logo_url()
-    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
+    
+    # Force usage of PNG for emails
+    if logo_url and logo_url.endswith('.webp'):
+        logo_url = logo_url.replace('.webp', '.png')
+        
+    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 80px; width: auto; height: auto; border: 0; display: block; margin: 0 auto 10px auto;" /><br/>' if logo_url else ""
     subject = f"Новая регистрация: {user_data.get('full_name', 'Unknown')}"
 
     from core.config import PUBLIC_URL
@@ -474,7 +560,12 @@ def send_registration_approved_email(email: str, name: str, language: str = 'en'
     """
     salon_name = get_salon_name()
     logo_url = get_logo_url()
-    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
+    
+    # Force usage of PNG for emails
+    if logo_url and logo_url.endswith('.webp'):
+        logo_url = logo_url.replace('.webp', '.png')
+        
+    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 80px; width: auto; height: auto; border: 0; display: block; margin: 0 auto 10px auto;" /><br/>' if logo_url else ""
 
     # Get translations
     t = lambda key: get_email_translation(key, language)
@@ -552,7 +643,12 @@ def send_registration_rejected_email(email: str, name: str, reason: str = "", la
     """
     salon_name = get_salon_name()
     logo_url = get_logo_url()
-    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
+    
+    # Force usage of PNG for emails
+    if logo_url and logo_url.endswith('.webp'):
+        logo_url = logo_url.replace('.webp', '.png')
+        
+    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 80px; width: auto; height: auto; border: 0; display: block; margin: 0 auto 10px auto;" /><br/>' if logo_url else ""
 
     # Get translations
     t = lambda key: get_email_translation(key, language)
@@ -613,7 +709,12 @@ def send_newsletter_welcome_email(email: str) -> bool:
     """
     salon_name = get_salon_name()
     logo_url = get_logo_url()
-    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 60px; max-width: 200px; margin-bottom: 10px;" /><br/>' if logo_url else ""
+    
+    # Force usage of PNG for emails
+    if logo_url and logo_url.endswith('.webp'):
+        logo_url = logo_url.replace('.webp', '.png')
+        
+    logo_html = f'<img src="{logo_url}" alt="{salon_name}" style="max-height: 80px; width: auto; height: auto; border: 0; display: block; margin: 0 auto 10px auto;" /><br/>' if logo_url else ""
     subject = f"Welcome to {salon_name} Newsletter!"
 
     html_body = f"""

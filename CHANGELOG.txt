@@ -1,3 +1,50 @@
+## [2026-02-08] Promo Code Integration & Marketing Unsubscription Tracking
+- 🎟️ **Promo Code System**:
+  - **Comprehensive Management**: Created a premium admin interface for managing promo codes (`pages/admin/PromoCodes.tsx`) with search, filters, and usage statistics.
+  - **Dynamic Discounting**: Implemented support for both percentage (%) and fixed-amount (AZN) discounts with minimum booking requirements.
+  - **Personalization Support**: Added backend and frontend support for personalized promo codes tied to specific clients.
+  - **Automated Incentives**: Modified the birthday checker script to automatically generate and send unique 15% discount promo codes to clients on their birthdays and as 1-day reminders.
+- 🔇 **Marketing Preference Transparency**:
+  - **Unsubscription Tracking**: Implemented a new `marketing_unsubscriptions` logic to track why and when users opt-out of various mailing lists.
+  - **Public Opt-Out**: Enhanced the public unsubscription endpoint to log detailed reason data while respecting user privacy.
+  - **Admin Visibility**: Added a dedicated "Unsubscribed" tab to the Broadcasts management page to help administrators track and manage opt-out trends.
+- 🧬 **Backend Orchestration & Security**:
+  - **Schema Expansion**: Added `promo_codes`, `promo_code_usage`, and `marketing_unsubscriptions` tables to the central `db/init.py` (SSOT).
+  - **Service-Oriented Logic**: Developed a robust `PromoCodeService` for validation, activation, and usage logging with strict concurrency safety.
+  - **API Hardening**: Implemented secure endpoints for management (CRUD) and public validation with idempotent usage logging.
+- 🎨 **Frontend Refinement**:
+  - **Zero Hardcode (Menu)**: Integrated Promo Codes into the main navigation with proper permission checks and localized labels.
+  - **UX Polish**: Added interactive status toggles and visual feedback for newsletter subscribers in the Broadcasts dashboard.
+  - **Premium Aesthetics**: Leveraged Lucide icons, glassmorphism-inspired cards, and consistent color systems across new management pages.
+- 🔧 **Operational Integrity**:
+  - **Audit Ready**: Centralized all marketing unsubscriptions in a dedicated table for legal compliance and preference management.
+  - **Sync-Ready**: Ensured all new features are fully localized across 9 languages via the project's translation engine.
+
+## [2026-02-07 v2] Database Stability & Schema Cleanup
+- 🔧 **Syntax Robustness (Init Script)**:
+  - **F-String Elimination**: Replaced problematic f-strings with a safer `.replace()` and `.format()` methodology in `backend/db/init.py` for `CREATE TABLE` and `ALTER TABLE` statements. This permanently resolves potential `SyntaxError` crashes caused by curly brace literals in JSONB defaults.
+  - **Function Reliability**: Refactored `add_column_if_not_exists` to handle SQL definitions safely, ensuring uvicorn reloads without crash loops in any environment.
+- 🧹 **Schema SSOT (Rule 15 Compliance)**:
+  - **Localized Column Cleanup**: Removed the `name_ru` field from the `services` table to align with the project's policy of storing translations exclusively in locale files rather than as database column prefixes.
+  - **Codebase Audit**: Verified that no other language-prefixed fields exist in the system-wide database initialization script.
+
+## [2026-02-07] Dynamic Currency Global Integration & Permissions Refinement
+- 🌍 **Global Zero-Hardcode (Currency)**:
+  - **Dynamic Fallbacks**: Replaced all remaining "AED" hardcodes in `backend/utils/currency.py`, `backend/db/settings.py`, `backend/api/public.py`, and `backend/api/salary.py` with the dynamic `SALON_CURRENCY_DEFAULT` and `get_salon_currency()`.
+  - **Single Source of Truth**: Unified the currency retrieval logic across the entire application stack, ensuring consistent pricing and financial displays.
+  - **Schema Robustness**: Updated `backend/db/init.py` to use `SALON_CURRENCY_DEFAULT` for table defaults and fixed potential syntax errors in JSONB initializations.
+- 🛡️ **Advanced Access Control**:
+  - **Granular Permissions**: Introduced `settings_view` and `settings_edit` in `core/config.py` for more precise control over salon configuration access.
+  - **API Authorization**: Refactored `backend/api/settings.py` to use `require_permission` instead of generic `require_role`, increasing the security posture of sensitive endpoints.
+- ⚙️ **Settings UX & Localization**:
+  - **Dynamic Placeholders**: Replaced hardcoded "Dubai" and "10:30 - 21:00" strings in `Settings.tsx` with localized translation keys (`placeholder_city`, `placeholder_working_hours`).
+  - **Dictionary Expansion**: Added new translation keys to `admin/settings.json` and executed a full 9-language sync (`npm run db:i18n:auto`) to ensure 100% localization.
+  - **UI Consistency**: Synchronized form placeholders with database-level defaults, providing a more intuitive and premium configuration experience.
+- 🔧 **Operational Stability**:
+  - **Init Script Fix**: Resolved a critical f-string syntax error in `db/init.py` by properly escaping curly braces for JSONB default values.
+  - **Public API Continuity**: Ensured the public-facing salon information and initial-load endpoints correctly respect the dynamic currency settings.
+
+
 ## [2026-02-05] Public Page Personalization & Translation Precision
 - 👤 **Employee Personalization**:
   - **Nickname Integration**: Implemented nicknames for all active staff members (ID 671-675) across the public landing page.

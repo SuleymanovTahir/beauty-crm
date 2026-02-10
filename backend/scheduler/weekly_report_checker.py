@@ -141,8 +141,8 @@ async def generate_and_send_weekly_report():
                 .content {{ padding: 30px; }}
                 .stat-card {{ border-bottom: 1px solid #eee; padding: 15px 0; display: flex; justify-content: space-between; align-items: center; }}
                 .stat-card:last-child {{ border-bottom: none; }}
-                .label {{ font-size: 14px; color: #666; }}
-                .value {{ font-weight: bold; font-size: 18px; color: #000; }}
+                .label {{ font-size: 14px; color: #666; flex: 1; padding-right: 15px; }}
+                .value {{ font-weight: bold; font-size: 18px; color: #000; min-width: 80px; text-align: right; }}
                 .sub-text {{ font-size: 11px; color: #999; margin-top: 2px; }}
                 .footer {{ background: #f9f9f9; padding: 20px; text-align: center; font-size: 12px; color: #999; }}
                 .brand-accent {{ width: 40px; height: 3px; background-color: #db2777; margin: 15px auto 0; }}
@@ -156,61 +156,112 @@ async def generate_and_send_weekly_report():
                     <p>{salon_name} | {period_text}</p>
                 </div>
                 <div class="content">
-                    <div class="stat-card">
-                        <div>
-                            <div class="label">{texts['active_bookings']}</div>
-                            <div class="sub-text">{texts['per_week']}</div>
-                        </div>
-                        <div class="value">{active_count}</div>
+                    <div class="stat-card" style="display: block; width: 100%;">
+                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="vertical-align: top;">
+                                    <div class="label">{texts['active_bookings']}</div>
+                                    <div class="sub-text">{texts['per_week']}</div>
+                                </td>
+                                <td style="vertical-align: middle; text-align: right; width: 100px;">
+                                    <div class="value">{active_count}</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="stat-card">
-                        <div>
-                            <div class="label">{texts['active_sum']}</div>
-                            <div class="sub-text">{texts['per_week']}</div>
-                        </div>
-                        <div class="value">{active_sum:,.0f} {currency}</div>
+                    <div class="stat-card" style="display: block; width: 100%;">
+                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="vertical-align: top;">
+                                    <div class="label">{texts['active_sum']}</div>
+                                    <div class="sub-text">{texts['per_week']}</div>
+                                </td>
+                                <td style="vertical-align: middle; text-align: right; width: 120px;">
+                                    <div class="value">{active_sum:,.0f} {currency}</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="stat-card" style="margin-top: 10px; border-top: 2px solid #000; padding-top: 20px;">
-                        <div>
-                            <div class="label" style="font-weight: bold; color: #000;">{texts['completed_count']}</div>
-                            <div class="sub-text">{texts['per_week']}</div>
-                        </div>
-                        <div class="value" style="color: #10b981;">{completed_count}</div>
+
+                    <div class="stat-card" style="margin-top: 15px; border-top: 2px solid #000; padding-top: 25px; display: block; width: 100%;">
+                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="vertical-align: top;">
+                                    <div class="label" style="font-weight: bold; color: #000;">{texts['completed_count']}</div>
+                                    <div class="sub-text">{texts['per_week']}</div>
+                                </td>
+                                <td style="vertical-align: middle; text-align: right; width: 100px;">
+                                    <div class="value" style="color: #10b981;">{completed_count}</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="stat-card">
-                        <div>
-                            <div class="label" style="font-weight: bold; color: #000;">{texts['revenue']}</div>
-                            <div class="sub-text">{texts['per_week']}</div>
-                        </div>
-                        <div class="value" style="color: #10b981;">{completed_sum:,.0f} {currency}</div>
+                    <div class="stat-card" style="display: block; width: 100%;">
+                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="vertical-align: top;">
+                                    <div class="label" style="font-weight: bold; color: #000;">{texts['revenue']}</div>
+                                    <div class="sub-text">{texts['per_week']}</div>
+                                </td>
+                                <td style="vertical-align: middle; text-align: right; width: 120px;">
+                                    <div class="value" style="color: #10b981;">{completed_sum:,.0f} {currency}</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="stat-card" style="margin-top: 10px;">
-                        <div>
-                            <div class="label">{texts['failed_count']}</div>
-                            <div class="sub-text">{texts['per_week']}</div>
-                        </div>
-                        <div class="value" style="color: #ef4444;">{failed_count}</div>
+
+                    <div class="stat-card" style="margin-top: 15px; display: block; width: 100%;">
+                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="vertical-align: top;">
+                                    <div class="label">{texts['failed_count']}</div>
+                                    <div class="sub-text">{texts['per_week']}</div>
+                                </td>
+                                <td style="vertical-align: middle; text-align: right; width: 100px;">
+                                    <div class="value" style="color: #ef4444;">{failed_count}</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="stat-card">
-                        <div>
-                            <div class="label">{texts['lost_revenue']}</div>
-                            <div class="sub-text">{texts['per_week']}</div>
-                        </div>
-                        <div class="value" style="color: #ef4444;">{failed_sum:,.0f} {currency}</div>
+                    <div class="stat-card" style="display: block; width: 100%;">
+                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="vertical-align: top;">
+                                    <div class="label">{texts['lost_revenue']}</div>
+                                    <div class="sub-text">{texts['per_week']}</div>
+                                </td>
+                                <td style="vertical-align: middle; text-align: right; width: 120px;">
+                                    <div class="value" style="color: #ef4444;">{failed_sum:,.0f} {currency}</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="stat-card" style="margin-top: 20px; background: #fdf2f8; padding: 15px; border-radius: 8px; border: none;">
-                        <div>
-                            <div class="label">{texts['new_bookings']}</div>
-                            <div class="sub-text">{texts['per_week']}</div>
-                        </div>
-                        <div class="value" style="color: #db2777;">{new_bookings_count}</div>
+
+                    <div class="stat-card" style="margin-top: 25px; background: #fdf2f8; padding: 20px; border-radius: 8px; border: none; display: block; width: 100%;">
+                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="vertical-align: top;">
+                                    <div class="label" style="color: #db2777;">{texts['new_bookings']}</div>
+                                    <div class="sub-text">{texts['per_week']}</div>
+                                </td>
+                                <td style="vertical-align: middle; text-align: right; width: 100px;">
+                                    <div class="value" style="color: #db2777;">{new_bookings_count}</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <div class="stat-card" style="background: #fdf2f8; padding: 15px; margin-top: 10px; border-radius: 8px; border: none;">
-                        <div>
-                            <div class="label">{texts['new_clients']}</div>
-                            <div class="sub-text">{texts['per_week']}</div>
-                        </div>
-                        <div class="value" style="color: #db2777;">{new_clients_count}</div>
+                    <div class="stat-card" style="background: #fdf2f8; padding: 20px; margin-top: 15px; border-radius: 8px; border: none; display: block; width: 100%;">
+                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="vertical-align: top;">
+                                    <div class="label" style="color: #db2777;">{texts['new_clients']}</div>
+                                    <div class="sub-text">{texts['per_week']}</div>
+                                </td>
+                                <td style="vertical-align: middle; text-align: right; width: 100px;">
+                                    <div class="value" style="color: #db2777;">{new_clients_count}</div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
                 <div class="footer">

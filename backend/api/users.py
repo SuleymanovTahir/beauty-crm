@@ -10,10 +10,12 @@ from db import get_all_users, delete_user, log_activity
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.utils import require_auth, sanitize_url, map_image_path, hash_password
+from utils.permissions import require_permission
 from utils.logger import log_error
 from core.auth import get_current_user_or_redirect as get_current_user
 import psycopg2
 from utils.cache import cache
+from utils.language_utils import get_localized_name
 
 router = APIRouter(tags=["Users"])
 
@@ -63,14 +65,14 @@ async def get_current_user_api(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/users")
+@require_permission("users_create")
 async def create_user_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Создать нового пользователя (для admin и director)"""
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    """Создать нового пользователя"""
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     data = await request.json()
 
@@ -183,7 +185,7 @@ async def get_user_by_id(
         user_data = {
             "id": row[0],
             "username": row[1],
-            "full_name": row[2],
+            "full_name": get_localized_name(row[0], row[2], language),
             "email": row[3],
             "role": row[4],
             "position": row[5],
@@ -207,18 +209,17 @@ async def get_user_by_id(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.get("/users")
+@require_permission("users_view")
 async def get_users(
     language: str = Query('ru', description="Language code"),
-    current_user: dict = Depends(get_current_user)
+    session_token: Optional[str] = Cookie(None)
 ):
     """Получить всех пользователей"""
-    if not current_user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
-        
-    # RBAC: Only staff can see all users
-    if current_user["role"] == "client":
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-        
+    # Token validation handled by decorator
+    # But we need current_user for logic
+    from utils.utils import get_current_user_from_token
+    current_user = get_current_user_from_token(session_token)
+
     try:
         conn = get_db_connection()
         c = conn.cursor()
@@ -250,7 +251,7 @@ async def get_users(
             user_data = {
                 "id": row[0],
                 "username": row[1],
-                "full_name": row[2],
+                "full_name": get_localized_name(row[0], row[2], language),
                 "email": row[3],
                 "role": row[4],
                 "position": row[5],
@@ -302,14 +303,14 @@ async def get_users(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/users/{user_id}/approve")
+@require_permission("users_edit")
 async def approve_user(
     user_id: int,
     session_token: Optional[str] = Cookie(None)
 ):
     """Активировать пользователя"""
-    user = require_auth(session_token)
-    if not user or user["role"] != "admin":
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     conn = get_db_connection()
     c = conn.cursor()
@@ -333,14 +334,14 @@ async def approve_user(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/users/{user_id}/reject")
+@require_permission("users_edit")
 async def reject_user(
     user_id: int,
     session_token: Optional[str] = Cookie(None)
 ):
     """Отклонить регистрацию пользователя"""
-    user = require_auth(session_token)
-    if not user or user["role"] != "admin":
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     conn = get_db_connection()
     c = conn.cursor()
@@ -364,15 +365,15 @@ async def reject_user(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/users/{user_id}/toggle-active")
+@require_permission("users_edit")
 async def toggle_user_active(
     user_id: int,
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Заблокировать/разблокировать пользователя (без удаления данных)"""
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    """Заблокировать/разблокировать пользователя"""
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     if user["id"] == user_id:
         return JSONResponse({"error": "Нельзя заблокировать самого себя"}, status_code=400)
@@ -416,6 +417,7 @@ async def toggle_user_active(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/users/{user_id}/delete")
+@require_permission("users_delete")
 async def delete_user_api(
     user_id: int,
     request: Request,
@@ -424,10 +426,9 @@ async def delete_user_api(
     """Удалить пользователя (Soft Delete)"""
     from utils.soft_delete import soft_delete_user
     from utils.audit import log_audit
+    from utils.utils import get_current_user_from_token
 
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    user = get_current_user_from_token(session_token)
 
     if user["id"] == user_id:
         return JSONResponse({"error": "Нельзя удалить самого себя"}, status_code=400)
@@ -476,15 +477,15 @@ async def delete_user_api(
 # После строки 286 (после функции update_user_profile)
 
 @router.post("/users/{user_id}/role")
+@require_permission("roles_edit")
 async def update_user_role(
     user_id: int,
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Изменить роль пользователя"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    from utils.utils import get_current_user_from_token
+    user = get_current_user_from_token(session_token)
     
     # Проверяем что пользователь может управлять ролями
     from core.config import ROLES, can_manage_role

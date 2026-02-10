@@ -84,7 +84,7 @@ def verify_user(username: str, password: str) -> Optional[Dict]:
     c = conn.cursor()
 
     # Сначала проверяем существует ли пользователь вообще (case-insensitive)
-    c.execute("""SELECT id, username, full_name, email, role, employee_id, phone, password_hash, is_active
+    c.execute("""SELECT id, username, full_name, email, role, employee_id, phone, password_hash, is_active, secondary_role
                  FROM users
                  WHERE LOWER(username) = LOWER(%s)""",
               (username,))
@@ -133,7 +133,8 @@ def verify_user(username: str, password: str) -> Optional[Dict]:
             "email": user_row[3],
             "role": user_row[4],
             "employee_id": user_row[5],
-            "phone": user_row[6]
+            "phone": user_row[6],
+            "secondary_role": user_row[9]
         }
     return None
 
@@ -231,7 +232,7 @@ def get_user_by_session(session_token: str) -> Optional[Dict]:
         now = datetime.now().isoformat()
         
         # Query with proper index usage (idx_sessions_token_expires covers this)
-        c.execute("""SELECT u.id, u.username, u.full_name, u.email, u.role, u.employee_id, u.phone
+        c.execute("""SELECT u.id, u.username, u.full_name, u.email, u.role, u.employee_id, u.phone, u.secondary_role
                      FROM users u
                      INNER JOIN sessions s ON u.id = s.user_id
                      WHERE s.session_token = %s 
@@ -250,7 +251,8 @@ def get_user_by_session(session_token: str) -> Optional[Dict]:
                 "email": user[3],
                 "role": user[4],
                 "employee_id": user[5],
-                "phone": user[6]
+                "phone": user[6],
+                "secondary_role": user[7]
             }
             
             # Cache in Redis (if available)

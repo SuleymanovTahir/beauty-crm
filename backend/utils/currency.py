@@ -32,10 +32,9 @@ def get_salon_currency() -> str:
         pass
     
     # Fallback to env or default
-    import os
-    default = os.getenv('SALON_CURRENCY', 'AED')
-    _cached_currency = default
-    return default
+    from core.config import SALON_CURRENCY_DEFAULT
+    _cached_currency = SALON_CURRENCY_DEFAULT
+    return SALON_CURRENCY_DEFAULT
 
 def clear_currency_cache():
     """Очистить кеш валюты (вызывать при обновлении настроек)"""

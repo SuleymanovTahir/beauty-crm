@@ -70,6 +70,7 @@ from api.menu_settings import router as menu_settings_router
 from api.service_change_requests import router as service_change_requests_router
 from api.positions import router as positions_router
 from api.products import router as products_router
+from api.promo_codes import router as promo_codes_router
 from api.subscriptions import router as subscriptions_router
 from api.broadcasts import router as broadcasts_router
 from api.trash import router as trash_router
@@ -182,7 +183,11 @@ async def lifespan(app: FastAPI):
         start_task_checker()
         start_user_status_checker()
         
-        cron = AsyncIOScheduler(job_defaults={'misfire_grace_time': 3600})
+        from apscheduler.util import undefined
+        cron = AsyncIOScheduler(
+            job_defaults={'misfire_grace_time': 3600},
+            timezone='Asia/Dubai'
+        )
         
         # Импорт статических задач
         from services.reminder_service import check_and_send_reminders
@@ -325,6 +330,7 @@ app.include_router(menu_settings_router, prefix="/api")
 app.include_router(service_change_requests_router, prefix="/api")
 app.include_router(positions_router, prefix="/api")
 app.include_router(products_router, prefix="/api")
+app.include_router(promo_codes_router, prefix="/api")
 app.include_router(subscriptions_router, prefix="/api")
 app.include_router(broadcasts_router, prefix="/api")
 app.include_router(trash_router, prefix="/api")

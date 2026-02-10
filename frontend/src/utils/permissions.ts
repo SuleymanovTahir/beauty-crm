@@ -45,6 +45,7 @@ export const ROLES: Record<string, Role> = {
       'clients_create',
       'clients_edit',
       'clients_delete',
+      'clients_export',
       'bookings_view',
       'bookings_create',
       'bookings_edit',
@@ -58,7 +59,11 @@ export const ROLES: Record<string, Role> = {
       'staff_chat_own',
       'calendar_view_all',
       'bot_settings_view',
+      'settings_view',
+      'settings_edit_branding',
       'broadcasts_send',
+      'roles_view',
+      'roles_edit',
     ],
     can_manage_roles: ['manager', 'sales', 'marketer', 'employee'],
     hierarchy_level: 80,
@@ -87,11 +92,13 @@ export const ROLES: Record<string, Role> = {
       'clients_view_limited',
       'analytics_view_stats_only',
       'staff_chat_own',
-      'calendar_view_all',           // Полный доступ к календарю (для просмотра и записи)
+      'calendar_view_all',
       'bot_settings_view',
-      'bookings_create',             // Право создавать записи
-      'bookings_view',               // Право просматривать записи
-      'telephony_access',            // Доступ к телефонии для звонков
+      'bookings_create',
+      'bookings_view',
+      'telephony_access',
+      'services_view',
+      'broadcasts_send',
     ],
     can_manage_roles: [],
     hierarchy_level: 40,
@@ -102,6 +109,9 @@ export const ROLES: Record<string, Role> = {
       'analytics_view_anonymized',
       'clients_view_stats_only',
       'staff_chat_own',
+      'broadcasts_send',
+      'services_view',
+      'settings_edit_loyalty',
     ],
     can_manage_roles: [],
     hierarchy_level: 30,
@@ -140,17 +150,27 @@ export class RoleHierarchy {
    * - Админ может управлять только ролями из своего списка (НЕ director)
    * - Другие роли не могут управлять никем
    */
-  static canManageRole(managerRole: string, targetRole: string): boolean {
+  static canManageRole(managerRole: string, targetRole: string, secondaryRole?: string): boolean {
     // Директор может управлять всеми (включая других директоров)
-    if (managerRole === 'director') {
+    if (managerRole === 'director' || secondaryRole === 'director') {
       return true;
     }
 
-    // Получаем список ролей, которыми может управлять manager
+    // Проверяем основную роль
     const managerData = ROLES[managerRole];
-    if (!managerData) return false;
+    if (managerData && managerData.can_manage_roles.includes(targetRole)) {
+      return true;
+    }
 
-    return managerData.can_manage_roles.includes(targetRole);
+    // Проверяем вторичную роль
+    if (secondaryRole) {
+      const secData = ROLES[secondaryRole];
+      if (secData && secData.can_manage_roles.includes(targetRole)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -181,15 +201,29 @@ export class RoleHierarchy {
   /**
    * Проверить, есть ли у роли конкретное право
    */
-  static hasPermission(role: string, permission: string): boolean {
-    const roleData = ROLES[role];
-    if (!roleData) return false;
-
-    if (roleData.permissions === '*') {
+  static hasPermission(role: string, permission: string, secondaryRole?: string): boolean {
+    // Директор всегда имеет доступ
+    if (role === 'director' || secondaryRole === 'director') {
       return true;
     }
 
-    return (roleData.permissions as string[]).includes(permission);
+    // Проверка основной роли
+    const roleData = ROLES[role];
+    if (roleData) {
+      if (roleData.permissions === '*') return true;
+      if ((roleData.permissions as string[]).includes(permission)) return true;
+    }
+
+    // Проверка вторичной роли
+    if (secondaryRole) {
+      const secData = ROLES[secondaryRole];
+      if (secData) {
+        if (secData.permissions === '*') return true;
+        if ((secData.permissions as string[]).includes(permission)) return true;
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -250,84 +284,74 @@ export class RoleHierarchy {
 export class PermissionChecker {
   // === ПОЛЬЗОВАТЕЛИ ===
 
-  static canViewAllUsers(role: string): boolean {
-    return ['director', 'admin'].includes(role);
+  static canViewAllUsers(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'users_view', secondaryRole);
   }
 
-  static canCreateUsers(role: string): boolean {
-    return (
-      ['director', 'admin'].includes(role) ||
-      RoleHierarchy.hasPermission(role, 'users_create')
-    );
+  static canCreateUsers(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'users_create', secondaryRole);
   }
 
-  static canEditUsers(role: string): boolean {
-    return (
-      ['director', 'admin'].includes(role) ||
-      RoleHierarchy.hasPermission(role, 'users_edit')
-    );
+  static canEditUsers(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'users_edit', secondaryRole);
   }
 
-  static canDeleteUsers(role: string): boolean {
-    return (
-      ['director', 'admin'].includes(role) ||
-      RoleHierarchy.hasPermission(role, 'users_delete')
-    );
+  static canDeleteUsers(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'users_delete', secondaryRole);
   }
 
-  static canChangeUserRole(assignerRole: string, targetRole: string): boolean {
-    return RoleHierarchy.canManageRole(assignerRole, targetRole);
+  static canChangeUserRole(assignerRole: string, targetRole: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.canManageRole(assignerRole, targetRole, secondaryRole);
   }
 
   // === КЛИЕНТЫ ===
 
-  static canViewAllClients(role: string): boolean {
-    return RoleHierarchy.hasPermission(role, 'clients_view');
+  static canViewAllClients(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'clients_view', secondaryRole);
   }
 
-  static canViewClientContacts(role: string): boolean {
-    // Только director, admin, manager имеют полный доступ к контактам
-    return ['director', 'admin', 'manager'].includes(role);
+  static canViewClientContacts(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'clients_view', secondaryRole);
   }
 
-  static canCreateClients(role: string): boolean {
-    return RoleHierarchy.hasPermission(role, 'clients_create');
+  static canCreateClients(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'clients_create', secondaryRole);
   }
 
-  static canEditClients(role: string): boolean {
-    return RoleHierarchy.hasPermission(role, 'clients_edit');
+  static canEditClients(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'clients_edit', secondaryRole);
   }
 
-  static canDeleteClients(role: string): boolean {
-    return (
-      role === 'director' || RoleHierarchy.hasPermission(role, 'clients_delete')
-    );
+  static canDeleteClients(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'clients_delete', secondaryRole);
+  }
+
+  static canExportClients(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'clients_export', secondaryRole);
   }
 
   // === ЗАПИСИ ===
 
-  static canViewAllBookings(role: string): boolean {
-    return RoleHierarchy.hasPermission(role, 'bookings_view');
+  static canViewAllBookings(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'bookings_view', secondaryRole);
   }
 
-  static canCreateBookings(role: string): boolean {
-    return RoleHierarchy.hasPermission(role, 'bookings_create');
+  static canCreateBookings(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'bookings_create', secondaryRole);
   }
 
-  static canEditBookings(role: string): boolean {
-    return RoleHierarchy.hasPermission(role, 'bookings_edit');
+  static canEditBookings(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'bookings_edit', secondaryRole);
   }
 
-  static canDeleteBookings(role: string): boolean {
-    return (
-      role === 'director' || RoleHierarchy.hasPermission(role, 'bookings_delete')
-    );
+  static canDeleteBookings(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'bookings_delete', secondaryRole);
   }
 
   // === КАЛЕНДАРЬ ===
 
-  static canViewAllCalendars(role: string): boolean {
-    return RoleHierarchy.hasPermission(role, 'calendar_view_all');
+  static canViewAllCalendars(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'calendar_view_all', secondaryRole);
   }
 
   // === АНАЛИТИКА ===
@@ -337,14 +361,17 @@ export class PermissionChecker {
    * 
    * ВАЖНО: Это соответствует backend/api/analytics.py ANALYTICS_ROLES
    */
-  static canViewAnalytics(role: string): boolean {
-    // Только admin, director, manager имеют доступ к финансовой аналитике
-    return ['admin', 'director', 'manager'].includes(role);
+  static canViewAnalytics(role: string, secondaryRole?: string): boolean {
+    // Включаем проверку всех типов доступа к аналитике
+    return (
+      RoleHierarchy.hasPermission(role, 'analytics_view', secondaryRole) ||
+      RoleHierarchy.hasPermission(role, 'analytics_view_anonymized', secondaryRole) ||
+      RoleHierarchy.hasPermission(role, 'analytics_view_stats_only', secondaryRole)
+    );
   }
 
-  static canViewFullAnalytics(role: string): boolean {
-    // Только director видит полную аналитику без ограничений
-    return role === 'director';
+  static canViewFullAnalytics(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'analytics_view', secondaryRole);
   }
 
   /**
@@ -354,68 +381,92 @@ export class PermissionChecker {
     return this.canViewAnalytics(role);
   }
 
-  static canExportData(role: string): boolean {
-    return ['director', 'admin'].includes(role);
+  static canExportData(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'analytics_view', secondaryRole);
   }
 
-  static canViewFinancials(role: string): boolean {
-    return ['director', 'admin', 'manager'].includes(role);
+  static canViewFinancials(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'settings_edit_finance', secondaryRole) ||
+      RoleHierarchy.hasPermission(role, 'analytics_view', secondaryRole);
   }
 
   // === УСЛУГИ ===
 
-  static canViewServices(role: string): boolean {
-    return RoleHierarchy.hasPermission(role, 'services_view');
+  static canViewServices(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'services_view', secondaryRole);
   }
 
-  static canEditServices(role: string): boolean {
-    return (
-      ['director', 'admin'].includes(role) ||
-      RoleHierarchy.hasPermission(role, 'services_edit')
-    );
+  static canEditServices(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'services_edit', secondaryRole);
   }
 
   // === НАСТРОЙКИ ===
 
-  static canViewSettings(role: string): boolean {
-    return ['director', 'admin'].includes(role);
+  static canViewSettings(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'settings_view', secondaryRole);
   }
 
-  static canEditSettings(role: string): boolean {
-    return role === 'director';
+  static canEditSettings(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'settings_edit', secondaryRole);
   }
 
-  static canViewBotSettings(role: string): boolean {
-    return (
-      ['director', 'admin', 'sales'].includes(role) ||
-      RoleHierarchy.hasPermission(role, 'bot_settings_view')
-    );
+  static canEditFinancialSettings(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'settings_edit_finance', secondaryRole);
+  }
+
+  static canEditBranding(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'settings_edit_branding', secondaryRole);
+  }
+
+  static canEditIntegrations(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'settings_edit_integrations', secondaryRole);
+  }
+
+  static canEditLoyalty(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'settings_edit_loyalty', secondaryRole);
+  }
+
+  static canEditSchedule(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'settings_edit_schedule', secondaryRole);
+  }
+
+  static canViewBotSettings(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'bot_settings_view', secondaryRole);
   }
 
   // === РАССЫЛКИ ===
 
-  static canSendBroadcasts(role: string): boolean {
-    return ['director', 'admin', 'sales'].includes(role);
+  static canSendBroadcasts(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'broadcasts_send', secondaryRole);
   }
 
   // === INSTAGRAM ===
 
-  static canViewInstagramChat(role: string): boolean {
-    return RoleHierarchy.hasPermission(role, 'instagram_chat_view');
+  static canViewInstagramChat(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'instagram_chat_view', secondaryRole);
   }
 
   // === ЗАДАЧИ ===
 
-  static canViewTasks(role: string): boolean {
-    return ['director', 'admin', 'manager'].includes(role) ||
-      RoleHierarchy.hasPermission(role, 'tasks_view') ||
-      RoleHierarchy.hasPermission(role, 'tasks_view_own');
+  static canViewTasks(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'tasks_view', secondaryRole) ||
+      RoleHierarchy.hasPermission(role, 'tasks_view_own', secondaryRole);
   }
 
   // === ВНУТРЕННЯЯ СВЯЗЬ ===
 
-  static canUseStaffChat(role: string): boolean {
-    return RoleHierarchy.hasPermission(role, 'staff_chat_own');
+  static canUseStaffChat(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'staff_chat_own', secondaryRole);
+  }
+
+  // === РОЛИ ===
+
+  static canViewRoles(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'roles_view', secondaryRole);
+  }
+
+  static canEditRoles(role: string, secondaryRole?: string): boolean {
+    return RoleHierarchy.hasPermission(role, 'roles_edit', secondaryRole);
   }
 }
 
@@ -432,60 +483,72 @@ export class PermissionChecker {
  * }
  * ```
  */
-export function usePermissions(role: string) {
+export function usePermissions(role: string, secondaryRole?: string) {
   return {
     // Пользователи
-    canViewAllUsers: PermissionChecker.canViewAllUsers(role),
-    canCreateUsers: PermissionChecker.canCreateUsers(role),
-    canEditUsers: PermissionChecker.canEditUsers(role),
-    canDeleteUsers: PermissionChecker.canDeleteUsers(role),
+    canViewAllUsers: PermissionChecker.canViewAllUsers(role, secondaryRole),
+    canCreateUsers: PermissionChecker.canCreateUsers(role, secondaryRole),
+    canEditUsers: PermissionChecker.canEditUsers(role, secondaryRole),
+    canDeleteUsers: PermissionChecker.canDeleteUsers(role, secondaryRole),
 
     // Клиенты
-    canViewAllClients: PermissionChecker.canViewAllClients(role),
-    canViewClientContacts: PermissionChecker.canViewClientContacts(role),
-    canCreateClients: PermissionChecker.canCreateClients(role),
-    canEditClients: PermissionChecker.canEditClients(role),
-    canDeleteClients: PermissionChecker.canDeleteClients(role),
+    canViewAllClients: PermissionChecker.canViewAllClients(role, secondaryRole),
+    canViewClientContacts: PermissionChecker.canViewClientContacts(role, secondaryRole),
+    canCreateClients: PermissionChecker.canCreateClients(role, secondaryRole),
+    canEditClients: PermissionChecker.canEditClients(role, secondaryRole),
+    canDeleteClients: PermissionChecker.canDeleteClients(role, secondaryRole),
+    canExportClients: PermissionChecker.canExportClients(role, secondaryRole),
 
     // Записи
-    canViewAllBookings: PermissionChecker.canViewAllBookings(role),
-    canCreateBookings: PermissionChecker.canCreateBookings(role),
-    canEditBookings: PermissionChecker.canEditBookings(role),
-    canDeleteBookings: PermissionChecker.canDeleteBookings(role),
+    canViewAllBookings: PermissionChecker.canViewAllBookings(role, secondaryRole),
+    canCreateBookings: PermissionChecker.canCreateBookings(role, secondaryRole),
+    canEditBookings: PermissionChecker.canEditBookings(role, secondaryRole),
+    canDeleteBookings: PermissionChecker.canDeleteBookings(role, secondaryRole),
 
     // Календарь
-    canViewAllCalendars: PermissionChecker.canViewAllCalendars(role),
+    canViewAllCalendars: PermissionChecker.canViewAllCalendars(role, secondaryRole),
 
     // Аналитика
-    canViewAnalytics: PermissionChecker.canViewAnalytics(role),
-    canViewFullAnalytics: PermissionChecker.canViewFullAnalytics(role),
-    canExportData: PermissionChecker.canExportData(role),
+    canViewAnalytics: PermissionChecker.canViewAnalytics(role, secondaryRole),
+    canViewFullAnalytics: PermissionChecker.canViewFullAnalytics(role, secondaryRole),
+    canExportData: PermissionChecker.canExportData(role, secondaryRole),
 
     // Услуги
-    canViewServices: PermissionChecker.canViewServices(role),
-    canEditServices: PermissionChecker.canEditServices(role),
+    canViewServices: PermissionChecker.canViewServices(role, secondaryRole),
+    canEditServices: PermissionChecker.canEditServices(role, secondaryRole),
 
     // Настройки
-    canViewSettings: PermissionChecker.canViewSettings(role),
-    canEditSettings: PermissionChecker.canEditSettings(role),
-    canViewBotSettings: PermissionChecker.canViewBotSettings(role),
+    canViewSettings: PermissionChecker.canViewSettings(role, secondaryRole),
+    canEditSettings: PermissionChecker.canEditSettings(role, secondaryRole),
+    canEditFinancialSettings: PermissionChecker.canEditFinancialSettings(role, secondaryRole),
+    canEditBranding: PermissionChecker.canEditBranding(role, secondaryRole),
+    canEditIntegrations: PermissionChecker.canEditIntegrations(role, secondaryRole),
+    canEditLoyalty: PermissionChecker.canEditLoyalty(role, secondaryRole),
+    canEditSchedule: PermissionChecker.canEditSchedule(role, secondaryRole),
+    canViewBotSettings: PermissionChecker.canViewBotSettings(role, secondaryRole),
 
     // Рассылки
-    canSendBroadcasts: PermissionChecker.canSendBroadcasts(role),
+    canSendBroadcasts: PermissionChecker.canSendBroadcasts(role, secondaryRole),
 
     // Instagram
-    canViewInstagramChat: PermissionChecker.canViewInstagramChat(role),
+    canViewInstagramChat: PermissionChecker.canViewInstagramChat(role, secondaryRole),
 
     // Задачи
-    canViewTasks: PermissionChecker.canViewTasks(role),
+    canViewTasks: PermissionChecker.canViewTasks(role, secondaryRole),
 
     // Внутренняя связь
-    canUseStaffChat: PermissionChecker.canUseStaffChat(role),
+    canUseStaffChat: PermissionChecker.canUseStaffChat(role, secondaryRole),
 
     // Финансы
-    canViewFinancials: PermissionChecker.canViewFinancials(role),
+    canViewFinancials: PermissionChecker.canViewFinancials(role, secondaryRole),
+
+    // Роли
+    canViewRoles: PermissionChecker.canViewRoles(role, secondaryRole),
+    canEditRoles: PermissionChecker.canEditRoles(role, secondaryRole),
 
     // Дополнительно
-    roleLevel: ROLES[role]?.hierarchy_level || 0,
+    role: role,
+    secondaryRole: secondaryRole,
+    roleLevel: Math.max(ROLES[role]?.hierarchy_level || 0, secondaryRole ? ROLES[secondaryRole]?.hierarchy_level || 0 : 0),
   };
 }

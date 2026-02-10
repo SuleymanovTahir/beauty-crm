@@ -418,7 +418,7 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
             stale_age = time_module.time() - stale_time
         
         # Execute DB query
-        count = get_total_unread()
+        count = get_total_unread(user["id"])
         db_duration = (time_module.time() - db_start) * 1000
         log_info(f"⏱️ [unread-count] DB query took {db_duration:.2f}ms, count: {count}", "chat")
         

@@ -7,24 +7,33 @@ from typing import List, Optional
 
 from datetime import datetime
 import asyncio
+import json
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.utils import get_current_user
 from utils.logger import log_info, log_error
+from utils.language_utils import get_localized_name
 
 router = APIRouter()
 
 class BroadcastRequest(BaseModel):
     """Модель запроса на отправку рассылки"""
     subscription_type: str  # promotions, news, appointments, etc.
-    channels: List[str]  # ["email", "telegram", "instagram"]
+    channels: List[str]  # ["email", "telegram", "instagram", "notification"]
     subject: str
     message: str
-    target_role: Optional[str] = None  # Если None - все пользователи
-    user_ids: Optional[List[int]] = None  # Конкретные ID пользователей для отправки
-    force_send: bool = False  # Если true, игнорировать статус подписки (но проверять наличие контактов)
-    attachment_urls: Optional[List[str]] = []  # URLs прикрепленных файлов
+    target_role: Optional[str] = None
+    user_ids: Optional[List[int]] = None
+    additional_emails: Optional[List[str]] = []
+    manual_contacts: Optional[List[dict]] = []  # [{name, email, telegram, instagram, whatsapp}]
+    force_send: bool = False
+    attachment_urls: Optional[List[str]] = []
+    template_name: Optional[str] = None
+    template_b_name: Optional[str] = None # For A/B testing
+    split_ratio: Optional[float] = 0.5 # 0.0 to 1.0 (portion for template_b)
+    scheduled_at: Optional[str] = None  # ISO format string
+    is_test: bool = False  # If true, only send to current user
 
 class BroadcastPreviewResponse(BaseModel):
     """Предпросмотр получателей рассылки"""
@@ -32,302 +41,133 @@ class BroadcastPreviewResponse(BaseModel):
     by_channel: dict
     users_sample: List[dict]
 
+@router.delete("/broadcasts/history/clear")
+async def clear_broadcast_history(
+    period: str = "all", # last_hour, today, 3_days, week, month, all
+    custom_start: Optional[str] = None,
+    custom_end: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """Очистить историю рассылок за период"""
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        query = "DELETE FROM broadcast_history"
+        params = []
+
+        if period != "all":
+            if period == "last_hour":
+                query += " WHERE created_at >= NOW() - INTERVAL '1 hour'"
+            elif period == "today":
+                query += " WHERE created_at >= CURRENT_DATE"
+            elif period == "3_days":
+                query += " WHERE created_at >= NOW() - INTERVAL '3 days'"
+            elif period == "week":
+                query += " WHERE created_at >= NOW() - INTERVAL '7 days'"
+            elif period == "month":
+                query += " WHERE created_at >= NOW() - INTERVAL '30 days'"
+            elif period == "custom" and custom_start:
+                query += " WHERE created_at >= %s"
+                params.append(custom_start)
+                if custom_end:
+                    query += " AND created_at <= %s"
+                    params.append(custom_end)
+
+        c.execute(query, params)
+        count = c.rowcount
+        conn.commit()
+        conn.close()
+
+        log_info(f"Администратор {current_user['username']} очистил историю рассылок ({count} записей, период: {period})", "broadcasts")
+        return {"success": True, "count": count}
+    except Exception as e:
+        log_error(f"Error clearing history: {e}", "broadcasts")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/broadcasts/preview", response_model=BroadcastPreviewResponse)
 async def preview_broadcast(
     broadcast: BroadcastRequest,
     current_user: dict = Depends(get_current_user)
 ):
     """
-    Предпросмотр: сколько пользователей получит рассылку по каждому каналу
+    Предпросмотр: сколько пользователей и клиентов получит рассылку
     """
-    # Проверка роли
     if current_user.get('role') not in ['admin', 'director']:
-        raise HTTPException(status_code=403, detail="Доступ запрещен. Требуется роль admin или director")
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
 
     try:
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Базовый запрос для получения подписчиков
-        # Базовый запрос для получения подписчиков
-        query = """
-            SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_id, u.instagram_username as instagram_link, u.role
-            FROM users u
-            LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.subscription_type = %s
-            WHERE u.is_active = TRUE
-        """
-        params = [broadcast.subscription_type]
+        if broadcast.is_test:
+            sample = [{"id": current_user['id'], "username": current_user['username'], "full_name": current_user.get('full_name'), "channel": "test"}]
+            return {"total_users": 1, "by_channel": {"test": 1}, "users_sample": sample}
 
-        if not broadcast.force_send:
-            query += " AND (s.id IS NULL OR s.is_subscribed = TRUE)"
-
-        # Если указаны конкретные пользователи - отправляем только им (игнорируем target_role)
-        if broadcast.user_ids:
-            placeholders = ','.join(['%s'] * len(broadcast.user_ids))
-            query += f" AND u.id IN ({placeholders})"
-            params.extend(broadcast.user_ids)
-        # Иначе используем фильтр по роли
-        elif broadcast.target_role and broadcast.target_role != 'all':
-            query += " AND u.role = %s"
-            params.append(broadcast.target_role)
-
-        c.execute(query, params)
-        all_users = c.fetchall()
-
-        # Подсчитываем получателей по каналам
         by_channel = {"email": 0, "telegram": 0, "instagram": 0, "notification": 0}
-        users_by_channel = {"email": [], "telegram": [], "instagram": [], "notification": []}
+        users_sample = []
 
-        for user in all_users:
-            user_id, username, full_name, email, telegram_chat_id, instagram_link, role = user
+        # 1. FETCH FROM USERS (Staff)
+        if not broadcast.target_role or broadcast.target_role != 'client':
+            query_users = """
+                SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_id, u.instagram_username as instagram_link, u.role
+                FROM users u
+                LEFT JOIN marketing_unsubscriptions s ON u.id = s.user_id AND s.mailing_type = %s
+                WHERE u.is_active = TRUE AND s.id IS NULL
+            """
+            params = [broadcast.subscription_type]
+            
+            if broadcast.user_ids:
+                placeholders = ','.join(['%s'] * len(broadcast.user_ids))
+                query_users += f" AND u.id IN ({placeholders})"
+                params.extend(broadcast.user_ids)
+            elif broadcast.target_role and broadcast.target_role != 'all':
+                query_users += " AND u.role = %s"
+                params.append(broadcast.target_role)
 
-            # Проверяем каналы для этого пользователя
-            c.execute("""
-                SELECT email_enabled, telegram_enabled, instagram_enabled
-                FROM user_subscriptions
-                WHERE user_id = %s AND subscription_type = %s
-            """, (user_id, broadcast.subscription_type))
+            c.execute(query_users, params)
+            for user in c.fetchall():
+                user_id, username, full_name, email, telegram_id, ig_link, role = user
+                for ch in broadcast.channels:
+                    if ch == "email" and email: by_channel["email"] += 1
+                    elif ch == "telegram" and telegram_id: by_channel["telegram"] += 1
+                    elif ch == "instagram" and ig_link: by_channel["instagram"] += 1
+                    elif ch == "notification": by_channel["notification"] += 1
+                if len(users_sample) < 3:
+                    users_sample.append({"id": user_id, "username": username, "full_name": full_name, "type": "staff"})
 
-            channels_data = c.fetchone()
-
-            # Если нет записи о подписке - используем все каналы по умолчанию
-            if not channels_data:
-                email_enabled, telegram_enabled, instagram_enabled = True, True, True
-            else:
-                email_enabled, telegram_enabled, instagram_enabled = channels_data
-
-            user_info = {
-                "id": user_id,
-                "username": username,
-                "full_name": full_name,
-                "role": role
-            }
-
-            # Email
-            if "email" in broadcast.channels and (email_enabled or broadcast.force_send) and email:
-                by_channel["email"] += 1
-                if len(users_by_channel["email"]) < 5:  # Первые 5 для превью
-                    users_by_channel["email"].append({**user_info, "contact": email})
-
-            # Telegram
-            if "telegram" in broadcast.channels and (telegram_enabled or broadcast.force_send) and telegram_chat_id:
-                by_channel["telegram"] += 1
-                if len(users_by_channel["telegram"]) < 5:
-                    users_by_channel["telegram"].append({**user_info, "contact": telegram_chat_id})
-
-            # Instagram
-            if "instagram" in broadcast.channels and (instagram_enabled or broadcast.force_send) and instagram_link:
-                by_channel["instagram"] += 1
-                if len(users_by_channel["instagram"]) < 5:
-                    users_by_channel["instagram"].append({**user_info, "contact": instagram_link})
-
-            # In-app Notification
-            if "notification" in broadcast.channels:
-                by_channel["notification"] += 1
-                if len(users_by_channel["notification"]) < 5:
-                    users_by_channel["notification"].append({**user_info, "contact": "in-app"})
+        # 2. FETCH FROM CLIENTS
+        if not broadcast.target_role or broadcast.target_role in ['all', 'client']:
+            query_clients = """
+                SELECT DISTINCT c.instagram_id, c.name, c.email, c.telegram_id
+                FROM clients c
+                LEFT JOIN marketing_unsubscriptions s ON (c.instagram_id = s.client_id OR c.telegram_id = s.client_id OR c.email = s.email) 
+                     AND s.mailing_type = %s
+                WHERE s.id IS NULL
+            """
+            c.execute(query_clients, (broadcast.subscription_type,))
+            for client in c.fetchall():
+                ig_id, name, email, tg_id = client
+                for ch in broadcast.channels:
+                    if ch == "email" and email: by_channel["email"] += 1
+                    elif ch == "telegram" and tg_id: by_channel["telegram"] += 1
+                    elif ch == "instagram" and ig_id: by_channel["instagram"] += 1
+                if len(users_sample) < 6:
+                    users_sample.append({"id": ig_id, "username": ig_id, "full_name": name, "type": "client"})
 
         conn.close()
-
-        total = sum(by_channel.values())
-        sample = []
-        for channel, users in users_by_channel.items():
-            for user in users[:2]:  # По 2 из каждого канала
-                sample.append({**user, "channel": channel})
-
-        log_info(f"Предпросмотр рассылки: {total} получателей ({by_channel})", "broadcasts")
-
         return {
-            "total_users": total,
+            "total_users": sum(by_channel.values()),
             "by_channel": by_channel,
-            "users_sample": sample[:10]
+            "users_sample": users_sample
         }
 
     except Exception as e:
-        log_error(f"Ошибка предпросмотра рассылки: {e}", "broadcasts")
+        log_error(f"Error in preview: {e}", "broadcasts")
         raise HTTPException(status_code=500, detail=str(e))
-
-async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int):
-    """
-    Асинхронная отправка рассылки
-    """
-    conn = None
-    try:
-        conn = get_db_connection()
-        c = conn.cursor()
-
-        # Получаем список получателей
-        query = """
-            SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_id, u.instagram_username
-            FROM users u
-            LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.subscription_type = %s
-            WHERE u.is_active = TRUE
-        """
-        params = [broadcast.subscription_type]
-
-        if not broadcast.force_send:
-            query += " AND (s.id IS NULL OR s.is_subscribed = TRUE)"
-
-        # Если указаны конкретные пользователи - отправляем только им (игнорируем target_role)
-        if broadcast.user_ids:
-            placeholders = ','.join(['%s'] * len(broadcast.user_ids))
-            query += f" AND u.id IN ({placeholders})"
-            params.extend(broadcast.user_ids)
-        # Иначе используем фильтр по роли
-        elif broadcast.target_role and broadcast.target_role != 'all':
-            query += " AND u.role = %s"
-            params.append(broadcast.target_role)
-
-        c.execute(query, params)
-        all_users = c.fetchall()
-
-        # Fetch salon settings for email footer
-        c.execute("SELECT name, address, phone, email, booking_url FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        salon_settings = {}
-        if row:
-             salon_settings = {
-                 "name": row[0],
-                 "address": row[1],
-                 "phone": row[2],
-                 "email": row[3],
-                 "website": row[4]
-             }
-
-        # Логируем для отладки
-        log_info(f"Найдено {len(all_users)} получателей для рассылки. Query params: {params}", "broadcasts")
-
-        results = {
-            "email": {"sent": 0, "failed": 0},
-            "telegram": {"sent": 0, "failed": 0},
-            "instagram": {"sent": 0, "failed": 0},
-            "notification": {"sent": 0, "failed": 0}
-        }
-        
-        import asyncio # Ensure asyncio is available
-
-        for user in all_users:
-            user_id, username, full_name, email, telegram_id, instagram_username = user
-
-            # Получаем настройки каналов
-            c.execute("""
-                SELECT email_enabled, telegram_enabled, instagram_enabled
-                FROM user_subscriptions
-                WHERE user_id = %s AND subscription_type = %s
-            """, (user_id, broadcast.subscription_type))
-
-            channels_data = c.fetchone()
-
-            # Если нет записи о подписке или force_send - включаем все каналы по умолчанию
-            if not channels_data:
-                if broadcast.force_send:
-                    email_enabled, telegram_enabled, instagram_enabled = True, True, True
-                else:
-                    # По умолчанию все каналы включены если нет явной записи
-                    email_enabled, telegram_enabled, instagram_enabled = True, True, True
-            else:
-                email_enabled, telegram_enabled, instagram_enabled = channels_data
-
-            # In-app notification
-            if "notification" in broadcast.channels:
-                try:
-                    c.execute("""
-                        INSERT INTO unified_communication_log (user_id, medium, trigger_type, title, content, status)
-                        VALUES (%s, 'in_app', 'broadcast', %s, %s, 'sent')
-                    """, (user_id, broadcast.subject, broadcast.message))
-                    results["notification"]["sent"] += 1
-                except Exception as e:
-                    log_error(f"In-app notification error for user {user_id}: {e}", "broadcasts")
-                    results["notification"]["failed"] += 1
-
-            # Email
-            if "email" in broadcast.channels and (email_enabled or broadcast.force_send) and email:
-                try:
-                    from utils.email import send_broadcast_email
-                    unsubscribe_link = f"/unsubscribe?user={user_id}&type={broadcast.subscription_type}&channel=email"
-                    
-                    # Use asyncio.to_thread for non-blocking email sending
-                    await asyncio.to_thread(
-                        send_broadcast_email,
-                        email, 
-                        broadcast.subject, 
-                        broadcast.message, 
-                        full_name, 
-                        unsubscribe_link,
-                        salon_settings,
-                        broadcast.attachment_urls
-                    )
-                    results["email"]["sent"] += 1
-                    # Log to unified log
-                    c.execute("""
-                        INSERT INTO unified_communication_log (user_id, medium, trigger_type, title, content, status)
-                        VALUES (%s, 'email', 'broadcast', %s, %s, 'sent')
-                    """, (user_id, broadcast.subject, broadcast.message))
-                except Exception as e:
-                    log_error(f"Email ошибка для {email}: {e}", "broadcasts")
-                    results["email"]["failed"] += 1
-
-            # Telegram
-            if "telegram" in broadcast.channels and (telegram_enabled or broadcast.force_send) and telegram_id:
-                try:
-                    from bot import get_bot
-                    bot = get_bot()
-                    unsubscribe_text = f"\\n\\n🔕 Отписаться: /unsubscribe_{broadcast.subscription_type}"
-                    # Используем await, так как мы в async функции
-                    await bot.send_message(telegram_id, broadcast.message + unsubscribe_text)
-                    results["telegram"]["sent"] += 1
-                    # Log to unified log
-                    c.execute("""
-                        INSERT INTO unified_communication_log (user_id, medium, trigger_type, title, content, status)
-                        VALUES (%s, 'telegram', 'broadcast', %s, %s, 'sent')
-                    """, (user_id, broadcast.subject, broadcast.message))
-                except Exception as e:
-                    log_error(f"Telegram ошибка для {telegram_id}: {e}", "broadcasts")
-                    results["telegram"]["failed"] += 1
-
-            # Instagram
-            if "instagram" in broadcast.channels and (instagram_enabled or broadcast.force_send) and instagram_username:
-                try:
-                    from integrations.instagram import send_instagram_dm
-                    # Уменьшаем задержку, так как это фоновая задача, но не убираем совсем для безопасности
-                    await asyncio.sleep(2) 
-                    send_instagram_dm(instagram_username, broadcast.message)
-                    results["instagram"]["sent"] += 1
-                    # Log to unified log
-                    c.execute("""
-                        INSERT INTO unified_communication_log (user_id, medium, trigger_type, title, content, status)
-                        VALUES (%s, 'instagram', 'broadcast', %s, %s, 'sent')
-                    """, (user_id, broadcast.subject, broadcast.message))
-                except Exception as e:
-                    log_error(f"Instagram ошибка для {instagram_username}: {e}", "broadcasts")
-                    results["instagram"]["failed"] += 1
-
-        # Сохраняем историю рассылки
-        c.execute("""
-            INSERT INTO broadcast_history
-            (sender_id, subscription_type, channels, subject, message, target_role,
-             total_sent, results, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            sender_id,
-            broadcast.subscription_type,
-            ','.join(broadcast.channels),
-            broadcast.subject,
-            broadcast.message,
-            broadcast.target_role or 'all',
-            sum(r["sent"] for r in results.values()),
-            str(results),
-            datetime.now().isoformat()
-        ))
-
-        conn.commit()
-        log_info(f"Рассылка успешно завершена: {results}", "broadcasts")
-
-    except Exception as e:
-        log_error(f"Критическая ошибка в фоновой рассылке: {e}", "broadcasts")
-    finally:
-        if conn:
-            conn.close()
 
 @router.post("/broadcasts/send")
 async def send_broadcast(
@@ -338,97 +178,174 @@ async def send_broadcast(
     """
     Отправить массовую рассылку (фоновая задача)
     """
-    # Проверка роли
     if current_user.get('role') not in ['admin', 'director']:
-        raise HTTPException(status_code=403, detail="Доступ запрещен. Требуется роль admin или director")
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
 
-    # Добавляем задачу в фон
+    # Add task to background
     background_tasks.add_task(process_broadcast_sending, broadcast, current_user['id'])
 
     return {
         "success": True,
-        "message": "Рассылка запущена в фоновом режиме. Вы будете уведомлены о завершении."
+        "message": "Рассылка запущена" if not broadcast.is_test else "Тестовая рассылка отправлена"
     }
 
-@router.get("/broadcasts/history")
-async def get_broadcast_history(
-    current_user: dict = Depends(get_current_user)
-):
-    """Получить историю рассылок"""
-    # Проверка роли
-    if current_user.get('role') not in ['admin', 'director']:
-        raise HTTPException(status_code=403, detail="Доступ запрещен. Требуется роль admin или director")
-
+async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int):
+    """
+    Асинхронная отправка рассылки через UniversalMessenger (Users + Clients)
+    """
+    from services.universal_messenger import send_universal_message
+    conn = None
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        sent_count = 0
+        failed_count = 0
 
+        # Collect targets
+        targets = [] # List of (id, name, email, tg_id, platform_id, type)
+
+        if broadcast.is_test:
+            c.execute("SELECT id, full_name, email, telegram_chat_id, instagram_username FROM users WHERE id = %s", (sender_id,))
+            row = c.fetchone()
+            if row: targets.append((row[0], row[1], row[2], row[3], row[4], 'staff'))
+        else:
+            # 1. Staff
+            if not broadcast.target_role or broadcast.target_role != 'client':
+                query_users = """
+                    SELECT u.id, u.full_name, u.email, u.telegram_chat_id, u.instagram_username
+                    FROM users u
+                    LEFT JOIN marketing_unsubscriptions s ON u.id = s.user_id AND s.mailing_type = %s
+                    WHERE u.is_active = TRUE AND s.id IS NULL
+                """
+                params = [broadcast.subscription_type]
+                if broadcast.user_ids:
+                    query_users += " AND u.id IN ({})".format(','.join(['%s']*len(broadcast.user_ids)))
+                    params.extend(broadcast.user_ids)
+                elif broadcast.target_role and broadcast.target_role != 'all':
+                    query_users += " AND u.role = %s"
+                    params.append(broadcast.target_role)
+                
+                c.execute(query_users, params)
+                for r in c.fetchall(): targets.append((r[0], r[1], r[2], r[3], r[4], 'staff'))
+
+            # 2. Clients
+            if not broadcast.target_role or broadcast.target_role in ['all', 'client']:
+                query_clients = """
+                    SELECT instagram_id, name, email, telegram_id, instagram_id
+                    FROM clients c
+                    LEFT JOIN marketing_unsubscriptions s ON (
+                        c.instagram_id = s.client_id OR 
+                        c.telegram_id = s.client_id OR 
+                        (c.email IS NOT NULL AND c.email = s.email)
+                    ) AND s.mailing_type = %s
+                    WHERE s.id IS NULL
+                """
+                params = [broadcast.subscription_type]
+
+                # ADD FILTER FOR SPECIFIC CLIENTS
+                if broadcast.user_ids and broadcast.target_role == 'client':
+                    # Filter clients by integer ID if user_ids are provided
+                    placeholders = ','.join(['%s'] * len(broadcast.user_ids))
+                    query_clients += f" AND c.id IN ({placeholders})"
+                    params.extend(broadcast.user_ids)
+
+                c.execute(query_clients, params)
+                for r in c.fetchall(): targets.append((r[0], r[1], r[2], r[3], r[4], 'client'))
+
+        # 3. Handle additional emails (manual entry)
+        if broadcast.additional_emails and 'email' in broadcast.channels:
+            for email in broadcast.additional_emails:
+                if not email or '@' not in email: continue
+                # target_id, name, email, tg, ig, type
+                # Use email as ID for manual
+                targets.append((0, "Anonymous", email.strip(), None, None, 'manual'))
+        
+        # 4. Handle manual contacts (new feature)
+        if broadcast.manual_contacts:
+            for contact in broadcast.manual_contacts:
+                name = contact.get('name', 'Manual Contact')
+                email = contact.get('email')
+                telegram = contact.get('telegram')
+                instagram = contact.get('instagram')
+                whatsapp = contact.get('whatsapp')
+                
+                # Добавляем контакт только если есть хотя бы один канал связи
+                if email or telegram or instagram or whatsapp:
+                    targets.append((0, name, email, telegram, instagram, 'manual'))
+
+        # Sending
+        for target in targets:
+            t_id, t_name, t_email, t_tg, t_ig, t_type = target
+            context = {"name": t_name or "Client", "lang": "ru"}
+
+            for channel in broadcast.channels:
+                recipient = None
+                platform = None
+                
+                if channel == "email" and t_email:
+                    recipient, platform = t_email, "email"
+                    context["unsubscribe_link"] = "/unsubscribe?email={}&type={}&channel=email".format(t_email, broadcast.subscription_type)
+                elif channel == "telegram" and t_tg:
+                    recipient, platform = str(t_tg), "telegram"
+                elif channel == "instagram" and t_ig:
+                    recipient, platform = t_ig, "instagram"
+                elif channel == "notification" and t_type == 'staff':
+                    recipient, platform = str(t_id), "in_app"
+                
+                if not recipient: continue
+
+                res = await send_universal_message(
+                    recipient_id=recipient,
+                    text=broadcast.message,
+                    subject=broadcast.subject,
+                    context=context,
+                    platform=platform,
+                    template_name=broadcast.template_name
+                )
+                if res.get("success"): sent_count += 1
+                else: failed_count += 1
+
+        # Save History
         c.execute("""
-            SELECT id, subscription_type, channels, subject, total_sent, created_at, results
-            FROM broadcast_history
-            ORDER BY created_at DESC
-            LIMIT 50
-        """)
-
-        history = []
-        for row in c.fetchall():
-            history.append({
-                "id": row[0],
-                "subscription_type": row[1],
-                "channels": row[2].split(','),
-                "subject": row[3],
-                "total_sent": row[4],
-                "created_at": row[5],
-                "results": row[6]
-            })
-
-        conn.close()
-
-        return {"history": history}
-
+            INSERT INTO broadcast_history (sender_id, subscription_type, channels, subject, message, total_sent, results)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (sender_id, broadcast.subscription_type, ','.join(broadcast.channels), broadcast.subject, broadcast.message, sent_count, json.dumps({"success": sent_count, "failed": failed_count})))
+        conn.commit()
     except Exception as e:
-        log_error(f"Ошибка получения истории: {e}", "broadcasts")
-        raise HTTPException(status_code=500, detail=str(e))
+        log_error(f"Error in broadcast process: {e}", "broadcasts")
+    finally:
+        if conn: conn.close()
 
 @router.post("/unsubscribe")
 async def unsubscribe_v2(
-    user: int,
     type: str,
-    channel: str
+    channel: str,
+    email: Optional[str] = None,
+    user_id: Optional[int] = None,
+    client_id: Optional[str] = None,
+    reason: Optional[str] = "User requested opt-out"
 ):
-    """Отписаться от конкретного канала рассылки (V2 с query params)"""
+    """Отписаться от рассылки с сохранением причины"""
     try:
-        if channel not in ["email", "telegram", "instagram"]:
-            raise HTTPException(status_code=400, detail="Неверный канал")
-
         conn = get_db_connection()
         c = conn.cursor()
-
-        channel_field = f"{channel}_enabled"
-        c.execute(f"""
-            UPDATE user_subscriptions
-            SET {channel_field} = 0, is_subscribed = CASE WHEN %s = 'promotions' THEN is_subscribed ELSE is_subscribed END, updated_at = %s
-            WHERE user_id = %s AND subscription_type = %s
-        """, (type, datetime.now().isoformat(), user, type))
-
+        c.execute("""
+            INSERT INTO marketing_unsubscriptions (client_id, user_id, email, mailing_type, reason)
+            VALUES (%s, %s, %s, %s, %s)
+            ON CONFLICT DO NOTHING
+        """, (client_id, user_id, email, type, reason))
         conn.commit()
         conn.close()
-
-        log_info(f"Пользователь {user} отписался от {channel} для {type}", "broadcasts")
-
-        return {
-            "success": True,
-            "message": f"Вы успешно отписались от {type} в {channel}"
-        }
-
+        return {"success": True, "message": "Вы успешно отписались"}
     except Exception as e:
-        log_error(f"Ошибка отписки: {e}", "broadcasts")
+        log_error(f"Unsubscribe error: {e}", "broadcasts")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/broadcasts/users")
 async def get_broadcast_users(
-    subscription_type: str,
+    subscription_type: Optional[str] = None,
     target_role: Optional[str] = None,
+    lang: str = 'ru',
     current_user: dict = Depends(get_current_user)
 ):
     """
@@ -440,46 +357,145 @@ async def get_broadcast_users(
     try:
         conn = get_db_connection()
         c = conn.cursor()
-
-        query = """
-            SELECT 
-                u.id, u.username, u.full_name, u.role, u.email, u.telegram_id, u.instagram_username,
-                COALESCE(s.is_subscribed, FALSE) as is_subscribed,
-                COALESCE(s.email_enabled, TRUE) as email_enabled,
-                COALESCE(s.telegram_enabled, TRUE) as telegram_enabled,
-                COALESCE(s.instagram_enabled, TRUE) as instagram_enabled
-            FROM users u
-            LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.subscription_type = %s
-            WHERE u.is_active = TRUE
-        """
-        params = [subscription_type]
-
-        if target_role and target_role != 'all':
-            query += " AND u.role = %s"
-            params.append(target_role)
-
-        c.execute(query, params)
         users = []
-        for row in c.fetchall():
-            users.append({
-                "id": row[0],
-                "username": row[1],
-                "full_name": row[2],
-                "role": row[3],
-                "email": row[4],
-                "telegram_id": row[5],
-                "instagram_username": row[6],
-                "is_subscribed": bool(row[7]),
-                "channels": {
-                    "email": bool(row[8]),
-                    "telegram": bool(row[9]),
-                    "instagram": bool(row[10])
-                }
-            })
+
+        # 1. Fetch Staff (Users) - UNLESS target_role is 'client'
+        if target_role != 'client':
+            # Handle optional subscription_type by using a dummy/all condition if not provided
+            sub_type_param = subscription_type if subscription_type else ''
+            
+            query = """
+                SELECT 
+                    u.id, u.username, u.full_name, u.role, u.email, u.telegram_id, u.instagram_username,
+                    COALESCE(s.is_subscribed, TRUE) as is_subscribed,
+                    COALESCE(s.email_enabled, TRUE) as email_enabled,
+                    COALESCE(s.telegram_enabled, TRUE) as telegram_enabled,
+                    COALESCE(s.instagram_enabled, TRUE) as instagram_enabled
+                FROM users u
+                LEFT JOIN user_subscriptions s ON u.id = s.user_id AND s.subscription_type = %s
+                WHERE u.is_active = TRUE AND u.role != 'client' AND u.deleted_at IS NULL
+            """
+            params = [sub_type_param] # Param must be present even if empty
+
+            if target_role and target_role != 'all':
+                query += " AND u.role = %s"
+                params.append(target_role)
+
+            c.execute(query, params)
+            for row in c.fetchall():
+                users.append({
+                    "id": row[0],
+                    "username": row[1],
+                    "full_name": get_localized_name(row[0], row[2], lang),
+                    "role": row[3],
+                    "email": row[4],
+                    "telegram_id": row[5],
+                    "instagram_username": row[6],
+
+                    "is_subscribed": bool(row[7]),
+                    "channels": {
+                        "email": bool(row[8]),
+                        "telegram": bool(row[9]),
+                        "instagram": bool(row[10])
+                    }
+                })
+
+        # 2. Fetch Clients - IF target_role is 'client' or 'all'
+        if not target_role or target_role in ['all', 'client']:
+            # Use instagram_id as ID because clients don't have integer ID
+            # Clients use instagram_id as PK (text)
+            query_clients = """
+                SELECT 
+                    c.instagram_id, c.instagram_id, c.name, c.email, c.telegram_id, c.instagram_id
+                FROM clients c
+                -- Check unsubscriptions (clients unsubscribe via marketing_unsubscriptions)
+                LEFT JOIN marketing_unsubscriptions s ON (
+                    c.instagram_id = s.client_id OR 
+                    c.telegram_id = s.client_id OR 
+                    (c.email IS NOT NULL AND c.email = s.email)
+                ) AND s.mailing_type = %s
+                WHERE s.id IS NULL AND c.deleted_at IS NULL
+            """
+            # Handle empty subscription_type for clients query too if needed, but usually strictly needed here
+            client_sub_type = subscription_type if subscription_type else ''
+            
+            c.execute(query_clients, (client_sub_type,))
+            for row in c.fetchall():
+                # For clients, we use instagram_id instead of integer ID
+                # get_localized_name expects an ID, but for clients we can pass 0 or their unique hash if needed
+                client_name = row[2] or "Client"
+                users.append({
+                    "id": row[0], # String ID (instagram_id)
+                    "username": row[1] or "client", # instagram_id
+                    "full_name": get_localized_name(0, client_name, lang),
+                    "role": "client",
+                    "email": row[3],
+                    "telegram_id": row[4],
+                    "instagram_username": row[5],
+                    "is_subscribed": True, # Clients are subscribed by default unless in marketing_unsubscriptions
+                    "channels": { 
+                        "email": bool(row[3]), 
+                        "telegram": bool(row[4]), 
+                        "instagram": bool(row[5]) 
+                    }
+                })
 
         conn.close()
         return {"users": users}
 
     except Exception as e:
         log_error(f"Error fetching broadcast users: {e}", "broadcasts")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/broadcasts/unsubscribed")
+async def get_unsubscribed_users(
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Получить всех людей, отписавшихся от рассылок
+    """
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT u.id, u.full_name, u.username, u.email, m.mailing_type, m.unsubscribed_at, m.reason
+            FROM marketing_unsubscriptions m
+            JOIN users u ON m.user_id = u.id
+            ORDER BY m.unsubscribed_at DESC
+        """)
+        
+        unsubs = []
+        for row in c.fetchall():
+            unsubs.append({
+                "id": row[0],
+                "full_name": row[1],
+                "username": row[2],
+                "email": row[3],
+                "mailing_type": row[4],
+                "unsubscribed_at": row[5],
+                "reason": row[6]
+            })
+
+        # Also add newsletter_subscribers who are inactive
+        c.execute("SELECT id, email, created_at FROM newsletter_subscribers WHERE is_active = FALSE")
+        for row in c.fetchall():
+            unsubs.append({
+                "id": f"ns_{row[0]}",
+                "full_name": "Newsletter Subscriber",
+                "username": row[1],
+                "email": row[1],
+                "mailing_type": "newsletter",
+                "unsubscribed_at": row[2],
+                "reason": "Inactive newsletter status"
+            })
+
+        conn.close()
+        return {"unsubscribed": unsubs}
+
+    except Exception as e:
+        log_error(f"Error fetching unsubscribed users: {e}", "broadcasts")
         raise HTTPException(status_code=500, detail=str(e))
