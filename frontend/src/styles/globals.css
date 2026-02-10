@@ -608,3 +608,14 @@ html {
   animation: marquee 8s linear infinite;
   min-width: 100%;
 }
+
+/* Logo Sharpness Fix */
+img[src*="logo"], 
+img.logo, 
+.salon-logo img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}

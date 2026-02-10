@@ -95,9 +95,12 @@ def delete_client(
         client_phone = client[2]
         client_email = client[3]
 
-        # Проверяем, есть ли связанный пользователь (по телефону или email)
-        is_registered_user = False
-        if client_phone or client_email:
+        # Проверяем, есть ли связанный пользователь (по id, телефону или email)
+        c.execute("SELECT user_id FROM clients WHERE instagram_id = %s", (client_id,))
+        res = c.fetchone()
+        user_id = res[0] if res else None
+
+        if not user_id and (client_phone or client_email):
             query_parts = []
             params = []
             if client_phone:
@@ -107,19 +110,22 @@ def delete_client(
                 query_parts.append("email = %s")
                 params.append(client_email)
 
-            c.execute(f"SELECT id FROM users WHERE ({' OR '.join(query_parts)}) AND deleted_at IS NULL", params)
-            is_registered_user = c.fetchone() is not None
+            if query_parts:
+                c.execute(f"SELECT id FROM users WHERE ({' OR '.join(query_parts)}) AND deleted_at IS NULL", params)
+                res = c.fetchone()
+                if res:
+                    user_id = res[0]
 
-        if is_registered_user:
-            # Hard Delete - клиент зарегистрирован как пользователь
-            c.execute("DELETE FROM clients WHERE instagram_id = %s", (client_id,))
-            can_restore = False
-            log_info(f"🗑️ Client {client_id} HARD deleted (registered user) by {deleted_by_user.get('username')}", "soft_delete")
-        else:
-            # Soft Delete - клиент только из соцсетей/системы
-            c.execute("UPDATE clients SET deleted_at = CURRENT_TIMESTAMP WHERE instagram_id = %s", (client_id,))
-            can_restore = True
-            log_info(f"🗑️ Client {client_id} SOFT deleted (social/manual) by {deleted_by_user.get('username')}", "soft_delete")
+        # Всегда Soft Delete для возможности восстановления из корзины
+        c.execute("UPDATE clients SET deleted_at = CURRENT_TIMESTAMP WHERE instagram_id = %s", (client_id,))
+        
+        if user_id:
+            # Также мягко удаляем связанного пользователя, если это клиент
+            c.execute("UPDATE users SET deleted_at = CURRENT_TIMESTAMP, is_active = FALSE WHERE id = %s AND role = 'client'", (user_id,))
+            log_info(f"🗑️ Linked user {user_id} soft deleted with client {client_id}", "soft_delete")
+
+        can_restore = True
+        log_info(f"🗑️ Client {client_id} SOFT deleted by {deleted_by_user.get('username')}", "soft_delete")
 
         # Записываем в лог удалений
         c.execute("""
@@ -153,6 +159,9 @@ def soft_delete_user(
         
         # Помечаем пользователя как неактивного и удаленного
         c.execute("UPDATE users SET deleted_at = CURRENT_TIMESTAMP, is_active = FALSE WHERE id = %s", (user_id,))
+        
+        # Если это клиент, помечаем и запись в clients
+        c.execute("UPDATE clients SET deleted_at = CURRENT_TIMESTAMP WHERE user_id = %s", (user_id,))
         
         c.execute("""
             INSERT INTO deleted_items 

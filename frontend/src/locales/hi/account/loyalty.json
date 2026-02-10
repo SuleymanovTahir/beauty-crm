@@ -14,7 +14,7 @@
   "invitations": "निमंत्रण",
   "last_6_months_few": "आखिरी के लिए {{count}} महीने",
   "last_6_months_many": "पिछले {{count}} महीनों के लिए",
-  "last_6_months_one": "पिछले [[V0]]] महीने के लिए",
+  "last_6_months_one": "पिछले {{count}} महीने के लिए",
   "last_6_months_other": "पिछले {{count}} महीनों के लिए",
   "loyalty_card": "लॉयल्टी कार्ड",
   "month_apr": "अप्रैल",

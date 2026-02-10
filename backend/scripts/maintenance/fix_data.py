@@ -296,6 +296,8 @@ def run_fix():
             if not admin_data[1] or not verify_password(passwords['admin'], admin_data[1]):
                 c.execute("UPDATE users SET password_hash = %s WHERE username = 'admin'", (hash_password(passwords['admin']),))
 
+        seed_notification_templates(c)
+
         conn.commit()
         log_info("🏆 Data maintenance completed successfully!", "maintenance")
         return True
@@ -310,6 +312,96 @@ def run_fix():
         except: pass
         try: conn.close()
         except: pass
+
+def seed_notification_templates(c):
+    """Синхронизация базовых системных шаблонов уведомлений"""
+    log_info("🎭 Synchronizing notification templates...", "maintenance")
+    
+    templates = [
+        {
+            "name": "booking_confirmation",
+            "category": "transactional",
+            "subject_ru": "Подтверждение записи к мастеру",
+            "subject_en": "Booking Confirmation - {salon_name}",
+            "body_ru": "Здравствуйте, {name}! \n\nВы успешно записаны в {salon_name}.\n\n🗓 {date}\n⏰ {time}\n💆 {service}\n👤 {master}\n\nБудем рады видеть вас! Если ваши планы изменятся, пожалуйста, сообщите нам заранее.",
+            "body_en": "Hello {name}! \n\nYour booking at {salon_name} is confirmed.\n\n🗓 {date}\n⏰ {time}\n💆 {service}\n👤 {master}\n\nWe look forward to seeing you! Please let us know if you need to reschedule.",
+            "variables": '["name", "service", "master", "date", "time", "salon_name"]'
+        },
+        {
+            "name": "booking_reminder",
+            "category": "transactional",
+            "subject_ru": "Напоминание о записи - {salon_name}",
+            "subject_en": "Appointment Reminder - {salon_name}",
+            "body_ru": "Напоминаем, что вы записаны сегодня ({date}) в {time} на {service}. Будем рады вас видеть!",
+            "body_en": "Reminder: your appointment for {service} is today ({date}) at {time}. We look forward to seeing you!",
+            "variables": '["name", "service", "date", "time", "salon_name"]'
+        },
+        {
+            "name": "birthday_greeting",
+            "category": "marketing",
+            "subject_ru": "{name}, с днем рождения! 🎁",
+            "subject_en": "Happy Birthday, {name}! 🎁",
+            "body_ru": "Здравствуйте, {name}! \n\nПоздравляем вас с Днем Рождения! 🎉\n\nВ честь вашего праздника мы подготовили для вас особенный подарок от {salon_name} — скидку 15% на любую услугу!\n\nВоспользоваться предложением можно в течение 7 дней.\n\nБудьте прекрасны и сияйте каждый день! ✨",
+            "body_en": "Hello {name}! \n\nHappy Birthday! 🎉\n\nTo celebrate your special day, we've prepared a gift from {salon_name} — 15% discount on any service!\n\nThe offer is valid for 7 days.\n\nStay beautiful and shine every day! ✨",
+            "variables": '["name", "salon_name"]'
+        },
+        {
+            "name": "birthday_reminder_7d",
+            "category": "marketing",
+            "subject_ru": "{name}, ваш день рождения уже через неделю! ✨",
+            "subject_en": "{name}, your birthday is in one week! ✨",
+            "body_ru": "Здравствуйте, {name}! \n\nМы знаем, что ваш особенный день — через неделю! 🎉\n\nСамое время подготовиться, чтобы сиять и быть на высоте. Мы подготовили для вас подарок: промокод на скидку 15% на любые услуги нашего салона!\n\n🎁 Промокод: {promo_code}\n\nЗапишитесь заранее, чтобы забронировать удобное время! Ждем вас! 💖",
+            "body_en": "Hello {name}! \n\nWe know your special day is in one week! 🎉\n\nIt's time to get ready to shine. We've prepared a gift for you: a 15% discount promo code for any service at our salon!\n\n🎁 Promo Code: {promo_code}\n\nPlease book in advance to secure your preferred time! See you soon! 💖",
+            "variables": '["name", "promo_code", "salon_name"]'
+        },
+        {
+            "name": "master_new_booking",
+            "category": "transactional",
+            "subject_ru": "🔔 Новая запись! - {datetime}",
+            "subject_en": "🔔 New Booking! - {datetime}",
+            "body_ru": "🔔 Новая запись!\n\n👤 Клиент: {client_name}\n💆 Услуга: {service}\n📅 Дата и время: {datetime}\n📞 Телефон: {phone}\n📋 ID: #{booking_id}",
+            "body_en": "🔔 New Booking!\n\n👤 Client: {client_name}\n💆 Service: {service}\n📅 Date & Time: {datetime}\n📞 Phone: {phone}\n📋 ID: #{booking_id}",
+            "variables": '["client_name", "service", "datetime", "phone", "booking_id"]'
+        },
+        {
+            "name": "master_booking_change",
+            "category": "transactional",
+            "subject_ru": "✏️ Запись изменена! - {datetime}",
+            "subject_en": "✏️ Booking Changed! - {datetime}",
+            "body_ru": "✏️ Запись изменена!\n\n👤 Клиент: {client_name}\n💆 Услуга: {service}\n📅 Новое время: {datetime}\n📞 Телефон: {phone}\n📋 ID: #{booking_id}",
+            "body_en": "✏️ Booking Changed!\n\n👤 Client: {client_name}\n💆 Service: {service}\n📅 New Time: {datetime}\n📞 Phone: {phone}\n📋 ID: #{booking_id}",
+            "variables": '["client_name", "service", "datetime", "phone", "booking_id"]'
+        },
+        {
+            "name": "master_booking_cancel",
+            "category": "transactional",
+            "subject_ru": "❌ Запись отменена! - {datetime}",
+            "subject_en": "❌ Booking Cancelled! - {datetime}",
+            "body_ru": "❌ Запись отменена!\n\n👤 Клиент: {client_name}\n💆 Услуга: {service}\n📅 Была на: {datetime}\n📋 ID: #{booking_id}",
+            "body_en": "❌ Booking Cancelled!\n\n👤 Client: {client_name}\n💆 Service: {service}\n📅 Was scheduled for: {datetime}\n📋 ID: #{booking_id}",
+            "variables": '["client_name", "service", "datetime", "booking_id"]'
+        }
+    ]
+
+    for t in templates:
+        c.execute("""
+            INSERT INTO notification_templates 
+            (name, category, subject_ru, subject_en, body_ru, body_en, variables, is_system)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE)
+            ON CONFLICT (name) DO UPDATE SET
+                category = EXCLUDED.category,
+                subject_ru = EXCLUDED.subject_ru,
+                subject_en = EXCLUDED.subject_en,
+                body_ru = EXCLUDED.body_ru,
+                body_en = EXCLUDED.body_en,
+                variables = EXCLUDED.variables,
+                updated_at = CURRENT_TIMESTAMP
+        """, (
+            t['name'], t['category'], t['subject_ru'], t.get('subject_en', t['subject_ru']), 
+            t['body_ru'], t.get('body_en', t['body_ru']), t['variables']
+        ))
+    
+    log_info(f"   ✅ Synchronized {len(templates)} system templates", "maintenance")
 
 if __name__ == "__main__":
     run_fix()

@@ -3,17 +3,20 @@ API Endpoints для уведомлений
 """
 from fastapi import APIRouter, Query, Cookie, HTTPException, Request
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, timedelta
 
 import os
+import json
 
-from core.config import DATABASE_NAME, DEFAULT_REPORT_TIME
+from core.config import DEFAULT_REPORT_TIME
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from utils.datetime_utils import get_current_time, get_salon_timezone
-from zoneinfo import ZoneInfo
+from utils.utils import get_total_unread
+from .notifications_ws import broadcast_unread_count_update
 
 router = APIRouter(tags=["Notifications"])
 
@@ -97,6 +100,14 @@ async def mark_notification_read(
         
         conn.commit()
         conn.close()
+        
+        # Broadcast unread count update
+        try:
+            new_count = get_total_unread(user["id"])
+            await broadcast_unread_count_update(user["id"], new_count)
+        except Exception as ws_err:
+            log_error(f"Error broadcasting unread count: {ws_err}", "notifications")
+            
         return {"success": True}
     except Exception as e:
         log_error(f"Error marking notification as read: {e}", "notifications")
@@ -109,6 +120,7 @@ async def mark_all_notifications_read(
     """Отметить все уведомления как прочитанные"""
     user = require_auth(session_token)
     if not user:
+        # User not found in session
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     try:
@@ -123,6 +135,14 @@ async def mark_all_notifications_read(
         
         conn.commit()
         conn.close()
+        
+        # Broadcast unread count update
+        try:
+            new_count = get_total_unread(user["id"])
+            await broadcast_unread_count_update(user["id"], new_count)
+        except Exception as ws_err:
+            log_error(f"Error broadcasting unread count: {ws_err}", "notifications")
+            
         return {"success": True}
     except Exception as e:
         log_error(f"Error marking all read: {e}", "notifications")
@@ -144,21 +164,6 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 
-@router.delete("/notifications/{notification_id}")
-async def delete_notification(notification_id: int, session_token: Optional[str] = Cookie(None)):
-    """Удалить уведомление"""
-    user = require_auth(session_token)
-    if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    try:
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("DELETE FROM unified_communication_log WHERE id = %s AND user_id = %s AND medium = 'in_app'", (notification_id, user["id"]))
-        conn.commit()
-        conn.close()
-        return {"success": True}
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=500)
-
 @router.delete("/notifications/clear-all")
 async def clear_all_notifications(session_token: Optional[str] = Cookie(None)):
     """Очистить всё"""
@@ -168,6 +173,21 @@ async def clear_all_notifications(session_token: Optional[str] = Cookie(None)):
         conn = get_db_connection()
         c = conn.cursor()
         c.execute("DELETE FROM unified_communication_log WHERE user_id = %s AND medium = 'in_app'", (user["id"],))
+        conn.commit()
+        conn.close()
+        return {"success": True}
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.delete("/notifications/{notification_id}")
+async def delete_notification(notification_id: int, session_token: Optional[str] = Cookie(None)):
+    """Удалить уведомление"""
+    user = require_auth(session_token)
+    if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("DELETE FROM unified_communication_log WHERE id = %s AND user_id = %s AND medium = 'in_app'", (notification_id, user["id"]))
         conn.commit()
         conn.close()
         return {"success": True}
@@ -642,12 +662,96 @@ async def send_batch_reminders(
         log_error(f"Error sending batch reminders: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
+# ===== ШАБЛОНЫ УВЕДОМЛЕНИЙ =====
+
+class TemplateModel(BaseModel):
+    name: str
+    category: Optional[str] = "transactional"
+    subject_ru: Optional[str] = ""
+    subject_en: Optional[str] = ""
+    subject_ar: Optional[str] = ""
+    body_ru: str
+    body_en: Optional[str] = ""
+    body_ar: Optional[str] = ""
+    variables: Optional[List[str]] = []
+
+@router.get("/notifications/templates")
+async def get_templates(session_token: Optional[str] = Cookie(None)):
+    """Получить все шаблоны"""
+    user = require_auth(session_token)
+    if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("SELECT * FROM notification_templates ORDER BY name ASC")
+        rows = c.fetchall()
+        column_names = [desc[0] for desc in c.description]
+        templates = [dict(zip(column_names, row)) for row in rows]
+        return {"templates": templates}
+    finally:
+        conn.close()
+
+@router.post("/notifications/templates")
+async def save_template(template: TemplateModel, session_token: Optional[str] = Cookie(None)):
+    """Создать или обновить шаблон"""
+    user = require_auth(session_token)
+    if not user or user.get('role') not in ['admin', 'director']:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("""
+            INSERT INTO notification_templates 
+            (name, category, subject_ru, subject_en, subject_ar, body_ru, body_en, body_ar, variables)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (name) DO UPDATE SET
+                category = EXCLUDED.category,
+                subject_ru = EXCLUDED.subject_ru,
+                subject_en = EXCLUDED.subject_en,
+                subject_ar = EXCLUDED.subject_ar,
+                body_ru = EXCLUDED.body_ru,
+                body_en = EXCLUDED.body_en,
+                body_ar = EXCLUDED.body_ar,
+                variables = EXCLUDED.variables,
+                updated_at = CURRENT_TIMESTAMP
+        """, (
+            template.name, template.category, 
+            template.subject_ru, template.subject_en, template.subject_ar,
+            template.body_ru, template.body_en, template.body_ar,
+            json.dumps(template.variables)
+        ))
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error saving template: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        conn.close()
+
+@router.delete("/notifications/templates/{name}")
+async def delete_template(name: str, session_token: Optional[str] = Cookie(None)):
+    """Удалить шаблон"""
+    user = require_auth(session_token)
+    if not user or user.get('role') not in ['admin', 'director']:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("DELETE FROM notification_templates WHERE name = %s AND is_system = FALSE", (name,))
+        conn.commit()
+        return {"success": True}
+    finally:
+        conn.close()
+
 @router.post("/notifications/broadcast")
 async def send_broadcast_message(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Отправить рекламное сообщение всем клиентам или выбранной группе"""
+    """Отправить рекламное сообщение всем клиентам через UniversalMessenger"""
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Forbidden"}, status_code=403)
@@ -655,102 +759,132 @@ async def send_broadcast_message(
     data = await request.json()
 
     try:
-        from notifications import get_client_preferred_messenger
-        from notifications.client_reminders import (
-            send_instagram_reminder,
-            send_telegram_reminder,
-            send_whatsapp_reminder
-        )
-
+        from services.universal_messenger import send_universal_message
+        
         message = data.get('message')
-        target_messenger = data.get('messenger', 'all')  # all, instagram, telegram, whatsapp
-        client_filter = data.get('filter', 'all')  # all, active, vip, etc.
+        target_messenger = data.get('messenger', 'all')
+        client_filter = data.get('filter', 'all')
+        template_name = data.get('template_name')
 
-        if not message:
-            return JSONResponse({"error": "message required"}, status_code=400)
+        if not message and not template_name:
+            return JSONResponse({"error": "message or template_name required"}, status_code=400)
 
         # Получаем список клиентов
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Базовый запрос зависит от фильтра
+        query = "SELECT instagram_id, name FROM clients"
+        params = []
+        
         if client_filter == 'active':
-            # Клиенты, которые были активны в последние 30 дней
             cutoff_date = (get_current_time() - timedelta(days=30)).strftime('%Y-%m-%d')
-            c.execute("""
-                SELECT DISTINCT instagram_id, name
-                FROM bookings
-                WHERE datetime >%s
-            """, (cutoff_date,))
+            query = "SELECT DISTINCT c.instagram_id, c.name FROM clients c JOIN bookings b ON c.instagram_id = b.client_id WHERE b.datetime > %s"
+            params = [cutoff_date]
         elif client_filter == 'vip':
-            # VIP клиенты (более 5 записей)
-            c.execute("""
-                SELECT instagram_id, name, COUNT(*) as booking_count
-                FROM bookings
-                GROUP BY instagram_id
-                HAVING booking_count >= 5
-            """)
-        else:
-            # Все клиенты
-            c.execute("""
-                SELECT DISTINCT instagram_id, name
-                FROM bookings
-            """)
+            query = "SELECT instagram_id, name FROM clients WHERE instagram_id IN (SELECT client_id FROM bookings GROUP BY client_id HAVING COUNT(*) >= 5)"
 
+        c.execute(query, params)
         clients = c.fetchall()
         conn.close()
 
-        # Отправляем сообщения
+        # Отправляем через UniversalMessenger
         results = []
         for client in clients:
             client_id, name = client[0], client[1]
-
-            # Определяем мессенджер
-            if target_messenger == 'all':
-                messenger = get_client_preferred_messenger(client_id)
-            else:
-                messenger = target_messenger
-
-            try:
-                success = False
-
-                if messenger == 'instagram':
-                    success = await send_instagram_reminder(client_id, message)
-                elif messenger == 'telegram':
-                    success = await send_telegram_reminder(client_id, message)
-                elif messenger == 'whatsapp':
-                    success = await send_whatsapp_reminder(client_id, message)
-
-                results.append({
-                    "client_id": client_id,
-                    "client_name": name,
-                    "messenger": messenger,
-                    "success": success
-                })
-
-            except Exception as e:
-                log_error(f"Error sending broadcast to {client_id}: {e}", "api")
-                results.append({
-                    "client_id": client_id,
-                    "client_name": name,
-                    "messenger": messenger,
-                    "success": False,
-                    "error": str(e)
-                })
+            platform_pref = target_messenger if target_messenger != 'all' else 'auto'
+            
+            res = await send_universal_message(
+                recipient_id=client_id,
+                text=message,
+                platform=platform_pref,
+                template_name=template_name,
+                context={"name": name or "Клиент"}
+            )
+            
+            results.append({
+                "client_id": client_id, 
+                "client_name": name,
+                "messenger": res.get("platform"),
+                "success": res.get("success"),
+                "error": res.get("error")
+            })
 
         success_count = sum(1 for r in results if r['success'])
-        failed_count = len(results) - success_count
-
-        log_info(f"Broadcast sent: {success_count} success, {failed_count} failed", "api")
-
         return {
             "success": True,
             "total": len(results),
             "sent": success_count,
-            "failed": failed_count,
+            "failed": len(results) - success_count,
             "results": results
         }
 
     except Exception as e:
-        log_error(f"Error sending broadcast: {e}", "api")
+        log_error(f"Error in client broadcast: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.get("/notifications/stats")
+async def get_notification_stats(
+    days: int = Query(30),
+    session_token: Optional[str] = Cookie(None)
+):
+    """Статистика уведомлений и рассылок"""
+    user = require_auth(session_token)
+    if not user or user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    try:
+        # 1. Общая статистика по каналам
+        c.execute("""
+            SELECT medium, status, COUNT(*) 
+            FROM unified_communication_log 
+            WHERE created_at >= NOW() - INTERVAL '%s days'
+            GROUP BY medium, status
+        """, (days,))
+        
+        raw_stats = c.fetchall()
+        by_channel = {}
+        for medium, status, count in raw_stats:
+            if medium not in by_channel:
+                by_channel[medium] = {"sent": 0, "failed": 0, "scheduled": 0}
+            
+            if status == 'sent': by_channel[medium]["sent"] += count
+            elif status == 'failed': by_channel[medium]["failed"] += count
+            elif status == 'scheduled': by_channel[medium]["scheduled"] += count
+
+        # 2. Популярные ошибки
+        c.execute("""
+            SELECT error_message, COUNT(*) 
+            FROM unified_communication_log 
+            WHERE status = 'failed' AND created_at >= NOW() - INTERVAL '%s days'
+            AND error_message IS NOT NULL
+            GROUP BY error_message 
+            ORDER BY count DESC LIMIT 5
+        """, (days,))
+        errors = [{"message": r[0], "count": r[1]} for r in c.fetchall()]
+
+        # 3. Эффективность шаблонов
+        c.execute("""
+            SELECT template_name, COUNT(*) as total, 
+                   SUM(CASE WHEN sent_at IS NOT NULL THEN 1 ELSE 0 END) as delivered
+            FROM unified_communication_log 
+            WHERE template_name IS NOT NULL AND created_at >= NOW() - INTERVAL '%s days'
+            GROUP BY template_name
+            ORDER BY total DESC
+        """, (days,))
+        templates = [{"name": r[0], "total": r[1], "delivered": r[2]} for r in c.fetchall()]
+
+        return {
+            "period_days": days,
+            "by_channel": by_channel,
+            "top_errors": errors,
+            "template_performance": templates
+        }
+
+    except Exception as e:
+        log_error(f"Error getting notification stats: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        conn.close()

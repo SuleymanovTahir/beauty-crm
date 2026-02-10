@@ -25,7 +25,7 @@ async def get_user_salary_settings(user_id: int, current_user: dict = Depends(ge
 
         c.execute("""
             SELECT uss.*, u.full_name
-            FROM user_salary_settings uss
+            FROM salary_settings uss
             JOIN users u ON uss.user_id = u.id
             WHERE uss.user_id =%s
         """, (user_id,))
@@ -62,20 +62,25 @@ async def update_salary_settings(user_id: int, request: Request, current_user: d
             return {"success": False, "error": "Пользователь не найден"}
         
         # Обновляем или создаем настройки
+        from utils.currency import get_salon_currency
         c.execute("""
-            INSERT INTO user_salary_settings
-            (user_id, salary_type, hourly_rate, monthly_rate, commission_rate,
+            INSERT INTO salary_settings
+            (user_id, base_salary, commission_rate,
              bonus_rate, currency, is_active, created_at, updated_at)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s, NOW(), NOW())
+            VALUES (%s,%s,%s,%s,%s,%s, NOW(), NOW())
+            ON CONFLICT (user_id) DO UPDATE SET
+                base_salary = EXCLUDED.base_salary,
+                commission_rate = EXCLUDED.commission_rate,
+                bonus_rate = EXCLUDED.bonus_rate,
+                currency = EXCLUDED.currency,
+                updated_at = NOW()
         """, (
             user_id,
-            data.get("salary_type", "hourly"),
-            data.get("hourly_rate", 0),
-            data.get("monthly_rate", 0),
+            data.get("base_salary", data.get("monthly_rate", 0)),
             data.get("commission_rate", 0),
-            data.get("bonus_rate", 0),
-            data.get("currency", "AED"),
-            1
+            data.get("bonus_range", 0),
+            data.get("currency", get_salon_currency()),
+            True
         ))
         
         conn.commit()
@@ -110,7 +115,7 @@ async def calculate_salary(
 
         # Получить настройки зарплаты
         c.execute("""
-            SELECT * FROM user_salary_settings
+            SELECT * FROM salary_settings
             WHERE user_id =%s AND is_active = TRUE
         """, (user_id,))
         settings = c.fetchone()

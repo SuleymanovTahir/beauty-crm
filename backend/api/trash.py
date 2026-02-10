@@ -73,40 +73,70 @@ async def permanent_delete_item(
     conn = get_db_connection()
     c = conn.cursor()
     try:
+        success = False
+        error_msg = None
+        
         try:
-            # Use SAVEPOINT for single deletion too
             c.execute("SAVEPOINT single_trash_delete")
-            if entity_type == 'booking':
-                c.execute("DELETE FROM bookings WHERE id = %s", (entity_id,))
-            elif entity_type == 'client':
+            
+            if entity_type == 'client':
+                # Пытаемся найти связанного пользователя ПЕРЕД удалением клиента
+                c.execute("SELECT user_id FROM clients WHERE instagram_id = %s", (entity_id,))
+                res = c.fetchone()
+                linked_user_id = res[0] if res else None
+                
+                # Удаляем клиента
                 c.execute("DELETE FROM clients WHERE instagram_id = %s", (entity_id,))
+                
+                # Если клиент удален и есть связанный пользователь-клиент, удаляем и его
+                if linked_user_id:
+                    c.execute("DELETE FROM users WHERE id = %s AND role = 'client'", (linked_user_id,))
+            
             elif entity_type == 'user':
+                # Пытаемся найти связанных клиентов ПЕРЕД удалением пользователя
+                c.execute("SELECT instagram_id FROM clients WHERE user_id = %s", (entity_id,))
+                client_ids = [row[0] for row in c.fetchall()]
+                
+                # Удаляем пользователя
                 c.execute("DELETE FROM users WHERE id = %s", (entity_id,))
+                
+                # Удаляем связанных клиентов
+                for cid in client_ids:
+                    c.execute("DELETE FROM clients WHERE instagram_id = %s", (cid,))
+            
+            elif entity_type == 'booking':
+                c.execute("DELETE FROM bookings WHERE id = %s", (entity_id,))
+            
+            success = True
             c.execute("RELEASE SAVEPOINT single_trash_delete")
         except Exception as e:
             c.execute("ROLLBACK TO SAVEPOINT single_trash_delete")
+            error_msg = str(e)
             from utils.logger import log_error
             log_error(f"Cannot hard delete single item {entity_type} {entity_id}: {e}", "trash")
             
-        # ALWAYS handle in deleted_items to hide from trash
-        c.execute("""
-            UPDATE deleted_items 
-            SET can_restore = FALSE, reason = COALESCE(reason, '') || ' (Permanently deleted)'
-            WHERE entity_type = %s AND entity_id = %s
-        """, (entity_type, entity_id))
-        
-        conn.commit()
-        
-        log_audit(
-            user=current_user,
-            action='delete',
-            entity_type=entity_type,
-            entity_id=entity_id,
-            new_value={"permanent": True},
-            success=True
-        )
-        
-        return {"success": True, "message": "Item permanently deleted"}
+        if success:
+            # Помечаем в deleted_items только если удаление из основной таблицы прошло успешно
+            c.execute("""
+                UPDATE deleted_items 
+                SET can_restore = FALSE, reason = COALESCE(reason, '') || ' (Permanently deleted)'
+                WHERE entity_type = %s AND entity_id = %s
+            """, (entity_type, entity_id))
+            
+            conn.commit()
+            
+            log_audit(
+                user=current_user,
+                action='delete',
+                entity_type=entity_type,
+                entity_id=entity_id,
+                new_value={"permanent": True},
+                success=True
+            )
+            return {"success": True, "message": "Item permanently deleted"}
+        else:
+            conn.rollback()
+            raise HTTPException(status_code=400, detail=f"Failed to delete item from database: {error_msg}")
     except Exception as e:
         if conn: conn.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -133,26 +163,44 @@ async def empty_trash(
         
         for entity_type, entity_id in items:
             try:
-                # Use SAVEPOINT to protect the transaction from FK constraint errors
                 c.execute("SAVEPOINT trash_item_delete")
+                item_deleted = False
+                
                 if entity_type == 'booking':
                     c.execute("DELETE FROM bookings WHERE id = %s", (entity_id,))
+                    item_deleted = True
                 elif entity_type == 'client':
+                    c.execute("SELECT user_id FROM clients WHERE instagram_id = %s", (entity_id,))
+                    res = c.fetchone()
+                    linked_user_id = res[0] if res else None
+                    
                     c.execute("DELETE FROM clients WHERE instagram_id = %s", (entity_id,))
+                    if linked_user_id:
+                        c.execute("DELETE FROM users WHERE id = %s AND role = 'client'", (linked_user_id,))
+                    item_deleted = True
                 elif entity_type == 'user':
+                    c.execute("SELECT instagram_id FROM clients WHERE user_id = %s", (entity_id,))
+                    client_ids = [row[0] for row in c.fetchall()]
+                    
                     c.execute("DELETE FROM users WHERE id = %s", (entity_id,))
+                    for cid in client_ids:
+                        c.execute("DELETE FROM clients WHERE instagram_id = %s", (cid,))
+                    item_deleted = True
                 
-                rows = c.rowcount
-                count += rows
+                if item_deleted:
+                    # Помечаем КАК удаленные в логе ТОЛЬКО если удаление из БД удалось
+                    c.execute("""
+                        UPDATE deleted_items 
+                        SET can_restore = FALSE, reason = COALESCE(reason, '') || ' (Purged)' 
+                        WHERE entity_type = %s AND entity_id = %s
+                    """, (entity_type, entity_id))
+                    count += 1
+                
                 c.execute("RELEASE SAVEPOINT trash_item_delete")
             except Exception as e:
-                # Rollback to savepoint so we can continue with other items
                 c.execute("ROLLBACK TO SAVEPOINT trash_item_delete")
-                log_error(f"Cannot hard delete {entity_type} {entity_id} (soft-purged only): {e}", "trash")
+                log_error(f"Cannot hard delete {entity_type} {entity_id} (still in trash): {e}", "trash")
 
-        # Mark all as permanently deleted in deleted_items (hide from trash bin)
-        c.execute("UPDATE deleted_items SET can_restore = FALSE, reason = COALESCE(reason, '') || ' (Purged)' WHERE can_restore = TRUE")
-        
         conn.commit()
         
         log_audit(
@@ -164,7 +212,7 @@ async def empty_trash(
             success=True
         )
 
-        return {"success": True, "message": f"Trash emptied. {count} items physically removed, others soft-purged."}
+        return {"success": True, "message": f"Trash cleaned. {count} items permanently deleted."}
         
     except Exception as e:
         if conn: conn.rollback()

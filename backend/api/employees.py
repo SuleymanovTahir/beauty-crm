@@ -17,12 +17,14 @@ from utils.utils import require_auth, sanitize_url, map_image_path
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
+from utils.language_utils import get_localized_name
 
 router = APIRouter(tags=["Employees"])
 
 @router.get("/employees")
 async def list_employees(
     active_only: bool = True,
+    lang: str = 'ru',
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить всех сотрудников (публичный endpoint)"""
@@ -39,7 +41,7 @@ async def list_employees(
         # Временный фикс: используем db_connection для получения имен колонок
         result.append({
             "id": e[0],
-            "full_name": e[3],
+            "full_name": get_localized_name(e[0], e[3], lang),
             "position": e[8], # position
             "experience": e[16], # experience
             "photo": map_image_path(sanitize_url(e[11])), # photo

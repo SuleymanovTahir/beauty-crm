@@ -3,6 +3,8 @@ import { Bell, X, Trash2, CheckCheck } from 'lucide-react';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNotificationsWebSocket } from '../../hooks/useNotificationsWebSocket';
 
 export default function NotificationsPage() {
     const { t } = useTranslation(['common']);
@@ -11,6 +13,15 @@ export default function NotificationsPage() {
     const [selectedNotification, setSelectedNotification] = useState<any>(null);
     const [showModal, setShowModal] = useState(false);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+    const { user } = useAuth();
+
+    useNotificationsWebSocket({
+        userId: user?.id || null,
+        onNotification: () => {
+            loadNotifications();
+        }
+    });
 
     useEffect(() => {
         loadNotifications();
@@ -33,11 +44,19 @@ export default function NotificationsPage() {
         setSelectedNotification(notif);
         setShowModal(true);
         if (!notif.is_read) {
+            // Optimistic update
+            setNotifications(prev => prev.map(n =>
+                n.id === notif.id ? { ...n, is_read: true } : n
+            ));
+
             try {
                 await api.markNotificationRead(notif.id);
-                loadNotifications();
+                // Optionally re-fetch to ensure sync, but local state is already correct
+                // loadNotifications(); 
             } catch (error) {
                 console.error('Error marking notification read:', error);
+                // Rollback on error
+                setNotifications(notifications);
             }
         }
     };
@@ -135,34 +154,38 @@ export default function NotificationsPage() {
                                 : t('all_read_message')}
                         </p>
                     </div>
-                    <div className="flex gap-2">
-                        {selectedIds.length > 0 && (
-                            <button
-                                onClick={handleDeleteSelected}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm"
-                            >
-                                <Trash2 size={16} />
-                                {t('delete')} ({selectedIds.length})
-                            </button>
-                        )}
-                        {unreadCount > 0 && (
-                            <button
-                                onClick={handleMarkAllRead}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-100"
-                            >
-                                <CheckCheck size={16} />
-                                {t('mark_all_read')}
-                            </button>
-                        )}
-                        {notifications.length > 0 && (
-                            <button
-                                onClick={handleClearAll}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
-                            >
-                                <Trash2 size={16} />
-                                {t('clear_list')}
-                            </button>
-                        )}
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            {unreadCount > 0 && (
+                                <button
+                                    onClick={handleMarkAllRead}
+                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#db2777] bg-[#fdf2f8] hover:bg-[#fce7f3] rounded-lg transition-colors border border-[#fbcfe8]"
+                                >
+                                    <CheckCheck size={16} />
+                                    {t('mark_all_read')}
+                                </button>
+                            )}
+
+                            {selectedIds.length > 0 ? (
+                                <button
+                                    onClick={handleDeleteSelected}
+                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm"
+                                >
+                                    <Trash2 size={16} />
+                                    {t('delete_selected')} ({selectedIds.length})
+                                </button>
+                            ) : (
+                                notifications.length > 0 && (
+                                    <button
+                                        onClick={handleClearAll}
+                                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                    >
+                                        <Trash2 size={16} />
+                                        {t('clear_list')}
+                                    </button>
+                                )
+                            )}
+                        </div>
                     </div>
                 </div>
 

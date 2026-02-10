@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Calendar, Image, Award, Trophy, Users, Sparkles, Bell, Settings as SettingsIcon, Menu, LogOut, X } from 'lucide-react';
+import { Home, Calendar, Image, Award, Trophy, Users, Sparkles, Bell, Settings as SettingsIcon, Menu, LogOut, X, Ticket } from 'lucide-react';
 import { Toaster } from '../../components/ui/sonner';
 import { Button } from './v2_components/ui/button';
 import { Badge } from './v2_components/ui/badge';
@@ -15,6 +15,7 @@ import { Masters } from './v2_components/Masters';
 import { BeautyProfile } from './v2_components/BeautyProfile';
 import { Notifications } from './v2_components/Notifications';
 import { Settings } from './v2_components/Settings';
+import { PromoCodesView } from './PromoCodesView';
 import { apiClient } from '../../../src/api/client';
 import LanguageSwitcher from '../../../src/components/LanguageSwitcher';
 import { toast } from 'sonner';
@@ -22,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { useSalonSettings } from '../../hooks/useSalonSettings';
 import { getPhotoUrl } from '../../../src/utils/photoUtils';
 
-type Tab = 'dashboard' | 'appointments' | 'gallery' | 'loyalty' | 'achievements' | 'masters' | 'beauty' | 'notifications' | 'settings';
+type Tab = 'dashboard' | 'appointments' | 'gallery' | 'loyalty' | 'achievements' | 'masters' | 'beauty' | 'notifications' | 'settings' | 'promocodes';
 
 
 
@@ -54,6 +55,7 @@ export function AccountPage() {
     { id: 'masters' as Tab, label: t('tabs.masters', 'Мастера'), icon: Users, path: '/account/masters' },
     { id: 'beauty' as Tab, label: t('tabs.beauty', 'Бьюти-профиль'), icon: Sparkles, path: '/account/beauty' },
     { id: 'notifications' as Tab, label: t('tabs.notifications', 'Уведомления'), icon: Bell, path: '/account/notifications' },
+    { id: 'promocodes' as Tab, label: t('tabs.promocodes', 'Промокоды'), icon: Ticket, path: '/account/promocodes' },
     { id: 'settings' as Tab, label: t('tabs.settings', 'Настройки'), icon: SettingsIcon, path: '/account/settings' },
   ];
 
@@ -246,6 +248,8 @@ export function AccountPage() {
         return <Notifications />;
       case 'settings':
         return <Settings />;
+      case 'promocodes':
+        return <PromoCodesView />;
       default:
         return <Dashboard />;
     }

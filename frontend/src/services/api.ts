@@ -1201,6 +1201,38 @@ export class ApiClient {
     })
   }
 
+  // ===== REFERRAL CAMPAIGNS =====
+  async getReferralCampaigns() {
+    return this.request<{ campaigns: any[] }>('/api/referral-campaigns')
+  }
+
+  async createReferralCampaign(data: any) {
+    return this.request('/api/referral-campaigns', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateReferralCampaign(id: number, data: any) {
+    return this.request(`/api/referral-campaigns/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async patchReferralCampaign(id: number, data: any) {
+    return this.request(`/api/referral-campaigns/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteReferralCampaign(id: number) {
+    return this.request(`/api/referral-campaigns/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
   // ===== ADMIN CLIENT GALLERY =====
   async getAdminClientGallery(clientId: string) {
     return this.request<any>(`/api/admin/client-gallery/${clientId}`)
@@ -1564,17 +1596,17 @@ export class ApiClient {
     })
   }
 
-  async grantPermission(userId: number, resource: string) {
-    return this.request(`/api/users/${userId}/permissions/grant`, {
+  async grantPermission(userId: number, resource: string, action?: string) {
+    return this.request<any>(`/api/users/${userId}/permissions/grant`, {
       method: 'POST',
-      body: JSON.stringify({ resource }),
+      body: JSON.stringify({ resource, action }),
     })
   }
 
-  async revokePermission(userId: number, resource: string) {
-    return this.request(`/api/users/${userId}/permissions/revoke`, {
+  async revokePermission(userId: number, resource: string, action?: string) {
+    return this.request<any>(`/api/users/${userId}/permissions/revoke`, {
       method: 'POST',
-      body: JSON.stringify({ resource }),
+      body: JSON.stringify({ resource, action }),
     })
   }
 
@@ -1766,7 +1798,7 @@ export class ApiClient {
     subject: string;
     message: string;
     target_role?: string;
-    user_ids?: number[];
+    user_ids?: (number | string)[]; // Support both staff IDs (number) and client IDs (string)
     force_send?: boolean;
   }) {
     return this.request<{
@@ -1792,7 +1824,7 @@ export class ApiClient {
     subject: string;
     message: string;
     target_role?: string;
-    user_ids?: number[];
+    user_ids?: (number | string)[]; // Support both staff IDs (number) and client IDs (string)
     force_send?: boolean;
   }) {
     return this.request<{
@@ -1819,7 +1851,54 @@ export class ApiClient {
     }>('/api/broadcasts/history')
   }
 
-  async getBroadcastUsers(type: string, role?: string) {
+  async getUnsubscribedUsers() {
+    return this.request<{
+      unsubscribed: Array<{
+        id: number | string;
+        full_name: string;
+        username: string;
+        email: string;
+        mailing_type: string;
+        unsubscribed_at: string;
+        reason: string;
+      }>;
+    }>('/api/broadcasts/unsubscribed')
+  }
+
+  // ===== PROMO CODES =====
+  async getPromoCodes() {
+    return this.request<any>('/api/promo-codes')
+  }
+
+  async createPromoCode(data: any) {
+    return this.request('/api/promo-codes', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    })
+  }
+
+  async validatePromoCode(code: string, amount: number = 0) {
+    return this.request(`/api/promo-codes/validate?code=${code}&amount=${amount}`, {
+      method: 'POST'
+    })
+  }
+
+  async togglePromoCode(promoId: number) {
+    return this.request(`/api/promo-codes/${promoId}/toggle`, {
+      method: 'POST'
+    })
+  }
+
+  async deletePromoCode(promoId: number) {
+    return this.request(`/api/promo-codes/${promoId}`, {
+      method: 'DELETE'
+    })
+  }
+
+  async getBroadcastUsers(type: string, role?: string, lang: string = 'ru') {
+    let url = `/api/broadcasts/users?subscription_type=${encodeURIComponent(type)}&lang=${lang}`;
+    if (role) url += `&target_role=${role}`;
+
     return this.request<{
       users: Array<{
         id: number;
@@ -1836,7 +1915,7 @@ export class ApiClient {
           instagram: boolean;
         };
       }>;
-    }>(`/api/broadcasts/users?type=${type}${role ? `&role=${role}` : ''}`)
+    }>(url)
   }
 
   // ===== SUBSCRIPTION TYPES =====
@@ -2313,6 +2392,13 @@ export class ApiClient {
     }>(`/api/newsletter/subscribers?include_inactive=${includeInactive}`)
   }
 
+  async addNewsletterSubscriber(data: { email: string; name?: string; source?: string }) {
+    return this.request(`/api/newsletter/subscribe`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   async updateNewsletterSubscriber(subscriberId: number, isActive: boolean) {
     return this.request(`/api/newsletter/subscribers/${subscriberId}`, {
       method: 'PATCH',
@@ -2320,9 +2406,23 @@ export class ApiClient {
     })
   }
 
+  async updateNewsletterSubscriberData(subscriberId: number, data: { email: string; name: string }) {
+    return this.request(`/api/newsletter/subscribers/${subscriberId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
   async deleteNewsletterSubscriber(subscriberId: number) {
     return this.request(`/api/newsletter/subscribers/${subscriberId}`, {
       method: 'DELETE',
+    })
+  }
+
+  async importNewsletterSubscribers(subscribers: Array<{ email: string; name?: string }>) {
+    return this.request(`/api/newsletter/import`, {
+      method: 'POST',
+      body: JSON.stringify({ subscribers }),
     })
   }
 

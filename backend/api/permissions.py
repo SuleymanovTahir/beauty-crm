@@ -1,281 +1,227 @@
-"""
-API Endpoints для управления правами и ролями пользователей
-"""
-from fastapi import APIRouter, Request, Cookie, HTTPException
+from fastapi import APIRouter, Request, Cookie, Query
 from fastapi.responses import JSONResponse
-from typing import Optional
+from typing import Optional, Dict
 
-from db.connection import get_db_connection
-import psycopg2
-
-from core.config import (
-    DATABASE_NAME, ROLES, CLIENT_STATUSES,
-    PERMISSION_DESCRIPTIONS, has_permission, can_manage_role
-)
 from utils.utils import require_auth
-from utils.logger import log_info, log_error
+from utils.permissions import require_permission
+from utils.logger import log_error
+from db import log_activity
+from db.connection import get_db_connection
+from core.config import ROLES, PERMISSION_DESCRIPTIONS
 
 router = APIRouter(tags=["Permissions"])
 
-@router.get("/permissions/roles")
-async def get_all_roles(session_token: Optional[str] = Cookie(None)):
-    """Получить все роли и их описания"""
-    user = require_auth(session_token)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    # Только директор и админ могут видеть роли
-    if user["role"] not in ["director", "admin"]:
-        raise HTTPException(status_code=403, detail="Forbidden")
-
-    return {
-        "roles": ROLES,
-        "count": len(ROLES)
-    }
-
-@router.get("/permissions/descriptions")
-async def get_permission_descriptions(session_token: Optional[str] = Cookie(None)):
-    """Получить описания всех прав"""
-    user = require_auth(session_token)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    if user["role"] not in ["director", "admin"]:
-        raise HTTPException(status_code=403, detail="Forbidden")
-
-    return {
-        "permissions": PERMISSION_DESCRIPTIONS,
-        "count": len(PERMISSION_DESCRIPTIONS)
-    }
-
-@router.get("/permissions/statuses")
-async def get_client_statuses(session_token: Optional[str] = Cookie(None)):
-    """Получить все статусы клиентов"""
-    user = require_auth(session_token)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    return {
-        "statuses": CLIENT_STATUSES,
-        "count": len(CLIENT_STATUSES)
-    }
-
 @router.get("/permissions/user/{user_id}")
+@require_permission("users_view")
 async def get_user_permissions(
     user_id: int,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Получить права конкретного пользователя"""
-    user = require_auth(session_token)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    # Проверяем права
-    if user["role"] not in ["director", "admin"] and user["id"] != user_id:
-        raise HTTPException(status_code=403, detail="Forbidden")
+    """
+    Get full permissions info for a specific user
+    Used by PermissionsTab.tsx
+    """
+    conn = get_db_connection()
+    c = conn.cursor()
 
     try:
-        conn = get_db_connection()
-        c = conn.cursor()
-
+        # 1. Get user info
         c.execute("""
-            SELECT id, username, full_name, role, email
-            FROM users
-            WHERE id =%s
+            SELECT id, username, full_name, role, email 
+            FROM users WHERE id = %s
         """, (user_id,))
-
-        target_user = c.fetchone()
-
-        if not target_user:
+        user_row = c.fetchone()
+        
+        if not user_row:
             conn.close()
-            raise HTTPException(status_code=404, detail="User not found")
-
-        user_id, username, full_name, role, email = target_user
-
-        role_data = ROLES.get(role, {})
-        permissions = role_data.get('permissions', [])
-
-        # Получаем индивидуальные права пользователя
+            return JSONResponse({"error": "User not found"}, status_code=404)
+            
+        user_data = {
+            "id": user_row[0],
+            "username": user_row[1],
+            "full_name": user_row[2],
+            "role": user_row[3],
+            "email": user_row[4]
+        }
+        
+        role_key = user_data["role"]
+        
+        # 2. Get Role Info
+        role_info = ROLES.get(role_key, {
+            "name": role_key,
+            "permissions": [],
+            "hierarchy_level": 0,
+            "can_manage_roles": []
+        })
+        
+        # 3. Get Custom Permissions (User specific overrides)
         c.execute("""
-            SELECT permission_key, granted
-            FROM user_permissions
-            WHERE user_id =%s
+            SELECT permission_key, granted 
+            FROM user_permissions 
+            WHERE user_id = %s
         """, (user_id,))
-
-        custom_permissions = {}
+        
+        custom_perms = {}
         for row in c.fetchall():
-            perm_key, granted = row
-            custom_permissions[perm_key] = bool(granted)
+            custom_perms[row[0]] = bool(row[1])
+            
+        # 4. Calculate Effective Permissions Map (Structured for frontend)
+        # We'll build a map: {resource: {view: bool, create: bool, ...}}
+        from utils.permissions import RoleHierarchy
+        resources = ['clients', 'bookings', 'services', 'analytics', 'settings', 'users', 'bot_settings', 
+                     'export_data', 'import_data', 'view_contacts', 'instagram_chat', 'internal_chat',
+                     'employees', 'reports', 'financial_data']
+        actions = ['view', 'create', 'edit', 'delete']
+        
+        effective_map = {}
+        for res in resources:
+            effective_map[res] = {}
+            for act in actions:
+                perm_key = f"{res}_{act}"
+                # Special cases for some keys that don't follow resource_action pattern
+                if res in ['export_data', 'import_data', 'view_contacts']:
+                    perm_key = res
+                
+                effective_map[res][act] = RoleHierarchy.has_permission(
+                    user_data["role"], perm_key, user_id=user_id
+                )
 
         conn.close()
-
+        
         return {
-            "user": {
-                "id": user_id,
-                "username": username,
-                "full_name": full_name,
-                "role": role,
-                "email": email
-            },
+            "user": user_data,
             "role_info": {
-                "name": role_data.get('name', role),
-                "hierarchy_level": role_data.get('hierarchy_level', 0),
-                "permissions": permissions,
-                "can_manage_roles": role_data.get('can_manage_roles', [])
+                "name": role_info.get("name"),
+                "hierarchy_level": role_info.get("hierarchy_level", 0),
+                "permissions": role_info.get("permissions", []),
+                "can_manage_roles": role_info.get("can_manage_roles", [])
             },
-            "custom_permissions": custom_permissions
+            "custom_permissions": custom_perms,
+            "permissions": effective_map # Structured for older frontend parts
         }
-    except psycopg2.Error as e:
-        log_error(f"Database error: {e}", "api")
-        raise HTTPException(status_code=500, detail="Database error")
 
-@router.put("/permissions/user/{user_id}/role")
-async def update_user_role(
+    except Exception as e:
+        log_error(f"Error getting user permissions: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.post("/users/{user_id}/permissions/grant")
+@require_permission("users_manage")
+async def grant_permission_api(
     user_id: int,
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Изменить роль пользователя"""
-    user = require_auth(session_token)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
+    """Явно дать право пользователю (DB override)"""
+    from utils.utils import get_current_user_from_token
+    from utils.permissions import grant_user_permission
+    
+    admin = get_current_user_from_token(session_token)
     data = await request.json()
-    new_role = data.get("role")
+    resource = data.get('resource') or data.get('permission')
+    
+    if not resource:
+        return JSONResponse({"error": "Missing permission key"}, status_code=400)
+    
+    success = grant_user_permission(user_id, resource, admin["id"])
+    if success:
+        log_activity(admin["id"], "grant_permission", "user", str(user_id), f"Granted {resource}")
+        return {"success": True, "message": f"Право {resource} предоставлено"}
+    return JSONResponse({"error": "Failed to grant permission"}, status_code=500)
 
-    if not new_role or new_role not in ROLES:
-        raise HTTPException(status_code=400, detail="Invalid role")
-
-    # Проверяем, может ли текущий пользователь управлять этой ролью
-    if not can_manage_role(user["role"], new_role):
-        raise HTTPException(
-            status_code=403,
-            detail=f"You cannot assign role '{new_role}'"
-        )
-
-    try:
-        conn = get_db_connection()
-        c = conn.cursor()
-
-        # Получаем текущую роль пользователя
-        c.execute("SELECT role FROM users WHERE id =%s", (user_id,))
-        result = c.fetchone()
-
-        if not result:
-            conn.close()
-            raise HTTPException(status_code=404, detail="User not found")
-
-        old_role = result[0]
-
-        # Проверяем, может ли изменять старую роль
-        if not can_manage_role(user["role"], old_role):
-            conn.close()
-            raise HTTPException(
-                status_code=403,
-                detail=f"You cannot modify users with role '{old_role}'"
-            )
-
-        # Обновляем роль
-        c.execute("""
-            UPDATE users
-            SET role =%s, updated_at = CURRENT_TIMESTAMP
-            WHERE id =%s
-        """, (new_role, user_id))
-
-        conn.commit()
-        conn.close()
-
-        log_info(
-            f"User {user['username']} changed role of user {user_id} from {old_role} to {new_role}",
-            "permissions"
-        )
-
-        return {
-            "success": True,
-            "message": f"Role updated from {old_role} to {new_role}",
-            "old_role": old_role,
-            "new_role": new_role
-        }
-
-    except psycopg2.Error as e:
-        log_error(f"Database error: {e}", "api")
-        raise HTTPException(status_code=500, detail="Database error")
+@router.post("/users/{user_id}/permissions/revoke")
+@require_permission("users_manage")
+async def revoke_permission_api(
+    user_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Явно отобрать право у пользователя (DB override)"""
+    from utils.utils import get_current_user_from_token
+    from utils.permissions import revoke_user_permission
+    
+    admin = get_current_user_from_token(session_token)
+    data = await request.json()
+    resource = data.get('resource') or data.get('permission')
+    
+    if not resource:
+        return JSONResponse({"error": "Missing permission key"}, status_code=400)
+    
+    success = revoke_user_permission(user_id, resource, admin["id"])
+    if success:
+        log_activity(admin["id"], "revoke_permission", "user", str(user_id), f"Revoked {resource}")
+        return {"success": True, "message": f"Право {resource} отозвано"}
+    return JSONResponse({"error": "Failed to revoke permission"}, status_code=500)
 
 @router.put("/permissions/user/{user_id}/custom")
+@require_permission("users_manage") # Changed from users_edit for consistency
 async def update_user_custom_permissions(
     user_id: int,
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Обновить индивидуальные права пользователя"""
-    user = require_auth(session_token)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    # Только директор может изменять индивидуальные права
-    if user["role"] != "director":
-        raise HTTPException(status_code=403, detail="Only director can modify custom permissions")
-
+    """Update custom permissions for a user"""
+    from utils.utils import get_current_user_from_token
+    current_user = get_current_user_from_token(session_token)
+    
     data = await request.json()
-    permissions = data.get("permissions", {})
-
-    if not isinstance(permissions, dict):
-        raise HTTPException(status_code=400, detail="Invalid permissions format")
-
+    permissions: Dict[str, bool] = data.get('permissions', {})
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    
     try:
-        conn = get_db_connection()
-        c = conn.cursor()
-
-        # Проверяем, существует ли пользователь
-        c.execute("SELECT id FROM users WHERE id =%s", (user_id,))
-        if not c.fetchone():
-            conn.close()
-            raise HTTPException(status_code=404, detail="User not found")
-
-        # Обновляем/добавляем права
+        # Clear existing custom permissions for this user (or update incrementally?)
+        # For simplicity and to match frontend "save" behavior, we might want to upsert
+        # But frontend sends the full map of customized perms?
+        # Actually PermissionsTab sends `customPermissions` state.
+        
+        # We'll iterate and upsert
         for perm_key, granted in permissions.items():
             c.execute("""
                 INSERT INTO user_permissions (user_id, permission_key, granted, granted_by, granted_at)
-                VALUES (%s,%s,%s,%s, CURRENT_TIMESTAMP)
-                ON CONFLICT(user_id, permission_key)
-                DO UPDATE SET granted =%s, granted_by =%s, granted_at = CURRENT_TIMESTAMP
-            """, (user_id, perm_key, int(granted), user["id"], int(granted), user["id"]))
-
+                VALUES (%s, %s, %s, %s, NOW())
+                ON CONFLICT (user_id, permission_key) 
+                DO UPDATE SET granted = %s, granted_by = %s, granted_at = NOW()
+            """, (user_id, perm_key, granted, current_user['id'], granted, current_user['id']))
+            
         conn.commit()
         conn.close()
-
-        log_info(
-            f"User {user['username']} updated custom permissions for user {user_id}",
-            "permissions"
-        )
-
-        return {
-            "success": True,
-            "message": "Custom permissions updated successfully",
-            "updated_permissions": permissions
-        }
-
-    except psycopg2.Error as e:
-        log_error(f"Database error: {e}", "api")
-        raise HTTPException(status_code=500, detail="Database error")
+        
+        log_activity(current_user['id'], "update_custom_permissions", "user", str(user_id), "Updated custom permissions")
+        
+        return {"success": True}
+        
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        log_error(f"Error updating custom permissions: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/permissions/check")
-async def check_permission(
+async def check_user_permission_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
-    """Проверить наличие права у текущего пользователя"""
+    """
+    Check if current user has a specific permission
+    """
     user = require_auth(session_token)
     if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     data = await request.json()
     permission = data.get("permission")
 
     if not permission:
-        raise HTTPException(status_code=400, detail="Permission required")
+        return JSONResponse({"error": "Missing permission key"}, status_code=400)
 
-    has_perm = has_permission(user["role"], permission)
+    from core.config import has_permission
+    has_perm = has_permission(user["role"], permission, user.get("secondary_role"))
+
+    # Also check DB overrides
+    if not has_perm:
+        from utils.permissions import check_user_permission
+        has_perm = check_user_permission(user["id"], permission)
 
     return {
         "user_id": user["id"],
@@ -285,31 +231,32 @@ async def check_permission(
     }
 
 @router.get("/permissions/users")
-async def get_all_users_with_permissions(
+@require_permission("users_view")
+async def get_users_with_permissions(
     session_token: Optional[str] = Cookie(None)
 ):
-    """Получить всех пользователей с их ролями и правами"""
-    user = require_auth(session_token)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    if user["role"] not in ["director", "admin"]:
-        raise HTTPException(status_code=403, detail="Forbidden")
+    """
+    Get all users with their role metadata and hierarchy levels
+    """
+    from utils.utils import get_current_user_from_token
+    current_user = get_current_user_from_token(session_token)
+    
+    conn = get_db_connection()
+    c = conn.cursor()
 
     try:
-        conn = get_db_connection()
-        c = conn.cursor()
-
         c.execute("""
             SELECT id, username, full_name, role, email, is_active, created_at
-            FROM users
+            FROM users 
+            WHERE deleted_at IS NULL
             ORDER BY id
         """)
 
         users = []
+        from core.config import can_manage_role
+        
         for row in c.fetchall():
             user_id, username, full_name, role, email, is_active, created_at = row
-
             role_data = ROLES.get(role, {})
 
             users.append({
@@ -322,16 +269,25 @@ async def get_all_users_with_permissions(
                 "is_active": bool(is_active),
                 "created_at": created_at,
                 "hierarchy_level": role_data.get('hierarchy_level', 0),
-                "can_edit": can_manage_role(user["role"], role)
+                "can_edit": can_manage_role(current_user["role"], role, current_user.get("secondary_role"))
             })
 
         conn.close()
-
         return {
             "users": users,
             "count": len(users)
         }
 
-    except psycopg2.Error as e:
-        log_error(f"Database error: {e}", "api")
-        raise HTTPException(status_code=500, detail="Database error")
+    except Exception as e:
+        log_error(f"Error fetching users with permissions: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.get("/permissions/roles")
+async def get_all_roles_info(session_token: Optional[str] = Cookie(None)):
+    """Get all roles info (for dropdowns etc)"""
+    return {"roles": ROLES}
+
+@router.get("/permissions/descriptions")
+async def get_permission_descriptions(session_token: Optional[str] = Cookie(None)):
+    """Get all permission descriptions"""
+    return {"permissions": PERMISSION_DESCRIPTIONS}

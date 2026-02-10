@@ -46,6 +46,16 @@ SINGLE_AR = {
     'z': 'ز'
 }
 
+# Таблица для хинди (деванагари - упрощенная фонетическая)
+SINGLE_HI = {
+    'a': 'अ', 'b': 'ब', 'c': 'च', 'd': 'द', 'e': 'े',
+    'f': 'फ', 'g': 'ग', 'h': 'ह', 'i': 'ि', 'j': 'ज',
+    'k': 'क', 'l': 'ल', 'm': 'म', 'n': 'न', 'o': 'ो',
+    'p': 'प', 'q': 'क', 'r': 'र', 's': 'स', 't': 'त',
+    'u': 'ु', 'v': 'व', 'w': 'व', 'x': 'क्स', 'y': 'य',
+    'z': 'ज'
+}
+
 def is_latin(text: str) -> bool:
     """Проверить содержит ли текст латиницу"""
     return any(c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' for c in text)
@@ -150,14 +160,14 @@ def transliterate_to_cyrillic(text: str) -> str:
 def transliterate_to_arabic(text: str) -> str:
     """
     Транслитерация латиницы в арабский (упрощенная фонетическая)
-
-    Примеры:
-        SIMO → سيمو
-        Takhir → تاكهير
-        LYAZZAT → ليازات
+    Если на входе кириллица - сначала переводим в латиницу
     """
     if not text:
         return text
+
+    # Если кириллица - сначала в латиницу
+    if is_cyrillic(text):
+        text = transliterate_to_latin(text)
 
     # Если уже арабский - оставить как есть
     if any('\u0600' <= c <= '\u06FF' for c in text):
@@ -169,6 +179,28 @@ def transliterate_to_arabic(text: str) -> str:
     for char in text_lower:
         if char in SINGLE_AR:
             result.append(SINGLE_AR[char])
+        else:
+            result.append(char)
+
+    return ''.join(result)
+
+def transliterate_to_hindi(text: str) -> str:
+    """
+    Транслитерация латиницы в хинди (деванагари)
+    """
+    if not text:
+        return text
+
+    # Если кириллица - сначала в латиницу
+    if is_cyrillic(text):
+        text = transliterate_to_latin(text)
+
+    text_lower = text.lower()
+    result = []
+
+    for char in text_lower:
+        if char in SINGLE_HI:
+            result.append(SINGLE_HI[char])
         else:
             result.append(char)
 
@@ -234,19 +266,29 @@ def transliterate_name(name: str, target_language: str) -> str:
     if not name:
         return name
 
-    if target_language == 'ru':
-        return transliterate_to_cyrillic(name)
-    elif target_language == 'ar':
+    # Для русского и казахского (оба используют кириллицу)
+    if target_language in ['ru', 'kk']:
+        # Если имя на латинице - переводим в кириллицу
+        if is_latin(name) and not is_cyrillic(name):
+            return transliterate_to_cyrillic(name)
+        # Если на кириллице - просто нормализуем регистр
+        words = name.split()
+        return ' '.join([w.capitalize() for w in words])
+
+    if target_language == 'ar':
         return transliterate_to_arabic(name)
-    else:  # 'en' или любой другой
-        # Если текст на кириллице, транслитерируем в латиницу
-        if is_cyrillic(name):
-            return transliterate_to_latin(name)
-            
-        # Для английского: приводим к правильному регистру
-        if name.isupper():
-            return name[0].upper() + name[1:].lower()
-        return name
+    
+    if target_language == 'hi':
+        return transliterate_to_hindi(name)
+    
+    # Для всех остальных (en, es, de, fr, pt)
+    # Если на кириллице - переводим в латиницу
+    if is_cyrillic(name):
+        name = transliterate_to_latin(name)
+        
+    # Нормализуем регистр для латиницы
+    words = name.split()
+    return ' '.join([w.capitalize() for w in words])
 
 def transliterate_employees_for_language(employees: list, language: str) -> list:
     """

@@ -26,6 +26,7 @@ from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from db.settings import get_bot_settings, update_bot_settings, get_salon_settings, update_salon_settings
 from services.features import FeatureService
+from utils.permissions import require_role, require_permission, RoleHierarchy
 import psycopg2
 
 router = APIRouter()
@@ -307,7 +308,9 @@ async def download_backup(session_token: Optional[str] = Cookie(None)):
         # Create a backup using pg_dump
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         backup_filename = f"beauty_crm_backup_{timestamp}.sql"
-        backup_path = f"backend/{backup_filename}"
+        # Use absolute path to ensure pg_dump can find it, or use a temp dir
+        # Using current directory as it is cleaner for now
+        backup_path = os.path.abspath(backup_filename)
         
         # Get DB params from env or config
         from core.config import POSTGRES_CONFIG
@@ -362,57 +365,112 @@ _salon_settings_cache_time = None
 _salon_settings_cache_ttl = 0  # Disabled for CRM - always fetch fresh data
 
 @router.get("/salon-settings")
-async def get_salon_settings_api():
+async def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
     """
-    Получить настройки салона
+    Получить настройки салона (публичный доступ для базовой информации)
     """
     from utils.cache import cache
+    from utils.utils import require_auth
     import time
     
+    # Пытаемся авторизовать пользователя, но не падаем с ошибкой
+    user = None
+    try:
+        user = require_auth(session_token)
+    except:
+        pass
+
     cache_key = "salon_settings"
     
     # Try Redis cache first (if available)
     if cache.enabled:
         cached_settings = cache.get(cache_key)
         if cached_settings is not None:
-            return cached_settings
+            settings = cached_settings
+        else:
+            settings = get_salon_settings()
+            cache.set(cache_key, settings, expire=300)
+    else:
+        # Fallback to in-memory cache
+        global _salon_settings_cache, _salon_settings_cache_time
+        if _salon_settings_cache is not None and (time.time() - _salon_settings_cache_time < _salon_settings_cache_ttl):
+            settings = _salon_settings_cache
+        else:
+            settings = get_salon_settings()
+            _salon_settings_cache = settings
+            _salon_settings_cache_time = time.time()
     
-    # Fallback to in-memory cache
-    global _salon_settings_cache, _salon_settings_cache_time
-    if _salon_settings_cache is not None and _salon_settings_cache_time is not None:
-        cache_age = time.time() - _salon_settings_cache_time
-        if cache_age < _salon_settings_cache_ttl:
-            return _salon_settings_cache
-    
-    try:
-        settings = get_salon_settings()
-        
-        # Cache in Redis (if available)
-        if cache.enabled:
-            cache.set(cache_key, settings, expire=300)  # 5 minutes
-        
-        # Cache in memory as fallback
-        _salon_settings_cache = settings
-        _salon_settings_cache_time = time.time()
-        
+    # Если пользователь авторизован и имеет права - отдаем всё
+    if user and RoleHierarchy.has_permission(user['role'], 'settings_view', user.get('secondary_role')):
         return settings
-    except Exception as e:
-        log_error(f"Error loading salon settings: {e}", "settings")
-        # Return cached value if available
-        if _salon_settings_cache is not None:
-            return _salon_settings_cache
-        raise HTTPException(status_code=500, detail=str(e))
+        
+    # Иначе отдаем только публичную информацию (брендинг)
+    public_fields = [
+        'name', 'logo_url', 'city', 'address', 'phone', 'email', 
+        'instagram', 'website', 'currency', 'timezone_offset',
+        'hours_weekdays', 'hours_weekends', 'lunch_start', 'lunch_end'
+    ]
+    
+    public_settings = {k: v for k, v in settings.items() if k in public_fields}
+    return public_settings
 
 @router.post("/salon-settings")
-async def update_salon_settings_api(request: Request):
+@require_permission(["settings_edit", "settings_edit_branding", "settings_edit_finance", "settings_edit_integrations", "settings_edit_loyalty", "settings_edit_schedule"])
+async def update_salon_settings_api(request: Request, session_token: Optional[str] = Cookie(None)):
     """
-    Обновить настройки салона
+    Обновить настройки салона (с гранулярной проверкой прав)
     """
     from utils.cache import cache
+    from utils.utils import get_current_user_from_token
+    from utils.permissions import check_user_permission
     
     try:
+        user = get_current_user_from_token(session_token)
         data = await request.json()
-        success = update_salon_settings(data)
+        
+        # Если у пользователя есть полные права, обновляем всё
+        if check_user_permission(user, "settings_edit"):
+             updated_data = data
+        else:
+            # Иначе фильтруем поля по правам
+            updated_data = {}
+            
+            # Карта полей и необходимых прав
+            PERMISSION_FIELD_MAP = {
+                'name': 'settings_edit_branding',
+                'city': 'settings_edit_branding',
+                'address': 'settings_edit_branding',
+                'phone': 'settings_edit_branding',
+                'email': 'settings_edit_branding',
+                'instagram': 'settings_edit_branding', 
+                'telegram_manager_chat_id': 'settings_edit_branding',
+                
+                'currency': 'settings_edit_finance',
+                'timezone_offset': 'settings_edit_finance',
+                
+                'birthday_discount': 'settings_edit_loyalty',
+                
+                'hours_weekdays': 'settings_edit_schedule',
+                'hours_weekends': 'settings_edit_schedule',
+                'lunch_start': 'settings_edit_schedule',
+                'lunch_end': 'settings_edit_schedule',
+            }
+            
+            for field, value in data.items():
+                # Если поле известно и у пользователя есть право
+                if field in PERMISSION_FIELD_MAP:
+                    required_perm = PERMISSION_FIELD_MAP[field]
+                    if check_user_permission(user, required_perm):
+                        updated_data[field] = value
+                else:
+                    # Если поле неизвестно, пропускаем его (безопасность по умолчанию)
+                    # Либо можно разрешить, если это какое-то общее поле
+                    pass
+            
+            if not updated_data:
+                return {"success": True, "message": "No changes applied due to insufficient permissions"}
+
+        success = update_salon_settings(updated_data)
 
         if success:
             # Invalidate cache after successful update
@@ -423,7 +481,7 @@ async def update_salon_settings_api(request: Request):
             if cache.enabled:
                 cache.delete(cache_key)
             
-            log_info("Salon settings updated successfully", "settings")
+            log_info(f"Salon settings updated by {user['username']}", "settings")
             return {"success": True, "message": "Salon settings updated"}
         else:
             raise HTTPException(status_code=500, detail="Failed to update salon settings")
@@ -497,11 +555,15 @@ async def get_currencies():
         # Return default if table doesn't exist yet (though migration should have run)
         return {"currencies": [
             {"code": "AED", "name": "UAE Dirham", "symbol": "AED", "is_active": True},
-            {"code": "USD", "name": "US Dollar", "symbol": "$", "is_active": True}
+            {"code": "USD", "name": "US Dollar", "symbol": "$", "is_active": True},
+            {"code": "RUB", "name": "Russian Ruble", "symbol": "₽", "is_active": True},
+            {"code": "EUR", "name": "Euro", "symbol": "€", "is_active": True},
+            {"code": "KZT", "name": "Kazakhstani Tenge", "symbol": "₸", "is_active": True}
         ]}
 
 @router.post("/settings/currencies")
-async def add_currency(request: Request):
+@require_permission("settings_edit_finance")
+async def add_currency(request: Request, session_token: Optional[str] = Cookie(None)):
     """Добавить новую валюту"""
     try:
         data = await request.json()
@@ -536,7 +598,8 @@ async def add_currency(request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete("/settings/currencies/{code}")
-async def delete_currency(code: str):
+@require_permission("settings_edit_finance")
+async def delete_currency(code: str, session_token: Optional[str] = Cookie(None)):
     """Удалить валюту"""
     try:
         conn = get_db_connection()
@@ -558,7 +621,8 @@ async def get_features_config():
     return service.get_features_config()
 
 @router.post("/features")
-async def update_features_config(request: Request):
+@require_permission("settings_edit_integrations")
+async def update_features_config(request: Request, session_token: Optional[str] = Cookie(None)):
     """Обновить конфигурацию фича-флагов"""
     service = FeatureService()
     try:
@@ -592,7 +656,8 @@ class ReferralCampaignCreate(BaseModel):
     end_date: Optional[str] = None
 
 @router.get("/referral-campaigns")
-async def get_referral_campaigns():
+@require_permission("settings_edit_loyalty")
+async def get_referral_campaigns(session_token: Optional[str] = Cookie(None)):
     """Получить список реферальных кампаний"""
     try:
         conn = get_db_connection()
@@ -634,7 +699,8 @@ async def get_referral_campaigns():
         return {"campaigns": [], "error": str(e)}
 
 @router.post("/referral-campaigns")
-async def create_referral_campaign(campaign: ReferralCampaignCreate):
+@require_permission("settings_edit_loyalty")
+async def create_referral_campaign(campaign: ReferralCampaignCreate, session_token: Optional[str] = Cookie(None)):
     """Создать реферальную кампанию"""
     try:
         conn = get_db_connection()
@@ -681,7 +747,8 @@ async def create_referral_campaign(campaign: ReferralCampaignCreate):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.put("/referral-campaigns/{campaign_id}")
-async def update_referral_campaign(campaign_id: int, campaign: ReferralCampaignCreate):
+@require_permission("settings_edit_loyalty")
+async def update_referral_campaign(campaign_id: int, campaign: ReferralCampaignCreate, session_token: Optional[str] = Cookie(None)):
     """Обновить реферальную кампанию"""
     try:
         conn = get_db_connection()
@@ -730,7 +797,8 @@ async def update_referral_campaign(campaign_id: int, campaign: ReferralCampaignC
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.patch("/referral-campaigns/{campaign_id}")
-async def patch_referral_campaign(campaign_id: int, request: Request):
+@require_permission("settings_edit_loyalty")
+async def patch_referral_campaign(campaign_id: int, request: Request, session_token: Optional[str] = Cookie(None)):
     """Частичное обновление реферальной кампании (например, is_active)"""
     try:
         data = await request.json()
@@ -755,7 +823,8 @@ async def patch_referral_campaign(campaign_id: int, request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete("/referral-campaigns/{campaign_id}")
-async def delete_referral_campaign(campaign_id: int):
+@require_permission("settings_edit_loyalty")
+async def delete_referral_campaign(campaign_id: int, session_token: Optional[str] = Cookie(None)):
     """Удалить реферальную кампанию"""
     try:
         conn = get_db_connection()

@@ -39,6 +39,7 @@ class CreateBookingRequest(BaseModel):
     master: Optional[str] = ''
     revenue: Optional[float] = 0
     source: Optional[str] = 'manual'
+    promo_code: Optional[str] = None
 
 class UpdateStatusRequest(BaseModel):
     status: str
@@ -451,6 +452,25 @@ async def process_booking_background_tasks(
             log_warning(f"⏱️ Admin notification timed out for booking {booking_id}", "bookings")
         except Exception as e:
             log_error(f"❌ Error sending admin notification: {e}", "api")
+
+        # 4. Notify Client (Confirmation)
+        try:
+            from services.universal_messenger import send_universal_message
+            await send_universal_message(
+                recipient_id=instagram_id,
+                template_name="booking_confirmation",
+                context={
+                    "name": name or "Клиент",
+                    "service": service,
+                    "datetime": datetime_str,
+                    "master": master or ""
+                },
+                booking_id=booking_id,
+                platform='auto'
+            )
+            log_info(f"📩 Client confirmation sent for booking {booking_id}", "bookings")
+        except Exception as e:
+            log_error(f"❌ Error sending client confirmation: {e}", "bookings")
         
     except Exception as e:
         log_error(f"❌ Background task error: {e}", "background_tasks")
@@ -475,11 +495,12 @@ def create_booking_api(
         master = data.master or ''
         revenue = data.revenue or 0
         source = data.source or 'manual'
+        promo_code = data.promo_code
         user_id = user["id"]
 
         # Synchronous DB Save
         get_or_create_client(instagram_id, username=name, phone=phone)
-        save_booking(instagram_id, service, datetime_str, phone, name, master=master, user_id=user_id, revenue=revenue, source=source)
+        save_booking(instagram_id, service, datetime_str, phone, name, master=master, user_id=user_id, revenue=revenue, source=source, promo_code=promo_code)
 
         # Update phone and name
         if phone or name:

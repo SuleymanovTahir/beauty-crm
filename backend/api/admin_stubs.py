@@ -8,13 +8,7 @@ from utils.utils import get_current_user
 router = APIRouter()
 
 
-@router.get("/menu-settings")
-async def get_menu_settings(current_user: dict = Depends(get_current_user)):
-    """Получить настройки меню"""
-    return {
-        "items": [],
-        "customization": {}
-    }
+
 
 
 @router.get("/funnel/stages")

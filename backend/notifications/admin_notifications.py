@@ -174,8 +174,7 @@ def notify_new_booking(
         title=title,
         content=content,
         trigger_type="new_booking",
-        action_url=f"/crm/booking/{booking_id}",
-        exclude_user_id=created_by_user_id
+        action_url=f"/crm/booking/{booking_id}"
     )
 
     try:
@@ -185,8 +184,7 @@ def notify_new_booking(
                 title=title,
                 content=content,
                 trigger_type="new_booking",
-                action_url=f"/crm/booking/{booking_id}",
-                exclude_user_id=created_by_user_id
+                action_url=f"/crm/booking/{booking_id}"
             ))
     except RuntimeError:
         pass
@@ -212,8 +210,7 @@ def notify_new_client(
         title=title,
         content=content,
         trigger_type="new_client",
-        action_url=action_url,
-        exclude_user_id=created_by_user_id
+        action_url=action_url
     )
 
     try:
@@ -223,8 +220,7 @@ def notify_new_client(
                 title=title,
                 content=content,
                 trigger_type="new_client",
-                action_url=action_url,
-                exclude_user_id=created_by_user_id
+                action_url=action_url
             ))
     except RuntimeError:
         pass

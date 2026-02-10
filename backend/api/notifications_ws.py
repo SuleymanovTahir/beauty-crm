@@ -8,6 +8,7 @@ import json
 from datetime import datetime
 from utils.logger import log_info, log_error
 from utils.redis_pubsub import redis_pubsub
+from utils.utils import get_total_unread
 
 router = APIRouter(tags=["Notifications"])
 
@@ -129,17 +130,7 @@ async def notifications_websocket(websocket: WebSocket):
                     # Клиент запросил текущее количество непрочитанных
                     from starlette.concurrency import run_in_threadpool
                     
-                    def get_count():
-                        from db.connection import get_db_connection
-                        conn = get_db_connection()
-                        c = conn.cursor()
-                        try:
-                            c.execute("SELECT COUNT(*) FROM unified_communication_log WHERE user_id = %s AND is_read = FALSE AND medium = 'in_app'", (user_id,))
-                            return c.fetchone()[0]
-                        finally:
-                            conn.close()
-
-                    count = await run_in_threadpool(get_count)
+                    count = await run_in_threadpool(get_total_unread, user_id)
 
                     await websocket.send_json({
                         "type": "unread_count",

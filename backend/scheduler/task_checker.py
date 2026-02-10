@@ -169,6 +169,62 @@ async def check_client_reminders():
     finally:
         conn.close()
 
+async def check_scheduled_communications():
+    """Check for scheduled messages in unified_communication_log and send them"""
+    from services.universal_messenger import send_universal_message
+    
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        now = datetime.now()
+        
+        # Get messages with status 'scheduled' that are due
+        c.execute("""
+            SELECT id, client_id, user_id, booking_id, medium, template_name, title, content
+            FROM unified_communication_log
+            WHERE status = 'scheduled'
+              AND (scheduled_at <= %s OR scheduled_at IS NULL)
+            LIMIT 50
+        """, (now,))
+        
+        scheduled_msgs = c.fetchall()
+        
+        if scheduled_msgs:
+            log_info(f"⏰ Found {len(scheduled_msgs)} scheduled messages to send", "task_checker")
+            
+        for msg in scheduled_msgs:
+            msg_id, client_id, user_id, booking_id, medium, template_name, title, content = msg
+            
+            # Use UniversalMessenger to send (it will handle logging but we need to update status)
+            # To avoid infinite loop, we mark it as 'sending' first
+            c.execute("UPDATE unified_communication_log SET status = 'sending' WHERE id = %s", (msg_id,))
+            conn.commit()
+            
+            # Send (scheduled_at = None in call to trigger immediate send)
+            res = await send_universal_message(
+                recipient_id=client_id or str(user_id),
+                text=content,
+                platform=medium,
+                template_name=template_name,
+                user_id=user_id,
+                booking_id=booking_id,
+                subject=title
+            )
+            
+            # Delete the 'scheduled' record since it's now sent and a new 'sent' log is created by UniversalMessenger
+            # OR better: update the scheduled record with new data and status
+            if res.get("success"):
+                c.execute("DELETE FROM unified_communication_log WHERE id = %s", (msg_id,))
+            else:
+                c.execute("UPDATE unified_communication_log SET status = 'failed', error_message = %s WHERE id = %s", (res.get("error"), msg_id))
+            
+            conn.commit()
+
+    except Exception as e:
+        log_error(f"Error checking scheduled communications: {e}", "task_checker")
+    finally:
+        conn.close()
+
 async def task_checker_loop():
     """Main loop for task/reminder checks"""
     log_info("⏰ Task & Reminder checker started", "task_checker")
@@ -176,7 +232,8 @@ async def task_checker_loop():
         try:
             await check_tasks_due()
             await check_client_reminders()
-            await asyncio.sleep(300) # Check every 5 minutes
+            await check_scheduled_communications() # ✅ New: process unified log
+            await asyncio.sleep(60) # Changed from 300 to 60 for more responsive scheduling
         except Exception as e:
             log_error(f"Error in task_checker_loop: {e}", "task_checker")
             await asyncio.sleep(60)

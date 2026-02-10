@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Cookie
 from pydantic import BaseModel
 from typing import List, Optional
 from db.holidays import add_holiday, get_holidays, delete_holiday, SalonHoliday
 from db.connection import get_db_connection
+from utils.permissions import require_permission
 
 router = APIRouter()
 
@@ -24,7 +25,8 @@ async def list_holidays(start_date: Optional[str] = None, end_date: Optional[str
     return get_holidays(start_date, end_date)
 
 @router.post("")
-async def create_holiday(holiday: HolidayRequest):
+@require_permission("settings_edit_schedule")
+async def create_holiday(holiday: HolidayRequest, session_token: Optional[str] = Cookie(None)):
     # 1. Add holiday to DB (including master exceptions)
     success = add_holiday(holiday.date, holiday.name, holiday.is_closed, holiday.master_exceptions)
     if not success:
@@ -33,7 +35,8 @@ async def create_holiday(holiday: HolidayRequest):
     return {"success": True}
 
 @router.delete("/{date}")
-async def remove_holiday(date: str):
+@require_permission("settings_edit_schedule")
+async def remove_holiday(date: str, session_token: Optional[str] = Cookie(None)):
     success = delete_holiday(date)
     if not success:
         raise HTTPException(status_code=404, detail="Holiday not found")

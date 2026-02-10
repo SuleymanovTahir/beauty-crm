@@ -28,7 +28,7 @@
   "stat_errors": "त्रुटियां ({{count}}h)",
   "stat_errors_one": "",
   "stat_errors_other": "",
-  "stat_total": "कुल ([[V0]]]h)",
+  "stat_total": "कुल ({{count}}h)",
   "stat_total_one": "",
   "stat_total_other": "",
   "subtitle": "सिस्टम में सभी कार्यों और परिवर्तनों का इतिहास",

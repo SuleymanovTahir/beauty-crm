@@ -126,6 +126,7 @@ async def api_login(request: Request, username: str = Form(...), password: str =
                 "full_name": user["full_name"],
                 "email": user["email"],
                 "role": user["role"],
+                "secondary_role": user.get("secondary_role"),
                 "phone": user.get("phone")
             }
         }
@@ -306,6 +307,7 @@ async def google_login(data: dict):
                 "full_name": full_name,
                 "email": email,
                 "role": role,
+                "secondary_role": user[9] if user and len(user) > 9 else None,
                 "phone": phone
             }
         })

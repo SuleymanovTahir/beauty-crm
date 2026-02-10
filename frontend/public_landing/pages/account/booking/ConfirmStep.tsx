@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Dialog, DialogContent } from './ui/dialog';
-import { CheckCircle2, Calendar, Clock, Phone, Loader2 } from 'lucide-react';
+import { CheckCircle2, Calendar, Clock, Phone, Loader2, Ticket, X } from 'lucide-react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -41,6 +41,11 @@ export function ConfirmStep({
     const [loading, setLoading] = useState(false);
     const [profileLoaded, setProfileLoaded] = useState(false);
     const [isGuestContinuing, setIsGuestContinuing] = useState(false);
+    const [promoCode, setPromoCode] = useState('');
+    const [appliedPromo, setAppliedPromo] = useState<any>(null);
+    const [promoError, setPromoError] = useState('');
+    const [validatingPromo, setValidatingPromo] = useState(false);
+
 
     // Автоматическая загрузка номера телефона из профиля
     useEffect(() => {
@@ -90,6 +95,33 @@ export function ConfirmStep({
         setShowPhoneModal(false);
     };
 
+    const handleApplyPromo = async () => {
+        if (!promoCode.trim()) return;
+        setValidatingPromo(true);
+        setPromoError('');
+        try {
+            const result: any = await api.validatePromoCode(promoCode, totalPrice);
+            if (result.valid) {
+                setAppliedPromo(result);
+                toast.success(t('promotions.applied', 'Promo code applied!'));
+            } else {
+                setAppliedPromo(null);
+                setPromoError(result.message || t('promotions.invalid', 'Invalid promo code'));
+            }
+        } catch (error) {
+            setAppliedPromo(null);
+            setPromoError(t('promotions.error', 'Error validating promo code'));
+        } finally {
+            setValidatingPromo(false);
+        }
+    };
+
+    const removePromo = () => {
+        setAppliedPromo(null);
+        setPromoCode('');
+        setPromoError('');
+    };
+
     const handleConfirm = async () => {
         if (!phone) {
             setShowPhoneModal(true);
@@ -115,7 +147,8 @@ export function ConfirmStep({
                         time: bookingState.time || '',
                         phone,
                         name: user?.full_name || user?.username || bookingState.name || 'Guest',
-                        source: 'client_cabinet'
+                        source: 'client_cabinet',
+                        promo_code: appliedPromo?.code
                     });
                 } else {
                     await api.createBooking({
@@ -126,7 +159,8 @@ export function ConfirmStep({
                         time: bookingState.time || '',
                         phone,
                         name: user?.full_name || user?.username || bookingState.name || 'Guest',
-                        source: 'client_cabinet'
+                        source: 'client_cabinet',
+                        promo_code: appliedPromo?.code
                     });
                 }
 
@@ -315,14 +349,73 @@ export function ConfirmStep({
                                 </div>
                             )}
 
+                            {/* Promo Code */}
+                            <div className="pt-6 border-t border-gray-50">
+                                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3">
+                                    {t('promotions.title', 'Promo Code')}
+                                </p>
+                                {appliedPromo ? (
+                                    <div className="flex items-center justify-between bg-green-50 border border-green-100 rounded-lg p-3">
+                                        <div className="flex items-center gap-2">
+                                            <Ticket className="w-4 h-4 text-green-600" />
+                                            <div>
+                                                <p className="font-bold text-green-700 text-sm">{appliedPromo.code}</p>
+                                                <p className="text-xs text-green-600">
+                                                    {appliedPromo.discount_type === 'percent'
+                                                        ? `-${appliedPromo.value}%`
+                                                        : `-${formatCurrency(appliedPromo.value)}`}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <button onClick={removePromo} className="text-gray-400 hover:text-gray-600">
+                                            <X size={16} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex gap-2">
+                                        <Input
+                                            placeholder={t('promotions.enter_code', 'Enter code')}
+                                            value={promoCode}
+                                            onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                                            className="uppercase"
+                                        />
+                                        <Button
+                                            variant="outline"
+                                            onClick={handleApplyPromo}
+                                            disabled={validatingPromo || !promoCode}
+                                        >
+                                            {validatingPromo ? <Loader2 className="w-4 h-4 animate-spin" /> : t('apply', 'Apply')}
+                                        </Button>
+                                    </div>
+                                )}
+                                {promoError && (
+                                    <p className="text-xs text-red-500 mt-1">{promoError}</p>
+                                )}
+                            </div>
+
                             {/* Total Amount */}
                             <div className="pt-6 border-t border-gray-50">
-                                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('confirm.total', 'Total Amount')}</span>
-                                    <div className="text-right">
-                                        <span className="text-2xl font-bold text-gray-900">
-                                            {formatCurrency(totalPrice)}
-                                        </span>
+                                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-2">
+                                    {appliedPromo && (
+                                        <>
+                                            <div className="flex items-center justify-between text-sm text-gray-500">
+                                                <span>{t('subtotal', 'Subtotal')}</span>
+                                                <span className="line-through">{formatCurrency(totalPrice)}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-sm text-green-600 font-medium">
+                                                <span>{t('discount', 'Discount')}</span>
+                                                <span>-{formatCurrency(totalPrice - (appliedPromo.final_price || totalPrice))}</span>
+                                            </div>
+                                            <div className="h-px bg-gray-200 my-2" />
+                                        </>
+                                    )}
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('confirm.total', 'Total Amount')}</span>
+                                        <div className="text-right">
+                                            <span className="text-2xl font-bold text-gray-900">
+                                                {formatCurrency(appliedPromo ? appliedPromo.final_price : totalPrice)}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

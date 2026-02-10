@@ -29,6 +29,7 @@ class DateTimeEncoder(json.JSONEncoder):
 
 def get_salon_settings() -> dict:
     """Получить настройки салона из БД (Архитектура v2.0)"""
+    from utils.currency import get_salon_currency
     conn = get_db_connection()
     c = conn.cursor()
 
@@ -59,11 +60,10 @@ def get_salon_settings() -> dict:
                 "lunch_end": row.get("lunch_end"),
                 "phone": row.get("phone", ""),
                 "email": row.get("email"),
-                "instagram": row.get("instagram"),
                 "whatsapp": row.get("whatsapp"),
                 "booking_url": row.get("booking_url", ""),
                 "timezone": row.get("timezone", "Asia/Dubai"),
-                "currency": row.get("currency", "AED"),
+                "currency": row.get("currency") or get_salon_currency(),
                 "city": row.get("city", ""),
                 "country": row.get("country", ""),
                 "latitude": row.get("latitude"),

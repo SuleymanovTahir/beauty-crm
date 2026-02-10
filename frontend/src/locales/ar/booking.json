@@ -1,4 +1,5 @@
 {
+  "apply": "تطبيق",
   "auth": {
     "birthday": "تاريخ الميلاد",
     "complete_profile": "الملف الشخصي الكامل",
@@ -31,10 +32,14 @@
   "common": {
     "cancel": "لاحقًا",
     "change": "تغيير",
+    "copy_code": "انسخ الرمز",
+    "discount": "إيقاف",
     "edit": "تحرير",
+    "expires": "تاريخ انتهاء الصلاحية",
     "reschedule": "نقل",
     "resetAll": "إعادة تعيين الكل",
     "save": "تحقق",
+    "search": "بحث...",
     "select": "حدد"
   },
   "confirm": {
@@ -64,6 +69,10 @@
     "selectDateFirst": "حدد التاريخ أولاً",
     "time": "حدد الوقت",
     "title": "التاريخ والوقت"
+  },
+  "discount": "الخصم",
+  "errors": {
+    "fetch_promocodes": "فشل تحميل الرموز الترويجية"
   },
   "formDate": "التاريخ",
   "formDatePlaceholder": "اختيار التاريخ",
@@ -103,6 +112,19 @@
     "notAvailableToday": "لا توجد أماكن متاحة اليوم",
     "title": "حدد متخصصًا"
   },
+  "promotions": {
+    "applied": "تم تطبيق الرمز الترويجي!",
+    "copied": "تم نسخ الرمز الترويجي!",
+    "enter_code": "أدخل الرمز",
+    "error": "حدث خطأ أثناء التحقق الرمز الترويجي",
+    "invalid": "الرمز الترويجي غير صالح",
+    "min_order": "الحد الأدنى. اطلب",
+    "no_active_codes": "لا توجد رموز ترويجية نشطة في الوقت الحالي.",
+    "no_desc": "لا يوجد وصف",
+    "offer_desc": "استخدم هذه الرموز للحصول على خصم على زيارتك القادمة",
+    "offer_title": "العروض الخاصة",
+    "title": "الرمز الترويجي"
+  },
   "searchCountry": "ابحث عن بلد...",
   "searchService": "ابحث عن خدمة...",
   "select_to_continue": "حدد خدمة أو متخصصًا للمتابعة",
@@ -117,5 +139,6 @@
     "total": "الإجمالي"
   },
   "submitBooking": "إرسال طلب",
+  "subtotal": "الملخص",
   "totalDuration": "المدة"
 }

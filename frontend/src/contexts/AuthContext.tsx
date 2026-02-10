@@ -6,6 +6,7 @@ interface User {
   username: string;
   full_name: string;
   role: string;
+  secondary_role?: string;
   email?: string;
   phone?: string;
 }
@@ -42,6 +43,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             username: userData.username,
             full_name: userData.full_name,
             role: userData.role,
+            secondary_role: userData.secondary_role,
             email: userData.email,
             phone: userData.phone
           });

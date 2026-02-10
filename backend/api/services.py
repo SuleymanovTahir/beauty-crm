@@ -267,6 +267,8 @@ async def delete_service_api(
 
 # ===== СПЕЦИАЛЬНЫЕ ПАКЕТЫ =====
 
+from utils.permissions import require_permission
+
 @router.get("/services/special-packages")
 @router.get("/special-packages")
 async def list_special_packages(
@@ -305,15 +307,15 @@ async def list_special_packages(
     }
 
 @router.post("/services/special-packages")
+@require_permission("settings_edit_loyalty")
 async def create_special_package_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """Создать специальный пакет"""
-    user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-
+    # Auth check handled by decorator
+    user = require_auth(session_token) 
+    
     data = await request.json()
 
     try:
@@ -348,6 +350,7 @@ async def create_special_package_api(
         return JSONResponse({"error": str(e)}, status_code=400)
 
 @router.post("/services/special-packages/{package_id}")
+@require_permission("settings_edit_loyalty")
 async def update_special_package_api(
     package_id: int,
     request: Request,
@@ -355,8 +358,6 @@ async def update_special_package_api(
 ):
     """Обновить специальный пакет"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     data = await request.json()
 
@@ -370,14 +371,13 @@ async def update_special_package_api(
         return JSONResponse({"error": str(e)}, status_code=400)
 
 @router.delete("/services/special-packages/{package_id}")
+@require_permission("settings_edit_loyalty")
 async def delete_special_package_api(
     package_id: int,
     session_token: Optional[str] = Cookie(None)
 ):
     """Удалить специальный пакет"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "manager", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
 
     try:
         delete_special_package(package_id)

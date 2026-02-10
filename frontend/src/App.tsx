@@ -66,6 +66,7 @@ const FeatureManagement = React.lazy(() => import('./pages/adminPanel/FeatureMan
 const Chat = React.lazy(() => import('./pages/manager/Chat'));
 const InternalChat = React.lazy(() => import('./components/shared/InternalChat'));
 const Broadcasts = React.lazy(() => import('./pages/admin/Broadcasts'));
+const PromoCodes = React.lazy(() => import('./pages/admin/PromoCodes'));
 
 // Employee routes
 const EmployeeProfile = React.lazy(() => import('./pages/employee/Profile'));
@@ -101,6 +102,7 @@ interface ProtectedRouteProps {
   requiredRole?: string;
   currentRole?: string;
   currentUsername?: string;
+  secondaryRole?: string;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
@@ -108,7 +110,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   isAuthenticated,
   requiredRole,
   currentRole,
-  currentUsername
+  currentUsername,
+  secondaryRole
 }) => {
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -124,14 +127,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/account" replace />;
   }
 
-  // Разрешаем директору заходить на /crm
-  const allowedRoles = requiredRole ? [requiredRole] : [];
-  if (requiredRole === 'admin') {
-    allowedRoles.push('director'); // Директор имеет доступ к crm панели
-  }
+  const hasRequiredRole = (role?: string, secondaryRole?: string) => {
+    if (!requiredRole) return true;
+    const allowed = requiredRole === 'admin' ? ['admin', 'director'] : [requiredRole];
+    return allowed.includes(role || '') || allowed.includes(secondaryRole || '');
+  };
 
-  if (requiredRole && !allowedRoles.includes(currentRole || '')) {
-    // Редирект на панель в зависимости от роли
+  if (requiredRole && !hasRequiredRole(currentRole, secondaryRole)) {
+    // Редирект на панель в зависимости от роли (приоритет основной роли)
     if (currentRole === 'director') return <Navigate to="/crm/dashboard" replace />;
     if (currentRole === 'admin') return <Navigate to="/crm/dashboard" replace />;
     if (currentRole === 'manager') return <Navigate to="/manager/dashboard" replace />;
@@ -189,7 +192,7 @@ export default function App() {
                     currentUser.role === 'director' ? <Navigate to="/crm/dashboard" replace /> :
                       currentUser.role === 'admin' ? <Navigate to="/crm/dashboard" replace /> :
                         currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
-                          currentUser.role === 'sales' ? <Navigate to="/sales/clients" replace /> :
+                          currentUser.role === 'saler' ? <Navigate to="/saler/clients" replace /> :
                             currentUser.role === 'marketer' ? <Navigate to="/marketer/analytics" replace /> :
                               currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
                                 currentUser.role === 'client' ? <Navigate to="/account" replace /> :
@@ -257,6 +260,7 @@ export default function App() {
                     requiredRole="admin"
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
+                    secondaryRole={currentUser?.secondary_role}
                     element={
                       <AdminPanelLayout
                         user={currentUser}
@@ -288,6 +292,7 @@ export default function App() {
                     requiredRole="admin"
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
+                    secondaryRole={currentUser?.secondary_role}
                     element={
                       <MainLayout
                         user={currentUser}
@@ -327,6 +332,7 @@ export default function App() {
                 <Route path="audit-log" element={<ProtectedRoute element={<AuditLog />} isAuthenticated={!!currentUser} requiredRole="director" currentRole={currentUser?.role} />} />
                 <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="broadcasts" element={<Broadcasts />} />
+                <Route path="promo-codes" element={<PromoCodes />} />
                 <Route path="contracts" element={<Contracts />} />
                 <Route path="products" element={<Products />} />
                 <Route path="invoices" element={<Invoices />} />
@@ -349,6 +355,7 @@ export default function App() {
                     requiredRole="manager"
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
+                    secondaryRole={currentUser?.secondary_role}
                     element={
                       <MainLayout
                         user={currentUser}
@@ -373,19 +380,21 @@ export default function App() {
                 <Route path="calendar" element={<CRMCalendar />} />
                 <Route path="clients" element={<CRMClients />} />
                 <Route path="internal-chat" element={<InternalChat />} />
+                <Route path="promo-codes" element={<PromoCodes />} />
                 <Route path="visitor-analytics" element={<VisitorAnalytics />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
-              {/* Sales Routes - Protected */}
+              {/* Saler Routes - Protected */}
               <Route
-                path="/sales/*"
+                path="/saler/*"
                 element={
                   <ProtectedRoute
                     isAuthenticated={!!currentUser}
-                    requiredRole="sales"
+                    requiredRole="saler"
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
+                    secondaryRole={currentUser?.secondary_role}
                     element={
                       <MainLayout
                         user={currentUser}
@@ -405,6 +414,7 @@ export default function App() {
                 <Route path="tasks" element={<CRMTasks />} />
                 <Route path="services" element={<CRMServices />} />
                 <Route path="internal-chat" element={<InternalChat />} />
+                <Route path="promo-codes" element={<PromoCodes />} />
                 <Route path="messengers" element={<Messengers />} />
                 <Route path="bot-settings" element={<BotSettings />} />
                 <Route path="settings" element={<Settings />} />
@@ -421,6 +431,7 @@ export default function App() {
                     requiredRole="marketer"
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
+                    secondaryRole={currentUser?.secondary_role}
                     element={
                       <MainLayout
                         user={currentUser}
@@ -438,6 +449,7 @@ export default function App() {
                 <Route path="tasks" element={<CRMTasks />} />
                 <Route path="services" element={<CRMServices />} />
                 <Route path="internal-chat" element={<InternalChat />} />
+                <Route path="promo-codes" element={<PromoCodes />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="settings/:tab?" element={<Settings />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
@@ -452,6 +464,7 @@ export default function App() {
                     requiredRole="employee"
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
+                    secondaryRole={currentUser?.secondary_role}
                     element={
                       <MainLayout
                         user={currentUser}

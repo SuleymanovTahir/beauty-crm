@@ -1,6 +1,6 @@
 
 from fastapi import APIRouter, Depends, HTTPException
-from typing import Optional, List
+from typing import Optional, List, Any
 from pydantic import BaseModel
 from db.connection import get_db_connection
 from utils.utils import get_current_user
@@ -18,24 +18,28 @@ _menu_cache = {}
 _cache_ttl = 0  # Disabled for CRM - always fetch fresh data
 
 class MenuSettings(BaseModel):
-    menu_order: Optional[List[str]] = None
+    menu_order: Optional[List[Any]] = None
     hidden_items: Optional[List[str]] = None
 
 class MenuSettingsResponse(BaseModel):
-    menu_order: Optional[List[str]]
+    menu_order: Optional[List[Any]]
     hidden_items: Optional[List[str]]
 
 @router.get("/menu-settings", response_model=MenuSettingsResponse)
 async def get_menu_settings(current_user: dict = Depends(get_current_user)):
     """Get menu settings for current user or their role"""
+    logger.info(f"Fetching menu settings for user {current_user.get('id')} with role {current_user.get('role')}")
     
-    cache_key = f"menu_settings_{current_user['id']}_{current_user['role']}"
+    cache_key = f"menu_settings_{current_user.get('id')}_{current_user.get('role')}"
     
     # Try Redis cache first (if available)
     if cache.enabled:
-        cached_data = cache.get(cache_key)
-        if cached_data is not None:
-            return cached_data
+        try:
+            cached_data = cache.get(cache_key)
+            if cached_data is not None:
+                return cached_data
+        except Exception as ce:
+            logger.error(f"Redis cache error: {ce}")
     
     # Fallback to in-memory cache
     if cache_key in _menu_cache:
@@ -60,7 +64,7 @@ async def get_menu_settings(current_user: dict = Depends(get_current_user)):
             ) combined
             ORDER BY priority
             LIMIT 1
-        """, (current_user['id'], current_user['role']))
+        """, (current_user.get('id'), current_user.get('role')))
         
         row = c.fetchone()
         
@@ -71,7 +75,10 @@ async def get_menu_settings(current_user: dict = Depends(get_current_user)):
         
         # Cache in Redis (if available)
         if cache.enabled:
-            cache.set(cache_key, result, expire=300)  # 5 minutes
+            try:
+                cache.set(cache_key, result, expire=300)  # 5 minutes
+            except Exception as ce:
+                logger.error(f"Redis cache set error: {ce}")
         
         # Cache in memory as fallback
         _menu_cache[cache_key] = (result, time.time())
@@ -85,7 +92,7 @@ async def get_menu_settings(current_user: dict = Depends(get_current_user)):
         
         return result
     except Exception as e:
-        log_error(f"Error fetching menu settings: {e}", "menu_settings")
+        logger.error(f"Error fetching menu settings: {e}")
         # Return cached value if available, otherwise defaults
         if cache_key in _menu_cache:
             cached_data, _ = _menu_cache[cache_key]

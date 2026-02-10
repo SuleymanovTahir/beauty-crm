@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/Users.tsx
 import { useState, useEffect } from 'react';
-import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Shield, Key, Filter, X, Calendar, Info, AlertTriangle, Check } from 'lucide-react';
+import { Users as UsersIcon, Search, UserPlus, Edit, Trash2, Loader, AlertCircle, Key, Filter, X, Calendar, AlertTriangle } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -82,7 +82,6 @@ function SortableUserRow({
   setSelectedUser,
   setShowScheduleDialog,
   setShowPermissionsDialog,
-  setShowRoleDialog,
   formatCurrency,
   getPhotoUrl,
   getDynamicAvatar
@@ -227,19 +226,6 @@ function SortableUserRow({
                 >
                   <Key className="w-4 h-4" />
                 </Button>
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    setSelectedUser(user);
-                    setShowRoleDialog(true);
-                  }}
-                  className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                  title={t('action_change_role_title')}
-                >
-                  <Shield className="w-4 h-4" />
-                </Button>
               </>
             )}
 
@@ -369,10 +355,6 @@ export default function Users() {
   };
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [showRoleDialog, setShowRoleDialog] = useState(false);
-  const [availableRoles, setAvailableRoles] = useState<Array<{ key: string; name: string; level: number }>>([]);
-  const [loadingRoles, setLoadingRoles] = useState(false);
-  const [savingRole, setSavingRole] = useState(false);
 
   // Edit user dialog states
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -380,75 +362,15 @@ export default function Users() {
   const [savingEdit, setSavingEdit] = useState(false);
 
   // Permissions dialog states
-  // Permissions dialog states
   const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
 
   // Schedule dialog states
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
 
   useEffect(() => {
-    // Параллельная загрузка для ускорения
-    Promise.all([
-      loadUsers(),
-      loadAvailableRoles()
-    ]).catch(error => {
-      console.error('Error loading users data:', error);
-    });
-  }, []);
-
-  // Reload when tab changes
-  useEffect(() => {
     loadUsers();
-  }, [activeTab]);
+  }, [activeTab, i18n.language]);
 
-  const loadAvailableRoles = async () => {
-    try {
-      setLoadingRoles(true);
-      const data = await api.getRoles();
-      setAvailableRoles(data.roles || []);
-    } catch (err) {
-      console.error('Error loading roles:', err);
-    } finally {
-      setLoadingRoles(false);
-    }
-  };
-
-  // Создаем roleConfig динамически из availableRoles
-  const roleConfig: Record<string, { label: string; color: string }> = {};
-  availableRoles.forEach(role => {
-    roleConfig[role.key] = {
-      label: role.name,
-      color: roleColors[role.key] || 'bg-gray-100 text-gray-800'
-    };
-  });
-
-  const getRoleDescription = (roleKey: string): string => {
-    const descriptions: Record<string, string> = {
-      director: t('role_director_desc'),
-      admin: t('role_admin_desc'),
-      manager: t('role_manager_desc'),
-      sales: t('role_sales_desc'),
-      marketer: t('role_marketer_desc'),
-      employee: t('role_employee_desc')
-    };
-    return descriptions[roleKey] || t('role_default');
-  };
-
-  const handleChangeRole = async (userId: number, newRole: string) => {
-    try {
-      setSavingRole(true);
-      await api.updateUserRole(userId, newRole); // fix argument type
-      toast.success(t('role_changed'));
-      setShowRoleDialog(false);
-      setSelectedUser(null);
-      await loadUsers();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : t('error_changing_role');
-      toast.error(message);
-    } finally {
-      setSavingRole(false);
-    }
-  };
 
   const handleEditUser = async () => {
     if (!selectedUser) return;
@@ -466,6 +388,16 @@ export default function Users() {
     } finally {
       setSavingEdit(false);
     }
+  };
+
+  // Роли для отображения в таблице (теперь просто как константы для названий)
+  const roleConfig: Record<string, { label: string; color: string }> = {
+    director: { label: t('role_director'), color: roleColors.director },
+    admin: { label: t('role_admin'), color: roleColors.admin },
+    manager: { label: t('role_manager'), color: roleColors.manager },
+    sales: { label: t('role_sales'), color: roleColors.sales },
+    marketer: { label: t('role_marketer'), color: roleColors.marketer },
+    employee: { label: t('role_employee'), color: roleColors.employee },
   };
 
   useEffect(() => {
@@ -679,7 +611,7 @@ export default function Users() {
               } `}
           >
             <div className="flex items-center justify-center gap-2">
-              <Shield className="w-4 h-4" />
+              <UsersIcon className="w-4 h-4" />
               <span>{t('tab_employees')}</span>
               {activeTab === 'employees' && (
                 <Badge className="bg-white/20 text-white border-0">{users.length}</Badge>
@@ -860,7 +792,6 @@ export default function Users() {
                         setSelectedUser={setSelectedUser}
                         setShowScheduleDialog={setShowScheduleDialog}
                         setShowPermissionsDialog={setShowPermissionsDialog}
-                        setShowRoleDialog={setShowRoleDialog}
                         formatCurrency={formatCurrency}
                         getPhotoUrl={getPhotoUrl} // Pass helper functions
                         getDynamicAvatar={getDynamicAvatar}
@@ -878,115 +809,6 @@ export default function Users() {
           </div>
         )}
       </div >
-
-      {/* Диалог смены роли */}
-      {
-        showRoleDialog && selectedUser && (
-          <div className="crm-modal-overlay" onClick={() => setShowRoleDialog(false)}>
-            <div className="crm-modal max-w-md" onClick={(e) => e.stopPropagation()}>
-              <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white flex-shrink-0 -m-6 mb-6 rounded-t-2xl">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 leading-tight">
-                    {t('action_change_role_title')}: {(selectedUser as any).full_name}
-                  </h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {t('role_dialog_current')}: {roleConfig[(selectedUser as any).role]?.label || (selectedUser as any).role}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    setShowRoleDialog(false);
-                    setSelectedUser(null);
-                  }}
-                  className="rounded-full hover:bg-gray-100"
-                  disabled={savingRole}
-                >
-                  <X className="w-5 h-5 text-gray-400" />
-                </Button>
-              </div>
-
-              <div className="crm-form-content">
-                {loadingRoles ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
-                  </div>
-                ) : (
-                  <>
-                    {availableRoles.length === 0 ? (
-                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                        <p className="text-sm text-yellow-800">
-                          {t('no_permission_to_change_roles')}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {availableRoles.map((role) => {
-                          // Get permissions for this role
-                          const rolePermissions = permissions.canCreateUsers ? [
-                            role.key === 'director' && t('perm_director_full'),
-                            role.key === 'admin' && t('perm_admin_manage'),
-                            role.key === 'manager' && t('perm_manager_bookings'),
-                            (role.key === 'sales' || role.key === 'marketer') && t('perm_sales_clients'),
-                            role.key === 'employee' && t('perm_employee_basic')
-                          ].filter(Boolean) : [];
-
-                          return (
-                            <div key={role.key} className="space-y-2">
-                              <button
-                                onClick={() => handleChangeRole((selectedUser as any).id, role.key)}
-                                disabled={savingRole}
-                                className={`w-full p-3 rounded-lg border-2 transition-all text-left ${(selectedUser as any).role === role.key
-                                  ? 'border-pink-500 bg-pink-50'
-                                  : 'border-gray-200 hover:border-pink-300 hover:bg-gray-50'
-                                  } `}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <div className="flex-1">
-                                    <p className="font-medium text-gray-900">{role.name}</p>
-                                    <p className="text-sm text-gray-600 mt-1">
-                                      {getRoleDescription(role.key)}
-                                    </p>
-                                  </div>
-                                  {(selectedUser as any).role === role.key && (
-                                    <Badge className="bg-pink-100 text-pink-800">{t('role_dialog_current_badge')}</Badge>
-                                  )}
-                                </div>
-                              </button>
-
-                              {/* Permissions display */}
-                              {rolePermissions.length > 0 && (
-                                <div className="ml-3 pl-3 border-l-2 border-gray-200">
-                                  <p className="text-xs font-medium text-gray-500 mb-1">{t('permissions_label')}:</p>
-                                  <ul className="space-y-1">
-                                    {rolePermissions.map((perm, idx) => (
-                                      <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
-                                        <Check className="w-3 h-3 text-green-600 mt-0.5" />
-                                        <span>{perm}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
-                      <p className="text-xs text-blue-800 flex items-center gap-1">
-                        <Info className="w-3 h-3 text-blue-600" />
-                        <strong>{t('role_hierarchy_label')}:</strong> {t('role_hierarchy_description')}
-                      </p>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        )
-      }
 
       {/* Диалог редактирования пользователя */}
       {
@@ -1095,32 +917,61 @@ export default function Users() {
       {/* Диалог управления правами */}
       {
         showPermissionsDialog && selectedUser && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl custom-dialog-scroll flex flex-col">
-              <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-white rounded-t-xl flex-shrink-0">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">
-                    {t('permissions_dialog_title')}: {(selectedUser as any).full_name}
-                  </h3>
-                  <p className="text-xs text-gray-600 mt-1">
-                    {t('permissions_dialog_role')}: {roleConfig[(selectedUser as any).role]?.label || (selectedUser as any).role}
-                  </p>
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-200"
+            onClick={() => {
+              setShowPermissionsDialog(false);
+              setSelectedUser(null);
+              loadUsers();
+            }}
+          >
+            <div
+              className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-white flex-shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-orange-50 rounded-lg">
+                    <Key className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 leading-tight">
+                      {t('permissions_dialog_title')}
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {(selectedUser as any).full_name} • {roleConfig[(selectedUser as any).role]?.label || (selectedUser as any).role}
+                    </p>
+                  </div>
                 </div>
                 <Button
-                  variant="outline"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => {
                     setShowPermissionsDialog(false);
                     setSelectedUser(null);
                     loadUsers();
                   }}
-                  className="ml-4"
+                  className="rounded-full hover:bg-gray-100 h-9 w-9"
                 >
-                  {t('permissions_dialog_close')}
+                  <X className="w-5 h-5 text-gray-400" />
                 </Button>
               </div>
 
-              <div className="p-4 overflow-y-auto flex-1">
+              <div className="overflow-y-auto flex-1 p-2 bg-gray-50/30">
                 <PermissionsTab userId={(selectedUser as any).id} />
+              </div>
+
+              <div className="p-4 border-t border-gray-100 bg-white rounded-b-2xl">
+                <Button
+                  onClick={() => {
+                    setShowPermissionsDialog(false);
+                    setSelectedUser(null);
+                    loadUsers();
+                  }}
+                  className="w-full bg-gray-900 hover:bg-black text-white h-11"
+                >
+                  {t('permissions_dialog_close')}
+                </Button>
               </div>
             </div>
           </div>

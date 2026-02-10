@@ -5,16 +5,18 @@ Handles subscriber management for CRM newsletters.
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
-def add_subscriber(email: str, source: str = 'footer') -> bool:
+def add_subscriber(email: str, name: str = None, source: str = 'footer') -> bool:
     """Add a new subscriber to the newsletter list"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
         c.execute("""
-            INSERT INTO newsletter_subscribers (email, is_active)
-            VALUES (%s, TRUE)
-            ON CONFLICT (email) DO UPDATE SET is_active = TRUE
-        """, (email.lower().strip(),))
+            INSERT INTO newsletter_subscribers (email, name, is_active)
+            VALUES (%s, %s, TRUE)
+            ON CONFLICT (email) DO UPDATE SET 
+                is_active = TRUE,
+                name = COALESCE(EXCLUDED.name, newsletter_subscribers.name)
+        """, (email.lower().strip(), name))
         conn.commit()
         return True
     except Exception as e:
@@ -31,13 +33,13 @@ def get_all_subscribers(include_inactive: bool = False) -> list:
     try:
         if include_inactive:
             c.execute("""
-                SELECT id, email, is_active, created_at
+                SELECT id, email, name, is_active, created_at
                 FROM newsletter_subscribers
                 ORDER BY created_at DESC
             """)
         else:
             c.execute("""
-                SELECT id, email, is_active, created_at
+                SELECT id, email, name, is_active, created_at
                 FROM newsletter_subscribers
                 WHERE is_active = TRUE
                 ORDER BY created_at DESC
@@ -47,8 +49,9 @@ def get_all_subscribers(include_inactive: bool = False) -> list:
             {
                 'id': row[0],
                 'email': row[1],
-                'is_active': row[2],
-                'created_at': row[3].isoformat() if row[3] else None
+                'name': row[2],
+                'is_active': row[3],
+                'created_at': row[4].isoformat() if row[4] else None
             }
             for row in rows
         ]
@@ -105,6 +108,24 @@ def get_subscribers_count() -> dict:
     except Exception as e:
         log_error(f"Error getting subscribers count: {e}", "db.newsletter")
         return {'active': 0, 'total': 0}
+    finally:
+        conn.close()
+def update_subscriber_data(subscriber_id: int, email: str, name: str) -> bool:
+    """Update subscriber email and name"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("""
+            UPDATE newsletter_subscribers
+            SET email = %s, name = %s
+            WHERE id = %s
+        """, (email.lower().strip(), name, subscriber_id))
+        conn.commit()
+        return c.rowcount > 0
+    except Exception as e:
+        log_error(f"Error updating subscriber data {subscriber_id}: {e}", "db.newsletter")
+        conn.rollback()
+        return False
     finally:
         conn.close()
 

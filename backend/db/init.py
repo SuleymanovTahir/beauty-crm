@@ -5,7 +5,11 @@
 from core.config import (
     DATABASE_NAME, 
     SALON_PHONE_DEFAULT, 
-    SALON_EMAIL_DEFAULT
+    SALON_EMAIL_DEFAULT,
+    SALON_CITY,
+    SALON_CURRENCY_DEFAULT,
+    DEFAULT_HOURS_WEEKDAYS,
+    DEFAULT_HOURS_WEEKENDS
 )
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
@@ -52,7 +56,7 @@ def init_database():
                 return  # Table doesn't exist yet, skip
 
             # Add the column
-            c.execute(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {definition}")
+            c.execute("ALTER TABLE {} ADD COLUMN IF NOT EXISTS {} {}".format(table, column, definition))
         except Exception as e:
             log_error(f"Ошибка при добавлении колонки {column} в {table}: {e}", "db")
 
@@ -141,14 +145,17 @@ def init_database():
             client_id TEXT,
             user_id INTEGER,
             booking_id INTEGER, -- Link to specific booking
-            medium TEXT NOT NULL,
-            trigger_type TEXT,
+            template_name TEXT, -- Reference to notification_templates
+            medium TEXT NOT NULL, -- email, telegram, instagram, whatsapp, in_app
+            trigger_type TEXT, -- automated, manual, broadcast
             title TEXT,
             content TEXT,
-            status TEXT DEFAULT 'sent',
+            status TEXT DEFAULT 'sent', -- sent, failed, pending, scheduled
             is_read BOOLEAN DEFAULT FALSE,
             action_url TEXT,
             error_message TEXT,
+            scheduled_at TIMESTAMP, -- For delayed sending
+            sent_at TIMESTAMP,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
         # Migrations for unified_communication_log
@@ -158,9 +165,30 @@ def init_database():
         add_column_if_not_exists('unified_communication_log', 'is_read', 'BOOLEAN DEFAULT FALSE')
         add_column_if_not_exists('unified_communication_log', 'action_url', 'TEXT')
         add_column_if_not_exists('unified_communication_log', 'error_message', 'TEXT')
+        add_column_if_not_exists('unified_communication_log', 'template_name', 'TEXT')
+        add_column_if_not_exists('unified_communication_log', 'scheduled_at', 'TIMESTAMP')
+        add_column_if_not_exists('unified_communication_log', 'sent_at', 'TIMESTAMP')
 
-        # Add indexes for speed (Unread count queries)
+        # Notification Templates System (Master Repository for all messages)
+        c.execute('''CREATE TABLE IF NOT EXISTS notification_templates (
+            id SERIAL PRIMARY KEY,
+            name TEXT UNIQUE NOT NULL, -- e.g. "booking_confirmation"
+            category TEXT DEFAULT 'transactional', -- transactional, marketing, alert
+            subject_ru TEXT,
+            subject_en TEXT,
+            subject_ar TEXT,
+            body_ru TEXT,
+            body_en TEXT,
+            body_ar TEXT,
+            variables JSONB DEFAULT '[]', -- List of allowed variables like ["name", "time"]
+            is_system BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # Add indexes for speed (Unread count queries and scheduling)
         c.execute("CREATE INDEX IF NOT EXISTS idx_unified_log_user_unread ON unified_communication_log (user_id, is_read, medium)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_unified_log_status_scheduled ON unified_communication_log (status, scheduled_at) WHERE status = 'scheduled'")
         c.execute("CREATE INDEX IF NOT EXISTS idx_unified_log_client_id ON unified_communication_log (client_id)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_unified_log_booking_id ON unified_communication_log (booking_id)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_unified_log_user_id ON unified_communication_log (user_id)")
@@ -253,6 +281,7 @@ def init_database():
         add_column_if_not_exists('users', 'assigned_employee_id', 'INTEGER')
         add_column_if_not_exists('users', 'preferred_language', "TEXT DEFAULT 'en'")
 
+
         # Soft Delete Tracking (Trash) - REQUIRED by housekeeping
         c.execute('''CREATE TABLE IF NOT EXISTS deleted_items (
             id SERIAL PRIMARY KEY,
@@ -311,13 +340,13 @@ def init_database():
         # --- END BASE COLUMNS (MOVED TO END) ---
         
         # Schema initialization for salon_settings
-        c.execute('''CREATE TABLE IF NOT EXISTS salon_settings (
+        salon_settings_sql = '''CREATE TABLE IF NOT EXISTS salon_settings (
             id INTEGER PRIMARY KEY CHECK (id = 1),
             name TEXT,
             address TEXT, 
             google_maps TEXT,
-            hours_weekdays TEXT DEFAULT '10:30 - 21:00',
-            hours_weekends TEXT DEFAULT '10:30 - 21:00',
+            hours_weekdays TEXT DEFAULT '{DEFAULT_HOURS_WEEKDAYS}',
+            hours_weekends TEXT DEFAULT '{DEFAULT_HOURS_WEEKENDS}',
             hours TEXT,
             lunch_start TEXT,
             lunch_end TEXT,
@@ -325,7 +354,7 @@ def init_database():
             whatsapp TEXT, instagram TEXT,
             booking_url TEXT, timezone TEXT DEFAULT 'Asia/Dubai',
             timezone_offset INTEGER DEFAULT 4,
-            currency TEXT DEFAULT 'AED',
+            currency TEXT DEFAULT '{SALON_CURRENCY_DEFAULT}',
             city TEXT, country TEXT,
             latitude REAL, longitude REAL,
             logo_url TEXT, base_url TEXT,
@@ -338,7 +367,11 @@ def init_database():
             loyalty_points_conversion_rate REAL DEFAULT 0.1,
             points_expiration_days INTEGER DEFAULT 365,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )''')
+        )'''
+        salon_settings_sql = salon_settings_sql.replace('{DEFAULT_HOURS_WEEKDAYS}', DEFAULT_HOURS_WEEKDAYS)
+        salon_settings_sql = salon_settings_sql.replace('{DEFAULT_HOURS_WEEKENDS}', DEFAULT_HOURS_WEEKENDS)
+        salon_settings_sql = salon_settings_sql.replace('{SALON_CURRENCY_DEFAULT}', SALON_CURRENCY_DEFAULT)
+        c.execute(salon_settings_sql)
         add_column_if_not_exists('salon_settings', 'lunch_start', 'TEXT')
         add_column_if_not_exists('salon_settings', 'lunch_end', 'TEXT')
         add_column_if_not_exists('salon_settings', 'timezone_offset', 'INTEGER DEFAULT 4')
@@ -357,20 +390,31 @@ def init_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
 
-        # User Notification Settings
         c.execute('''CREATE TABLE IF NOT EXISTS notification_settings (
             id SERIAL PRIMARY KEY,
-            user_id INTEGER REFERENCES users(id) NOT NULL,
+            user_id INTEGER REFERENCES users(id) NOT NULL UNIQUE,
             email_notifications BOOLEAN DEFAULT TRUE,
+            telegram_notifications BOOLEAN DEFAULT TRUE,
+            whatsapp_notifications BOOLEAN DEFAULT FALSE,
+            push_notifications BOOLEAN DEFAULT TRUE,
             sms_notifications BOOLEAN DEFAULT FALSE,
             booking_notifications BOOLEAN DEFAULT TRUE,
+            notify_on_new_booking BOOLEAN DEFAULT TRUE,
+            notify_on_booking_change BOOLEAN DEFAULT TRUE,
+            notify_on_booking_cancel BOOLEAN DEFAULT TRUE,
             chat_notifications BOOLEAN DEFAULT TRUE,
             daily_report BOOLEAN DEFAULT TRUE,
             report_time TEXT DEFAULT '21:00',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE(user_id)
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('notification_settings', 'telegram_notifications', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('notification_settings', 'whatsapp_notifications', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('notification_settings', 'push_notifications', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('notification_settings', 'notify_on_new_booking', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('notification_settings', 'notify_on_booking_change', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('notification_settings', 'notify_on_booking_cancel', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('notification_settings', 'report_time', "TEXT DEFAULT '21:00'")
 
         # Activity Log for user actions
         c.execute('''CREATE TABLE IF NOT EXISTS activity_log (
@@ -384,15 +428,14 @@ def init_database():
         )''')
 
         # Services and Pricing
-        c.execute('''CREATE TABLE IF NOT EXISTS services (
+        c.execute(f'''CREATE TABLE IF NOT EXISTS services (
             id SERIAL PRIMARY KEY,
-            service_key TEXT UNIQUE NOT NULL,
+            parent_id INTEGER REFERENCES services(id), -- For sub-services
             name TEXT NOT NULL,
-            category TEXT,
             price REAL NOT NULL,
             min_price REAL,
             max_price REAL,
-            currency TEXT DEFAULT 'AED',
+            currency TEXT DEFAULT '{SALON_CURRENCY_DEFAULT}',
             duration TEXT, -- '60', '30 min', etc.
             description TEXT,
             benefits TEXT, -- '|' separated list
@@ -514,6 +557,7 @@ def init_database():
         add_column_if_not_exists('bookings', 'reminder_sent_2h', 'BOOLEAN DEFAULT FALSE')
         add_column_if_not_exists('bookings', 'special_package_id', 'INTEGER')
         add_column_if_not_exists('bookings', 'user_id', 'INTEGER')
+        add_column_if_not_exists('bookings', 'promo_code', 'TEXT')
 
         # Tasks and Project Management
         c.execute('''CREATE TABLE IF NOT EXISTS tasks (
@@ -541,16 +585,14 @@ def init_database():
         # --- 4. DOCUMENTS & FINANCE ---
 
         # Invoices
-        c.execute('''CREATE TABLE IF NOT EXISTS invoices (
+        c.execute(f'''CREATE TABLE IF NOT EXISTS invoices (
             id SERIAL PRIMARY KEY,
-            invoice_number TEXT UNIQUE NOT NULL,
-            client_id TEXT REFERENCES clients(instagram_id),
-            booking_id INTEGER REFERENCES bookings(id),
-            status TEXT DEFAULT 'draft',
+            client_id INTEGER REFERENCES clients(id),
+            booking_id INTEGER,
             stage_id INTEGER REFERENCES workflow_stages(id),
             total_amount REAL DEFAULT 0,
             paid_amount REAL DEFAULT 0,
-            currency TEXT DEFAULT 'AED',
+            currency TEXT DEFAULT '{SALON_CURRENCY_DEFAULT}',
             items JSONB DEFAULT '[]',
             notes TEXT, pdf_path TEXT,
             created_by INTEGER REFERENCES users(id),
@@ -755,6 +797,49 @@ def init_database():
         except:
             pass
 
+        # --- 6. LOYALTY AND PROMOTIONS (New) ---
+        c.execute('''CREATE TABLE IF NOT EXISTS promo_codes (
+            id SERIAL PRIMARY KEY,
+            code TEXT UNIQUE NOT NULL,
+            discount_type TEXT NOT NULL, -- 'fixed' or 'percent'
+            value REAL NOT NULL,
+            min_amount REAL DEFAULT 0,
+            valid_from TIMESTAMP,
+            valid_until TIMESTAMP,
+            max_uses INTEGER,
+            current_uses INTEGER DEFAULT 0,
+            is_active BOOLEAN DEFAULT TRUE,
+            category TEXT, -- 'birthday', 'general', 'referral'
+            description TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        
+        c.execute('''CREATE TABLE IF NOT EXISTS promo_code_usage (
+            id SERIAL PRIMARY KEY,
+            promo_id INTEGER REFERENCES promo_codes(id) ON DELETE CASCADE,
+            client_id TEXT, -- instagram_id or telegram_id
+            user_id INTEGER REFERENCES users(id),
+            booking_id INTEGER,
+            used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS marketing_unsubscriptions (
+            id SERIAL PRIMARY KEY,
+            client_id TEXT, -- instagram_id or telegram_id
+            user_id INTEGER REFERENCES users(id),
+            email TEXT,
+            mailing_type TEXT NOT NULL, -- 'promotional', 'newsletter', 'birthday', 'all'
+            reason TEXT,
+            unsubscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(client_id, mailing_type),
+            UNIQUE(user_id, mailing_type),
+            UNIQUE(email, mailing_type)
+        )''')
+        
+        # Add index for unsubscriptions
+        c.execute("CREATE INDEX IF NOT EXISTS idx_unsub_client ON marketing_unsubscriptions (client_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_unsub_email ON marketing_unsubscriptions (email)")
+
         # Notification Logs
         c.execute('''CREATE TABLE IF NOT EXISTS notification_logs (
             id SERIAL PRIMARY KEY,
@@ -835,6 +920,7 @@ def init_database():
         c.execute('''CREATE TABLE IF NOT EXISTS newsletter_subscribers (
             id SERIAL PRIMARY KEY,
             email TEXT UNIQUE NOT NULL,
+            name TEXT,
             is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
@@ -1178,6 +1264,17 @@ def init_database():
             UNIQUE(role_key, permission_key)
         )''')
 
+        # User-specific permission overrides
+        c.execute('''CREATE TABLE IF NOT EXISTS user_permissions (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            permission_key TEXT NOT NULL,
+            granted BOOLEAN DEFAULT TRUE,
+            granted_by INTEGER REFERENCES users(id),
+            granted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id, permission_key)
+        )''')
+
         c.execute('''CREATE TABLE IF NOT EXISTS menu_settings (
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -1357,16 +1454,14 @@ def init_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
 
-        c.execute('''CREATE TABLE IF NOT EXISTS user_salary_settings (
+        c.execute(f'''CREATE TABLE IF NOT EXISTS salary_settings (
             id SERIAL PRIMARY KEY,
             user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-            salary_type TEXT DEFAULT 'commission',
-            hourly_rate REAL DEFAULT 0,
-            monthly_rate REAL DEFAULT 0,
+            base_salary REAL DEFAULT 0,
             commission_rate REAL DEFAULT 0,
             bonus_rate REAL DEFAULT 0,
             kpi_settings JSONB,
-            currency TEXT DEFAULT 'AED',
+            currency TEXT DEFAULT '{SALON_CURRENCY_DEFAULT}',
             is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -1586,7 +1681,7 @@ def init_database():
         salon_address = os.getenv('SALON_ADDRESS', 'Shop 13, Amwaj 2, Plaza Level, JBR, Dubai')
         salon_hours_weekdays = os.getenv('SALON_HOURS_WEEKDAYS', '10:30 - 21:00')
         salon_hours_weekends = os.getenv('SALON_HOURS_WEEKENDS', '10:30 - 21:00')
-        salon_currency = os.getenv('SALON_CURRENCY', 'AED')
+        salon_currency = os.getenv('SALON_CURRENCY', SALON_CURRENCY_DEFAULT)
         
         custom_settings = {
             "stats": {
@@ -1657,10 +1752,10 @@ def init_database():
                 id, name, address,
                 phone, whatsapp, instagram, email, booking_url, google_maps,
                 hours_weekdays, hours_weekends, hours, bot_name, base_url,
-                currency, bot_config, custom_settings, messenger_config
+                currency, city, bot_config, custom_settings, messenger_config
             )
             VALUES (
-                1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             )
             ON CONFLICT (id) DO UPDATE SET
                 name = EXCLUDED.name,
@@ -1674,6 +1769,7 @@ def init_database():
                 hours_weekends = EXCLUDED.hours_weekends,
                 hours = EXCLUDED.hours,
                 currency = EXCLUDED.currency,
+                city = EXCLUDED.city,
                 bot_config = EXCLUDED.bot_config,
                 custom_settings = EXCLUDED.custom_settings,
                 messenger_config = COALESCE(NULLIF(salon_settings.messenger_config::text, '[]'), EXCLUDED.messenger_config::text)::jsonb,
@@ -1685,7 +1781,7 @@ def init_database():
             salon_hours_weekdays, salon_hours_weekends,
             f"Ежедневно: {salon_hours_weekdays}",
             bot_config['bot_name'], salon_base_url,
-            salon_currency, json.dumps(bot_config), json.dumps(custom_settings), json.dumps(messenger_config)
+            salon_currency, SALON_CITY, json.dumps(bot_config), json.dumps(custom_settings), json.dumps(messenger_config)
         ))
 
         # Продуктовые сотрудники
@@ -1817,6 +1913,7 @@ def init_database():
         # Critical migrations for salon_settings
         add_column_if_not_exists('salon_settings', 'bot_config', "JSONB DEFAULT '{}'")
         add_column_if_not_exists('salon_settings', 'messenger_config', "JSONB DEFAULT '[]'")
+        add_column_if_not_exists('newsletter_subscribers', 'name', 'TEXT')
 
         # Ensure workflow_stages table exists (critical for tasks)
         c.execute('''CREATE TABLE IF NOT EXISTS workflow_stages (

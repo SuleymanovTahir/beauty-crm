@@ -17,7 +17,7 @@
 """
 
 import logging
-from typing import Optional, Dict, List, Tuple
+from typing import Optional, Dict, List, Tuple, Union
 from functools import wraps
 from fastapi import Cookie
 from fastapi.responses import JSONResponse
@@ -43,31 +43,12 @@ class RoleHierarchy:
         return ROLES.get(role, {}).get('hierarchy_level', 0)
 
     @staticmethod
-    def can_manage_role(manager_role: str, target_role: str) -> bool:
+    def can_manage_role(manager_role: str, target_role: str, secondary_role: str = None) -> bool:
         """
-        Проверить, может ли manager_role управлять target_role
-
-        Правила:
-        - Директор может управлять всеми ролями
-        - Админ может управлять только ролями из своего списка (НЕ director)
-        - Другие роли не могут управлять никем
-
-        Args:
-            manager_role: Роль того, кто хочет управлять
-            target_role: Роль, которой хотят управлять
-
-        Returns:
-            bool: True если может управлять
+        Проверить, может ли manager_role (или secondary_role) управлять target_role
         """
-        # Директор может управлять всеми (включая других директоров)
-        if manager_role == 'director':
-            return True
-
-        # Получаем список ролей, которыми может управлять manager
-        manager_data = ROLES.get(manager_role, {})
-        can_manage_list = manager_data.get('can_manage_roles', [])
-
-        return target_role in can_manage_list
+        from core.config import can_manage_role as config_can_manage_role
+        return config_can_manage_role(manager_role, target_role, secondary_role)
 
     @staticmethod
     def can_assign_higher_role(current_role: str, target_role: str) -> bool:
@@ -107,37 +88,44 @@ class RoleHierarchy:
         return role_data.get('can_manage_roles', [])
 
     @staticmethod
-    def has_permission(role: str, permission: str) -> bool:
+    def has_permission(role: str, permission: str, secondary_role: str = None, user_id: int = None) -> bool:
         """
-        Проверить, есть ли у роли конкретное право
-
-        Args:
-            role: Роль пользователя
-            permission: Ключ права (например, 'clients_view')
-
-        Returns:
-            bool: True если есть право
+        Проверить наличие права (SSOT: Config + DB Overrides)
         """
-        return config_has_permission(role, permission)
+        # 1. Сначала проверяем статический конфиг (самый быстрый путь)
+        if config_has_permission(role, permission, secondary_role):
+            return True
+
+        # 2. Если в конфиге нет, но есть user_id - проверяем БД (переопределения)
+        if user_id:
+            return check_user_permission(user_id, permission)
+
+        return False
 
     @staticmethod
-    def get_all_permissions(role: str) -> List[str]:
+    def get_all_permissions(role: str, user_id: int = None) -> List[str]:
         """
-        Получить все права роли
-
-        Args:
-            role: Роль пользователя
-
-        Returns:
-            List[str]: Список прав или ['*'] для директора
+        Получить все права роли + переопределения из БД
         """
         role_data = ROLES.get(role, {})
         permissions = role_data.get('permissions', [])
 
         if permissions == '*':
-            return ['*']  # Все права
+            return ['*']
 
-        return permissions
+        final_permissions = list(permissions) if isinstance(permissions, list) else []
+
+        if user_id:
+            db_perms = get_user_permissions(user_id)
+            for res, perm_obj in db_perms.items():
+                for act, granted in perm_obj.items():
+                    perm_key = f"{res}_{act}"
+                    if granted and perm_key not in final_permissions:
+                        final_permissions.append(perm_key)
+                    elif not granted and perm_key in final_permissions:
+                        final_permissions.remove(perm_key)
+
+        return final_permissions
 
     @staticmethod
     def validate_role_assignment(
@@ -175,7 +163,7 @@ class RoleHierarchy:
             return False, f"Роль '{new_role}' не существует"
 
         # 3. Проверка права управлять этой ролью
-        if not RoleHierarchy.can_manage_role(assigner_role, new_role):
+        if not RoleHierarchy.can_manage_role(assigner_role, new_role, kwargs.get('secondary_role')):
             return False, f"У вас нет прав для назначения роли '{ROLES[new_role]['name']}'"
 
         # 4. Проверка, что не назначаем роль выше своей
@@ -190,102 +178,109 @@ class PermissionChecker:
     # === ПОЛЬЗОВАТЕЛИ ===
 
     @staticmethod
-    def can_view_all_users(role: str) -> bool:
+    def can_view_all_users(user: dict) -> bool:
         """Может ли роль просматривать всех пользователей"""
-        return role in ['director', 'admin']
+        return RoleHierarchy.has_permission(user.get('role'), 'users_view', user.get('secondary_role'), user.get('id'))
 
     @staticmethod
-    def can_create_users(role: str) -> bool:
+    def can_create_users(user: dict) -> bool:
         """Может ли роль создавать пользователей"""
-        return role in ['director', 'admin'] or RoleHierarchy.has_permission(role, 'users_create')
+        return RoleHierarchy.has_permission(user.get('role'), 'users_create', user.get('secondary_role'), user.get('id'))
 
     @staticmethod
-    def can_edit_users(role: str) -> bool:
+    def can_edit_users(user: dict) -> bool:
         """Может ли роль редактировать пользователей"""
-        return role in ['director', 'admin'] or RoleHierarchy.has_permission(role, 'users_edit')
+        return RoleHierarchy.has_permission(user.get('role'), 'users_edit', user.get('secondary_role'), user.get('id'))
 
     @staticmethod
-    def can_delete_users(role: str) -> bool:
+    def can_delete_users(user: dict) -> bool:
         """Может ли роль удалять пользователей"""
-        return role in ['director', 'admin'] or RoleHierarchy.has_permission(role, 'users_delete')
+        return RoleHierarchy.has_permission(user.get('role'), 'users_delete', user.get('secondary_role'), user.get('id'))
 
     @staticmethod
-    def can_change_user_role(assigner_role: str, target_role: str) -> bool:
+    def can_change_user_role(manager: dict, target_role: str) -> bool:
         """Может ли пользователь изменить роль другого пользователя"""
-        return RoleHierarchy.can_manage_role(assigner_role, target_role)
+        return RoleHierarchy.can_manage_role(manager.get('role'), target_role, manager.get('secondary_role'))
 
     # === КЛИЕНТЫ ===
 
     @staticmethod
-    def can_view_all_clients(role: str) -> bool:
+    def can_view_all_clients(user: dict) -> bool:
         """Может ли роль просматривать всех клиентов"""
-        return RoleHierarchy.has_permission(role, 'clients_view')
+        return RoleHierarchy.has_permission(user.get('role'), 'clients_view', user.get('secondary_role'))
 
     @staticmethod
-    def can_view_client_contacts(role: str) -> bool:
+    def can_view_client_contacts(user: dict) -> bool:
         """Может ли роль видеть контактные данные клиентов"""
-        # Только director, admin, manager имеют полный доступ к контактам
-        return role in ['director', 'admin', 'manager']
+        # Только те, у кого есть право clients_view (обычно полные данные)
+        return RoleHierarchy.has_permission(user.get('role'), 'clients_view', user.get('secondary_role'))
 
     @staticmethod
-    def can_create_clients(role: str) -> bool:
+    def can_create_clients(user: dict) -> bool:
         """Может ли роль создавать клиентов"""
-        return RoleHierarchy.has_permission(role, 'clients_create')
+        return RoleHierarchy.has_permission(user.get('role'), 'clients_create', user.get('secondary_role'))
 
     @staticmethod
-    def can_edit_clients(role: str) -> bool:
+    def can_edit_clients(user: dict) -> bool:
         """Может ли роль редактировать клиентов"""
-        return RoleHierarchy.has_permission(role, 'clients_edit')
+        return RoleHierarchy.has_permission(user.get('role'), 'clients_edit', user.get('secondary_role'))
 
     @staticmethod
-    def can_delete_clients(role: str) -> bool:
+    def can_delete_clients(user: dict) -> bool:
         """Может ли роль удалять клиентов"""
-        return role == 'director' or RoleHierarchy.has_permission(role, 'clients_delete')
+        return RoleHierarchy.has_permission(user.get('role'), 'clients_delete', user.get('secondary_role'))
+        
+    @staticmethod
+    def can_export_clients(user: dict) -> bool:
+        """Может ли роль экспортировать базу клиентов"""
+        return RoleHierarchy.has_permission(user.get('role'), 'clients_export', user.get('secondary_role'))
 
     # === ЗАПИСИ ===
 
     @staticmethod
-    def can_view_all_bookings(role: str) -> bool:
+    def can_view_all_bookings(user: dict) -> bool:
         """Может ли роль просматривать все записи"""
-        return RoleHierarchy.has_permission(role, 'bookings_view')
+        return RoleHierarchy.has_permission(user.get('role'), 'bookings_view', user.get('secondary_role'))
 
     @staticmethod
-    def can_create_bookings(role: str) -> bool:
+    def can_create_bookings(user: dict) -> bool:
         """Может ли роль создавать записи"""
-        return RoleHierarchy.has_permission(role, 'bookings_create')
+        return RoleHierarchy.has_permission(user.get('role'), 'bookings_create', user.get('secondary_role'))
 
     @staticmethod
-    def can_edit_bookings(role: str) -> bool:
+    def can_edit_bookings(user: dict) -> bool:
         """Может ли роль редактировать записи"""
-        return RoleHierarchy.has_permission(role, 'bookings_edit')
+        return RoleHierarchy.has_permission(user.get('role'), 'bookings_edit', user.get('secondary_role'))
 
     @staticmethod
-    def can_delete_bookings(role: str) -> bool:
+    def can_delete_bookings(user: dict) -> bool:
         """Может ли роль удалять записи"""
-        return role == 'director' or RoleHierarchy.has_permission(role, 'bookings_delete')
+        return RoleHierarchy.has_permission(user.get('role'), 'bookings_delete', user.get('secondary_role'))
 
     # === КАЛЕНДАРЬ ===
 
     @staticmethod
-    def can_view_all_calendars(role: str) -> bool:
+    def can_view_all_calendars(user: dict) -> bool:
         """Может ли роль видеть календари всех сотрудников"""
-        return RoleHierarchy.has_permission(role, 'calendar_view_all')
+        return RoleHierarchy.has_permission(user.get('role'), 'calendar_view_all', user.get('secondary_role'))
 
     # === АНАЛИТИКА ===
 
     @staticmethod
-    def can_view_analytics(role: str) -> bool:
+    def can_view_analytics(user: dict) -> bool:
         """Может ли роль просматривать аналитику"""
+        role = user.get('role')
+        s_role = user.get('secondary_role')
         return (
-            RoleHierarchy.has_permission(role, 'analytics_view') or
-            RoleHierarchy.has_permission(role, 'analytics_view_anonymized') or
-            RoleHierarchy.has_permission(role, 'analytics_view_stats_only')
+            RoleHierarchy.has_permission(role, 'analytics_view', s_role) or
+            RoleHierarchy.has_permission(role, 'analytics_view_anonymized', s_role) or
+            RoleHierarchy.has_permission(role, 'analytics_view_stats_only', s_role)
         )
 
     @staticmethod
-    def can_view_full_analytics(role: str) -> bool:
+    def can_view_full_analytics(user: dict) -> bool:
         """Может ли роль видеть полную аналитику с персональными данными"""
-        return role == 'director'
+        return RoleHierarchy.has_permission(user.get('role'), 'analytics_view', user.get('secondary_role'))
 
     @staticmethod
     def can_export_data(role: str) -> bool:
@@ -295,45 +290,50 @@ class PermissionChecker:
     # === УСЛУГИ ===
 
     @staticmethod
-    def can_view_services(role: str) -> bool:
+    def can_view_services(user: dict) -> bool:
         """Может ли роль просматривать услуги"""
-        return RoleHierarchy.has_permission(role, 'services_view')
+        return RoleHierarchy.has_permission(user.get('role'), 'services_view', user.get('secondary_role'))
 
     @staticmethod
-    def can_edit_services(role: str) -> bool:
+    def can_edit_services(user: dict) -> bool:
         """Может ли роль редактировать услуги"""
-        return role in ['director', 'admin'] or RoleHierarchy.has_permission(role, 'services_edit')
+        return RoleHierarchy.has_permission(user.get('role'), 'services_edit', user.get('secondary_role'))
 
     # === НАСТРОЙКИ ===
 
     @staticmethod
-    def can_view_settings(role: str) -> bool:
+    def can_view_settings(user: dict) -> bool:
         """Может ли роль просматривать настройки"""
-        return role in ['director', 'admin']
+        return RoleHierarchy.has_permission(user.get('role'), 'settings_view', user.get('secondary_role'))
 
     @staticmethod
-    def can_edit_settings(role: str) -> bool:
-        """Может ли роль изменять настройки"""
-        return role == 'director'
+    def can_edit_settings(user: dict) -> bool:
+        """Может ли роль изменять настройки (полный доступ)"""
+        return RoleHierarchy.has_permission(user.get('role'), 'settings_edit', user.get('secondary_role'))
+        
+    @staticmethod
+    def can_edit_branding(user: dict) -> bool:
+        """Может ли роль менять брендинг"""
+        return RoleHierarchy.has_permission(user.get('role'), 'settings_edit_branding', user.get('secondary_role'))
 
     @staticmethod
-    def can_view_bot_settings(role: str) -> bool:
+    def can_view_bot_settings(user: dict) -> bool:
         """Может ли роль просматривать настройки бота"""
-        return role in ['director', 'sales'] or RoleHierarchy.has_permission(role, 'bot_settings_view')
+        return RoleHierarchy.has_permission(user.get('role'), 'bot_settings_view', user.get('secondary_role'))
 
     # === РАССЫЛКИ ===
 
     @staticmethod
-    def can_send_broadcasts(role: str) -> bool:
+    def can_send_broadcasts(user: dict) -> bool:
         """Может ли роль отправлять рассылки"""
-        return role in ['director', 'admin', 'marketer']
+        return RoleHierarchy.has_permission(user.get('role'), 'broadcasts_send', user.get('secondary_role'))
 
     # === INSTAGRAM ===
 
     @staticmethod
-    def can_view_instagram_chat(role: str) -> bool:
+    def can_view_instagram_chat(user: dict) -> bool:
         """Может ли роль просматривать Instagram чат"""
-        return RoleHierarchy.has_permission(role, 'instagram_chat_view')
+        return RoleHierarchy.has_permission(user.get('role'), 'instagram_chat_view', user.get('secondary_role'), user.get('id'))
 
 # ===== ДЕКОРАТОРЫ ДЛЯ FASTAPI =====
 
@@ -356,7 +356,11 @@ def require_role(allowed_roles: List[str]):
             if not user:
                 return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-            if user["role"] not in allowed_roles:
+            has_role = user["role"] in allowed_roles
+            if not has_role and user.get("secondary_role"):
+                has_role = user["secondary_role"] in allowed_roles
+
+            if not has_role:
                 return JSONResponse(
                     {"error": f"Требуется одна из ролей: {', '.join(allowed_roles)}"},
                     status_code=403
@@ -367,15 +371,9 @@ def require_role(allowed_roles: List[str]):
         return wrapper
     return decorator
 
-def require_permission(permission: str):
+def require_permission(permission: Union[str, List[str]]):
     """
-    Декоратор для проверки конкретного права
-
-    Использование:
-        @router.post("/clients")
-        @require_permission('clients_create')
-        async def create_client(session_token: Optional[str] = Cookie(None)):
-            ...
+    Декоратор для проверки наличия хотя бы одного права из списка
     """
     def decorator(func):
         @wraps(func)
@@ -386,9 +384,18 @@ def require_permission(permission: str):
             if not user:
                 return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-            if not RoleHierarchy.has_permission(user["role"], permission):
+            perms = [permission] if isinstance(permission, str) else permission
+            
+            has_any = False
+            for p in perms:
+                if RoleHierarchy.has_permission(user["role"], p, user.get("secondary_role"), user.get("id")):
+                    has_any = True
+                    break
+            
+            if not has_any:
+                perm_str = ", ".join(perms)
                 return JSONResponse(
-                    {"error": f"Нет права: {permission}"},
+                    {"error": f"Нет необходимых прав. Требуется одно из: {perm_str}"},
                     status_code=403
                 )
 
@@ -627,3 +634,66 @@ def filter_data_by_permissions(data: List[Dict], user_id: int, hide_contacts: bo
         filtered_data.append(filtered_item)
 
     return filtered_data
+
+def check_user_permission(user_id: int, permission_key: str, action: str = 'view') -> bool:
+    """
+    Проверить есть ли у пользователя право на действие
+    
+    Args:
+        user_id: ID пользователя
+        permission_key: ключ права (например 'clients_view')
+        action: действие ('view', 'create', 'edit', 'delete')
+        
+    Returns:
+        bool: True если право есть
+    """
+    from db.connection import get_db_connection
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    try:
+        c.execute("SELECT role FROM users WHERE id = %s", (user_id,))
+        result = c.fetchone()
+
+        if not result:
+            return False
+
+        role_key = result[0]
+
+        if role_key == 'director':
+            return True
+
+        # Проверка через RoleHierarchy (конфиг)
+        if RoleHierarchy.has_permission(role_key, permission_key):
+           return True
+
+        # Проверка через БД (legacy/custom roles)
+        column = f"can_{action}"
+        # Sanitize action to prevent SQL injection (though generic logic usually safe)
+        if action not in ['view', 'create', 'edit', 'delete']:
+             return False
+             
+        # Check role_permissions table
+        c.execute(f"""SELECT {column} FROM role_permissions 
+                     WHERE role_key = %s AND permission_key = %s""",
+                  (role_key, permission_key))
+
+        result = c.fetchone()
+        if result and result[0]:
+            return True
+            
+        # Check user_permissions table (overrides)
+        c.execute("""SELECT granted FROM user_permissions 
+                     WHERE user_id = %s AND permission_key = %s""",
+                  (user_id, permission_key))
+        user_perm = c.fetchone()
+        if user_perm:
+            return bool(user_perm[0])
+            
+        return False
+
+    except Exception as e:
+        log_error(f"Ошибка проверки прав: {e}", "database")
+        return False
+    finally:
+        conn.close()
