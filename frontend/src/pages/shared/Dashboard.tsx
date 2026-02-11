@@ -1,7 +1,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import {
-  Users, Loader, AlertCircle, Crown, UserPlus, UserCheck,
+  Users, Loader, AlertCircle, Crown, UserPlus, UserCheck, CheckCircle2,
   TrendingUp, Calendar, FileText, Clock, Filter, Bot
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
@@ -356,43 +356,69 @@ export default function UniversalDashboard() {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl text-gray-900 font-bold mb-6">
-            {isSales ? t('admin/dashboard:recent_leads') : t('employee/Dashboard:schedule_for_today')}
-          </h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl text-gray-900 font-bold flex items-center gap-2">
+              <Clock className="w-6 h-6 text-pink-600" />
+              {t('employee/Dashboard:schedule_for_today')}
+            </h2>
+            <span className="text-sm text-gray-500">
+              {recentBookings.filter(b => b.status === 'confirmed').length} {t('admin/dashboard:status_confirmed')},
+              {recentBookings.filter(b => b.status === 'pending').length} {t('admin/dashboard:status_pending')}
+            </span>
+          </div>
+
           {recentBookings.length === 0 ? (
             <div className="flex flex-col items-center py-12 text-center">
               <Calendar className="w-12 h-12 text-gray-300 mb-4" />
-              <p className="text-gray-500">{isSales ? t('admin/dashboard:no_active_leads') : t('employee/Dashboard:no_bookings_today')}</p>
+              <p className="text-gray-500">{t('employee/Dashboard:no_bookings_today')}</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {recentBookings.map((booking) => (
-                <div key={booking.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer bg-gray-50" onClick={() => navigate(`${rolePrefix}/bookings/${booking.id}`)}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-                        <Clock className="w-5 h-5 text-pink-600" />
+            <div className="space-y-3">
+              {recentBookings.map((booking) => {
+                const bookingTime = new Date(booking.datetime);
+                const now = new Date();
+                const isPast = bookingTime < now;
+                const isNow = Math.abs(bookingTime.getTime() - now.getTime()) < 30 * 60 * 1000;
+
+                return (
+                  <div
+                    key={booking.id}
+                    className={`border-l-4 rounded-lg p-4 transition-all cursor-pointer ${isNow ? 'border-pink-500 bg-pink-50' :
+                      isPast ? 'border-gray-300 bg-gray-50 opacity-60' :
+                        'border-blue-300 bg-white hover:bg-blue-50'
+                      }`}
+                    onClick={() => navigate(`${rolePrefix}/bookings/${booking.id}`)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className="text-center min-w-[60px]">
+                          <div className={`text-2xl font-bold ${isNow ? 'text-pink-600' : 'text-gray-900'}`}>
+                            {bookingTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                          {isNow && (
+                            <span className="text-xs text-pink-600 font-semibold animate-pulse">{t('employee/Dashboard:now', 'СЕЙЧАС')}</span>
+                          )}
+                        </div>
+
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-gray-900">{booking.name || 'Клиент'}</h3>
+                            <Badge className={
+                              booking.status === 'confirmed' || booking.status === 'completed'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                            }>
+                              {t(`admin/dashboard:status_${booking.status}`)}
+                            </Badge>
+                          </div>
+                          <p className="text-gray-700 text-sm mb-1">{booking.service}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-bold text-gray-900">
-                          {new Date(booking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
-                        </p>
-                        <p className="text-gray-900 text-sm">{booking.name}</p>
-                        <p className="text-gray-500 text-xs">{booking.service}</p>
-                      </div>
+                      {isPast && !isNow && <CheckCircle2 className="w-5 h-5 text-gray-400" />}
                     </div>
-                    <Badge className={
-                      booking.status === 'confirmed' || booking.status === 'completed'
-                        ? 'bg-green-100 text-green-800'
-                        : booking.status === 'pending'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-gray-100 text-gray-800'
-                    }>
-                      {t(`admin/dashboard:status_${booking.status}`)}
-                    </Badge>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

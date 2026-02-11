@@ -1,4 +1,4 @@
-// /frontend/src/pages/admin/Referrals.tsx
+// /frontend/src/pages/shared/Referrals.tsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -39,7 +39,7 @@ interface Referral {
     created_at: string;
 }
 
-export default function Referrals() {
+export default function UniversalReferrals() {
     const { t } = useTranslation(['adminpanel/referralprogram', 'common', 'services']);
     const navigate = useNavigate();
 
@@ -164,7 +164,7 @@ export default function Referrals() {
             <div className="max-w-6xl mx-auto space-y-8">
                 {/* Back Navigation */}
                 <button
-                    onClick={() => navigate('/crm/services')}
+                    onClick={() => navigate(-1)}
                     className="flex items-center gap-2 text-gray-400 hover:text-gray-900 transition-colors group"
                 >
                     <div className="p-1.5 rounded-lg group-hover:bg-white border border-transparent group-hover:border-gray-100 transition-all">

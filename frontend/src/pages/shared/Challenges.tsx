@@ -1,11 +1,11 @@
-// /frontend/src/pages/admin/Challenges.tsx
+// /frontend/src/pages/shared/Challenges.tsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Plus, TrendingUp, Edit, Star,
-    Medal, Zap, Calendar, Users, ChevronRight,
+    Medal, Zap, Calendar, Users,
     Trophy, Sparkles, Flame, ChevronDown,
-    ArrowLeft
+    ArrowLeft, Trash2, Loader2
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '../../components/ui/card';
@@ -20,6 +20,7 @@ import {
     DialogFooter,
 } from '../../components/ui/dialog';
 import { Label } from '../../components/ui/label';
+import { Textarea } from '../../components/ui/textarea';
 import { Progress } from '../../components/ui/progress';
 import { useSalonSettings } from '../../hooks/useSalonSettings';
 import { toast } from 'sonner';
@@ -28,23 +29,27 @@ interface Challenge {
     id: string;
     title: string;
     description: string;
-    type: 'visits' | 'spend' | 'service_type';
+    type: 'visits' | 'spend' | 'service_type' | 'spending' | 'referrals' | 'services';
     target_value: number;
     reward_points: number;
     start_date: string;
     end_date: string;
     is_active: boolean;
-    participants_count: number;
-    completion_rate: number;
+    participants_count?: number;
+    participants?: number; // compat
+    completion_rate?: number;
+    completions?: number; // compat
+    status?: 'active' | 'upcoming' | 'completed'; // compat
 }
 
-export default function Challenges() {
-    const { t } = useTranslation(['admin/challenges', 'common', 'services', 'dynamic']);
+export default function UniversalChallenges() {
+    const { t } = useTranslation(['admin/challenges', 'adminpanel/challenges', 'common', 'services', 'dynamic']);
     const { currency } = useSalonSettings();
     const navigate = useNavigate();
 
     const [challenges, setChallenges] = useState<Challenge[]>([]);
     const [loading, setLoading] = useState(false);
+    const [checkingProgress, setCheckingProgress] = useState<string | null>(null);
     const [showAddDialog, setShowAddDialog] = useState(false);
     const [editingChallenge, setEditingChallenge] = useState<Challenge | null>(null);
     const [stats, setStats] = useState({
@@ -56,7 +61,7 @@ export default function Challenges() {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        type: 'visits',
+        type: 'visits' as Challenge['type'],
         target_value: 5,
         reward_points: 500,
         start_date: new Date().toISOString().split('T')[0],
@@ -78,6 +83,7 @@ export default function Challenges() {
             }
         } catch (error) {
             console.error('Error:', error);
+            toast.error(t('common:error_loading', 'Ошибка загрузки'));
         } finally {
             setLoading(false);
         }
@@ -111,9 +117,60 @@ export default function Challenges() {
                 setEditingChallenge(null);
                 loadChallenges();
                 loadStats();
+            } else {
+                const error = await response.json();
+                toast.error(error.error || t('common:error_saving', 'Ошибка сохранения'));
             }
         } catch (error) {
             toast.error(t('common:error_saving', 'Ошибка сохранения'));
+        }
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!window.confirm(t('dialogs.delete.confirm', 'Вы уверены, что хотите удалить этот челлендж?'))) return;
+
+        try {
+            const response = await fetch(`/api/admin/challenges/${id}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                toast.success(t('toasts.deleted', 'Челлендж удален'));
+                loadChallenges();
+                loadStats();
+            } else {
+                toast.error(t('toasts.failed_delete', 'Ошибка при удалении'));
+            }
+        } catch (error) {
+            toast.error(t('toasts.failed_delete', 'Ошибка при удалении'));
+        }
+    };
+
+    const handleCheckProgress = async (id: string) => {
+        try {
+            setCheckingProgress(id);
+            const response = await fetch(`/api/admin/challenges/${id}/check-progress`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({}),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    toast.success(t('toasts.progress_checked', {
+                        defaultValue: `Обновлено ${data.updated_count} клиентов`,
+                        count: data.updated_count
+                    }));
+                    loadChallenges();
+                }
+            }
+        } catch (error) {
+            toast.error(t('toasts.failed_check_progress', 'Ошибка проверки прогресса'));
+        } finally {
+            setCheckingProgress(null);
         }
     };
 
@@ -146,7 +203,7 @@ export default function Challenges() {
             <div className="max-w-6xl mx-auto space-y-8">
                 {/* Back Navigation */}
                 <button
-                    onClick={() => navigate('/crm/services')}
+                    onClick={() => navigate(-1)}
                     className="flex items-center gap-2 text-gray-400 hover:text-gray-900 transition-colors group"
                 >
                     <div className="p-1.5 rounded-lg group-hover:bg-white border border-transparent group-hover:border-gray-100 transition-all">
@@ -218,24 +275,40 @@ export default function Challenges() {
                         <div key={challenge.id} className="group bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 p-8 relative overflow-hidden flex flex-col gap-6">
                             <div className="flex justify-between items-start">
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <Badge className={`${challenge.is_active ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-gray-50 text-gray-400 border-gray-100'} px-2 py-1 font-bold text-[9px] uppercase tracking-wider border shadow-none`}>
-                                        {challenge.is_active ? t('status.active', 'АКТИВЕН') : t('status.inactive', 'ПАУЗА')}
+                                    <Badge className={`${challenge.is_active || challenge.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-gray-50 text-gray-400 border-gray-100'} px-2 py-1 font-bold text-[9px] uppercase tracking-wider border shadow-none`}>
+                                        {(challenge.is_active || challenge.status === 'active') ? t('status.active', 'АКТИВЕН') : t('status.inactive', 'ПАУЗА')}
                                     </Badge>
                                     <Badge className="bg-amber-50 text-amber-600 border-amber-100 px-2 py-1 font-bold text-[9px] uppercase tracking-wider border shadow-none flex items-center gap-1.5">
                                         <Star className="w-2.5 h-2.5 fill-amber-500" />
                                         {challenge.reward_points} {t('common:points_sc', 'БАЛЛОВ')}
                                     </Badge>
                                 </div>
-                                <button
-                                    onClick={() => {
-                                        setEditingChallenge(challenge);
-                                        setFormData({ ...challenge });
-                                        setShowAddDialog(true);
-                                    }}
-                                    className="p-2 rounded-lg bg-gray-50 text-gray-400 hover:bg-gray-900 hover:text-white transition-all shadow-sm"
-                                >
-                                    <Edit className="w-4 h-4" />
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => {
+                                            setEditingChallenge(challenge);
+                                            setFormData({
+                                                title: challenge.title,
+                                                description: challenge.description,
+                                                type: challenge.type,
+                                                target_value: challenge.target_value,
+                                                reward_points: challenge.reward_points,
+                                                start_date: challenge.start_date.split('T')[0],
+                                                end_date: challenge.end_date.split('T')[0]
+                                            });
+                                            setShowAddDialog(true);
+                                        }}
+                                        className="p-2 rounded-lg bg-gray-50 text-gray-400 hover:bg-gray-900 hover:text-white transition-all shadow-sm"
+                                    >
+                                        <Edit className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(challenge.id)}
+                                        className="p-2 rounded-lg bg-gray-50 text-gray-400 hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="space-y-2">
@@ -251,7 +324,7 @@ export default function Challenges() {
                                     </div>
                                     <div className="text-right space-y-1">
                                         <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{t('card.participants', 'УЧАСТНИКИ')}</p>
-                                        <p className="text-base font-bold text-gray-900 leading-none">{challenge.participants_count}</p>
+                                        <p className="text-base font-bold text-gray-900 leading-none">{challenge.participants_count || challenge.participants || 0}</p>
                                     </div>
                                 </div>
                                 <Progress value={challenge.completion_rate} className="h-2.5 bg-gray-200" />
@@ -262,10 +335,18 @@ export default function Challenges() {
                                     <Calendar className="w-3.5 h-3.5" />
                                     {new Date(challenge.start_date).toLocaleDateString('ru-RU')} — {new Date(challenge.end_date).toLocaleDateString('ru-RU')}
                                 </div>
-                                <div className="flex items-center gap-1.5 text-gray-900">
-                                    {t('card.details', 'Подробнее')}
-                                    <ChevronRight className="w-3.5 h-3.5" />
-                                </div>
+                                <button
+                                    onClick={() => handleCheckProgress(challenge.id)}
+                                    disabled={checkingProgress === challenge.id}
+                                    className="flex items-center gap-1.5 text-gray-900 hover:text-blue-600 transition-colors disabled:opacity-50"
+                                >
+                                    {checkingProgress === challenge.id ? (
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                    ) : (
+                                        <Trophy className="w-3.5 h-3.5" />
+                                    )}
+                                    {t('card.check_progress', 'Обновить')}
+                                </button>
                             </div>
                         </div>
                     ))}
@@ -319,8 +400,8 @@ export default function Challenges() {
 
                             <div className="col-span-2 space-y-2">
                                 <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 px-1">{t('fields.description', 'Публичное описание')}</Label>
-                                <Input
-                                    className="h-12 bg-gray-50 border-gray-100 rounded-xl font-bold px-4 focus:bg-white transition-all text-gray-600 text-sm"
+                                <Textarea
+                                    className="min-h-[100px] bg-gray-50 border-gray-100 rounded-xl font-bold px-4 py-3 focus:bg-white transition-all text-gray-600 text-sm"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     placeholder={t('placeholders.description', 'Как клиент увидит это задание?')}
@@ -337,7 +418,8 @@ export default function Challenges() {
                                     >
                                         <option value="visits">{t('types.visits', 'Количество визитов')}</option>
                                         <option value="spend">{t('types.spend', 'Общая сумма трат')}</option>
-                                        <option value="service_type">{t('types.service', 'Услуга категории')}</option>
+                                        <option value="referrals">{t('types.referrals', 'Рекомендации')}</option>
+                                        <option value="services">{t('types.services', 'Услуги')}</option>
                                     </select>
                                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                                 </div>
@@ -353,7 +435,7 @@ export default function Challenges() {
                                         onChange={(e) => setFormData({ ...formData, target_value: parseInt(e.target.value) })}
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-gray-300 text-sm">
-                                        {formData.type === 'spend' ? currency : formData.type === 'visits' ? 'X' : ''}
+                                        {formData.type === 'spend' || formData.type === 'spending' ? currency : (formData.type === 'visits' ? 'X' : '')}
                                     </span>
                                 </div>
                             </div>
