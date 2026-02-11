@@ -133,6 +133,23 @@ export default function UniversalFunnel() {
         }
     }, [viewMode, period]);
 
+    const getStageLabel = (stage: Stage) => {
+        const key = stage.key || stage.name.toLowerCase().replace(/\s+/g, '_');
+        const overrides: Record<string, string> = {
+            'закрыто_выиграно': 'closed_won',
+            'закрыто_проиграно': 'closed_lost',
+            'закрыто не реализовано': 'closed_not_realized',
+            'успешно реализовано': 'successfully_realized',
+            'отправленное предложение': 'offer_sent',
+            'предложение отправлено': 'offer_sent',
+            'переговоры': 'negotiation',
+            'negotiations': 'negotiation',
+            'прип': 'decision_making' // Example guess or just leave as is
+        };
+        const normalizedKey = overrides[key.toLowerCase()] || key;
+        return t(`stages.${normalizedKey}`, { defaultValue: stage.name });
+    };
+
     const loadBoardData = async () => {
         try {
             setLoading(true);
@@ -303,19 +320,21 @@ export default function UniversalFunnel() {
     }
 
     return (
-        <div className="h-full flex flex-col bg-gray-50/50">
+        <div className="flex flex-col bg-gray-50/50 min-h-screen">
             {/* Header */}
-            <div className="px-8 py-6 bg-white border-b sticky top-0 z-20">
-                <div className="flex items-center justify-between mb-6">
+            <div className="px-6 py-4 bg-white border-b relative z-20">
+                <div className="flex flex-col gap-6">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">{t('funnel')}</h1>
                         <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
                     </div>
-                    <div className="flex gap-2">
-                        <div className="bg-gray-100 p-1 rounded-lg flex items-center mr-2 border border-gray-200">
+
+                    <div className="flex flex-col gap-4">
+                        {/* Tabs - Full Width */}
+                        <div className="bg-gray-100 p-1 rounded-lg flex w-full border border-gray-200">
                             <button
                                 onClick={() => setViewMode('board')}
-                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'board'
+                                className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${viewMode === 'board'
                                     ? 'bg-white text-gray-900 shadow-sm'
                                     : 'text-gray-500 hover:text-gray-900'
                                     }`}
@@ -325,7 +344,7 @@ export default function UniversalFunnel() {
                             </button>
                             <button
                                 onClick={() => setViewMode('list')}
-                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'list'
+                                className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${viewMode === 'list'
                                     ? 'bg-white text-gray-900 shadow-sm'
                                     : 'text-gray-500 hover:text-gray-900'
                                     }`}
@@ -336,7 +355,7 @@ export default function UniversalFunnel() {
                             {isAdmin && (
                                 <button
                                     onClick={() => setViewMode('analytics')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'analytics'
+                                    className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${viewMode === 'analytics'
                                         ? 'bg-white text-gray-900 shadow-sm'
                                         : 'text-gray-500 hover:text-gray-900'
                                         }`}
@@ -347,99 +366,103 @@ export default function UniversalFunnel() {
                             )}
                         </div>
 
+                        {/* Search & Actions Row */}
                         {viewMode !== 'analytics' && (
-                            <>
-                                {isAdmin && (
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="text-gray-500 hover:text-gray-900"
-                                        onClick={() => setManageStagesOpen(true)}
-                                    >
-                                        <Settings className="w-4 h-4" />
-                                    </Button>
-                                )}
-
-                                <div className="relative">
+                            <div className="flex flex-col min-[600px]:flex-row gap-3 min-[600px]:items-center">
+                                <div className="relative w-full min-[600px]:flex-1">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <Input
                                         placeholder={t('search_clients')}
-                                        className="pl-9 h-9 w-64 bg-gray-50 border-gray-200"
+                                        className="pl-9 h-10 w-full bg-gray-50 border-gray-200"
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
                                     />
                                 </div>
 
-                                <Button
-                                    className="bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20"
-                                    onClick={() => setCreateDialogOpen(true)}
-                                >
-                                    <Plus className="w-4 h-4 mr-2" />
-                                    {t('quick_add')}
-                                </Button>
-                            </>
+                                <div className="flex items-center gap-3 shrink-0">
+                                    {isAdmin && (
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            className="h-10 w-10 shrink-0 bg-white"
+                                            onClick={() => setManageStagesOpen(true)}
+                                        >
+                                            <Settings className="w-5 h-5" />
+                                        </Button>
+                                    )}
+
+                                    <Button
+                                        className="h-10 flex-initial bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20 shrink-0 whitespace-nowrap px-6"
+                                        onClick={() => setCreateDialogOpen(true)}
+                                    >
+                                        <Plus className="w-4 h-4 mr-2" />
+                                        {t('quick_add')}
+                                    </Button>
+                                </div>
+                            </div>
                         )}
                     </div>
-                </div>
 
-                {viewMode !== 'analytics' && (
-                    <div className="grid grid-cols-4 gap-4">
-                        <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
-                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
-                                <Users className="w-6 h-6" />
+                    {/* Analytics Grid */}
+                    {viewMode !== 'analytics' && (
+                        <div className="grid grid-cols-1 min-[400px]:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                            <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
+                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                                    <Users className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <div className="text-2xl font-bold text-blue-900">{dashboardAnalytics.total_clients}</div>
+                                    <div className="text-xs text-blue-600 font-medium">{t('total_clients')}</div>
+                                </div>
                             </div>
-                            <div>
-                                <div className="text-2xl font-bold text-blue-900">{dashboardAnalytics.total_clients}</div>
-                                <div className="text-xs text-blue-600 font-medium">{t('total_clients')}</div>
+                            <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-4">
+                                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-red-600">
+                                    <Flame className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <div className="text-2xl font-bold text-red-900">{dashboardAnalytics.hot_leads}</div>
+                                    <div className="text-xs text-red-600 font-medium">{t('hot_leads')}</div>
+                                </div>
+                            </div>
+                            <div className="bg-green-50 border border-green-100 p-4 rounded-xl flex items-center gap-4">
+                                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
+                                    <DollarSign className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <div className="text-2xl font-bold text-green-900">{dashboardAnalytics.total_revenue}</div>
+                                    <div className="text-xs text-green-600 font-medium">{t('pipeline_value')}</div>
+                                </div>
+                            </div>
+                            <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
+                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                                    <TrendingUp className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <div className="text-2xl font-bold text-blue-900">{dashboardAnalytics.new_this_month}</div>
+                                    <div className="text-xs text-blue-600 font-medium">{t('new_this_month')}</div>
+                                </div>
                             </div>
                         </div>
-                        <div className="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-4">
-                            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center text-red-600">
-                                <Flame className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <div className="text-2xl font-bold text-red-900">{dashboardAnalytics.hot_leads}</div>
-                                <div className="text-xs text-red-600 font-medium">{t('hot_leads')}</div>
-                            </div>
-                        </div>
-                        <div className="bg-green-50 border border-green-100 p-4 rounded-xl flex items-center gap-4">
-                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
-                                <DollarSign className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <div className="text-2xl font-bold text-green-900">{dashboardAnalytics.total_revenue}</div>
-                                <div className="text-xs text-green-600 font-medium">{t('pipeline_value')}</div>
-                            </div>
-                        </div>
-                        <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
-                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
-                                <TrendingUp className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <div className="text-2xl font-bold text-blue-900">{dashboardAnalytics.new_this_month}</div>
-                                <div className="text-xs text-blue-600 font-medium">{t('new_this_month')}</div>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 flex flex-col">
                 {viewMode === 'board' && (
-                    <div className="h-full overflow-x-auto p-6">
-                        <div className="flex gap-6 h-full w-max">
+                    <div className="flex-1 overflow-x-auto p-4 md:p-6">
+                        <div className="flex gap-6 min-h-full w-max">
                             {stages.map((stage) => (
                                 <div
                                     key={stage.id}
-                                    className="w-80 flex flex-col h-full rounded-xl bg-gray-100/50 border border-gray-200/60"
+                                    className="w-96 shrink-0 flex flex-col rounded-xl bg-gray-100/50 border border-gray-200/60"
                                     onDragOver={handleDragOver}
                                     onDrop={(e) => handleDrop(e, stage.id)}
                                 >
                                     <div className="p-4 border-b border-gray-200/60 bg-white/50 backdrop-blur-sm rounded-t-xl sticky top-0 z-10">
                                         <div className="flex items-center justify-between mb-2">
                                             <h3 className="font-semibold text-sm text-gray-700 uppercase tracking-wide">
-                                                {t(`stages.${stage.key || stage.name.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: stage.name })}
+                                                {getStageLabel(stage)}
                                             </h3>
                                             <Badge variant="secondary" className="bg-white text-gray-600 font-mono text-xs border shadow-sm">
                                                 {clients[stage.id]?.length || 0}

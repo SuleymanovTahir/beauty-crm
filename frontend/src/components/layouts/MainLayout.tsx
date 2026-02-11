@@ -274,6 +274,48 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         { id: 'internal', icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, badge: internalChatUnreadCount },
     ], [t, rolePrefix, chatUnreadCount, internalChatUnreadCount]);
 
+    // Update document title based on current page
+    useEffect(() => {
+        let currentLabel = '';
+
+        // Check main tabs first
+        const activeTab = mainTabs.find(tab => tab.path && location.pathname === tab.path);
+        if (activeTab) {
+            currentLabel = activeTab.label;
+        } else {
+            // Check menu items
+            const findLabel = (items: any[]): string | null => {
+                for (const item of items) {
+                    if (item.path === location.pathname) return item.label;
+                    if (item.items) {
+                        const subLabel = findLabel(item.items);
+                        if (subLabel) return subLabel;
+                    }
+                }
+                return null;
+            };
+
+            const label = findLabel(menuItems);
+            if (label) currentLabel = label;
+        }
+
+        if (currentLabel) {
+            document.title = currentLabel;
+        }
+    }, [location.pathname, mainTabs, menuItems]);
+
+    // Close mobile menu on resize
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 1100 && showMoreModal) {
+                setShowMoreModal(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [showMoreModal]);
+
     const toggleMobileGroup = (id: string) => {
         const newGroups = new Set(mobileExpandedGroups);
         if (newGroups.has(id)) newGroups.delete(id);
@@ -479,6 +521,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                 <X size={20} />
                             </button>
                         </div>
+
                         <div className="more-menu-items">
                             {menuItems.map((item: any) => {
                                 if (mainTabs.some(t => t.id === item.id)) return null;
@@ -543,44 +586,51 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                     </div>
                                 );
                             })}
+                        </div>
 
-                            <div className="user-profile-section">
-                                <div className="quick-actions-row">
-                                    <div className="quick-action-item justify-center">
-                                        <LanguageSwitcher variant="minimal" />
-                                    </div>
-                                    <button
-                                        onClick={() => { navigate(`${rolePrefix}/notifications`); setShowMoreModal(false); }}
-                                        className="quick-action-btn"
-                                    >
-                                        <div className="quick-action-text-part">
-                                            <span className="quick-action-label">{t('menu.notifications')}</span>
-                                        </div>
-                                        <div className="quick-action-icon-wrapper">
-                                            <Bell size={20} className="text-gray-700" />
-                                            {notificationsUnreadCount > 0 && <span className="quick-action-badge">{notificationsUnreadCount}</span>}
-                                        </div>
-                                    </button>
+                        <div className="user-profile-section">
+                            {/* User Info - Left */}
+                            <div className="flex items-center gap-3 overflow-hidden flex-1 min-w-0 pr-4">
+                                <div className="relative shrink-0">
+                                    <img
+                                        src={getDynamicAvatar(user?.full_name || 'User')}
+                                        alt="Avatar"
+                                        className="w-10 h-10 rounded-xl object-cover border-2 border-white shadow-sm ring-1 ring-gray-100"
+                                    />
+                                    <div className="user-status-indicator" />
+                                </div>
+                                <div className="flex flex-col min-w-0 justify-center">
+                                    <div className="text-sm font-bold text-gray-900 truncate leading-snug">{user?.full_name}</div>
+                                    <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide truncate">{getRoleLabel()}</div>
+                                </div>
+                            </div>
+
+                            {/* Actions - Right */}
+                            <div className="flex items-center gap-6 shrink-0">
+                                <div className="scale-100 origin-right">
+                                    <LanguageSwitcher variant="minimal" />
                                 </div>
 
-                                <div className="profile-logout-row">
-                                    <div className="user-card-premium flex-1">
-                                        <div className="user-card-content">
-                                            <div className="user-avatar-wrapper">
-                                                <img src={getDynamicAvatar(user?.full_name || 'User')} alt="Avatar" className="user-avatar-img" />
-                                                <div className="user-status-indicator" />
-                                            </div>
-                                            <div className="user-info-text">
-                                                <div className="user-name-premium">{user?.full_name}</div>
-                                                <div className="user-role-premium">{getRoleLabel()}</div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div className="w-px h-6 bg-gray-200"></div>
 
-                                    <button onClick={() => { handleLogout(); setShowMoreModal(false); }} className="logout-btn-minimal">
-                                        <LogOut size={22} />
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={() => { navigate(`${rolePrefix}/notifications`); setShowMoreModal(false); }}
+                                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors relative"
+                                >
+                                    <Bell size={20} strokeWidth={2} />
+                                    {notificationsUnreadCount > 0 && (
+                                        <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white shadow-sm"></span>
+                                    )}
+                                </button>
+
+                                <div className="w-px h-6 bg-gray-200"></div>
+
+                                <button
+                                    onClick={() => { handleLogout(); setShowMoreModal(false); }}
+                                    className="p-2 text-red-500/80 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                                >
+                                    <LogOut size={20} strokeWidth={2} />
+                                </button>
                             </div>
                         </div>
                     </div>

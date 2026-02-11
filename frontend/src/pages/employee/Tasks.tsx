@@ -158,13 +158,13 @@ export default function EmployeeTasks() {
         <div className="h-full flex flex-col bg-gray-50/50">
             {/* Header & Analytics */}
             <div className="px-8 py-6 bg-white border-b">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">{t('tasks')}</h1>
                         <p className="text-sm text-gray-500 mt-1">{t('task_management_subtitle')}</p>
                     </div>
-                    <div className="flex gap-2">
-                        <div className="bg-gray-100 p-1 rounded-lg flex items-center mr-2 border border-gray-200">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                        <div className="bg-gray-100 p-1 rounded-lg flex items-center border border-gray-200 self-start sm:self-auto">
                             <button
                                 onClick={() => setViewMode('board')}
                                 className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'board'
@@ -188,7 +188,7 @@ export default function EmployeeTasks() {
                         </div>
 
                         <Button
-                            className="bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20"
+                            className="bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20 shrink-0"
                             onClick={() => setCreateDialogOpen(true)}
                         >
                             <Plus className="w-4 h-4 mr-2" />
@@ -208,7 +208,7 @@ export default function EmployeeTasks() {
 
                 {/* Only show analytics summary in Board view */}
                 {viewMode === 'board' && (
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
                             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
                                 <Clock className="w-6 h-6" />
