@@ -108,7 +108,14 @@ export default function Tasks() {
             ]);
             setTasks(tasksData);
             setAnalytics(analyticsData);
-            setStages(stagesData);
+            // Deduplicate stages to prevent double "Done" columns
+            const uniqueStages = stagesData.filter((stage: any, index: number, self: any[]) =>
+                index === self.findIndex((s: any) => (
+                    (s.key && stage.key && s.key === stage.key) ||
+                    s.name.trim().toLowerCase() === stage.name.trim().toLowerCase()
+                ))
+            );
+            setStages(uniqueStages);
         } catch (error) {
             console.error('Error loading tasks:', error);
             toast.error('Failed to load tasks');
@@ -217,137 +224,141 @@ export default function Tasks() {
     };
 
     return (
-        <div className="h-full flex flex-col bg-gray-50/50">
+        <div className="flex flex-col bg-gray-50/50 min-h-screen">
             {/* Header & Analytics */}
-            <div className="px-8 py-6 bg-white border-b">
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">{t('tasks')}</h1>
-                        <p className="text-sm text-gray-500 mt-1">{t('task_management_subtitle')}</p>
-                    </div>
-                    <div className="flex gap-2">
-                        <div className="bg-gray-100 p-1 rounded-lg flex items-center mr-2 border border-gray-200">
-                            <button
-                                onClick={() => setViewMode('board')}
-                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'board'
-                                    ? 'bg-white text-gray-900 shadow-sm'
-                                    : 'text-gray-500 hover:text-gray-900'
-                                    }`}
-                            >
-                                <Layout className="w-4 h-4 mr-2 inline-block" />
-                                {t('board')}
-                            </button>
-                            <button
-                                onClick={() => setViewMode('dashboard')}
-                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'dashboard'
-                                    ? 'bg-white text-gray-900 shadow-sm'
-                                    : 'text-gray-500 hover:text-gray-900'
-                                    }`}
-                            >
-                                <LayoutDashboard className="w-4 h-4 mr-2 inline-block" />
-                                {t('dashboard')}
-                            </button>
-                        </div>
+            {/* Header & Analytics */}
+            <div className="px-6 py-4 bg-white border-b flex flex-col gap-6">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900">{t('tasks')}</h1>
+                    <p className="text-sm text-gray-500 mt-1">{t('task_management_subtitle')}</p>
+                </div>
 
+                <div className="flex flex-col gap-4">
+                    {/* Tabs - Full Width */}
+                    <div className="bg-gray-100 p-1 rounded-lg flex w-full border border-gray-200">
+                        <button
+                            onClick={() => setViewMode('board')}
+                            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${viewMode === 'board'
+                                ? 'bg-white text-gray-900 shadow-sm'
+                                : 'text-gray-500 hover:text-gray-900'
+                                }`}
+                        >
+                            <Layout className="w-4 h-4 mr-2 inline-block" />
+                            {t('board')}
+                        </button>
+                        <button
+                            onClick={() => setViewMode('dashboard')}
+                            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${viewMode === 'dashboard'
+                                ? 'bg-white text-gray-900 shadow-sm'
+                                : 'text-gray-500 hover:text-gray-900'
+                                }`}
+                        >
+                            <LayoutDashboard className="w-4 h-4 mr-2 inline-block" />
+                            {t('dashboard')}
+                        </button>
+                    </div>
+
+                    {/* Actions Row */}
+                    <div className="flex flex-col min-[450px]:flex-row gap-3">
                         <Button
                             variant="outline"
-                            className="bg-white"
+                            className="flex-1 md:flex-none bg-white whitespace-nowrap"
                             onClick={() => setManageStagesOpen(true)}
                         >
                             <Settings className="w-4 h-4 mr-2" />
                             {t('manage_stages')}
                         </Button>
                         <Button
-                            className="bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20"
+                            className="flex-1 md:flex-none bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20 whitespace-nowrap"
                             onClick={() => setCreateDialogOpen(true)}
                         >
                             <Plus className="w-4 h-4 mr-2" />
                             {t('create_task')}
                         </Button>
                     </div>
-                </div>
 
-                <CreateTaskDialog
-                    open={createDialogOpen}
-                    onOpenChange={handleCreateTaskClose}
-                    onSuccess={loadData}
-                    stages={stages}
-                    taskToEdit={taskToEdit}
-                />
+                    <CreateTaskDialog
+                        open={createDialogOpen}
+                        onOpenChange={handleCreateTaskClose}
+                        onSuccess={loadData}
+                        stages={stages}
+                        taskToEdit={taskToEdit}
+                    />
 
-                <ManageTaskStagesDialog
-                    open={manageStagesOpen}
-                    onOpenChange={setManageStagesOpen}
-                    onSuccess={loadData}
-                />
+                    <ManageTaskStagesDialog
+                        open={manageStagesOpen}
+                        onOpenChange={setManageStagesOpen}
+                        onSuccess={loadData}
+                    />
 
-                {/* Filters */}
-                {viewMode === 'board' && (
-                    <div className="flex items-center gap-3 mb-4 flex-wrap">
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <Filter className="w-4 h-4" />
-                            <span>{t('filters', 'Фильтры')}:</span>
-                        </div>
+                    {/* Filters - Responsive Grid */}
+                    {viewMode === 'board' && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:items-center gap-3 bg-gray-50/50 p-3 rounded-xl border border-gray-100">
+                            <div className="flex items-center gap-2 text-sm text-gray-500 sm:col-span-2 lg:w-auto lg:border-r lg:pr-3 lg:mr-1">
+                                <Filter className="w-4 h-4" />
+                                <span>{t('filters', 'Фильтры')}:</span>
+                            </div>
 
-                        <Select value={filterAssignee} onValueChange={setFilterAssignee}>
-                            <SelectTrigger className="w-[180px] h-9 bg-white">
-                                <SelectValue placeholder={t('filter_assignee', 'Ответственный')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">{t('all_assignees', 'Все ответственные')}</SelectItem>
-                                {users.map(user => (
-                                    <SelectItem key={user.id} value={user.id.toString()}>
-                                        {user.full_name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            <Select value={filterAssignee} onValueChange={setFilterAssignee}>
+                                <SelectTrigger className="w-full lg:w-[180px] h-9 bg-white">
+                                    <SelectValue placeholder={t('filter_assignee', 'Ответственный')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">{t('all_assignees', 'Все ответственные')}</SelectItem>
+                                    {users.map(user => (
+                                        <SelectItem key={user.id} value={user.id.toString()}>
+                                            {user.full_name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
 
-                        <Select value={filterPriority} onValueChange={setFilterPriority}>
-                            <SelectTrigger className="w-[140px] h-9 bg-white">
-                                <SelectValue placeholder={t('filter_priority', 'Приоритет')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">{t('all_priorities', 'Все приоритеты')}</SelectItem>
-                                <SelectItem value="high">{t('priority.high')}</SelectItem>
-                                <SelectItem value="medium">{t('priority.medium')}</SelectItem>
-                                <SelectItem value="low">{t('priority.low')}</SelectItem>
-                            </SelectContent>
-                        </Select>
+                            <Select value={filterPriority} onValueChange={setFilterPriority}>
+                                <SelectTrigger className="w-full lg:w-[140px] h-9 bg-white">
+                                    <SelectValue placeholder={t('filter_priority', 'Приоритет')} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">{t('all_priorities', 'Все приоритеты')}</SelectItem>
+                                    <SelectItem value="high">{t('priority.high')}</SelectItem>
+                                    <SelectItem value="medium">{t('priority.medium')}</SelectItem>
+                                    <SelectItem value="low">{t('priority.low')}</SelectItem>
+                                </SelectContent>
+                            </Select>
 
-                        <Button
-                            variant={filterOverdue ? "default" : "outline"}
-                            size="sm"
-                            className={filterOverdue ? "bg-red-500 hover:bg-red-600 text-white" : "bg-white"}
-                            onClick={() => setFilterOverdue(!filterOverdue)}
-                        >
-                            <AlertCircle className="w-4 h-4 mr-1" />
-                            {t('overdue_only', 'Только просроченные')}
-                        </Button>
-
-                        {hasActiveFilters && (
                             <Button
-                                variant="ghost"
+                                variant={filterOverdue ? "default" : "outline"}
                                 size="sm"
-                                onClick={clearFilters}
-                                className="text-gray-500 hover:text-gray-700"
+                                className={`w-full lg:w-auto ${filterOverdue ? "bg-red-500 hover:bg-red-600 text-white" : "bg-white"}`}
+                                onClick={() => setFilterOverdue(!filterOverdue)}
                             >
-                                <X className="w-4 h-4 mr-1" />
-                                {t('clear_filters', 'Сбросить')}
+                                <AlertCircle className="w-4 h-4 mr-1" />
+                                {t('overdue_only', 'Только просроченные')}
                             </Button>
-                        )}
 
-                        {hasActiveFilters && (
-                            <Badge variant="secondary" className="ml-auto">
-                                {t('showing_tasks', 'Показано')}: {filteredTasks.length} {t('of', 'из')} {tasks.length}
-                            </Badge>
-                        )}
-                    </div>
-                )}
+                            {hasActiveFilters && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={clearFilters}
+                                    className="text-gray-500 hover:text-gray-700 w-full sm:w-auto justify-center"
+                                >
+                                    <X className="w-4 h-4 mr-1" />
+                                    {t('clear_filters', 'Сбросить')}
+                                </Button>
+                            )}
+
+                            {hasActiveFilters && (
+                                <Badge variant="secondary" className="ml-auto hidden lg:inline-flex">
+                                    {t('showing_tasks', 'Показано')}: {filteredTasks.length} {t('of', 'из')} {tasks.length}
+                                </Badge>
+                            )}
+                        </div>
+                    )}
+                </div>
 
                 {/* Only show analytics summary in Board view */}
                 {viewMode === 'board' && (
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 min-[400px]:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
                         <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
                             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
                                 <Clock className="w-6 h-6" />
@@ -395,12 +406,12 @@ export default function Tasks() {
                 </div>
             ) : (
                 /* Kanban Board */
-                <div className="flex-1 overflow-x-auto p-6">
+                <div className="flex-1 overflow-x-auto p-4 md:p-6">
                     <div className="flex gap-6 h-full min-w-max">
                         {stages.map(stage => (
                             <div
                                 key={stage.id}
-                                className="w-96 flex flex-col bg-gray-100/50 rounded-xl border border-gray-200/60"
+                                className="w-96 shrink-0 flex flex-col bg-gray-100/50 rounded-xl border border-gray-200/60"
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, stage.id)}
                             >
