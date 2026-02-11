@@ -134,20 +134,7 @@ export default function UniversalFunnel() {
     }, [viewMode, period]);
 
     const getStageLabel = (stage: Stage) => {
-        const key = stage.key || stage.name.toLowerCase().replace(/\s+/g, '_');
-        const overrides: Record<string, string> = {
-            'закрыто_выиграно': 'closed_won',
-            'закрыто_проиграно': 'closed_lost',
-            'закрыто не реализовано': 'closed_not_realized',
-            'успешно реализовано': 'successfully_realized',
-            'отправленное предложение': 'offer_sent',
-            'предложение отправлено': 'offer_sent',
-            'переговоры': 'negotiation',
-            'negotiations': 'negotiation',
-            'прип': 'decision_making' // Example guess or just leave as is
-        };
-        const normalizedKey = overrides[key.toLowerCase()] || key;
-        return t(`stages.${normalizedKey}`, { defaultValue: stage.name });
+        return t(`stages.${stage.key}`, { defaultValue: stage.name });
     };
 
     const loadBoardData = async () => {
@@ -455,7 +442,7 @@ export default function UniversalFunnel() {
                             {stages.map((stage) => (
                                 <div
                                     key={stage.id}
-                                    className="w-96 shrink-0 flex flex-col rounded-xl bg-gray-100/50 border border-gray-200/60"
+                                    className="w-96 shrink-0 flex flex-col min-h-[380px] rounded-xl bg-gray-100/50 border border-gray-200/60"
                                     onDragOver={handleDragOver}
                                     onDrop={(e) => handleDrop(e, stage.id)}
                                 >
@@ -482,7 +469,7 @@ export default function UniversalFunnel() {
                                         </div>
                                     </div>
 
-                                    <ScrollArea className="flex-1 p-3">
+                                    <ScrollArea className="p-3">
                                         <div className="flex flex-col gap-3 pb-2">
                                             {clients[stage.id]?.filter(c =>
                                                 c.name.toLowerCase().includes(search.toLowerCase()) ||
