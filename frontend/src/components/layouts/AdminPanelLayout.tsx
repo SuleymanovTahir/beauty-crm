@@ -210,12 +210,18 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
           <div className="flex flex-col h-full overflow-hidden">
             {/* Logo Section */}
             <div className="sidebar-header-premium flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-                {salonSettings?.logo_url ? (
-                  <img src={salonSettings.logo_url} alt="Logo" className="w-8 h-8 object-contain" />
-                ) : (
-                  <LayoutDashboard className="w-6 h-6 text-white" />
-                )}
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md p-1.5 shrink-0">
+                <img
+                  src={salonSettings?.logo_url || '/logo.webp'}
+                  alt="Logo"
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    if (target.src.endsWith('.webp')) {
+                      target.src = '/logo.png';
+                    }
+                  }}
+                />
               </div>
               <h1 className="text-lg font-bold text-gray-900 truncate">{salonSettings?.name || t('admin_panel')}</h1>
             </div>
@@ -244,12 +250,12 @@ export default function AdminPanelLayout({ user, onLogout }: AdminPanelLayoutPro
                     <Link
                       to={item.path}
                       className={cn(
-                        "w-full menu-item-premium",
+                        "w-full flex items-center gap-3 menu-item-premium",
                         isActive && "active"
                       )}
                     >
-                      <item.icon size={20} />
-                      <span className="flex-1 text-left">{item.label}</span>
+                      <item.icon size={20} className="shrink-0" />
+                      <span className="flex-1 text-left truncate">{item.label}</span>
                     </Link>
                   </li>
                 );

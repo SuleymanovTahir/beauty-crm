@@ -4,13 +4,18 @@
   "logout": "लॉगआउट",
   "menu": {
     "challenges": "चुनौतियां",
+    "challenges_short": "लक्ष्य",
     "dashboard": "कंट्रोल पैनल",
+    "dashboard_short": "होम",
     "feature_management": "फीचर प्रबंधन",
     "loyalty_management": "वफादारी प्रबंधन",
+    "loyalty_short": "वफादारी",
+    "more": "अधिक",
     "notifications": "सूचनाएं",
     "photo_gallery": "फोटो गैलरी",
     "public_content": "सार्वजनिक सामग्री",
     "referral_program": "रेफरल कार्यक्रम",
+    "referrals_short": "रेफ़रल",
     "services": "सेवाएं",
     "settings": "सेटिंग्स",
     "user_management": "उपयोगकर्ता प्रबंधन"

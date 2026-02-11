@@ -4,13 +4,18 @@
   "logout": "Abmelden",
   "menu": {
     "challenges": "Herausforderungen",
+    "challenges_short": "Ziele",
     "dashboard": "Panel-Steuerelemente",
+    "dashboard_short": "Startseite",
     "feature_management": "Funktionsverwaltung",
     "loyalty_management": "Treuemanagement",
+    "loyalty_short": "Loyalität",
+    "more": "Mehr",
     "notifications": "Benachrichtigungen",
     "photo_gallery": "Fotogalerie",
     "public_content": "Öffentlicher Inhalt",
     "referral_program": "Empfehlungsprogramm",
+    "referrals_short": "Empfehlungen",
     "services": "Dienste",
     "settings": "Einstellungen",
     "user_management": "Benutzerverwaltung"

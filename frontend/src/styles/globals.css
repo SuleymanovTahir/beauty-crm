@@ -222,7 +222,7 @@ html {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1099px) {
   .mobile-bottom-nav {
     display: flex;
     position: fixed;
@@ -300,7 +300,7 @@ html {
 }
 
 /* Desktop sidebar */
-@media (min-width: 769px) {
+@media (min-width: 1100px) {
   .desktop-sidebar {
     display: flex !important;
   }
@@ -333,7 +333,7 @@ html {
    ANALYTICS MOBILE OPTIMIZATIONS
    ================================= */
 
-@media (max-width: 768px) {
+@media (max-width: 1099px) {
   .analytics-container {
     padding: 1rem !important;
   }
@@ -422,7 +422,7 @@ html {
 }
 
 /* Mobile touch improvements */
-@media (max-width: 768px) {
+@media (max-width: 1099px) {
   button,
   a,
   input,
@@ -610,8 +610,8 @@ html {
 }
 
 /* Logo Sharpness Fix */
-img[src*="logo"], 
-img.logo, 
+img[src*="logo"],
+img.logo,
 .salon-logo img {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
