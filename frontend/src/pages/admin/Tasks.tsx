@@ -411,7 +411,7 @@ export default function Tasks() {
                         {stages.map(stage => (
                             <div
                                 key={stage.id}
-                                className="w-96 shrink-0 flex flex-col bg-gray-100/50 rounded-xl border border-gray-200/60"
+                                className="w-96 shrink-0 flex flex-col min-h-[300px] bg-gray-100/50 rounded-xl border border-gray-200/60"
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, stage.id)}
                             >
@@ -422,7 +422,9 @@ export default function Tasks() {
                                                 className="w-2 h-2 rounded-full"
                                                 style={{ backgroundColor: stage.color?.replace('bg-', '').replace('-500', '') || '#9ca3af' }}
                                             />
-                                            <span className="font-semibold text-gray-700">{t(`stages.${stage.key || stage.name.toLowerCase().replace(/\s+/g, '_')}`, { defaultValue: stage.name })}</span>
+                                            <span className="font-semibold text-gray-700">
+                                                {t(`stages.${stage.key}`, { defaultValue: stage.name })}
+                                            </span>
                                         </div>
                                         <Badge variant="secondary" className="bg-white text-gray-500 shadow-sm border">
                                             {filteredTasks.filter(t => t.stage_id === stage.id).length}
@@ -430,7 +432,7 @@ export default function Tasks() {
                                     </div>
                                 </div>
 
-                                <ScrollArea className="flex-1 p-3">
+                                <ScrollArea className="p-3">
                                     <div className="space-y-3 pb-2">
                                         {filteredTasks.filter(t => t.stage_id === stage.id).map(task => (
                                             <div

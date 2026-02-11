@@ -80,11 +80,11 @@
   "stage_name": "Название стадии",
   "stage_name_placeholder": "Например: В работе",
   "stages": {
-    "done": "Готово",
+    "done": "Завершено",
     "in_progress": "В работе",
-    "on_hold": "Отложено",
+    "on_hold": "Бэклог",
     "review": "Проверка",
-    "todo": "Сделать"
+    "todo": "К выполнению"
   },
   "status_updated": "Статус обновлен",
   "task_created": "Задача создана",
