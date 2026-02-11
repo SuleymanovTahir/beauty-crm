@@ -29,7 +29,7 @@ const EmployeeDetail = React.lazy(() => import('./pages/admin/EmployeeDetail'));
 const EmployeeManagement = React.lazy(() => import('./pages/admin/EmployeeManagement'));
 const VisitorAnalytics = React.lazy(() => import('./pages/admin/VisitorAnalytics'));
 const Funnel = React.lazy(() => import('./pages/shared/Funnel'));
-const AdminTasks = React.lazy(() => import('./pages/admin/Tasks'));
+const UniversalTasks = React.lazy(() => import('./pages/shared/Tasks'));
 const Telephony = React.lazy(() => import('./pages/admin/Telephony'));
 const MenuCustomization = React.lazy(() => import('./pages/admin/MenuCustomization'));
 const TrashBin = React.lazy(() => import('@/pages/admin/TrashBin'));
@@ -45,7 +45,7 @@ const CRMChallenges = React.lazy(() => import('./pages/admin/Challenges'));
 const ServiceChangeRequests = React.lazy(() => import('./pages/admin/ServiceChangeRequests'));
 
 // Aliases for shared components across roles
-const CRMTasks = AdminTasks;
+const CRMTasks = UniversalTasks;
 const CRMServices = Services;
 const CRMBookings = Bookings;
 const CRMCalendar = Calendar;
@@ -70,7 +70,7 @@ const PromoCodes = React.lazy(() => import('./pages/admin/PromoCodes'));
 
 // Employee routes
 const EmployeeProfile = React.lazy(() => import('./pages/employee/Profile'));
-const EmployeeTasks = React.lazy(() => import('./pages/employee/Tasks'));
+// Task component is now shared as UniversalTasks
 const EmployeeBookings = React.lazy(() => import('./pages/employee/Bookings'));
 const EmployeeServices = React.lazy(() => import('./pages/employee/Services'));
 const EmployeeDashboard = React.lazy(() => import('./pages/employee/Dashboard'));
@@ -325,7 +325,7 @@ export default function App() {
                 <Route path="public-content/:tab?" element={<PublicContent />} />
                 <Route path="visitor-analytics" element={<VisitorAnalytics />} />
                 <Route path="funnel" element={<Funnel />} />
-                <Route path="tasks" element={<AdminTasks />} />
+                <Route path="tasks" element={<UniversalTasks />} />
                 <Route path="telephony" element={<Telephony />} />
                 <Route path="menu-customization" element={<MenuCustomization />} />
                 <Route path="trash" element={<TrashBin />} />
@@ -479,7 +479,7 @@ export default function App() {
                 <Route path="settings" element={<Navigate to="/employee/profile" replace />} />
                 <Route path="calendar" element={<Calendar employeeFilter={true} />} />
                 <Route path="bookings" element={<EmployeeBookings />} />
-                <Route path="tasks" element={<EmployeeTasks />} />
+                <Route path="tasks" element={<UniversalTasks />} />
                 <Route path="services" element={<EmployeeServices />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="internal-chat" element={<InternalChat />} />
