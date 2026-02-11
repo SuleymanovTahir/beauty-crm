@@ -805,8 +805,14 @@ export default function AdminSettings() {
     }
   };
 
+  const { tab } = useParams<{ tab: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const activeTab = tab || 'profile';
+
   // Проверка доступа к настройкам
-  if (!userPermissions.canViewSettings) {
+  // Если у пользователя нет прав на общие настройки, мы все равно позволяем видеть профиль
+  if (!userPermissions.canViewSettings && activeTab !== 'profile' && activeTab !== 'notifications') {
     return (
       <div className="p-8 flex items-center justify-center min-h-screen">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 max-w-md text-center">
@@ -819,11 +825,6 @@ export default function AdminSettings() {
       </div>
     );
   }
-
-  const { tab } = useParams<{ tab: string }>();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const activeTab = tab || 'profile';
 
   // Определяем префикс путей
   const rolePrefix = useMemo(() => {

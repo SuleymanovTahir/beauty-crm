@@ -10,10 +10,10 @@ import { ThemeProvider } from './contexts/ThemeContext';
 // Lazy load pages
 const MainLayout = React.lazy(() => import('./components/layouts/MainLayout'));
 const Dashboard = React.lazy(() => import('./pages/shared/Dashboard'));
-const Bookings = React.lazy(() => import('./pages/admin/Bookings'));
+const Bookings = React.lazy(() => import('./pages/shared/Bookings'));
 const BookingDetail = React.lazy(() => import('./pages/admin/BookingDetail'));
 const Analytics = React.lazy(() => import('./pages/admin/Analytics'));
-const Services = React.lazy(() => import('./pages/admin/Services'));
+const Services = React.lazy(() => import('./pages/shared/Services'));
 const Clients = React.lazy(() => import('./pages/admin/Clients'));
 const ClientDetail = React.lazy(() => import('./pages/admin/ClientDetail'));
 const CreateUser = React.lazy(() => import('./pages/admin/CreateUser'));
@@ -40,8 +40,8 @@ const Invoices = React.lazy(() => import('./pages/admin/Invoices'));
 const PaymentIntegrations = React.lazy(() => import('./pages/admin/PaymentIntegrations'));
 const MarketplaceIntegrations = React.lazy(() => import('./pages/admin/MarketplaceIntegrations'));
 const Messengers = React.lazy(() => import('./pages/admin/Messengers'));
-const CRMReferrals = React.lazy(() => import('./pages/admin/Referrals'));
-const CRMChallenges = React.lazy(() => import('./pages/admin/Challenges'));
+const UniversalReferrals = React.lazy(() => import('./pages/shared/Referrals'));
+const UniversalChallenges = React.lazy(() => import('./pages/shared/Challenges'));
 const ServiceChangeRequests = React.lazy(() => import('./pages/admin/ServiceChangeRequests'));
 
 // Aliases for shared components across roles
@@ -56,8 +56,8 @@ const CRMClients = Clients;
 const AdminPanelLayout = React.lazy(() => import('./components/layouts/AdminPanelLayout'));
 const AdminPanelDashboard = React.lazy(() => import('./pages/adminPanel/Dashboard'));
 const LoyaltyManagement = React.lazy(() => import('./pages/adminPanel/LoyaltyManagement'));
-const ReferralProgram = React.lazy(() => import('./pages/adminPanel/ReferralProgram'));
-const Challenges = React.lazy(() => import('./pages/adminPanel/Challenges'));
+// ReferralProgram is now shared as UniversalReferrals
+// Challenges is now shared as UniversalChallenges
 const NotificationsDashboard = React.lazy(() => import('./pages/adminPanel/NotificationsDashboard'));
 
 const PhotoGallery = React.lazy(() => import('./pages/adminPanel/PhotoGallery'));
@@ -65,16 +65,14 @@ const FeatureManagement = React.lazy(() => import('./pages/adminPanel/FeatureMan
 
 const Chat = React.lazy(() => import('./pages/manager/Chat'));
 const InternalChat = React.lazy(() => import('./components/shared/InternalChat'));
+const NotificationsPage = React.lazy(() => import('./pages/common/Notifications'));
+
 const Broadcasts = React.lazy(() => import('./pages/admin/Broadcasts'));
 const PromoCodes = React.lazy(() => import('./pages/admin/PromoCodes'));
 
 // Employee routes
-const EmployeeProfile = React.lazy(() => import('./pages/employee/Profile'));
+const UniversalProfile = React.lazy(() => import('./pages/shared/Profile'));
 // Task component is now shared as UniversalTasks
-const EmployeeBookings = React.lazy(() => import('./pages/employee/Bookings'));
-const EmployeeServices = React.lazy(() => import('./pages/employee/Services'));
-const EmployeeDashboard = React.lazy(() => import('./pages/employee/Dashboard'));
-const NotificationsPage = React.lazy(() => import('./pages/common/Notifications'));
 
 // New Public Landing Pages - Lazy Loaded
 const LandingPage = React.lazy(() => import('../public_landing/pages/LandingPage').then(module => ({ default: module.LandingPage })));
@@ -272,8 +270,8 @@ export default function App() {
               >
                 <Route path="dashboard" element={<AdminPanelDashboard />} />
                 <Route path="loyalty" element={<LoyaltyManagement />} />
-                <Route path="referrals" element={<ReferralProgram />} />
-                <Route path="challenges" element={<Challenges />} />
+                <Route path="referrals" element={<UniversalReferrals />} />
+                <Route path="challenges" element={<UniversalChallenges />} />
                 <Route path="notifications" element={<NotificationsDashboard />} />
                 <Route path="features" element={<FeatureManagement />} />
                 <Route path="gallery" element={<PhotoGallery />} />
@@ -316,7 +314,7 @@ export default function App() {
                 <Route path="users/permissions" element={<PermissionManagement />} />
                 <Route path="users/:identifier/edit" element={<EditUser />} />
                 <Route path="users/:id/:tab?" element={<EmployeeDetail />} />
-                <Route path="profile" element={<EmployeeProfile />} />
+                <Route path="profile" element={<UniversalProfile />} />
 
                 <Route path="plans" element={<PlansManagement />} />
                 <Route path="calendar" element={<Calendar />} />
@@ -339,8 +337,8 @@ export default function App() {
                 <Route path="messengers" element={<Messengers />} />
                 <Route path="payment-integrations" element={<PaymentIntegrations />} />
                 <Route path="marketplace-integrations" element={<MarketplaceIntegrations />} />
-                <Route path="referrals" element={<CRMReferrals />} />
-                <Route path="challenges" element={<CRMChallenges />} />
+                <Route path="referrals" element={<UniversalReferrals />} />
+                <Route path="challenges" element={<UniversalChallenges />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="service-change-requests" element={<ServiceChangeRequests />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
@@ -474,13 +472,13 @@ export default function App() {
                   />
                 }
               >
-                <Route path="dashboard" element={<EmployeeDashboard />} />
-                <Route path="profile" element={<EmployeeProfile />} />
-                <Route path="settings" element={<Navigate to="/employee/profile" replace />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="profile" element={<UniversalProfile />} />
+                <Route path="settings" element={<Settings />} />
                 <Route path="calendar" element={<Calendar employeeFilter={true} />} />
-                <Route path="bookings" element={<EmployeeBookings />} />
+                <Route path="bookings" element={<Bookings />} />
                 <Route path="tasks" element={<UniversalTasks />} />
-                <Route path="services" element={<EmployeeServices />} />
+                <Route path="services" element={<Services />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
