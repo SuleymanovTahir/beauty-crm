@@ -406,8 +406,8 @@ export default function Tasks() {
                 </div>
             ) : (
                 /* Kanban Board */
-                <div className="flex-1 overflow-x-auto p-4 md:p-6">
-                    <div className="flex gap-6 h-full min-w-max">
+                <div className="flex-1 flex flex-col overflow-x-auto p-4 md:p-6">
+                    <div className="flex gap-6 min-h-full min-w-max">
                         {stages.map(stage => (
                             <div
                                 key={stage.id}
