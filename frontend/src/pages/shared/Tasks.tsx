@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
 import { Button } from '../../components/ui/button';
@@ -34,13 +34,14 @@ import { toast } from 'sonner';
 import { CreateTaskDialog } from '../../components/tasks/CreateTaskDialog';
 import { ManageTaskStagesDialog } from '../../components/tasks/ManageTaskStagesDialog';
 import { TasksDashboard } from '../../components/tasks/TasksDashboard';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface Task {
     id: number;
     title: string;
     description?: string;
     stage_id: number;
-    status: string; // legacy or convenience
+    status: string;
     priority: 'low' | 'medium' | 'high';
     due_date?: string;
     assignee_id?: number;
@@ -51,7 +52,6 @@ interface Task {
     created_by_name?: string;
     created_at: string;
 }
-
 
 interface Stage {
     id: number;
@@ -67,8 +67,20 @@ interface TaskAnalytics {
     today: number;
 }
 
-export default function Tasks() {
+export default function UniversalTasks() {
     const { t } = useTranslation(['admin/tasks', 'common']);
+    const { user: currentUser } = useAuth();
+
+    const isAdminLike = useMemo(() => {
+        return currentUser?.role === 'admin' ||
+            currentUser?.role === 'director' ||
+            currentUser?.role === 'manager' ||
+            currentUser?.role === 'saler' ||
+            currentUser?.role === 'marketer';
+    }, [currentUser]);
+
+    const isEmployee = currentUser?.role === 'employee';
+
     const [tasks, setTasks] = useState<Task[]>([]);
     const [stages, setStages] = useState<Stage[]>([]);
     const [analytics, setAnalytics] = useState<TaskAnalytics>({ total_active: 0, completed: 0, overdue: 0, today: 0 });
@@ -84,11 +96,14 @@ export default function Tasks() {
     const [filterPriority, setFilterPriority] = useState<string>('all');
     const [filterOverdue, setFilterOverdue] = useState<boolean>(false);
     const [users, setUsers] = useState<Array<{ id: number; full_name: string; role: string }>>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         loadData();
-        loadUsers();
-    }, []);
+        if (isAdminLike) {
+            loadUsers();
+        }
+    }, [isAdminLike]);
 
     const loadUsers = async () => {
         try {
@@ -101,14 +116,19 @@ export default function Tasks() {
 
     const loadData = async () => {
         try {
+            setLoading(true);
+            const endpoint = isEmployee ? '/api/tasks/my' : '/api/tasks';
+
             const [tasksData, analyticsData, stagesData] = await Promise.all([
-                api.get('/api/tasks'),
+                api.get(endpoint),
                 api.get('/api/tasks/analytics'),
                 api.get('/api/tasks/stages')
             ]);
+
             setTasks(tasksData);
             setAnalytics(analyticsData);
-            // Deduplicate stages to prevent double "Done" columns
+
+            // Deduplicate stages
             const uniqueStages = stagesData.filter((stage: any, index: number, self: any[]) =>
                 index === self.findIndex((s: any) => (
                     (s.key && stage.key && s.key === stage.key) ||
@@ -118,7 +138,9 @@ export default function Tasks() {
             setStages(uniqueStages);
         } catch (error) {
             console.error('Error loading tasks:', error);
-            toast.error('Failed to load tasks');
+            toast.error(t('common:error_loading'));
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -142,7 +164,6 @@ export default function Tasks() {
         try {
             await api.put(`/api/tasks/${draggedTask.id}/move`, { stage_id: stageId });
             toast.success(t('status_updated'));
-            // Refresh analytics
             const updatedAnalytics = await api.get('/api/tasks/analytics');
             setAnalytics(updatedAnalytics);
         } catch (error) {
@@ -165,7 +186,6 @@ export default function Tasks() {
         try {
             await api.delete(`/api/tasks/${taskId}`);
             toast.success(t('task_deleted'));
-
             setTasks(prev => prev.filter(t => t.id !== taskId));
             const updatedAnalytics = await api.get('/api/tasks/analytics');
             setAnalytics(updatedAnalytics);
@@ -194,6 +214,8 @@ export default function Tasks() {
 
     // Filter tasks
     const filteredTasks = tasks.filter(task => {
+        if (!isAdminLike) return true; // Employees see all their tasks in board
+
         // Filter by assignee
         if (filterAssignee !== 'all') {
             const assigneeId = parseInt(filterAssignee);
@@ -223,140 +245,154 @@ export default function Tasks() {
         setFilterOverdue(false);
     };
 
+    if (loading && tasks.length === 0) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col bg-gray-50/50 min-h-screen">
             {/* Header & Analytics */}
-            {/* Header & Analytics */}
             <div className="px-6 py-4 bg-white border-b flex flex-col gap-6">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{t('tasks')}</h1>
-                    <p className="text-sm text-gray-500 mt-1">{t('task_management_subtitle')}</p>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('tasks')}</h1>
+                        <p className="text-sm text-gray-500 mt-1">{t('task_management_subtitle')}</p>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        {/* Tabs */}
+                        <div className="bg-gray-100 p-1 rounded-lg flex border border-gray-200">
+                            <button
+                                onClick={() => setViewMode('board')}
+                                className={`flex-1 px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap flex items-center justify-center ${viewMode === 'board'
+                                    ? 'bg-white text-gray-900 shadow-sm'
+                                    : 'text-gray-500 hover:text-gray-900'
+                                    }`}
+                            >
+                                <Layout className="w-4 h-4 mr-2" />
+                                {t('board')}
+                            </button>
+                            <button
+                                onClick={() => setViewMode('dashboard')}
+                                className={`flex-1 px-3 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap flex items-center justify-center ${viewMode === 'dashboard'
+                                    ? 'bg-white text-gray-900 shadow-sm'
+                                    : 'text-gray-500 hover:text-gray-900'
+                                    }`}
+                            >
+                                <LayoutDashboard className="w-4 h-4 mr-2" />
+                                {t('dashboard')}
+                            </button>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-2">
+                            {isAdminLike && (
+                                <Button
+                                    variant="outline"
+                                    className="bg-white whitespace-nowrap"
+                                    onClick={() => setManageStagesOpen(true)}
+                                >
+                                    <Settings className="w-4 h-4 mr-2" />
+                                    {t('manage_stages')}
+                                </Button>
+                            )}
+                            <Button
+                                className="bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20 whitespace-nowrap"
+                                onClick={() => setCreateDialogOpen(true)}
+                            >
+                                <Plus className="w-4 h-4 mr-2" />
+                                {t('create_task')}
+                            </Button>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="flex flex-col gap-4">
-                    {/* Tabs - Full Width */}
-                    <div className="bg-gray-100 p-1 rounded-lg flex w-full border border-gray-200">
-                        <button
-                            onClick={() => setViewMode('board')}
-                            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${viewMode === 'board'
-                                ? 'bg-white text-gray-900 shadow-sm'
-                                : 'text-gray-500 hover:text-gray-900'
-                                }`}
-                        >
-                            <Layout className="w-4 h-4 mr-2 inline-block" />
-                            {t('board')}
-                        </button>
-                        <button
-                            onClick={() => setViewMode('dashboard')}
-                            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${viewMode === 'dashboard'
-                                ? 'bg-white text-gray-900 shadow-sm'
-                                : 'text-gray-500 hover:text-gray-900'
-                                }`}
-                        >
-                            <LayoutDashboard className="w-4 h-4 mr-2 inline-block" />
-                            {t('dashboard')}
-                        </button>
-                    </div>
+                <CreateTaskDialog
+                    open={createDialogOpen}
+                    onOpenChange={handleCreateTaskClose}
+                    onSuccess={loadData}
+                    stages={stages}
+                    taskToEdit={taskToEdit}
+                    isEmployee={isEmployee}
+                />
 
-                    {/* Actions Row */}
-                    <div className="flex flex-col min-[450px]:flex-row gap-3">
-                        <Button
-                            variant="outline"
-                            className="flex-1 md:flex-none bg-white whitespace-nowrap"
-                            onClick={() => setManageStagesOpen(true)}
-                        >
-                            <Settings className="w-4 h-4 mr-2" />
-                            {t('manage_stages')}
-                        </Button>
-                        <Button
-                            className="flex-1 md:flex-none bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20 whitespace-nowrap"
-                            onClick={() => setCreateDialogOpen(true)}
-                        >
-                            <Plus className="w-4 h-4 mr-2" />
-                            {t('create_task')}
-                        </Button>
-                    </div>
-
-                    <CreateTaskDialog
-                        open={createDialogOpen}
-                        onOpenChange={handleCreateTaskClose}
-                        onSuccess={loadData}
-                        stages={stages}
-                        taskToEdit={taskToEdit}
-                    />
-
+                {isAdminLike && (
                     <ManageTaskStagesDialog
                         open={manageStagesOpen}
                         onOpenChange={setManageStagesOpen}
                         onSuccess={loadData}
                     />
+                )}
 
-                    {/* Filters - Responsive Grid */}
-                    {viewMode === 'board' && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:items-center gap-3 bg-gray-50/50 p-3 rounded-xl border border-gray-100">
-                            <div className="flex items-center gap-2 text-sm text-gray-500 sm:col-span-2 lg:w-auto lg:border-r lg:pr-3 lg:mr-1">
-                                <Filter className="w-4 h-4" />
-                                <span>{t('filters', 'Фильтры')}:</span>
-                            </div>
-
-                            <Select value={filterAssignee} onValueChange={setFilterAssignee}>
-                                <SelectTrigger className="w-full lg:w-[180px] h-9 bg-white">
-                                    <SelectValue placeholder={t('filter_assignee', 'Ответственный')} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">{t('all_assignees', 'Все ответственные')}</SelectItem>
-                                    {users.map(user => (
-                                        <SelectItem key={user.id} value={user.id.toString()}>
-                                            {user.full_name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-
-                            <Select value={filterPriority} onValueChange={setFilterPriority}>
-                                <SelectTrigger className="w-full lg:w-[140px] h-9 bg-white">
-                                    <SelectValue placeholder={t('filter_priority', 'Приоритет')} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">{t('all_priorities', 'Все приоритеты')}</SelectItem>
-                                    <SelectItem value="high">{t('priority.high')}</SelectItem>
-                                    <SelectItem value="medium">{t('priority.medium')}</SelectItem>
-                                    <SelectItem value="low">{t('priority.low')}</SelectItem>
-                                </SelectContent>
-                            </Select>
-
-                            <Button
-                                variant={filterOverdue ? "default" : "outline"}
-                                size="sm"
-                                className={`w-full lg:w-auto ${filterOverdue ? "bg-red-500 hover:bg-red-600 text-white" : "bg-white"}`}
-                                onClick={() => setFilterOverdue(!filterOverdue)}
-                            >
-                                <AlertCircle className="w-4 h-4 mr-1" />
-                                {t('overdue_only', 'Только просроченные')}
-                            </Button>
-
-                            {hasActiveFilters && (
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={clearFilters}
-                                    className="text-gray-500 hover:text-gray-700 w-full sm:w-auto justify-center"
-                                >
-                                    <X className="w-4 h-4 mr-1" />
-                                    {t('clear_filters', 'Сбросить')}
-                                </Button>
-                            )}
-
-                            {hasActiveFilters && (
-                                <Badge variant="secondary" className="ml-auto hidden lg:inline-flex">
-                                    {t('showing_tasks', 'Показано')}: {filteredTasks.length} {t('of', 'из')} {tasks.length}
-                                </Badge>
-                            )}
+                {/* Filters */}
+                {viewMode === 'board' && isAdminLike && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:items-center gap-3 bg-gray-50/50 p-3 rounded-xl border border-gray-100">
+                        <div className="flex items-center gap-2 text-sm text-gray-500 sm:col-span-2 lg:w-auto lg:border-r lg:pr-3 lg:mr-1">
+                            <Filter className="w-4 h-4" />
+                            <span>{t('filters', 'Фильтры')}:</span>
                         </div>
-                    )}
-                </div>
 
-                {/* Only show analytics summary in Board view */}
+                        <Select value={filterAssignee} onValueChange={setFilterAssignee}>
+                            <SelectTrigger className="w-full lg:w-[180px] h-9 bg-white">
+                                <SelectValue placeholder={t('filter_assignee', 'Ответственный')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">{t('all_assignees', 'Все ответственные')}</SelectItem>
+                                {users.map(user => (
+                                    <SelectItem key={user.id} value={user.id.toString()}>
+                                        {user.full_name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Select value={filterPriority} onValueChange={setFilterPriority}>
+                            <SelectTrigger className="w-full lg:w-[140px] h-9 bg-white">
+                                <SelectValue placeholder={t('filter_priority', 'Приоритет')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">{t('all_priorities', 'Все приоритеты')}</SelectItem>
+                                <SelectItem value="high">{t('priority.high')}</SelectItem>
+                                <SelectItem value="medium">{t('priority.medium')}</SelectItem>
+                                <SelectItem value="low">{t('priority.low')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                        <Button
+                            variant={filterOverdue ? "default" : "outline"}
+                            size="sm"
+                            className={`w-full lg:w-auto ${filterOverdue ? "bg-red-500 hover:bg-red-600 text-white" : "bg-white"}`}
+                            onClick={() => setFilterOverdue(!filterOverdue)}
+                        >
+                            <AlertCircle className="w-4 h-4 mr-1" />
+                            {t('overdue_only', 'Только просроченные')}
+                        </Button>
+
+                        {hasActiveFilters && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={clearFilters}
+                                className="text-gray-500 hover:text-gray-700 w-full sm:w-auto justify-center"
+                            >
+                                <X className="w-4 h-4 mr-1" />
+                                {t('clear_filters', 'Сбросить')}
+                            </Button>
+                        )}
+
+                        {hasActiveFilters && (
+                            <Badge variant="secondary" className="ml-auto hidden lg:inline-flex">
+                                {t('showing_tasks', 'Показано')}: {filteredTasks.length} {t('of', 'из')} {tasks.length}
+                            </Badge>
+                        )}
+                    </div>
+                )}
+
+                {/* Analytics summary */}
                 {viewMode === 'board' && (
                     <div className="grid grid-cols-1 min-[400px]:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
                         <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
@@ -377,13 +413,13 @@ export default function Tasks() {
                                 <div className="text-xs text-red-600 font-medium">{t('analytics.overdue')}</div>
                             </div>
                         </div>
-                        <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
-                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                        <div className="bg-green-50 border border-green-100 p-4 rounded-xl flex items-center gap-4">
+                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
                                 <CheckCircle2 className="w-6 h-6" />
                             </div>
                             <div>
-                                <div className="text-2xl font-bold text-blue-900">{analytics.completed}</div>
-                                <div className="text-xs text-blue-600 font-medium">{t('analytics.completed')}</div>
+                                <div className="text-2xl font-bold text-green-900">{analytics.completed}</div>
+                                <div className="text-xs text-green-600 font-medium">{t('analytics.completed')}</div>
                             </div>
                         </div>
                         <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl flex items-center gap-4">
@@ -479,7 +515,7 @@ export default function Tasks() {
                                                 <h4 className="text-sm font-semibold text-gray-900 mb-1 leading-snug">{task.title}</h4>
                                                 {task.description && <p className="text-xs text-gray-500 line-clamp-2 mb-2">{task.description}</p>}
 
-                                                {task.created_by_name && (
+                                                {isAdminLike && task.created_by_name && (
                                                     <div className="flex items-center gap-1.5 mb-3 text-[10px] text-gray-400">
                                                         <User className="w-3 h-3" />
                                                         <span>{t('created_by')}: {task.created_by_name}</span>
@@ -543,7 +579,7 @@ export default function Tasks() {
                                         size="sm"
                                         className="w-full text-gray-400 hover:text-gray-600 text-xs border border-dashed border-gray-300 hover:bg-white bg-transparent"
                                         onClick={() => {
-                                            setTaskToEdit(null); // Ensure creation mode
+                                            setTaskToEdit(null);
                                             setCreateDialogOpen(true);
                                         }}
                                     >
