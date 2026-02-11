@@ -39,7 +39,7 @@ interface Challenge {
 }
 
 export default function Challenges() {
-    const { t } = useTranslation(['admin/challenges', 'common', 'services']);
+    const { t } = useTranslation(['admin/challenges', 'common', 'services', 'dynamic']);
     const { currency } = useSalonSettings();
     const navigate = useNavigate();
 
@@ -239,8 +239,8 @@ export default function Challenges() {
                             </div>
 
                             <div className="space-y-2">
-                                <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight tracking-tight">{challenge.title}</h3>
-                                <p className="text-gray-500 font-medium leading-relaxed max-w-md text-sm">{challenge.description}</p>
+                                <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight tracking-tight">{t(challenge.title)}</h3>
+                                <p className="text-gray-500 font-medium leading-relaxed max-w-md text-sm">{t(challenge.description)}</p>
                             </div>
 
                             <div className="bg-gray-50/80 rounded-2xl p-6 border border-gray-100 space-y-4">

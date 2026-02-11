@@ -4,13 +4,18 @@
   "logout": "تسجيل الخروج",
   "menu": {
     "challenges": "التحديات",
+    "challenges_short": "الأهداف",
     "dashboard": "لوحة التحكم",
+    "dashboard_short": "الصفحة الرئيسية",
     "feature_management": "إدارة الميزات",
     "loyalty_management": "إدارة الولاء",
+    "loyalty_short": "الولاء",
+    "more": "المزيد",
     "notifications": "الإشعارات",
     "photo_gallery": "معرض الصور",
     "public_content": "المحتوى العام",
     "referral_program": "برنامج الإحالة",
+    "referrals_short": "الإحالات",
     "services": "الخدمات",
     "settings": "الإعدادات",
     "user_management": "المستخدم الإدارة"

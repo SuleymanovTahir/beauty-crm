@@ -4,13 +4,18 @@
   "logout": "Шығу",
   "menu": {
     "challenges": "Қиындықтар",
+    "challenges_short": "Мақсаттар",
     "dashboard": "Басқару тақтасы",
+    "dashboard_short": "Үй",
     "feature_management": "Функцияларды басқару",
     "loyalty_management": "Адалдықты басқару",
+    "loyalty_short": "Адалдық",
+    "more": "Қосымша",
     "notifications": "Хабарландырулар",
     "photo_gallery": "Фото галереясы",
     "public_content": "Жалпыға ортақ мазмұн",
     "referral_program": "Жолдау бағдарламасы",
+    "referrals_short": "Референциялар",
     "services": "Қызметтер",
     "settings": "Параметрлер",
     "user_management": "Пайдаланушыны басқару"

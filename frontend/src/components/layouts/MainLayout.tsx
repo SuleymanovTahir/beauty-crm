@@ -12,7 +12,6 @@ import {
     MessageSquare,
     Settings,
     LogOut,
-    UserCog,
     Calendar,
     Scissors,
     ChevronDown,
@@ -35,10 +34,11 @@ import {
     Bell,
     Ticket,
     Gift,
-    Award,
     Target,
     MoreHorizontal,
-    Link as LinkIcon
+    Link as LinkIcon,
+    LayoutGrid,
+    Share2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -66,7 +66,9 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
 
     const [showMoreModal, setShowMoreModal] = useState(false);
     const [showChatMenu, setShowChatMenu] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(0);
+    const [chatUnreadCount, setChatUnreadCount] = useState(0);
+    const [internalChatUnreadCount, setInternalChatUnreadCount] = useState(0);
+    const [notificationsUnreadCount, setNotificationsUnreadCount] = useState(0);
     const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
     const [mobileExpandedGroups, setMobileExpandedGroups] = useState<Set<string>>(new Set());
     const [menuSettings, setMenuSettings] = useState<{ menu_order: any[] | null; hidden_items: string[] | null } | null>(null);
@@ -116,8 +118,10 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
 
     const loadUnreadCount = async () => {
         try {
-            const data = await api.getUnreadCount();
-            setUnreadCount(data.total || 0);
+            const data = await api.getTotalUnread();
+            setChatUnreadCount(data.chat || 0);
+            setInternalChatUnreadCount(data.internal_chat || 0);
+            setNotificationsUnreadCount(data.notifications || 0);
         } catch (err) {
             console.error('Failed to load unread count:', err);
         }
@@ -171,50 +175,52 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             'bookings': { icon: Calendar, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, req: () => permissions.canViewAllBookings },
             'calendar': { icon: Calendar, label: t('menu.calendar'), path: `${rolePrefix}/calendar`, req: () => true },
             'clients': { icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, req: () => true },
-            'chat': { icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, req: () => true },
-            'analytics': { icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, req: () => permissions.canViewAnalytics },
-            'funnel': { icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, req: () => true },
-            'tasks': { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, req: () => true },
-            'services': { icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, req: () => permissions.canEditServices },
+            'chat-group': { icon: MessageSquare, label: t('menu.chat'), req: () => true },
             'internal-chat': { icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, req: () => true },
+            'funnel': { icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, req: () => true },
+            'catalog-group': { icon: LayoutGrid, label: t('menu.catalog'), req: () => true },
+            'services': { icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, req: () => permissions.canEditServices },
+            'service-change-requests': { icon: FileText, label: t('menu.service_requests'), path: `${rolePrefix}/service-change-requests`, req: () => permissions.canEditServices },
+            'products': { icon: Package, label: t('menu.products'), path: `${rolePrefix}/products`, req: () => permissions.roleLevel >= 70 },
+            'analytics-group': { icon: BarChart3, label: t('menu.analytics'), req: () => permissions.canViewAnalytics },
+            'analytics': { icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, req: () => permissions.canViewAnalytics },
+            'visitor-analytics': { icon: Users, label: t('menu.visitors'), path: `${rolePrefix}/visitor-analytics`, req: () => permissions.roleLevel >= 70 },
+            'finance-group': { icon: Receipt, label: t('menu.finance'), req: () => permissions.roleLevel >= 70 },
+            'invoices': { icon: Receipt, label: t('menu.invoices'), path: `${rolePrefix}/invoices`, req: () => permissions.roleLevel >= 70 },
+            'contracts': { icon: Briefcase, label: t('menu.contracts'), path: `${rolePrefix}/contracts`, req: () => permissions.roleLevel >= 70 },
+            'tools-group': { icon: Briefcase, label: t('menu.tools'), req: () => true },
+            'tasks': { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, req: () => true },
             'broadcasts': { icon: Send, label: t('menu.broadcasts'), path: `${rolePrefix}/broadcasts`, req: () => permissions.roleLevel >= 70 },
-            'promo-codes': { icon: Ticket, label: t('menu.promo_codes', 'Промокоды'), path: `${rolePrefix}/promo-codes`, req: () => permissions.roleLevel >= 70 },
-            'loyalty': { icon: Gift, label: t('menu.loyalty', 'Лояльность'), path: `${rolePrefix}/loyalty`, req: () => permissions.roleLevel >= 70 },
             'telephony': { icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, req: () => true },
+            'referrals': { icon: Share2, label: t('menu.referrals'), path: `${rolePrefix}/referrals`, req: () => permissions.roleLevel >= 70 },
+            'promo-codes': { icon: Ticket, label: t('menu.promo_codes'), path: `${rolePrefix}/promo-codes`, req: () => permissions.roleLevel >= 70 },
+            'loyalty': { icon: Gift, label: t('menu.loyalty'), path: `${rolePrefix}/loyalty`, req: () => permissions.roleLevel >= 70 },
+            'challenges': { icon: Target, label: t('menu.challenges'), path: `${rolePrefix}/challenges`, req: () => permissions.roleLevel >= 70 },
             'integrations-group': { icon: LinkIcon, label: t('menu.integrations'), req: () => true },
             'messengers': { icon: MessageSquare, label: t('menu.messengers'), path: `${rolePrefix}/messengers`, req: () => true },
             'payment-integrations': { icon: CreditCard, label: t('menu.payments'), path: `${rolePrefix}/payment-integrations`, req: () => true },
             'marketplace-integrations': { icon: Store, label: t('menu.marketplaces'), path: `${rolePrefix}/marketplace-integrations`, req: () => true },
-            'referrals': { icon: Award, label: t('menu.referrals'), path: `${rolePrefix}/referrals`, req: () => permissions.roleLevel >= 70 },
-            'challenges': { icon: Target, label: t('menu.challenges'), path: `${rolePrefix}/challenges`, req: () => permissions.roleLevel >= 70 },
-            'trash': { icon: Trash2, label: t('menu.trash'), path: `${rolePrefix}/trash`, req: () => permissions.roleLevel >= 70 },
-            'audit-log': { icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, req: () => user?.role === 'director' },
-            'employees': { icon: UserCog, label: t('menu.employees'), path: `${rolePrefix}/employees`, req: () => user?.role === 'manager' },
+            'settings-group': { icon: Settings, label: t('menu.settings'), req: () => permissions.canEditSettings },
             'settings': { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, req: () => permissions.canEditSettings },
-            'bot-settings': { icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, req: () => permissions.canViewBotSettings },
-            'users-group': { icon: Users, label: t('menu.user_management'), req: () => permissions.roleLevel >= 70 },
             'users': { icon: Users, label: t('menu.users'), path: `${rolePrefix}/users`, req: () => permissions.roleLevel >= 70 },
-            'permissions': { icon: ShieldCheck, label: t('menu.permissions'), path: `${rolePrefix}/users/permissions`, req: () => permissions.roleLevel >= 70 },
-            'pending-users': { icon: UserCog, label: t('menu.pending_registrations'), path: `${rolePrefix}/users/pending`, req: () => permissions.roleLevel >= 70 },
-            'content-group': { icon: FileText, label: t('menu.content'), req: () => permissions.roleLevel >= 70 },
             'public-content': { icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, req: () => permissions.roleLevel >= 70 },
-            'visitor-analytics': { icon: BarChart3, label: t('menu.visitor_analytics'), path: `${rolePrefix}/visitor-analytics`, req: () => permissions.roleLevel >= 70 },
-            'menu-customization': { icon: Settings, label: t('menu.menu_customization'), path: `${rolePrefix}/menu-customization`, req: () => permissions.roleLevel >= 70 },
-            'finance-group': { icon: Receipt, label: t('menu.finance'), req: () => permissions.roleLevel >= 70 },
-            'invoices': { icon: Receipt, label: t('menu.invoices'), path: `${rolePrefix}/invoices`, req: () => permissions.roleLevel >= 70 },
-            'products': { icon: Package, label: t('menu.products'), path: `${rolePrefix}/products`, req: () => permissions.roleLevel >= 70 },
-            'contracts': { icon: Briefcase, label: t('menu.contracts'), path: `${rolePrefix}/contracts`, req: () => permissions.roleLevel >= 70 },
+            'bot-settings': { icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, req: () => permissions.canViewBotSettings },
+            'audit-log': { icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, req: () => user?.role === 'director' },
+            'trash': { icon: Trash2, label: t('menu.trash'), path: `${rolePrefix}/trash`, req: () => permissions.roleLevel >= 70 },
         };
 
         const groups: Record<string, string[]> = {
-            'users-group': ['users', 'permissions', 'pending-users'],
-            'content-group': ['public-content', 'visitor-analytics', 'menu-customization'],
-            'finance-group': ['invoices', 'products', 'contracts'],
-            'integrations-group': ['telephony', 'messengers', 'payment-integrations', 'marketplace-integrations'],
+            'chat-group': ['internal-chat'],
+            'catalog-group': ['services', 'service-change-requests', 'products'],
+            'analytics-group': ['analytics', 'visitor-analytics'],
+            'finance-group': ['invoices', 'contracts'],
+            'tools-group': ['tasks', 'broadcasts', 'telephony', 'referrals', 'promo-codes', 'loyalty', 'challenges'],
+            'integrations-group': ['messengers', 'payment-integrations', 'marketplace-integrations'],
+            'settings-group': ['settings', 'users', 'public-content', 'bot-settings', 'audit-log', 'trash'],
         };
 
         const finalItems: any[] = [];
-        const order = menuSettings?.menu_order || ['dashboard', 'bookings', 'calendar', 'clients', 'chat', 'analytics', 'funnel', 'tasks', 'services', 'internal-chat', 'broadcasts', 'promo-codes', 'loyalty', 'finance-group', 'users-group', 'content-group', 'integrations-group', 'referrals', 'challenges', 'trash', 'audit-log', 'settings', 'bot-settings'];
+        const order = menuSettings?.menu_order || ['dashboard', 'bookings', 'clients', 'chat-group', 'calendar', 'funnel', 'catalog-group', 'analytics-group', 'finance-group', 'tools-group', 'integrations-group', 'settings-group'];
 
         order.forEach(id => {
             if (menuSettings?.hidden_items?.includes(id)) return;
@@ -238,24 +244,35 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     }, [t, rolePrefix, dashboardPath, permissions, user?.role, menuSettings]);
 
     const menuItems = useMemo(() => {
-        return allMenuItems.map((item: any) => ({
-            ...item,
-            badge: item.id === 'chat' ? unreadCount : 0
-        }));
-    }, [allMenuItems, unreadCount]);
+        return allMenuItems.map((item: any) => {
+            let badge = 0;
+            if (item.id === 'chat-group') badge = chatUnreadCount + internalChatUnreadCount;
+            else if (item.id === 'messengers') badge = chatUnreadCount;
+            else if (item.id === 'internal-chat') badge = internalChatUnreadCount;
+
+            const subItems = item.items?.map((sub: any) => {
+                let subBadge = 0;
+                if (sub.id === 'messengers') subBadge = chatUnreadCount;
+                else if (sub.id === 'internal-chat') subBadge = internalChatUnreadCount;
+                return { ...sub, badge: subBadge };
+            });
+
+            return { ...item, badge, items: subItems };
+        });
+    }, [allMenuItems, chatUnreadCount, internalChatUnreadCount]);
 
     const mainTabs = useMemo(() => [
         { id: 'dashboard', icon: LayoutDashboard, label: t('menu.dashboard'), path: dashboardPath },
         { id: 'funnel', icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel` },
         { id: 'bookings', icon: Calendar, label: t('menu.bookings'), path: `${rolePrefix}/bookings` },
-        { id: 'chat', icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: unreadCount },
-        { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё') },
-    ], [t, dashboardPath, rolePrefix, unreadCount]);
+        { id: 'chat', icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: chatUnreadCount + internalChatUnreadCount },
+        { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
+    ], [t, dashboardPath, rolePrefix, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount]);
 
     const chatSubItems = useMemo(() => [
-        { id: 'messengers', icon: Send, label: t('menu.messengers'), path: `${rolePrefix}/messengers`, badge: unreadCount },
-        { id: 'internal', icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, badge: 0 },
-    ], [t, rolePrefix, unreadCount]);
+        { id: 'messengers', icon: Send, label: t('menu.messengers'), path: `${rolePrefix}/messengers`, badge: chatUnreadCount },
+        { id: 'internal', icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, badge: internalChatUnreadCount },
+    ], [t, rolePrefix, chatUnreadCount, internalChatUnreadCount]);
 
     const toggleMobileGroup = (id: string) => {
         const newGroups = new Set(mobileExpandedGroups);
@@ -274,57 +291,32 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     return (
         <div className="flex h-screen overflow-hidden bg-gray-50 font-sans">
             {/* Sidebar Desktop */}
-            <aside className="fixed lg:sticky top-0 left-0 z-30 h-screen w-64 desktop-sidebar sidebar-premium shadow-sm">
+            <aside className="fixed min-[1100px]:sticky top-0 left-0 z-30 h-screen w-64 desktop-sidebar sidebar-premium shadow-sm hidden min-[1100px]:flex">
                 <div className="flex flex-col h-full overflow-hidden">
                     {/* Logo Section */}
                     <div className="sidebar-header-premium flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-                            {salonSettings?.logo_url ? (
-                                <img src={salonSettings.logo_url} alt="Logo" className="w-8 h-8 object-contain" />
-                            ) : (
-                                <LayoutDashboard className="w-6 h-6 text-white" />
-                            )}
-                        </div>
-                        <h1 className="text-lg font-bold text-gray-900 truncate">{salonSettings?.name || 'Beauty CRM'}</h1>
-                    </div>
-
-                    {/* User Profile Hook */}
-                    <div className="user-card-sidebar shadow-sm border border-pink-50/50">
-                        <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-gray-100 p-2 shrink-0">
                             <img
-                                src={getDynamicAvatar(user?.full_name || 'User')}
-                                alt="Avatar"
-                                className="w-10 h-10 rounded-xl object-fit shadow-sm border-2 border-white"
+                                src={salonSettings?.logo_url || '/logo.webp'}
+                                alt="Logo"
+                                className="w-full h-full object-contain"
+                                onError={(e) => {
+                                    // Fallback to logo.png if webp fails, or hide if both fail
+                                    const target = e.target as HTMLImageElement;
+                                    if (target.src.endsWith('.webp')) {
+                                        target.src = '/logo.png';
+                                    }
+                                }}
                             />
-                            <div className="min-w-0 flex-1">
-                                <div className="text-sm font-bold text-gray-900 truncate">{user?.full_name}</div>
-                                <div className="text-[11px] font-semibold text-pink-600 uppercase tracking-wider">{getRoleLabel()}</div>
-                            </div>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <h1 className="text-lg font-bold text-gray-900 truncate leading-tight">{salonSettings?.name || 'Beauty CRM'}</h1>
+                            <div className="text-xs text-gray-500 font-medium">{getRoleLabel()}</div>
                         </div>
                     </div>
 
                     {/* Navigation */}
                     <nav className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
-                        <li className="list-none mb-4">
-                            <button
-                                onClick={() => navigate(`${rolePrefix}/notifications`)}
-                                className={cn(
-                                    "w-full menu-item-premium",
-                                    location.pathname.includes('/notifications') && "active"
-                                )}
-                            >
-                                <div className="relative">
-                                    <Bell size={20} />
-                                    {unreadCount > 0 && (
-                                        <span className="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] bg-red-500 text-white text-[8px] font-bold rounded-full border border-white flex items-center justify-center">
-                                            {unreadCount > 99 ? '99+' : unreadCount}
-                                        </span>
-                                    )}
-                                </div>
-                                <span className="flex-1 text-left font-bold">{t('menu.notifications') || 'Уведомления'}</span>
-                            </button>
-                        </li>
-
                         {menuItems.map((item: any) => {
                             const isGroup = !!(item.items && item.items.length > 0);
                             const isExpanded = expandedMenu === item.id;
@@ -337,13 +329,18 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                             <button
                                                 onClick={() => setExpandedMenu(isExpanded ? null : item.id)}
                                                 className={cn(
-                                                    "w-full menu-item-premium",
+                                                    "w-full flex items-center gap-3 menu-item-premium",
                                                     isActive && !isExpanded && "active"
                                                 )}
                                             >
-                                                <item.icon size={20} />
-                                                <span className="flex-1 text-left">{item.label}</span>
-                                                <ChevronDown size={16} className={cn("transition-transform duration-200", isExpanded && "rotate-180")} />
+                                                <item.icon size={20} className="shrink-0" />
+                                                <span className="flex-1 text-left truncate">{item.label}</span>
+                                                {item.badge > 0 && !isExpanded && (
+                                                    <span className="badge-premium badge-premium-red badge-sidebar mr-1">
+                                                        {item.badge}
+                                                    </span>
+                                                )}
+                                                <ChevronDown size={16} className={cn("transition-transform duration-200 shrink-0", isExpanded && "rotate-180")} />
                                             </button>
                                             {isExpanded && (
                                                 <ul className="mt-1 space-y-1">
@@ -352,12 +349,17 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                             <button
                                                                 onClick={() => navigate(sub.path)}
                                                                 className={cn(
-                                                                    "w-full submenu-item-premium",
+                                                                    "w-full flex items-center gap-3 submenu-item-premium",
                                                                     location.pathname === sub.path && "active"
                                                                 )}
                                                             >
-                                                                <sub.icon size={16} />
-                                                                <span>{sub.label}</span>
+                                                                <sub.icon size={16} className="shrink-0" />
+                                                                <span className="flex-1 truncate text-left">{sub.label}</span>
+                                                                {sub.badge > 0 && (
+                                                                    <span className="badge-premium badge-premium-red badge-sidebar">
+                                                                        {sub.badge}
+                                                                    </span>
+                                                                )}
                                                             </button>
                                                         </li>
                                                     ))}
@@ -368,14 +370,14 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                         <button
                                             onClick={() => navigate(item.path)}
                                             className={cn(
-                                                "w-full menu-item-premium",
+                                                "w-full flex items-center gap-3 menu-item-premium",
                                                 location.pathname === item.path && "active"
                                             )}
                                         >
-                                            <item.icon size={20} />
-                                            <span className="flex-1 text-left">{item.label}</span>
+                                            <item.icon size={20} className="shrink-0" />
+                                            <span className="flex-1 text-left truncate">{item.label}</span>
                                             {item.badge > 0 && (
-                                                <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                                                <span className="badge-premium badge-premium-red badge-sidebar">
                                                     {item.badge}
                                                 </span>
                                             )}
@@ -387,28 +389,60 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                     </nav>
 
                     {/* Sidebar Footer */}
-                    <div className="sidebar-footer-premium mt-auto">
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="flex-1 p-2 bg-gray-50 rounded-xl">
+                    <div className="sidebar-footer-premium">
+                        {/* User & Notifications Row */}
+                        <div className="user-card-sidebar px-4">
+                            <div className="flex items-center justify-between gap-3">
+                                <div className="flex items-center gap-3 min-w-0 flex-1">
+                                    <img
+                                        src={getDynamicAvatar(user?.full_name || 'User')}
+                                        alt="Avatar"
+                                        className="w-10 h-10 rounded-xl object-cover border-2 border-white shadow-sm"
+                                    />
+                                    <div className="min-w-0 flex-1">
+                                        <div className="text-sm font-bold text-gray-900 truncate">{user?.full_name}</div>
+                                        <div className="text-[11px] text-gray-400 font-medium truncate">@{user?.username || 'admin'}</div>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => navigate(`${rolePrefix}/notifications`)}
+                                    className={cn(
+                                        "p-2.5 rounded-xl transition-all relative",
+                                        location.pathname.includes('/notifications')
+                                            ? "bg-pink-50 text-pink-600 shadow-sm"
+                                            : "text-gray-400 hover:bg-gray-50 hover:text-gray-600"
+                                    )}
+                                    title={t('menu.notifications')}
+                                >
+                                    <Bell size={20} />
+                                    {notificationsUnreadCount > 0 && (
+                                        <span className="badge-premium badge-premium-orange badge-header transition-transform hover:scale-110">
+                                            {notificationsUnreadCount > 99 ? '99+' : notificationsUnreadCount}
+                                        </span>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 mt-4 px-4 pb-6">
+                            <div className="flex-1">
                                 <LanguageSwitcher />
                             </div>
                             <button
                                 onClick={handleLogout}
-                                className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors shadow-sm"
-                                title={t('common:logout')}
+                                className="flex items-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-all font-bold shadow-sm"
                             >
-                                <LogOut size={20} />
+                                <LogOut size={18} />
+                                <span className="text-sm">{t('common:logout') || 'Выйти'}</span>
                             </button>
-                        </div>
-                        <div className="text-[10px] text-center text-gray-400 font-medium">
-                            {salonSettings?.name || 'Beauty CRM'} v1.0.1
                         </div>
                     </div>
                 </div>
             </aside>
 
-            {/* Mobile Bottom Navigation */}
-            <div className="mobile-bottom-nav lg:hidden">
+            {/* Mobile Bottom Navigation - Visible ONLY on small screens */}
+            <div className="mobile-bottom-nav min-[1100px]:hidden">
                 {mainTabs.map((tab) => (
                     <button
                         key={tab.id}
@@ -417,12 +451,15 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                             else if (tab.id === 'chat') setShowChatMenu(true);
                             else navigate(tab.path!);
                         }}
-                        className={`mobile-nav-btn ${location.pathname === tab.path ? 'active' : ''}`}
+                        className={`mobile-nav-btn ${location.pathname === (tab as any).path ? 'active' : ''}`}
                     >
                         <div className="mobile-nav-icon-container">
                             <tab.icon size={24} />
                             {(tab as any).badge !== undefined && (tab as any).badge > 0 && (
-                                <span className="mobile-nav-badge">
+                                <span className={cn(
+                                    "mobile-nav-badge",
+                                    tab.id === 'more' && "badge-orange"
+                                )}>
                                     {(tab as any).badge > 99 ? '99+' : (tab as any).badge}
                                 </span>
                             )}
@@ -457,6 +494,11 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                     <div className="flex items-center gap-3">
                                                         <item.icon size={20} className="text-gray-700" />
                                                         <span className="font-medium text-gray-700">{item.label}</span>
+                                                        {item.badge > 0 && !mobileExpandedGroups.has(item.id) && (
+                                                            <span className="badge-premium badge-premium-red badge-sidebar">
+                                                                {item.badge}
+                                                            </span>
+                                                        )}
                                                     </div>
                                                     {mobileExpandedGroups.has(item.id) ? (
                                                         <ChevronDown size={18} className="text-gray-400" />
@@ -473,7 +515,12 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                                 className="menu-sub-item"
                                                             >
                                                                 <sub.icon size={16} />
-                                                                <span>{sub.label}</span>
+                                                                <span className="flex-1 text-left">{sub.label}</span>
+                                                                {sub.badge > 0 && (
+                                                                    <span className="badge-premium badge-premium-red badge-sidebar">
+                                                                        {sub.badge}
+                                                                    </span>
+                                                                )}
                                                             </button>
                                                         ))}
                                                     </div>
@@ -485,7 +532,12 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                                 className="menu-item-link"
                                             >
                                                 <item.icon size={20} className="text-gray-700" />
-                                                <span className="font-medium">{item.label}</span>
+                                                <span className="flex-1 font-medium text-left">{item.label}</span>
+                                                {item.badge > 0 && (
+                                                    <span className="badge-premium badge-premium-red badge-sidebar">
+                                                        {item.badge}
+                                                    </span>
+                                                )}
                                             </button>
                                         )}
                                     </div>
@@ -506,7 +558,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                         </div>
                                         <div className="quick-action-icon-wrapper">
                                             <Bell size={20} className="text-gray-700" />
-                                            {unreadCount > 0 && <span className="quick-action-badge">{unreadCount}</span>}
+                                            {notificationsUnreadCount > 0 && <span className="quick-action-badge">{notificationsUnreadCount}</span>}
                                         </div>
                                     </button>
                                 </div>
@@ -560,7 +612,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
                                         <span className="font-semibold text-gray-800">{chat.label}</span>
                                     </div>
                                     {chat.badge > 0 && (
-                                        <span className="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                                        <span className="badge-premium badge-premium-red px-2.5 py-1 text-xs">
                                             {chat.badge}
                                         </span>
                                     )}
@@ -572,7 +624,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             )}
 
             <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-                <div className="flex-1 overflow-y-auto bg-gray-50/50 relative pb-[80px] lg:pb-0">
+                <div className="flex-1 overflow-y-auto bg-gray-50/50 relative pb-[80px] min-[1100px]:pb-0">
                     <Outlet />
                 </div>
             </main>

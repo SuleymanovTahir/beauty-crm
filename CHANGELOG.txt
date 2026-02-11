@@ -1,3 +1,16 @@
+## [2026-02-11] Unread Counts & Premium Communication Indicators
+- 🔔 **Intelligent Unread Tracking**:
+  - **Granular Counts**: Refactored the unread tracking system to distinguish between customer chats (Instagram/Messengers), internal staff chats, and system notifications.
+  - **Unified Backend logic**: Updated `get_total_unread` in `utils/utils.py` to include internal chat messages and provide detailed breakdown objects.
+  - **Optimized API**: The `/api/unread-count` endpoint now returns a comprehensive state object `{total, chat, internal_chat, notifications}` with built-in caching for performance.
+- 🎨 **Premium UI/UX (Badges)**:
+  - **Mobile Excellence**: Implemented high-fidelity badges in the mobile bottom navigation. The "More" tab now features a premium orange badge specifically for system notifications, while the "Chat" tab uses a rose-red badge for messages.
+  - **Sidebar Indicators**: Added badge support for both individual menu items and grouped menus (e.g., "Communication") in the desktop sidebar. Group badges automatically sum the unread counts of their sub-items.
+  - **Refined Header Bell**: Modernized the desktop notification bell with a premium orange badge, featuring glassmorphism-inspired shadows and hover scaling effects.
+- 🔧 **Code Architecture & SSOT**:
+  - **Zero-Hardcode Policy**: Moved all badge-related colors and styles to dedicated CSS classes (`.badge-premium-red`, `.badge-premium-orange`) in `MainLayout.css` to ensure design consistency and follow project rules.
+  - **Clean State Management**: Refactored `MainLayout.tsx` to handle separate unread states, improving reactive updates for different communication channels.
+
 ## [2026-02-08] Promo Code Integration & Marketing Unsubscription Tracking
 - 🎟️ **Promo Code System**:
   - **Comprehensive Management**: Created a premium admin interface for managing promo codes (`pages/admin/PromoCodes.tsx`) with search, filters, and usage statistics.
@@ -362,6 +375,21 @@
 | **По дату** | Date to | إلى تاريخ | Күнге дейін | Datum bis | Hasta fecha | À la date | Até data | दिनांक तक |
 | **В ожидании** | Pending | قيد الانتظار | Күтуде | Ausstehend | En espera | En attente | Pendente | लंबित |
 | **Мастер** | Stylist/Master | خبير | Маман/Шебер | Spezialist | Especialista | Spécialiste | Especialista | विशेषज्ञ |
+
+
+## [2026-02-11] UI Logo Fallbacks & Localization Consistency
+- 🎨 **Logo System Hardening**:
+  - Implemented automatic fallback to `/logo.webp` (with `/logo.png` as secondary fallback) in `MainLayout`, `AdminPanelLayout`, and `AccountPage`. This ensures the salon branding is always visible even if `logo_url` is missing in the database.
+  - Standardized logo container styling to `bg-white` with `shadow-md` for premium look and high contrast.
+- 🌍 **Localization & i18n Fixes**:
+  - **Sidebar Menu**: Added missing `challenges` and `referrals` keys to `mainlayout.json` across all 9 languages via `npm run db:i18n:auto`.
+  - **Arabic Support**: Explicitly verified and fixed untranslated menu items in the Arabic locale.
+  - **Challenges Page**: Wrapped dynamic database content (titles/descriptions) in `t()` function and added `dynamic` namespace to support multi-language challenges.
+- 🎨 **UI Refinement**:
+  - **CRM Submenu Visibility**: Adjusted submenu item colors from `#94a3b8` to `#64748b` in `MainLayout.css` to fix transparency issues and improve readability on light backgrounds.
+- 🧹 **Code Quality**:
+  - Removed hardcoded icons (Scissors, LayoutDashboard, Sparkles) used as logo placeholders.
+  - Fixed linting warnings and optimized translation hook namespaces.
 
 
 ## [2026-01-22] Оптимизация скорости перевода и локализация воронки
@@ -1024,6 +1052,7 @@ CREATE TABLE menu_settings (
 - **Backend**:
   - Обновлен `get_telephony_stats` (поддержка фильтров дат).
   - Добавлен `get_telephony_analytics` с поддержкой фильтров по сотруднику, статусу, типу и длительности.
+  - Реализованы API эндпоинты для управления настройками мессенджеров.
   - Реализованы API эндпоинты для управления настройками мессенджеров.
 
 ### ВАЖНО ПОМНИТЬ

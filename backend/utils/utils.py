@@ -434,7 +434,7 @@ def get_client_display_name(client) -> str:
     else:
         return client[0][:15] + "..."
 
-def get_total_unread(user_id: int = None) -> int:
+def get_total_unread(user_id: int = None, return_details: bool = False) -> int:
     """
     Получить общее количество непрочитанных сообщений и уведомлений
     """
@@ -447,6 +447,7 @@ def get_total_unread(user_id: int = None) -> int:
         
         # 2. Считаем уведомления (если передан user_id)
         notification_count = 0
+        internal_chat_count = 0
         if user_id:
             c.execute("""
                 SELECT COUNT(*) 
@@ -455,9 +456,30 @@ def get_total_unread(user_id: int = None) -> int:
             """, (user_id,))
             notification_count = c.fetchone()[0] or 0
             
-        return chat_count + notification_count
+            # 3. Считаем внутренний чат
+            try:
+                c.execute("""
+                    SELECT COUNT(*)
+                    FROM internal_chat
+                    WHERE receiver_id = %s AND is_read = FALSE
+                """, (user_id,))
+                internal_chat_count = c.fetchone()[0] or 0
+            except:
+                pass
+            
+        if return_details:
+            return {
+                "total": chat_count + notification_count + internal_chat_count,
+                "chat": chat_count,
+                "notifications": notification_count,
+                "internal_chat": internal_chat_count
+            }
+            
+        return chat_count + notification_count + internal_chat_count
     except Exception as e:
         log_error(f"Error in get_total_unread: {e}")
+        if return_details:
+            return {"total": 0, "chat": 0, "notifications": 0}
         return 0
     finally:
         conn.close()

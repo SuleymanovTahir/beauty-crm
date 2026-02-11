@@ -412,42 +412,43 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
     try:
         # Check if we have stale cache to return immediately if DB is slow
         stale_cache_available = cache_key in _unread_cache
-        stale_count = None
+        stale_count, stale_time = None, 0
         if stale_cache_available:
             stale_count, stale_time = _unread_cache[cache_key]
             stale_age = time_module.time() - stale_time
         
         # Execute DB query
-        count = get_total_unread(user["id"])
+        data = get_total_unread(user["id"], return_details=True)
+        count = data["total"]
         db_duration = (time_module.time() - db_start) * 1000
-        log_info(f"⏱️ [unread-count] DB query took {db_duration:.2f}ms, count: {count}", "chat")
+        log_info(f"⏱️ [unread-count] DB query took {db_duration:.2f}ms, data: {data}", "chat")
         
         if db_duration > 1000:
             log_error(f"🐌 [unread-count] SLOW DB QUERY: {db_duration:.2f}ms - consider optimizing or adding index", "chat")
-            # If DB query was slow and we have stale cache, log it but still return fresh count
+            # If DB query was slow and we have stale cache, log it but still return fresh data
             if stale_cache_available:
-                log_info(f"💡 [unread-count] Stale cache available (age: {stale_age:.1f}s) but returning fresh count", "chat")
+                log_info(f"💡 [unread-count] Stale cache available (age: {stale_age:.1f}s) but returning fresh data", "chat")
     except Exception as e:
         db_duration = (time_module.time() - db_start) * 1000
         log_error(f"❌ [unread-count] Error getting unread count ({db_duration:.2f}ms): {e}", "chat")
-        # Return cached value if available, otherwise 0
+        # Return cached value if available, otherwise default
         if cache_key in _unread_cache:
-            cached_count, _ = _unread_cache[cache_key]
+            cached_data, _ = _unread_cache[cache_key]
             log_info(f"⚠️ [unread-count] Returning stale cache due to error", "chat")
-            return {"count": cached_count}
-        return {"count": 0}
+            return cached_data
+        return {"total": 0, "chat": 0, "notifications": 0}
     
     # Cache in Redis (if available)
     if cache.enabled:
-        cache.set(cache_key, count, expire=60)  # 60 seconds
+        cache.set(cache_key, data, expire=60)  # 60 seconds
     
     # Cache in memory as fallback
-    _unread_cache[cache_key] = (count, time_module.time())
+    _unread_cache[cache_key] = (data, time_module.time())
     
     total_duration = (time_module.time() - request_start) * 1000
     log_info(f"✅ [unread-count] Total request took {total_duration:.2f}ms (DB: {db_duration:.2f}ms)", "chat")
     
-    return {"count": count}
+    return data
 
 @router.get("/chat/unread/{client_id}")
 async def get_client_unread_count(
