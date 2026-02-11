@@ -8,7 +8,7 @@ import { useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
 // Lazy load pages
-const MainLayout = React.lazy(() => import('./components/layouts/MainLayout'));
+const UniversalLayout = React.lazy(() => import('./components/layouts/UniversalLayout'));
 const Dashboard = React.lazy(() => import('./pages/shared/Dashboard'));
 const Bookings = React.lazy(() => import('./pages/shared/Bookings'));
 const BookingDetail = React.lazy(() => import('./pages/admin/BookingDetail'));
@@ -17,7 +17,7 @@ const Services = React.lazy(() => import('./pages/shared/Services'));
 const Clients = React.lazy(() => import('./pages/admin/Clients'));
 const ClientDetail = React.lazy(() => import('./pages/admin/ClientDetail'));
 const CreateUser = React.lazy(() => import('./pages/admin/CreateUser'));
-const Users = React.lazy(() => import('./pages/admin/Users'));
+const Team = React.lazy(() => import('./pages/shared/Team'));
 const Calendar = React.lazy(() => import('./pages/admin/Calendar'));
 const Settings = React.lazy(() => import('./pages/shared/Settings'));
 const BotSettings = React.lazy(() => import('./pages/admin/BotSettings'));
@@ -26,7 +26,6 @@ const PermissionManagement = React.lazy(() => import('./pages/admin/PermissionMa
 const PlansManagement = React.lazy(() => import('./pages/admin/PlansManagement'));
 const PublicContent = React.lazy(() => import('./pages/admin/PublicContent'));
 const EmployeeDetail = React.lazy(() => import('./pages/admin/EmployeeDetail'));
-const EmployeeManagement = React.lazy(() => import('./pages/admin/EmployeeManagement'));
 const VisitorAnalytics = React.lazy(() => import('./pages/admin/VisitorAnalytics'));
 const Funnel = React.lazy(() => import('./pages/shared/Funnel'));
 const UniversalTasks = React.lazy(() => import('./pages/shared/Tasks'));
@@ -53,7 +52,6 @@ const CRMClients = Clients;
 
 
 // Admin Panel pages
-const AdminPanelLayout = React.lazy(() => import('./components/layouts/AdminPanelLayout'));
 const AdminPanelDashboard = React.lazy(() => import('./pages/adminPanel/Dashboard'));
 const LoyaltyManagement = React.lazy(() => import('./pages/adminPanel/LoyaltyManagement'));
 // ReferralProgram is now shared as UniversalReferrals
@@ -63,7 +61,7 @@ const NotificationsDashboard = React.lazy(() => import('./pages/adminPanel/Notif
 const PhotoGallery = React.lazy(() => import('./pages/adminPanel/PhotoGallery'));
 const FeatureManagement = React.lazy(() => import('./pages/adminPanel/FeatureManagement'));
 
-const Chat = React.lazy(() => import('./pages/manager/Chat'));
+const Chat = React.lazy(() => import('./pages/shared/Chat'));
 const InternalChat = React.lazy(() => import('./components/shared/InternalChat'));
 const NotificationsPage = React.lazy(() => import('./pages/common/Notifications'));
 
@@ -260,7 +258,7 @@ export default function App() {
                     currentUsername={currentUser?.username}
                     secondaryRole={currentUser?.secondary_role}
                     element={
-                      <AdminPanelLayout
+                      <UniversalLayout
                         user={currentUser}
                         onLogout={handleLogout}
                       />
@@ -277,7 +275,7 @@ export default function App() {
                 <Route path="gallery" element={<PhotoGallery />} />
                 <Route path="services" element={<Services />} />
                 <Route path="public-content/:tab?" element={<PublicContent />} />
-                <Route path="users" element={<Users />} />
+                <Route path="team" element={<Team />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
@@ -292,7 +290,7 @@ export default function App() {
                     currentUsername={currentUser?.username}
                     secondaryRole={currentUser?.secondary_role}
                     element={
-                      <MainLayout
+                      <UniversalLayout
                         user={currentUser}
                         onLogout={handleLogout}
                       />
@@ -308,12 +306,12 @@ export default function App() {
                 <Route path="clients" element={<Clients />} />
                 <Route path="clients/:id" element={<ClientDetail />} />
                 <Route path="chat" element={<Chat />} />
-                <Route path="users" element={<Users />} />
-                <Route path="users/create" element={<CreateUser />} />
-                <Route path="users/pending" element={<PendingRegistrations />} />
-                <Route path="users/permissions" element={<PermissionManagement />} />
-                <Route path="users/:identifier/edit" element={<EditUser />} />
-                <Route path="users/:id/:tab?" element={<EmployeeDetail />} />
+                <Route path="team" element={<Team />} />
+                <Route path="team/create" element={<CreateUser />} />
+                <Route path="team/pending" element={<PendingRegistrations />} />
+                <Route path="team/permissions" element={<PermissionManagement />} />
+                <Route path="team/:identifier/edit" element={<EditUser />} />
+                <Route path="team/:id/:tab?" element={<EmployeeDetail />} />
                 <Route path="profile" element={<UniversalProfile />} />
 
                 <Route path="plans" element={<PlansManagement />} />
@@ -355,7 +353,7 @@ export default function App() {
                     currentUsername={currentUser?.username}
                     secondaryRole={currentUser?.secondary_role}
                     element={
-                      <MainLayout
+                      <UniversalLayout
                         user={currentUser}
                         onLogout={handleLogout}
                       />
@@ -366,8 +364,8 @@ export default function App() {
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="analytics" element={<Analytics />} />
-                <Route path="employees" element={<EmployeeManagement />} />
-                <Route path="employees/:id" element={<EmployeeManagement />} />
+                <Route path="team" element={<Team />} />
+                <Route path="team/:id" element={<Team />} />
                 <Route path="messengers" element={<Messengers />} />
                 <Route path="settings/:tab?" element={<Settings />} />
                 <Route path="bot-settings" element={<BotSettings />} />
@@ -394,7 +392,7 @@ export default function App() {
                     currentUsername={currentUser?.username}
                     secondaryRole={currentUser?.secondary_role}
                     element={
-                      <MainLayout
+                      <UniversalLayout
                         user={currentUser}
                         onLogout={handleLogout}
                       />
@@ -431,7 +429,7 @@ export default function App() {
                     currentUsername={currentUser?.username}
                     secondaryRole={currentUser?.secondary_role}
                     element={
-                      <MainLayout
+                      <UniversalLayout
                         user={currentUser}
                         onLogout={handleLogout}
                       />
@@ -464,7 +462,7 @@ export default function App() {
                     currentUsername={currentUser?.username}
                     secondaryRole={currentUser?.secondary_role}
                     element={
-                      <MainLayout
+                      <UniversalLayout
                         user={currentUser}
                         onLogout={handleLogout}
                       />

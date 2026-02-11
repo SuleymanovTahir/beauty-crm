@@ -38,7 +38,8 @@ import {
     MoreHorizontal,
     Link as LinkIcon,
     LayoutGrid,
-    Share2
+    Share2,
+    Award
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -52,10 +53,13 @@ interface MainLayoutProps {
     onLogout: () => void;
 }
 
-export default function MainLayout({ user, onLogout }: MainLayoutProps) {
+export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     const navigate = useNavigate();
     const location = useLocation();
-    const { t } = useTranslation(['layouts/mainlayout', 'common']);
+    const { t } = useTranslation(['layouts/mainlayout', 'layouts/adminpanellayout', 'common']);
+
+    // Detect if we are in Admin Panel
+    const isAdminPanel = location.pathname.startsWith('/admin');
 
     const [incomingCall, setIncomingCall] = useState<{
         from: number;
@@ -78,6 +82,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
 
     const rolePrefix = useMemo(() => {
         const path = location.pathname;
+        if (path.startsWith('/admin')) return '/admin';
         if (path.startsWith('/crm')) return '/crm';
         if (path.startsWith('/manager')) return '/manager';
         if (path.startsWith('/saler')) return '/saler';
@@ -87,10 +92,11 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     }, [location.pathname]);
 
     const dashboardPath = useMemo(() => {
+        if (isAdminPanel) return '/admin/dashboard';
         if (user?.role === 'saler') return `${rolePrefix}/clients`;
         if (user?.role === 'marketer') return `${rolePrefix}/analytics`;
         return `${rolePrefix}/dashboard`;
-    }, [user?.role, rolePrefix]);
+    }, [user?.role, rolePrefix, isAdminPanel]);
 
     useNotificationsWebSocket({
         userId: user?.id || null,
@@ -136,6 +142,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     };
 
     const loadMenuSettings = async () => {
+        if (isAdminPanel) return; // Menu settings are only for CRM
         try {
             const settings = await api.getMenuSettings();
             setMenuSettings(settings);
@@ -159,6 +166,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     };
 
     const getRoleLabel = () => {
+        if (isAdminPanel) return t('layouts/adminpanellayout:admin_panel', 'Админ-панель');
         switch (user?.role) {
             case 'director': return t('roles.director');
             case 'admin': return t('roles.admin');
@@ -170,6 +178,17 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
     };
 
     const allMenuItems: any[] = useMemo(() => {
+        if (isAdminPanel) {
+            return [
+                { id: 'dashboard', icon: LayoutDashboard, label: t('layouts/adminpanellayout:menu.dashboard'), path: '/admin/dashboard', req: () => true },
+                { id: 'team', icon: Users, label: t('layouts/adminpanellayout:menu.team', 'Команда'), path: '/admin/team', req: () => true },
+                { id: 'loyalty', icon: Gift, label: t('layouts/adminpanellayout:menu.loyalty_management'), path: '/admin/loyalty', req: () => true },
+                { id: 'referrals', icon: Award, label: t('layouts/adminpanellayout:menu.referral_program'), path: '/admin/referrals', req: () => true },
+                { id: 'challenges', icon: Target, label: t('layouts/adminpanellayout:menu.challenges'), path: '/admin/challenges', req: () => true },
+                { id: 'notifications', icon: Bell, label: t('layouts/adminpanellayout:menu.notifications'), path: '/admin/notifications', req: () => true },
+            ];
+        }
+
         const items: Record<string, any> = {
             'dashboard': { icon: LayoutDashboard, label: t('menu.dashboard'), path: dashboardPath, req: () => true },
             'bookings': { icon: Calendar, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, req: () => permissions.canViewAllBookings },
@@ -202,7 +221,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             'marketplace-integrations': { icon: Store, label: t('menu.marketplaces'), path: `${rolePrefix}/marketplace-integrations`, req: () => true },
             'settings-group': { icon: Settings, label: t('menu.settings'), req: () => permissions.canEditSettings },
             'settings': { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, req: () => permissions.canEditSettings },
-            'users': { icon: Users, label: t('menu.users'), path: `${rolePrefix}/users`, req: () => permissions.roleLevel >= 70 },
+            'team': { icon: Users, label: t('menu.team', 'Команда'), path: `${rolePrefix}/team`, req: () => permissions.roleLevel >= 70 },
             'public-content': { icon: Globe, label: t('menu.public_content'), path: `${rolePrefix}/public-content`, req: () => permissions.roleLevel >= 70 },
             'bot-settings': { icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, req: () => permissions.canViewBotSettings },
             'audit-log': { icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, req: () => user?.role === 'director' },
@@ -216,7 +235,7 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
             'finance-group': ['invoices', 'contracts'],
             'tools-group': ['tasks', 'broadcasts', 'telephony', 'referrals', 'promo-codes', 'loyalty', 'challenges'],
             'integrations-group': ['messengers', 'payment-integrations', 'marketplace-integrations'],
-            'settings-group': ['settings', 'users', 'public-content', 'bot-settings', 'audit-log', 'trash'],
+            'settings-group': ['settings', 'team', 'public-content', 'bot-settings', 'audit-log', 'trash'],
         };
 
         const finalItems: any[] = [];
@@ -241,12 +260,14 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
         });
 
         return finalItems;
-    }, [t, rolePrefix, dashboardPath, permissions, user?.role, menuSettings]);
+    }, [t, rolePrefix, dashboardPath, permissions, user?.role, menuSettings, isAdminPanel]);
 
     const menuItems = useMemo(() => {
         return allMenuItems.map((item: any) => {
             let badge = 0;
-            if (item.id === 'chat-group') badge = chatUnreadCount + internalChatUnreadCount;
+            if (item.id === 'chat-group' || (isAdminPanel && item.id === 'notifications')) {
+                badge = item.id === 'notifications' ? notificationsUnreadCount : (chatUnreadCount + internalChatUnreadCount);
+            }
             else if (item.id === 'messengers') badge = chatUnreadCount;
             else if (item.id === 'internal-chat') badge = internalChatUnreadCount;
 
@@ -259,15 +280,26 @@ export default function MainLayout({ user, onLogout }: MainLayoutProps) {
 
             return { ...item, badge, items: subItems };
         });
-    }, [allMenuItems, chatUnreadCount, internalChatUnreadCount]);
+    }, [allMenuItems, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount, isAdminPanel]);
 
-    const mainTabs = useMemo(() => [
-        { id: 'dashboard', icon: LayoutDashboard, label: t('menu.dashboard'), path: dashboardPath },
-        { id: 'funnel', icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel` },
-        { id: 'bookings', icon: Calendar, label: t('menu.bookings'), path: `${rolePrefix}/bookings` },
-        { id: 'chat', icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: chatUnreadCount + internalChatUnreadCount },
-        { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
-    ], [t, dashboardPath, rolePrefix, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount]);
+    const mainTabs = useMemo(() => {
+        if (isAdminPanel) {
+            return [
+                { id: 'dashboard', icon: LayoutDashboard, label: t('layouts/adminpanellayout:menu.dashboard_short', 'Главная'), path: '/admin/dashboard' },
+                { id: 'loyalty', icon: Gift, label: t('layouts/adminpanellayout:menu.loyalty_short', 'Лояльность'), path: '/admin/loyalty' },
+                { id: 'referrals', icon: Award, label: t('layouts/adminpanellayout:menu.referrals_short', 'Рефералы'), path: '/admin/referrals' },
+                { id: 'challenges', icon: Target, label: t('layouts/adminpanellayout:menu.challenges_short', 'Цели'), path: '/admin/challenges' },
+                { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
+            ];
+        }
+        return [
+            { id: 'dashboard', icon: LayoutDashboard, label: t('menu.dashboard'), path: dashboardPath },
+            { id: 'funnel', icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel` },
+            { id: 'bookings', icon: Calendar, label: t('menu.bookings'), path: `${rolePrefix}/bookings` },
+            { id: 'chat', icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: chatUnreadCount + internalChatUnreadCount },
+            { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
+        ];
+    }, [t, dashboardPath, rolePrefix, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount, isAdminPanel]);
 
     const chatSubItems = useMemo(() => [
         { id: 'messengers', icon: Send, label: t('menu.messengers'), path: `${rolePrefix}/messengers`, badge: chatUnreadCount },
