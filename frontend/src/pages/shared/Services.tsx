@@ -1,7 +1,19 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
-    Scissors, Search, Plus, History, Loader2
+    Scissors,
+    Search,
+    Plus,
+    History,
+    Loader2,
+    Gift,
+    Users,
+    Target,
+    ArrowUpDown,
+    Clock3,
+    Pencil,
+    Trash2,
+    ChevronDown
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +26,7 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCurrency } from '../../hooks/useSalonSettings';
+import '../../styles/crm-pages.css';
 
 interface Service {
     id: number;
@@ -29,6 +42,19 @@ interface Service {
     benefits?: string[];
     is_active: boolean;
     [key: string]: any;
+}
+
+interface ServiceFormData {
+    key: string;
+    name: string;
+    price: number | string;
+    min_price: number | string;
+    max_price: number | string;
+    duration: number | string;
+    category: string;
+    description: string;
+    benefits: string;
+    is_active: boolean;
 }
 
 interface PendingRequest {
@@ -55,66 +81,170 @@ interface ChangeRequest {
     resolved_at?: string;
 }
 
-type TabType = 'services' | 'packages' | 'referrals' | 'challenges' | 'history';
+type TabType = 'services' | 'history';
+type SortKey = 'name' | 'price' | 'duration' | 'category';
+
+const EMPTY_SERVICE_FORM: ServiceFormData = {
+    key: '',
+    name: '',
+    price: '',
+    min_price: '',
+    max_price: '',
+    duration: '',
+    category: '',
+    description: '',
+    benefits: '',
+    is_active: true
+};
+
+function parseDurationToMinutes(duration: unknown): number {
+    if (typeof duration === 'number' && Number.isFinite(duration)) {
+        return duration;
+    }
+
+    if (typeof duration !== 'string') {
+        return 0;
+    }
+
+    const normalized = duration.trim().toLowerCase();
+    if (normalized.length === 0) {
+        return 0;
+    }
+
+    const numericDuration = Number(normalized);
+    if (!Number.isNaN(numericDuration)) {
+        return numericDuration;
+    }
+
+    if (normalized.includes('h')) {
+        const hours = Number(normalized.replace(/[^0-9.]/g, ''));
+        return Number.isNaN(hours) ? 0 : Math.round(hours * 60);
+    }
+
+    if (normalized.includes('ч')) {
+        const hours = Number(normalized.replace(/[^0-9.]/g, ''));
+        return Number.isNaN(hours) ? 0 : Math.round(hours * 60);
+    }
+
+    if (normalized.includes('min')) {
+        const minutes = Number(normalized.replace(/[^0-9.]/g, ''));
+        return Number.isNaN(minutes) ? 0 : Math.round(minutes);
+    }
+
+    if (normalized.includes('мин')) {
+        const minutes = Number(normalized.replace(/[^0-9.]/g, ''));
+        return Number.isNaN(minutes) ? 0 : Math.round(minutes);
+    }
+
+    return 0;
+}
+
+function extractSpecialPackagesCount(response: unknown): number {
+    if (Array.isArray(response)) {
+        return response.length;
+    }
+
+    if (typeof response !== 'object') {
+        return 0;
+    }
+
+    if (response === null) {
+        return 0;
+    }
+
+    const data = response as { packages?: unknown[]; special_packages?: unknown[] };
+    if (Array.isArray(data.packages)) {
+        return data.packages.length;
+    }
+
+    if (Array.isArray(data.special_packages)) {
+        return data.special_packages.length;
+    }
+
+    return 0;
+}
 
 export default function UniversalServices() {
+    const location = useLocation();
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const { user: currentUser } = useAuth();
-    const { t, i18n } = useTranslation(['admin/services', 'employee/services', 'common']);
+    const { t, i18n } = useTranslation(['admin/services', 'employee/services', 'common', 'layouts/mainlayout']);
     const { currency, formatCurrency } = useCurrency();
 
     const isEmployee = currentUser?.role === 'employee';
+    const rolePrefix = useMemo(() => {
+        if (location.pathname.startsWith('/crm')) return '/crm';
+        if (location.pathname.startsWith('/manager')) return '/manager';
+        if (location.pathname.startsWith('/saler')) return '/saler';
+        if (location.pathname.startsWith('/marketer')) return '/marketer';
+        if (location.pathname.startsWith('/employee')) return '/employee';
+        if (location.pathname.startsWith('/admin')) return '/admin';
+        return '/crm';
+    }, [location.pathname]);
 
     const [activeTab, setActiveTab] = useState<TabType>(() => {
-        const tab = searchParams.get('tab') as TabType;
-        return (tab === 'services' || tab === 'packages' || tab === 'referrals' || tab === 'challenges' || tab === 'history') ? tab : 'services';
+        const tab = searchParams.get('tab');
+        return tab === 'history' ? 'history' : 'services';
     });
 
     const [services, setServices] = useState<Service[]>([]);
+    const [specialPackagesCount, setSpecialPackagesCount] = useState(0);
     const [pendingRequests, setPendingRequests] = useState<Record<number, PendingRequest>>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [categoryFilter] = useState('all');
-    const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
+    const [categoryFilter, setCategoryFilter] = useState('all');
+    const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'asc' | 'desc' } | null>(null);
 
-    // Edit / Request Modal
     const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
     const [editingService, setEditingService] = useState<Service | null>(null);
-    const [serviceFormData, setServiceFormData] = useState<any>({
-        key: '', name: '', price: 0, min_price: '', max_price: '', duration: '',
-        category: '', description: '', benefits: '', is_active: true
-    });
+    const [serviceFormData, setServiceFormData] = useState<ServiceFormData>({ ...EMPTY_SERVICE_FORM });
 
-    // Employee specific change request state
     const [editOnlineBooking, setEditOnlineBooking] = useState(true);
     const [editCalendarEnabled, setEditCalendarEnabled] = useState(true);
     const [editComment, setEditComment] = useState('');
 
-    // History state
     const [changeHistory, setChangeHistory] = useState<ChangeRequest[]>([]);
     const [loadingHistory, setLoadingHistory] = useState(false);
 
     useEffect(() => {
-        loadData();
-    }, [activeTab, i18n.language]);
+        if (!isEmployee && activeTab === 'history') {
+            setActiveTab('services');
+        }
+    }, [activeTab, isEmployee]);
+
+    useEffect(() => {
+        void loadData();
+    }, [activeTab, i18n.language, isEmployee]);
 
     const loadData = async () => {
         try {
             setLoading(true);
-            if (activeTab === 'services') {
-                if (isEmployee) {
-                    const response = await fetch('/api/my/services', { credentials: 'include' });
-                    const data = await response.json();
-                    setServices(data.services || []);
-                    setPendingRequests(data.pending_requests || {});
-                } else {
-                    const data = await api.getServices(false);
-                    setServices(data.services || []);
-                }
-            } else if (activeTab === 'history' && isEmployee) {
-                loadHistory();
+
+            if (isEmployee && activeTab === 'history') {
+                await loadHistory();
+                return;
             }
+
+            if (isEmployee) {
+                const response = await fetch('/api/my/services', { credentials: 'include' });
+                const data = await response.json() as { services?: Service[]; pending_requests?: Record<number, PendingRequest> };
+                setServices(Array.isArray(data.services) ? data.services : []);
+                setPendingRequests(typeof data.pending_requests === 'object' && data.pending_requests !== null ? data.pending_requests : {});
+                setSpecialPackagesCount(0);
+                return;
+            }
+
+            const [servicesResponse, specialPackagesResponse] = await Promise.all([
+                api.getServices(false),
+                api.getSpecialPackages().catch(() => [])
+            ]);
+
+            const servicesList = Array.isArray(servicesResponse?.services) ? servicesResponse.services : [];
+            setServices(servicesList);
+            setPendingRequests({});
+            setSpecialPackagesCount(extractSpecialPackagesCount(specialPackagesResponse));
         } catch (err) {
             toast.error(t('common:error_loading'));
         } finally {
@@ -126,8 +256,8 @@ export default function UniversalServices() {
         setLoadingHistory(true);
         try {
             const response = await fetch('/api/my/change-requests', { credentials: 'include' });
-            const data = await response.json();
-            setChangeHistory(data.requests || []);
+            const data = await response.json() as { requests?: ChangeRequest[] };
+            setChangeHistory(Array.isArray(data.requests) ? data.requests : []);
         } catch (err) {
             console.error(err);
         } finally {
@@ -135,54 +265,143 @@ export default function UniversalServices() {
         }
     };
 
-    const handleSort = (key: string) => {
+    const handleSort = (key: SortKey) => {
         let direction: 'asc' | 'desc' = 'asc';
-        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
+        if (sortConfig?.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
         setSortConfig({ key, direction });
     };
 
-    const filteredAndSortedServices = useMemo(() => {
-        let result = services.filter(s => {
-            const name = (s.name || '').toLowerCase();
-            const search = searchTerm.toLowerCase();
-            return name.includes(search) && (categoryFilter === 'all' || s.category === categoryFilter);
+    const categories = useMemo(() => {
+        const uniqueCategories = new Set<string>();
+        services.forEach((service) => {
+            if (typeof service.category === 'string' && service.category.trim().length > 0) {
+                uniqueCategories.add(service.category);
+            }
         });
 
-        if (sortConfig) {
-            result.sort((a, b) => {
-                const { key, direction } = sortConfig;
-                let aVal = a[key as keyof Service];
-                let bVal = b[key as keyof Service];
-                if (aVal! < bVal!) return direction === 'asc' ? -1 : 1;
-                if (aVal! > bVal!) return direction === 'asc' ? 1 : -1;
-                return 0;
-            });
+        return [...uniqueCategories].sort((a, b) => a.localeCompare(b, i18n.language));
+    }, [services, i18n.language]);
+
+    const filteredAndSortedServices = useMemo(() => {
+        const normalizedSearch = searchTerm.trim().toLowerCase();
+
+        const result = services.filter((service) => {
+            const serviceName = typeof service.name === 'string' ? service.name.toLowerCase() : '';
+            const serviceCategory = typeof service.category === 'string' ? service.category : '';
+
+            const matchesSearch = serviceName.includes(normalizedSearch);
+            const matchesCategory = categoryFilter === 'all' ? true : serviceCategory === categoryFilter;
+            return matchesSearch && matchesCategory;
+        });
+
+        if (sortConfig === null) {
+            return result;
         }
-        return result;
+
+        const sorted = [...result];
+        sorted.sort((leftService, rightService) => {
+            const { key, direction } = sortConfig;
+
+            const leftValue = (() => {
+                if (key === 'price') return Number(leftService.price ?? 0);
+                if (key === 'duration') return parseDurationToMinutes(leftService.duration);
+                if (key === 'category') return String(leftService.category ?? '').toLowerCase();
+                return String(leftService.name ?? '').toLowerCase();
+            })();
+
+            const rightValue = (() => {
+                if (key === 'price') return Number(rightService.price ?? 0);
+                if (key === 'duration') return parseDurationToMinutes(rightService.duration);
+                if (key === 'category') return String(rightService.category ?? '').toLowerCase();
+                return String(rightService.name ?? '').toLowerCase();
+            })();
+
+            if (leftValue < rightValue) {
+                return direction === 'asc' ? -1 : 1;
+            }
+            if (leftValue > rightValue) {
+                return direction === 'asc' ? 1 : -1;
+            }
+            return 0;
+        });
+
+        return sorted;
     }, [services, searchTerm, categoryFilter, sortConfig]);
+
+    const formatDurationLabel = (duration: unknown) => {
+        const minutes = parseDurationToMinutes(duration);
+        if (minutes <= 0) {
+            return '-';
+        }
+        if (minutes % 60 === 0) {
+            return `${minutes / 60}${t('admin/services:unit_hour')}`;
+        }
+        return `${minutes}${t('admin/services:unit_minute')}`;
+    };
+
+    const openCreateModal = () => {
+        setEditingService(null);
+        setServiceFormData({ ...EMPTY_SERVICE_FORM });
+        setIsServiceModalOpen(true);
+    };
+
+    const openRouteTab = (target: string) => {
+        if (location.pathname !== target) {
+            navigate(target);
+        }
+    };
 
     const handleOpenEdit = (service: Service) => {
         setEditingService(service);
         if (isEmployee) {
-            setServiceFormData({ price: service.price, duration: service.duration });
+            setServiceFormData({
+                ...EMPTY_SERVICE_FORM,
+                price: service.price ?? '',
+                duration: service.duration ?? ''
+            });
             setEditOnlineBooking(service.is_online_booking_enabled !== false);
             setEditCalendarEnabled(service.is_calendar_enabled !== false);
             setEditComment('');
         } else {
+            const benefits = Array.isArray(service.benefits) ? service.benefits.join(' | ') : '';
             setServiceFormData({
-                key: service.key, name: service.name, price: service.price,
-                min_price: service.min_price || '', max_price: service.max_price || '',
-                duration: service.duration || '', category: service.category,
-                description: service.description || '', benefits: (service.benefits || []).join(' | ')
+                key: service.key ?? '',
+                name: service.name ?? '',
+                price: service.price ?? '',
+                min_price: service.min_price ?? '',
+                max_price: service.max_price ?? '',
+                duration: service.duration ?? '',
+                category: service.category ?? '',
+                description: service.description ?? '',
+                benefits,
+                is_active: service.is_active ?? true
             });
         }
         setIsServiceModalOpen(true);
     };
 
+    const handleDeleteService = async (serviceId: number) => {
+        const isConfirmed = window.confirm(t('common:are_you_sure'));
+        if (!isConfirmed) {
+            return;
+        }
+
+        try {
+            await api.deleteService(serviceId);
+            toast.success(t('admin/services:service_deleted'));
+            await loadData();
+        } catch (err) {
+            toast.error(t('common:error_deleting'));
+        }
+    };
+
     const handleSave = async () => {
         setSaving(true);
         try {
-            if (isEmployee && editingService) {
+            if (isEmployee && editingService !== null) {
+                const cleanedComment = editComment.trim();
                 const response = await fetch(`/api/my/services/${editingService.id}/request-change`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -192,20 +411,21 @@ export default function UniversalServices() {
                         duration: serviceFormData.duration,
                         is_online_booking_enabled: editOnlineBooking,
                         is_calendar_enabled: editCalendarEnabled,
-                        comment: editComment || null
+                        comment: cleanedComment.length > 0 ? cleanedComment : null
                     })
                 });
                 if (!response.ok) throw new Error('Request failed');
                 toast.success(t('employee/services:request_submitted'));
-            } else if (editingService) {
+            } else if (editingService !== null) {
                 await api.updateService(editingService.id, serviceFormData);
                 toast.success(t('admin/services:service_updated'));
             } else {
                 await api.createService(serviceFormData);
                 toast.success(t('admin/services:service_added'));
             }
+
             setIsServiceModalOpen(false);
-            loadData();
+            await loadData();
         } catch (err) {
             toast.error(t('common:error_saving'));
         } finally {
@@ -217,95 +437,230 @@ export default function UniversalServices() {
         try {
             await fetch(`/api/my/services/${serviceId}/cancel-request`, { method: 'DELETE', credentials: 'include' });
             toast.success(t('employee/services:request_cancelled'));
-            loadData();
+            await loadData();
         } catch (err) {
             toast.error(t('common:error_deleting'));
         }
     };
 
-    if (loading) return (
-        <div className="flex items-center justify-center h-screen">
-            <Loader2 className="w-8 h-8 text-pink-600 animate-spin" />
-        </div>
-    );
+    const showFullTabs = !isEmployee && rolePrefix === '/crm';
+
+    if (loading) {
+        return (
+            <div className="crm-services-loading">
+                <Loader2 className="crm-services-loading-icon" />
+            </div>
+        );
+    }
 
     return (
-        <div className="p-8">
-            <div className="mb-8 flex justify-between items-center">
-                <div>
-                    <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-                        <Scissors className="w-8 h-8 text-pink-600" />
-                        {isEmployee ? t('employee/services:my_services') : t('admin/services:services_and_packages')}
-                    </h1>
-                    <p className="text-gray-600">
-                        {isEmployee ? t('employee/services:edit_services_description') : t('admin/services:management_of_price_list_and_salon_promotions')}
-                    </p>
-                </div>
-                {!isEmployee && (
-                    <Button onClick={() => { setEditingService(null); setIsServiceModalOpen(true); }} className="bg-pink-600 hover:bg-pink-700">
-                        <Plus className="w-4 h-4 mr-2" /> {t('admin/services:add_service')}
-                    </Button>
-                )}
+        <div className="crm-services-page">
+            <div className="crm-services-header">
+                <h1 className="crm-services-title">
+                    <Scissors className="crm-services-title-icon" />
+                    <span>{isEmployee ? t('employee/services:my_services') : t('admin/services:services_and_packages')}</span>
+                </h1>
+                <p className="crm-services-subtitle">
+                    {isEmployee ? t('employee/services:edit_services_description') : t('admin/services:management_of_price_list_and_salon_promotions')}
+                </p>
             </div>
 
-            <div className="flex gap-4 mb-6">
-                <div className="relative flex-1 max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input placeholder={t('common:search')} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" />
-                </div>
-                {isEmployee && (
+            {!isEmployee && (
+                <>
+                    <div className="crm-services-tabs-card">
+                        <button type="button" className="crm-services-tab crm-services-tab-active">
+                            <Scissors className="crm-services-tab-icon" />
+                            <span>{t('admin/services:services')} ({services.length})</span>
+                        </button>
+
+                        <button type="button" className="crm-services-tab" onClick={() => openRouteTab(`${rolePrefix}/promo-codes`)}>
+                            <Gift className="crm-services-tab-icon" />
+                            <span>{t('admin/services:special_packages')} ({specialPackagesCount})</span>
+                        </button>
+
+                        {showFullTabs && (
+                            <>
+                                <button type="button" className="crm-services-tab" onClick={() => openRouteTab(`${rolePrefix}/referrals`)}>
+                                    <Users className="crm-services-tab-icon" />
+                                    <span>{t('layouts/mainlayout:menu.referrals')}</span>
+                                </button>
+
+                                <button type="button" className="crm-services-tab" onClick={() => openRouteTab(`${rolePrefix}/challenges`)}>
+                                    <Target className="crm-services-tab-icon" />
+                                    <span>{t('layouts/mainlayout:menu.challenges')}</span>
+                                </button>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="crm-services-controls-card">
+                        <div className="crm-services-search-wrap">
+                            <Search className="crm-services-search-icon" />
+                            <Input
+                                placeholder={t('admin/services:search_services')}
+                                value={searchTerm}
+                                onChange={(event) => setSearchTerm(event.target.value)}
+                                className="crm-services-search-input"
+                            />
+                        </div>
+
+                        <div className="crm-services-controls-right">
+                            <div className="crm-services-category-select-wrap">
+                                <select
+                                    value={categoryFilter}
+                                    onChange={(event) => setCategoryFilter(event.target.value)}
+                                    className="crm-services-category-select"
+                                >
+                                    <option value="all">{t('admin/services:all_categories')}</option>
+                                    {categories.map((category) => (
+                                        <option key={category} value={category}>{category}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="crm-services-category-caret" />
+                            </div>
+
+                            <Button onClick={openCreateModal} className="crm-services-add-button">
+                                <Plus className="crm-services-add-icon" />
+                                <span>{t('admin/services:add_service')}</span>
+                            </Button>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {isEmployee && (
+                <div className="crm-services-employee-controls">
+                    <div className="crm-services-search-wrap">
+                        <Search className="crm-services-search-icon" />
+                        <Input
+                            placeholder={t('common:search')}
+                            value={searchTerm}
+                            onChange={(event) => setSearchTerm(event.target.value)}
+                            className="crm-services-search-input"
+                        />
+                    </div>
+
                     <Button variant="outline" onClick={() => setActiveTab(activeTab === 'history' ? 'services' : 'history')}>
-                        <History className="w-4 h-4 mr-2" /> {activeTab === 'history' ? t('employee/services:view_all') : t('employee/services:change_history')}
+                        <History className="w-4 h-4 mr-2" />
+                        {activeTab === 'history' ? t('employee/services:view_all') : t('employee/services:change_history')}
                     </Button>
-                )}
-            </div>
+                </div>
+            )}
 
             {activeTab === 'history' && isEmployee ? (
-                <div className="space-y-4">
-                    {loadingHistory ? <Loader2 className="animate-spin" /> : changeHistory.map(req => (
-                        <div key={req.id} className={`p-4 rounded-xl border ${req.status === 'approved' ? 'bg-green-50 border-green-200' : req.status === 'rejected' ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200'}`}>
-                            <div className="flex justify-between">
-                                <div>
-                                    <h3 className="font-bold">{req.service_name}</h3>
-                                    <p className="text-sm text-gray-600">{t('admin/services:price')}: {req.requested_price} | {t('admin/services:duration')}: {req.requested_duration}</p>
+                <div className="crm-services-history-list">
+                    {loadingHistory ? (
+                        <Loader2 className="crm-services-history-loader" />
+                    ) : (
+                        changeHistory.map((request) => (
+                            <div key={request.id} className="crm-services-history-card">
+                                <div className="crm-services-history-card-main">
+                                    <h3 className="crm-services-history-name">{request.service_name}</h3>
+                                    <p className="crm-services-history-meta">
+                                        {t('admin/services:price')}: {request.requested_price ?? '-'} | {t('admin/services:duration')}: {request.requested_duration ?? '-'}
+                                    </p>
                                 </div>
-                                <Badge>{t(`common:status_${req.status}`, req.status)}</Badge>
+                                <Badge>{t(`common:status_${request.status}`, request.status)}</Badge>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             ) : (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <table className="w-full text-left">
-                        <thead className="bg-gray-50 border-b border-gray-200">
+                <div className="crm-services-table-card">
+                    <table className="crm-services-table">
+                        <thead>
                             <tr>
-                                <th onClick={() => handleSort('name')} className="px-6 py-4 cursor-pointer">{t('admin/services:service_name')}</th>
-                                <th onClick={() => handleSort('price')} className="px-6 py-4 cursor-pointer">{t('admin/services:price')}</th>
-                                <th onClick={() => handleSort('duration')} className="px-6 py-4 cursor-pointer">{t('admin/services:duration')}</th>
-                                <th className="px-6 py-4">{t('common:status')}</th>
-                                <th className="px-6 py-4 text-right">{t('common:actions')}</th>
+                                <th>
+                                    <button type="button" className="crm-services-sort-button" onClick={() => handleSort('name')}>
+                                        <span>{t('admin/services:service_name')}</span>
+                                        <ArrowUpDown className="crm-services-sort-icon" />
+                                    </button>
+                                </th>
+                                <th>
+                                    <button type="button" className="crm-services-sort-button" onClick={() => handleSort('price')}>
+                                        <span>{t('admin/services:price')}</span>
+                                        <ArrowUpDown className="crm-services-sort-icon" />
+                                    </button>
+                                </th>
+                                <th>
+                                    <button type="button" className="crm-services-sort-button" onClick={() => handleSort('duration')}>
+                                        <span>{t('admin/services:duration')}</span>
+                                        <ArrowUpDown className="crm-services-sort-icon" />
+                                    </button>
+                                </th>
+                                {!isEmployee && (
+                                    <th>
+                                        <button type="button" className="crm-services-sort-button" onClick={() => handleSort('category')}>
+                                            <span>{t('admin/services:category')}</span>
+                                            <ArrowUpDown className="crm-services-sort-icon" />
+                                        </button>
+                                    </th>
+                                )}
+                                <th>{t('common:status')}</th>
+                                <th className="crm-services-actions-header">{t('common:actions')}</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {filteredAndSortedServices.map(s => {
-                                const pending = pendingRequests[s.id];
+                        <tbody>
+                            {filteredAndSortedServices.map((service) => {
+                                const pending = pendingRequests[service.id];
+                                const hasPendingRequest = pending !== undefined;
+                                const categoryLabel = service.category && service.category.trim().length > 0 ? service.category : '-';
+
                                 return (
-                                    <tr key={s.id} className={`hover:bg-gray-50 ${pending ? 'bg-amber-50/50' : ''}`}>
-                                        <td className="px-6 py-4 font-bold">{s.name}</td>
-                                        <td className="px-6 py-4">{formatCurrency(s.price)}</td>
-                                        <td className="px-6 py-4">{s.duration} {t('common:min')}</td>
-                                        <td className="px-6 py-4">
-                                            {pending ? (
-                                                <span className="text-amber-600 text-sm flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> {t('employee/services:pending_approval')}</span>
+                                    <tr key={service.id}>
+                                        <td className="crm-services-service-cell">{service.name}</td>
+                                        <td>{formatCurrency(service.price)}</td>
+                                        <td>
+                                            <span className="crm-services-duration-badge">
+                                                <Clock3 className="crm-services-duration-icon" />
+                                                <span>{formatDurationLabel(service.duration)}</span>
+                                            </span>
+                                        </td>
+                                        {!isEmployee && (
+                                            <td>
+                                                <span className="crm-services-category-badge">{categoryLabel}</span>
+                                            </td>
+                                        )}
+                                        <td>
+                                            {hasPendingRequest ? (
+                                                <span className="crm-services-status-badge crm-services-status-badge-pending">
+                                                    <Loader2 className="crm-services-pending-icon" />
+                                                    <span>{t('employee/services:pending_approval')}</span>
+                                                </span>
                                             ) : (
-                                                <span className="text-green-600 text-sm">{t('common:active')}</span>
+                                                <span className="crm-services-status-badge crm-services-status-badge-active">
+                                                    <span>{isEmployee ? t('common:active') : t('admin/services:active')}</span>
+                                                </span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-right">
-                                            {pending ? (
-                                                <Button variant="outline" size="sm" onClick={() => handleCancelRequest(s.id)} className="text-red-500">{t('employee/services:cancel_request')}</Button>
+                                        <td className="crm-services-actions-cell">
+                                            {hasPendingRequest ? (
+                                                <Button variant="outline" size="sm" onClick={() => handleCancelRequest(service.id)}>
+                                                    {t('employee/services:cancel_request')}
+                                                </Button>
+                                            ) : isEmployee ? (
+                                                <Button variant="outline" size="sm" onClick={() => handleOpenEdit(service)}>
+                                                    {t('employee/services:request_change')}
+                                                </Button>
                                             ) : (
-                                                <Button variant="outline" size="sm" onClick={() => handleOpenEdit(s)}>{isEmployee ? t('employee/services:request_change') : t('common:edit')}</Button>
+                                                <div className="crm-services-icon-actions">
+                                                    <button
+                                                        type="button"
+                                                        className="crm-services-icon-button"
+                                                        onClick={() => handleOpenEdit(service)}
+                                                        aria-label={t('common:edit')}
+                                                    >
+                                                        <Pencil className="crm-services-action-icon" />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="crm-services-icon-button crm-services-icon-button-danger"
+                                                        onClick={() => handleDeleteService(service.id)}
+                                                        aria-label={t('common:delete')}
+                                                    >
+                                                        <Trash2 className="crm-services-action-icon" />
+                                                    </button>
+                                                </div>
                                             )}
                                         </td>
                                     </tr>
@@ -319,47 +674,86 @@ export default function UniversalServices() {
             <Dialog open={isServiceModalOpen} onOpenChange={setIsServiceModalOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{editingService ? (isEmployee ? t('employee/services:request_service_change') : t('admin/services:edit_service')) : t('admin/services:add_service')}</DialogTitle>
+                        <DialogTitle>
+                            {editingService
+                                ? (isEmployee ? t('employee/services:request_service_change') : t('admin/services:edit_service'))
+                                : t('admin/services:add_service')}
+                        </DialogTitle>
                     </DialogHeader>
+
                     <div className="space-y-4 py-4">
                         {isEmployee ? (
                             <>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label>{t('admin/services:price')} ({currency})</Label>
-                                        <Input type="number" value={serviceFormData.price} onChange={e => setServiceFormData({ ...serviceFormData, price: e.target.value })} />
+                                        <Label>{t('admin/services:price')} ({currency ?? ''})</Label>
+                                        <Input
+                                            type="number"
+                                            value={serviceFormData.price}
+                                            onChange={(event) => setServiceFormData((prev) => ({ ...prev, price: event.target.value }))}
+                                        />
                                     </div>
                                     <div>
                                         <Label>{t('admin/services:duration')} ({t('common:min')})</Label>
-                                        <Input type="number" value={serviceFormData.duration} onChange={e => setServiceFormData({ ...serviceFormData, duration: e.target.value })} />
+                                        <Input
+                                            type="number"
+                                            value={serviceFormData.duration}
+                                            onChange={(event) => setServiceFormData((prev) => ({ ...prev, duration: event.target.value }))}
+                                        />
                                     </div>
                                 </div>
+
                                 <div className="flex items-center justify-between">
                                     <Label>{t('employee/services:online_booking')}</Label>
                                     <Switch checked={editOnlineBooking} onCheckedChange={setEditOnlineBooking} />
                                 </div>
+
                                 <div className="flex items-center justify-between">
                                     <Label>{t('employee/services:show_in_calendar')}</Label>
                                     <Switch checked={editCalendarEnabled} onCheckedChange={setEditCalendarEnabled} />
                                 </div>
+
                                 <div>
                                     <Label>{t('employee/services:comment_optional')}</Label>
-                                    <Textarea value={editComment} onChange={e => setEditComment(e.target.value)} />
+                                    <Textarea value={editComment} onChange={(event) => setEditComment(event.target.value)} />
                                 </div>
                             </>
                         ) : (
                             <>
                                 <Label>{t('admin/services:service_name')}</Label>
-                                <Input value={serviceFormData.name} onChange={e => setServiceFormData({ ...serviceFormData, name: e.target.value })} />
+                                <Input
+                                    value={serviceFormData.name}
+                                    onChange={(event) => setServiceFormData((prev) => ({ ...prev, name: event.target.value }))}
+                                />
+
                                 <Label>{t('admin/services:category')}</Label>
-                                <Input value={serviceFormData.category} onChange={e => setServiceFormData({ ...serviceFormData, category: e.target.value })} />
+                                <Input
+                                    value={serviceFormData.category}
+                                    onChange={(event) => setServiceFormData((prev) => ({ ...prev, category: event.target.value }))}
+                                />
+
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div><Label>{t('admin/services:price')}</Label><Input type="number" value={serviceFormData.price} onChange={e => setServiceFormData({ ...serviceFormData, price: e.target.value })} /></div>
-                                    <div><Label>{t('admin/services:duration')}</Label><Input type="number" value={serviceFormData.duration} onChange={e => setServiceFormData({ ...serviceFormData, duration: e.target.value })} /></div>
+                                    <div>
+                                        <Label>{t('admin/services:price')}</Label>
+                                        <Input
+                                            type="number"
+                                            value={serviceFormData.price}
+                                            onChange={(event) => setServiceFormData((prev) => ({ ...prev, price: event.target.value }))}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Label>{t('admin/services:duration')}</Label>
+                                        <Input
+                                            type="number"
+                                            value={serviceFormData.duration}
+                                            onChange={(event) => setServiceFormData((prev) => ({ ...prev, duration: event.target.value }))}
+                                        />
+                                    </div>
                                 </div>
                             </>
                         )}
                     </div>
+
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setIsServiceModalOpen(false)}>{t('common:cancel')}</Button>
                         <Button onClick={handleSave} disabled={saving}>{saving ? t('common:saving') : t('common:save')}</Button>
@@ -371,5 +765,5 @@ export default function UniversalServices() {
 }
 
 function Badge({ children }: { children: React.ReactNode }) {
-    return <span className="px-2 py-1 rounded-full bg-gray-100 text-xs font-bold text-gray-600">{children}</span>;
+    return <span className="crm-services-history-badge">{children}</span>;
 }

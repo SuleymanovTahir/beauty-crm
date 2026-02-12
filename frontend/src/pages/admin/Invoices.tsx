@@ -184,7 +184,7 @@ const Invoices = () => {
 
 
     return (
-        <div className="crm-page p-0 bg-gray-50/50 flex flex-col h-full overflow-hidden">
+        <div className="crm-page crm-calendar-theme p-0 bg-gray-50/50 flex flex-col h-full overflow-hidden">
             <div className="px-8 py-6 bg-white border-b sticky top-0 z-20 shadow-sm">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
                     <div>

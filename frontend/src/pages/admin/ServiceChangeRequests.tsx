@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Textarea } from '../../components/ui/textarea';
 import { toast } from 'sonner';
+import '../../styles/crm-pages.css';
 
 interface ChangeRequest {
   id: number;
@@ -112,14 +113,14 @@ export default function ServiceChangeRequests() {
 
   if (loading) {
     return (
-      <div className="p-8 flex items-center justify-center">
+      <div className="crm-calendar-theme p-8 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-pink-600" />
       </div>
     );
   }
 
   return (
-    <div className="p-8">
+    <div className="crm-calendar-theme p-8">
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <Scissors className="w-8 h-8 text-pink-600" />
