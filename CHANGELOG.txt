@@ -1,3 +1,33 @@
+## [2026-02-13] Unified Embedded Header Structure in Special Packages
+- Switched `challenges`, `loyalty`, and `promo-codes` sections in `/crm/special-packages` to one shared top structure from the orchestrator page:
+  - common icon + title + subtitle block,
+  - common primary action button placement,
+  - same spacing and alignment across all three tabs.
+- Added embedded action registration from child pages to parent, so section actions still work while child headers are disabled in embedded mode:
+  - challenges: `Создать задание`,
+  - loyalty: `Изменить баланс баллов`,
+  - promo codes: `Создать промокод`.
+- Child embedded pages (`Challenges`, `LoyaltyManagement`, `PromoCodes`) now support hiding their own embedded header when rendered inside `SpecialPackages`.
+- Files:
+  - `frontend/src/pages/admin/SpecialPackages.tsx`
+  - `frontend/src/pages/shared/Challenges.tsx`
+  - `frontend/src/pages/adminPanel/LoyaltyManagement.tsx`
+  - `frontend/src/pages/admin/PromoCodes.tsx`
+
+## [2026-02-13] Embedded Special Packages Header Structure Refactor
+- Reworked embedded header layout for special-packages sections so action buttons stay in the top-right zone and no longer look visually dropped:
+  - `/crm/special-packages?section=challenges` (`Создать задание`)
+  - `/crm/special-packages?section=loyalty` (`Изменить баланс баллов`)
+  - `/crm/special-packages?section=promo-codes` (`Создать промокод`)
+- Structural changes:
+  - switched header wrappers to `flex-col` + `lg:flex-row` + `lg:items-start` + `lg:justify-between`,
+  - left title/description blocks now use `min-w-0` + `lg:flex-1`,
+  - action buttons receive `lg:self-start` to prevent vertical drift.
+- Files:
+  - `frontend/src/pages/shared/Challenges.tsx`
+  - `frontend/src/pages/adminPanel/LoyaltyManagement.tsx`
+  - `frontend/src/pages/admin/PromoCodes.tsx`
+
 ## [2026-02-13] Embedded Section Header Button Alignment Tuning
 - Normalized header alignment for embedded special-packages sections so primary action buttons stop dropping below title when width is sufficient:
   - loyalty (`Изменить баланс баллов`),

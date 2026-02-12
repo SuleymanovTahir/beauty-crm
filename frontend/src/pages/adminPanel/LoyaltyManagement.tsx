@@ -1,5 +1,5 @@
 // /frontend/src/pages/adminPanel/LoyaltyManagement.tsx
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Plus, Search, Edit, Trash2, TrendingUp, Gift, DollarSign, Power } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
@@ -58,9 +58,15 @@ interface CategoryRule {
 
 interface LoyaltyManagementProps {
   embedded?: boolean;
+  showEmbeddedHeader?: boolean;
+  onEmbeddedPrimaryActionReady?: (handler: (() => void) | null) => void;
 }
 
-export default function LoyaltyManagement({ embedded = false }: LoyaltyManagementProps) {
+export default function LoyaltyManagement({
+  embedded = false,
+  showEmbeddedHeader = true,
+  onEmbeddedPrimaryActionReady
+}: LoyaltyManagementProps) {
   const { t } = useTranslation(['adminpanel/loyaltymanagement', 'common']);
   const { user } = useAuth();
   const allowedEditorRoles = useMemo(() => new Set(['admin', 'manager', 'director']), []);
@@ -458,30 +464,49 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
   ];
 
   const cardClassName = embedded ? 'crm-calendar-panel bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden' : '';
+  const showHeader = !embedded || showEmbeddedHeader;
+  const handleOpenAdjustDialog = useCallback(() => {
+    setShowAdjustDialog(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof onEmbeddedPrimaryActionReady !== 'function') {
+      return;
+    }
+
+    if (embedded && canManageLoyalty) {
+      onEmbeddedPrimaryActionReady(() => handleOpenAdjustDialog());
+      return () => onEmbeddedPrimaryActionReady(null);
+    }
+
+    onEmbeddedPrimaryActionReady(null);
+  }, [embedded, canManageLoyalty, handleOpenAdjustDialog, onEmbeddedPrimaryActionReady]);
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="min-w-0">
-          <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-3xl font-bold text-gray-900'}>
-            {embedded && <Gift className="w-8 h-8 text-blue-600" />}
-            {t('title')}
-          </h1>
-          <p className={embedded ? 'text-gray-600' : 'text-gray-500 mt-1'}>{t('subtitle')}</p>
-        </div>
-        {canManageLoyalty && (
-          <div className="flex gap-2 w-full sm:w-auto">
-            <Button
-              onClick={() => setShowAdjustDialog(true)}
-              className={embedded ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm' : ''}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              {t('adjust_points')}
-            </Button>
+      {showHeader && (
+        <div className={embedded ? 'flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between' : 'flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4'}>
+          <div className={embedded ? 'min-w-0 lg:flex-1' : 'min-w-0'}>
+            <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-3xl font-bold text-gray-900'}>
+              {embedded && <Gift className="w-8 h-8 text-blue-600" />}
+              {t('title')}
+            </h1>
+            <p className={embedded ? 'text-gray-600' : 'text-gray-500 mt-1'}>{t('subtitle')}</p>
           </div>
-        )}
-      </div>
+          {canManageLoyalty && (
+            <div className="flex gap-2 w-full sm:w-auto lg:self-start">
+              <Button
+                onClick={handleOpenAdjustDialog}
+                className={embedded ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm' : ''}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                {t('adjust_points')}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

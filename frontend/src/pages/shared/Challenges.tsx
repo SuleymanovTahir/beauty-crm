@@ -1,5 +1,5 @@
 // /frontend/src/pages/shared/Challenges.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Plus, TrendingUp, Edit, Star,
@@ -45,9 +45,15 @@ interface Challenge {
 
 interface UniversalChallengesProps {
     embedded?: boolean;
+    showEmbeddedHeader?: boolean;
+    onEmbeddedPrimaryActionReady?: (handler: (() => void) | null) => void;
 }
 
-export default function UniversalChallenges({ embedded = false }: UniversalChallengesProps) {
+export default function UniversalChallenges({
+    embedded = false,
+    showEmbeddedHeader = true,
+    onEmbeddedPrimaryActionReady
+}: UniversalChallengesProps) {
     const { t } = useTranslation(['admin/challenges', 'adminpanel/challenges', 'common', 'services', 'dynamic']);
     const { currency } = useSalonSettings();
     const navigate = useNavigate();
@@ -98,6 +104,33 @@ export default function UniversalChallenges({ embedded = false }: UniversalChall
         loadChallenges();
         loadStats();
     }, []);
+
+    const handleOpenCreateDialog = useCallback(() => {
+        setEditingChallenge(null);
+        setFormData({
+            title: '',
+            description: '',
+            type: 'visits',
+            target_value: 5,
+            reward_points: 500,
+            start_date: new Date().toISOString().split('T')[0],
+            end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        });
+        setShowAddDialog(true);
+    }, []);
+
+    useEffect(() => {
+        if (typeof onEmbeddedPrimaryActionReady !== 'function') {
+            return;
+        }
+
+        if (embedded) {
+            onEmbeddedPrimaryActionReady(() => handleOpenCreateDialog());
+            return () => onEmbeddedPrimaryActionReady(null);
+        }
+
+        onEmbeddedPrimaryActionReady(null);
+    }, [embedded, onEmbeddedPrimaryActionReady, handleOpenCreateDialog]);
 
     const loadChallenges = async () => {
         try {
@@ -248,6 +281,7 @@ export default function UniversalChallenges({ embedded = false }: UniversalChall
     const containerClassName = embedded
         ? ''
         : 'crm-calendar-theme crm-calendar-page crm-calendar-challenges min-h-screen bg-gray-50/30 p-4 sm:p-8 animate-in fade-in duration-500';
+    const showHeader = !embedded || showEmbeddedHeader;
 
     return (
         <div className={containerClassName}>
@@ -266,48 +300,38 @@ export default function UniversalChallenges({ embedded = false }: UniversalChall
                 )}
 
                 {/* Header Section */}
-                <div className={embedded ? 'flex flex-col md:flex-row md:items-center justify-between gap-4' : 'crm-calendar-toolbar flex flex-col md:flex-row md:items-start justify-between gap-6'}>
-                    <div className={embedded ? '' : 'space-y-3'}>
-                        {!embedded && (
-                            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-[0.2em]">
-                                <Sparkles className="w-2.5 h-2.5" />
-                                Gamification Engine
-                            </div>
-                        )}
-                        <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-none'}>
-                            {embedded && (
-                                <Trophy className="w-8 h-8 text-blue-600" />
+                {showHeader && (
+                    <div className={embedded ? 'flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between' : 'crm-calendar-toolbar flex flex-col md:flex-row md:items-start justify-between gap-6'}>
+                        <div className={embedded ? 'min-w-0 lg:flex-1' : 'space-y-3'}>
+                            {!embedded && (
+                                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-[0.2em]">
+                                    <Sparkles className="w-2.5 h-2.5" />
+                                    Gamification Engine
+                                </div>
                             )}
-                            {t('title', 'Челленджи')}
-                            {!embedded && <span className="text-blue-600">.</span>}
-                        </h1>
-                        <p className={embedded ? 'text-gray-600' : 'text-gray-500 font-medium max-w-lg text-sm leading-relaxed'}>
-                            {t('subtitle', 'Повышайте лояльность клиентов с помощью игровых механик и автоматических наград.')}
-                        </p>
-                    </div>
+                            <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-none'}>
+                                {embedded && (
+                                    <Trophy className="w-8 h-8 text-blue-600" />
+                                )}
+                                {t('title', 'Челленджи')}
+                                {!embedded && <span className="text-blue-600">.</span>}
+                            </h1>
+                            <p className={embedded ? 'text-gray-600' : 'text-gray-500 font-medium max-w-lg text-sm leading-relaxed'}>
+                                {t('subtitle', 'Повышайте лояльность клиентов с помощью игровых механик и автоматических наград.')}
+                            </p>
+                        </div>
 
-                    <Button
-                        onClick={() => {
-                            setEditingChallenge(null);
-                            setFormData({
-                                title: '',
-                                description: '',
-                                type: 'visits',
-                                target_value: 5,
-                                reward_points: 500,
-                                start_date: new Date().toISOString().split('T')[0],
-                                end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-                            });
-                            setShowAddDialog(true);
-                        }}
-                        className={embedded
-                            ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm transition-all flex items-center gap-2 shrink-0'
-                            : 'bg-gray-900 hover:bg-black text-white rounded-xl h-12 px-6 font-bold shadow-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center gap-2 shrink-0'}
-                    >
-                        <Plus className={embedded ? 'w-4 h-4' : 'w-5 h-5'} />
-                        {t('buttons.add_challenge', 'Создать задание')}
-                    </Button>
-                </div>
+                        <Button
+                            onClick={handleOpenCreateDialog}
+                            className={embedded
+                                ? 'w-full sm:w-auto lg:self-start bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm transition-all flex items-center gap-2 shrink-0'
+                                : 'bg-gray-900 hover:bg-black text-white rounded-xl h-12 px-6 font-bold shadow-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center gap-2 shrink-0'}
+                        >
+                            <Plus className={embedded ? 'w-4 h-4' : 'w-5 h-5'} />
+                            {t('buttons.add_challenge', 'Создать задание')}
+                        </Button>
+                    </div>
+                )}
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

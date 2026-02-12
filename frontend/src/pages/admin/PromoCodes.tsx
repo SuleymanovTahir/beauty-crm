@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
     Ticket,
     Plus,
@@ -91,6 +91,8 @@ interface NewPromoState {
 
 interface PromoCodesProps {
     embedded?: boolean;
+    showEmbeddedHeader?: boolean;
+    onEmbeddedPrimaryActionReady?: (handler: (() => void) | null) => void;
 }
 
 const createInitialPromoState = (): NewPromoState => ({
@@ -107,7 +109,11 @@ const createInitialPromoState = (): NewPromoState => ({
     target_client_ids: [],
 });
 
-export default function PromoCodes({ embedded = false }: PromoCodesProps) {
+export default function PromoCodes({
+    embedded = false,
+    showEmbeddedHeader = true,
+    onEmbeddedPrimaryActionReady
+}: PromoCodesProps) {
     const { t } = useTranslation(['admin/promocodes', 'common', 'layouts/mainlayout', 'admin/services']);
     const { currency } = useCurrency();
     const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
@@ -210,10 +216,23 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
         setEditingPromo(null);
     };
 
-    const handleOpenCreateDialog = () => {
+    const handleOpenCreateDialog = useCallback(() => {
         resetForm();
         setShowCreateDialog(true);
-    };
+    }, []);
+
+    useEffect(() => {
+        if (typeof onEmbeddedPrimaryActionReady !== 'function') {
+            return;
+        }
+
+        if (embedded) {
+            onEmbeddedPrimaryActionReady(() => handleOpenCreateDialog());
+            return () => onEmbeddedPrimaryActionReady(null);
+        }
+
+        onEmbeddedPrimaryActionReady(null);
+    }, [embedded, handleOpenCreateDialog, onEmbeddedPrimaryActionReady]);
 
     const handleOpenEditDialog = (promo: PromoCode) => {
         const normalizedValidFrom = normalizeDateInput(promo.valid_from);
@@ -417,36 +436,39 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
     const containerClassName = embedded
         ? 'crm-calendar-promocodes'
         : 'crm-calendar-theme crm-calendar-page crm-calendar-promocodes p-4 sm:p-8 max-w-7xl mx-auto min-h-screen bg-[#fafafa]';
+    const showHeader = !embedded || showEmbeddedHeader;
 
     return (
         <div className={containerClassName}>
-            <div className={embedded ? 'flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8' : 'crm-calendar-toolbar flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8'}>
-                <div>
-                    <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3'}>
-                        {embedded ? (
-                            <Ticket size={32} className="text-blue-600" />
-                        ) : (
-                            <div className="p-2 bg-pink-100 rounded-xl text-pink-600">
-                                <Ticket size={28} />
-                            </div>
-                        )}
-                        {t('title', 'Промокоды')}
-                    </h1>
-                    <p className={embedded ? 'text-gray-600' : 'text-gray-500 mt-2 font-medium'}>
-                        {t('subtitle', 'Управление скидками и бонусными кодами для клиентов')}
-                    </p>
-                </div>
+            {showHeader && (
+                <div className={embedded ? 'flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between mb-8' : 'crm-calendar-toolbar flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8'}>
+                    <div className={embedded ? 'min-w-0 lg:flex-1' : ''}>
+                        <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3'}>
+                            {embedded ? (
+                                <Ticket size={32} className="text-blue-600" />
+                            ) : (
+                                <div className="p-2 bg-pink-100 rounded-xl text-pink-600">
+                                    <Ticket size={28} />
+                                </div>
+                            )}
+                            {t('title', 'Промокоды')}
+                        </h1>
+                        <p className={embedded ? 'text-gray-600' : 'text-gray-500 mt-2 font-medium'}>
+                            {t('subtitle', 'Управление скидками и бонусными кодами для клиентов')}
+                        </p>
+                    </div>
 
-                <Button
-                    onClick={handleOpenCreateDialog}
-                    className={embedded
-                        ? 'w-full sm:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm flex items-center gap-2 transition-all'
-                        : 'bg-pink-600 hover:bg-pink-700 text-white shadow-lg shadow-pink-100 px-6 py-6 rounded-2xl flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-95'}
-                >
-                    <Plus size={embedded ? 16 : 20} />
-                    {t('create_btn', 'Создать промокод')}
-                </Button>
-            </div>
+                    <Button
+                        onClick={handleOpenCreateDialog}
+                        className={embedded
+                            ? 'w-full sm:w-auto lg:self-start shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm flex items-center gap-2 transition-all'
+                            : 'bg-pink-600 hover:bg-pink-700 text-white shadow-lg shadow-pink-100 px-6 py-6 rounded-2xl flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-95'}
+                    >
+                        <Plus size={embedded ? 16 : 20} />
+                        {t('create_btn', 'Создать промокод')}
+                    </Button>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className={embedded ? 'crm-calendar-panel bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4' : 'crm-calendar-panel bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4'}>
