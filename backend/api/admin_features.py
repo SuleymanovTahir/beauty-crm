@@ -744,7 +744,7 @@ async def get_loyalty_tiers(session_token: Optional[str] = Cookie(None)):
         c = conn.cursor()
 
         c.execute("""
-            SELECT id, name, min_points, discount, color
+            SELECT id, name, min_points, discount, COALESCE(is_active, TRUE), color
             FROM loyalty_tiers
             ORDER BY min_points ASC
         """)
@@ -756,23 +756,24 @@ async def get_loyalty_tiers(session_token: Optional[str] = Cookie(None)):
                 "name": row[1],
                 "min_points": row[2] or 0,
                 "discount": row[3] or 0,
-                "color": row[4] or "#CD7F32"
+                "is_active": bool(row[4]),
+                "color": row[5] or "#CD7F32"
             })
 
         # Если тиров нет, создаем дефолтные
         if not tiers:
             default_tiers = [
-                ('Bronze', 0, 0, '#CD7F32'),
-                ('Silver', 1000, 5, '#C0C0C0'),
-                ('Gold', 5000, 10, '#FFD700'),
-                ('Platinum', 10000, 15, '#E5E4E2')
+                ('Bronze', 0, 0, True, '#CD7F32'),
+                ('Silver', 1000, 0, True, '#C0C0C0'),
+                ('Gold', 5000, 0, True, '#FFD700'),
+                ('Platinum', 10000, 0, True, '#E5E4E2')
             ]
 
             for tier in default_tiers:
                 c.execute("""
-                    INSERT INTO loyalty_tiers (name, min_points, discount, color)
-                    VALUES (%s, %s, %s, %s)
-                    RETURNING id, name, min_points, discount, color
+                    INSERT INTO loyalty_tiers (name, min_points, discount, is_active, color)
+                    VALUES (%s, %s, %s, %s, %s)
+                    RETURNING id, name, min_points, discount, is_active, color
                 """, tier)
                 row = c.fetchone()
                 tiers.append({
@@ -780,7 +781,8 @@ async def get_loyalty_tiers(session_token: Optional[str] = Cookie(None)):
                     "name": row[1],
                     "min_points": row[2],
                     "discount": row[3],
-                    "color": row[4]
+                    "is_active": bool(row[4]),
+                    "color": row[5]
                 })
 
             conn.commit()
@@ -791,15 +793,96 @@ async def get_loyalty_tiers(session_token: Optional[str] = Cookie(None)):
         log_error(f"Error getting loyalty tiers: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
-@router.put("/admin/loyalty/tiers/{tier_id}")
-async def update_loyalty_tier(tier_id: int, request: Request, session_token: Optional[str] = Cookie(None)):
-    """Обновить уровень лояльности"""
+@router.post("/admin/loyalty/tiers")
+async def create_loyalty_tier(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Создать уровень лояльности"""
     user = require_auth(session_token)
-    if not user or user["role"] not in ["admin", "director"]:
+    if not user or user["role"] not in ["admin", "director", "manager"]:
         raise HTTPException(status_code=403, detail="Forbidden")
 
     try:
         data = await request.json()
+        tier_name = str(data.get("name") or "").strip()
+        min_points = data.get("min_points")
+        discount = data.get("discount")
+        color = data.get("color")
+        is_active_raw = data.get("is_active", True)
+
+        if len(tier_name) == 0:
+            return JSONResponse({"error": "Tier name is required"}, status_code=400)
+
+        min_points_value = int(min_points) if min_points is not None else 0
+        discount_value = float(discount) if discount is not None else 0
+        is_active_value = bool(is_active_raw) if isinstance(is_active_raw, bool) else str(is_active_raw).strip().lower() in ["1", "true", "yes", "on"]
+        color_value = str(color or '#CD7F32').strip()
+
+        if min_points_value < 0:
+            min_points_value = 0
+
+        if discount_value < 0:
+            discount_value = 0
+
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        c.execute("""
+            INSERT INTO loyalty_tiers (name, min_points, discount, is_active, color)
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id, name, min_points, discount, is_active, color
+        """, (
+            tier_name,
+            min_points_value,
+            discount_value,
+            is_active_value,
+            color_value
+        ))
+
+        row = c.fetchone()
+        conn.commit()
+        conn.close()
+
+        created_tier = {
+            "id": str(row[0]),
+            "name": row[1],
+            "min_points": row[2] or 0,
+            "discount": row[3] or 0,
+            "is_active": bool(row[4]),
+            "color": row[5] or "#CD7F32"
+        }
+        return {"success": True, "tier": created_tier}
+    except Exception as e:
+        log_error(f"Error creating loyalty tier: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.put("/admin/loyalty/tiers/{tier_id}")
+async def update_loyalty_tier(tier_id: int, request: Request, session_token: Optional[str] = Cookie(None)):
+    """Обновить уровень лояльности"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        data = await request.json()
+        tier_name = str(data.get("name") or "").strip()
+        min_points = data.get("min_points")
+        discount = data.get("discount")
+        color = data.get("color")
+        is_active_raw = data.get("is_active", True)
+
+        if len(tier_name) == 0:
+            return JSONResponse({"error": "Tier name is required"}, status_code=400)
+
+        min_points_value = int(min_points) if min_points is not None else 0
+        discount_value = float(discount) if discount is not None else 0
+        is_active_value = bool(is_active_raw) if isinstance(is_active_raw, bool) else str(is_active_raw).strip().lower() in ["1", "true", "yes", "on"]
+        color_value = str(color or '#CD7F32').strip()
+
+        if min_points_value < 0:
+            min_points_value = 0
+
+        if discount_value < 0:
+            discount_value = 0
+
         conn = get_db_connection()
         c = conn.cursor()
 
@@ -808,21 +891,56 @@ async def update_loyalty_tier(tier_id: int, request: Request, session_token: Opt
                 name = %s,
                 min_points = %s,
                 discount = %s,
+                is_active = %s,
                 color = %s
             WHERE id = %s
         """, (
-            data.get("name"),
-            data.get("min_points"),
-            data.get("discount"),
-            data.get("color"),
+            tier_name,
+            min_points_value,
+            discount_value,
+            is_active_value,
+            color_value,
             tier_id
         ))
+
+        if c.rowcount == 0:
+            conn.close()
+            return JSONResponse({"error": "Tier not found"}, status_code=404)
 
         conn.commit()
         conn.close()
         return {"success": True}
     except Exception as e:
         log_error(f"Error updating loyalty tier: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.delete("/admin/loyalty/tiers/{tier_id}")
+async def delete_loyalty_tier(tier_id: int, session_token: Optional[str] = Cookie(None)):
+    """Удалить уровень лояльности"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        c.execute("SELECT COUNT(*) FROM loyalty_tiers")
+        tiers_count = c.fetchone()[0] or 0
+        if tiers_count <= 1:
+            conn.close()
+            return JSONResponse({"error": "At least one tier must remain"}, status_code=400)
+
+        c.execute("DELETE FROM loyalty_tiers WHERE id = %s", (tier_id,))
+        if c.rowcount == 0:
+            conn.close()
+            return JSONResponse({"error": "Tier not found"}, status_code=404)
+
+        conn.commit()
+        conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error deleting loyalty tier: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.get("/admin/loyalty/transactions")
@@ -867,6 +985,46 @@ async def get_loyalty_transactions(session_token: Optional[str] = Cookie(None)):
         return {"success": True, "transactions": transactions}
     except Exception as e:
         log_error(f"Error getting loyalty transactions: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.delete("/admin/loyalty/transactions/{transaction_id}")
+async def delete_loyalty_transaction(transaction_id: int, session_token: Optional[str] = Cookie(None)):
+    """Удалить транзакцию лояльности"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT client_id, points
+            FROM loyalty_transactions
+            WHERE id = %s
+        """, (transaction_id,))
+        row = c.fetchone()
+        if row is None:
+            conn.close()
+            return JSONResponse({"error": "Transaction not found"}, status_code=404)
+
+        client_id = row[0]
+        points = row[1] if row[1] is not None else 0
+
+        c.execute("DELETE FROM loyalty_transactions WHERE id = %s", (transaction_id,))
+
+        if client_id:
+            c.execute("""
+                UPDATE clients
+                SET loyalty_points = GREATEST(0, COALESCE(loyalty_points, 0) - %s)
+                WHERE instagram_id = %s
+            """, (points, client_id))
+
+        conn.commit()
+        conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error deleting loyalty transaction: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/admin/loyalty/adjust-points")

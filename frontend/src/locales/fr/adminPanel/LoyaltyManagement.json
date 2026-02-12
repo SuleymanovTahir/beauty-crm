@@ -10,9 +10,10 @@
   "categories": {
     "category": "Catégorie",
     "category_placeholder": "Par exemple. Manucure",
-    "description": "Configurer des multiplicateurs de points pour des catégories de services individuelles",
-    "multiplier": "Multiplicateur",
-    "title": "Multiplicateurs de catégorie"
+    "description": "Définissez le facteur d'accumulation de points pour chaque catégorie de service",
+    "multiplier": "Facteur d'accumulation",
+    "title": "Règles de points par catégorie",
+    "hint": "Le facteur s'applique uniquement à la catégorie sélectionnée. Si la règle est désactivée, le taux de base x1 est utilisé."
   },
   "config": {
     "cashback_hint": "Exemple : {{percent}}% de cashback ({{points}} points pour chaque {{unit}} dépensé)",
@@ -40,11 +41,15 @@
       "discount_percent": "Pourcentage de remise",
       "min_points": "Seuil minimum de points",
       "tier_name": "Nom du niveau",
-      "title": "Niveau d'édition"
+      "title": "Niveau d'édition",
+      "status_label": "Statut du niveau",
+      "status_hint": "Un niveau inactif ne participe pas au calcul automatique des privilèges."
     },
     "rule": {
       "description": "Coefficient d'accumulation personnel pour la catégorie",
-      "title": "Règle de catégorie"
+      "title": "Règle de catégorie",
+      "status_label": "Statut de la règle",
+      "status_hint": "Si la règle est désactivée, la catégorie utilise le taux de base x1."
     }
   },
   "stats": {
@@ -60,7 +65,7 @@
     "starting_level": "Niveau de départ",
     "title": "Niveaux de privilège"
   },
-  "title": "Programme de fidélité",
+  "title": "Programme de bonus",
   "toasts": {
     "config_updated": "Paramètres enregistrés",
     "failed_adjust": "Échec de la modification du solde",
@@ -85,5 +90,12 @@
       "type": "Type"
     },
     "title": "Dernières transactions"
+  },
+  "actions": {
+    "activate": "Activer",
+    "deactivate": "Désactiver"
+  },
+  "statuses": {
+    "inactive": "Inactif"
   }
 }

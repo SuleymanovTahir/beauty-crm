@@ -10,9 +10,10 @@
   "categories": {
     "category": "Kategorie",
     "category_placeholder": "z.B. Maniküre",
-    "description": "Punktmultiplikatoren für einzelne Servicekategorien einrichten",
-    "multiplier": "Multiplikator",
-    "title": "Kategoriemultiplikatoren"
+    "description": "Legen Sie den Punktefaktor für jede Servicekategorie fest",
+    "multiplier": "Punktefaktor",
+    "title": "Regeln für Punkte nach Kategorie",
+    "hint": "Der Faktor gilt nur für die ausgewählte Kategorie. Ist die Regel deaktiviert, gilt der Basiswert x1."
   },
   "config": {
     "cashback_hint": "Beispiel: {{percent}} % Cashback ({{points}} Punkte für jeden ausgegebenen {{unit}})",
@@ -40,11 +41,15 @@
       "discount_percent": "Rabattprozentsatz",
       "min_points": "Mindestpunktschwelle",
       "tier_name": "Name Ebene",
-      "title": "Bearbeitungsebene"
+      "title": "Bearbeitungsebene",
+      "status_label": "Status der Stufe",
+      "status_hint": "Eine inaktive Stufe wird bei der automatischen Privilegienberechnung nicht berücksichtigt."
     },
     "rule": {
       "description": "Persönliche Sammelrate für Kategorie",
-      "title": "Kategorieregel"
+      "title": "Kategorieregel",
+      "status_label": "Regelstatus",
+      "status_hint": "Ist die Regel deaktiviert, nutzt die Kategorie den Basiswert x1."
     }
   },
   "stats": {
@@ -60,7 +65,7 @@
     "starting_level": "Startstufe",
     "title": "Berechtigungsstufen"
   },
-  "title": "Treueprogramm",
+  "title": "Bonusprogramm",
   "toasts": {
     "config_updated": "Einstellungen gespeichert",
     "failed_adjust": "Guthaben konnte nicht geändert werden",
@@ -85,5 +90,12 @@
       "type": "Typ"
     },
     "title": "Letzte Transaktionen"
+  },
+  "actions": {
+    "activate": "Aktivieren",
+    "deactivate": "Deaktivieren"
+  },
+  "statuses": {
+    "inactive": "Inaktiv"
   }
 }

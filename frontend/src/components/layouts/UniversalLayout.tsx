@@ -56,7 +56,7 @@ interface MainLayoutProps {
 export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     const navigate = useNavigate();
     const location = useLocation();
-    const { t } = useTranslation(['layouts/mainlayout', 'layouts/adminpanellayout', 'common']);
+    const { t } = useTranslation(['layouts/mainlayout', 'layouts/adminpanellayout', 'adminpanel/loyaltymanagement', 'common']);
 
     // Detect if we are in Admin Panel
     const isAdminPanel = location.pathname.startsWith('/admin');
@@ -216,7 +216,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             'telephony': { icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, req: () => true },
             'referrals': { icon: Share2, label: t('menu.referrals'), path: `${rolePrefix}/referrals`, req: () => permissions.roleLevel >= 70 },
             'promo-codes': { icon: Ticket, label: t('menu.promo_codes'), path: `${rolePrefix}/promo-codes`, req: () => permissions.roleLevel >= 70 },
-            'loyalty': { icon: Gift, label: t('menu.loyalty'), path: `${rolePrefix}/loyalty`, req: () => permissions.roleLevel >= 70 },
+            'loyalty': { icon: Gift, label: t('adminpanel/loyaltymanagement:title'), path: `${rolePrefix}/loyalty`, req: () => permissions.roleLevel >= 70 },
             'challenges': { icon: Target, label: t('menu.challenges'), path: `${rolePrefix}/challenges`, req: () => permissions.roleLevel >= 70 },
             'integrations-group': { icon: LinkIcon, label: t('menu.integrations'), req: () => true },
             'messengers': { icon: MessageSquare, label: t('menu.messengers'), path: `${rolePrefix}/messengers`, req: () => true },
@@ -401,7 +401,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                     return t('layouts/mainlayout:menu.challenges');
                 }
                 if (value === 'loyalty') {
-                    return t('layouts/mainlayout:menu.loyalty');
+                    return t('adminpanel/loyaltymanagement:title');
                 }
                 if (value === 'promo-codes') {
                     return t('layouts/mainlayout:menu.promo_codes');

@@ -7,6 +7,9 @@ import {
     History,
     Loader2,
     Gift,
+    Users,
+    Target,
+    Ticket,
     ArrowUpDown,
     Clock3,
     Pencil,
@@ -169,6 +172,9 @@ export default function UniversalServices() {
     const { user: currentUser } = useAuth();
     const { t, i18n } = useTranslation([
         'admin/services',
+        'admin/specialpackages',
+        'adminpanel/loyaltymanagement',
+        'layouts/mainlayout',
         'employee/services',
         'common',
         'public_landing/services',
@@ -389,10 +395,13 @@ export default function UniversalServices() {
         setIsServiceModalOpen(true);
     };
 
-    const openRouteTab = (target: string) => {
-        if (location.pathname !== target) {
-            navigate(target);
+    const openSpecialPackagesSection = (section: 'packages' | 'referrals' | 'challenges' | 'loyalty' | 'promo-codes') => {
+        const nextParams = new URLSearchParams();
+        nextParams.set('section', section);
+        if (section === 'referrals') {
+            nextParams.set('view', 'history');
         }
+        navigate(`${rolePrefix}/special-packages?${nextParams.toString()}`);
     };
 
     const handleOpenEdit = (service: Service) => {
@@ -494,7 +503,7 @@ export default function UniversalServices() {
     }
 
     return (
-        <div className="crm-services-page">
+        <div className="crm-services-page crm-stable-page-height">
             {!isEmployee && (
                 <>
                     <div className="flex flex-wrap gap-2 mb-6">
@@ -511,10 +520,50 @@ export default function UniversalServices() {
                             type="button"
                             variant="outline"
                             className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                            onClick={() => openRouteTab(`${rolePrefix}/special-packages`)}
+                            onClick={() => openSpecialPackagesSection('packages')}
                         >
                             <Gift className="w-4 h-4 mr-2" />
-                            <span>{t('admin/services:special_packages')} ({specialPackagesCount})</span>
+                            <span>{t('admin/specialpackages:tab_packages')} ({specialPackagesCount})</span>
+                        </Button>
+
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                            onClick={() => openSpecialPackagesSection('referrals')}
+                        >
+                            <Users className="w-4 h-4 mr-2" />
+                            <span>{t('admin/specialpackages:tab_referrals')}</span>
+                        </Button>
+
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                            onClick={() => openSpecialPackagesSection('challenges')}
+                        >
+                            <Target className="w-4 h-4 mr-2" />
+                            <span>{t('layouts/mainlayout:menu.challenges')}</span>
+                        </Button>
+
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                            onClick={() => openSpecialPackagesSection('loyalty')}
+                        >
+                            <Gift className="w-4 h-4 mr-2" />
+                            <span>{t('adminpanel/loyaltymanagement:title')}</span>
+                        </Button>
+
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                            onClick={() => openSpecialPackagesSection('promo-codes')}
+                        >
+                            <Ticket className="w-4 h-4 mr-2" />
+                            <span>{t('layouts/mainlayout:menu.promo_codes')}</span>
                         </Button>
                     </div>
                 </>

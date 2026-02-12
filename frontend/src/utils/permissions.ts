@@ -97,6 +97,7 @@ export const ROLES: Record<string, Role> = {
       'analytics_view_anonymized',
       'staff_chat_own',
       'calendar_view_all',
+      'settings_edit_loyalty',
     ],
     can_manage_roles: [],
     hierarchy_level: 60,
