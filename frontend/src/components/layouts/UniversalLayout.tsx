@@ -640,7 +640,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                                     )}
                                                 >
                                                     <div className="flex items-center gap-3">
-                                                        <item.icon size={18} className="menu-item-icon" />
+                                                        <item.icon size={16} className="menu-item-icon" />
                                                         <span className="menu-item-label">{item.label}</span>
                                                         {item.badge > 0 && !isGroupExpanded && (
                                                             <span className="badge-premium badge-premium-red badge-sidebar">
@@ -649,9 +649,9 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                                         )}
                                                     </div>
                                                     {isGroupExpanded ? (
-                                                        <ChevronDown size={16} className={cn("menu-group-chevron", isGroupActive && "active")} />
+                                                        <ChevronDown size={14} className={cn("menu-group-chevron", isGroupActive && "active")} />
                                                     ) : (
-                                                        <ChevronRight size={16} className={cn("menu-group-chevron", isGroupActive && "active")} />
+                                                        <ChevronRight size={14} className={cn("menu-group-chevron", isGroupActive && "active")} />
                                                     )}
                                                 </button>
                                                 {isGroupExpanded && (
@@ -665,7 +665,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                                                     location.pathname === sub.path && "active"
                                                                 )}
                                                             >
-                                                                <sub.icon size={15} className="menu-sub-icon" />
+                                                                <sub.icon size={14} className="menu-sub-icon" />
                                                                 <span className="menu-sub-label">{sub.label}</span>
                                                                 {sub.badge > 0 && (
                                                                     <span className="badge-premium badge-premium-red badge-sidebar">
@@ -682,7 +682,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                                 onClick={() => { navigate(item.path); setShowMoreModal(false); }}
                                                 className={cn("menu-item-link", isItemActive && "active")}
                                             >
-                                                <item.icon size={18} className="menu-item-icon" />
+                                                <item.icon size={16} className="menu-item-icon" />
                                                 <span className="menu-item-label">{item.label}</span>
                                                 {item.badge > 0 && (
                                                     <span className="badge-premium badge-premium-red badge-sidebar">

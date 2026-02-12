@@ -3,7 +3,7 @@
 // Управление специальными пакетами и акциями
 
 import { useState, useEffect } from 'react';
-import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, AlertCircle, Loader, Users, Target } from 'lucide-react';
+import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, AlertCircle, Loader, Users, Target, Settings, ChevronRight, TrendingUp } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -12,6 +12,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '../../components/ui/table';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useCurrency } from '../../hooks/useSalonSettings';
@@ -55,12 +63,35 @@ interface ReferralCampaign {
   created_at: string;
 }
 
+interface ReferralHistoryItem {
+  id: string;
+  referrer_name: string;
+  referrer_email: string;
+  referred_name: string;
+  referred_email: string;
+  status: 'pending' | 'completed' | 'cancelled';
+  points_awarded: number;
+  created_at: string;
+}
+
+interface ReferralStats {
+  total_referrals: number;
+  completed_referrals: number;
+  points_distributed: number;
+}
+
+interface ReferralSettings {
+  referrer_bonus: number;
+  referred_bonus: number;
+  min_purchase_amount: number;
+}
+
 export default function SpecialPackages() {
   const [packages, setPackages] = useState<SpecialPackage[]>([]);
-  const { t } = useTranslation(['admin/specialpackages', 'common']);
+  const { t } = useTranslation(['admin/specialpackages', 'adminpanel/referralprogram', 'common']);
   const { currency, formatCurrency } = useCurrency();
   const { user } = useAuth();
-  const permissions = usePermissions(user?.role || '');
+  const permissions = usePermissions(user?.role ?? '');
   const [filteredPackages, setFilteredPackages] = useState<SpecialPackage[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
@@ -72,6 +103,21 @@ export default function SpecialPackages() {
 
   // Referral campaigns state
   const [campaigns, setCampaigns] = useState<ReferralCampaign[]>([]);
+  const [referralHistory, setReferralHistory] = useState<ReferralHistoryItem[]>([]);
+  const [referralSearchTerm, setReferralSearchTerm] = useState('');
+  const [referralStatusFilter, setReferralStatusFilter] = useState<'all' | 'pending' | 'completed' | 'cancelled'>('all');
+  const [referralLoading, setReferralLoading] = useState(false);
+  const [referralStats, setReferralStats] = useState<ReferralStats>({
+    total_referrals: 0,
+    completed_referrals: 0,
+    points_distributed: 0
+  });
+  const [referralSettings, setReferralSettings] = useState<ReferralSettings>({
+    referrer_bonus: 500,
+    referred_bonus: 200,
+    min_purchase_amount: 0
+  });
+  const [isReferralSettingsOpen, setIsReferralSettingsOpen] = useState(false);
   const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<ReferralCampaign | null>(null);
   const [referralFormData, setReferralFormData] = useState({
@@ -106,14 +152,19 @@ export default function SpecialPackages() {
     loadPackages();
   }, []);
 
-  // Load campaigns when switching to referrals tab
+  // Load referral metadata when switching to referrals tab
   useEffect(() => {
     if (activeSection === 'referrals') {
-      api.getReferralCampaigns()
-        .then(data => setCampaigns(data.campaigns || []))
-        .catch(() => toast.error(t('error_loading_campaigns')));
+      loadReferralMetadata();
     }
   }, [activeSection]);
+
+  // Load referral history when changing status filter
+  useEffect(() => {
+    if (activeSection === 'referrals') {
+      loadReferralHistory();
+    }
+  }, [activeSection, referralStatusFilter]);
 
   useEffect(() => {
     const filtered = packages.filter(pkg => {
@@ -131,14 +182,152 @@ export default function SpecialPackages() {
     try {
       setLoading(true);
       const data = await api.getSpecialPackages();
-      setPackages(data.packages || []);
+      const packagesData = Array.isArray(data.packages) ? data.packages : [];
+      setPackages(packagesData);
     } catch (err) {
-      toast.error(t('specialpackages:error_loading_packages'));
+      toast.error(t('admin/specialpackages:error_loading_packages'));
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
+
+  const loadReferralMetadata = async () => {
+    try {
+      const [campaignsResponse, statsResponse, settingsResponse] = await Promise.all([
+        api.getReferralCampaigns(),
+        api.getReferralStats(),
+        api.getReferralSettings()
+      ]);
+
+      const campaignsData = Array.isArray(campaignsResponse.campaigns) ? campaignsResponse.campaigns : [];
+      const statsData = statsResponse.stats;
+      const settingsData = settingsResponse.settings;
+
+      setCampaigns(campaignsData);
+      setReferralStats({
+        total_referrals: typeof statsData?.total_referrals === 'number' ? statsData.total_referrals : 0,
+        completed_referrals: typeof statsData?.completed_referrals === 'number' ? statsData.completed_referrals : 0,
+        points_distributed: typeof statsData?.points_distributed === 'number' ? statsData.points_distributed : 0
+      });
+      setReferralSettings({
+        referrer_bonus: typeof settingsData?.referrer_bonus === 'number' ? settingsData.referrer_bonus : 500,
+        referred_bonus: typeof settingsData?.referred_bonus === 'number' ? settingsData.referred_bonus : 200,
+        min_purchase_amount: typeof settingsData?.min_purchase_amount === 'number' ? settingsData.min_purchase_amount : 0
+      });
+    } catch (err) {
+      toast.error(t('adminpanel/referralprogram:toasts.failed_load'));
+      console.error(err);
+    }
+  };
+
+  const loadReferralHistory = async () => {
+    try {
+      setReferralLoading(true);
+      const historyResponse = await api.getReferrals({
+        status: referralStatusFilter === 'all' ? undefined : referralStatusFilter
+      });
+      const referralsData = Array.isArray(historyResponse.referrals) ? historyResponse.referrals : [];
+      setReferralHistory(referralsData);
+    } catch (err) {
+      toast.error(t('adminpanel/referralprogram:toasts.failed_load'));
+      console.error(err);
+    } finally {
+      setReferralLoading(false);
+    }
+  };
+
+  const handleSaveReferralSettings = async () => {
+    try {
+      await api.updateReferralSettings({
+        referrer_bonus: referralSettings.referrer_bonus,
+        referred_bonus: referralSettings.referred_bonus,
+        min_purchase_amount: referralSettings.min_purchase_amount
+      });
+      toast.success(t('adminpanel/referralprogram:toasts.settings_saved'));
+      setIsReferralSettingsOpen(false);
+    } catch (err) {
+      toast.error(t('adminpanel/referralprogram:toasts.failed_save'));
+      console.error(err);
+    }
+  };
+
+  const handleCreateReferralCampaign = () => {
+    setEditingCampaign(null);
+    setReferralFormData({
+      name: '',
+      description: '',
+      bonus_points: 200,
+      referrer_bonus: 200,
+      is_active: true,
+      target_type: 'all',
+      days_inactive: 30,
+      start_date: '',
+      end_date: ''
+    });
+    setIsReferralModalOpen(true);
+  };
+
+  const handleEditReferralCampaign = (campaign: ReferralCampaign) => {
+    setEditingCampaign(campaign);
+    setReferralFormData({
+      name: campaign.name,
+      description: campaign.description ?? '',
+      bonus_points: campaign.bonus_points,
+      referrer_bonus: campaign.referrer_bonus,
+      is_active: campaign.is_active,
+      target_type: campaign.target_type,
+      days_inactive: campaign.target_criteria?.days_inactive ?? 30,
+      start_date: campaign.start_date ?? '',
+      end_date: campaign.end_date ?? ''
+    });
+    setIsReferralModalOpen(true);
+  };
+
+  const handleSaveReferralCampaign = async () => {
+    try {
+      const payload = {
+        name: referralFormData.name,
+        description: referralFormData.description,
+        bonus_points: referralFormData.bonus_points,
+        referrer_bonus: referralFormData.referrer_bonus,
+        is_active: referralFormData.is_active,
+        target_type: referralFormData.target_type,
+        target_criteria: referralFormData.target_type === 'by_inactivity'
+          ? { days_inactive: referralFormData.days_inactive }
+          : null,
+        start_date: referralFormData.start_date.length > 0 ? referralFormData.start_date : null,
+        end_date: referralFormData.end_date.length > 0 ? referralFormData.end_date : null
+      };
+
+      if (editingCampaign) {
+        await api.updateReferralCampaign(editingCampaign.id, payload);
+        toast.success(t('campaign_updated'));
+      } else {
+        await api.createReferralCampaign(payload);
+        toast.success(t('campaign_created'));
+      }
+
+      await Promise.all([loadReferralMetadata(), loadReferralHistory()]);
+      setIsReferralModalOpen(false);
+    } catch (err) {
+      toast.error(t('error_saving_campaign'));
+      console.error(err);
+    }
+  };
+
+  const filteredReferralHistory = referralHistory.filter((item) => {
+    const normalizedSearch = referralSearchTerm.trim().toLowerCase();
+    if (normalizedSearch.length === 0) {
+      return true;
+    }
+    return (
+      item.referrer_name.toLowerCase().includes(normalizedSearch) ||
+      item.referrer_email.toLowerCase().includes(normalizedSearch) ||
+      item.referred_name.toLowerCase().includes(normalizedSearch) ||
+      item.referred_email.toLowerCase().includes(normalizedSearch)
+    );
+  });
 
   const handleOpenAddModal = () => {
     setEditingPackage(null);
@@ -189,12 +378,12 @@ export default function SpecialPackages() {
   const handleSavePackage = async () => {
     try {
       if (!formData.name) {
-        toast.error(t('specialpackages:fill_package_name'));
+        toast.error(t('admin/specialpackages:fill_package_name'));
         return;
       }
 
       if (formData.special_price >= formData.original_price) {
-        toast.error(t('specialpackages:special_price_must_be_less_than_original'));
+        toast.error(t('admin/specialpackages:special_price_must_be_less_than_original'));
         return;
       }
 
@@ -218,16 +407,16 @@ export default function SpecialPackages() {
 
       if (editingPackage) {
         await api.updateSpecialPackage(editingPackage.id, packageData);
-        toast.success(t('specialpackages:package_updated'));
+        toast.success(t('admin/specialpackages:package_updated'));
       } else {
         await api.createSpecialPackage(packageData);
-        toast.success(t('specialpackages:package_created'));
+        toast.success(t('admin/specialpackages:package_created'));
       }
 
       await loadPackages();
       setIsModalOpen(false);
     } catch (err) {
-      toast.error(t('specialpackages:error_saving'));
+      toast.error(t('admin/specialpackages:error_saving'));
       console.error(err);
     } finally {
       setSaving(false);
@@ -235,14 +424,14 @@ export default function SpecialPackages() {
   };
 
   const handleDeletePackage = async (id: number) => {
-    if (!confirm(t('specialpackages:delete_package_confirm'))) return;
+    if (!confirm(t('admin/specialpackages:delete_package_confirm'))) return;
 
     try {
       await api.deleteSpecialPackage(id);
       setPackages(packages.filter(p => p.id !== id));
-      toast.success(t('specialpackages:package_deleted'));
+      toast.success(t('admin/specialpackages:package_deleted'));
     } catch (err) {
-      toast.error(t('specialpackages:error_deleting'));
+      toast.error(t('admin/specialpackages:error_deleting'));
       console.error(err);
     }
   };
@@ -253,17 +442,17 @@ export default function SpecialPackages() {
       setPackages(packages.map(p =>
         p.id === pkg.id ? { ...p, is_active: !p.is_active } : p
       ));
-      toast.success(pkg.is_active ? t('specialpackages:package_deactivated') : t('specialpackages:package_activated'));
+      toast.success(pkg.is_active ? t('admin/specialpackages:package_deactivated') : t('admin/specialpackages:package_activated'));
     } catch (err) {
-      toast.error(t('specialpackages:error_changing_status'));
+      toast.error(t('admin/specialpackages:error_changing_status'));
     }
   };
 
   const handleToggleCampaignActive = async (campaign: ReferralCampaign) => {
     try {
       await api.patchReferralCampaign(campaign.id, { is_active: !campaign.is_active });
-      setCampaigns(campaigns.map(c =>
-        c.id === campaign.id ? { ...c, is_active: !c.is_active } : c
+      setCampaigns(previousCampaigns => previousCampaigns.map(currentCampaign =>
+        currentCampaign.id === campaign.id ? { ...currentCampaign, is_active: !currentCampaign.is_active } : currentCampaign
       ));
       toast.success(campaign.is_active ? t('campaign_deactivated') : t('campaign_activated'));
     } catch (err) {
@@ -276,7 +465,7 @@ export default function SpecialPackages() {
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
           <Loader className="w-8 h-8 text-pink-600 animate-spin" />
-          <p className="text-gray-600">{t('specialpackages:loading_packages')}</p>
+          <p className="text-gray-600">{t('admin/specialpackages:loading_packages')}</p>
         </div>
       </div>
     );
@@ -288,10 +477,12 @@ export default function SpecialPackages() {
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <Gift className="w-8 h-8 text-pink-600" />
-          {t('specialpackages:special_packages_and_promotions')}
+          {t('admin/specialpackages:special_packages_and_promotions')}
         </h1>
         <p className="text-gray-600">
-          {t('specialpackages:manage_promotional_offers')} {filteredPackages.length} {t('specialpackages:packages')}
+          {activeSection === 'packages'
+            ? `${t('admin/specialpackages:manage_promotional_offers')} ${filteredPackages.length} ${t('admin/specialpackages:packages')}`
+            : t('adminpanel/referralprogram:subtitle')}
         </p>
       </div>
 
@@ -322,11 +513,11 @@ export default function SpecialPackages() {
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-blue-800 font-medium">{t('specialpackages:how_special_packages_work')}</p>
+                <p className="text-blue-800 font-medium">{t('admin/specialpackages:how_special_packages_work')}</p>
                 <ul className="text-blue-700 text-sm mt-2 space-y-1 list-disc list-inside">
-                  <li>{t('specialpackages:when_client_mentions_keywords_or_promo_code')}</li>
-                  <li>{t('specialpackages:bot_automatically_recognizes_context_of_promotional_campaign')}</li>
-                  <li>{t('specialpackages:packages_can_be_limited_by_time_and_usage_count')}</li>
+                  <li>{t('admin/specialpackages:when_client_mentions_keywords_or_promo_code')}</li>
+                  <li>{t('admin/specialpackages:bot_automatically_recognizes_context_of_promotional_campaign')}</li>
+                  <li>{t('admin/specialpackages:packages_can_be_limited_by_time_and_usage_count')}</li>
                 </ul>
               </div>
             </div>
@@ -340,7 +531,7 @@ export default function SpecialPackages() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder={t('specialpackages:search_packages_promo_codes')}
+                  placeholder={t('admin/specialpackages:search_packages_promo_codes')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -348,12 +539,12 @@ export default function SpecialPackages() {
               </div>
               <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
                 <SelectTrigger className="w-full md:w-[200px]">
-                  <SelectValue placeholder={t('specialpackages:status')} />
+                  <SelectValue placeholder={t('admin/specialpackages:status')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('specialpackages:all_packages')}</SelectItem>
-                  <SelectItem value="active">{t('specialpackages:active')}</SelectItem>
-                  <SelectItem value="inactive">{t('specialpackages:inactive')}</SelectItem>
+                  <SelectItem value="all">{t('admin/specialpackages:all_packages')}</SelectItem>
+                  <SelectItem value="active">{t('admin/specialpackages:active')}</SelectItem>
+                  <SelectItem value="inactive">{t('admin/specialpackages:inactive')}</SelectItem>
                 </SelectContent>
               </Select>
               {permissions.canEditLoyalty && (
@@ -362,7 +553,7 @@ export default function SpecialPackages() {
                   onClick={handleOpenAddModal}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  {t('specialpackages:create_package')}
+                  {t('admin/specialpackages:create_package')}
                 </Button>
               )}
             </div>
@@ -381,7 +572,7 @@ export default function SpecialPackages() {
                     <h3 className="font-semibold text-gray-900 mb-1">{pkg.name}</h3>
                   </div>
                   <Badge className={pkg.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                    {pkg.is_active ? t('specialpackages:active') : t('specialpackages:inactive')}
+                    {pkg.is_active ? t('admin/specialpackages:active') : t('admin/specialpackages:inactive')}
                   </Badge>
                 </div>
 
@@ -404,7 +595,7 @@ export default function SpecialPackages() {
                     </span>
                   </div>
                   <div className="text-sm text-green-600 font-medium">
-                    {t('specialpackages:discount')} {pkg.discount_percent}%
+                    {t('admin/specialpackages:discount')} {pkg.discount_percent}%
                   </div>
                 </div>
 
@@ -416,7 +607,7 @@ export default function SpecialPackages() {
                 {/* Keywords */}
                 {pkg.keywords.length > 0 && (
                   <div className="mb-4">
-                    <p className="text-xs text-gray-500 mb-1">{t('specialpackages:keywords')}</p>
+                    <p className="text-xs text-gray-500 mb-1">{t('admin/specialpackages:keywords')}</p>
                     <div className="flex flex-wrap gap-1">
                       {pkg.keywords.slice(0, 3).map((keyword, idx) => (
                         <span key={idx} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
@@ -441,7 +632,7 @@ export default function SpecialPackages() {
                 {/* Stats */}
                 {pkg.max_usage && (
                   <div className="text-xs text-gray-500 mb-4">
-                    {t('specialpackages:used')}: {pkg.usage_count} / {pkg.max_usage}
+                    {t('admin/specialpackages:used')}: {pkg.usage_count} / {pkg.max_usage}
                   </div>
                 )}
 
@@ -454,7 +645,7 @@ export default function SpecialPackages() {
                       className="flex-1"
                     >
                       <Edit className="w-4 h-4 mr-1" />
-                      {t('specialpackages:edit')}
+                      {t('admin/specialpackages:edit')}
                     </Button>
                     <Button
                       size="sm"
@@ -462,7 +653,7 @@ export default function SpecialPackages() {
                       onClick={() => handleToggleActive(pkg)}
                       className={pkg.is_active ? 'text-orange-600' : 'text-green-600'}
                     >
-                      {pkg.is_active ? t('specialpackages:disable') : t('specialpackages:enable')}
+                      {pkg.is_active ? t('admin/specialpackages:disable') : t('admin/specialpackages:enable')}
                     </Button>
                     <Button
                       size="sm"
@@ -481,9 +672,9 @@ export default function SpecialPackages() {
           {filteredPackages.length === 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 text-center">
               <Gift className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">{t('specialpackages:special_packages_not_found')}</p>
+              <p className="text-gray-500">{t('admin/specialpackages:special_packages_not_found')}</p>
               <Button onClick={handleOpenAddModal} className="mt-4 bg-pink-600 hover:bg-pink-700">
-                {t('specialpackages:create_first_package')}
+                {t('admin/specialpackages:create_first_package')}
               </Button>
             </div>
           )}
@@ -493,7 +684,7 @@ export default function SpecialPackages() {
             <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
-                  {editingPackage ? t('specialpackages:edit_package') : t('specialpackages:create_package')}
+                  {editingPackage ? t('admin/specialpackages:edit_package') : t('admin/specialpackages:create_package')}
                 </DialogTitle>
               </DialogHeader>
 
@@ -501,23 +692,23 @@ export default function SpecialPackages() {
                 {/* Basic Info */}
                 <div className="grid grid-cols-1 gap-4">
                   <div>
-                    <Label htmlFor="name">{t('specialpackages:name')} *</Label>
+                    <Label htmlFor="name">{t('admin/specialpackages:name')} *</Label>
                     <Input
                       id="name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder={t('specialpackages:summer_special_package')}
+                      placeholder={t('admin/specialpackages:summer_special_package')}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="description">{t('specialpackages:description')}</Label>
+                  <Label htmlFor="description">{t('admin/specialpackages:description')}</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder={t('specialpackages:includes_manicure_and_pedicure_at_special_price')}
+                    placeholder={t('admin/specialpackages:includes_manicure_and_pedicure_at_special_price')}
                     rows={2}
                   />
                 </div>
@@ -525,7 +716,7 @@ export default function SpecialPackages() {
                 {/* Pricing */}
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor="originalPrice">{t('specialpackages:original_price')} *</Label>
+                    <Label htmlFor="originalPrice">{t('admin/specialpackages:original_price')} *</Label>
                     <Input
                       id="originalPrice"
                       type="number"
@@ -534,7 +725,7 @@ export default function SpecialPackages() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="specialPrice">{t('specialpackages:special_price')} *</Label>
+                    <Label htmlFor="specialPrice">{t('admin/specialpackages:special_price')} *</Label>
                     <Input
                       id="specialPrice"
                       type="number"
@@ -543,7 +734,7 @@ export default function SpecialPackages() {
                     />
                   </div>
                   <div>
-                    <Label>{t('specialpackages:discount')}</Label>
+                    <Label>{t('admin/specialpackages:discount')}</Label>
                     <div className="h-10 flex items-center text-2xl font-bold text-green-600">
                       {calculateDiscount()}%
                     </div>
@@ -553,49 +744,49 @@ export default function SpecialPackages() {
                 {/* Promo Code & Keywords */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="promoCode">{t('specialpackages:promo_code')} ({t('specialpackages:optional')})</Label>
+                    <Label htmlFor="promoCode">{t('admin/specialpackages:promo_code')} ({t('admin/specialpackages:optional')})</Label>
                     <Input
                       id="promoCode"
                       value={formData.promo_code}
                       onChange={(e) => setFormData({ ...formData, promo_code: e.target.value.toUpperCase() })}
-                      placeholder={t('specialpackages:summer_special_package_promo_code')}
+                      placeholder={t('admin/specialpackages:summer_special_package_promo_code')}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="maxUsage">{t('specialpackages:max_usage')}</Label>
+                    <Label htmlFor="maxUsage">{t('admin/specialpackages:max_usage')}</Label>
                     <Input
                       id="maxUsage"
                       type="number"
                       value={formData.max_usage}
                       onChange={(e) => setFormData({ ...formData, max_usage: Number(e.target.value) })}
-                      placeholder={t('specialpackages:unlimited_0')}
+                      placeholder={t('admin/specialpackages:unlimited_0')}
                     />
                   </div>
                 </div>
 
                 {/* Keywords */}
                 <div>
-                  <Label htmlFor="keywords">{t('specialpackages:keywords')} ({t('specialpackages:separate_through_comma')} *)</Label>
+                  <Label htmlFor="keywords">{t('admin/specialpackages:keywords')} ({t('admin/specialpackages:separate_through_comma')} *)</Label>
                   <Textarea
                     id="keywords"
                     value={formData.keywords}
                     onChange={(e) => setFormData({ ...formData, keywords: e.target.value })}
-                    placeholder={t('specialpackages:keywords_placeholder')}
+                    placeholder={t('admin/specialpackages:keywords_placeholder')}
                     rows={2}
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    {t('specialpackages:when_client_mentions_keywords_bot_will_offer_package')}
+                    {t('admin/specialpackages:when_client_mentions_keywords_bot_will_offer_package')}
                   </p>
                 </div>
 
                 {/* Services */}
                 <div>
-                  <Label htmlFor="services">{t('specialpackages:included_services')} ({t('specialpackages:separate_through_comma')})</Label>
+                  <Label htmlFor="services">{t('admin/specialpackages:included_services')} ({t('admin/specialpackages:separate_through_comma')})</Label>
                   <Textarea
                     id="services"
                     value={formData.services_included}
                     onChange={(e) => setFormData({ ...formData, services_included: e.target.value })}
-                    placeholder={t('specialpackages:services_included_placeholder')}
+                    placeholder={t('admin/specialpackages:services_included_placeholder')}
                     rows={2}
                   />
                 </div>
@@ -603,7 +794,7 @@ export default function SpecialPackages() {
                 {/* Validity Period */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="validFrom">{t('specialpackages:valid_from')} *</Label>
+                    <Label htmlFor="validFrom">{t('admin/specialpackages:valid_from')} *</Label>
                     <Input
                       id="validFrom"
                       type="date"
@@ -612,7 +803,7 @@ export default function SpecialPackages() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="validUntil">{t('specialpackages:valid_until')} *</Label>
+                    <Label htmlFor="validUntil">{t('admin/specialpackages:valid_until')} *</Label>
                     <Input
                       id="validUntil"
                       type="date"
@@ -632,21 +823,21 @@ export default function SpecialPackages() {
                     className="w-4 h-4 text-pink-600 rounded"
                   />
                   <Label htmlFor="isActive" className="cursor-pointer">
-                    {t('specialpackages:active')} ({t('specialpackages:available_for_clients')})
+                    {t('admin/specialpackages:active')} ({t('admin/specialpackages:available_for_clients')})
                   </Label>
                 </div>
               </div>
 
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-                  {t('specialpackages:cancel')}
+                  {t('admin/specialpackages:cancel')}
                 </Button>
                 <Button
                   onClick={handleSavePackage}
                   className="bg-pink-600 hover:bg-pink-700"
                   disabled={saving}
                 >
-                  {saving ? t('specialpackages:saving') : t('specialpackages:save')}
+                  {saving ? t('admin/specialpackages:saving') : t('admin/specialpackages:save')}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -672,140 +863,330 @@ export default function SpecialPackages() {
             </div>
           </div>
 
-          {/* Create Button */}
-          <div className="flex justify-end">
-            {permissions.canEditLoyalty && (
-              <Button
-                className="bg-blue-600 hover:bg-blue-700"
-                onClick={() => {
-                  setEditingCampaign(null);
-                  setReferralFormData({
-                    name: '',
-                    description: '',
-                    bonus_points: 200,
-                    referrer_bonus: 200,
-                    is_active: true,
-                    target_type: 'all',
-                    days_inactive: 30,
-                    start_date: '',
-                    end_date: ''
-                  });
-                  setIsReferralModalOpen(true);
-                }}
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">{t('adminpanel/referralprogram:stats.total_referrals')}</p>
+                  <p className="text-2xl font-bold text-gray-900">{referralStats.total_referrals}</p>
+                </div>
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <Users className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">{t('adminpanel/referralprogram:stats.completed_referrals')}</p>
+                  <p className="text-2xl font-bold text-gray-900">{referralStats.completed_referrals}</p>
+                </div>
+                <div className="w-10 h-10 rounded-lg bg-green-50 text-green-600 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">{t('adminpanel/referralprogram:stats.points_distributed')}</p>
+                  <p className="text-2xl font-bold text-gray-900">{referralStats.points_distributed.toLocaleString()}</p>
+                </div>
+                <div className="w-10 h-10 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center">
+                  <Gift className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* History Controls */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder={t('adminpanel/referralprogram:table.search_placeholder')}
+                  value={referralSearchTerm}
+                  onChange={(event) => setReferralSearchTerm(event.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select
+                value={referralStatusFilter}
+                onValueChange={(value: 'all' | 'pending' | 'completed' | 'cancelled') => setReferralStatusFilter(value)}
               >
-                <Plus className="w-4 h-4 mr-2" />
-                {t('create_campaign_button')}
-              </Button>
+                <SelectTrigger className="w-full lg:w-[220px]">
+                  <SelectValue placeholder={t('adminpanel/referralprogram:table.filters.all_statuses')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('adminpanel/referralprogram:table.filters.all_statuses')}</SelectItem>
+                  <SelectItem value="pending">{t('adminpanel/referralprogram:table.statuses.pending')}</SelectItem>
+                  <SelectItem value="completed">{t('adminpanel/referralprogram:table.statuses.completed')}</SelectItem>
+                  <SelectItem value="cancelled">{t('adminpanel/referralprogram:table.statuses.cancelled')}</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {permissions.canEditLoyalty && (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsReferralSettingsOpen(true)}
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    {t('adminpanel/referralprogram:settings')}
+                  </Button>
+                  <Button
+                    className="bg-blue-600 hover:bg-blue-700"
+                    onClick={handleCreateReferralCampaign}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    {t('create_campaign_button')}
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Referral History Table */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-base font-semibold text-gray-900">{t('adminpanel/referralprogram:table.title')}</h3>
+            </div>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t('adminpanel/referralprogram:table.columns.referrer')}</TableHead>
+                    <TableHead className="w-10 text-center">
+                      <ChevronRight className="w-4 h-4 mx-auto text-gray-300" />
+                    </TableHead>
+                    <TableHead>{t('adminpanel/referralprogram:table.columns.referred_friend')}</TableHead>
+                    <TableHead>{t('adminpanel/referralprogram:table.columns.date')}</TableHead>
+                    <TableHead>{t('adminpanel/referralprogram:table.columns.status')}</TableHead>
+                    <TableHead className="text-right">{t('adminpanel/referralprogram:table.columns.points_awarded')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {!referralLoading && filteredReferralHistory.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>
+                        <div className="min-w-[220px]">
+                          <div className="font-medium text-gray-900">{item.referrer_name}</div>
+                          <div className="text-xs text-gray-500">{item.referrer_email}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center text-gray-300">
+                        <ChevronRight className="w-4 h-4 mx-auto" />
+                      </TableCell>
+                      <TableCell>
+                        <div className="min-w-[220px]">
+                          <div className="font-medium text-gray-900">{item.referred_name}</div>
+                          <div className="text-xs text-gray-500">{item.referred_email}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-gray-600 whitespace-nowrap">
+                        {new Date(item.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        {item.status === 'completed' && (
+                          <Badge className="bg-green-100 text-green-800">{t('adminpanel/referralprogram:table.statuses.completed')}</Badge>
+                        )}
+                        {item.status === 'pending' && (
+                          <Badge className="bg-blue-100 text-blue-800">{t('adminpanel/referralprogram:table.statuses.pending')}</Badge>
+                        )}
+                        {item.status === 'cancelled' && (
+                          <Badge className="bg-gray-100 text-gray-800">{t('adminpanel/referralprogram:table.statuses.cancelled')}</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right font-semibold text-blue-600">
+                        {item.points_awarded > 0 ? `+${item.points_awarded}` : '0'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+
+            {referralLoading && (
+              <div className="py-12 text-center text-gray-500">
+                {t('admin/specialpackages:loading_packages')}
+              </div>
+            )}
+
+            {!referralLoading && filteredReferralHistory.length === 0 && (
+              <div className="py-16 text-center">
+                <Users className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                <p className="text-sm text-gray-500">{t('adminpanel/referralprogram:table.description')}</p>
+              </div>
             )}
           </div>
 
           {/* Campaigns List */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {campaigns.map((campaign) => (
-              <div
-                key={campaign.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-1">{campaign.name}</h3>
-                    <p className="text-sm text-gray-500">{campaign.description}</p>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-base font-semibold text-gray-900">{t('tab_referrals_title')}</h3>
+              <span className="text-sm text-gray-500">{campaigns.length}</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {campaigns.map((campaign) => (
+                <div
+                  key={campaign.id}
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900 mb-1">{campaign.name}</h3>
+                      <p className="text-sm text-gray-500">{campaign.description}</p>
+                    </div>
+                    <Badge className={campaign.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                      {campaign.is_active ? t('campaign_active') : t('campaign_inactive')}
+                    </Badge>
                   </div>
-                  <Badge className={campaign.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                    {campaign.is_active ? t('campaign_active') : t('campaign_inactive')}
-                  </Badge>
-                </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="bg-blue-50 p-3 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-blue-600">{campaign.bonus_points}</p>
-                    <p className="text-xs text-blue-700">{t('bonus_to_referee')}</p>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="bg-blue-50 p-3 rounded-lg text-center">
+                      <p className="text-2xl font-bold text-blue-600">{campaign.bonus_points}</p>
+                      <p className="text-xs text-blue-700">{t('bonus_to_referee')}</p>
+                    </div>
+                    <div className="bg-pink-50 p-3 rounded-lg text-center">
+                      <p className="text-2xl font-bold text-pink-600">{campaign.referrer_bonus}</p>
+                      <p className="text-xs text-pink-700">{t('bonus_to_referrer')}</p>
+                    </div>
                   </div>
-                  <div className="bg-pink-50 p-3 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-pink-600">{campaign.referrer_bonus}</p>
-                    <p className="text-xs text-pink-700">{t('bonus_to_referrer')}</p>
-                  </div>
-                </div>
 
-                <div className="mb-4">
-                  <p className="text-xs text-gray-500 mb-1">{t('target_audience')}</p>
-                  <Badge variant="outline">
-                    {campaign.target_type === 'all' && t('target_all_clients')}
-                    {campaign.target_type === 'specific_users' && t('target_specific_users')}
-                    {campaign.target_type === 'by_master' && t('target_by_master')}
-                    {campaign.target_type === 'by_service' && t('target_by_service')}
-                    {campaign.target_type === 'by_inactivity' && t('target_inactive_days', { count: campaign.target_criteria?.days_inactive || 30 })}
-                  </Badge>
-                </div>
-
-                {permissions.canEditLoyalty && (
-                  <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setEditingCampaign(campaign);
-                        setReferralFormData({
-                          name: campaign.name,
-                          description: campaign.description || '',
-                          bonus_points: campaign.bonus_points,
-                          referrer_bonus: campaign.referrer_bonus,
-                          is_active: campaign.is_active,
-                          target_type: campaign.target_type,
-                          days_inactive: campaign.target_criteria?.days_inactive || 30,
-                          start_date: campaign.start_date || '',
-                          end_date: campaign.end_date || ''
-                        });
-                        setIsReferralModalOpen(true);
-                      }}
-                      className="flex-1"
-                    >
-                      <Edit className="w-4 h-4 mr-1" />
-                      {t('edit_campaign')}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleToggleCampaignActive(campaign)}
-                      className={campaign.is_active ? 'text-orange-600' : 'text-green-600'}
-                    >
-                      {campaign.is_active ? t('disable') : t('enable')}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={async () => {
-                        if (!confirm(t('delete_campaign_confirm'))) return;
-                        try {
-                          await api.deleteReferralCampaign(campaign.id);
-                          setCampaigns(campaigns.filter(c => c.id !== campaign.id));
-                          toast.success(t('campaign_deleted'));
-                        } catch (e) {
-                          toast.error(t('error_deleting_campaign'));
-                        }
-                      }}
-                      className="text-red-600"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                  <div className="mb-4">
+                    <p className="text-xs text-gray-500 mb-1">{t('target_audience')}</p>
+                    <Badge variant="outline">
+                      {campaign.target_type === 'all' && t('target_all_clients')}
+                      {campaign.target_type === 'specific_users' && t('target_specific_users')}
+                      {campaign.target_type === 'by_master' && t('target_by_master')}
+                      {campaign.target_type === 'by_service' && t('target_by_service')}
+                      {campaign.target_type === 'by_inactivity' && t('target_inactive_days', { count: campaign.target_criteria?.days_inactive ?? 30 })}
+                    </Badge>
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {permissions.canEditLoyalty && (
+                    <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleEditReferralCampaign(campaign)}
+                        className="flex-1"
+                      >
+                        <Edit className="w-4 h-4 mr-1" />
+                        {t('edit_campaign')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleToggleCampaignActive(campaign)}
+                        className={campaign.is_active ? 'text-orange-600' : 'text-green-600'}
+                      >
+                        {campaign.is_active ? t('disable') : t('enable')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={async () => {
+                          if (!confirm(t('delete_campaign_confirm'))) {
+                            return;
+                          }
+                          try {
+                            await api.deleteReferralCampaign(campaign.id);
+                            setCampaigns(previousCampaigns => previousCampaigns.filter(currentCampaign => currentCampaign.id !== campaign.id));
+                            toast.success(t('campaign_deleted'));
+                          } catch (error) {
+                            toast.error(t('error_deleting_campaign'));
+                            console.error(error);
+                          }
+                        }}
+                        className="text-red-600"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           {campaigns.length === 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 py-20 text-center">
               <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500">{t('no_campaigns_found')}</p>
-              <Button
-                onClick={() => setIsReferralModalOpen(true)}
-                className="mt-4 bg-blue-600 hover:bg-blue-700"
-              >
-                {t('create_first_campaign')}
-              </Button>
+              {permissions.canEditLoyalty && (
+                <Button
+                  onClick={handleCreateReferralCampaign}
+                  className="mt-4 bg-blue-600 hover:bg-blue-700"
+                >
+                  {t('create_first_campaign')}
+                </Button>
+              )}
             </div>
           )}
+
+          {/* Referral Settings Modal */}
+          <Dialog open={isReferralSettingsOpen} onOpenChange={setIsReferralSettingsOpen}>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>{t('adminpanel/referralprogram:dialogs.settings.title')}</DialogTitle>
+              </DialogHeader>
+
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="referrerBonusSettings">{t('adminpanel/referralprogram:dialogs.settings.referrer_bonus')}</Label>
+                  <Input
+                    id="referrerBonusSettings"
+                    type="number"
+                    value={referralSettings.referrer_bonus}
+                    onChange={(event) => setReferralSettings({
+                      ...referralSettings,
+                      referrer_bonus: Number(event.target.value)
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="referredBonusSettings">{t('adminpanel/referralprogram:dialogs.settings.referred_bonus')}</Label>
+                  <Input
+                    id="referredBonusSettings"
+                    type="number"
+                    value={referralSettings.referred_bonus}
+                    onChange={(event) => setReferralSettings({
+                      ...referralSettings,
+                      referred_bonus: Number(event.target.value)
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="referralMinPurchase">{t('adminpanel/referralprogram:dialogs.settings.min_purchase_amount', { currency })}</Label>
+                  <Input
+                    id="referralMinPurchase"
+                    type="number"
+                    value={referralSettings.min_purchase_amount}
+                    onChange={(event) => setReferralSettings({
+                      ...referralSettings,
+                      min_purchase_amount: Number(event.target.value)
+                    })}
+                  />
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsReferralSettingsOpen(false)}>
+                  {t('adminpanel/referralprogram:buttons.cancel')}
+                </Button>
+                <Button
+                  className="bg-blue-600 hover:bg-blue-700"
+                  onClick={handleSaveReferralSettings}
+                >
+                  {t('adminpanel/referralprogram:buttons.save_changes')}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
 
           {/* Referral Campaign Modal */}
           <Dialog open={isReferralModalOpen} onOpenChange={setIsReferralModalOpen}>
@@ -866,11 +1247,11 @@ export default function SpecialPackages() {
                     onValueChange={(value: any) => setReferralFormData({ ...referralFormData, target_type: value })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t('select_audience', 'Выберите аудиторию')} />
+                      <SelectValue placeholder={t('select_audience')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t('target_all_clients')}</SelectItem>
-                      <SelectItem value="by_inactivity">{t('target_by_inactivity', 'Неактивные клиенты')}</SelectItem>
+                      <SelectItem value="by_inactivity">{t('target_by_inactivity')}</SelectItem>
                       <SelectItem value="by_master">{t('target_by_master')}</SelectItem>
                       <SelectItem value="by_service">{t('target_by_service')}</SelectItem>
                     </SelectContent>
@@ -930,38 +1311,7 @@ export default function SpecialPackages() {
                   {t('cancel')}
                 </Button>
                 <Button
-                  onClick={async () => {
-                    try {
-                      const payload = {
-                        name: referralFormData.name,
-                        description: referralFormData.description,
-                        bonus_points: referralFormData.bonus_points,
-                        referrer_bonus: referralFormData.referrer_bonus,
-                        is_active: referralFormData.is_active,
-                        target_type: referralFormData.target_type,
-                        target_criteria: referralFormData.target_type === 'by_inactivity'
-                          ? { days_inactive: referralFormData.days_inactive }
-                          : null,
-                        start_date: referralFormData.start_date || null,
-                        end_date: referralFormData.end_date || null
-                      };
-
-                      if (editingCampaign) {
-                        await api.updateReferralCampaign(editingCampaign.id, payload);
-                        toast.success(t('campaign_updated'));
-                      } else {
-                        await api.createReferralCampaign(payload);
-                        toast.success(t('campaign_created'));
-                      }
-
-                      // Reload campaigns
-                      const data = await api.getReferralCampaigns();
-                      setCampaigns(data.campaigns || []);
-                      setIsReferralModalOpen(false);
-                    } catch (e) {
-                      toast.error(t('error_saving_campaign'));
-                    }
-                  }}
+                  onClick={handleSaveReferralCampaign}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   {editingCampaign ? t('save_campaign') : t('create_campaign')}

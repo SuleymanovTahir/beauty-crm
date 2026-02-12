@@ -99,6 +99,65 @@ def init_database():
             # Silently ignore FK cascade errors - not critical
             pass
 
+    stage_aliases = {
+        'pipeline': {
+            'новое': 'new',
+            'новый_лид': 'new',
+            'new_lead': 'new',
+            'переговоры': 'negotiation',
+            'отправленное_предложение': 'sent_offer',
+            'предложение_отправлено': 'sent_offer',
+            'закрыто_выиграно': 'closed_won',
+            'успешно_реализовано': 'closed_won',
+            'закрыто_проиграно': 'closed_lost',
+            'закрыто_не_реализовано': 'closed_lost',
+        },
+        'invoice': {
+            'черновик': 'draft',
+            'отправлено': 'sent',
+            'оплачено': 'paid',
+            'частично_оплачено': 'partial',
+            'частично': 'partial',
+            'просрочено': 'overdue',
+            'отменено': 'cancelled',
+        },
+        'task': {
+            'все': 'todo',
+            'к_выполнению': 'todo',
+            'в_прогрессе': 'in_progress',
+            'в_работе': 'in_progress',
+            'готово': 'done',
+            'завершено': 'done',
+        },
+    }
+
+    canonical_stage_order = {
+        'pipeline': {
+            'new': 0,
+            'negotiation': 1,
+            'sent_offer': 2,
+            'closed_won': 3,
+            'closed_lost': 4,
+        },
+        'invoice': {
+            'draft': 0,
+            'sent': 1,
+            'paid': 2,
+            'partial': 3,
+            'overdue': 4,
+            'cancelled': 5,
+        },
+        'task': {
+            'todo': 0,
+            'in_progress': 1,
+            'done': 2,
+        },
+    }
+
+    def normalize_stage_key(entity_type: str, stage_name: str) -> str:
+        normalized = str(stage_name or '').strip().lower().replace(' ', '_')
+        return stage_aliases.get(entity_type, {}).get(normalized, normalized)
+
     log_info("🔌 Инициализация единой схемы базы данных...", "db")
     
     try:
@@ -822,6 +881,47 @@ def init_database():
             booking_id INTEGER,
             used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS special_packages (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            description TEXT,
+            original_price REAL NOT NULL DEFAULT 0,
+            special_price REAL NOT NULL DEFAULT 0,
+            currency TEXT,
+            discount_percent INTEGER DEFAULT 0,
+            services_included TEXT,
+            promo_code TEXT,
+            keywords TEXT,
+            valid_from TIMESTAMP,
+            valid_until TIMESTAMP,
+            is_active BOOLEAN DEFAULT TRUE,
+            usage_count INTEGER DEFAULT 0,
+            max_usage INTEGER,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            scheduled BOOLEAN DEFAULT FALSE,
+            schedule_date DATE,
+            schedule_time TIME,
+            auto_activate BOOLEAN DEFAULT FALSE,
+            auto_deactivate BOOLEAN DEFAULT FALSE
+        )''')
+        add_column_if_not_exists('special_packages', 'description', 'TEXT')
+        add_column_if_not_exists('special_packages', 'services_included', 'TEXT')
+        add_column_if_not_exists('special_packages', 'promo_code', 'TEXT')
+        add_column_if_not_exists('special_packages', 'keywords', 'TEXT')
+        add_column_if_not_exists('special_packages', 'is_active', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('special_packages', 'usage_count', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('special_packages', 'max_usage', 'INTEGER')
+        add_column_if_not_exists('special_packages', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        add_column_if_not_exists('special_packages', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        add_column_if_not_exists('special_packages', 'scheduled', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('special_packages', 'schedule_date', 'DATE')
+        add_column_if_not_exists('special_packages', 'schedule_time', 'TIME')
+        add_column_if_not_exists('special_packages', 'auto_activate', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('special_packages', 'auto_deactivate', 'BOOLEAN DEFAULT FALSE')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_special_packages_active_period ON special_packages (is_active, valid_from, valid_until)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_special_packages_promo_code ON special_packages (promo_code)")
 
         c.execute('''CREATE TABLE IF NOT EXISTS marketing_unsubscriptions (
             id SERIAL PRIMARY KEY,
@@ -1661,7 +1761,8 @@ def init_database():
             ('invoice', 'sent', 'Отправлен', '#3b82f6', 1),
             ('invoice', 'paid', 'Оплачен', '#22c55e', 2),
             ('task', 'todo', 'Сделать', '#94a3b8', 0),
-            ('task', 'done', 'Завершено', '#22c55e', 3)
+            ('task', 'in_progress', 'В работе', '#3b82f6', 1),
+            ('task', 'done', 'Завершено', '#22c55e', 2)
         ]
         for ent, nm, ru, clr, ord in default_stages:
             c.execute("""
@@ -1669,6 +1770,75 @@ def init_database():
                 VALUES (%s, %s, %s, %s)
                 ON CONFLICT (entity_type, name) DO NOTHING
             """, (ent, nm, clr, ord))
+
+        stage_reference_map = {
+            'pipeline': ('clients', 'pipeline_stage_id'),
+            'invoice': ('invoices', 'stage_id'),
+            'task': ('tasks', 'stage_id'),
+        }
+
+        for entity_type, (ref_table, ref_column) in stage_reference_map.items():
+            c.execute("""
+                SELECT id, name, color, sort_order
+                FROM workflow_stages
+                WHERE entity_type = %s
+                ORDER BY sort_order, id
+            """, (entity_type,))
+            stage_rows = c.fetchall()
+
+            grouped_by_key = {}
+            for stage_id, stage_name, stage_color, sort_order in stage_rows:
+                canonical_key = normalize_stage_key(entity_type, stage_name)
+                if len(canonical_key) == 0:
+                    continue
+
+                grouped_by_key.setdefault(canonical_key, []).append({
+                    "id": stage_id,
+                    "name": stage_name,
+                    "color": stage_color,
+                    "sort_order": sort_order,
+                })
+
+            for canonical_key, variants in grouped_by_key.items():
+                winner = next(
+                    (
+                        stage
+                        for stage in variants
+                        if str(stage["name"]).strip().lower().replace(' ', '_') == canonical_key
+                    ),
+                    variants[0]
+                )
+
+                for stage in variants:
+                    if stage["id"] == winner["id"]:
+                        continue
+
+                    c.execute(
+                        f"UPDATE {ref_table} SET {ref_column} = %s WHERE {ref_column} = %s",
+                        (winner["id"], stage["id"])
+                    )
+                    c.execute("DELETE FROM workflow_stages WHERE id = %s", (stage["id"],))
+
+                current_winner_name = str(winner["name"]).strip().lower().replace(' ', '_')
+                if current_winner_name != canonical_key:
+                    c.execute("UPDATE workflow_stages SET name = %s WHERE id = %s", (canonical_key, winner["id"]))
+
+                expected_sort_order = canonical_stage_order.get(entity_type, {}).get(canonical_key)
+                if expected_sort_order is not None and winner["sort_order"] != expected_sort_order:
+                    c.execute(
+                        "UPDATE workflow_stages SET sort_order = %s WHERE id = %s",
+                        (expected_sort_order, winner["id"])
+                    )
+
+        for source_status, canonical_status in stage_aliases['invoice'].items():
+            c.execute(
+                """
+                UPDATE invoices
+                SET status = %s
+                WHERE LOWER(REPLACE(COALESCE(status, ''), ' ', '_')) = %s
+                """,
+                (canonical_status, source_status)
+            )
 
         # Настройки салона (Архитектура v2.2 - REAL DATA)
         salon_name = os.getenv('SALON_NAME', 'M.Le Diamant')

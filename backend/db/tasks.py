@@ -2,7 +2,21 @@
 from typing import List, Dict, Optional
 from datetime import datetime
 from db.connection import get_db_connection
-from utils.logger import log_error, log_info
+from utils.logger import log_error
+
+TASK_STAGE_ALIASES = {
+    'все': 'todo',
+    'к_выполнению': 'todo',
+    'в_прогрессе': 'in_progress',
+    'в_работе': 'in_progress',
+    'готово': 'done',
+    'завершено': 'done',
+}
+
+
+def normalize_task_stage_key(stage_name: str) -> str:
+    normalized = str(stage_name or '').strip().lower().replace(' ', '_')
+    return TASK_STAGE_ALIASES.get(normalized, normalized)
 
 # ===== STAGES =====
 
@@ -18,16 +32,23 @@ def get_task_stages() -> List[Dict]:
             ORDER BY sort_order ASC
         """)
         rows = c.fetchall()
-        return [
-            {
-                "id": row[0],
-                "name": row[1],
-                "key": row[1],
-                "order_index": row[3],
-                "color": row[2]
-            }
-            for row in rows
-        ]
+        stages_by_key: Dict[str, Dict] = {}
+        for row in rows:
+            stage_key = normalize_task_stage_key(row[1])
+            current = stages_by_key.get(stage_key)
+            should_replace = (
+                current is None
+                or str(row[1]).strip().lower().replace(' ', '_') == stage_key
+            )
+            if should_replace:
+                stages_by_key[stage_key] = {
+                    "id": row[0],
+                    "name": row[1],
+                    "key": stage_key,
+                    "order_index": row[3],
+                    "color": row[2]
+                }
+        return sorted(stages_by_key.values(), key=lambda stage: stage["order_index"])
     except Exception as e:
         log_error(f"Error getting task stages: {e}", "db.tasks")
         return []
@@ -179,7 +200,7 @@ def get_tasks(filters: Dict = None) -> List[Dict]:
             SELECT t.id, t.title, t.description, t.stage_id, t.priority, 
                    t.due_date, t.assignee_id, t.created_by, t.client_id, 
                    t.created_at, u.full_name as assignee_name, c.name as client_name,
-                   s.name as stage_name, s.color as stage_color, s.key as stage_key,
+                   s.name as stage_name, s.color as stage_color,
                    creator.full_name as created_by_name
             FROM tasks t
             LEFT JOIN users u ON t.assignee_id = u.id
@@ -223,6 +244,7 @@ def get_tasks(filters: Dict = None) -> List[Dict]:
             assignees = c.fetchall()
             assignee_ids = [a[0] for a in assignees] if assignees else []
             assignee_names = [a[1] for a in assignees if a[1]] if assignees else []
+            stage_key = normalize_task_stage_key(row[12])
             
             tasks.append({
                 "id": row[0],
@@ -237,10 +259,10 @@ def get_tasks(filters: Dict = None) -> List[Dict]:
                 "created_at": row[9],
                 "assignee_name": row[10],  # Primary assignee name
                 "client_name": row[11],
-                "status": row[14], # key
+                "status": stage_key, # canonical key
                 "stage_name": row[12], # name
                 "stage_color": row[13],
-                "created_by_name": row[15],
+                "created_by_name": row[14],
                 "assignee_ids": assignee_ids,  # All assignees
                 "assignee_names": assignee_names  # All assignee names
             })
@@ -344,14 +366,20 @@ def get_task_analytics(user_id: int = None) -> Dict:
             GROUP BY s.name
         """
         c.execute(query, user_filter_params if user_id else [])
-        status_counts = dict(c.fetchall())
+        raw_status_counts = c.fetchall()
+        status_counts: Dict[str, int] = {}
+        for stage_name, count in raw_status_counts:
+            stage_key = normalize_task_stage_key(stage_name)
+            status_counts[stage_key] = status_counts.get(stage_key, 0) + count
 
         # Overdue tasks
         query = f"""
             SELECT COUNT(t.id)
             FROM tasks t
             JOIN workflow_stages s ON t.stage_id = s.id
-            WHERE s.entity_type = 'task' AND s.name != 'done' AND t.due_date < NOW() {user_filter if user_id else ''}
+            WHERE s.entity_type = 'task'
+              AND LOWER(REPLACE(COALESCE(s.name, ''), ' ', '_')) NOT IN ('done', 'готово', 'завершено')
+              AND t.due_date < NOW() {user_filter if user_id else ''}
         """
         c.execute(query, user_filter_params if user_id else [])
         overdue_count = c.fetchone()[0]
@@ -361,13 +389,15 @@ def get_task_analytics(user_id: int = None) -> Dict:
             SELECT COUNT(t.id)
             FROM tasks t
             JOIN workflow_stages s ON t.stage_id = s.id
-            WHERE s.entity_type = 'task' AND s.name != 'done' AND t.due_date::date = CURRENT_DATE {user_filter if user_id else ''}
+            WHERE s.entity_type = 'task'
+              AND LOWER(REPLACE(COALESCE(s.name, ''), ' ', '_')) NOT IN ('done', 'готово', 'завершено')
+              AND t.due_date::date = CURRENT_DATE {user_filter if user_id else ''}
         """
         c.execute(query, user_filter_params if user_id else [])
         today_count = c.fetchone()[0]
 
         return {
-            "total_active": sum(v for k,v in status_counts.items() if k != 'done'),
+            "total_active": sum(v for k, v in status_counts.items() if k != 'done'),
             "completed": status_counts.get('done', 0),
             "overdue": overdue_count,
             "today": today_count

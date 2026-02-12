@@ -1451,7 +1451,7 @@
   padding: 1rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.62rem;
 }
 
 .crm-services-search-wrap {
@@ -1488,7 +1488,7 @@
 .crm-services-controls-right {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.62rem;
 }
 
 .crm-services-category-select-wrap {
@@ -1550,21 +1550,23 @@
 }
 
 .crm-services-table-card {
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .crm-services-table {
   width: 100%;
+  min-width: 1040px;
   border-collapse: collapse;
-  table-layout: auto;
+  table-layout: fixed;
 }
 
 .crm-services-col-name {
-  width: 31%;
+  width: 40%;
 }
 
 .crm-services-col-price {
-  width: 11%;
+  width: 13%;
 }
 
 .crm-services-col-duration {
@@ -1572,15 +1574,15 @@
 }
 
 .crm-services-col-category {
-  width: 11%;
+  width: 15%;
 }
 
 .crm-services-col-status {
-  width: 10%;
+  width: 11%;
 }
 
 .crm-services-col-actions {
-  width: 9%;
+  width: 10%;
 }
 
 .crm-services-table thead {
@@ -1590,7 +1592,7 @@
 
 .crm-services-table th {
   text-align: left;
-  padding: 0.8rem 0.86rem;
+  padding: 0.74rem 0.8rem;
   color: #4b5565;
   font-size: 0.89rem;
   font-weight: 700;
@@ -1598,7 +1600,7 @@
 }
 
 .crm-services-table td {
-  padding: 0.82rem 0.86rem;
+  padding: 0.74rem 0.8rem;
   border-bottom: 1px solid #e6e9ef;
   color: #111827;
   font-size: 0.9rem;
@@ -1852,7 +1854,7 @@
   }
 
   .crm-services-table {
-    min-width: 620px;
+    min-width: 560px;
   }
 
   .crm-services-table-card {
@@ -1861,8 +1863,16 @@
 
   .crm-services-table th,
   .crm-services-table td {
-    padding: 0.72rem 0.62rem;
+    padding: 0.64rem 0.56rem;
     font-size: 0.84rem;
+  }
+
+  .crm-services-table th {
+    white-space: normal;
+  }
+
+  .crm-services-table td:not(.crm-services-actions-cell) {
+    white-space: normal;
   }
 
   .crm-services-duration-badge,
@@ -1879,5 +1889,11 @@
   .crm-services-employee-controls {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+@media (max-width: 640px) {
+  .crm-services-table {
+    min-width: 540px;
   }
 }

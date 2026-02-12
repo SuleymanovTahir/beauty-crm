@@ -14,8 +14,6 @@ from utils.logger import log_error, log_warning, log_info
 from core.config import (
     DEFAULT_HOURS_WEEKDAYS,
     DEFAULT_HOURS_WEEKENDS,
-    DEFAULT_LUNCH_START,
-    DEFAULT_LUNCH_END,
     DEFAULT_REPORT_TIME
 )
 
@@ -130,8 +128,8 @@ def _get_default_salon_settings() -> dict:
         "name": os.getenv('SALON_NAME', 'Beauty Salon'),
         "hours_weekdays": DEFAULT_HOURS_WEEKDAYS,
         "hours_weekends": DEFAULT_HOURS_WEEKENDS,
-        "lunch_start": DEFAULT_LUNCH_START,
-        "lunch_end": DEFAULT_LUNCH_END,
+        "lunch_start": "",
+        "lunch_end": "",
         "phone": os.getenv('SALON_PHONE', ''),
         "email": os.getenv('SALON_EMAIL', ''),
         "instagram": os.getenv('SALON_INSTAGRAM', ''),

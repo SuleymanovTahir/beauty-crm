@@ -50,6 +50,21 @@ class InvoicePayment(BaseModel):
 
 router = APIRouter()
 
+INVOICE_STAGE_ALIASES = {
+    'черновик': 'draft',
+    'отправлено': 'sent',
+    'оплачено': 'paid',
+    'частично_оплачено': 'partial',
+    'частично': 'partial',
+    'просрочено': 'overdue',
+    'отменено': 'cancelled',
+}
+
+
+def normalize_invoice_stage_key(stage_name: str) -> str:
+    normalized = str(stage_name or '').strip().lower().replace(' ', '_')
+    return INVOICE_STAGE_ALIASES.get(normalized, normalized)
+
 @router.get("/invoices/stages")
 async def get_invoice_stages(current_user: dict = Depends(get_current_user)):
     """Получить список стадий счетов из workflow_stages"""
@@ -62,16 +77,24 @@ async def get_invoice_stages(current_user: dict = Depends(get_current_user)):
             WHERE entity_type = 'invoice'
             ORDER BY sort_order
         """)
-        stages = []
+        stages_by_key = {}
         for row in c.fetchall():
-            stages.append({
-                "id": row[0],
-                "name": row[1],
-                "key": row[1],
-                "color": row[2],
-                "order_index": row[3]
-            })
-        return stages
+            stage_key = normalize_invoice_stage_key(row[1])
+            current = stages_by_key.get(stage_key)
+            should_replace = (
+                current is None
+                or str(row[1]).strip().lower().replace(' ', '_') == stage_key
+            )
+            if should_replace:
+                stages_by_key[stage_key] = {
+                    "id": row[0],
+                    "name": row[1],
+                    "key": stage_key,
+                    "color": row[2],
+                    "order_index": row[3]
+                }
+
+        return sorted(stages_by_key.values(), key=lambda stage: stage["order_index"])
     finally:
         conn.close()
 
@@ -201,7 +224,8 @@ async def update_invoice(
         c = conn.cursor()
         c.execute("SELECT name FROM workflow_stages WHERE id = %s", (data['stage_id'],))
         res = c.fetchone()
-        if res: data['status'] = res[0]
+        if res:
+            data['status'] = normalize_invoice_stage_key(res[0])
         conn.close()
 
     if db_update_invoice(invoice_id, data):

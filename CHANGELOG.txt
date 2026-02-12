@@ -1,3 +1,38 @@
+## [2026-02-12] Schedule, Special Packages, and Stage Canonicalization Fixes
+- Special Packages / Referrals UX and functionality convergence:
+  - Extended referral tab in `frontend/src/pages/admin/SpecialPackages.tsx` with referral-program dashboard functionality from `/crm/referrals` while preserving special-packages page style.
+  - Added referral stats panels, referral history table, status filter, and search on the referrals tab.
+  - Added referral program settings dialog (bonus rules and minimum purchase) integrated with `/api/admin/referrals/settings`.
+  - Updated `frontend/src/services/api.ts`:
+    - `getReferrals()` now supports status/sort/order query params.
+    - `updateReferralSettings()` now uses `PUT` to match backend endpoint.
+- Settings schedule UX hardening:
+  - Replaced free-text lunch range input in `frontend/src/pages/shared/Settings.tsx` with two strict `type="time"` fields (`lunch_start`, `lunch_end`).
+  - Removed hardcoded lunch-range placeholder usage from the form flow to prevent arbitrary input and placeholder-driven hardcode.
+- Booking availability lunch logic stabilization:
+  - Updated `backend/services/master_schedule.py` to apply lunch unavailability only when `lunch_start/lunch_end` are explicitly configured and valid.
+  - Removed fallback behavior that could block slots with implicit default lunch time when DB lunch values are empty.
+  - Added missing `log_warning` import for invalid lunch format handling.
+  - Removed default lunch fallback usage in `backend/api/schedule.py` and `backend/bot/tools.py`; lunch is now considered only from persisted DB values.
+  - Updated `backend/db/settings.py` default profile to keep `lunch_start/lunch_end` empty instead of synthetic defaults.
+- Special packages API/runtime recovery:
+  - Added SSOT schema for `special_packages` in `backend/db/init.py` (including scheduling fields and indexes), with idempotent column sync.
+  - Updated `backend/db/services.py`:
+    - `get_all_special_packages()` now safely handles table-not-ready scenarios.
+    - `create_special_package()` now uses `RETURNING id` for PostgreSQL-safe inserts.
+- Special packages i18n key fix:
+  - Corrected namespace usage in `frontend/src/pages/admin/SpecialPackages.tsx` from `specialpackages:*` to `admin/specialpackages:*`, restoring missing UI translations.
+- Workflow stages deduplication and normalization:
+  - Added canonical stage normalization in `backend/db/init.py` for `pipeline`, `invoice`, and `task` entities.
+  - During init sync, duplicate stage variants are merged, related records are migrated (`clients.pipeline_stage_id`, `tasks.stage_id`, `invoices.stage_id`), and duplicate rows are removed.
+  - Invoice status text values are normalized to canonical keys to keep board/list filters consistent.
+  - Added default `task` stage `in_progress` into baseline seed.
+- Stage key consistency in data APIs:
+  - `backend/db/pipelines.py`, `backend/db/tasks.py`, and `backend/api/invoices.py` now normalize legacy stage aliases to canonical keys.
+  - Fixed `backend/db/tasks.py` query using non-existent `workflow_stages.key` column by deriving canonical key from `workflow_stages.name`.
+- Services table layout behavior:
+  - Updated `frontend/src/styles/crm-pages.css` to improve column width balance and horizontal scroll behavior for the services table so non-name columns no longer create excessive spacing and name column does not collapse before scroll appears.
+
 ## [2026-02-12] CRM Services Page Structure Restore
 - Restored `/crm/services` visual structure to match the previous CRM style:
   - Added top navigation tabs block for Services, Special Packages, Referrals, and Challenges.

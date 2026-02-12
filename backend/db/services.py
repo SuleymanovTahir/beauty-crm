@@ -7,6 +7,7 @@ from typing import Optional
 
 from db.connection import get_db_connection
 import psycopg2
+from utils.logger import log_error, log_warning
 
 # ===== УСЛУГИ =====
 
@@ -211,19 +212,27 @@ def get_all_special_packages(active_only=True):
     c = conn.cursor()
     
     now = datetime.now().isoformat()
-    
-    if active_only:
-        c.execute("""SELECT * FROM special_packages 
-                     WHERE is_active = TRUE 
-                     AND valid_from <= %s 
-                     AND valid_until >= %s
-                     ORDER BY created_at DESC""", (now, now))
-    else:
-        c.execute("SELECT * FROM special_packages ORDER BY created_at DESC")
-    
-    packages = c.fetchall()
-    conn.close()
-    return packages
+
+    try:
+        if active_only:
+            c.execute("""SELECT * FROM special_packages 
+                         WHERE is_active = TRUE 
+                         AND valid_from <= %s 
+                         AND valid_until >= %s
+                         ORDER BY created_at DESC""", (now, now))
+        else:
+            c.execute("SELECT * FROM special_packages ORDER BY created_at DESC")
+
+        packages = c.fetchall()
+        return packages
+    except (psycopg2.errors.UndefinedTable, psycopg2.ProgrammingError) as e:
+        log_warning(f"special_packages table is missing or not ready: {e}", "database")
+        return []
+    except Exception as e:
+        log_error(f"Error fetching special packages: {e}", "database")
+        return []
+    finally:
+        conn.close()
 
 def get_special_package_by_id(package_id):
     """Получить пакет по ID"""
@@ -286,20 +295,26 @@ def create_special_package(name, original_price, special_price, currency,
                       updated_at, max_usage, scheduled, schedule_date, schedule_time,
                       auto_activate, auto_deactivate)
                      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                             %s, %s)""",
+                             %s, %s)
+                     RETURNING id""",
                   (name, description, original_price,
                    special_price, currency, discount_percent, services_str,
                    promo_code, keywords_str, valid_from, valid_until, now, now,
                    max_usage, scheduled, schedule_date, schedule_time,
                    auto_activate, auto_deactivate))
+        package_id = c.fetchone()[0]
         conn.commit()
-        package_id = c.lastrowid
-        conn.close()
         return package_id
     except psycopg2.IntegrityError as e:
-        conn.close()
+        conn.rollback()
         print(f"Ошибка создания пакета: {e}")
         return None
+    except Exception as e:
+        conn.rollback()
+        log_error(f"Ошибка создания специального пакета: {e}", "database")
+        return None
+    finally:
+        conn.close()
 
 def update_special_package(package_id, **kwargs):
     """Обновить специальный пакет"""
