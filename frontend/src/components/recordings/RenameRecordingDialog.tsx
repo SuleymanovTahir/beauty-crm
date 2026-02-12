@@ -13,10 +13,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { api } from "@/services/api";;
+import { api } from "@/services/api";
 
 interface Recording {
   id: number;
+  source?: 'telephony' | 'chat';
+  type?: 'telephony' | 'chat';
   custom_name: string;
   notes?: string;
 }
@@ -56,7 +58,10 @@ const RenameRecordingDialog: React.FC<RenameRecordingDialogProps> = ({
 
     try {
       setSaving(true);
-      await api.put(`/api/recordings/${recording.id}`, {
+      const isChatSource = recording.source === 'chat';
+      const isChatType = recording.type === 'chat';
+      const source = isChatSource ? 'chat' : (isChatType ? 'chat' : 'telephony');
+      await api.put(`/api/recordings/${source}/${recording.id}`, {
         custom_name: name.trim(),
         notes: notes.trim() || null,
       });

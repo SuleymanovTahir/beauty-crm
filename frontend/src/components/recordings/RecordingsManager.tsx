@@ -33,6 +33,7 @@ interface FolderNode {
 
 interface Recording {
   id: number;
+  source: 'telephony' | 'chat';
   type: 'telephony' | 'chat';
   custom_name: string;
   recording_url?: string;
@@ -119,7 +120,7 @@ const RecordingsManager: React.FC<RecordingsManagerProps> = ({ type = 'all' }) =
     try {
       setRecordingsLoading(true);
       const params: any = {
-        type,
+        record_type: type === 'all' ? undefined : type,
         folder_id: selectedFolderId,
         search: filters.search || undefined,
         date_from: filters.date_from || undefined,
@@ -132,13 +133,27 @@ const RecordingsManager: React.FC<RecordingsManagerProps> = ({ type = 'all' }) =
       // Build query string from params
       const queryParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined) {
+        if (value !== undefined && value !== null && value !== '') {
           queryParams.append(key, String(value));
         }
       });
 
       const response = await api.get(`/api/recordings?${queryParams.toString()}`);
-      setRecordings(response.recordings || []);
+      const normalizedRecordings: Recording[] = Array.isArray(response.recordings)
+        ? response.recordings.map((item: any) => {
+            const source = item.source === 'chat' ? 'chat' : 'telephony';
+            const normalizedType = item.type === 'chat' ? 'chat' : source;
+            return {
+              ...item,
+              source,
+              type: normalizedType,
+              custom_name: typeof item.custom_name === 'string'
+                ? item.custom_name
+                : (typeof item.name === 'string' ? item.name : ''),
+            };
+          })
+        : [];
+      setRecordings(normalizedRecordings);
     } catch (error: any) {
       console.error('Failed to load recordings:', error);
       toast.error(t('telephony:error', 'Ошибка'), {

@@ -8,7 +8,7 @@ API для управления папками и записями (аудио/�
 """
 
 from fastapi import APIRouter, Depends, Query, HTTPException, UploadFile, File, Form
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Set
 from pydantic import BaseModel
 from db.connection import get_db_connection
 from utils.utils import get_current_user
@@ -85,6 +85,15 @@ def build_folder_tree(folders: List[Dict]) -> List[Dict]:
             root_folders.append(folder_dict[folder['id']])
 
     return root_folders
+
+
+def _get_table_columns(cursor, table_name: str) -> Set[str]:
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = %s
+    """, (table_name,))
+    return {row[0] for row in cursor.fetchall()}
 
 # ==================== FOLDERS ENDPOINTS ====================
 
@@ -255,13 +264,15 @@ async def delete_folder(folder_id: int, current_user: dict = Depends(get_current
             raise HTTPException(status_code=403, detail="Нет прав для удаления этой папки")
 
         parent_id = row[1]
+        call_logs_columns = _get_table_columns(c, "call_logs")
 
         # Переместить все записи в родительскую папку
-        c.execute("""
-            UPDATE call_logs
-            SET folder_id = %s
-            WHERE folder_id = %s
-        """, (parent_id, folder_id))
+        if "folder_id" in call_logs_columns:
+            c.execute("""
+                UPDATE call_logs
+                SET folder_id = %s
+                WHERE folder_id = %s
+            """, (parent_id, folder_id))
 
         c.execute("""
             UPDATE chat_recordings
@@ -305,6 +316,7 @@ async def get_recordings(
     date_to: Optional[str] = None,
     tags: Optional[str] = None,
     record_type: Optional[str] = None,  # telephony | chat
+    type: Optional[str] = Query(None, alias="type"),  # compatibility alias
     sort_by: Optional[str] = 'created_at',
     order: Optional[str] = 'desc',
     limit: int = 50,
@@ -320,16 +332,26 @@ async def get_recordings(
     c = conn.cursor()
 
     try:
+        effective_record_type = record_type if record_type is not None else type
+
         # Базовый запрос объединяет записи из call_logs и chat_recordings
         is_admin = current_user.get('role') in ['director', 'admin']
         user_name = current_user.get('full_name') or current_user.get('username')
+        call_logs_columns = _get_table_columns(c, "call_logs")
+        has_call_folder = "folder_id" in call_logs_columns
+        has_call_custom_name = "custom_name" in call_logs_columns
+        has_call_file_size = "file_size" in call_logs_columns
+        has_call_file_format = "file_format" in call_logs_columns
+        has_call_is_archived = "is_archived" in call_logs_columns
+        has_call_tags = "tags" in call_logs_columns
 
         # Запрос для call_logs (телефония)
         call_logs_query = """
             SELECT
                 cl.id,
                 'telephony' as source,
-                COALESCE(cl.custom_name,
+                COALESCE(
+                    {custom_name_expr},
                     CONCAT(
                         COALESCE(cl.manual_client_name, c.name, c.username, 'Неизвестный'),
                         ' - ',
@@ -338,15 +360,15 @@ async def get_recordings(
                         TO_CHAR(cl.created_at, 'DD.MM.YYYY HH24:MI')
                     )
                 ) as name,
-                cl.folder_id,
+                {folder_id_expr},
                 cl.recording_file,
                 cl.recording_url,
                 cl.duration,
-                cl.file_size,
-                cl.file_format,
+                {file_size_expr},
+                {file_format_expr},
                 cl.created_at,
-                cl.is_archived,
-                cl.tags,
+                {is_archived_expr},
+                {tags_expr},
                 cl.notes,
                 COALESCE(cl.manual_manager_name, b.master) as manager_name,
                 NULL as sender_id,
@@ -355,7 +377,14 @@ async def get_recordings(
             LEFT JOIN clients c ON c.instagram_id = cl.client_id
             LEFT JOIN bookings b ON b.id = cl.booking_id
             WHERE 1=1
-        """
+        """.format(
+            custom_name_expr="cl.custom_name" if has_call_custom_name else "NULL",
+            folder_id_expr="cl.folder_id" if has_call_folder else "NULL",
+            file_size_expr="cl.file_size" if has_call_file_size else "NULL",
+            file_format_expr="cl.file_format" if has_call_file_format else "NULL",
+            is_archived_expr="cl.is_archived" if has_call_is_archived else "FALSE",
+            tags_expr="cl.tags" if has_call_tags else "'[]'::jsonb",
+        )
 
         # Запрос для chat_recordings (внутренний чат)
         chat_recordings_query = """
@@ -390,44 +419,61 @@ async def get_recordings(
             WHERE 1=1
         """
 
-        params = []
+        call_params: List[Any] = []
+        chat_params: List[Any] = []
+        use_call_records = effective_record_type in [None, 'telephony']
+        use_chat_records = effective_record_type in [None, 'chat']
 
         # Фильтр по папке
         if folder_id is not None:
-            call_logs_query += " AND cl.folder_id = %s"
-            chat_recordings_query += " AND cr.folder_id = %s"
-            params.append(folder_id)
+            if use_call_records and has_call_folder:
+                call_logs_query += " AND cl.folder_id = %s"
+                call_params.append(folder_id)
+            if use_chat_records:
+                chat_recordings_query += " AND cr.folder_id = %s"
+                chat_params.append(folder_id)
 
         # Фильтр по датам
         if date_from:
-            call_logs_query += " AND cl.created_at >= %s"
-            chat_recordings_query += " AND cr.created_at >= %s"
-            params.append(date_from)
+            if use_call_records:
+                call_logs_query += " AND cl.created_at >= %s"
+                call_params.append(date_from)
+            if use_chat_records:
+                chat_recordings_query += " AND cr.created_at >= %s"
+                chat_params.append(date_from)
 
         if date_to:
             end_date = date_to if len(date_to) > 10 else date_to + " 23:59:59"
-            call_logs_query += " AND cl.created_at <= %s"
-            chat_recordings_query += " AND cr.created_at <= %s"
-            params.append(end_date)
+            if use_call_records:
+                call_logs_query += " AND cl.created_at <= %s"
+                call_params.append(end_date)
+            if use_chat_records:
+                chat_recordings_query += " AND cr.created_at <= %s"
+                chat_params.append(end_date)
 
         # Фильтр по правам доступа
         if not is_admin:
             # Для телефонии - только записи где пользователь менеджер
-            call_logs_query += " AND (cl.manual_manager_name = %s OR b.master = %s)"
-            params.extend([user_name, user_name])
+            if use_call_records:
+                call_logs_query += " AND (cl.manual_manager_name = %s OR b.master = %s)"
+                call_params.extend([user_name, user_name])
 
             # Для чата - только записи где пользователь участник
-            chat_recordings_query += " AND (cr.sender_id = %s OR cr.receiver_id = %s)"
-            params.extend([current_user['id'], current_user['id']])
+            if use_chat_records:
+                chat_recordings_query += " AND (cr.sender_id = %s OR cr.receiver_id = %s)"
+                chat_params.extend([current_user['id'], current_user['id']])
 
         # Фильтр по типу
-        if record_type == 'telephony':
+        if effective_record_type == 'telephony':
             final_query = call_logs_query
-        elif record_type == 'chat':
+            params = call_params
+        elif effective_record_type == 'chat':
             final_query = chat_recordings_query
+            params = chat_params
         else:
             # Объединить оба запроса
             final_query = f"({call_logs_query}) UNION ALL ({chat_recordings_query})"
+            params = call_params + chat_params
 
         # Сортировка
         allowed_sort = {'created_at': 'created_at', 'name': 'name', 'duration': 'duration'}
@@ -444,7 +490,9 @@ async def get_recordings(
             {
                 'id': row[0],
                 'source': row[1],
+                'type': row[1],
                 'name': row[2],
+                'custom_name': row[2],
                 'folder_id': row[3],
                 'recording_file': row[4],
                 'recording_url': row[5] or (f"/static/recordings/{row[4]}" if row[4] else None),
@@ -485,7 +533,11 @@ async def update_recording(
     c = conn.cursor()
 
     try:
+        if source not in ["telephony", "chat"]:
+            raise HTTPException(status_code=400, detail="Invalid source")
+
         table = "call_logs" if source == "telephony" else "chat_recordings"
+        table_columns = _get_table_columns(c, table)
 
         # Проверить существование
         c.execute(f"SELECT * FROM {table} WHERE id = %s", (recording_id,))
@@ -501,16 +553,16 @@ async def update_recording(
         fields = []
         params = []
 
-        if update.custom_name is not None:
+        if update.custom_name is not None and "custom_name" in table_columns:
             fields.append("custom_name = %s")
             params.append(update.custom_name)
-        if update.folder_id is not None:
+        if update.folder_id is not None and "folder_id" in table_columns:
             fields.append("folder_id = %s")
             params.append(update.folder_id)
-        if update.tags is not None:
+        if update.tags is not None and "tags" in table_columns:
             fields.append("tags = %s")
             params.append(update.tags)
-        if update.notes is not None:
+        if update.notes is not None and "notes" in table_columns:
             fields.append("notes = %s")
             params.append(update.notes)
 
@@ -546,6 +598,8 @@ async def delete_recording(
     c = conn.cursor()
 
     try:
+        if source not in ["telephony", "chat"]:
+            raise HTTPException(status_code=400, detail="Invalid source")
         table = "call_logs" if source == "telephony" else "chat_recordings"
 
         # Получить информацию о файле для удаления
@@ -590,24 +644,46 @@ async def archive_recording(
     c = conn.cursor()
 
     try:
+        if source not in ["telephony", "chat"]:
+            raise HTTPException(status_code=400, detail="Invalid source")
+
         table = "call_logs" if source == "telephony" else "chat_recordings"
+        table_columns = _get_table_columns(c, table)
+        if "is_archived" not in table_columns:
+            return {"success": True}
 
         if is_archived:
-            c.execute(f"""
-                UPDATE {table}
-                SET is_archived = TRUE, archived_at = CURRENT_TIMESTAMP
-                WHERE id = %s
-            """, (recording_id,))
+            if "archived_at" in table_columns:
+                c.execute(f"""
+                    UPDATE {table}
+                    SET is_archived = TRUE, archived_at = CURRENT_TIMESTAMP
+                    WHERE id = %s
+                """, (recording_id,))
+            else:
+                c.execute(f"""
+                    UPDATE {table}
+                    SET is_archived = TRUE
+                    WHERE id = %s
+                """, (recording_id,))
         else:
-            c.execute(f"""
-                UPDATE {table}
-                SET is_archived = FALSE, archived_at = NULL
-                WHERE id = %s
-            """, (recording_id,))
+            if "archived_at" in table_columns:
+                c.execute(f"""
+                    UPDATE {table}
+                    SET is_archived = FALSE, archived_at = NULL
+                    WHERE id = %s
+                """, (recording_id,))
+            else:
+                c.execute(f"""
+                    UPDATE {table}
+                    SET is_archived = FALSE
+                    WHERE id = %s
+                """, (recording_id,))
 
         conn.commit()
         return {"success": True}
 
+    except HTTPException:
+        raise
     except Exception as e:
         conn.rollback()
         logger.error(f"Error archiving recording: {e}")

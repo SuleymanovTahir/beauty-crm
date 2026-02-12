@@ -46,6 +46,7 @@ interface FolderNode {
 
 interface Recording {
   id: number;
+  source?: 'telephony' | 'chat';
   type: 'telephony' | 'chat';
   custom_name: string;
   recording_url?: string;
@@ -159,9 +160,9 @@ const RecordingsList: React.FC<RecordingsListProps> = ({
   const handleArchive = async (recording: Recording) => {
     try {
       setArchiving(true);
-      await api.post(`/api/recordings/${recording.id}/archive`, {
-        is_archived: !recording.is_archived,
-      });
+      const source = recording.source === 'chat' ? 'chat' : 'telephony';
+      const archiveState = !recording.is_archived;
+      await api.post(`/api/recordings/${source}/${recording.id}/archive?is_archived=${archiveState}`);
 
       toast.success(t('telephony:success', 'Успешно'), {
         description: recording.is_archived ? 'Запись разархивирована' : 'Запись архивирована',
@@ -183,7 +184,8 @@ const RecordingsList: React.FC<RecordingsListProps> = ({
 
     try {
       setDeleting(true);
-      await api.delete(`/api/recordings/${selectedRecording.id}`);
+      const source = selectedRecording.source === 'chat' ? 'chat' : 'telephony';
+      await api.delete(`/api/recordings/${source}/${selectedRecording.id}`);
 
       toast.success(t('telephony:success', 'Успешно'), {
         description: 'Запись удалена',
@@ -250,13 +252,14 @@ const RecordingsList: React.FC<RecordingsListProps> = ({
       {recordings.map((recording) => {
         const recordingUrl = getRecordingUrl(recording);
         const isPlaying = playingId === recording.id;
+        const recordingSource = recording.source === 'chat' ? 'chat' : recording.type;
 
         return (
           <Card key={recording.id} className="p-4">
             <div className="flex items-start gap-4">
               {/* Type icon */}
               <div className="flex-shrink-0">
-                {recording.type === 'telephony' ? (
+                {recordingSource === 'telephony' ? (
                   <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
                     <Phone className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
