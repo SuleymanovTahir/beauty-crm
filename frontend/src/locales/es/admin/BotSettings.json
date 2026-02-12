@@ -110,7 +110,7 @@
   "style_adaptive_desc": "La media dorada",
   "style_concise": "Conciso",
   "style_concise_desc": "Claro y específico",
-  "style_descriptions": "• Negocios: {{min}}–{{max}} oraciones palabra hasta fecha palabra.\n• Inteligente: conciso al escribir, detallado al hacer preguntas.\n• Amigable: siempre con detalles, listas y recomendaciones.",
+  "style_descriptions": "• Negocios: {{min}}–{{max}} oraciones palabra por palabra.\n• Inteligente: conciso al escribir, detallado al hacer preguntas.\n• Amigable: siempre con detalles, listas y recomendaciones.",
   "style_detailed": "Detallado",
   "style_detailed_desc": "Respuestas ampliadas con detalles",
   "success_metrics": "Indicadores de éxito",

@@ -67,6 +67,7 @@ const NotificationsPage = React.lazy(() => import('./pages/common/Notifications'
 
 const Broadcasts = React.lazy(() => import('./pages/admin/Broadcasts'));
 const PromoCodes = React.lazy(() => import('./pages/admin/PromoCodes'));
+const SpecialPackages = React.lazy(() => import('./pages/admin/SpecialPackages'));
 
 // Employee routes
 const UniversalProfile = React.lazy(() => import('./pages/shared/Profile'));
@@ -329,6 +330,7 @@ export default function App() {
                 <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="broadcasts" element={<Broadcasts />} />
                 <Route path="promo-codes" element={<PromoCodes />} />
+                <Route path="special-packages" element={<SpecialPackages />} />
                 <Route path="contracts" element={<Contracts />} />
                 <Route path="products" element={<Products />} />
                 <Route path="invoices" element={<Invoices />} />
@@ -377,6 +379,7 @@ export default function App() {
                 <Route path="clients" element={<CRMClients />} />
                 <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="promo-codes" element={<PromoCodes />} />
+                <Route path="special-packages" element={<SpecialPackages />} />
                 <Route path="visitor-analytics" element={<VisitorAnalytics />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
@@ -411,6 +414,7 @@ export default function App() {
                 <Route path="services" element={<CRMServices />} />
                 <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="promo-codes" element={<PromoCodes />} />
+                <Route path="special-packages" element={<SpecialPackages />} />
                 <Route path="messengers" element={<Messengers />} />
                 <Route path="bot-settings" element={<BotSettings />} />
                 <Route path="settings" element={<Settings />} />
@@ -446,6 +450,7 @@ export default function App() {
                 <Route path="services" element={<CRMServices />} />
                 <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="promo-codes" element={<PromoCodes />} />
+                <Route path="special-packages" element={<SpecialPackages />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="settings/:tab?" element={<Settings />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />

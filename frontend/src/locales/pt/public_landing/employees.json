@@ -1,39 +1,39 @@
 {
   "items": [
     {
-      "id": 671,
-      "name": "Kasymova Gulchekhre",
-      "position": "Mestre em manicure e depilação, cuidados faciais",
       "bio": "Gulya é uma especialista reconhecida na área de manicure, depilação e cuidados faciais profissionais com 8 anos de experiência. Através do seu domínio das técnicas de transformação estética e da atenção aos detalhes, ela cria imagens impecáveis, proporcionando a cada cliente o mais alto nível de cuidado e abordagem profissional.",
-      "photo": ""
+      "id": 671,
+      "name": "Kasymova Gulchere",
+      "photo": "",
+      "position": "Mestre em manicure e depilação"
     },
     {
+      "bio": "Jennifer personifica o talento de uma profissional multidisciplinar. Ela executa com maestria procedimentos de beleza básicos e complexos, proporcionando uma abordagem abrangente e harmoniosa para sua transformação.",
       "id": 672,
       "name": "Peradilla Jennifer",
-      "position": "Universal Beauty Master",
-      "bio": "Jennifer personifica o talento de uma profissional multidisciplinar. Ela executa com maestria procedimentos de beleza básicos e complexos, proporcionando uma abordagem abrangente e harmoniosa para sua transformação.",
-      "photo": ""
+      "photo": "",
+      "position": "Universal Beauty Master"
     },
     {
+      "bio": "Mestan é um mestre único que combina o talento de um estilista de ponta e um especialista em maquiagem permanente. Seu profundo conhecimento permite criar imagens completas e impecáveis ​​que destacam sua individualidade.",
       "id": 673,
       "name": "Amandurdyyeva Mestan",
-      "position": "Cabeleireiro e Maquiador Permanente",
-      "bio": "Mestan é um mestre único que combina o talento de um estilista de ponta e um especialista em maquiagem permanente. Seu profundo conhecimento permite criar imagens completas e impecáveis ​​que destacam sua individualidade.",
-      "photo": ""
+      "photo": "",
+      "position": "cabeleireiro e mestre em maquiagem permanente"
     },
     {
-      "id": 674,
-      "name": "Mokhammed Sabri",
-      "position": "Top Stylist",
       "bio": "Simo é o maior especialista do nosso salão na área de cuidados premium e coloração complexa. Seus muitos anos de experiência internacional e técnicas proprietárias garantem resultados da mais alta classe.",
-      "photo": ""
+      "id": 674,
+      "name": "Mohamed Sabri",
+      "photo": "",
+      "position": "cabelo estilista"
     },
     {
+      "bio": "Lyazat é um verdadeiro perfeccionista na indústria de manicure. Com gosto impecável e atenção aos detalhes, ela cria a manicure e a pedicure perfeitas, cuidando da estética e da saúde das suas mãos.",
       "id": 675,
       "name": "Kozhabay Lyazat",
-      "position": "Nail Master",
-      "bio": "Lyazat é um verdadeiro perfeccionista na indústria de manicure. Com gosto impecável e atenção aos detalhes, ela cria a manicure e a pedicure perfeitas, cuidando da estética e da saúde das suas mãos.",
-      "photo": ""
+      "photo": "",
+      "position": "Nail Master"
     }
   ]
 }

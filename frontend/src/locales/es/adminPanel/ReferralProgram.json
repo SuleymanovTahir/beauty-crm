@@ -14,7 +14,7 @@
     "settings": {
       "description": "Configuración de puntos de bonificación y requisitos",
       "min_purchase_amount": "Valor mínimo de compra ({{currency}})",
-      "min_purchase_help": "La cantidad mínima que un amigo debe gastar para activar el bono hasta fecha recomendación ({{min}} = sin mínimo)",
+      "min_purchase_help": "Monto mínimo que debe gastar un amigo para activar el bono por recomendación ({{min}} = sin mínimo)",
       "referred_bonus": "puntos de bonificación de amigo invitado",
       "referred_bonus_help": "puntos otorgados a un amigo al registrarse",
       "referrer_bonus": "puntos de bonificación de recomendador",

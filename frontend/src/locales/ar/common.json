@@ -299,13 +299,7 @@
   "password_changed_successfully": "تم تغيير كلمة المرور بنجاح",
   "pause": "إيقاف مؤقت",
   "per_week": "في الأسبوع",
-  "period": {
-    "2weeks": "",
-    "3months": "{{count}} شهر",
-    "month": "الشهر",
-    "two_weeks": "أسبوعان",
-    "week": "أسبوع"
-  },
+  "period": "",
   "period_label": "فترة",
   "perm_analytics_export_anonymized": "تصدير التحليلات",
   "perm_analytics_export_full": "تصدير قاعدة البيانات الكاملة",

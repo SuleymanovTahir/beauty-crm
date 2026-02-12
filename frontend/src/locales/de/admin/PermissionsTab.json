@@ -7,7 +7,7 @@
   "error_saving_permissions": "Fehler beim Speichern der Rechte",
   "full_access_message": "Voller Zugriff auf alle Systemfunktionen (Rolle Direktor)",
   "hierarchy_level": "Hierarchische Ebene:",
-  "individual_permissions_info": "Einzelrechte: Sie können Benutzerrechte unabhängig datum bis seiner Rolle ändern. Ein Häkchen bedeutet, dass das Recht gewährt ist. Ein deaktiviertes Kontrollkästchen bedeutet, dass das Recht widerrufen wurde.",
+  "individual_permissions_info": "Individuelle Rechte: Sie können Benutzerrechte unabhängig von seiner Rolle ändern. Ein Häkchen bedeutet, dass das Recht gewährt ist. Ein deaktiviertes Kontrollkästchen bedeutet, dass das Recht widerrufen wurde.",
   "permissions_title": "Zugriffsrechte",
   "permissions_updated": "Berechtigungen aktualisiert",
   "role_unchanged": "Rolle hat sich nicht geändert",

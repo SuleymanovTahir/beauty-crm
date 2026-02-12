@@ -40,8 +40,8 @@
   "share_instagram": "Partagez sur Instagram",
   "share_whatsapp": "Partagez sur WhatsApp",
   "show_qr": "Afficher le code QR",
-  "spending_by_category": "Dépenses à la date catégorie",
-  "spending_by_month": "Dépenses à la date mois",
+  "spending_by_category": "Dépenses par catégorie",
+  "spending_by_month": "Dépenses par mois",
   "status": "Statut",
   "streak_message_few": "Vous nous avez rendu visite {{count}} fois de suite !",
   "streak_message_many": "Vous nous avez rendu visite {{count}} fois de suite !",
@@ -53,6 +53,6 @@
   "virtual_card": "Carte virtuelle",
   "visit_streak": "Série de visites",
   "wallet_coming_soon": "Le portefeuille sera bientôt disponible",
-  "year_distribution": "Répartition à la date année",
+  "year_distribution": "Répartition par année",
   "your_promo_code": "Votre code promotionnel"
 }

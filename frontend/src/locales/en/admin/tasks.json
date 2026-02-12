@@ -69,9 +69,9 @@
   "select_priority": "Select priority",
   "select_stage": "Select stage",
   "selected_count": "Selected: {{count}}",
-  "selected_count_one": "",
   "selected_count_few": "",
   "selected_count_many": "",
+  "selected_count_one": "",
   "selected_count_other": "",
   "showing_tasks": "Showing",
   "stage": "Stage",
@@ -80,11 +80,11 @@
   "stage_name": "Stage name",
   "stage_name_placeholder": "For example: At work",
   "stages": {
-    "done": "Done",
+    "done": "Completed",
     "in_progress": "In progress",
-    "on_hold": "Postponed",
+    "on_hold": "Backlog",
     "review": "Checking",
-    "todo": "To do"
+    "todo": "To be completed"
   },
   "status_updated": "Status updated",
   "task_created": "Task created",

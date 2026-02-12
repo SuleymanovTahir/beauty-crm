@@ -52,7 +52,7 @@
     "notes": "Notas",
     "title": "Agregar pago"
   },
-  "search_placeholder": "Buscar hasta fecha número o cliente...",
+  "search_placeholder": "Buscar por número o cliente...",
   "sendButton": "Enviar",
   "sendDialog": {
     "email": "Correo electrónico",

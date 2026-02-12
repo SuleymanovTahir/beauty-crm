@@ -160,9 +160,9 @@
   "irreversible_actions": "Қайтарылмайтын әрекеттер",
   "issues_found": "Мәселелер табылды",
   "loading": "Жүктелуде...",
+  "lunch_break_range": "Түскі үзіліс (қайтадан және дейін)",
   "lunch_end": "Түскі астың соңы",
   "lunch_start": "Түскі астың басталуы",
-  "working_schedule": "Жұмыс кестесі",
   "manage_crm_parameters": "CRM параметрлерін басқару",
   "manage_currencies": "Валюталарды басқару",
   "manage_currencies_title": "Валюталарды басқару",
@@ -214,6 +214,7 @@
   "placeholder_enter_api_token": "API таңбалауышын енгізіңіз...",
   "placeholder_enter_message": "Хабар мәтінін енгізіңіз...",
   "placeholder_full_name": "Толық аты-жөніңізді енгізіңіз",
+  "placeholder_lunch_range": "13:00 - 14:00",
   "placeholder_position": "Мысалы: шаш стилисті",
   "placeholder_reminder_example": "Мысалы: 2 сағатта",
   "placeholder_select_type": "Түрді таңдаңыз...",
@@ -311,6 +312,7 @@
   "what_is_checked": "Не тексерілуде?",
   "whatsapp_desc": "WhatsApp Business API арқылы жіберілетін хаттар, кездесулер туралы еске салғыштар.",
   "working_masters": "Жұмыс істейтін қолөнершілер",
+  "working_schedule": "Жұмыс уақыты",
   "years_of_experience": "Лет опыта",
   "your_password": "Құпия сөзіңіз"
 }

@@ -171,7 +171,9 @@ export default function UniversalServices() {
         'admin/services',
         'employee/services',
         'common',
-        'public_landing/services'
+        'public_landing/services',
+        'dynamic',
+        'booking'
     ]);
     const { currency, formatCurrency } = useCurrency();
 
@@ -287,11 +289,34 @@ export default function UniversalServices() {
         return [...uniqueCategories].sort((a, b) => a.localeCompare(b, i18n.language));
     }, [services, i18n.language]);
 
+    const getCategoryDisplayName = useCallback((category: string): string => {
+        const normalizedCategory = category.trim().toLowerCase().replace(/\s+/g, '_');
+        if (normalizedCategory.length === 0) {
+            return category;
+        }
+
+        const dynamicLabel = t(`dynamic:categories.${normalizedCategory}`, { defaultValue: '' }).trim();
+        if (dynamicLabel.length > 0) {
+            return dynamicLabel;
+        }
+
+        const bookingLabel = t(`booking:services.category_${normalizedCategory}`, { defaultValue: '' }).trim();
+        if (bookingLabel.length > 0) {
+            return bookingLabel;
+        }
+
+        const publicLabel = t(`public_landing/services:categories.${normalizedCategory}`, { defaultValue: '' }).trim();
+        if (publicLabel.length > 0) {
+            return publicLabel;
+        }
+
+        return category;
+    }, [t]);
+
     const getServiceDisplayName = useCallback((service: Service): string => {
         const sourceName = typeof service.name === 'string' ? service.name : '';
         if (typeof service.key === 'string' && service.key.trim().length > 0) {
             return t(`public_landing/services:items.${service.key}.name`, {
-                lng: 'en',
                 defaultValue: sourceName
             });
         }
@@ -485,7 +510,7 @@ export default function UniversalServices() {
                             <span>{t('admin/services:services')} ({services.length})</span>
                         </button>
 
-                        <button type="button" className="crm-services-tab" onClick={() => openRouteTab(`${rolePrefix}/promo-codes`)}>
+                        <button type="button" className="crm-services-tab" onClick={() => openRouteTab(`${rolePrefix}/special-packages`)}>
                             <Gift className="crm-services-tab-icon" />
                             <span>{t('admin/services:special_packages')} ({specialPackagesCount})</span>
                         </button>
@@ -511,7 +536,7 @@ export default function UniversalServices() {
                                 >
                                     <option value="all">{t('admin/services:all_categories')}</option>
                                     {categories.map((category) => (
-                                        <option key={category} value={category}>{category}</option>
+                                        <option key={category} value={category}>{getCategoryDisplayName(category)}</option>
                                     ))}
                                 </select>
                                 <ChevronDown className="crm-services-category-caret" />
@@ -566,6 +591,14 @@ export default function UniversalServices() {
             ) : (
                 <div className="crm-services-table-card">
                     <table className="crm-services-table">
+                        <colgroup>
+                            <col className="crm-services-col-name" />
+                            <col className="crm-services-col-price" />
+                            <col className="crm-services-col-duration" />
+                            {!isEmployee && <col className="crm-services-col-category" />}
+                            <col className="crm-services-col-status" />
+                            <col className="crm-services-col-actions" />
+                        </colgroup>
                         <thead>
                             <tr>
                                 <th>
@@ -607,7 +640,7 @@ export default function UniversalServices() {
                             {filteredAndSortedServices.map((service) => {
                                 const pending = pendingRequests[service.id];
                                 const hasPendingRequest = pending !== undefined;
-                                const categoryLabel = service.category && service.category.trim().length > 0 ? service.category : '-';
+                                const categoryLabel = service.category && service.category.trim().length > 0 ? getCategoryDisplayName(service.category) : '-';
 
                                 return (
                                     <tr key={service.id}>

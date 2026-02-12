@@ -38,7 +38,7 @@
       "price": 100.0
     },
     "blowdry_long": {
-      "category": "تصفيف الشعر",
+      "category": "تسريحة الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -48,7 +48,7 @@
       "price": 280.0
     },
     "blowdry_medium": {
-      "category": "تصفيف الشعر",
+      "category": "تسريحة الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -58,7 +58,7 @@
       "price": 250.0
     },
     "blowdry_short": {
-      "category": "تصفيف الشعر",
+      "category": "تسريحة الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -104,7 +104,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "تغيير طلاء الأظافر (بيدي)",
+      "name": "تغيير بولندية (بيدي)",
       "price": 50.0
     },
     "change_gel_pedicure": {
@@ -178,7 +178,7 @@
       "price": 400.0
     },
     "evening_hairstyle": {
-      "category": "تصفيف الشعر",
+      "category": "تسريحة الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -198,7 +198,7 @@
       "price": 150.0
     },
     "eyeliner": {
-      "category": "المكياج الدائم",
+      "category": "مكياج دائم",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -368,7 +368,7 @@
       "price": 100.0
     },
     "kim_style_effect": {
-      "category": "رموش",
+      "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -378,7 +378,7 @@
       "price": 30.0
     },
     "lash_lami": {
-      "category": "رموش",
+      "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -388,7 +388,7 @@
       "price": 200.0
     },
     "lashes_2d": {
-      "category": "رموش",
+      "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -398,7 +398,7 @@
       "price": 250.0
     },
     "lashes_3d": {
-      "category": "رموش",
+      "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -408,7 +408,7 @@
       "price": 300.0
     },
     "lashes_classic": {
-      "category": "رموش",
+      "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -418,7 +418,7 @@
       "price": 200.0
     },
     "lashes_mega": {
-      "category": "رموش",
+      "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -428,7 +428,7 @@
       "price": 350.0
     },
     "lashliner": {
-      "category": "المكياج الدائم",
+      "category": "مكياج دائم",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -468,7 +468,7 @@
       "price": 130.0
     },
     "massage_anticellulite": {
-      "category": "التدليك",
+      "category": "تدليك",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -478,7 +478,7 @@
       "price": 300.0
     },
     "massage_body": {
-      "category": "التدليك",
+      "category": "تدليك",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -488,7 +488,7 @@
       "price": 250.0
     },
     "massage_extremities": {
-      "category": "التدليك",
+      "category": "تدليك",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -498,7 +498,7 @@
       "price": 150.0
     },
     "massage_head": {
-      "category": "التدليك",
+      "category": "تدليك",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -508,7 +508,7 @@
       "price": 100.0
     },
     "massage_sculptural": {
-      "category": "التدليك",
+      "category": "تدليك",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -634,7 +634,7 @@
       "duration": "60",
       "max_price": null,
       "min_price": null,
-      "name": "باديكير ذكي + طلاء",
+      "name": "باديكير ذكي + ورنيش",
       "price": 150.0
     },
     "peeling": {
@@ -648,7 +648,7 @@
       "price": 350.0
     },
     "permanent_brows": {
-      "category": "المكياج الدائم",
+      "category": "مكياج دائم",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -658,7 +658,7 @@
       "price": 800.0
     },
     "permanent_correction": {
-      "category": "المكياج الدائم",
+      "category": "مكياج دائم",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -668,7 +668,7 @@
       "price": 800.0
     },
     "permanent_lips": {
-      "category": "المكياج الدائم",
+      "category": "مكياج دائم",
       "currency": "AED",
       "description": "",
       "duration": "120",
@@ -718,7 +718,7 @@
       "price": 30.0
     },
     "remove_lashes": {
-      "category": "رموش",
+      "category": "الرموش",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -758,7 +758,7 @@
       "price": 250.0
     },
     "styling_long": {
-      "category": "تصفيف الشعر",
+      "category": "تسريحة الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -768,7 +768,7 @@
       "price": 300.0
     },
     "styling_medium": {
-      "category": "تصفيف الشعر",
+      "category": "تسريحة الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",
@@ -778,7 +778,7 @@
       "price": 260.0
     },
     "styling_short": {
-      "category": "تصفيف الشعر",
+      "category": "تسريحة الشعر",
       "currency": "AED",
       "description": "",
       "duration": "60",

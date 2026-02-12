@@ -69,9 +69,9 @@
   "select_priority": "प्राथमिकता चुनें",
   "select_stage": "चरण चुनें",
   "selected_count": "चयनित: {{गिनती}}",
-  "selected_count_one": "",
   "selected_count_few": "",
   "selected_count_many": "",
+  "selected_count_one": "",
   "selected_count_other": "",
   "showing_tasks": "दिखाया गया",
   "stage": "चरण",
@@ -80,11 +80,11 @@
   "stage_name": "चरण का नाम",
   "stage_name_placeholder": "उदाहरण के लिए: प्रगति पर",
   "stages": {
-    "done": "हो गया",
+    "done": "पूर्ण",
     "in_progress": "प्रगति पर",
-    "on_hold": "स्थगित किया गया",
+    "on_hold": "बैकलॉग",
     "review": "जाँच की जा रही है",
-    "todo": "करने के लिए"
+    "todo": "पूरा किया जाना है"
   },
   "status_updated": "स्थिति अपडेट की गई",
   "task_created": "कार्य बनाया गया",

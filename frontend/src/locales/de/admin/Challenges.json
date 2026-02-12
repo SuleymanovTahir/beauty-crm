@@ -4,12 +4,16 @@
     "create_challenge": "Herausforderung ausführen"
   },
   "card": {
+    "check_progress": "Update",
     "details": "Weitere Details",
     "participants": "TEILNEHMER",
     "progress": "FORTSCHRITT"
   },
   "dialogs": {
     "add_title": "Neue Herausforderung",
+    "delete": {
+      "confirm": "Sind Sie sicher, dass Sie diese Herausforderung löschen möchten?"
+    },
     "edit_title": "Herausforderung bearbeiten"
   },
   "empty": {
@@ -41,10 +45,19 @@
   "title": "Herausforderungen",
   "toasts": {
     "created": "Aufgabe erstellt",
+    "deleted": "Herausforderung gelöscht",
+    "failed_check_progress": "Fehler beim Überprüfen des Fortschritts",
+    "failed_delete": "Fehler beim Löschen",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_one": "",
+    "progress_checked_other": "",
     "updated": "Aufgabe aktualisiert"
   },
   "types": {
+    "referrals": "Empfehlungen",
     "service": "Kategorieservice",
+    "services": "Dienstleistungen",
     "spend": "Gesamtausgaben",
     "visits": "Anzahl der Besuche"
   }

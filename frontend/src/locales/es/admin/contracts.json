@@ -23,8 +23,8 @@
     "selectClient": "Seleccionar cliente"
   },
   "internalContracts": "Interno",
-  "manage_stages": "Columnas",
   "manageTypes": "Tipos de contrato",
+  "manage_stages": "Columnas",
   "messages": {
     "confirmDelete": "¿Está seguro de que desea eliminar este contrato?",
     "contractCreated": "Contrato creado",
@@ -33,7 +33,7 @@
     "contractUpdated": "El contrato ha sido actualizado"
   },
   "noContracts": "Aún no hay contratos",
-  "search_placeholder": "Buscar hasta fecha número o cliente...",
+  "search_placeholder": "Buscar por número o cliente...",
   "sendDialog": {
     "email": "Correo electrónico",
     "instagram": "Instagram",

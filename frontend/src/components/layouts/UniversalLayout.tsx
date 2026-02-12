@@ -395,6 +395,18 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         return () => window.removeEventListener('resize', handleResize);
     }, [showMoreModal]);
 
+    useEffect(() => {
+        if (!showMoreModal) {
+            return;
+        }
+
+        if (activeDesktopGroupId === null) {
+            return;
+        }
+
+        setMobileExpandedGroups(new Set([activeDesktopGroupId]));
+    }, [showMoreModal, activeDesktopGroupId, location.pathname]);
+
     const toggleMobileGroup = (id: string) => {
         const newGroups = new Set(mobileExpandedGroups);
         if (newGroups.has(id)) newGroups.delete(id);
@@ -573,7 +585,12 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                             else if (tab.id === 'chat') setShowChatMenu(true);
                             else navigate(tab.path!);
                         }}
-                        className={`mobile-nav-btn ${location.pathname === (tab as any).path ? 'active' : ''}`}
+                        className={cn(
+                            "mobile-nav-btn",
+                            location.pathname === (tab as any).path && "active",
+                            tab.id === 'more' && showMoreModal && "active",
+                            tab.id === 'chat' && showChatMenu && "active"
+                        )}
                     >
                         <div className="mobile-nav-icon-container">
                             <tab.icon size={24} />
@@ -598,7 +615,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                         <div className="more-menu-header">
                             <span className="more-menu-title">{t('menu.more', 'Ещё')}</span>
                             <button onClick={() => setShowMoreModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                                <X size={20} />
+                                <X size={18} />
                             </button>
                         </div>
 
@@ -606,39 +623,50 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                             {menuItems.map((item: any) => {
                                 if (mainTabs.some(t => t.id === item.id)) return null;
 
+                                const isGroupActive = Array.isArray(item.items) && item.items.some((sub: any) => location.pathname === sub.path);
+                                const isGroupExpanded = mobileExpandedGroups.has(item.id);
+                                const isItemActive = typeof item.path === 'string' && location.pathname === item.path;
+
                                 return (
                                     <div key={item.id} className="menu-group">
                                         {item.items ? (
                                             <div>
                                                 <button
                                                     onClick={() => toggleMobileGroup(item.id)}
-                                                    className="menu-group-btn"
+                                                    className={cn(
+                                                        "menu-group-btn",
+                                                        isGroupActive && "active",
+                                                        isGroupExpanded && "expanded"
+                                                    )}
                                                 >
                                                     <div className="flex items-center gap-3">
-                                                        <item.icon size={20} className="text-gray-700" />
-                                                        <span className="font-medium text-gray-700">{item.label}</span>
-                                                        {item.badge > 0 && !mobileExpandedGroups.has(item.id) && (
+                                                        <item.icon size={18} className="menu-item-icon" />
+                                                        <span className="menu-item-label">{item.label}</span>
+                                                        {item.badge > 0 && !isGroupExpanded && (
                                                             <span className="badge-premium badge-premium-red badge-sidebar">
                                                                 {item.badge}
                                                             </span>
                                                         )}
                                                     </div>
-                                                    {mobileExpandedGroups.has(item.id) ? (
-                                                        <ChevronDown size={18} className="text-gray-400" />
+                                                    {isGroupExpanded ? (
+                                                        <ChevronDown size={16} className={cn("menu-group-chevron", isGroupActive && "active")} />
                                                     ) : (
-                                                        <ChevronRight size={18} className="text-gray-400" />
+                                                        <ChevronRight size={16} className={cn("menu-group-chevron", isGroupActive && "active")} />
                                                     )}
                                                 </button>
-                                                {mobileExpandedGroups.has(item.id) && (
+                                                {isGroupExpanded && (
                                                     <div className="menu-sub-items">
                                                         {item.items.map((sub: any) => (
                                                             <button
                                                                 key={sub.id}
                                                                 onClick={() => { navigate(sub.path); setShowMoreModal(false); }}
-                                                                className="menu-sub-item"
+                                                                className={cn(
+                                                                    "menu-sub-item",
+                                                                    location.pathname === sub.path && "active"
+                                                                )}
                                                             >
-                                                                <sub.icon size={16} />
-                                                                <span className="flex-1 text-left">{sub.label}</span>
+                                                                <sub.icon size={15} className="menu-sub-icon" />
+                                                                <span className="menu-sub-label">{sub.label}</span>
                                                                 {sub.badge > 0 && (
                                                                     <span className="badge-premium badge-premium-red badge-sidebar">
                                                                         {sub.badge}
@@ -652,10 +680,10 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                         ) : (
                                             <button
                                                 onClick={() => { navigate(item.path); setShowMoreModal(false); }}
-                                                className="menu-item-link"
+                                                className={cn("menu-item-link", isItemActive && "active")}
                                             >
-                                                <item.icon size={20} className="text-gray-700" />
-                                                <span className="flex-1 font-medium text-left">{item.label}</span>
+                                                <item.icon size={18} className="menu-item-icon" />
+                                                <span className="menu-item-label">{item.label}</span>
                                                 {item.badge > 0 && (
                                                     <span className="badge-premium badge-premium-red badge-sidebar">
                                                         {item.badge}

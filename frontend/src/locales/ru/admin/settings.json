@@ -160,9 +160,9 @@
   "irreversible_actions": "Необратимые действия",
   "issues_found": "Найдено проблем",
   "loading": "Загрузка...",
+  "lunch_break_range": "Обеденный перерыв (от и до)",
   "lunch_end": "Конец обеда",
   "lunch_start": "Начало обеда",
-  "working_schedule": "График работы",
   "manage_crm_parameters": "Управление параметрами CRM",
   "manage_currencies": "Управление валютами",
   "manage_currencies_title": "Управление валютами",
@@ -214,6 +214,7 @@
   "placeholder_enter_api_token": "Введите API токен...",
   "placeholder_enter_message": "Введите текст вашего сообщения...",
   "placeholder_full_name": "Введите ФИО",
+  "placeholder_lunch_range": "13:00 - 14:00",
   "placeholder_position": "Например: Стилист-парикмахер",
   "placeholder_reminder_example": "Например: За 2 часа",
   "placeholder_select_type": "Выберите тип...",
@@ -311,6 +312,7 @@
   "what_is_checked": "Что проверяется?",
   "whatsapp_desc": "Рассылки через WhatsApp Business API, напоминания о записи.",
   "working_masters": "Работающие мастера",
+  "working_schedule": "График работы",
   "years_of_experience": "Лет опыта",
   "your_password": "Ваш пароль"
 }

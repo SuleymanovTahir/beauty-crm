@@ -2,17 +2,17 @@
   "booking_and_cancellation": "Reservierungen und Stornierungen",
   "booking_requirements": "Um sich für Behandlungen anzumelden, müssen Sie gültige Kontaktinformationen angeben. Wir behalten uns das Recht vor, Ihre Buchung zu bestätigen oder abzulehnen.",
   "cancellation_policy": "Stornierungsbedingungen",
-  "cancellation_policy_text": "Der Kunde kann den Termin bis zu 24 Stunden vor dem geplanten Termin stornieren. Bei Stornierungen, die weniger als 24 Stunden im Voraus erfolgen, kann eine Strafe in Höhe datum bis 50 % des Servicepreises erhoben werden.",
+  "cancellation_policy_text": "Der Kunde kann den Termin spätestens 24 Stunden vor dem vereinbarten Termin absagen. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Vertragsstrafe in Höhe von 50 % der Kosten der Dienstleistung erhoben werden.",
   "client_obligations": "Vor dem Eingriff muss der Kunde den Spezialisten über medizinische Kontraindikationen, Allergien oder Gesundheitszustände informieren.",
   "confidentiality": "Datenschutz",
   "contact_info": "Sie können uns bei Fragen zu diesen Bedingungen kontaktieren.",
   "contacts": "Kontakte",
-  "dissatisfaction_policy": "Wenn das Ergebnis nicht zufriedenstellend ist, muss sich der Kunde innerhalb datum bis 7 Tagen mit dem Salon in Verbindung setzen, um mögliche Lösungen zu besprechen.",
+  "dissatisfaction_policy": "Wenn das Ergebnis nicht zufriedenstellend ist, muss sich der Kunde innerhalb von 7 Tagen mit dem Salon in Verbindung setzen, um mögliche Lösungen zu besprechen.",
   "general_provisions": "Allgemeine Regeln",
   "general_provisions_text": "Diese Nutzungsbedingungen regeln Ihre Nutzung der M Le Diamant-Dienste. Durch die Nutzung unserer Dienste stimmen Sie diesen Bedingungen zu.",
   "lastUpdated": "Datum der letzten Aktualisierung: {{date}}",
   "last_update_date": "Datum der letzten Aktualisierung",
-  "late_arrival": "Bei einer Verspätung des Kunden datum bis mehr als 15 Minuten hat der Salon das Recht, den Termin abzusagen oder die Behandlungszeit zu verkürzen.",
+  "late_arrival": "Wenn der Kunde mehr als 15 Minuten zu spät kommt, hat der Salon das Recht, den Termin abzusagen oder die Behandlungszeit zu verkürzen.",
   "medical_contraindications": "Medizinische Kontraindikationen",
   "payment_details": "Die Bezahlung erfolgt in bar oder per Karte nach Leistungserbringung. Die Kosten für die Dienstleistungen sind in der Preisliste angegeben und können ohne vorherige Ankündigung geändert werden.",
   "payment_for_services": "Zahlung für Dienstleistungen",
@@ -22,7 +22,7 @@
   "sections": {
     "booking": {
       "booking_requirements": "Um sich für Behandlungen anzumelden, müssen Sie gültige Kontaktinformationen angeben. Wir behalten uns das Recht vor, Ihre Buchung zu bestätigen oder abzulehnen.",
-      "cancellationText": "Der Kunde kann den Termin bis zu 24 Stunden vor dem geplanten Termin stornieren. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Vertragsstrafe in Höhe datum bis 50 % der Kosten der Dienstleistung erhoben werden.",
+      "cancellationText": "Der Kunde kann den Termin nicht absagen später als 24 Stunden vor dem vereinbarten Termin. Bei einer Stornierung weniger als 24 Stunden im Voraus kann eine Strafe in Höhe von 50 % der Kosten der Dienstleistung erhoben werden.",
       "cancellationTitle": "Abmelden:",
       "title": "2. Buchung und Stornierung"
     },
@@ -48,7 +48,7 @@
     },
     "payment": {
       "paragraph1": "Die Bezahlung erfolgt in bar oder per Karte nach Leistungserbringung. Die Kosten für die Dienstleistungen sind in der Preisliste angegeben und können ohne vorherige Ankündigung geändert werden.",
-      "paragraph2": "Bei einer Verspätung des Kunden datum bis mehr als 15 Minuten hat der Salon das Recht, den Termin abzusagen oder die Behandlungszeit zu verkürzen.",
+      "paragraph2": "Wenn der Kunde mehr als 15 Minuten zu spät kommt, hat der Salon das Recht, den Termin abzusagen oder die Behandlungszeit zu verkürzen.",
       "title": "3. Zahlung für Dienstleistungen"
     },
     "privacy": {
@@ -57,7 +57,7 @@
     },
     "warranty": {
       "paragraph1": "Wir garantieren die Qualität der verwendeten Materialien und die Professionalität unserer Handwerker. Die Ergebnisse des Eingriffs können je nach den individuellen Merkmalen des Kunden variieren.",
-      "paragraph2": "Wenn das Ergebnis nicht zufriedenstellend ist, muss sich der Kunde innerhalb datum bis 7 Tagen mit dem Salon in Verbindung setzen, um mögliche Lösungen zu besprechen.",
+      "paragraph2": "Wenn das Ergebnis nicht zufriedenstellend ist, muss der Kunde den Salon innerhalb von 7 Tagen kontaktieren, um mögliche Lösungen zu besprechen.",
       "title": "5. Gewährleistungen und Haftung"
     }
   },

@@ -299,13 +299,7 @@
   "password_changed_successfully": "Password changed successfully",
   "pause": "Pause",
   "per_week": "per week",
-  "period": {
-    "2weeks": "",
-    "3months": "{{count}} months",
-    "month": "Month",
-    "two_weeks": "2 weeks",
-    "week": "Week"
-  },
+  "period": "",
   "period_label": "Period",
   "perm_analytics_export_anonymized": "Analytics export",
   "perm_analytics_export_full": "Export the full database",

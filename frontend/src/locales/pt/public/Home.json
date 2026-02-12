@@ -27,15 +27,15 @@
         "title": "Conteúdo Premium"
       },
       "schedule": {
-        "description_few": "Estamos abertos {{count}} dias até data semana em um horário conveniente para você.",
-        "description_many": "Estamos abertos {{count}} dias até data semana em um horário conveniente para você.",
-        "description_one": "Estamos abertos {{count}} dias até data semana em um horário conveniente para você.",
-        "description_other": "Estamos abertos {{count}} dias até data semana em um horário conveniente para você, horário para você.",
+        "description_few": "Estamos abertos {{count}} dias por semana em um horário conveniente para você.",
+        "description_many": "Estamos abertos {{count}} dias por semana em um horário conveniente para você. seu tempo.",
+        "description_one": "Estamos abertos {{count}} dias por semana em um horário conveniente para você.",
+        "description_other": "Estamos abertos {{count}} dias por semana em um horário conveniente para você.",
         "title": "Horário conveniente"
       }
     },
     "subtitle": "Oferecemos o melhor serviço na indústria da beleza",
-    "title": "até data que você nos escolhe"
+    "title": "Por que você nos escolheu"
   },
   "gallery": {
     "items": {

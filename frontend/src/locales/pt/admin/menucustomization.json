@@ -8,7 +8,7 @@
   "drag_hint": "Arraste para alterar a ordem, clique no olho para ocultar/mostrar",
   "edit": "Editar",
   "group": "Grupo",
-  "hint_text": "Os itens de menu ocultos não aparecerão na barra lateral, mas o acesso a eles até data meio de links diretos permanecerá.",
+  "hint_text": "Os itens de menu ocultos não aparecerão na barra lateral, mas ainda poderão ser acessados ​​por meio de links diretos.",
   "hint_title": "Dica:",
   "item_type": "Tipo de elemento",
   "items": {

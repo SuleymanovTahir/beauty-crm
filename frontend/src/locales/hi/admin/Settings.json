@@ -160,9 +160,9 @@
   "irreversible_actions": "अपरिवर्तनीय कार्य",
   "issues_found": "समस्याएं मिलीं",
   "loading": "लोड हो रहा है...",
+  "lunch_break_range": "दोपहर का भोजन अवकाश (से और तक)",
   "lunch_end": "दोपहर के भोजन का अंत",
   "lunch_start": "दोपहर के भोजन की शुरुआत",
-  "working_schedule": "कार्य अनुसूची",
   "manage_crm_parameters": "सीआरएम पैरामीटर प्रबंधित करें",
   "manage_currencies": "मुद्राएं प्रबंधित करें",
   "manage_currencies_title": "मुद्राएं प्रबंधित करें",
@@ -214,6 +214,7 @@
   "placeholder_enter_api_token": "एपीआई टोकन दर्ज करें...",
   "placeholder_enter_message": "अपना संदेश टेक्स्ट दर्ज करें...",
   "placeholder_full_name": "अपना पूरा नाम दर्ज करें",
+  "placeholder_lunch_range": "13:00 - 14:00",
   "placeholder_position": "उदाहरण के लिए: हेयर स्टाइलिस्ट",
   "placeholder_reminder_example": "उदाहरण के लिए: 2 घंटे में",
   "placeholder_select_type": "प्रकार चुनें...",
@@ -311,6 +312,7 @@
   "what_is_checked": "क्या चेक किया जा रहा है?",
   "whatsapp_desc": "व्हाट्सएप बिजनेस एपीआई के माध्यम से मेलआउट, अपॉइंटमेंट रिमाइंडर।",
   "working_masters": "वर्किंग मास्टर्स",
+  "working_schedule": "कार्य अनुसूची",
   "years_of_experience": "वर्षों का अनुभव",
   "your_password": "आपका पासवर्ड"
 }

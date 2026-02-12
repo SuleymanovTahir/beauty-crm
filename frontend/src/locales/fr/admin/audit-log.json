@@ -22,7 +22,7 @@
   "filter_login": "Écrire",
   "filter_restore": "Restaurer",
   "filter_update": "Modifier",
-  "search_placeholder": "Rechercher à la date utilisateur, entité ou action...",
+  "search_placeholder": "Recherche par utilisateur, entité ou action...",
   "stat_active_users": "Utilisateurs actifs",
   "stat_created": "Créé",
   "stat_errors": "Erreurs ({{count}}h)",

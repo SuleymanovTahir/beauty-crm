@@ -4,12 +4,16 @@
     "create_challenge": "تشغيل التحدي"
   },
   "card": {
+    "check_progress": "تحديث",
     "details": "مزيد من التفاصيل",
     "participants": "المشاركين",
     "progress": "التقدم"
   },
   "dialogs": {
     "add_title": "التحدي الجديد",
+    "delete": {
+      "confirm": "هل أنت متأكد من رغبتك في حذف هذا التحدي؟"
+    },
     "edit_title": "تحرير التحدي"
   },
   "empty": {
@@ -41,10 +45,21 @@
   "title": "التحديات",
   "toasts": {
     "created": "تم إنشاء المهمة",
+    "deleted": "تم حذف التحدي",
+    "failed_check_progress": "حدث خطأ أثناء التحقق من التقدم",
+    "failed_delete": "حدث خطأ أثناء الحذف",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_one": "",
+    "progress_checked_other": "",
+    "progress_checked_two": "",
+    "progress_checked_zero": "",
     "updated": "تم تحديث المهمة"
   },
   "types": {
+    "referrals": "التوصيات",
     "service": "فئة الخدمة",
+    "services": "الخدمات",
     "spend": "إجمالي المبلغ المنفق",
     "visits": "عدد الزيارات"
   }

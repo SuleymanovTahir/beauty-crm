@@ -25,9 +25,23 @@ LOCALES_DIR = FRONTEND_DIR / "src" / "locales"
 LANGUAGES = ["ru", "en", "ar", "es", "de", "fr", "hi", "kk", "pt"]
 SOURCE_LANG = 'ru'
 
+BAD_TRANSLATION_MARKERS = {
+    'en': ['interior settings', 'mail mailings'],
+    'es': ['hasta fecha'],
+    'fr': ['à la date'],
+    'de': ['datum bis'],
+    'pt': ['até data', 'de data']
+}
+
 def is_bad_translation(value: str, target_lang: str) -> bool:
     if not isinstance(value, str) or not value or not value.strip():
         return False
+
+    normalized_value = value.lower()
+    markers = BAD_TRANSLATION_MARKERS.get(target_lang, [])
+    if any(marker in normalized_value for marker in markers):
+        return True
+
     if "Imported from CSV" in value or "imported from csv" in value.lower():
         return True
     if '_' in value and not value.startswith('http') and not re.search(r'{{|}}', value):

@@ -4,12 +4,16 @@
     "create_challenge": "Ejecutar desafío"
   },
   "card": {
+    "check_progress": "Actualizar",
     "details": "Más detalles",
     "participants": "PARTICIPANTES",
     "progress": "PROGRESO"
   },
   "dialogs": {
     "add_title": "Nuevo desafío",
+    "delete": {
+      "confirm": "¿Estás seguro de que quieres eliminar este desafío?"
+    },
     "edit_title": "Editar desafío"
   },
   "empty": {
@@ -26,7 +30,7 @@
   },
   "placeholders": {
     "description": "¿Cómo verá el cliente esta tarea?",
-    "title": "hasta fecha ejemplo: estado Gold"
+    "title": "Por ejemplo: estado oro"
   },
   "stats": {
     "active_challenges": "TAREAS ACTIVAS",
@@ -41,10 +45,19 @@
   "title": "Desafíos",
   "toasts": {
     "created": "Misión creada",
+    "deleted": "Reto eliminado",
+    "failed_check_progress": "Error al comprobar el progreso",
+    "failed_delete": "Error al eliminar",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_one": "",
+    "progress_checked_other": "",
     "updated": "Tarea actualizada"
   },
   "types": {
+    "referrals": "Recomendaciones",
     "service": "categoría de servicio",
+    "services": "Servicios",
     "spend": "Total cantidad gastada",
     "visits": "Número de visitas"
   }

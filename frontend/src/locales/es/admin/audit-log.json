@@ -22,7 +22,7 @@
   "filter_login": "Reserva",
   "filter_restore": "Restaurar",
   "filter_update": "Cambiar",
-  "search_placeholder": "Buscar hasta fecha usuario, entidad o acción...",
+  "search_placeholder": "Buscar por usuario, entidad o acción...",
   "stat_active_users": "Usuarios activos",
   "stat_created": "Creado",
   "stat_errors": "Errores ({{count}}h)",

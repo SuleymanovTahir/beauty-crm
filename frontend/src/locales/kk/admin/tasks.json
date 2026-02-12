@@ -80,11 +80,11 @@
   "stage_name": "Сахна атауы",
   "stage_name_placeholder": "Мысалы: Орындалуда",
   "stages": {
-    "done": "Дайын",
+    "done": "Аяқталды",
     "in_progress": "Орындалуда",
-    "on_hold": "Кейінге қалдырылды",
+    "on_hold": "Артқы тізім",
     "review": "Тексеруде",
-    "todo": "Жасаңыз"
+    "todo": "Толтырылады"
   },
   "status_updated": "Жаңартылған күй",
   "task_created": "Тапсырма жасалды",

@@ -43,6 +43,87 @@ import { InstagramIcon, TelegramIcon } from '../../components/icons/SocialIcons'
 import { ManageCurrenciesDialog } from '../../components/admin/ManageCurrenciesDialog';
 import './Settings.css';
 
+function normalizeTimeValue(rawTime: string): string {
+  const parts = rawTime.split(':');
+  if (parts.length !== 2) {
+    return '';
+  }
+
+  const hours = Number(parts[0]);
+  const minutes = Number(parts[1]);
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) {
+    return '';
+  }
+  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+    return '';
+  }
+
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
+
+function parseLunchRange(rawRange: string): { start: string; end: string } {
+  const trimmedRange = rawRange.trim();
+  if (trimmedRange.length === 0) {
+    return { start: '', end: '' };
+  }
+
+  const explicitRangeMatch = trimmedRange.match(/^(\d{1,2}:\d{2})\s*[-–—]\s*(\d{1,2}:\d{2})$/);
+  if (explicitRangeMatch !== null) {
+    return {
+      start: normalizeTimeValue(explicitRangeMatch[1]),
+      end: normalizeTimeValue(explicitRangeMatch[2])
+    };
+  }
+
+  const matchedTimes = trimmedRange.match(/\d{1,2}:\d{2}/g);
+  if (matchedTimes === null || matchedTimes.length === 0) {
+    return { start: '', end: '' };
+  }
+
+  return {
+    start: normalizeTimeValue(matchedTimes[0]),
+    end: matchedTimes.length > 1 ? normalizeTimeValue(matchedTimes[1]) : ''
+  };
+}
+
+function buildLunchRangeValue(start: string, end: string): string {
+  const normalizedStart = normalizeTimeValue(start);
+  const normalizedEnd = normalizeTimeValue(end);
+
+  if (normalizedStart.length > 0 && normalizedEnd.length > 0) {
+    return `${normalizedStart} - ${normalizedEnd}`;
+  }
+  if (normalizedStart.length > 0) {
+    return `${normalizedStart} - `;
+  }
+  if (normalizedEnd.length > 0) {
+    return ` - ${normalizedEnd}`;
+  }
+  return '';
+}
+
+function normalizeTimezoneOffsetValue(rawTimezoneOffset: unknown): string {
+  if (typeof rawTimezoneOffset === 'number' && Number.isFinite(rawTimezoneOffset)) {
+    const sign = rawTimezoneOffset >= 0 ? '+' : '';
+    return `UTC${sign}${rawTimezoneOffset}`;
+  }
+
+  if (typeof rawTimezoneOffset === 'string') {
+    const trimmedTimezone = rawTimezoneOffset.trim();
+    if (trimmedTimezone.startsWith('UTC')) {
+      return trimmedTimezone;
+    }
+
+    const parsedOffset = Number(trimmedTimezone);
+    if (!Number.isNaN(parsedOffset) && Number.isFinite(parsedOffset)) {
+      const sign = parsedOffset >= 0 ? '+' : '';
+      return `UTC${sign}${parsedOffset}`;
+    }
+  }
+
+  return '';
+}
+
 export default function AdminSettings() {
   const { t, i18n } = useTranslation(['admin/settings', 'common']);
   const { user: currentUser } = useAuth();
@@ -70,6 +151,7 @@ export default function AdminSettings() {
       end: ''
     }
   });
+  const [lunchRangeInput, setLunchRangeInput] = useState('');
   const [loading, setLoading] = useState(true);
 
   // ✅ ДОБАВЬ СОСТОЯНИЕ:
@@ -205,6 +287,9 @@ export default function AdminSettings() {
     try {
       setLoading(true);
       const data = await api.getSalonSettings();
+      const lunchStart = typeof data.lunch_start === 'string' ? data.lunch_start : '';
+      const lunchEnd = typeof data.lunch_end === 'string' ? data.lunch_end : '';
+      setLunchRangeInput(buildLunchRangeValue(lunchStart, lunchEnd));
       setGeneralSettings({
         salonName: data.name || '',
         city: data.city || '',
@@ -214,15 +299,15 @@ export default function AdminSettings() {
         instagram: data.instagram || '',
         telegram_manager_chat_id: data.telegram_manager_chat_id || '',
         currency: data.currency,
-        timezone_offset: data.timezone_offset || '',
+        timezone_offset: normalizeTimezoneOffsetValue(data.timezone_offset),
         birthday_discount: data.birthday_discount || '',
         working_hours: {
           weekdays: data.hours_weekdays || '',
           weekends: data.hours_weekends || ''
         },
         lunch_time: {
-          start: data.lunch_start || '',
-          end: data.lunch_end || ''
+          start: lunchStart,
+          end: lunchEnd
         }
       });
       setBotGloballyEnabled(data.bot_globally_enabled ?? true);
@@ -456,7 +541,14 @@ export default function AdminSettings() {
       return;
     }
 
-    if (generalSettings.lunch_time.start && generalSettings.lunch_time.end) {
+    const hasLunchStart = generalSettings.lunch_time.start.trim().length > 0;
+    const hasLunchEnd = generalSettings.lunch_time.end.trim().length > 0;
+    if (hasLunchStart !== hasLunchEnd) {
+      toast.error(t('settings:error_invalid_lunch_time'));
+      return;
+    }
+
+    if (hasLunchStart && hasLunchEnd) {
       if (generalSettings.lunch_time.start >= generalSettings.lunch_time.end) {
         toast.error(t('settings:error_invalid_lunch_time'));
         return;
@@ -1295,31 +1387,27 @@ export default function AdminSettings() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                  <div className="grid grid-cols-1 gap-6 mt-4">
                     <div className="space-y-3">
-                      <Label htmlFor="lunch_start" className="settings-label-spacing">{t('settings:lunch_start')}</Label>
+                      <Label htmlFor="lunch_range" className="settings-label-spacing">
+                        {t('settings:lunch_break_range')}
+                      </Label>
                       <Input
-                        id="lunch_start"
-                        type="time"
-                        value={generalSettings.lunch_time.start}
-                        onChange={(e) => setGeneralSettings({
-                          ...generalSettings,
-                          lunch_time: { ...generalSettings.lunch_time, start: e.target.value }
-                        })}
-                        className="px-3"
-                        disabled={!userPermissions.canEditSchedule && !userPermissions.canEditSettings}
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <Label htmlFor="lunch_end" className="settings-label-spacing">{t('settings:lunch_end')}</Label>
-                      <Input
-                        id="lunch_end"
-                        type="time"
-                        value={generalSettings.lunch_time.end}
-                        onChange={(e) => setGeneralSettings({
-                          ...generalSettings,
-                          lunch_time: { ...generalSettings.lunch_time, end: e.target.value }
-                        })}
+                        id="lunch_range"
+                        value={lunchRangeInput}
+                        onChange={(e) => {
+                          const rangeValue = e.target.value;
+                          setLunchRangeInput(rangeValue);
+                          const parsedRange = parseLunchRange(rangeValue);
+                          setGeneralSettings({
+                            ...generalSettings,
+                            lunch_time: parsedRange
+                          });
+                        }}
+                        onBlur={() => {
+                          setLunchRangeInput(buildLunchRangeValue(generalSettings.lunch_time.start, generalSettings.lunch_time.end));
+                        }}
+                        placeholder={t('settings:placeholder_lunch_range')}
                         className="px-3"
                         disabled={!userPermissions.canEditSchedule && !userPermissions.canEditSettings}
                       />

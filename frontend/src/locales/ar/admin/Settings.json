@@ -160,9 +160,9 @@
   "irreversible_actions": "إجراءات لا يمكن التراجع عنها",
   "issues_found": "تم العثور على مشكلات",
   "loading": "جارٍ التحميل...",
+  "lunch_break_range": "استراحة الغداء (من وإلى)",
   "lunch_end": "نهاية الغداء",
   "lunch_start": "بداية الغداء",
-  "working_schedule": "جدول العمل",
   "manage_crm_parameters": "إدارة معلمات CRM",
   "manage_currencies": "الإدارة العملات",
   "manage_currencies_title": "إدارة العملات",
@@ -214,6 +214,7 @@
   "placeholder_enter_api_token": "أدخل رمز واجهة برمجة التطبيقات...",
   "placeholder_enter_message": "أدخل نص رسالتك...",
   "placeholder_full_name": "أدخل اسمك بالكامل",
+  "placeholder_lunch_range": "13:00 - 14:00",
   "placeholder_position": "على سبيل المثال: مصفف الشعر",
   "placeholder_reminder_example": "على سبيل المثال: خلال ساعتين",
   "placeholder_select_type": "اختر أ اكتب...",
@@ -311,6 +312,7 @@
   "what_is_checked": "ما الذي يتم التحقق منه؟",
   "whatsapp_desc": "رسائل البريد عبر WhatsApp Business API، وتذكيرات المواعيد.",
   "working_masters": "المعلمون العاملون",
+  "working_schedule": "جدول العمل",
   "years_of_experience": "سنوات الخبرة",
   "your_password": "كلمة المرور الخاصة بك"
 }

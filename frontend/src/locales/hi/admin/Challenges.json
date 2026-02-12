@@ -4,12 +4,16 @@
     "create_challenge": "चुनौती चलाएं"
   },
   "card": {
+    "check_progress": "अपडेट",
     "details": "अधिक विवरण",
     "participants": "प्रतिभागी",
     "progress": "प्रगति"
   },
   "dialogs": {
     "add_title": "नई चुनौती",
+    "delete": {
+      "confirm": "क्या आप वाकई इस चुनौती को हटाना चाहते हैं?"
+    },
     "edit_title": "चुनौती संपादित करें"
   },
   "empty": {
@@ -41,10 +45,19 @@
   "title": "चुनौतियां",
   "toasts": {
     "created": "कार्य बनाया गया",
+    "deleted": "चुनौती हटा दी गई",
+    "failed_check_progress": "प्रगति की जांच करने में त्रुटि",
+    "failed_delete": "हटाते समय त्रुटि",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_one": "",
+    "progress_checked_other": "",
     "updated": "कार्य अपडेट किया गया"
   },
   "types": {
+    "referrals": "सिफारिशें",
     "service": "श्रेणी सेवा",
+    "services": "सेवाएं",
     "spend": "खर्च की गई कुल राशि",
     "visits": "दौरों की संख्या"
   }
