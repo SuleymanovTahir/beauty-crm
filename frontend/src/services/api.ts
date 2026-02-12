@@ -1184,7 +1184,50 @@ export class ApiClient {
   }
 
   async getNotificationTemplates() {
-    return this.request<{ templates: Array<{ id: number; name: string; category?: string; subject?: string; body?: string }> }>('/api/notifications/templates')
+    return this.request<{
+      templates: Array<{
+        id: number;
+        name: string;
+        category?: string;
+        subject?: string;
+        body?: string;
+        variables?: string[];
+        is_system?: boolean;
+      }>
+    }>('/api/notifications/templates')
+  }
+
+  async saveNotificationTemplate(data: {
+    name: string;
+    category?: string;
+    subject?: string;
+    body: string;
+    variables?: string[];
+  }) {
+    return this.request<{ success: boolean }>('/api/notifications/templates', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateNotificationTemplate(templateId: number, data: {
+    name: string;
+    category?: string;
+    subject?: string;
+    body: string;
+    variables?: string[];
+  }) {
+    return this.request<{ success: boolean }>(`/api/notifications/templates/${templateId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteNotificationTemplate(name: string) {
+    const encodedName = encodeURIComponent(name)
+    return this.request<{ success: boolean }>(`/api/notifications/templates/${encodedName}`, {
+      method: 'DELETE',
+    })
   }
 
   async markNotificationRead(id: number) {
@@ -1942,6 +1985,13 @@ export class ApiClient {
         results: string;
       }>;
     }>('/api/broadcasts/history')
+  }
+
+  async deleteBroadcastHistoryEntries(ids: number[]) {
+    return this.request<{ success: boolean; count: number }>('/api/broadcasts/history/delete', {
+      method: 'POST',
+      body: JSON.stringify({ ids }),
+    })
   }
 
   async getUnsubscribedUsers() {

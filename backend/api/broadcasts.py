@@ -39,6 +39,11 @@ class BroadcastPreviewResponse(BaseModel):
     users_sample: List[dict]
 
 
+class BroadcastHistoryDeleteRequest(BaseModel):
+    """Удаление записей истории рассылок по списку ID."""
+    ids: List[int]
+
+
 def _split_target_ids(user_ids: Optional[List[Union[int, str]]]) -> Tuple[List[int], List[str]]:
     """Split selected recipients into staff IDs and client IDs."""
     staff_ids: List[int] = []
@@ -116,6 +121,47 @@ async def clear_broadcast_history(
         return {"success": True, "count": count}
     except Exception as e:
         log_error(f"Error clearing history: {e}", "broadcasts")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/broadcasts/history/delete")
+async def delete_broadcast_history_entries(
+    payload: BroadcastHistoryDeleteRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Удалить выбранные записи истории рассылок."""
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
+
+    normalized_ids: List[int] = []
+    for raw_id in payload.ids:
+        try:
+            value = int(raw_id)
+        except (TypeError, ValueError):
+            continue
+        if value > 0 and value not in normalized_ids:
+            normalized_ids.append(value)
+
+    if len(normalized_ids) == 0:
+        raise HTTPException(status_code=400, detail="Не переданы корректные ID записей")
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        placeholders = ", ".join(["%s"] * len(normalized_ids))
+        c.execute(f"DELETE FROM broadcast_history WHERE id IN ({placeholders})", tuple(normalized_ids))
+        deleted_count = c.rowcount
+        conn.commit()
+        conn.close()
+
+        log_info(
+            f"Администратор {current_user['username']} удалил записи истории рассылок "
+            f"({deleted_count} записей, ids={normalized_ids})",
+            "broadcasts"
+        )
+        return {"success": True, "count": deleted_count}
+    except Exception as e:
+        log_error(f"Error deleting broadcast history entries: {e}", "broadcasts")
         raise HTTPException(status_code=500, detail=str(e))
 
 

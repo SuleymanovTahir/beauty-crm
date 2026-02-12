@@ -23,15 +23,17 @@ export function getDateLocale(lang: string) {
 /**
  * Returns a localized string or value from a data object
  */
-export function getLocalizedValue(data: any, field: string, lang: string) {
+export function getLocalizedValue(data: any, field: string, _lang: string) {
     if (!data) return '';
-    return data[`${field}_${lang}`] || data[field] || '';
+    if (typeof field !== 'string' || field.length === 0) return '';
+    const value = data[field];
+    return typeof value === 'string' ? value : (value ?? '');
 }
 
 /**
- * Specifically handles service/master names which often have _ru, _en, etc.
+ * Handles service/master names using canonical fields only.
  */
-export function getLocalizedName(data: any, lang: string) {
+export function getLocalizedName(data: any, _lang: string) {
     if (!data) return '';
-    return data[`name_${lang}`] || data[`full_name_${lang}`] || data.full_name || data.name || data.username || '';
+    return data.full_name ?? data.name ?? data.username ?? '';
 }

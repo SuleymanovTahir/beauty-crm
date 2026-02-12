@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
-import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield, Bell, Settings, Plus, Trash2, Edit, X, UserCheck, UserX, Newspaper, UserMinus } from 'lucide-react';
+import { Send, Mail, MessageCircle, Instagram, Loader, Users, AlertCircle, History, Eye, Shield, Bell, Settings, Plus, Trash2, Edit, X, UserCheck, UserX, Newspaper, UserMinus, LayoutTemplate } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -54,6 +54,8 @@ interface NotificationTemplate {
   category?: string;
   subject?: string;
   body?: string;
+  variables?: string[];
+  is_system?: boolean;
 }
 
 const getRoleLabel = (
@@ -114,8 +116,24 @@ export default function Broadcasts() {
   const [roles, setRoles] = useState<Array<{ key: string; name: string }>>([]);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [notificationTemplates, setNotificationTemplates] = useState<NotificationTemplate[]>([]);
-  const [selectedTemplateName, setSelectedTemplateName] = useState('');
   const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
+  const [showTemplateEditor, setShowTemplateEditor] = useState(false);
+  const [templateEditorMode, setTemplateEditorMode] = useState<'create' | 'edit'>('create');
+  const [editingTemplateId, setEditingTemplateId] = useState<number | null>(null);
+  const [savingTemplate, setSavingTemplate] = useState(false);
+  const [deletingTemplateName, setDeletingTemplateName] = useState('');
+  const [templateForm, setTemplateForm] = useState<{
+    name: string;
+    category: string;
+    subject: string;
+    body: string;
+  }>({
+    name: '',
+    category: 'transactional',
+    subject: '',
+    body: '',
+  });
 
   // Новые состояния для добавления контактов вручную
   const [showAddManualContacts, setShowAddManualContacts] = useState(false);
@@ -134,6 +152,8 @@ export default function Broadcasts() {
   const [unsubscribed, setUnsubscribed] = useState<any[]>([]);
   const [loadingUnsubscribed, setLoadingUnsubscribed] = useState(false);
   const [clearPeriod, setClearPeriod] = useState('all');
+  const [selectedHistoryIds, setSelectedHistoryIds] = useState<number[]>([]);
+  const [deletingHistory, setDeletingHistory] = useState(false);
 
   const [showAddSubscriber, setShowAddSubscriber] = useState(false);
   const [showImportSubscribers, setShowImportSubscribers] = useState(false);
@@ -163,6 +183,10 @@ export default function Broadcasts() {
       loadUnsubscribed();
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    setSelectedHistoryIds((previousState) => previousState.filter((historyId) => history.some((item) => item.id === historyId)));
+  }, [history]);
 
   const loadUnsubscribed = async () => {
     try {
@@ -218,6 +242,137 @@ export default function Broadcasts() {
       message: template.body ?? previousState.message,
     }));
     toast.success(t('template_applied', { defaultValue: 'Шаблон вставлен' }));
+  };
+
+  const openCreateTemplateEditor = () => {
+    setTemplateEditorMode('create');
+    setEditingTemplateId(null);
+    setTemplateForm({
+      name: '',
+      category: 'transactional',
+      subject: '',
+      body: '',
+    });
+    setShowTemplateEditor(true);
+  };
+
+  const openEditTemplateEditor = (template: NotificationTemplate) => {
+    setTemplateEditorMode('edit');
+    setEditingTemplateId(template.id);
+    setTemplateForm({
+      name: template.name,
+      category: template.category ?? 'transactional',
+      subject: template.subject ?? '',
+      body: template.body ?? '',
+    });
+    setShowTemplateEditor(true);
+  };
+
+  const handleSaveTemplate = async () => {
+    const normalizedName = templateForm.name.trim();
+    const normalizedBody = templateForm.body.trim();
+
+    if (normalizedName.length === 0) {
+      toast.error(t('template_name_required', { defaultValue: 'Введите название шаблона' }));
+      return;
+    }
+    if (normalizedBody.length === 0) {
+      toast.error(t('template_body_required', { defaultValue: 'Введите текст шаблона' }));
+      return;
+    }
+
+    try {
+      setSavingTemplate(true);
+      const payload = {
+        name: normalizedName,
+        category: templateForm.category.trim().length > 0 ? templateForm.category : 'transactional',
+        subject: templateForm.subject,
+        body: normalizedBody,
+      };
+
+      if (templateEditorMode === 'edit' && editingTemplateId !== null) {
+        await api.updateNotificationTemplate(editingTemplateId, payload);
+      } else {
+        await api.saveNotificationTemplate(payload);
+      }
+
+      toast.success(t('template_saved', { defaultValue: 'Шаблон сохранен' }));
+      setShowTemplateEditor(false);
+      await loadNotificationTemplates();
+    } catch (err: any) {
+      toast.error(err.message ?? t('common:error_saving', { defaultValue: 'Ошибка сохранения' }));
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
+
+  const handleDeleteTemplate = async (template: NotificationTemplate) => {
+    if (template.is_system === true) {
+      toast.error(t('template_system_cannot_delete', { defaultValue: 'Системный шаблон нельзя удалить' }));
+      return;
+    }
+
+    if (!confirm(t('template_delete_confirm', { defaultValue: 'Удалить этот шаблон?' }))) {
+      return;
+    }
+
+    try {
+      setDeletingTemplateName(template.name);
+      await api.deleteNotificationTemplate(template.name);
+      toast.success(t('template_deleted', { defaultValue: 'Шаблон удален' }));
+      await loadNotificationTemplates();
+    } catch (err: any) {
+      toast.error(err.message ?? t('common:error_deleting', { defaultValue: 'Ошибка удаления' }));
+    } finally {
+      setDeletingTemplateName('');
+    }
+  };
+
+  const toggleHistorySelection = (historyId: number) => {
+    setSelectedHistoryIds((previousState) => {
+      if (previousState.includes(historyId)) {
+        return previousState.filter((itemId) => itemId !== historyId);
+      }
+      return [...previousState, historyId];
+    });
+  };
+
+  const toggleSelectAllHistory = () => {
+    const historyIds = history.map((item) => item.id).filter((id) => Number.isFinite(id));
+    if (historyIds.length === 0) {
+      return;
+    }
+    const allSelected = historyIds.every((id) => selectedHistoryIds.includes(id));
+    if (allSelected) {
+      setSelectedHistoryIds([]);
+      return;
+    }
+    setSelectedHistoryIds(historyIds);
+  };
+
+  const handleDeleteHistoryEntries = async (ids: number[]) => {
+    if (ids.length === 0) {
+      return;
+    }
+    if (!confirm(t('confirm_delete_history_selected', { defaultValue: 'Удалить выбранные записи истории?' }))) {
+      return;
+    }
+
+    try {
+      setDeletingHistory(true);
+      const response = await api.deleteBroadcastHistoryEntries(ids);
+      const deletedCount = typeof response.count === 'number' ? response.count : ids.length;
+      toast.success(t('history_selected_deleted', {
+        defaultValue: 'Удалено записей: {{count}}',
+        count: deletedCount,
+      }));
+      setSelectedHistoryIds([]);
+      await loadHistory();
+    } catch (err: any) {
+      toast.error(err.message ?? t('error_clearing_history', { defaultValue: 'Ошибка очистки истории' }));
+    } finally {
+      setDeletingHistory(false);
+    }
   };
 
   const loadSubscribers = async (includeInactive: boolean = showInactive) => {
@@ -358,6 +513,7 @@ export default function Broadcasts() {
     try {
       await api.delete(`/api/broadcasts/history/clear?period=${period}`);
       toast.success(t('history_cleared', 'История очищена'));
+      setSelectedHistoryIds([]);
       loadHistory();
     } catch (err: any) {
       toast.error(err.message || t('error_clearing_history', 'Ошибка при очистке истории'));
@@ -588,6 +744,10 @@ export default function Broadcasts() {
             <History className="w-4 h-4" />
             {t('history')}
           </TabsTrigger>
+          <TabsTrigger value="templates" className="flex items-center gap-2">
+            <LayoutTemplate className="w-4 h-4" />
+            {t('templates_tab', { defaultValue: 'Шаблоны' })}
+          </TabsTrigger>
           <TabsTrigger value="subscribers" className="flex items-center gap-2" onClick={() => loadSubscribers()}>
             <Newspaper className="w-4 h-4" />
             {t('subscribers')}
@@ -698,36 +858,6 @@ export default function Broadcasts() {
                         ))}
                     </SelectContent>
                   </Select>
-                </div>
-
-                {/* Subject - Only show when email is selected */}
-                <div>
-                  <Label className="block mb-2.5 text-sm font-semibold text-gray-700">
-                    {t('template_selector_label', { defaultValue: 'Готовый шаблон' })}
-                  </Label>
-                  <div className="flex gap-3">
-                    <Select value={selectedTemplateName} onValueChange={setSelectedTemplateName}>
-                      <SelectTrigger className="flex-1">
-                        <SelectValue placeholder={t('template_selector_placeholder', { defaultValue: 'Выберите шаблон' })} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {notificationTemplates.map((template) => (
-                          <SelectItem key={template.id} value={template.name}>
-                            {template.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => handleApplyTemplate(selectedTemplateName)}
-                      disabled={selectedTemplateName.length === 0 || loadingTemplates}
-                      className="shrink-0"
-                    >
-                      {t('template_insert_button', { defaultValue: 'Вставить' })}
-                    </Button>
-                  </div>
                 </div>
 
                 {/* Subject - Only show when email is selected */}
@@ -970,7 +1100,7 @@ export default function Broadcasts() {
                         ))}
                       </div>
                     )}
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <input
                         type="file"
                         id="file-upload"
@@ -1033,6 +1163,15 @@ export default function Broadcasts() {
                           </>
                         )}
                       </label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="h-10"
+                        onClick={() => setShowTemplatePicker(true)}
+                      >
+                        <LayoutTemplate className="w-4 h-4 mr-2" />
+                        {t('template_selector_label', { defaultValue: 'Готовый шаблон' })}
+                      </Button>
                       <p className="text-xs text-gray-500 flex items-center">
                         {t('file_formats_hint', { max: 10 })}
                       </p>
@@ -1184,10 +1323,33 @@ export default function Broadcasts() {
         {/* History Tab */}
         <TabsContent value="history">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-6">
               <h2 className="text-xl font-bold text-gray-900">{t('history_title')}</h2>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                {history.length > 0 && (
+                  <label className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={history.length > 0 && history.every((item) => selectedHistoryIds.includes(item.id))}
+                      onChange={toggleSelectAllHistory}
+                      className="w-4 h-4 text-pink-600 rounded"
+                    />
+                    <span>{t('history_select_all', { defaultValue: 'Выбрать все' })}</span>
+                  </label>
+                )}
+                {selectedHistoryIds.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteHistoryEntries(selectedHistoryIds)}
+                    disabled={deletingHistory}
+                    className="h-9 text-red-600 border-red-100 hover:bg-red-50"
+                  >
+                    {deletingHistory ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                    {t('delete_selected_history', { defaultValue: 'Удалить выбранные ({{count}})', count: selectedHistoryIds.length })}
+                  </Button>
+                )}
                 <Select value={clearPeriod} onValueChange={setClearPeriod}>
                   <SelectTrigger className="w-[180px] h-9 text-xs">
                     <SelectValue placeholder={t('select_period', 'Период')} />
@@ -1225,17 +1387,47 @@ export default function Broadcasts() {
             ) : (
               <div className="space-y-4">
                 {history.map((item) => (
-                  <div key={item.id} className="border border-gray-200 rounded-lg p-4 hover:border-pink-300 transition-colors">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="font-medium text-gray-900">{item.subject}</h3>
-                        <p className="text-sm text-gray-600">
-                          {availableSubscriptions[item.subscription_type]?.name || item.subscription_type}
-                        </p>
+                  <div
+                    key={item.id}
+                    className={`border rounded-lg p-4 transition-colors ${
+                      selectedHistoryIds.includes(item.id)
+                        ? 'border-pink-300 bg-pink-50/40'
+                        : 'border-gray-200 hover:border-pink-300'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-3 gap-3">
+                      <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <label className="pt-1 shrink-0">
+                          <input
+                            type="checkbox"
+                            checked={selectedHistoryIds.includes(item.id)}
+                            onChange={() => toggleHistorySelection(item.id)}
+                            className="w-4 h-4 text-pink-600 rounded"
+                          />
+                        </label>
+                        <div className="min-w-0">
+                          <h3 className="font-medium text-gray-900">{item.subject}</h3>
+                          <p className="text-sm text-gray-600">
+                            {availableSubscriptions[item.subscription_type]?.name || item.subscription_type}
+                          </p>
+                        </div>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        {new Date(item.created_at).toLocaleString('ru-RU')}
-                      </span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-xs text-gray-500">
+                          {new Date(item.created_at).toLocaleString('ru-RU')}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteHistoryEntries([item.id])}
+                          className="h-8 text-red-600 border-red-100 hover:bg-red-50"
+                          title={t('delete_history_item', { defaultValue: 'Удалить запись' })}
+                        >
+                          <Trash2 className="w-4 h-4 mr-1" />
+                          {t('common:delete', { defaultValue: 'Удалить' })}
+                        </Button>
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-4 text-sm">
@@ -1253,6 +1445,94 @@ export default function Broadcasts() {
                             {channel}
                           </span>
                         ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Templates Tab */}
+        <TabsContent value="templates">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">{t('templates_title', { defaultValue: 'Шаблоны рассылок' })}</h2>
+                <p className="text-sm text-gray-500">{t('templates_subtitle', { defaultValue: 'Создание, изменение и удаление шаблонов для быстрых рассылок' })}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={loadNotificationTemplates} disabled={loadingTemplates}>
+                  {loadingTemplates ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <History className="w-4 h-4 mr-2" />}
+                  {t('refresh', { defaultValue: 'Обновить' })}
+                </Button>
+                <Button size="sm" className="bg-pink-600 hover:bg-pink-700 text-white" onClick={openCreateTemplateEditor}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  {t('create_template', { defaultValue: 'Создать шаблон' })}
+                </Button>
+              </div>
+            </div>
+
+            {loadingTemplates ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+              </div>
+            ) : notificationTemplates.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <LayoutTemplate className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p>{t('no_templates', { defaultValue: 'Шаблоны пока не созданы' })}</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {notificationTemplates.map((template) => (
+                  <div key={template.id} className="rounded-lg border border-gray-200 p-4">
+                    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-gray-900">{template.name}</h3>
+                          {template.is_system === true && (
+                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                              {t('template_system', { defaultValue: 'Системный' })}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500">{template.category ?? 'transactional'}</p>
+                        {(template.subject ?? '').trim().length > 0 && (
+                          <p className="text-sm text-gray-700">{template.subject}</p>
+                        )}
+                        <p className="text-sm text-gray-600 whitespace-pre-wrap">{template.body ?? ''}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            handleApplyTemplate(template.name);
+                            handleTabChange('compose');
+                          }}
+                        >
+                          <LayoutTemplate className="w-4 h-4 mr-2" />
+                          {t('template_insert_button', { defaultValue: 'Вставить' })}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openEditTemplateEditor(template)}
+                        >
+                          <Edit className="w-4 h-4 mr-2" />
+                          {t('common:edit', { defaultValue: 'Изменить' })}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={template.is_system === true || deletingTemplateName === template.name}
+                          onClick={() => handleDeleteTemplate(template)}
+                          className="text-red-600 border-red-100 hover:bg-red-50"
+                        >
+                          {deletingTemplateName === template.name ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                          {t('common:delete', { defaultValue: 'Удалить' })}
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -1577,6 +1857,164 @@ export default function Broadcasts() {
                   {t('confirm_and_send', 'Подтвердить и отправить')}
                 </>
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={showTemplatePicker}
+        onOpenChange={(open) => {
+          setShowTemplatePicker(open);
+        }}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{t('template_selector_label', { defaultValue: 'Готовый шаблон' })}</DialogTitle>
+          </DialogHeader>
+          <div className="py-2">
+            {loadingTemplates ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader className="w-6 h-6 text-pink-600 animate-spin" />
+              </div>
+            ) : notificationTemplates.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <LayoutTemplate className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                <p>{t('no_templates', { defaultValue: 'Шаблоны пока не созданы' })}</p>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-[55vh] overflow-y-auto pr-1">
+                {notificationTemplates.map((template) => (
+                  <div key={template.id} className="rounded-lg border border-gray-200 p-3">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <div>
+                          <p className="font-medium text-gray-900">{template.name}</p>
+                          <p className="text-xs text-gray-500">{template.category ?? 'transactional'}</p>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            handleApplyTemplate(template.name);
+                            setShowTemplatePicker(false);
+                          }}
+                        >
+                          <LayoutTemplate className="w-4 h-4 mr-2" />
+                          {t('template_insert_button', { defaultValue: 'Вставить' })}
+                        </Button>
+                      </div>
+                      {(template.subject ?? '').trim().length > 0 && (
+                        <p className="text-sm text-gray-700">{template.subject}</p>
+                      )}
+                      <p className="text-sm text-gray-600 whitespace-pre-wrap">{template.body ?? ''}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <DialogFooter className="gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setShowTemplatePicker(false);
+                handleTabChange('templates');
+              }}
+            >
+              {t('manage_templates', { defaultValue: 'Управление шаблонами' })}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                setShowTemplatePicker(false);
+                openCreateTemplateEditor();
+              }}
+              className="bg-pink-600 hover:bg-pink-700 text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {t('create_template', { defaultValue: 'Создать шаблон' })}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={showTemplateEditor}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowTemplateEditor(false);
+          }
+        }}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {templateEditorMode === 'create'
+                ? t('create_template', { defaultValue: 'Создать шаблон' })
+                : t('edit_template', { defaultValue: 'Изменить шаблон' })}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-2 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="template-name">{t('template_name', { defaultValue: 'Название шаблона' })}</Label>
+              <Input
+                id="template-name"
+                value={templateForm.name}
+                onChange={(e) => setTemplateForm((previousState) => ({ ...previousState, name: e.target.value }))}
+                placeholder={t('template_name_placeholder', { defaultValue: 'welcome_campaign' })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="template-category">{t('template_category', { defaultValue: 'Категория' })}</Label>
+              <Input
+                id="template-category"
+                value={templateForm.category}
+                onChange={(e) => setTemplateForm((previousState) => ({ ...previousState, category: e.target.value }))}
+                placeholder="transactional"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="template-subject">{t('subject', { defaultValue: 'Тема (для Email) *' })}</Label>
+              <Input
+                id="template-subject"
+                value={templateForm.subject}
+                onChange={(e) => setTemplateForm((previousState) => ({ ...previousState, subject: e.target.value }))}
+                placeholder={t('placeholder_subject', { defaultValue: 'Специальное предложение для вас!' })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="template-body">{t('message', { defaultValue: 'Сообщение *' })}</Label>
+              <Textarea
+                id="template-body"
+                value={templateForm.body}
+                onChange={(e) => setTemplateForm((previousState) => ({ ...previousState, body: e.target.value }))}
+                className="min-h-[180px]"
+                placeholder={t('placeholder_message', { defaultValue: 'Введите текст вашего сообщения...' })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowTemplateEditor(false)}
+            >
+              {t('cancel')}
+            </Button>
+            <Button
+              type="button"
+              onClick={handleSaveTemplate}
+              disabled={savingTemplate}
+              className="bg-pink-600 hover:bg-pink-700 text-white"
+            >
+              {savingTemplate ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+              {t('save_template', { defaultValue: 'Сохранить шаблон' })}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2178,7 +2616,7 @@ const ManageSubscriptionTypesDialog = ({ onClose, roles }: { onClose: () => void
               </div>
 
               <div className="crm-form-group mt-4">
-                <Label className="mb-3 block">{t('desc_ru')}</Label>
+                <Label className="mb-3 block">{t('common:description')}</Label>
                 <textarea
                   className="crm-textarea min-h-[100px]"
                   value={editingType.description || ''}

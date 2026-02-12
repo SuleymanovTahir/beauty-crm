@@ -19,19 +19,17 @@ interface MenuItem {
     isOpen?: boolean;
 }
 
-const ACCOUNT_MENU_IDS = [
-    'dashboard',
-    'appointments',
-    'gallery',
-    'loyalty',
-    'achievements',
-    'promocodes',
-    'specialoffers',
-    'masters',
-    'beauty',
-    'notifications',
-    'settings',
+const ACCOUNT_MENU_DEFAULT_ORDER = [
+    'account-main',
+    'account-bonus-program',
+    'account-profile-tools',
 ];
+
+const ACCOUNT_MENU_GROUPS: Record<string, string[]> = {
+    'account-main': ['dashboard', 'appointments', 'gallery', 'masters', 'beauty'],
+    'account-bonus-program': ['loyalty', 'achievements', 'promocodes', 'specialoffers'],
+    'account-profile-tools': ['notifications', 'settings'],
+};
 
 type CatalogItem = {
     label?: string;
@@ -183,30 +181,29 @@ export default function MenuCustomization() {
         [crmCatalog]
     );
 
-    const accountDefaultMenuItems: MenuItem[] = useMemo(
-        () => ACCOUNT_MENU_IDS.map((id) => {
-            const labelMap: Record<string, string> = {
-                dashboard: t('account:tabs.dashboard', { defaultValue: 'Главная' }),
-                appointments: t('account:tabs.appointments', { defaultValue: 'Записи' }),
-                gallery: t('account:tabs.gallery', { defaultValue: 'Галерея' }),
-                loyalty: t('adminpanel/loyaltymanagement:title', { defaultValue: 'Бонусная программа' }),
-                achievements: t('layouts/mainlayout:menu.challenges', { defaultValue: 'Челленджи' }),
-                promocodes: t('layouts/mainlayout:menu.promo_codes', { defaultValue: 'Промокоды' }),
-                specialoffers: t('account:settings.special_offers', { defaultValue: 'Специальные предложения' }),
-                masters: t('account:tabs.masters', { defaultValue: 'Мастера' }),
-                beauty: t('account:tabs.beauty', { defaultValue: 'Уход и рекомендации' }),
-                notifications: t('account:tabs.notifications', { defaultValue: 'Уведомления' }),
-                settings: t('account:tabs.settings', { defaultValue: 'Настройки' }),
-            };
-            return {
-                id,
-                label: labelMap[id] ?? id,
-                path: `/account/${id === 'dashboard' ? 'dashboard' : id === 'promocodes' ? 'promocodes' : id === 'specialoffers' ? 'special-offers' : id}`,
-                type: 'link',
-                visible: true,
-            };
+    const accountCatalog = useMemo(
+        () => ({
+            'account-main': { label: t('account_menu_group_main', { defaultValue: 'Основные разделы' }) },
+            'account-bonus-program': { label: t('account_menu_group_bonus_program', { defaultValue: 'Бонусная программа' }) },
+            'account-profile-tools': { label: t('account_menu_group_profile_tools', { defaultValue: 'Профиль и настройки' }) },
+            dashboard: { label: t('account:tabs.dashboard', { defaultValue: 'Главная' }), path: '/account/dashboard' },
+            appointments: { label: t('account:tabs.appointments', { defaultValue: 'Записи' }), path: '/account/appointments' },
+            gallery: { label: t('account:tabs.gallery', { defaultValue: 'Галерея' }), path: '/account/gallery' },
+            masters: { label: t('account:tabs.masters', { defaultValue: 'Мастера' }), path: '/account/masters' },
+            beauty: { label: t('account:tabs.beauty', { defaultValue: 'Уход и рекомендации' }), path: '/account/beauty' },
+            loyalty: { label: t('adminpanel/loyaltymanagement:title', { defaultValue: 'Бонусная программа' }), path: '/account/loyalty' },
+            achievements: { label: t('layouts/mainlayout:menu.challenges', { defaultValue: 'Челленджи' }), path: '/account/achievements' },
+            promocodes: { label: t('layouts/mainlayout:menu.promo_codes', { defaultValue: 'Промокоды' }), path: '/account/promocodes' },
+            specialoffers: { label: t('account:settings.special_offers', { defaultValue: 'Специальные предложения' }), path: '/account/special-offers' },
+            notifications: { label: t('account:tabs.notifications', { defaultValue: 'Уведомления' }), path: '/account/notifications' },
+            settings: { label: t('account:tabs.settings', { defaultValue: 'Настройки' }), path: '/account/settings' },
         }),
         [t]
+    );
+
+    const accountDefaultMenuItems: MenuItem[] = useMemo(
+        () => buildMenuItemsFromCatalog(accountCatalog, ACCOUNT_MENU_GROUPS, ACCOUNT_MENU_DEFAULT_ORDER),
+        [accountCatalog]
     );
 
     // Modal state
@@ -328,9 +325,30 @@ export default function MenuCustomization() {
     };
 
     const toggleVisibility = (id: string) => {
+        const applyVisibilityRecursive = (items: MenuItem[], nextVisible: boolean): MenuItem[] => {
+            return items.map((entry) => ({
+                ...entry,
+                visible: nextVisible,
+                children: Array.isArray(entry.children)
+                    ? applyVisibilityRecursive(entry.children, nextVisible)
+                    : undefined,
+            }));
+        };
+
         const updateVisibility = (items: MenuItem[]): MenuItem[] => {
             return items.map(item => {
-                if (item.id === id) return { ...item, visible: !item.visible };
+                if (item.id === id) {
+                    const nextVisible = !item.visible;
+                    if (item.type === 'group' && Array.isArray(item.children)) {
+                        return {
+                            ...item,
+                            visible: nextVisible,
+                            children: applyVisibilityRecursive(item.children, nextVisible),
+                        };
+                    }
+
+                    return { ...item, visible: nextVisible };
+                }
                 if (item.children) return { ...item, children: updateVisibility(item.children) };
                 return item;
             });

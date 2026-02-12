@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import json
-import os
+import re
 import sys
 from pathlib import Path
 
@@ -12,6 +12,19 @@ from db.connection import get_db_connection
 
 LANGUAGES = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']
 TABLES = ['public_faq', 'public_reviews', 'public_banners']
+
+
+def normalize_field_name(raw_field: str) -> str:
+    """Normalize legacy language-suffixed field names to canonical field name."""
+    match = re.match(r"^(?P<base>.+)_([a-z]{2})$", raw_field)
+    if match is None:
+        return raw_field
+
+    language_code = match.group(2)
+    if language_code in LANGUAGES:
+        return match.group('base')
+
+    return raw_field
 
 def restore_full_content():
     print("🚀 Restoring full public content from locales...")
@@ -29,7 +42,7 @@ def restore_full_content():
         ru_data = json.load(f)
         
     for key, value in ru_data.items():
-        # Format: table.id.field or table.id.field_ru.hash
+        # Format: table.id.field or table.id.field.<hash>
         parts = key.split('.')
         if len(parts) < 3:
             continue
@@ -43,20 +56,15 @@ def restore_full_content():
         except ValueError:
             continue
             
-        # Extract field name (remove _ru suffix and hash if present)
-        field_with_suffix = parts[2]
+        field_name = normalize_field_name(parts[2])
         
-        # Determine base field name
-        if field_with_suffix.endswith('_ru'):
-            base_field = field_with_suffix[:-3]  # Remove '_ru'
-        else:
-            base_field = field_with_suffix
-            
         # Handle special multi-word fields
-        if field_with_suffix.startswith('employee_position'):
+        if field_name.startswith('employee_position'):
             base_field = 'employee_position'
-        elif field_with_suffix.startswith('author_name'):
+        elif field_name.startswith('author_name'):
             base_field = 'author_name'
+        else:
+            base_field = field_name
         
         if table not in master_data:
             master_data[table] = {}

@@ -128,7 +128,7 @@ async function getRoutes() {
       for (const s of services) {
         const id = s?.id;
         const category = (s?.category || "other").toString().toLowerCase();
-        const name = s?.name_en || s?.name || s?.name_ru || "";
+        const name = s?.name || "";
         const slug = slugifyAscii(name) || `service-${id}`;
         if (id) {
           routes.add(`/service/${encodeURIComponent(category)}/${id}-${encodeURIComponent(slug)}`);
@@ -207,4 +207,3 @@ main().catch((e) => {
   console.error(e);
   process.exit(1);
 });
-

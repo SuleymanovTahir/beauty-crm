@@ -43,7 +43,6 @@ interface User {
   full_name?: string;
   role: string;
   position?: string;
-  position_ru?: string;
 }
 
 interface Service {
@@ -555,7 +554,7 @@ export default function BookingDetail() {
                     </p>
                   )}
                   {(() => {
-                    const pos = i18n.language.startsWith('ru') && masterInfo?.position_ru ? masterInfo.position_ru : (masterInfo?.position || '');
+                    const pos = masterInfo?.position || '';
                     return pos ? (
                       <p className="text-sm text-indigo-600 font-medium">{pos}</p>
                     ) : null;

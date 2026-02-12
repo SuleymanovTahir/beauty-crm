@@ -6,6 +6,9 @@
   "account_hide_hint": "Disabled items will be hidden in the client account",
   "account_menu_subtitle": "Control visibility of client account menu items for all clients or specific profiles",
   "account_menu_title": "Client menu setup",
+  "account_menu_group_main": "Main sections",
+  "account_menu_group_bonus_program": "Bonus program",
+  "account_menu_group_profile_tools": "Profile and settings",
   "account_select_clients": "Select clients:",
   "account_visible_items": "Client menu items",
   "cancel": "Cancel",
@@ -16,7 +19,7 @@
   "drag_hint": "Drag to change order, click on eye to hide/show",
   "edit": "Edit",
   "group": "Group",
-  "hint_text": "Hidden menu items will not appear in the sidebar, but they will still be accessible through direct links.",
+  "hint_text": "Hidden menu items, tabs, and related links will not be available in the client account.",
   "hint_title": "Advice:",
   "item_type": "Element type",
   "items": {

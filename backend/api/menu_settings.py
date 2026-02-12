@@ -338,7 +338,8 @@ async def save_account_menu_settings(
 
 @router.get("/client/account-menu-settings")
 async def get_client_account_menu_settings(current_user: dict = Depends(get_current_user)):
-    if current_user.get("role") != "client":
+    current_role = str(current_user.get("role") or "")
+    if current_role != "client" and current_role not in ADMIN_ROLES:
         raise HTTPException(status_code=403, detail="Forbidden")
 
     conn = get_db_connection()
@@ -353,6 +354,9 @@ async def get_client_account_menu_settings(current_user: dict = Depends(get_curr
         apply_mode_raw = str(account_config.get("apply_mode") or "all").lower()
         apply_mode = "selected" if apply_mode_raw == "selected" else "all"
         target_client_ids = set(_normalize_string_list(account_config.get("target_client_ids")))
+
+        if current_role in ADMIN_ROLES:
+            return {"hidden_items": hidden_items, "apply_mode": apply_mode, "is_targeted": True}
 
         if apply_mode == "all":
             return {"hidden_items": hidden_items, "apply_mode": apply_mode, "is_targeted": True}

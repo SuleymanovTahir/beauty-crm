@@ -336,6 +336,39 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         });
     }, [allMenuItems, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount, isAdminPanel]);
 
+    const routeAccessEntries = useMemo(() => {
+        if (isAdminPanel) {
+            return [] as Array<{ id: string; path: string; allowed: boolean }>;
+        }
+
+        const crmCatalog = buildCrmMenuCatalog({
+            t,
+            rolePrefix,
+            dashboardPath,
+            permissions,
+            userRole: user?.role,
+        });
+        const catalogItems: Record<string, any> = crmCatalog.items;
+
+        return Object.entries(catalogItems)
+            .map(([id, item]) => {
+                const path = typeof item.path === 'string' ? item.path : '';
+                if (path.length === 0) {
+                    return null;
+                }
+
+                const hiddenBySettings = menuSettings?.hidden_items?.includes(id) === true;
+                const allowedByRole = item.req() === true;
+
+                return {
+                    id,
+                    path,
+                    allowed: allowedByRole && hiddenBySettings !== true,
+                };
+            })
+            .filter((entry): entry is { id: string; path: string; allowed: boolean } => entry !== null);
+    }, [dashboardPath, isAdminPanel, menuSettings?.hidden_items, permissions, rolePrefix, t, user?.role]);
+
     const activeDesktopGroupId = useMemo(() => {
         const activeGroup = menuItems.find((item: any) => {
             if (!Array.isArray(item.items)) {
@@ -485,6 +518,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             const tabKeyMap: Record<string, string> = {
                 compose: 'admin/broadcasts:create_broadcast',
                 history: 'admin/broadcasts:history',
+                templates: 'admin/broadcasts:templates_tab',
                 subscribers: 'admin/broadcasts:subscribers',
                 unsubscribed: 'admin/broadcasts:unsubscribed_tab',
                 profile: 'settings:profile',
@@ -576,6 +610,33 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             setExpandedMenu(activeDesktopGroupId);
         }
     }, [location.pathname, activeDesktopGroupId]);
+
+    useEffect(() => {
+        if (isAdminPanel) {
+            return;
+        }
+
+        const matchedRoute = routeAccessEntries
+            .filter((entry) => {
+                if (location.pathname === entry.path) {
+                    return true;
+                }
+
+                return location.pathname.startsWith(`${entry.path}/`);
+            })
+            .sort((left, right) => right.path.length - left.path.length)[0];
+
+        if (matchedRoute === undefined) {
+            return;
+        }
+
+        if (matchedRoute.allowed) {
+            return;
+        }
+
+        toast.error(t('common:access_denied'));
+        navigate(dashboardPath, { replace: true });
+    }, [dashboardPath, isAdminPanel, location.pathname, navigate, routeAccessEntries, t]);
 
     useEffect(() => {
         const navElement = sidebarNavRef.current;
