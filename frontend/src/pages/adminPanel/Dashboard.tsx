@@ -1,6 +1,6 @@
 // /frontend/src/pages/adminpanel/dashboard.tsx
 import { useEffect, useState } from 'react';
-import { Users, Gift, Award, Target, Bell, Image, TrendingUp, ArrowRight, Download } from 'lucide-react';
+import { Users, Gift, Award, Target, Bell, Image, ArrowRight, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
@@ -128,29 +128,21 @@ export default function AdminDashboard() {
       title: t('stats.total_users'),
       value: stats.total_users.toLocaleString(),
       icon: Users,
-      change: '+12%',
-      changeType: 'increase' as const,
     },
     {
       title: t('stats.active_challenges'),
       value: stats.active_challenges.toString(),
       icon: Target,
-      change: '+2',
-      changeType: 'increase' as const,
     },
     {
       title: t('stats.loyalty_points_issued'),
       value: stats.total_loyalty_points.toLocaleString(),
       icon: Gift,
-      change: '+8%',
-      changeType: 'increase' as const,
     },
     {
       title: t('stats.total_referrals'),
       value: stats.total_referrals.toString(),
       icon: Award,
-      change: '+15%',
-      changeType: 'increase' as const,
     },
   ];
 
@@ -190,12 +182,6 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stat.value}</div>
-                <div className="flex items-center gap-1 mt-1">
-                  <TrendingUp className="w-4 h-4 text-green-500" />
-                  <span className="text-xs text-green-600 font-medium">
-                    {stat.change} {t('stats.from_last_month')}
-                  </span>
-                </div>
               </CardContent>
             </Card>
           );

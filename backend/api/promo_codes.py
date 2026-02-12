@@ -307,6 +307,99 @@ async def create_new_promo(promo: PromoCodeModel, session_token: Optional[str] =
         log_error(f"Error creating promo code: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
 
+
+@router.put("/promo-codes/{promo_id}")
+async def update_promo(promo_id: int, promo: PromoCodeModel, session_token: Optional[str] = Cookie(None)):
+    """Обновить существующий промокод"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    validation_error = _validate_promo_payload(promo)
+    if validation_error:
+        return JSONResponse({"error": validation_error}, status_code=400)
+
+    try:
+        normalized_code = promo.code.upper().strip()
+        normalized_category = promo.category.strip()
+        if normalized_category == "":
+            normalized_category = "general"
+        normalized_scope = _normalize_scope(promo.target_scope)
+        normalized_target_categories = _normalize_string_list(promo.target_categories)
+        normalized_target_services = [str(value) for value in _normalize_int_list(promo.target_service_ids)]
+        normalized_target_clients = _normalize_string_list(promo.target_client_ids)
+
+        conn = get_db_connection()
+        c = conn.cursor()
+        promo_columns = _get_promo_code_columns(c)
+        supports_targeting = all(
+            column_name in promo_columns
+            for column_name in ["target_scope", "target_category_names", "target_service_ids", "target_client_ids"]
+        )
+
+        c.execute("SELECT id FROM promo_codes WHERE id = %s", (promo_id,))
+        exists = c.fetchone()
+        if exists is None:
+            conn.close()
+            return JSONResponse({"error": "Promo code not found"}, status_code=404)
+
+        if supports_targeting:
+            c.execute("""
+                UPDATE promo_codes
+                SET
+                    code = %s,
+                    discount_type = %s,
+                    value = %s,
+                    min_amount = %s,
+                    valid_from = %s,
+                    valid_until = %s,
+                    max_uses = %s,
+                    category = %s,
+                    description = %s,
+                    is_active = %s,
+                    target_scope = %s,
+                    target_category_names = %s,
+                    target_service_ids = %s,
+                    target_client_ids = %s
+                WHERE id = %s
+            """, (
+                normalized_code, promo.discount_type, promo.value, promo.min_amount,
+                promo.valid_from, promo.valid_until, promo.max_uses, normalized_category, promo.description,
+                promo.is_active, normalized_scope, _to_csv(normalized_target_categories),
+                _to_csv(normalized_target_services), _to_csv(normalized_target_clients), promo_id
+            ))
+        else:
+            if normalized_scope != "all":
+                conn.close()
+                return JSONResponse({"error": "Promo targeting columns are missing in database"}, status_code=400)
+
+            c.execute("""
+                UPDATE promo_codes
+                SET
+                    code = %s,
+                    discount_type = %s,
+                    value = %s,
+                    min_amount = %s,
+                    valid_from = %s,
+                    valid_until = %s,
+                    max_uses = %s,
+                    category = %s,
+                    description = %s,
+                    is_active = %s
+                WHERE id = %s
+            """, (
+                normalized_code, promo.discount_type, promo.value, promo.min_amount,
+                promo.valid_from, promo.valid_until, promo.max_uses, normalized_category, promo.description,
+                promo.is_active, promo_id
+            ))
+
+        conn.commit()
+        conn.close()
+        return {"success": True, "id": promo_id}
+    except Exception as e:
+        log_error(f"Error updating promo code {promo_id}: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)
+
 @router.post("/promo-codes/validate")
 async def api_validate_promo(
     code: str,

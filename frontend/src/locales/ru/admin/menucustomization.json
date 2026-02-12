@@ -1,5 +1,13 @@
 {
   "add_group": "Добавить группу",
+  "account_apply_mode_all": "Всем клиентам",
+  "account_apply_mode_selected": "Только выбранным клиентам",
+  "account_apply_mode_title": "Кому применить скрытые пункты",
+  "account_hide_hint": "Отключенные пункты исчезнут в личном кабинете клиента",
+  "account_menu_subtitle": "Управляйте видимостью пунктов меню личного кабинета для всех клиентов или выбранных профилей",
+  "account_menu_title": "Настройка меню клиента",
+  "account_select_clients": "Выберите клиентов:",
+  "account_visible_items": "Пункты меню клиента",
   "cancel": "Отмена",
   "confirm": "Подтвердить",
   "custom_link": "Своя ссылка",

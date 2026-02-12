@@ -6,6 +6,8 @@ import { Toaster } from './components/ui/sonner';
 import './i18n';
 import { useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import PromoCodes from './pages/admin/PromoCodes';
+import SpecialPackages from './pages/admin/SpecialPackages';
 
 // Lazy load pages
 const UniversalLayout = React.lazy(() => import('./components/layouts/UniversalLayout'));
@@ -51,7 +53,6 @@ const CRMClients = Clients;
 
 // Admin Panel pages
 const AdminPanelDashboard = React.lazy(() => import('./pages/adminPanel/Dashboard'));
-const NotificationsDashboard = React.lazy(() => import('./pages/adminPanel/NotificationsDashboard'));
 
 const PhotoGallery = React.lazy(() => import('./pages/adminPanel/PhotoGallery'));
 const FeatureManagement = React.lazy(() => import('./pages/adminPanel/FeatureManagement'));
@@ -61,9 +62,6 @@ const InternalChat = React.lazy(() => import('./components/shared/InternalChat')
 const NotificationsPage = React.lazy(() => import('./pages/common/Notifications'));
 
 const Broadcasts = React.lazy(() => import('./pages/admin/Broadcasts'));
-const PromoCodes = React.lazy(() => import('./pages/admin/PromoCodes'));
-const SpecialPackages = React.lazy(() => import('./pages/admin/SpecialPackages'));
-
 // Employee routes
 const UniversalProfile = React.lazy(() => import('./pages/shared/Profile'));
 // Task component is now shared as UniversalTasks
@@ -282,12 +280,17 @@ export default function App() {
                 <Route path="challenges" element={<SpecialPackages entryMode="challenges-only" />} />
                 <Route path="promo-codes" element={<SpecialPackages entryMode="promo-codes-only" />} />
                 <Route path="special-packages" element={<SpecialPackages />} />
-                <Route path="notifications" element={<NotificationsDashboard />} />
+                <Route path="notifications" element={<NotificationsPage />} />
+                <Route path="broadcasts" element={<Broadcasts />} />
                 <Route path="features" element={<FeatureManagement />} />
                 <Route path="gallery" element={<PhotoGallery />} />
                 <Route path="services" element={<Services />} />
+                <Route path="clients" element={<Clients />} />
+                <Route path="clients/:id" element={<ClientDetail />} />
                 <Route path="public-content/:tab?" element={<PublicContent />} />
                 <Route path="team" element={<Team />} />
+                <Route path="settings/:tab?" element={<Settings />} />
+                <Route path="menu-customization" element={<MenuCustomization />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 

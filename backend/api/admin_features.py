@@ -73,6 +73,40 @@ def _get_table_columns(cursor, table_name: str) -> Set[str]:
     return {row[0] for row in cursor.fetchall()}
 
 
+def _quote_sql_identifier(identifier: str) -> str:
+    escaped_identifier = identifier.replace('"', '""')
+    return f'"{escaped_identifier}"'
+
+
+def _get_template_value_expression(template_columns: Set[str], base_column: str) -> str:
+    if base_column in template_columns:
+        return _quote_sql_identifier(base_column)
+
+    prefixed_columns = sorted([
+        column_name
+        for column_name in template_columns
+        if column_name.startswith(f"{base_column}_")
+    ])
+    if len(prefixed_columns) == 0:
+        return "''::text"
+
+    prefixed_sql = ", ".join([
+        f"NULLIF({_quote_sql_identifier(column_name)}, '')"
+        for column_name in prefixed_columns
+    ])
+    return f"COALESCE({prefixed_sql}, '')"
+
+
+def _get_template_storage_columns(template_columns: Set[str], base_column: str) -> List[str]:
+    if base_column in template_columns:
+        return [base_column]
+    return sorted([
+        column_name
+        for column_name in template_columns
+        if column_name.startswith(f"{base_column}_")
+    ])
+
+
 def _normalize_challenge_type(raw_type: Optional[str]) -> str:
     if raw_type == "spend":
         return "spending"
@@ -1176,11 +1210,18 @@ async def get_notification_templates(session_token: Optional[str] = Cookie(None)
                 ORDER BY created_at DESC
             """)
         else:
+            order_by_expression = "COALESCE(updated_at, created_at)" if "updated_at" in template_columns else "created_at"
+            subject_sql = _get_template_value_expression(template_columns, "subject")
+            body_sql = _get_template_value_expression(template_columns, "body")
             c.execute("""
-                SELECT id, name, category, subject_ru, subject_en, body_ru, body_en
+                SELECT id, name, category, {subject_sql} AS subject, {body_sql} AS body
                 FROM notification_templates
-                ORDER BY COALESCE(updated_at, created_at) DESC
-            """)
+                ORDER BY {order_by_expression} DESC
+            """.format(
+                subject_sql=subject_sql,
+                body_sql=body_sql,
+                order_by_expression=order_by_expression
+            ))
 
         templates = []
         rows = c.fetchall()
@@ -1201,8 +1242,8 @@ async def get_notification_templates(session_token: Optional[str] = Cookie(None)
                 templates.append({
                     "id": str(row[0]),
                     "name": row[1] or "",
-                    "title": row[3] or row[4] or row[1] or "",
-                    "message": row[5] or row[6] or "",
+                    "title": row[3] or row[1] or "",
+                    "message": row[4] or "",
                     "type": mapped_type
                 })
 
@@ -1241,28 +1282,48 @@ async def create_notification_template(request: Request, session_token: Optional
             ))
         else:
             template_category = template_type if template_type in ["email", "push", "sms"] else "transactional"
-            c.execute("""
-                INSERT INTO notification_templates (
-                    name, category, subject_ru, subject_en, body_ru, body_en, variables
-                )
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (name) DO UPDATE SET
-                    category = EXCLUDED.category,
-                    subject_ru = EXCLUDED.subject_ru,
-                    subject_en = EXCLUDED.subject_en,
-                    body_ru = EXCLUDED.body_ru,
-                    body_en = EXCLUDED.body_en,
-                    updated_at = CURRENT_TIMESTAMP
-                RETURNING id
-            """, (
+            template_title = data.get("title")
+            template_message = data.get("message")
+            insert_columns = ["name", "category"]
+            insert_values = [
                 template_name,
-                template_category,
-                data.get("title"),
-                data.get("title"),
-                data.get("message"),
-                data.get("message"),
-                json.dumps([])
-            ))
+                template_category
+            ]
+            update_clauses = [
+                "category = EXCLUDED.category"
+            ]
+
+            for subject_column in _get_template_storage_columns(template_columns, "subject"):
+                insert_columns.append(subject_column)
+                insert_values.append(template_title)
+                quoted_column = _quote_sql_identifier(subject_column)
+                update_clauses.append(f"{quoted_column} = EXCLUDED.{quoted_column}")
+
+            for body_column in _get_template_storage_columns(template_columns, "body"):
+                insert_columns.append(body_column)
+                insert_values.append(template_message)
+                quoted_column = _quote_sql_identifier(body_column)
+                update_clauses.append(f"{quoted_column} = EXCLUDED.{quoted_column}")
+
+            if "variables" in template_columns:
+                insert_columns.append("variables")
+                insert_values.append(json.dumps([]))
+                update_clauses.append("variables = EXCLUDED.variables")
+
+            if "updated_at" in template_columns:
+                update_clauses.append("updated_at = CURRENT_TIMESTAMP")
+
+            c.execute("""
+                INSERT INTO notification_templates ({columns})
+                VALUES ({placeholders})
+                ON CONFLICT (name) DO UPDATE SET
+                    {updates}
+                RETURNING id
+            """.format(
+                columns=", ".join(insert_columns),
+                placeholders=", ".join(["%s"] * len(insert_values)),
+                updates=", ".join(update_clauses)
+            ), tuple(insert_values))
 
         new_id = c.fetchone()[0]
         conn.commit()
@@ -1489,6 +1550,26 @@ async def send_notification(request: Request, session_token: Optional[str] = Coo
 # PHOTO GALLERY API
 # ============================================================================
 
+def _remove_gallery_file(path_url: Optional[str]):
+    if not path_url:
+        return
+
+    file_path = ""
+    if path_url.startswith("/uploads/"):
+        file_path = path_url[1:]
+    elif path_url.startswith("/static/uploads/"):
+        file_path = path_url.replace("/static/", "/", 1)[1:]
+
+    if len(file_path) == 0:
+        return
+
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path)
+            log_info(f"Deleted file: {file_path}", "api")
+        except Exception as e:
+            log_error(f"Error deleting file {file_path}: {e}", "api")
+
 @router.get("/admin/gallery/photos")
 async def get_gallery_photos(session_token: Optional[str] = Cookie(None)):
     """Получить все фото галереи"""
@@ -1499,15 +1580,76 @@ async def get_gallery_photos(session_token: Optional[str] = Cookie(None)):
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        gallery_columns = _get_table_columns(c, "gallery_photos")
 
-        c.execute("""
-            SELECT
-                id, url, title, description, category,
-                uploaded_by, created_at, is_featured, views,
-                before_photo_url, after_photo_url, client_id, is_visible
-            FROM gallery_photos
-            ORDER BY created_at DESC
-        """)
+        if len(gallery_columns) > 0:
+            url_sql = "url" if "url" in gallery_columns else "''::text AS url"
+            title_sql = "title" if "title" in gallery_columns else "''::text AS title"
+            description_sql = "description" if "description" in gallery_columns else "''::text AS description"
+            category_sql = "category" if "category" in gallery_columns else "'other'::text AS category"
+            uploaded_by_sql = "uploaded_by" if "uploaded_by" in gallery_columns else "'Admin'::text AS uploaded_by"
+            created_at_sql = "created_at" if "created_at" in gallery_columns else "CURRENT_TIMESTAMP AS created_at"
+            is_featured_sql = "is_featured" if "is_featured" in gallery_columns else "FALSE AS is_featured"
+            views_sql = "views" if "views" in gallery_columns else "0 AS views"
+            before_sql = "before_photo_url" if "before_photo_url" in gallery_columns else "''::text AS before_photo_url"
+            after_sql = "after_photo_url" if "after_photo_url" in gallery_columns else "''::text AS after_photo_url"
+            client_sql = "client_id" if "client_id" in gallery_columns else "''::text AS client_id"
+            visible_sql = "is_visible" if "is_visible" in gallery_columns else "TRUE AS is_visible"
+            order_by_expression = "created_at DESC" if "created_at" in gallery_columns else "id DESC"
+
+            c.execute("""
+                SELECT
+                    id,
+                    {url_sql},
+                    {title_sql},
+                    {description_sql},
+                    {category_sql},
+                    {uploaded_by_sql},
+                    {created_at_sql},
+                    {is_featured_sql},
+                    {views_sql},
+                    {before_sql},
+                    {after_sql},
+                    {client_sql},
+                    {visible_sql}
+                FROM gallery_photos
+                ORDER BY {order_by_expression}
+            """.format(
+                url_sql=url_sql,
+                title_sql=title_sql,
+                description_sql=description_sql,
+                category_sql=category_sql,
+                uploaded_by_sql=uploaded_by_sql,
+                created_at_sql=created_at_sql,
+                is_featured_sql=is_featured_sql,
+                views_sql=views_sql,
+                before_sql=before_sql,
+                after_sql=after_sql,
+                client_sql=client_sql,
+                visible_sql=visible_sql,
+                order_by_expression=order_by_expression
+            ))
+        else:
+            c.execute("""
+                SELECT
+                    cg.id,
+                    COALESCE(NULLIF(cg.after_photo, ''), NULLIF(cg.before_photo, ''), '') AS url,
+                    COALESCE(cl.name, cg.client_id, '') AS title,
+                    COALESCE(cg.notes, '') AS description,
+                    COALESCE(cg.category, 'other') AS category,
+                    COALESCE(u.full_name, 'Admin') AS uploaded_by,
+                    cg.created_at,
+                    FALSE AS is_featured,
+                    0 AS views,
+                    COALESCE(cg.before_photo, '') AS before_photo_url,
+                    COALESCE(cg.after_photo, '') AS after_photo_url,
+                    COALESCE(cg.client_id, '') AS client_id,
+                    TRUE AS is_visible
+                FROM client_gallery cg
+                LEFT JOIN clients cl ON cl.instagram_id = cg.client_id
+                LEFT JOIN users u ON u.id = cg.master_id
+                ORDER BY cg.created_at DESC
+            """)
 
         photos = []
         for row in c.fetchall():
@@ -1524,7 +1666,7 @@ async def get_gallery_photos(session_token: Optional[str] = Cookie(None)):
                 "before_photo_url": row[9] or "",
                 "after_photo_url": row[10] or "",
                 "client_id": row[11] or "",
-                "is_visible": row[12] if len(row) > 12 else True
+                "is_visible": True if row[12] is None else row[12]
             })
 
         conn.close()
@@ -1589,22 +1731,36 @@ async def get_gallery_stats(session_token: Optional[str] = Cookie(None)):
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        gallery_columns = _get_table_columns(c, "gallery_photos")
 
-        # Total photos
-        c.execute("SELECT COUNT(*) FROM gallery_photos")
-        total_photos = c.fetchone()[0] or 0
+        if len(gallery_columns) > 0:
+            c.execute("SELECT COUNT(*) FROM gallery_photos")
+            total_photos = c.fetchone()[0] or 0
 
-        # Total views
-        c.execute("SELECT COALESCE(SUM(views), 0) FROM gallery_photos")
-        total_views = c.fetchone()[0] or 0
+            if "views" in gallery_columns:
+                c.execute("SELECT COALESCE(SUM(views), 0) FROM gallery_photos")
+                total_views = c.fetchone()[0] or 0
+            else:
+                total_views = 0
 
-        # Featured count
-        c.execute("SELECT COUNT(*) FROM gallery_photos WHERE is_featured = TRUE")
-        featured_count = c.fetchone()[0] or 0
+            if "is_featured" in gallery_columns:
+                c.execute("SELECT COUNT(*) FROM gallery_photos WHERE is_featured = TRUE")
+                featured_count = c.fetchone()[0] or 0
+            else:
+                featured_count = 0
 
-        # Recent uploads (last 7 days)
-        c.execute("SELECT COUNT(*) FROM gallery_photos WHERE created_at >= CURRENT_DATE - INTERVAL '7 days'")
-        recent_uploads = c.fetchone()[0] or 0
+            if "created_at" in gallery_columns:
+                c.execute("SELECT COUNT(*) FROM gallery_photos WHERE created_at >= CURRENT_DATE - INTERVAL '7 days'")
+                recent_uploads = c.fetchone()[0] or 0
+            else:
+                recent_uploads = 0
+        else:
+            c.execute("SELECT COUNT(*) FROM client_gallery")
+            total_photos = c.fetchone()[0] or 0
+            total_views = 0
+            featured_count = 0
+            c.execute("SELECT COUNT(*) FROM client_gallery WHERE created_at >= CURRENT_DATE - INTERVAL '7 days'")
+            recent_uploads = c.fetchone()[0] or 0
 
         conn.close()
 
@@ -1689,25 +1845,59 @@ async def upload_gallery_photo(
         # Сохранить в БД
         conn = get_db_connection()
         c = conn.cursor()
+        gallery_columns = _get_table_columns(c, "gallery_photos")
 
-        c.execute("""
-            INSERT INTO gallery_photos (
-                url, title, description, category,
-                uploaded_by, is_featured, client_id,
-                before_photo_url, after_photo_url
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING id
-        """, (
-            photo_url,
-            title,
-            description,
-            category,
-            user.get("email", "admin"),
-            is_featured.lower() == "true",
-            client_id if client_id else None,
-            before_photo_url if before_photo_url else None,
-            after_photo_url if after_photo_url else None
-        ))
+        if len(gallery_columns) > 0:
+            insert_columns = ["url", "title", "description", "category"]
+            insert_values = [photo_url, title, description, category]
+
+            if "uploaded_by" in gallery_columns:
+                insert_columns.append("uploaded_by")
+                insert_values.append(user.get("email", "admin"))
+            if "is_featured" in gallery_columns:
+                insert_columns.append("is_featured")
+                insert_values.append(is_featured.lower() == "true")
+            if "client_id" in gallery_columns:
+                insert_columns.append("client_id")
+                insert_values.append(client_id if client_id else None)
+            if "before_photo_url" in gallery_columns:
+                insert_columns.append("before_photo_url")
+                insert_values.append(before_photo_url if before_photo_url else None)
+            if "after_photo_url" in gallery_columns:
+                insert_columns.append("after_photo_url")
+                insert_values.append(after_photo_url if after_photo_url else None)
+
+            c.execute("""
+                INSERT INTO gallery_photos ({columns})
+                VALUES ({placeholders})
+                RETURNING id
+            """.format(
+                columns=", ".join(insert_columns),
+                placeholders=", ".join(["%s"] * len(insert_values))
+            ), tuple(insert_values))
+        else:
+            normalized_client_id = (client_id or "").strip()
+            if len(normalized_client_id) == 0:
+                conn.close()
+                raise HTTPException(status_code=400, detail="client_id is required")
+
+            notes_value = (description or "").strip()
+            if len(notes_value) == 0:
+                notes_value = (title or "").strip()
+
+            c.execute("""
+                INSERT INTO client_gallery (
+                    client_id, before_photo, after_photo, category, notes, master_id
+                ) VALUES (%s, %s, %s, %s, %s, %s)
+                RETURNING id
+            """, (
+                normalized_client_id,
+                before_photo_url if len(before_photo_url) > 0 else None,
+                after_photo_url if len(after_photo_url) > 0 else (photo_url if len(photo_url) > 0 else None),
+                category,
+                notes_value,
+                user.get("id")
+            ))
 
         new_id = c.fetchone()[0]
         conn.commit()
@@ -1734,39 +1924,48 @@ async def delete_gallery_photo(photo_id: int, session_token: Optional[str] = Coo
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        gallery_columns = _get_table_columns(c, "gallery_photos")
 
-        # Получить URL фото
-        c.execute("SELECT url, before_photo_url, after_photo_url FROM gallery_photos WHERE id = %s", (photo_id,))
-        result = c.fetchone()
+        if len(gallery_columns) > 0:
+            url_sql = "url" if "url" in gallery_columns else "NULL::text AS url"
+            before_sql = "before_photo_url" if "before_photo_url" in gallery_columns else "NULL::text AS before_photo_url"
+            after_sql = "after_photo_url" if "after_photo_url" in gallery_columns else "NULL::text AS after_photo_url"
+            c.execute("""
+                SELECT {url_sql}, {before_sql}, {after_sql}
+                FROM gallery_photos
+                WHERE id = %s
+            """.format(
+                url_sql=url_sql,
+                before_sql=before_sql,
+                after_sql=after_sql
+            ), (photo_id,))
+            result = c.fetchone()
 
-        if result:
-            photo_url = result[0]
-            before_url = result[1]
-            after_url = result[2]
-            
-            # Helper to delete file
-            def delete_file(path_url):
-                if path_url and path_url.startswith("/uploads/"):
-                    file_path = path_url[1:]  # Remove leading /
-                    if os.path.exists(file_path):
-                        try:
-                            os.remove(file_path)
-                            log_info(f"Deleted file: {file_path}", "api")
-                        except Exception as e:
-                            log_error(f"Error deleting file {file_path}: {e}", "api")
+            if result:
+                photo_url = result[0]
+                before_url = result[1]
+                after_url = result[2]
+                _remove_gallery_file(photo_url)
+                if before_url and before_url != photo_url:
+                    _remove_gallery_file(before_url)
+                if after_url and after_url != photo_url:
+                    _remove_gallery_file(after_url)
 
-            # Удаляем основное фото
-            delete_file(photo_url)
-            
-            # Удаляем фото до/после если есть (и если отличаются от основного)
-            if before_url and before_url != photo_url:
-                delete_file(before_url)
-            
-            if after_url and after_url != photo_url:
-                delete_file(after_url)
+            c.execute("DELETE FROM gallery_photos WHERE id = %s", (photo_id,))
+        else:
+            c.execute("""
+                SELECT before_photo, after_photo
+                FROM client_gallery
+                WHERE id = %s
+            """, (photo_id,))
+            result = c.fetchone()
+            if result:
+                _remove_gallery_file(result[0])
+                if result[1] != result[0]:
+                    _remove_gallery_file(result[1])
 
-        # Удалить из БД
-        c.execute("DELETE FROM gallery_photos WHERE id = %s", (photo_id,))
+            c.execute("DELETE FROM client_gallery WHERE id = %s", (photo_id,))
+
         conn.commit()
         conn.close()
 
@@ -1786,12 +1985,13 @@ async def toggle_featured_photo(photo_id: int, request: Request, session_token: 
         data = await request.json()
         conn = get_db_connection()
         c = conn.cursor()
-
-        c.execute("""
-            UPDATE gallery_photos
-            SET is_featured = %s
-            WHERE id = %s
-        """, (data.get("is_featured", False), photo_id))
+        gallery_columns = _get_table_columns(c, "gallery_photos")
+        if len(gallery_columns) > 0 and "is_featured" in gallery_columns:
+            c.execute("""
+                UPDATE gallery_photos
+                SET is_featured = %s
+                WHERE id = %s
+            """, (data.get("is_featured", False), photo_id))
 
         conn.commit()
         conn.close()
@@ -1816,12 +2016,13 @@ async def toggle_gallery_photo_visibility(
         data = await request.json()
         conn = get_db_connection()
         c = conn.cursor()
-
-        c.execute("""
-            UPDATE gallery_photos
-            SET is_visible = %s
-            WHERE id = %s
-        """, (data.get("is_visible", True), photo_id))
+        gallery_columns = _get_table_columns(c, "gallery_photos")
+        if len(gallery_columns) > 0 and "is_visible" in gallery_columns:
+            c.execute("""
+                UPDATE gallery_photos
+                SET is_visible = %s
+                WHERE id = %s
+            """, (data.get("is_visible", True), photo_id))
 
         conn.commit()
         conn.close()

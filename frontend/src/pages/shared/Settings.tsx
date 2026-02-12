@@ -914,7 +914,7 @@ export default function AdminSettings() {
       </div>
 
       {userPermissions.roleLevel >= 80 && (
-        <div className="mb-6 flex justify-end">
+        <div className="mb-6 flex justify-end gap-3 flex-wrap">
           <Button
             onClick={() => navigate(`${rolePrefix}/menu-customization`)}
             variant="outline"
@@ -922,6 +922,14 @@ export default function AdminSettings() {
           >
             <Menu className="w-4 h-4 mr-2" />
             {t('settings:customize_menu')}
+          </Button>
+          <Button
+            onClick={() => navigate(`${rolePrefix}/menu-customization?portal=account`)}
+            variant="outline"
+            className="bg-white"
+          >
+            <Menu className="w-4 h-4 mr-2" />
+            {t('settings:customize_account_menu', { defaultValue: 'Настроить меню клиента' })}
           </Button>
         </div>
       )}

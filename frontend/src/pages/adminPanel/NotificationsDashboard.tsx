@@ -48,7 +48,7 @@ interface NotificationTemplate {
 }
 
 export default function NotificationsDashboard() {
-  const { t } = useTranslation(['adminpanel/notificationsdashboard', 'common']);
+  const { t, i18n } = useTranslation(['adminpanel/notificationsdashboard', 'common']);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [templates, setTemplates] = useState<NotificationTemplate[]>([]);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -85,8 +85,11 @@ export default function NotificationsDashboard() {
 
   useEffect(() => {
     loadNotifications();
-    loadTemplates();
   }, []);
+
+  useEffect(() => {
+    loadTemplates();
+  }, [i18n.language]);
 
   const loadNotifications = async () => {
     try {
@@ -110,7 +113,8 @@ export default function NotificationsDashboard() {
 
   const loadTemplates = async () => {
     try {
-      const response = await fetch('/api/admin/notifications/templates', {
+      const templateLanguage = encodeURIComponent(i18n.language);
+      const response = await fetch(`/api/admin/notifications/templates?lang=${templateLanguage}`, {
         credentials: 'include',
       });
 

@@ -1,5 +1,13 @@
 {
   "add_group": "Add group",
+  "account_apply_mode_all": "All clients",
+  "account_apply_mode_selected": "Selected clients only",
+  "account_apply_mode_title": "Apply hidden items to",
+  "account_hide_hint": "Disabled items will be hidden in the client account",
+  "account_menu_subtitle": "Control visibility of client account menu items for all clients or specific profiles",
+  "account_menu_title": "Client menu setup",
+  "account_select_clients": "Select clients:",
+  "account_visible_items": "Client menu items",
   "cancel": "Cancel",
   "confirm": "Confirm",
   "custom_link": "Custom link",

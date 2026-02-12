@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { GripVertical, Eye, EyeOff, RotateCcw, ArrowLeft, Plus, Edit2, Trash2, ChevronDown, ChevronRight, Folder, Link as LinkIcon, X, LayoutGrid } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
+import { buildCrmMenuCatalog, CRM_MENU_DEFAULT_ORDER, CRM_MENU_GROUPS } from '../../components/layouts/UniversalLayout';
 
 interface MenuItem {
     id: string;
@@ -18,119 +19,264 @@ interface MenuItem {
     isOpen?: boolean;
 }
 
+const ACCOUNT_MENU_IDS = [
+    'dashboard',
+    'appointments',
+    'gallery',
+    'loyalty',
+    'achievements',
+    'promocodes',
+    'specialoffers',
+    'masters',
+    'beauty',
+    'notifications',
+    'settings',
+];
+
+type CatalogItem = {
+    label?: string;
+    path?: string;
+};
+
+const buildMenuItemsFromCatalog = (
+    catalogItems: Record<string, CatalogItem>,
+    groups: Record<string, string[]>,
+    defaultOrder: string[]
+): MenuItem[] => {
+    const result: MenuItem[] = [];
+
+    defaultOrder.forEach((id) => {
+        const item = catalogItems[id];
+        if (item === undefined) {
+            return;
+        }
+
+        const groupChildren = groups[id];
+        if (Array.isArray(groupChildren)) {
+            const children: MenuItem[] = groupChildren
+                .map((childId) => {
+                    const child = catalogItems[childId];
+                    if (child === undefined) {
+                        return null;
+                    }
+                    return {
+                        id: childId,
+                        label: child.label ?? childId,
+                        path: child.path,
+                        type: 'link',
+                        visible: true,
+                    };
+                })
+                .filter((child): child is MenuItem => child !== null);
+
+            result.push({
+                id,
+                label: item.label ?? id,
+                type: 'group',
+                visible: true,
+                isOpen: true,
+                children,
+            });
+            return;
+        }
+
+        result.push({
+            id,
+            label: item.label ?? id,
+            path: item.path,
+            type: 'link',
+            visible: true,
+        });
+    });
+
+    return result;
+};
+
 export default function MenuCustomization() {
-    const { t } = useTranslation(['admin/menucustomization', 'common']);
+    const { t } = useTranslation([
+        'admin/menucustomization',
+        'account',
+        'layouts/mainlayout',
+        'layouts/adminpanellayout',
+        'adminpanel/loyaltymanagement',
+        'admin/settings',
+        'common'
+    ]);
     const navigate = useNavigate();
+    const location = useLocation();
     const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [draggedItem, setDraggedItem] = useState<{ index: number; parentId: string | null } | null>(null);
+    const [applyMode, setApplyMode] = useState<'all' | 'selected'>('all');
+    const [targetClientIds, setTargetClientIds] = useState<string[]>([]);
+    const [clients, setClients] = useState<Array<{ id: string; label: string }>>([]);
+
+    const rolePrefix = useMemo(() => {
+        if (location.pathname.startsWith('/admin')) return '/admin';
+        if (location.pathname.startsWith('/crm')) return '/crm';
+        if (location.pathname.startsWith('/manager')) return '/manager';
+        if (location.pathname.startsWith('/sales')) return '/sales';
+        if (location.pathname.startsWith('/marketer')) return '/marketer';
+        if (location.pathname.startsWith('/employee')) return '/employee';
+        return '/crm';
+    }, [location.pathname]);
+
+    const portalMode = useMemo(() => {
+        const searchParams = new URLSearchParams(location.search);
+        return searchParams.get('portal') === 'account' ? 'account' : 'crm';
+    }, [location.search]);
+
+    const crmCatalog = useMemo(
+        () => buildCrmMenuCatalog({
+            t,
+            rolePrefix: '/crm',
+            dashboardPath: '/crm/dashboard',
+            permissions: {
+                canViewAllBookings: true,
+                canEditServices: true,
+                canViewAnalytics: true,
+                roleLevel: 100,
+                canEditSettings: true,
+                canViewBotSettings: true,
+            },
+            userRole: 'director',
+        }),
+        [t]
+    );
+
+    const SYSTEM_LIBRARY: Partial<MenuItem>[] = useMemo(() => {
+        const result: Partial<MenuItem>[] = [];
+        const groupedIds = new Set<string>();
+
+        Object.values(CRM_MENU_GROUPS).forEach((children) => {
+            children.forEach((id) => groupedIds.add(id));
+        });
+
+        Object.entries(crmCatalog.items).forEach(([id, item]) => {
+            if (groupedIds.has(id)) {
+                result.push({
+                    id,
+                    label: item.label,
+                    path: item.path,
+                    type: 'link',
+                });
+                return;
+            }
+
+            if (item.path === undefined) {
+                return;
+            }
+
+            result.push({
+                id,
+                label: item.label,
+                path: item.path,
+                type: 'link',
+            });
+        });
+
+        return result;
+    }, [crmCatalog]);
+
+    const defaultMenuItems: MenuItem[] = useMemo(
+        () => buildMenuItemsFromCatalog(crmCatalog.items, CRM_MENU_GROUPS, CRM_MENU_DEFAULT_ORDER),
+        [crmCatalog]
+    );
+
+    const accountDefaultMenuItems: MenuItem[] = useMemo(
+        () => ACCOUNT_MENU_IDS.map((id) => {
+            const labelMap: Record<string, string> = {
+                dashboard: t('account:tabs.dashboard', { defaultValue: 'Главная' }),
+                appointments: t('account:tabs.appointments', { defaultValue: 'Записи' }),
+                gallery: t('account:tabs.gallery', { defaultValue: 'Галерея' }),
+                loyalty: t('adminpanel/loyaltymanagement:title', { defaultValue: 'Бонусная программа' }),
+                achievements: t('layouts/mainlayout:menu.challenges', { defaultValue: 'Челленджи' }),
+                promocodes: t('layouts/mainlayout:menu.promo_codes', { defaultValue: 'Промокоды' }),
+                specialoffers: t('account:settings.special_offers', { defaultValue: 'Специальные предложения' }),
+                masters: t('account:tabs.masters', { defaultValue: 'Мастера' }),
+                beauty: t('account:tabs.beauty', { defaultValue: 'Уход и рекомендации' }),
+                notifications: t('account:tabs.notifications', { defaultValue: 'Уведомления' }),
+                settings: t('account:tabs.settings', { defaultValue: 'Настройки' }),
+            };
+            return {
+                id,
+                label: labelMap[id] ?? id,
+                path: `/account/${id === 'dashboard' ? 'dashboard' : id === 'promocodes' ? 'promocodes' : id === 'specialoffers' ? 'special-offers' : id}`,
+                type: 'link',
+                visible: true,
+            };
+        }),
+        [t]
+    );
 
     // Modal state
     const [showEditModal, setShowEditModal] = useState(false);
     const [editingItem, setEditingItem] = useState<{ item: MenuItem | null; parentId: string | null }>({ item: null, parentId: null });
     const [editForm, setEditForm] = useState({ label: '', path: '', type: 'link' as 'group' | 'link' });
 
-    // Список всех стандартных системных пунктов для быстрого добавления
-    const SYSTEM_LIBRARY: Partial<MenuItem>[] = [
-        { id: 'dashboard', label: t('items.dashboard'), path: '/crm/dashboard', type: 'link' },
-        { id: 'bookings', label: t('items.bookings'), path: '/crm/bookings', type: 'link' },
-        { id: 'calendar', label: t('items.calendar'), path: '/crm/calendar', type: 'link' },
-        { id: 'clients', label: t('items.clients'), path: '/crm/clients', type: 'link' },
-        { id: 'internal-chat', label: t('items.internal_chat'), path: '/crm/internal-chat', type: 'link' },
-        { id: 'funnel', label: t('items.funnel'), path: '/crm/funnel', type: 'link' },
-        { id: 'services', label: t('items.services'), path: '/crm/services', type: 'link' },
-        { id: 'service-requests', label: t('items.service_requests'), path: '/crm/service-change-requests', type: 'link' },
-        { id: 'products', label: t('items.products'), path: '/crm/products', type: 'link' },
-        { id: 'analytics', label: t('items.analytics'), path: '/crm/analytics', type: 'link' },
-        { id: 'visitors', label: t('items.visitors'), path: '/crm/visitor-analytics', type: 'link' },
-        { id: 'invoices', label: t('items.invoices'), path: '/crm/invoices', type: 'link' },
-        { id: 'contracts', label: t('items.contracts'), path: '/crm/contracts', type: 'link' },
-        { id: 'tasks', label: t('items.tasks'), path: '/crm/tasks', type: 'link' },
-        { id: 'broadcasts', label: t('items.broadcasts'), path: '/crm/broadcasts', type: 'link' },
-        { id: 'telephony', label: t('items.telephony'), path: '/crm/telephony', type: 'link' },
-        { id: 'messengers', label: t('items.messengers'), path: '/crm/messengers', type: 'link' },
-        { id: 'payment-integrations', label: t('items.payment_integrations'), path: '/crm/payment-integrations', type: 'link' },
-        { id: 'marketplace-integrations', label: t('items.marketplace_integrations'), path: '/crm/marketplace-integrations', type: 'link' },
-        { id: 'app-settings', label: t('items.settings'), path: '/crm/settings', type: 'link' },
-        { id: 'users', label: t('items.users'), path: '/crm/users', type: 'link' },
-        { id: 'public-content', label: t('items.public_content'), path: '/crm/public-content', type: 'link' },
-        { id: 'bot-settings', label: t('items.bot_settings'), path: '/crm/bot-settings', type: 'link' },
-        { id: 'audit-log', label: t('items.audit_log'), path: '/crm/audit-log', type: 'link' },
-        { id: 'trash', label: t('items.trash'), path: '/crm/trash', type: 'link' },
-    ];
-
-    const defaultMenuItems: MenuItem[] = [
-        { id: 'dashboard', label: t('items.dashboard'), path: '/crm/dashboard', type: 'link', visible: true },
-        { id: 'bookings', label: t('items.bookings'), path: '/crm/bookings', type: 'link', visible: true },
-        { id: 'clients', label: t('items.clients'), path: '/crm/clients', type: 'link', visible: true },
-        {
-            id: 'chat-group', label: t('items.chat'), type: 'group', visible: true, isOpen: true, children: [
-                { id: 'internal-chat', label: t('items.internal_chat'), path: '/crm/internal-chat', type: 'link', visible: true }
-            ]
-        },
-        { id: 'calendar', label: t('items.calendar'), path: '/crm/calendar', type: 'link', visible: true },
-        { id: 'funnel', label: t('items.funnel'), path: '/crm/funnel', type: 'link', visible: true },
-        {
-            id: 'catalog-group', label: t('items.catalog'), type: 'group', visible: true, isOpen: true, children: [
-                { id: 'services', label: t('items.services'), path: '/crm/services', type: 'link', visible: true },
-                { id: 'service-requests', label: t('items.service_requests'), path: '/crm/service-change-requests', type: 'link', visible: true },
-                { id: 'products', label: t('items.products'), path: '/crm/products', type: 'link', visible: true }
-            ]
-        },
-        {
-            id: 'analytics-group', label: t('items.analytics'), type: 'group', visible: true, isOpen: true, children: [
-                { id: 'analytics', label: t('items.analytics'), path: '/crm/analytics', type: 'link', visible: true },
-                { id: 'visitors', label: t('items.visitors'), path: '/crm/visitor-analytics', type: 'link', visible: true }
-            ]
-        },
-        {
-            id: 'finance-group', label: t('items.finance'), type: 'group', visible: true, isOpen: true, children: [
-                { id: 'invoices', label: t('items.invoices'), path: '/crm/invoices', type: 'link', visible: true },
-                { id: 'contracts', label: t('items.contracts'), path: '/crm/contracts', type: 'link', visible: true }
-            ]
-        },
-        {
-            id: 'tools-group', label: t('items.tools'), type: 'group', visible: true, isOpen: true, children: [
-                { id: 'tasks', label: t('items.tasks'), path: '/crm/tasks', type: 'link', visible: true },
-                { id: 'broadcasts', label: t('items.broadcasts'), path: '/crm/broadcasts', type: 'link', visible: true },
-                { id: 'telephony', label: t('items.telephony'), path: '/crm/telephony', type: 'link', visible: true }
-            ]
-        },
-        {
-            id: 'integrations-group', label: t('items.integrations'), type: 'group', visible: true, isOpen: true, children: [
-                { id: 'messengers', label: t('items.messengers'), path: '/crm/messengers', type: 'link', visible: true },
-                { id: 'payment-integrations', label: t('items.payment_integrations'), path: '/crm/payment-integrations', type: 'link', visible: true },
-                { id: 'marketplace-integrations', label: t('items.marketplace_integrations'), path: '/crm/marketplace-integrations', type: 'link', visible: true }
-            ]
-        },
-        {
-            id: 'settings-group', label: t('items.settings'), type: 'group', visible: true, isOpen: true, children: [
-                { id: 'app-settings', label: t('items.settings'), path: '/crm/settings', type: 'link', visible: true },
-                { id: 'users', label: t('items.users'), path: '/crm/users', type: 'link', visible: true },
-                { id: 'public-content', label: t('items.public_content'), path: '/crm/public-content', type: 'link', visible: true },
-                { id: 'bot-settings', label: t('items.bot_settings'), path: '/crm/bot-settings', type: 'link', visible: true },
-                { id: 'audit-log', label: t('items.audit_log'), path: '/crm/audit-log', type: 'link', visible: true },
-                { id: 'trash', label: t('items.trash'), path: '/crm/trash', type: 'link', visible: true }
-            ]
-        }
-    ];
-
     useEffect(() => {
         loadMenuSettings();
-    }, []);
+    }, [portalMode, defaultMenuItems, accountDefaultMenuItems]);
+
+    const applyHiddenItemsToMenu = (items: MenuItem[], hiddenItems: string[]) => {
+        const hiddenSet = new Set(hiddenItems);
+        const applyVisibility = (source: MenuItem[]): MenuItem[] => {
+            return source.map((item) => ({
+                ...item,
+                visible: !hiddenSet.has(item.id),
+                children: Array.isArray(item.children) ? applyVisibility(item.children) : undefined,
+            }));
+        };
+        return applyVisibility(items);
+    };
+
+    const loadClients = async () => {
+        try {
+            const response = await api.getClients('all');
+            const allClients = Array.isArray(response?.clients) ? response.clients : [];
+            setClients(
+                allClients.map((client: any) => ({
+                    id: String(client.instagram_id ?? client.id ?? ''),
+                    label: String(client.display_name ?? client.name ?? client.username ?? client.instagram_id ?? ''),
+                })).filter((client: { id: string; label: string }) => client.id.length > 0)
+            );
+        } catch (error) {
+            setClients([]);
+        }
+    };
 
     const loadMenuSettings = async () => {
         try {
             setLoading(true);
+
+            if (portalMode === 'account') {
+                const [settings] = await Promise.all([
+                    api.getAccountMenuSettings(),
+                    loadClients(),
+                ]);
+
+                const hiddenItems = Array.isArray(settings.hidden_items) ? settings.hidden_items : [];
+                setApplyMode(settings.apply_mode === 'selected' ? 'selected' : 'all');
+                setTargetClientIds(Array.isArray(settings.target_client_ids) ? settings.target_client_ids : []);
+                setMenuItems(applyHiddenItemsToMenu(accountDefaultMenuItems, hiddenItems));
+                return;
+            }
+
             const settings = await api.getMenuSettings();
-            if (settings.menu_order && settings.menu_order.length > 0 && typeof settings.menu_order[0] === 'object') {
-                setMenuItems(settings.menu_order as any as MenuItem[]);
+            if (Array.isArray(settings.menu_order) && settings.menu_order.length > 0 && typeof settings.menu_order[0] === 'object') {
+                setMenuItems(settings.menu_order as unknown as MenuItem[]);
             } else {
                 setMenuItems(defaultMenuItems);
             }
         } catch (error) {
-            setMenuItems(defaultMenuItems);
+            if (portalMode === 'account') {
+                setMenuItems(accountDefaultMenuItems);
+                setApplyMode('all');
+                setTargetClientIds([]);
+            } else {
+                setMenuItems(defaultMenuItems);
+            }
         } finally {
             setLoading(false);
         }
@@ -140,9 +286,21 @@ export default function MenuCustomization() {
         try {
             setSaving(true);
             const hidden_items = extractHiddenIds(menuItems);
-            await api.saveMenuSettings({ menu_order: menuItems as any, hidden_items });
+
+            if (portalMode === 'account') {
+                await api.saveAccountMenuSettings({
+                    hidden_items,
+                    apply_mode: applyMode,
+                    target_client_ids: applyMode === 'selected' ? targetClientIds : [],
+                });
+            } else {
+                await api.saveMenuSettings({ menu_order: menuItems as any, hidden_items });
+            }
+
             toast.success(t('settings_saved'));
-            setTimeout(() => window.location.reload(), 500);
+            if (portalMode !== 'account') {
+                setTimeout(() => window.location.reload(), 500);
+            }
         } catch (error) {
             toast.error(t('save_error'));
         } finally {
@@ -161,6 +319,12 @@ export default function MenuCustomization() {
 
     const handleReset = async () => {
         if (!confirm(t('reset_confirm'))) return;
+        if (portalMode === 'account') {
+            setMenuItems(accountDefaultMenuItems);
+            setApplyMode('all');
+            setTargetClientIds([]);
+            return;
+        }
         setMenuItems(defaultMenuItems);
     };
 
@@ -299,17 +463,27 @@ export default function MenuCustomization() {
 
     const renderMenuItem = (item: MenuItem, index: number, parentId: string | null = null, depth: number = 0) => {
         const isGroup = item.type === 'group';
+        const canEditStructure = portalMode === 'crm';
         return (
             <div key={item.id} className="space-y-1">
                 <div
-                    draggable onDragStart={() => handleDragStart(index, parentId)}
-                    onDragOver={(e) => handleDragOver(e, index, parentId)}
+                    draggable={canEditStructure}
+                    onDragStart={() => {
+                        if (canEditStructure) {
+                            handleDragStart(index, parentId);
+                        }
+                    }}
+                    onDragOver={(e) => {
+                        if (canEditStructure) {
+                            handleDragOver(e, index, parentId);
+                        }
+                    }}
                     className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all group ${depth > 0 ? 'ml-8' : ''} ${draggedItem?.index === index && draggedItem?.parentId === parentId ? 'border-blue-500 bg-blue-50 shadow-lg' :
                         item.visible ? 'border-gray-50 bg-white hover:border-blue-100 shadow-sm' : 'border-gray-50 bg-gray-50/50 opacity-60'
                         }`}
                 >
-                    <div className="flex items-center gap-2 flex-1 cursor-move">
-                        <GripVertical className="w-5 h-5 text-gray-300" />
+                    <div className={`flex items-center gap-2 flex-1 ${canEditStructure ? 'cursor-move' : ''}`}>
+                        {canEditStructure ? <GripVertical className="w-5 h-5 text-gray-300" /> : <div className="w-5" />}
                         {isGroup ? (
                             <button onClick={() => toggleGroup(item.id)} className="p-1 hover:bg-gray-100 rounded">
                                 {item.isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -323,20 +497,22 @@ export default function MenuCustomization() {
                             {!isGroup && item.path && <span className="text-[10px] text-gray-400 font-mono italic">{item.path}</span>}
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {isGroup && (
+                    {canEditStructure && (
+                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {isGroup && (
                             <button onClick={() => openAddModal(item.id, 'link')} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
                                 <Plus className="w-4 h-4" />
                                 <span className="text-xs font-bold">{t('sub_item')}</span>
                             </button>
-                        )}
-                        <button onClick={() => openEditModal(item, parentId)} className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors">
-                            <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => handleDeleteItem(item.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                            <Trash2 className="w-4 h-4" />
-                        </button>
-                    </div>
+                            )}
+                            <button onClick={() => openEditModal(item, parentId)} className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors">
+                                <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button onClick={() => handleDeleteItem(item.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
                     <button onClick={() => toggleVisibility(item.id)} className={`p-2 rounded-lg ${item.visible ? 'text-green-600 bg-green-50' : 'text-gray-400 bg-gray-100'}`}>
                         {item.visible ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                     </button>
@@ -354,10 +530,18 @@ export default function MenuCustomization() {
         <div className="p-8 max-w-[1400px] mx-auto pb-32">
             <div className="flex items-center justify-between mb-10">
                 <div className="flex items-center gap-5">
-                    <button onClick={() => navigate('/crm/settings')} className="p-3 bg-white hover:shadow-xl rounded-2xl border border-gray-100 transition-all"><ArrowLeft className="w-6 h-6" /></button>
+                    <button onClick={() => navigate(`${rolePrefix}/settings`)} className="p-3 bg-white hover:shadow-xl rounded-2xl border border-gray-100 transition-all"><ArrowLeft className="w-6 h-6" /></button>
                     <div>
-                        <h1 className="text-4xl font-black text-gray-900 tracking-tighter">{t('title')}</h1>
-                        <p className="text-gray-500 mt-1 font-medium italic text-lg opacity-80">{t('subtitle')}</p>
+                        <h1 className="text-4xl font-black text-gray-900 tracking-tighter">
+                            {portalMode === 'account'
+                                ? t('account_menu_title', { defaultValue: 'Настройка меню клиента' })
+                                : t('title')}
+                        </h1>
+                        <p className="text-gray-500 mt-1 font-medium italic text-lg opacity-80">
+                            {portalMode === 'account'
+                                ? t('account_menu_subtitle', { defaultValue: 'Скрывайте разделы в личном кабинете для всех клиентов или выбранных профилей' })
+                                : t('subtitle')}
+                        </p>
                     </div>
                 </div>
                 <div className="flex gap-4">
@@ -371,20 +555,84 @@ export default function MenuCustomization() {
                     <div className="bg-white rounded-[32px] shadow-2xl shadow-blue-500/5 p-8 border border-gray-100 relative overflow-hidden">
                         <div className="flex items-center justify-between mb-8">
                             <div>
-                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">{t('working_structure')}</h2>
-                                <p className="text-sm text-gray-400 font-medium">{t('drag_hint')}</p>
+                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">
+                                    {portalMode === 'account'
+                                        ? t('account_visible_items', { defaultValue: 'Пункты меню клиента' })
+                                        : t('working_structure')}
+                                </h2>
+                                <p className="text-sm text-gray-400 font-medium">
+                                    {portalMode === 'account'
+                                        ? t('account_hide_hint', { defaultValue: 'Отключенные пункты исчезнут в личном кабинете' })
+                                        : t('drag_hint')}
+                                </p>
                             </div>
-                            <div className="flex gap-2">
-                                <Button onClick={() => openAddModal(null, 'group')} className="bg-pink-600 hover:bg-pink-700 text-white rounded-xl h-10 px-4 font-bold shadow-lg shadow-pink-200"><Plus className="w-4 h-4 mr-2" /> {t('add_group')}</Button>
-                                <Button onClick={() => openAddModal(null, 'link')} variant="outline" className="rounded-xl h-10 px-4 font-bold border-gray-200"><Plus className="w-4 h-4 mr-2" /> {t('custom_link')}</Button>
-                            </div>
+                            {portalMode === 'crm' && (
+                                <div className="flex gap-2">
+                                    <Button onClick={() => openAddModal(null, 'group')} className="bg-pink-600 hover:bg-pink-700 text-white rounded-xl h-10 px-4 font-bold shadow-lg shadow-pink-200"><Plus className="w-4 h-4 mr-2" /> {t('add_group')}</Button>
+                                    <Button onClick={() => openAddModal(null, 'link')} variant="outline" className="rounded-xl h-10 px-4 font-bold border-gray-200"><Plus className="w-4 h-4 mr-2" /> {t('custom_link')}</Button>
+                                </div>
+                            )}
                         </div>
+
+                        {portalMode === 'account' && (
+                            <div className="mb-6 rounded-2xl border border-gray-200 bg-gray-50 p-4 space-y-4">
+                                <div className="text-sm font-semibold text-gray-700">
+                                    {t('account_apply_mode_title', { defaultValue: 'Кому применить скрытые пункты' })}
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    <button
+                                        onClick={() => setApplyMode('all')}
+                                        className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${applyMode === 'all' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                                    >
+                                        {t('account_apply_mode_all', { defaultValue: 'Всем клиентам' })}
+                                    </button>
+                                    <button
+                                        onClick={() => setApplyMode('selected')}
+                                        className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${applyMode === 'selected' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                                    >
+                                        {t('account_apply_mode_selected', { defaultValue: 'Только выбранным' })}
+                                    </button>
+                                </div>
+
+                                {applyMode === 'selected' && (
+                                    <div className="bg-white border border-gray-200 rounded-xl p-3 max-h-52 overflow-y-auto">
+                                        <div className="text-xs text-gray-500 mb-2">
+                                            {t('account_select_clients', { defaultValue: 'Выберите клиентов:' })}
+                                        </div>
+                                        <div className="space-y-2">
+                                            {clients.map((client) => {
+                                                const checked = targetClientIds.includes(client.id);
+                                                return (
+                                                    <label key={client.id} className="flex items-center gap-2 text-sm text-gray-700">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={checked}
+                                                            onChange={(event) => {
+                                                                setTargetClientIds((prev) => {
+                                                                    if (event.target.checked) {
+                                                                        return [...prev, client.id];
+                                                                    }
+                                                                    return prev.filter((value) => value !== client.id);
+                                                                });
+                                                            }}
+                                                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                        />
+                                                        <span>{client.label}</span>
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                         <div className="space-y-3">{menuItems.map((item, index) => renderMenuItem(item, index))}</div>
                     </div>
                 </div>
 
-                <div className="w-[350px] shrink-0 sticky top-8">
-                    <div className="bg-gray-900 rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden">
+                {portalMode === 'crm' && (
+                    <div className="w-[350px] shrink-0 sticky top-8">
+                        <div className="bg-gray-900 rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-16 translate-x-16"></div>
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 bg-white/10 rounded-xl"><LayoutGrid className="w-6 h-6" /></div>
@@ -408,10 +656,11 @@ export default function MenuCustomization() {
                             })}
                         </div>
                     </div>
-                </div>
+                    </div>
+                )}
             </div>
 
-            {showEditModal && (
+            {showEditModal && portalMode === 'crm' && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[200] flex items-center justify-center p-4 animate-in fade-in transition-all">
                     <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 p-10 border border-gray-100">
                         <div className="flex items-center justify-between mb-8">
