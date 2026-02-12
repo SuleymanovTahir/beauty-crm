@@ -1472,8 +1472,8 @@
 
 .crm-services-search-input {
   height: 2.78rem;
-  border: 1px solid #ddd5cf;
-  background: #efe8e2;
+  border: 1px solid var(--input);
+  background: var(--input-background);
   border-radius: 0.75rem;
   padding-left: 2.45rem;
   font-size: 0.9rem;
@@ -1494,8 +1494,8 @@
 .crm-services-category-select {
   width: 100%;
   height: 2.78rem;
-  border: 1px solid #ddd5cf;
-  background: #efe8e2;
+  border: 1px solid var(--input);
+  background: var(--input-background);
   border-radius: 0.75rem;
   padding: 0 2.6rem 0 1rem;
   appearance: none;

@@ -18,7 +18,7 @@
 
 .sidebar-brand-name {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   line-height: 1.15;
   font-weight: 700;
   color: #111827;
@@ -29,7 +29,7 @@
 
 .sidebar-brand-role {
   margin-top: 4px;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   line-height: 1.2;
   font-weight: 500;
   color: #6b7280;
@@ -49,10 +49,10 @@
   gap: 10px;
   padding: 10px 12px;
   border-radius: 12px;
-  color: #64748b;
+  color: #475569;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
   width: 100%;
   text-align: left !important;
 }
@@ -73,6 +73,22 @@
   color: white !important;
 }
 
+.menu-item-premium.expanded {
+  background: #eaf1ff;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.menu-item-premium.expanded svg {
+  color: #2563eb;
+}
+
+.menu-item-premium.expanded:hover {
+  background: #e2ebff;
+  color: #1d4ed8;
+  transform: none;
+}
+
 .submenu-item-premium {
   display: flex !important;
   flex-direction: row !important;
@@ -81,7 +97,7 @@
   gap: 10px;
   padding: 9px 12px 9px 42px;
   border-radius: 10px;
-  color: #64748b;
+  color: #475569;
   font-weight: 500;
   font-size: 12px;
   transition: all 0.2s ease;
@@ -95,9 +111,14 @@
 }
 
 .submenu-item-premium.active {
-  color: #d946ef;
+  color: #ffffff;
   font-weight: 700;
-  background: #fdf4ff;
+  background: linear-gradient(135deg, #3b82f6 0%, #d946ef 50%, #f43f5e 100%);
+  box-shadow: 0 10px 15px -3px rgba(217, 70, 239, 0.26);
+}
+
+.submenu-item-premium.active svg {
+  color: #ffffff;
 }
 
 .sidebar-footer-premium {
