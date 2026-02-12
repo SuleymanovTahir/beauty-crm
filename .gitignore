@@ -41,6 +41,9 @@ backend/salon_bot.db
 # Environment variables - CRITICAL: Never commit backend API keys!
 backend/.env.local
 backend/.env.production
+.env
+.env.*
+!.env.example
 
 # Virtual environments
 .venv

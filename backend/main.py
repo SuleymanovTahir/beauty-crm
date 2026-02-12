@@ -78,6 +78,7 @@ from api.messengers import router as messengers_router
 from api.marketplace_integrations import router as marketplace_router
 from api.payment_integrations import router as payment_integrations_router
 from api.admin_stubs import router as admin_stubs_router
+from api.admin_features import router as admin_features_router
 from api.internal_chat import router as internal_chat_router
 from api.statuses import router as statuses_router
 from api.gallery import router as gallery_router
@@ -338,6 +339,7 @@ app.include_router(messengers_router, prefix="/api")
 app.include_router(marketplace_router, prefix="/api")
 app.include_router(payment_integrations_router, prefix="/api")
 app.include_router(admin_stubs_router, prefix="/api")
+app.include_router(admin_features_router, prefix="/api")
 app.include_router(internal_chat_router)  # already has /api/internal-chat prefix
 app.include_router(statuses_router, prefix="/api")
 app.include_router(gallery_router, prefix="/api")
