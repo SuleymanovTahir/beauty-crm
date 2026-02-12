@@ -159,6 +159,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     const [menuSettings, setMenuSettings] = useState<{ menu_order: any[] | null; hidden_items: string[] | null } | null>(null);
     const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
     const sidebarNavRef = useRef<HTMLElement | null>(null);
+    const lastDeniedPathRef = useRef<string>('');
 
     const permissions = usePermissions(user?.role || 'employee', user?.secondary_role);
 
@@ -195,12 +196,45 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         loadEnabledMessengers();
         loadMenuSettings();
         loadSalonSettings();
+        const handleMenuSettingsUpdated = () => {
+            loadMenuSettings();
+        };
+
+        const handleMenuSettingsStorage = (event: StorageEvent) => {
+            if (event.key === 'crm_menu_settings_updated_at') {
+                loadMenuSettings();
+            }
+        };
+
+        const handleWindowFocus = () => {
+            loadMenuSettings();
+        };
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                loadMenuSettings();
+            }
+        };
+
+        const menuSettingsIntervalId = window.setInterval(() => {
+            loadMenuSettings();
+        }, 30000);
+
+        window.addEventListener('crm-menu-settings-updated', handleMenuSettingsUpdated);
+        window.addEventListener('storage', handleMenuSettingsStorage);
+        window.addEventListener('focus', handleWindowFocus);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
         webrtcService.onIncomingCall = (fromId: number, type: 'audio' | 'video', _status?: string, name?: string, photo?: string) => {
             setIncomingCall({ from: fromId, type, callerName: name, callerPhoto: photo });
         };
 
         return () => {
+            window.clearInterval(menuSettingsIntervalId);
+            window.removeEventListener('crm-menu-settings-updated', handleMenuSettingsUpdated);
+            window.removeEventListener('storage', handleMenuSettingsStorage);
+            window.removeEventListener('focus', handleWindowFocus);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
             webrtcService.onIncomingCall = null;
         };
     }, []);
@@ -289,7 +323,25 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         const groups: Record<string, string[]> = crmCatalog.groups;
 
         const finalItems: any[] = [];
-        const order = menuSettings?.menu_order ?? CRM_MENU_DEFAULT_ORDER;
+        const savedOrderIds = Array.isArray(menuSettings?.menu_order)
+            ? menuSettings.menu_order
+                .map((entry: any) => {
+                    if (typeof entry === 'string' && entry.length > 0) {
+                        return entry;
+                    }
+                    if (typeof entry === 'object' && entry !== null && typeof entry.id === 'string' && entry.id.length > 0) {
+                        return entry.id;
+                    }
+                    return '';
+                })
+                .filter((id: string) => id.length > 0)
+            : [];
+        const order = savedOrderIds.length > 0
+            ? [
+                ...savedOrderIds,
+                ...CRM_MENU_DEFAULT_ORDER.filter((id) => !savedOrderIds.includes(id)),
+            ]
+            : CRM_MENU_DEFAULT_ORDER;
 
         order.forEach(id => {
             if (menuSettings?.hidden_items?.includes(id)) return;
@@ -631,12 +683,21 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         }
 
         if (matchedRoute.allowed) {
+            lastDeniedPathRef.current = '';
             return;
         }
 
-        toast.error(t('common:access_denied'));
-        navigate(dashboardPath, { replace: true });
-    }, [dashboardPath, isAdminPanel, location.pathname, navigate, routeAccessEntries, t]);
+        const fallbackPath = routeAccessEntries.find((entry) => entry.allowed)?.path ?? '';
+        if (fallbackPath.length === 0 || fallbackPath === location.pathname) {
+            return;
+        }
+
+        if (lastDeniedPathRef.current !== location.pathname) {
+            toast.error(t('common:access_denied'));
+            lastDeniedPathRef.current = location.pathname;
+        }
+        navigate(fallbackPath, { replace: true });
+    }, [isAdminPanel, location.pathname, navigate, routeAccessEntries, t]);
 
     useEffect(() => {
         const navElement = sidebarNavRef.current;

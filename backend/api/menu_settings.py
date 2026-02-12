@@ -37,16 +37,77 @@ class AccountMenuSettingsResponse(BaseModel):
 
 ADMIN_ROLES = {"director", "admin", "manager"}
 
-def _normalize_string_list(values: Optional[List[Any]]) -> List[str]:
+def _normalize_string_list(values: Optional[Any]) -> List[str]:
     if values is None:
         return []
+
+    if isinstance(values, str):
+        raw_text = values.strip()
+        if len(raw_text) == 0:
+            return []
+        try:
+            values = json.loads(raw_text)
+        except json.JSONDecodeError:
+            values = [part.strip() for part in raw_text.split(",")]
+
+    if isinstance(values, dict):
+        # Legacy support:
+        # 1) {"hidden_items": [...]}
+        # 2) {"masters": false, "gallery": true} (visibility map)
+        for nested_key in ("hidden_items", "items", "ids"):
+            nested_value = values.get(nested_key)
+            if nested_value is not None:
+                return _normalize_string_list(nested_value)
+
+        normalized_from_map: List[str] = []
+        for key, flag_value in values.items():
+            is_hidden_flag = (
+                flag_value is False
+                or flag_value == 0
+                or (isinstance(flag_value, str) and flag_value.strip().lower() in {"false", "0", "hidden", "off"})
+            )
+            if is_hidden_flag:
+                normalized_key = str(key).strip()
+                if len(normalized_key) > 0:
+                    normalized_from_map.append(normalized_key)
+        return normalized_from_map
+
+    if not isinstance(values, list):
+        values = [values]
+
     normalized: List[str] = []
     for raw_value in values:
+        if isinstance(raw_value, dict):
+            raw_id = raw_value.get("id") if raw_value.get("id") is not None else raw_value.get("key")
+            if raw_id is None:
+                continue
+
+            raw_visible = raw_value.get("visible")
+            raw_hidden = raw_value.get("hidden")
+            include_value = (
+                raw_hidden is True
+                or raw_visible is False
+                or (raw_hidden is None and raw_visible is None)
+            )
+            if include_value:
+                value = str(raw_id).strip()
+                if len(value) > 0:
+                    normalized.append(value)
+            continue
+
         value = str(raw_value).strip()
         if len(value) == 0:
             continue
         normalized.append(value)
-    return normalized
+
+    unique_normalized: List[str] = []
+    seen_values: set = set()
+    for value in normalized:
+        if value in seen_values:
+            continue
+        seen_values.add(value)
+        unique_normalized.append(value)
+    return unique_normalized
 
 def _load_salon_menu_config(cursor) -> dict:
     cursor.execute("SELECT menu_config FROM salon_settings WHERE id = 1")
@@ -339,8 +400,7 @@ async def save_account_menu_settings(
 @router.get("/client/account-menu-settings")
 async def get_client_account_menu_settings(current_user: dict = Depends(get_current_user)):
     current_role = str(current_user.get("role") or "")
-    if current_role != "client" and current_role not in ADMIN_ROLES:
-        raise HTTPException(status_code=403, detail="Forbidden")
+    is_client_role = current_role == "client"
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -355,7 +415,7 @@ async def get_client_account_menu_settings(current_user: dict = Depends(get_curr
         apply_mode = "selected" if apply_mode_raw == "selected" else "all"
         target_client_ids = set(_normalize_string_list(account_config.get("target_client_ids")))
 
-        if current_role in ADMIN_ROLES:
+        if not is_client_role:
             return {"hidden_items": hidden_items, "apply_mode": apply_mode, "is_targeted": True}
 
         if apply_mode == "all":
