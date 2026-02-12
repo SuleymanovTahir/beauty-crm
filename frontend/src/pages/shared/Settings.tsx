@@ -876,6 +876,7 @@ export default function AdminSettings() {
 
   // Определяем префикс путей
   const rolePrefix = useMemo(() => {
+    if (location.pathname.startsWith('/admin')) return '/admin';
     if (location.pathname.startsWith('/crm')) return '/crm';
     if (location.pathname.startsWith('/manager')) return '/manager';
     if (location.pathname.startsWith('/sales')) return '/sales';

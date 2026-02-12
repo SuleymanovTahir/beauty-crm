@@ -100,19 +100,20 @@ export function AccountPage() {
   }, [features.challenges, menuItems]);
 
   const mainTabs = useMemo(() => {
+    const visibilityById = new Map(menuItems.map((item) => [item.id, item.hidden !== true]));
     const candidates: MobileTab[] = [
-      { id: 'dashboard', icon: Home, label: t('tabs.dashboard'), path: '/account/dashboard' },
-      { id: 'appointments', icon: Calendar, label: t('tabs.appointments'), path: '/account/appointments' },
-      { id: 'loyalty', icon: Award, label: t('adminpanel/loyaltymanagement:title'), path: '/account/loyalty' },
-      { id: 'gallery', icon: Image, label: t('tabs.gallery'), path: '/account/gallery' },
-      { id: 'notifications', icon: Bell, label: t('tabs.notifications'), path: '/account/notifications', badge: unreadCount },
-    ];
+      { id: 'dashboard', icon: Home, label: t('tabs.dashboard'), path: '/account/dashboard', hidden: visibilityById.get('dashboard') !== true },
+      { id: 'appointments', icon: Calendar, label: t('tabs.appointments'), path: '/account/appointments', hidden: visibilityById.get('appointments') !== true },
+      { id: 'loyalty', icon: Award, label: t('adminpanel/loyaltymanagement:title'), path: '/account/loyalty', hidden: visibilityById.get('loyalty') !== true },
+      { id: 'gallery', icon: Image, label: t('tabs.gallery'), path: '/account/gallery', hidden: visibilityById.get('gallery') !== true },
+      { id: 'notifications', icon: Bell, label: t('tabs.notifications'), path: '/account/notifications', badge: unreadCount, hidden: visibilityById.get('notifications') !== true },
+    ].filter((item) => item.hidden !== true);
 
     return [
       ...candidates.slice(0, 4),
       { id: 'more', icon: MoreHorizontal, label: t('tabs.more', 'Ещё') },
     ];
-  }, [t, unreadCount]);
+  }, [t, unreadCount, menuItems]);
 
   // Determine active tab from URL
   const getActiveTabFromPath = (): Tab => {
@@ -288,7 +289,7 @@ export function AccountPage() {
   const loadAccountMenuSettings = async () => {
     try {
       const response = await apiClient.getClientAccountMenuSettings();
-      if (response.success && Array.isArray(response.hidden_items)) {
+      if (Array.isArray(response.hidden_items)) {
         setAccountHiddenMenuItems(response.hidden_items.map((id: any) => String(id)));
       } else {
         setAccountHiddenMenuItems([]);
