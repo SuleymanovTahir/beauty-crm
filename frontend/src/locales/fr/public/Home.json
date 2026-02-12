@@ -27,10 +27,10 @@
         "title": "Contenu Premium"
       },
       "schedule": {
-        "description_few": "Nous sommes ouverts {{count}} jours à la date semaine à l'heure qui vous convient.",
-        "description_many": "Nous sommes ouverts {{count}} jours à la date semaine à l'heure qui vous convient.",
-        "description_one": "Nous sommes ouverts {{count}} jours à la date semaine à l'heure qui vous convient.",
-        "description_other": "Nous sommes ouverts {{count}} jours à la date semaine à une heure qui vous convient.",
+        "description_few": "Nous sommes ouverts {{count}} jours par semaine à l'heure qui vous convient.",
+        "description_many": "Nous sommes ouverts {{count}} jours par semaine à une heure qui vous convient.",
+        "description_one": "Nous sommes ouverts {{count}} jours par semaine à une heure qui vous convient.",
+        "description_other": "Nous sommes ouverts {{count}} jours par semaine à une heure qui vous convient.",
         "title": "Horaire pratique"
       }
     },

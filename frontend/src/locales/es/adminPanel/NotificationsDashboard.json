@@ -37,7 +37,7 @@
           "appointment_based": "By Appointment",
           "inactive": "Perdidos (inactivo)",
           "service_based": "By Service",
-          "tier": "hasta fecha niveles de fidelidad"
+          "tier": "Por niveles de fidelidad"
         },
         "select_filter": "Select filter",
         "select_tier": "Seleccionar nivel",
@@ -63,7 +63,7 @@
         "message": "Mensaje",
         "message_placeholder": "Utilice {nombre} para sustituir el nombre del cliente",
         "template_name": "Nombre de la plantilla",
-        "template_name_placeholder": "hasta fecha ejemplo: Bienvenido nuevo cliente",
+        "template_name_placeholder": "por ejemplo: Saludar a un nuevo cliente",
         "title": "Título",
         "title_placeholder": "Título de la notificación",
         "type": "Tipo de canal",

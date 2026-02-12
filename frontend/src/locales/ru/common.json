@@ -299,13 +299,7 @@
   "password_changed_successfully": "Пароль успешно изменен",
   "pause": "Пауза",
   "per_week": "за неделю",
-  "period": {
-    "2weeks": "",
-    "3months": "{{count}} месяца",
-    "month": "Месяц",
-    "two_weeks": "2 недели",
-    "week": "Неделя"
-  },
+  "period": "",
   "period_label": "Период",
   "perm_analytics_export_anonymized": "Экспорт аналитики",
   "perm_analytics_export_full": "Экспорт полной базы",

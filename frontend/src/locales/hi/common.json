@@ -299,13 +299,7 @@
   "password_changed_successfully": "पासवर्ड सफलतापूर्वक बदला गया",
   "pause": "रोकें",
   "per_week": "प्रति सप्ताह",
-  "period": {
-    "2weeks": "",
-    "3months": "{{count}} महीना",
-    "month": "महीना",
-    "two_weeks": "2 सप्ताह",
-    "week": "सप्ताह"
-  },
+  "period": "",
   "period_label": "अवधि",
   "perm_analytics_export_anonymized": "विश्लेषिकी निर्यात",
   "perm_analytics_export_full": "संपूर्ण डेटाबेस निर्यात करें",

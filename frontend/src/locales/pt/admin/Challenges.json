@@ -4,12 +4,16 @@
     "create_challenge": "Executar desafio"
   },
   "card": {
+    "check_progress": "Atualização",
     "details": "Mais detalhes",
     "participants": "PARTICIPANTES",
     "progress": "PROGRESSO"
   },
   "dialogs": {
     "add_title": "Novo desafio",
+    "delete": {
+      "confirm": "Tem certeza de que deseja excluir este desafio?"
+    },
     "edit_title": "Editar desafio"
   },
   "empty": {
@@ -26,7 +30,7 @@
   },
   "placeholders": {
     "description": "Como o cliente verá esta tarefa?",
-    "title": "até data exemplo: Status Ouro"
+    "title": "Por exemplo: status Ouro"
   },
   "stats": {
     "active_challenges": "TAREFAS ATIVAS",
@@ -41,10 +45,19 @@
   "title": "Desafios",
   "toasts": {
     "created": "Missão criada",
+    "deleted": "Desafio excluído",
+    "failed_check_progress": "Erro ao verificar o progresso",
+    "failed_delete": "Erro ao excluir",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_one": "",
+    "progress_checked_other": "",
     "updated": "Tarefa atualizada"
   },
   "types": {
+    "referrals": "Recomendações",
     "service": "serviço de categoria",
+    "services": "Serviços",
     "spend": "Valor total gasto",
     "visits": "Número de visitas"
   }

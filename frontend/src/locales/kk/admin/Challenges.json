@@ -4,12 +4,16 @@
     "create_challenge": "3Create task"
   },
   "card": {
+    "check_progress": "Жаңарту",
     "details": "Толығырақ",
     "participants": "ҚАТЫСУШЫЛАР",
     "progress": "ПРОГРЕСС"
   },
   "dialogs": {
     "add_title": "Жаңа тапсырма",
+    "delete": {
+      "confirm": "Осы тапсырманы шынымен жойғыңыз келе ме?"
+    },
     "edit_title": "Тапсырманы өңдеу"
   },
   "empty": {
@@ -41,10 +45,19 @@
   "title": "Қиындықтар",
   "toasts": {
     "created": "Тапсырма жасалды",
+    "deleted": "Тапсырма жойылды",
+    "failed_check_progress": "Орындалу барысын тексеру қатесі",
+    "failed_delete": "Жою кезіндегі қате",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_one": "",
+    "progress_checked_other": "",
     "updated": "Тапсырма жаңартылды"
   },
   "types": {
+    "referrals": "Ұсыныстар",
     "service": "санат қызметі",
+    "services": "Қызметтер",
     "spend": "Жұмсалған жалпы сома",
     "visits": "Кіру саны"
   }

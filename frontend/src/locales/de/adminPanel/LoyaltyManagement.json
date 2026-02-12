@@ -56,7 +56,7 @@
   "tiers": {
     "description": "Treuestufen für Kundensegmentierung",
     "discount": "Rabatt {{percent}} %",
-    "from_points": "datum bis {{points}} Punkten",
+    "from_points": "ab {{points}} Punkten",
     "starting_level": "Startstufe",
     "title": "Berechtigungsstufen"
   },

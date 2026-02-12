@@ -4,12 +4,16 @@
     "create_challenge": "Lancer un défi"
   },
   "card": {
+    "check_progress": "Mise à jour",
     "details": "Plus de détails",
     "participants": "PARTICIPANTS",
     "progress": "PROGRÈS"
   },
   "dialogs": {
     "add_title": "Nouveau défi",
+    "delete": {
+      "confirm": "Êtes-vous sûr de vouloir supprimer ce défi ?"
+    },
     "edit_title": "Modifier le défi"
   },
   "empty": {
@@ -26,7 +30,7 @@
   },
   "placeholders": {
     "description": "Comment le client verra-t-il cette tâche ?",
-    "title": "à la date exemple : Statut Or"
+    "title": "Par exemple : statut Gold"
   },
   "stats": {
     "active_challenges": "TÂCHES ACTIFS",
@@ -41,10 +45,19 @@
   "title": "Défis",
   "toasts": {
     "created": "Tâche créée",
+    "deleted": "Défi supprimé",
+    "failed_check_progress": "Erreur lors de la vérification de la progression",
+    "failed_delete": "Erreur lors de la suppression",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_one": "",
+    "progress_checked_other": "",
     "updated": "Tâche mise à jour"
   },
   "types": {
+    "referrals": "Recommandations",
     "service": "service de catégorie",
+    "services": "Services",
     "spend": "Montant total dépensé",
     "visits": "Nombre de visites"
   }

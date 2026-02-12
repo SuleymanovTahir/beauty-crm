@@ -92,7 +92,7 @@
     "createLink": "Crear enlace",
     "createLinkTitle": "Crear enlace de pago",
     "currency": "Moneda",
-    "descriptionPlaceholder": "hasta fecha ejemplo: Prepago de manicura",
+    "descriptionPlaceholder": "Por ejemplo: pago anticipado de manicura.",
     "enableProvider": "Habilitar proveedor",
     "inactive": "No configurado",
     "linkCreated": "Enlace creado exitosamente",

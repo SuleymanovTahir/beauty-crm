@@ -4,12 +4,16 @@
     "create_challenge": "Start a challenge"
   },
   "card": {
+    "check_progress": "Update",
     "details": "More details",
     "participants": "PARTICIPANTS",
     "progress": "PROGRESS"
   },
   "dialogs": {
     "add_title": "New challenge",
+    "delete": {
+      "confirm": "Are you sure you want to delete this challenge?"
+    },
     "edit_title": "Editing a challenge"
   },
   "empty": {
@@ -41,10 +45,19 @@
   "title": "Challenges",
   "toasts": {
     "created": "Task created",
+    "deleted": "Challenge deleted",
+    "failed_check_progress": "Error checking progress",
+    "failed_delete": "Error when deleting",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_one": "",
+    "progress_checked_other": "",
     "updated": "Quest updated"
   },
   "types": {
+    "referrals": "Recommendations",
     "service": "service category",
+    "services": "Services",
     "spend": "Total spend",
     "visits": "Number of visits"
   }

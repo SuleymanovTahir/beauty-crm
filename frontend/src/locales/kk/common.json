@@ -299,13 +299,7 @@
   "password_changed_successfully": "Құпия сөз сәтті өзгертілді",
   "pause": "Кідірту",
   "per_week": "аптасына",
-  "period": {
-    "2weeks": "",
-    "3months": "{{count}} ай",
-    "month": "Ай",
-    "two_weeks": "2 апта",
-    "week": "Апта"
-  },
+  "period": "",
   "period_label": "Кезең",
   "perm_analytics_export_anonymized": "Аналитика экспорты",
   "perm_analytics_export_full": "Толық дерекқорды экспорттау",

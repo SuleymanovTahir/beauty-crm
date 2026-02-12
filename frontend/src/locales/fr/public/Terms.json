@@ -14,7 +14,7 @@
   "last_update_date": "Date de dernière mise à jour",
   "late_arrival": "Si le client est en retard de plus de 15 minutes, le salon a le droit d'annuler le rendez-vous ou de réduire la durée de l'intervention.",
   "medical_contraindications": "Contre-indications médicales",
-  "payment_details": "Le paiement s'effectue en espèces ou à la date carte après la prestation de la prestation. Le coût des prestations est indiqué dans la grille tarifaire et est sujet à changement sans préavis.",
+  "payment_details": "Le paiement s'effectue en espèces ou par carte après prestation de la prestation. Le coût des prestations est indiqué dans la grille tarifaire et est susceptible de modification sans préavis.",
   "payment_for_services": "Paiement des prestations",
   "privacy_commitment": "Nous respectons votre vie privée et nous engageons à protéger vos informations personnelles conformément à notre politique de confidentialité.",
   "quality_guarantee": "Nous garantissons la qualité des matériaux utilisés et le professionnalisme de nos artisans. Les résultats de la procédure peuvent varier en fonction des caractéristiques individuelles du client.",
@@ -47,7 +47,7 @@
       "title": "4. Contre-indications médicales."
     },
     "payment": {
-      "paragraph1": "Le paiement s'effectue en espèces ou à la date carte après prestation de la prestation. Le coût des prestations est indiqué dans la grille tarifaire et peut être modifié sans préavis.",
+      "paragraph1": "Le paiement s'effectue en espèces ou par carte après prestation de la prestation. Le coût des prestations est indiqué dans la grille tarifaire et est sujet à changement sans préavis.",
       "paragraph2": "Si le client est en retard de plus de 15 minutes, le salon a le droit d'annuler le rendez-vous ou de raccourcir la durée de l'intervention.",
       "title": "3. Paiement des services"
     },

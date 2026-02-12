@@ -15,12 +15,12 @@
     "title": "Multiplicadores de categorías"
   },
   "config": {
-    "cashback_hint": "Ejemplo: {{percent}}% de reembolso ({{points}} puntos hasta fecha cada {{unit}} gastado)",
+    "cashback_hint": "Ejemplo: {{percent}}% cashback ({{points}} puntos por cada {{unit}} gastado)",
     "cashback_rate": "Reembolso (%)",
     "description": "Configuraciones básicas del programa de fidelización.",
     "expiration_days": "Período de validez de los puntos (días)",
     "expiration_hint": "Los puntos se cancelarán automáticamente después del tiempo especificado.",
-    "points_per_unit": "puntos hasta fecha 1 unidad. monedas",
+    "points_per_unit": "puntos por 1 unidad. monedas",
     "title": "Configuración global"
   },
   "confirm_delete_rule": "¿Está seguro de que desea eliminar esta regla?",
@@ -30,7 +30,7 @@
       "client_email_placeholder": "Ingrese el correo electrónico para vincular",
       "description": "Ajuste manual del saldo de puntos",
       "points": "Número de puntos",
-      "points_placeholder": "hasta fecha ej. 100 o -100",
+      "points_placeholder": "P.ej. 100 o -100",
       "reason": "Razón",
       "reason_placeholder": "Especifique el motivo del cambio",
       "title": "Cambio de saldo"
@@ -76,7 +76,7 @@
   },
   "transactions": {
     "description": "Historial de transacciones de puntos de fidelidad",
-    "search_placeholder": "Buscar hasta fecha cliente...",
+    "search_placeholder": "Buscar por cliente...",
     "table": {
       "client": "Cliente",
       "date": "Fecha",

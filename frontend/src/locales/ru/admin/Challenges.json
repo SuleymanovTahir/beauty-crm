@@ -4,12 +4,16 @@
     "create_challenge": "Запустить челлендж"
   },
   "card": {
+    "check_progress": "Обновить",
     "details": "Подробнее",
     "participants": "УЧАСТНИКИ",
     "progress": "ПРОГРЕСС ВЫПОЛНЕНИЯ"
   },
   "dialogs": {
     "add_title": "Новый челлендж",
+    "delete": {
+      "confirm": "Вы уверены, что хотите удалить этот челлендж?"
+    },
     "edit_title": "Правка челленджа"
   },
   "empty": {
@@ -41,10 +45,19 @@
   "title": "Челленджи",
   "toasts": {
     "created": "Задание создано",
+    "deleted": "Челлендж удален",
+    "failed_check_progress": "Ошибка проверки прогресса",
+    "failed_delete": "Ошибка при удалении",
+    "progress_checked_one": "",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_other": "",
     "updated": "Задание обновлено"
   },
   "types": {
+    "referrals": "Рекомендации",
     "service": "услуга категории",
+    "services": "Услуги",
     "spend": "Общая сумма трат",
     "visits": "Количество визитов"
   }

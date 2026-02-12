@@ -22,7 +22,7 @@
   "filter_login": "Escrever",
   "filter_restore": "Restaurar",
   "filter_update": "Alterar",
-  "search_placeholder": "Pesquisar até data usuário, entidade ou ação...",
+  "search_placeholder": "Pesquise por usuário, entidade ou ação...",
   "stat_active_users": "Usuários ativos",
   "stat_created": "Criados",
   "stat_errors": "Erros ({{count}}h)",

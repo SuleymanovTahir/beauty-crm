@@ -3,10 +3,10 @@
   "allCategories": "Todas as categorias",
   "analytics": {
     "avgPrice": "Méd. preço",
-    "last30Days": "até data {{count}} dias",
-    "last30Days_one": "",
+    "last30Days": "Por {{count}} dias",
     "last30Days_few": "",
     "last30Days_many": "",
+    "last30Days_one": "",
     "last30Days_other": "",
     "revenue": "Receita",
     "totalSold": "Total vendido"
@@ -15,9 +15,9 @@
   "delete": "Excluir",
   "detail": {
     "costPriceLabel": "Custo: {{price}} {{currency}}",
-    "inStock_one": "Em estoque {{count}} unidades.",
     "inStock_few": "B em estoque {{count}} peças.",
     "inStock_many": "Em estoque {{count}} peças.",
+    "inStock_one": "Em estoque {{count}} unidades.",
     "inStock_other": "Em estoque {{count}} peças.",
     "loadingData": "Carregando dados...",
     "movementAdjustment": "Ajuste",
@@ -60,7 +60,7 @@
     }
   },
   "noProducts": "Nenhum produto ainda",
-  "search_placeholder": "Pesquisar até data nome ou categoria...",
+  "search_placeholder": "Pesquisar por título ou categoria...",
   "stock_status": {
     "in_stock": "Em estoque",
     "low_stock": "Pouco",

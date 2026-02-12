@@ -20,7 +20,7 @@
   "question_6": "¿Es necesaria una preparación preliminar para el procedimiento?",
   "questions": {
     "booking": {
-      "answer": "Puedes apuntarte al trámite a través del formulario {{phone, phone}} de nuestra web, llamando a {{phone}}{{/phone}}{{instagram, instagram}} o escribiéndonos hasta fecha Instagram {{instagram}}{{/instagram}}. Nos pondremos en contacto contigo para confirmar tu cita.",
+      "answer": "Registrarse El trámite se puede realizar a través del formulario {{phone, phone}} en nuestra web, llamando a {{phone}}{{/phone}}{{instagram, instagram}} o escribiéndonos por Instagram {{instagram}}{{/instagram}}. Nos comunicaremos con usted para confirmar su cita.",
       "question": "¿Cómo inscribirte al trámite?"
     },
     "cancellation": {
@@ -36,7 +36,7 @@
       "question": "¿Existe alguna contraindicación para el procedimiento?"
     },
     "gift": {
-      "answer": "Sí, ofrecemos certificados de regalo hasta fecha cualquier monto o para ciertos servicios. Contáctenos para recibir un certificado.",
+      "answer": "Sí, ofrecemos certificados de regalo por cualquier monto o para ciertos servicios. Contáctenos para recibir un certificado.",
       "question": "¿Puedo proporcionar un certificado para los servicios?"
     },
     "guarantee": {

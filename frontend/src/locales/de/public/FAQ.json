@@ -3,7 +3,7 @@
   "answer_2": "Wir akzeptieren Zahlungen in bar und mit Bankkarten.",
   "answer_3": "Ja, Sie können einen Termin spätestens {{hours}} Stunden vor dem vereinbarten Zeitpunkt absagen oder verschieben.",
   "answer_4": "Ja, bei einigen Eingriffen bestehen medizinische Kontraindikationen. Bevor Sie schreiben, wenden Sie sich an unseren Spezialisten.",
-  "answer_5": "Die Dauer des Verfahrens hängt datum bis der gewählten Dienstleistung ab. Normalerweise zwischen {{min}} Minuten und {{max}} Stunden.",
+  "answer_5": "Die Bearbeitungszeit hängt vom gewählten Service ab. Typischerweise {{min}} Minuten bis {{max}} Stunden.",
   "answer_6": "Einige Verfahren erfordern eine besondere Vorbereitung. Darüber informiert Sie der Facharzt bei der Anmeldung.",
   "cta": {
     "bookButton": "Melden Sie sich für den Eingriff an",
@@ -24,7 +24,7 @@
       "question": "Wie vereinbare ich einen Termin?"
     },
     "cancellation": {
-      "answer": "Ja, Sie können Ihren Termin bis zu {{hours}} Stunden vor dem geplanten Zeitpunkt absagen oder verschieben. Bei einer Stornierung weniger als {{hours}} Stunden im Voraus kann eine Vertragsstrafe in Höhe datum bis {{percent}} % der Kosten der Dienstleistung erhoben werden.",
+      "answer": "Ja, Sie können Ihren Termin bis zu {{hours}} Stunden vor der geplanten Zeit absagen oder verschieben. Bei einer Stornierung in weniger als {{hours}} Stunden kann eine Strafe in Höhe von {{percent}} % der Kosten der Dienstleistung erhoben werden.",
       "question": "Kann ich einen Termin absagen oder verschieben?"
     },
     "certificates": {
@@ -40,7 +40,7 @@
       "question": "Kann ich für Dienstleistungen ein Zertifikat vorlegen?"
     },
     "guarantee": {
-      "answer": "Ja, wir garantieren die Qualität aller unserer Dienstleistungen. Wenn Sie mit dem Ergebnis nicht zufrieden sind, kontaktieren Sie uns innerhalb datum bis {{count}} Tagen und wir werden eine Lösung finden.",
+      "answer": "Ja, wir garantieren die Qualität aller unserer Dienstleistungen. Wenn Sie mit dem Ergebnis nicht zufrieden sind, kontaktieren Sie uns innerhalb von {{count}} Tagen und wir finden eine Lösung.",
       "question": "Garantien Sie die Dienstleistungen?"
     },
     "location": {
@@ -52,7 +52,7 @@
       "question": "Haben Sie ein Treueprogramm?"
     },
     "materials": {
-      "answer": "Wir verwenden ausschließlich zertifizierte Premium-Materialien datum bis weltweit führenden Marken. Alle Pigmente sind hypoallergen und gesundheitlich unbedenklich.",
+      "answer": "Wir verwenden ausschließlich zertifizierte Premium-Materialien von weltweit führenden Marken. Alle Pigmente sind hypoallergen und gesundheitlich unbedenklich.",
       "question": "Welche Materialien verwenden Sie?"
     },
     "payment": {

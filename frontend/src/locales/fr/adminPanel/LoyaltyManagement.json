@@ -9,7 +9,7 @@
   },
   "categories": {
     "category": "Catégorie",
-    "category_placeholder": "à la date ex. Manucure",
+    "category_placeholder": "Par exemple. Manucure",
     "description": "Configurer des multiplicateurs de points pour des catégories de services individuelles",
     "multiplier": "Multiplicateur",
     "title": "Multiplicateurs de catégorie"
@@ -30,7 +30,7 @@
       "client_email_placeholder": "Entrez l'e-mail pour lier",
       "description": "Ajustement manuel du solde de points",
       "points": "Nombre de points",
-      "points_placeholder": "à la date exemple. 100 ou -100",
+      "points_placeholder": "Par exemple. 100 ou -100",
       "reason": "Raison",
       "reason_placeholder": "Précisez la raison du changement",
       "title": "Changement de solde"
@@ -76,7 +76,7 @@
   },
   "transactions": {
     "description": "Historique des transactions de points de fidélité",
-    "search_placeholder": "Recherche à la date client...",
+    "search_placeholder": "Recherche par client...",
     "table": {
       "client": "Client",
       "date": "Date",

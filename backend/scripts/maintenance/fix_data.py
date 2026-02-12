@@ -1,3 +1,5 @@
+import os
+
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 
@@ -55,6 +57,28 @@ def run_fix():
         """)
         if c.rowcount > 0:
             log_info(f"   ✅ Cleared {c.rowcount} missing employee photos", "maintenance")
+
+        # 3.1 Ensure salon branding defaults that must be prefilled via maintenance/migrations
+        salon_instagram = os.getenv('SALON_INSTAGRAM', 'mlediamant').strip()
+        if len(salon_instagram) == 0:
+            salon_instagram = 'mlediamant'
+
+        timezone_offset_raw = os.getenv('SALON_TIMEZONE_OFFSET', '4').strip()
+        try:
+            timezone_offset_value = int(float(timezone_offset_raw))
+        except ValueError:
+            timezone_offset_value = 4
+
+        c.execute("""
+            UPDATE salon_settings
+            SET
+                instagram = COALESCE(NULLIF(TRIM(instagram), ''), %s),
+                timezone_offset = COALESCE(timezone_offset, %s),
+                timezone = COALESCE(NULLIF(TRIM(timezone), ''), 'Asia/Dubai')
+            WHERE id = 1
+        """, (salon_instagram, timezone_offset_value))
+        if c.rowcount > 0:
+            log_info("   ✅ Ensured salon Instagram and timezone defaults in salon_settings", "maintenance")
 
         # 4. Sync Banners - Ensure all banners have images
         c.execute("SELECT id, image_url FROM public_banners")
@@ -254,7 +278,6 @@ def run_fix():
 
         # 12. Fix Usernames and Full Names for Active Staff
         log_info("👤 Synchronizing staff with credentials...", "maintenance")
-        import os
         from utils.utils import hash_password, verify_password
 
         staff_fixes = [

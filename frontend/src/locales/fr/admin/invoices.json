@@ -30,7 +30,7 @@
   "invoiceNumber": "Numéro de compte",
   "manage_stages": "Colonnes",
   "messages": {
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette facture\u00a0?",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette facture ?",
     "invoiceCreated": "Compte créé",
     "invoiceDeleted": "Facture supprimée",
     "invoiceSent": "Facture envoyée",
@@ -52,7 +52,7 @@
     "notes": "Notes",
     "title": "Ajouter un paiement"
   },
-  "search_placeholder": "Recherche à la date numéro ou client...",
+  "search_placeholder": "Recherche par numéro ou client...",
   "sendButton": "Envoyer",
   "sendDialog": {
     "email": "E-mail",

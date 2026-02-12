@@ -1488,7 +1488,7 @@
 .crm-services-controls-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .crm-services-category-select-wrap {
@@ -1556,6 +1556,31 @@
 .crm-services-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: auto;
+}
+
+.crm-services-col-name {
+  width: 31%;
+}
+
+.crm-services-col-price {
+  width: 11%;
+}
+
+.crm-services-col-duration {
+  width: 11%;
+}
+
+.crm-services-col-category {
+  width: 11%;
+}
+
+.crm-services-col-status {
+  width: 10%;
+}
+
+.crm-services-col-actions {
+  width: 9%;
 }
 
 .crm-services-table thead {
@@ -1565,19 +1590,25 @@
 
 .crm-services-table th {
   text-align: left;
-  padding: 0.88rem 1.2rem;
+  padding: 0.8rem 0.86rem;
   color: #4b5565;
   font-size: 0.89rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .crm-services-table td {
-  padding: 0.92rem 1.2rem;
+  padding: 0.82rem 0.86rem;
   border-bottom: 1px solid #e6e9ef;
   color: #111827;
   font-size: 0.9rem;
   font-weight: 500;
   vertical-align: middle;
+  white-space: normal;
+}
+
+.crm-services-table td:not(.crm-services-service-cell) {
+  white-space: nowrap;
 }
 
 .crm-services-table tbody tr:hover {
@@ -1615,6 +1646,7 @@
 .crm-services-service-cell {
   font-weight: 700;
   color: #141b2d;
+  white-space: normal;
 }
 
 .crm-services-duration-badge,
@@ -1778,6 +1810,12 @@
     width: 100%;
     justify-content: space-between;
   }
+
+  .crm-services-table th,
+  .crm-services-table td {
+    padding-left: 0.72rem;
+    padding-right: 0.72rem;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1814,11 +1852,28 @@
   }
 
   .crm-services-table {
-    min-width: 780px;
+    min-width: 620px;
   }
 
   .crm-services-table-card {
     overflow-x: auto;
+  }
+
+  .crm-services-table th,
+  .crm-services-table td {
+    padding: 0.72rem 0.62rem;
+    font-size: 0.84rem;
+  }
+
+  .crm-services-duration-badge,
+  .crm-services-category-badge,
+  .crm-services-status-badge {
+    font-size: 0.72rem;
+    padding: 0.16rem 0.42rem;
+  }
+
+  .crm-services-icon-actions {
+    gap: 0.3rem;
   }
 
   .crm-services-employee-controls {

@@ -25,6 +25,38 @@ class DateTimeEncoder(json.JSONEncoder):
             return obj.isoformat()
         return super().default(obj)
 
+def _normalize_timezone_offset(raw_offset):
+    """Нормализовать значение timezone_offset к целому смещению UTC"""
+    if raw_offset is None:
+        return None
+
+    if isinstance(raw_offset, bool):
+        return None
+
+    if isinstance(raw_offset, (int, float)):
+        if raw_offset != raw_offset:  # NaN guard
+            return None
+        return int(raw_offset)
+
+    if not isinstance(raw_offset, str):
+        return None
+
+    cleaned = raw_offset.strip()
+    if len(cleaned) == 0:
+        return None
+
+    normalized = cleaned.upper().replace('UTC', '').replace('−', '-').strip()
+    if normalized.startswith('+'):
+        normalized = normalized[1:]
+
+    if len(normalized) == 0:
+        return None
+
+    try:
+        return int(float(normalized))
+    except (TypeError, ValueError):
+        return None
+
 # ===== НАСТРОЙКИ САЛОНА =====
 
 def get_salon_settings() -> dict:
@@ -60,9 +92,11 @@ def get_salon_settings() -> dict:
                 "lunch_end": row.get("lunch_end"),
                 "phone": row.get("phone", ""),
                 "email": row.get("email"),
+                "instagram": row.get("instagram") or os.getenv('SALON_INSTAGRAM', ''),
                 "whatsapp": row.get("whatsapp"),
                 "booking_url": row.get("booking_url", ""),
                 "timezone": row.get("timezone", "Asia/Dubai"),
+                "timezone_offset": row.get("timezone_offset", 4),
                 "currency": row.get("currency") or get_salon_currency(),
                 "city": row.get("city", ""),
                 "country": row.get("country", ""),
@@ -100,8 +134,10 @@ def _get_default_salon_settings() -> dict:
         "lunch_end": DEFAULT_LUNCH_END,
         "phone": os.getenv('SALON_PHONE', ''),
         "email": os.getenv('SALON_EMAIL', ''),
+        "instagram": os.getenv('SALON_INSTAGRAM', ''),
         "bot_name": os.getenv('BOT_NAME', 'Assistant'),
         "timezone": "Asia/Dubai",
+        "timezone_offset": 4,
         "currency": get_salon_currency(),
         "gallery_display_count": 6,
         "portfolio_display_count": 6,
@@ -129,7 +165,7 @@ def update_salon_settings(data: dict) -> bool:
         direct_fields = [
             'name', 'address', 'google_maps', 'hours_weekdays', 'hours_weekends',
             'lunch_start', 'lunch_end', 'phone', 'email', 'instagram', 'whatsapp',
-            'booking_url', 'timezone', 'currency', 'city', 'country',
+            'booking_url', 'timezone', 'timezone_offset', 'currency', 'city', 'country',
             'latitude', 'longitude', 'logo_url', 'base_url', 'bot_name'
         ]
         
@@ -144,6 +180,25 @@ def update_salon_settings(data: dict) -> bool:
         # Handle direct fields
         for field in direct_fields:
             if field in data:
+                if field == 'timezone_offset':
+                    normalized_offset = _normalize_timezone_offset(data[field])
+                    if normalized_offset is None:
+                        raw_offset = data[field]
+                        if isinstance(raw_offset, str) and len(raw_offset.strip()) == 0:
+                            set_parts.append(f"{field} = %s")
+                            params.append(None)
+                            continue
+                        if raw_offset is None:
+                            set_parts.append(f"{field} = %s")
+                            params.append(None)
+                            continue
+                        log_warning(f"⚠️ Невалидный timezone_offset пропущен: {raw_offset}", "database")
+                        continue
+
+                    set_parts.append(f"{field} = %s")
+                    params.append(normalized_offset)
+                    continue
+
                 set_parts.append(f"{field} = %s")
                 params.append(data[field])
 

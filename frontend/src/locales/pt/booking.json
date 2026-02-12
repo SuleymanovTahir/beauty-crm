@@ -23,7 +23,7 @@
     "welcome": "Welcome"
   },
   "bookingDesc": "Selecione um horário conveniente para sua visita",
-  "bookingError": "Ocorreu um erro ao criar uma reserva. até data favor, tente novamente mais tarde.",
+  "bookingError": "Erro ao criar reserva. Por favor, tente novamente mais tarde.",
   "bookingSuccess": "Solicitação enviada com sucesso! Entraremos em contato para confirmar.",
   "bookingTag": "Inscreva-se online",
   "bookingTitlePart1": "Inscrever-se",
