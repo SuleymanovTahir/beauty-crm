@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Star, Heart, Award, Flame, Crown, Gem, Trophy, Lock, Loader2, Share2 } from 'lucide-react';
+import { Star, Heart, Award, Flame, Crown, Gem, Trophy, Lock, Loader2, Share2, PartyPopper, Search } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
@@ -15,6 +15,8 @@ const iconMap: Record<string, any> = {
   Crown,
   Gem,
   Trophy,
+  'party-popper': PartyPopper,
+  search: Search,
 };
 
 export function Achievements() {
@@ -49,7 +51,7 @@ export function Achievements() {
             setNewlyUnlocked(newUnlocks);
             // Show celebration toast
             toast.success(
-              `🎉 ${t('achievements.unlocked_new', 'Разблокировано новое достижение!')}`,
+              t('achievements.unlocked_new', 'Разблокировано новое достижение!'),
               {
                 duration: 5000,
               }
@@ -89,7 +91,11 @@ export function Achievements() {
   const unlockedCount = achievements.filter((a: any) => a.unlocked).length;
   const totalCount = achievements.length;
 
-  const getDaysLeft = (deadline: string) => {
+  const getDaysLeft = (deadline: string | null | undefined) => {
+    if (!deadline) {
+      return null;
+    }
+
     const days = Math.ceil((new Date(deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
     return days;
   };
@@ -278,7 +284,10 @@ export function Achievements() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {challenges.map((challenge: any) => {
               const daysLeft = getDaysLeft(challenge.deadline);
-              const progress = (challenge.progress / challenge.maxProgress) * 100;
+              const maxProgress = Number(challenge.maxProgress || 0);
+              const progress = maxProgress > 0
+                ? (Number(challenge.progress || 0) / maxProgress) * 100
+                : 0;
 
               return (
                 <Card
@@ -289,10 +298,12 @@ export function Achievements() {
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-lg">{challenge.title}</CardTitle>
                       <Badge
-                        variant={daysLeft <= 3 ? 'destructive' : 'default'}
+                        variant={daysLeft !== null && daysLeft <= 3 ? 'destructive' : 'default'}
                         className="ml-2"
                       >
-                        {daysLeft}{t('achievements.days_short', 'd')}
+                        {daysLeft === null
+                          ? '-'
+                          : `${Math.max(daysLeft, 0)}${t('achievements.days_short', 'd')}`}
                       </Badge>
                     </div>
                     <CardDescription>{challenge.description}</CardDescription>
@@ -314,10 +325,12 @@ export function Achievements() {
                     </div>
 
                     <div className="text-xs text-gray-500">
-                      {t('achievements.until', 'Until')} {new Date(challenge.deadline).toLocaleDateString(undefined, {
-                        day: 'numeric',
-                        month: 'long',
-                      })}
+                      {challenge.deadline
+                        ? `${t('achievements.until', 'Until')} ${new Date(challenge.deadline).toLocaleDateString(undefined, {
+                          day: 'numeric',
+                          month: 'long',
+                        })}`
+                        : `${t('achievements.until', 'Until')} -`}
                     </div>
                   </CardContent>
                 </Card>

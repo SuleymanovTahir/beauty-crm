@@ -407,12 +407,16 @@ class LoyaltyService:
             # 1. Get global conversion rate
             c.execute("SELECT loyalty_points_conversion_rate FROM salon_settings LIMIT 1")
             row = c.fetchone()
-            conversion_rate = row[0] if row and row[0] is not None else 0.1
+            conversion_rate = row[0] if row and row[0] is not None else 0
 
             # 2. Get category multiplier if category provided
             category_multiplier = 1.0
             if service_category:
-                c.execute("SELECT points_multiplier FROM loyalty_category_rules WHERE category = %s", (service_category,))
+                c.execute("""
+                    SELECT points_multiplier
+                    FROM loyalty_category_rules
+                    WHERE category = %s AND COALESCE(is_active, TRUE) = TRUE
+                """, (service_category,))
                 cat_row = c.fetchone()
                 if cat_row:
                     category_multiplier = cat_row[0]
@@ -422,8 +426,7 @@ class LoyaltyService:
             return points
         except Exception as e:
             log_error(f"Error calculating points for booking: {e}", "loyalty")
-            # Fallback to default 10%
-            return int(revenue * 0.1)
+            return 0
         finally:
             conn.close()
 
@@ -434,7 +437,7 @@ class LoyaltyService:
         try:
             c.execute("SELECT loyalty_points_conversion_rate, points_expiration_days FROM salon_settings LIMIT 1")
             row = c.fetchone()
-            rate = row[0] if row and row[0] is not None else 0.1
+            rate = row[0] if row and row[0] is not None else 0
             expiration_days = row[1] if row and row[1] is not None else 365
             return {
                 "loyalty_points_conversion_rate": rate,
@@ -466,22 +469,34 @@ class LoyaltyService:
         conn = get_db_connection()
         c = conn.cursor()
         try:
-            c.execute("SELECT category, points_multiplier FROM loyalty_category_rules ORDER BY category")
-            return [{"category": row[0], "points_multiplier": row[1]} for row in c.fetchall()]
+            c.execute("""
+                SELECT category, points_multiplier, COALESCE(is_active, TRUE)
+                FROM loyalty_category_rules
+                ORDER BY category
+            """)
+            return [
+                {
+                    "category": row[0],
+                    "points_multiplier": row[1],
+                    "is_active": bool(row[2]),
+                }
+                for row in c.fetchall()
+            ]
         finally:
             conn.close()
 
-    def update_category_rule(self, category: str, multiplier: float) -> bool:
+    def update_category_rule(self, category: str, multiplier: float, is_active: bool = True) -> bool:
         """Создать или обновить правило для категории"""
         conn = get_db_connection()
         c = conn.cursor()
         try:
             c.execute("""
-                INSERT INTO loyalty_category_rules (category, points_multiplier, created_at)
-                VALUES (%s, %s, CURRENT_TIMESTAMP)
+                INSERT INTO loyalty_category_rules (category, points_multiplier, is_active, created_at)
+                VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
                 ON CONFLICT (category) DO UPDATE SET 
-                    points_multiplier = EXCLUDED.points_multiplier
-            """, (category, multiplier))
+                    points_multiplier = EXCLUDED.points_multiplier,
+                    is_active = EXCLUDED.is_active
+            """, (category, multiplier, is_active))
             conn.commit()
             return True
         except Exception as e:

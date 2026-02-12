@@ -808,7 +808,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
   }
 
   return (
-    <div className="p-8">
+    <div className="p-8 min-h-screen">
       {/* Tab Navigation */}
       {!isSingleSectionMode && (
         <div className="flex flex-wrap gap-2 mb-6">
@@ -858,7 +858,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
               : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
           >
             <Gift className="w-4 h-4 mr-2" />
-            {t('layouts/mainlayout:menu.loyalty')}
+            {t('adminpanel/loyaltymanagement:title')}
           </Button>
           <Button
             variant={activeSection === 'promo-codes' ? 'default' : 'outline'}

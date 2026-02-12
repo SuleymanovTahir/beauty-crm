@@ -37,11 +37,19 @@ import { cn } from '../../../src/lib/utils';
 import '../../../src/components/layouts/MainLayout.css';
 
 type Tab = 'dashboard' | 'appointments' | 'gallery' | 'loyalty' | 'achievements' | 'masters' | 'beauty' | 'notifications' | 'settings' | 'promocodes';
+type MobileTab = {
+  id: string;
+  icon: any;
+  label: string;
+  path?: string;
+  badge?: number;
+  hidden?: boolean;
+};
 
 
 
 export function AccountPage() {
-  const { t } = useTranslation(['account', 'common']);
+  const { t, i18n } = useTranslation(['account', 'common', 'adminpanel/loyaltymanagement']);
   const navigate = useNavigate();
   const location = useLocation();
   const [showMoreModal, setShowMoreModal] = useState(false);
@@ -63,7 +71,7 @@ export function AccountPage() {
     { id: 'dashboard' as Tab, label: t('tabs.dashboard', 'Главная'), icon: Home, path: '/account/dashboard' },
     { id: 'appointments' as Tab, label: t('tabs.appointments', 'Записи'), icon: Calendar, path: '/account/appointments' },
     { id: 'gallery' as Tab, label: t('tabs.gallery', 'Галерея'), icon: Image, path: '/account/gallery' },
-    { id: 'loyalty' as Tab, label: t('tabs.loyalty', 'Лояльность'), icon: Award, path: '/account/loyalty', hidden: !features.loyalty_program },
+    { id: 'loyalty' as Tab, label: t('adminpanel/loyaltymanagement:title'), icon: Award, path: '/account/loyalty' },
     { id: 'achievements' as Tab, label: t('tabs.achievements', 'Достижения'), icon: Trophy, path: '/account/achievements', hidden: !features.challenges },
     { id: 'masters' as Tab, label: t('tabs.masters', 'Мастера'), icon: Users, path: '/account/masters' },
     { id: 'beauty' as Tab, label: t('tabs.beauty', 'Бьюти-профиль'), icon: Sparkles, path: '/account/beauty' },
@@ -72,13 +80,20 @@ export function AccountPage() {
     { id: 'settings' as Tab, label: t('tabs.settings', 'Настройки'), icon: SettingsIcon, path: '/account/settings' },
   ], [t, features, unreadCount]);
 
-  const mainTabs = useMemo(() => [
-    { id: 'dashboard', icon: Home, label: t('tabs.dashboard'), path: '/account/dashboard' },
-    { id: 'appointments', icon: Calendar, label: t('tabs.appointments'), path: '/account/appointments' },
-    { id: 'loyalty', icon: Award, label: t('tabs.loyalty'), path: '/account/loyalty' },
-    { id: 'notifications', icon: Bell, label: t('tabs.notifications'), path: '/account/notifications', badge: unreadCount },
-    { id: 'more', icon: MoreHorizontal, label: t('tabs.more', 'Ещё') },
-  ], [t, unreadCount]);
+  const mainTabs = useMemo(() => {
+    const candidates: MobileTab[] = [
+      { id: 'dashboard', icon: Home, label: t('tabs.dashboard'), path: '/account/dashboard' },
+      { id: 'appointments', icon: Calendar, label: t('tabs.appointments'), path: '/account/appointments' },
+      { id: 'loyalty', icon: Award, label: t('adminpanel/loyaltymanagement:title'), path: '/account/loyalty' },
+      { id: 'gallery', icon: Image, label: t('tabs.gallery'), path: '/account/gallery' },
+      { id: 'notifications', icon: Bell, label: t('tabs.notifications'), path: '/account/notifications', badge: unreadCount },
+    ];
+
+    return [
+      ...candidates.slice(0, 4),
+      { id: 'more', icon: MoreHorizontal, label: t('tabs.more', 'Ещё') },
+    ];
+  }, [t, unreadCount]);
 
   // Determine active tab from URL
   const getActiveTabFromPath = (): Tab => {
@@ -195,11 +210,14 @@ export function AccountPage() {
     try {
       const result = await apiClient.markNotificationRead(notifId);
       if (result.success) {
+        const clickedNotification = notifications.find((item: any) => item.id === notifId);
         // Update local state
         setNotifications(prev =>
           prev.map(n => n.id === notifId ? { ...n, is_read: true } : n)
         );
-        setUnreadCount(prev => Math.max(0, prev - 1));
+        if (clickedNotification && !clickedNotification.is_read) {
+          setUnreadCount(prev => Math.max(0, prev - 1));
+        }
       }
     } catch (error) {
       console.error('Error marking notification as read:', error);
@@ -416,7 +434,7 @@ export function AccountPage() {
                         <div className="font-medium text-sm text-gray-900">{notif.title}</div>
                         <div className="text-xs text-gray-600 mt-1 line-clamp-2">{notif.message}</div>
                         <div className="text-xs text-gray-400 mt-1">
-                          {new Date(notif.created_at).toLocaleString('ru-RU')}
+                          {new Date(notif.created_at).toLocaleString(i18n.language)}
                         </div>
                       </div>
                     </div>
@@ -434,8 +452,14 @@ export function AccountPage() {
           <button
             key={tab.id}
             onClick={() => {
-              if (tab.id === 'more') setShowMoreModal(true);
-              else navigate(tab.path!);
+              if (tab.id === 'more') {
+                setShowMoreModal(true);
+                return;
+              }
+
+              if (tab.path) {
+                navigate(tab.path);
+              }
             }}
             className={cn(
               "mobile-nav-btn",

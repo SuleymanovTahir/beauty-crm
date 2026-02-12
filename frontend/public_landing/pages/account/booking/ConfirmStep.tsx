@@ -96,17 +96,29 @@ export function ConfirmStep({
     };
 
     const handleApplyPromo = async () => {
-        if (!promoCode.trim()) return;
+        const normalizedPromoCode = promoCode.trim().toUpperCase();
+        if (!normalizedPromoCode) return;
         setValidatingPromo(true);
         setPromoError('');
         try {
-            const result: any = await api.validatePromoCode(promoCode, totalPrice);
+            const result: any = await api.validatePromoCode(normalizedPromoCode, totalPrice);
             if (result.valid) {
-                setAppliedPromo(result);
+                const promoValue = Number(result.value) || 0;
+                const discountAmount = result.discount_type === 'percent'
+                    ? (totalPrice * promoValue) / 100
+                    : promoValue;
+                const finalPrice = Math.max(0, totalPrice - discountAmount);
+
+                setAppliedPromo({
+                    code: normalizedPromoCode,
+                    discount_type: result.discount_type,
+                    value: promoValue,
+                    final_price: finalPrice
+                });
                 toast.success(t('promotions.applied', 'Promo code applied!'));
             } else {
                 setAppliedPromo(null);
-                setPromoError(result.message || t('promotions.invalid', 'Invalid promo code'));
+                setPromoError(result.error || result.message || t('promotions.invalid', 'Invalid promo code'));
             }
         } catch (error) {
             setAppliedPromo(null);
@@ -133,69 +145,56 @@ export function ConfirmStep({
         try {
             const dateStr = bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : '';
             const serviceNames = bookingState.services.map((s: any) => getLocalizedName(s, i18n.language)).join(', ');
+            if (bookingState.id) {
+                await api.put(`/api/bookings/${bookingState.id}`, {
+                    service: serviceNames,
+                    master: bookingState.professional?.username || 'any',
+                    date: dateStr,
+                    time: bookingState.time || '',
+                    phone,
+                    name: user?.full_name || user?.username || bookingState.name || 'Guest',
+                    source: 'client_cabinet',
+                    promo_code: appliedPromo?.code
+                });
+            } else {
+                await api.createBooking({
+                    instagram_id: user?.username || `web_${user?.id || 'guest'}_${Date.now()}`,
+                    service: serviceNames,
+                    master: bookingState.professional?.username || 'any',
+                    date: dateStr,
+                    time: bookingState.time || '',
+                    phone,
+                    name: user?.full_name || user?.username || bookingState.name || 'Guest',
+                    source: 'client_cabinet',
+                    promo_code: appliedPromo?.code
+                });
+            }
 
-            // Create AbortController for timeout
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+            toast.success(t('confirm.success', 'Booking confirmed!'));
 
-            try {
-                if (bookingState.id) {
-                    await api.put(`/api/bookings/${bookingState.id}`, {
-                        service: serviceNames,
-                        master: bookingState.professional?.username || 'any',
-                        date: dateStr,
-                        time: bookingState.time || '',
-                        phone,
-                        name: user?.full_name || user?.username || bookingState.name || 'Guest',
-                        source: 'client_cabinet',
-                        promo_code: appliedPromo?.code
-                    });
-                } else {
-                    await api.createBooking({
-                        instagram_id: user?.username || `web_${user?.id || 'guest'}_${Date.now()}`,
-                        service: serviceNames,
-                        master: bookingState.professional?.username || 'any',
-                        date: dateStr,
-                        time: bookingState.time || '',
-                        phone,
-                        name: user?.full_name || user?.username || bookingState.name || 'Guest',
-                        source: 'client_cabinet',
-                        promo_code: appliedPromo?.code
-                    });
-                }
-
-                clearTimeout(timeoutId);
-                toast.success(t('confirm.success', 'Booking confirmed!'));
-
-                // Save phone to user profile if logged in
-                if (user && phone && phone !== user.phone) {
-                    try {
-                        await api.updateClientProfile({ phone });
-                    } catch (err) {
-                        console.warn('Failed to update phone:', err);
-                    }
-                }
-
-                // Redirect to appointments page after success (if user logged in)
-                setTimeout(() => {
-                    onSuccess();
-                    if (user) {
-                        window.location.href = '/account/appointments';
-                    } else {
-                        // For guests, we don't go to /account since it's restricted
-                        // They've seen the success toast, and the modal will close via onClose in onSuccess wrapper
-                        toast.info(t('auth.login_to_see_more', 'Login to manage your bookings'));
-                    }
-                }, 1000);
-            } catch (fetchError: any) {
-                clearTimeout(timeoutId);
-
-                if (fetchError.name === 'AbortError') {
-                    toast.error(t('confirm.timeout', 'Request timed out. Please try again.'));
-                } else {
-                    throw fetchError;
+            // Save phone to user profile if logged in
+            if (user && phone && phone !== user.phone) {
+                try {
+                    await api.post('/api/client/profile/update', { phone });
+                } catch (err) {
+                    console.warn('Failed to update phone:', err);
                 }
             }
+
+            // Redirect to appointments page after success (if user logged in)
+            setTimeout(() => {
+                onSuccess();
+                if (user) {
+                    window.location.href = '/account/appointments';
+                    return;
+                }
+
+                toast.info(t('auth.login_to_see_more', 'Login to manage your bookings'));
+                if (setStep) {
+                    setStep('menu');
+                }
+                setLoading(false);
+            }, 1000);
         } catch (error) {
             console.error('Booking error:', error);
             toast.error(t('confirm.error', 'Error creating booking. Please try again.'));
@@ -404,7 +403,7 @@ export function ConfirmStep({
                                             </div>
                                             <div className="flex items-center justify-between text-sm text-green-600 font-medium">
                                                 <span>{t('discount', 'Discount')}</span>
-                                                <span>-{formatCurrency(totalPrice - (appliedPromo.final_price || totalPrice))}</span>
+                                                <span>-{formatCurrency(totalPrice - (appliedPromo.final_price ?? totalPrice))}</span>
                                             </div>
                                             <div className="h-px bg-gray-200 my-2" />
                                         </>

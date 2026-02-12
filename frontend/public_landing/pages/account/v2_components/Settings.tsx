@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'; // TOUCH EDIT
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { User, Lock, Bell, Eye, Download, Smartphone, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -13,12 +13,20 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '../../../../src/api/client';
 
+const SETTINGS_TABS = ['profile', 'security', 'notifications', 'privacy'] as const;
+type SettingsTab = typeof SETTINGS_TABS[number];
+
+const isSettingsTab = (value: string | null): value is SettingsTab =>
+  value !== null && SETTINGS_TABS.includes(value as SettingsTab);
+
 export function Settings() {
   const { t } = useTranslation(['account', 'common']);
   const [searchParams, setSearchParams] = useSearchParams();
+  const initialTabParam = searchParams.get('tab');
+  const initialTab: SettingsTab = isSettingsTab(initialTabParam) ? initialTabParam : 'profile';
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile');
+  const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
   const [notifications, setNotifications] = useState({
     push: true,
     email: true,
@@ -42,6 +50,21 @@ export function Settings() {
   useEffect(() => {
     loadProfile();
   }, []);
+
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (!tabParam) return;
+
+    if (isSettingsTab(tabParam)) {
+      if (tabParam !== activeTab) {
+        setActiveTab(tabParam);
+      }
+      return;
+    }
+
+    setActiveTab('profile');
+    setSearchParams({ tab: 'profile' }, { replace: true });
+  }, [searchParams, activeTab, setSearchParams]);
 
   const loadProfile = async () => {
     try {
@@ -101,6 +124,9 @@ export function Settings() {
       const result = await apiClient.updateClientProfile(profile);
       if (result.success) {
         toast.success(t('settings.profile_updated', 'Профиль обновлен'));
+        if (profile?.name) localStorage.setItem('user_name', profile.name);
+        if (profile?.email) localStorage.setItem('user_email', profile.email);
+        if (profile?.phone) localStorage.setItem('user_phone', profile.phone);
         // Dispatch event to update profile across all components
         window.dispatchEvent(new CustomEvent('profile-updated'));
       }
@@ -131,9 +157,9 @@ export function Settings() {
     }
   };
 
-  const handleSaveNotifications = async () => {
+  const handleSaveNotifications = async (nextNotifications: typeof notifications) => {
     try {
-      const result = await apiClient.updateNotificationPreferences(notifications);
+      const result = await apiClient.updateNotificationPreferences(nextNotifications);
       if (result.success) {
         toast.success(t('settings.notifications_updated', 'Настройки уведомлений сохранены'));
       }
@@ -143,9 +169,9 @@ export function Settings() {
     }
   };
 
-  const handleSavePrivacy = async () => {
+  const handleSavePrivacy = async (nextPrivacy: typeof privacy) => {
     try {
-      const result = await apiClient.updatePrivacyPreferences(privacy);
+      const result = await apiClient.updatePrivacyPreferences(nextPrivacy);
       if (result.success) {
         toast.success(t('settings.privacy_updated', 'Настройки приватности сохранены'));
       }
@@ -161,7 +187,7 @@ export function Settings() {
 
   const handleExportData = () => {
     // Check if user has an email address
-    if (!profile.email || profile.email.trim() === '') {
+    if (!profile?.email || profile.email.trim() === '') {
       toast.error(t('settings.email_required_export', 'Пожалуйста, укажите email в настройках профиля для получения экспорта данных'));
       // Switch to profile tab
       setActiveTab('profile');
@@ -198,6 +224,10 @@ export function Settings() {
       <Tabs
         value={activeTab}
         onValueChange={(value) => {
+          if (!isSettingsTab(value)) {
+            return;
+          }
+
           setActiveTab(value);
           setSearchParams({ tab: value });
         }}
@@ -403,8 +433,9 @@ export function Settings() {
                 <Switch
                   checked={notifications.push}
                   onCheckedChange={(checked) => {
-                    setNotifications({ ...notifications, push: checked });
-                    handleSaveNotifications();
+                    const nextNotifications = { ...notifications, push: checked };
+                    setNotifications(nextNotifications);
+                    void handleSaveNotifications(nextNotifications);
                   }}
                 />
               </div>
@@ -421,8 +452,9 @@ export function Settings() {
                 <Switch
                   checked={notifications.email}
                   onCheckedChange={(checked) => {
-                    setNotifications({ ...notifications, email: checked });
-                    handleSaveNotifications();
+                    const nextNotifications = { ...notifications, email: checked };
+                    setNotifications(nextNotifications);
+                    void handleSaveNotifications(nextNotifications);
                   }}
                 />
               </div>
@@ -439,8 +471,9 @@ export function Settings() {
                 <Switch
                   checked={notifications.sms}
                   onCheckedChange={(checked) => {
-                    setNotifications({ ...notifications, sms: checked });
-                    handleSaveNotifications();
+                    const nextNotifications = { ...notifications, sms: checked };
+                    setNotifications(nextNotifications);
+                    void handleSaveNotifications(nextNotifications);
                   }}
                 />
               </div>
@@ -463,8 +496,9 @@ export function Settings() {
                 <Switch
                   checked={notifications.appointments}
                   onCheckedChange={(checked) => {
-                    setNotifications({ ...notifications, appointments: checked });
-                    handleSaveNotifications();
+                    const nextNotifications = { ...notifications, appointments: checked };
+                    setNotifications(nextNotifications);
+                    void handleSaveNotifications(nextNotifications);
                   }}
                 />
               </div>
@@ -481,8 +515,9 @@ export function Settings() {
                 <Switch
                   checked={notifications.promotions}
                   onCheckedChange={(checked) => {
-                    setNotifications({ ...notifications, promotions: checked });
-                    handleSaveNotifications();
+                    const nextNotifications = { ...notifications, promotions: checked };
+                    setNotifications(nextNotifications);
+                    void handleSaveNotifications(nextNotifications);
                   }}
                 />
               </div>
@@ -499,8 +534,9 @@ export function Settings() {
                 <Switch
                   checked={notifications.achievements}
                   onCheckedChange={(checked) => {
-                    setNotifications({ ...notifications, achievements: checked });
-                    handleSaveNotifications();
+                    const nextNotifications = { ...notifications, achievements: checked };
+                    setNotifications(nextNotifications);
+                    void handleSaveNotifications(nextNotifications);
                   }}
                 />
               </div>
@@ -526,8 +562,9 @@ export function Settings() {
                 <Switch
                   checked={privacy.allowPhotos}
                   onCheckedChange={(checked) => {
-                    setPrivacy({ ...privacy, allowPhotos: checked });
-                    handleSavePrivacy();
+                    const nextPrivacy = { ...privacy, allowPhotos: checked };
+                    setPrivacy(nextPrivacy);
+                    void handleSavePrivacy(nextPrivacy);
                   }}
                 />
               </div>
@@ -544,8 +581,9 @@ export function Settings() {
                 <Switch
                   checked={privacy.shareWithMasters}
                   onCheckedChange={(checked) => {
-                    setPrivacy({ ...privacy, shareWithMasters: checked });
-                    handleSavePrivacy();
+                    const nextPrivacy = { ...privacy, shareWithMasters: checked };
+                    setPrivacy(nextPrivacy);
+                    void handleSavePrivacy(nextPrivacy);
                   }}
                 />
               </div>
@@ -562,8 +600,9 @@ export function Settings() {
                 <Switch
                   checked={privacy.publicProfile}
                   onCheckedChange={(checked) => {
-                    setPrivacy({ ...privacy, publicProfile: checked });
-                    handleSavePrivacy();
+                    const nextPrivacy = { ...privacy, publicProfile: checked };
+                    setPrivacy(nextPrivacy);
+                    void handleSavePrivacy(nextPrivacy);
                   }}
                 />
               </div>

@@ -24,12 +24,14 @@ import {
 } from '../../components/ui/dialog';
 import { Label } from '../../components/ui/label';
 import { toast } from 'sonner';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface LoyaltyTier {
   id: string;
   name: string;
   min_points: number;
   discount: number;
+  is_active: boolean;
   color: string;
 }
 
@@ -51,6 +53,7 @@ interface LoyaltyConfig {
 interface CategoryRule {
   category: string;
   points_multiplier: number;
+  is_active: boolean;
 }
 
 interface LoyaltyManagementProps {
@@ -59,10 +62,13 @@ interface LoyaltyManagementProps {
 
 export default function LoyaltyManagement({ embedded = false }: LoyaltyManagementProps) {
   const { t } = useTranslation(['adminpanel/loyaltymanagement', 'common']);
+  const { user } = useAuth();
+  const allowedEditorRoles = useMemo(() => new Set(['admin', 'manager', 'director']), []);
+  const canManageLoyalty = [user?.role ?? '', user?.secondary_role ?? ''].some((role) => allowedEditorRoles.has(role));
   const [tiers, setTiers] = useState<LoyaltyTier[]>([]);
   const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
   const [config, setConfig] = useState<LoyaltyConfig>({
-    loyalty_points_conversion_rate: 0.1,
+    loyalty_points_conversion_rate: 0,
     points_expiration_days: 365
   });
   const [categoryRules, setCategoryRules] = useState<CategoryRule[]>([]);
@@ -85,7 +91,8 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
 
   const [ruleForm, setRuleForm] = useState<CategoryRule>({
     category: '',
-    points_multiplier: 1.0
+    points_multiplier: 1.0,
+    is_active: true,
   });
 
   const parseNumberOrFallback = (value: string, fallbackValue: number): number => {
@@ -152,7 +159,13 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
       const response = await fetch('/api/admin/loyalty/categories', { credentials: 'include' });
       const data = await response.json();
       if (data.success) {
-        setCategoryRules(data.rules);
+        const normalizedRules = Array.isArray(data.rules)
+          ? data.rules.map((rule: CategoryRule) => ({
+            ...rule,
+            is_active: typeof rule.is_active === 'boolean' ? rule.is_active : true,
+          }))
+          : [];
+        setCategoryRules(normalizedRules);
       }
     } catch (error) {
       console.error('Error loading category rules:', error);
@@ -197,6 +210,30 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
     }
   };
 
+  const handleToggleRuleStatus = async (rule: CategoryRule) => {
+    try {
+      const response = await fetch('/api/admin/loyalty/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          category: rule.category,
+          points_multiplier: rule.points_multiplier,
+          is_active: !rule.is_active,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(t('toasts.rule_saved'));
+        await loadCategoryRules();
+      } else {
+        throw new Error('Failed to update rule status');
+      }
+    } catch (error) {
+      toast.error(t('toasts.failed_update'));
+    }
+  };
+
   const handleDeleteRule = async (category: string) => {
     if (!confirm(t('confirm_delete_rule'))) return;
     try {
@@ -222,7 +259,11 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.tiers) {
-          setTiers(data.tiers);
+          const normalizedTiers = data.tiers.map((tier: LoyaltyTier) => ({
+            ...tier,
+            is_active: typeof tier.is_active === 'boolean' ? tier.is_active : true,
+          }));
+          setTiers(normalizedTiers);
         }
       }
     } catch (error) {
@@ -268,26 +309,100 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
   };
 
   const handleSaveTier = async () => {
-    if (editingTier) {
-      try {
-        const response = await fetch(`/api/admin/loyalty/tiers/${editingTier.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify(editingTier),
-        });
+    if (editingTier === null) {
+      return;
+    }
 
-        if (response.ok) {
-          toast.success(t('toasts.tier_updated'));
-          loadTiers();
-          setShowTierDialog(false);
-          setEditingTier(null);
-        } else {
-          throw new Error('Failed to update tier');
-        }
-      } catch (error) {
-        toast.error(t('toasts.failed_update'));
+    try {
+      const isEditMode = editingTier.id.length > 0;
+      const endpoint = isEditMode ? `/api/admin/loyalty/tiers/${editingTier.id}` : '/api/admin/loyalty/tiers';
+      const method = isEditMode ? 'PUT' : 'POST';
+
+      const response = await fetch(endpoint, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(editingTier),
+      });
+
+      if (response.ok) {
+        toast.success(t('toasts.tier_updated'));
+        loadTiers();
+        setShowTierDialog(false);
+        setEditingTier(null);
+      } else {
+        throw new Error('Failed to save tier');
       }
+    } catch (error) {
+      toast.error(t('toasts.failed_update'));
+    }
+  };
+
+  const handleDeleteTier = async (tierId: string) => {
+    if (!confirm(t('confirm_delete_rule'))) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/loyalty/tiers/${tierId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        toast.success(t('toasts.rule_deleted'));
+        loadTiers();
+      } else {
+        throw new Error('Failed to delete tier');
+      }
+    } catch (error) {
+      toast.error(t('toasts.failed_delete'));
+    }
+  };
+
+  const handleToggleTierStatus = async (tier: LoyaltyTier) => {
+    try {
+      const response = await fetch(`/api/admin/loyalty/tiers/${tier.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          ...tier,
+          is_active: !tier.is_active,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(t('toasts.tier_updated'));
+        await loadTiers();
+      } else {
+        throw new Error('Failed to update tier status');
+      }
+    } catch (error) {
+      toast.error(t('toasts.failed_update'));
+    }
+  };
+
+  const handleDeleteTransaction = async (transactionId: string) => {
+    if (!confirm(t('confirm_delete_rule'))) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/loyalty/transactions/${transactionId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        toast.success(t('toasts.rule_deleted'));
+        loadTransactions();
+        loadStats();
+      } else {
+        throw new Error('Failed to delete transaction');
+      }
+    } catch (error) {
+      toast.error(t('toasts.failed_delete'));
     }
   };
 
@@ -355,15 +470,17 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
           </h1>
           <p className={embedded ? 'text-gray-600' : 'text-gray-500 mt-1'}>{t('subtitle')}</p>
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
-          <Button
-            onClick={() => setShowAdjustDialog(true)}
-            className={embedded ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-10 px-4 font-semibold shadow-sm' : ''}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            {t('adjust_points')}
-          </Button>
-        </div>
+        {canManageLoyalty && (
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Button
+              onClick={() => setShowAdjustDialog(true)}
+              className={embedded ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-10 px-4 font-semibold shadow-sm' : ''}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {t('adjust_points')}
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Stats */}
@@ -390,13 +507,13 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
 
       {/* Global Configuration */}
       <Card className={cardClassName}>
-        <CardHeader>
+        <CardHeader className="space-y-3">
           <CardTitle>{t('config.title', 'Настройки')}</CardTitle>
           <CardDescription>{t('config.description', 'Управление глобальными настройками лояльности')}</CardDescription>
         </CardHeader>
         <CardContent className={embedded ? 'pt-0' : ''}>
           {embedded ? (
-            <div className="max-w-4xl space-y-6">
+            <div className="max-w-5xl space-y-6">
               <div className="space-y-2">
                 <Label className="text-base font-semibold text-gray-900">{t('config.cashback_rate', 'Кэшбэк (%)')}</Label>
                 <div className="flex flex-wrap items-center gap-3">
@@ -420,24 +537,26 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                 })}</p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-4 lg:items-end">
-                <div className="space-y-2">
-                  <Label className="text-base font-semibold text-gray-900">{t('config.expiration_days', 'Срок действия баллов (дней)')}</Label>
-                  <Input
-                    type="number"
-                    value={config.points_expiration_days}
-                    onChange={(e) => setConfig({ ...config, points_expiration_days: parseIntegerOrFallback(e.target.value, config.points_expiration_days) })}
-                    placeholder="365"
-                    className="h-11 w-full"
-                  />
-                  <p className="text-sm text-gray-500 leading-6">
-                    {t('config.expiration_hint', 'Начисленные баллы сгорят через указанное количество дней.')}
-                  </p>
-                </div>
-                <div className="flex w-full lg:w-auto">
-                  <Button onClick={handleUpdateConfig} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-11 px-6 font-semibold shadow-sm">
-                    {t('buttons.save', 'Сохранить')}
-                  </Button>
+              <div className="space-y-2">
+                <Label className="text-base font-semibold text-gray-900">{t('config.expiration_days', 'Срок действия баллов (дней)')}</Label>
+                <div className="flex flex-col lg:flex-row lg:items-end gap-3">
+                  <div className="w-full space-y-2">
+                    <Input
+                      type="number"
+                      value={config.points_expiration_days}
+                      onChange={(e) => setConfig({ ...config, points_expiration_days: parseIntegerOrFallback(e.target.value, config.points_expiration_days) })}
+                      placeholder="365"
+                      className="h-11 w-full"
+                    />
+                    <p className="text-sm text-gray-500 leading-6">
+                      {t('config.expiration_hint', 'Начисленные баллы сгорят через указанное количество дней.')}
+                    </p>
+                  </div>
+                  {canManageLoyalty && (
+                    <Button onClick={handleUpdateConfig} className="w-full lg:w-auto lg:min-w-[170px] bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-11 px-6 font-semibold shadow-sm">
+                      {t('buttons.save', 'Сохранить')}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -471,9 +590,11 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                   {t('config.expiration_hint', 'Начисленные баллы сгорят через указанное количество дней.')}
                 </p>
               </div>
-              <Button onClick={handleUpdateConfig}>
-                {t('buttons.save', 'Сохранить')}
-              </Button>
+              {canManageLoyalty && (
+                <Button onClick={handleUpdateConfig}>
+                  {t('buttons.save', 'Сохранить')}
+                </Button>
+              )}
             </div>
           )}
         </CardContent>
@@ -481,27 +602,31 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
 
       {/* Category Rules */}
       <Card className={cardClassName}>
-        <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-          <div>
-            <CardTitle>{t('categories.title', 'Множители категорий')}</CardTitle>
-            <CardDescription>{t('categories.description', 'Настройте множители баллов для категорий услуг')}</CardDescription>
+        <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 space-y-2 sm:space-y-0">
+          <div className="space-y-1.5">
+            <CardTitle>{t('categories.title', 'Правила начисления по категориям')}</CardTitle>
+            <CardDescription>{t('categories.description', 'Настройте коэффициент начисления баллов для каждой категории услуг')}</CardDescription>
+            <p className="text-sm text-gray-500">{t('categories.hint', 'Коэффициент применяется только к выбранной категории. Для выключенных правил используется обычное начисление x1.')}</p>
           </div>
-          <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => {
-            setRuleForm({ category: '', points_multiplier: 1.0 });
-            setShowRuleDialog(true);
-          }}>
-            <Plus className="w-4 h-4 mr-2" />
-            {t('buttons.add_rule', 'Добавить правило')}
-          </Button>
+          {canManageLoyalty && (
+            <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => {
+              setRuleForm({ category: '', points_multiplier: 1.0, is_active: true });
+              setShowRuleDialog(true);
+            }}>
+              <Plus className="w-4 h-4 mr-2" />
+              {t('buttons.add_rule', 'Добавить правило')}
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <Table className="min-w-[460px]">
+            <Table className="min-w-[720px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('categories.category', 'Категория')}</TableHead>
-                  <TableHead>{t('categories.multiplier', 'Множитель')}</TableHead>
-                  <TableHead className="w-[100px]"></TableHead>
+                  <TableHead>{t('categories.multiplier', 'Коэффициент начисления')}</TableHead>
+                  <TableHead className="w-[140px]">{t('common:status')}</TableHead>
+                  {canManageLoyalty && <TableHead className="w-[260px] text-right">{t('common:actions')}</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -510,18 +635,33 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                     <TableCell>{rule.category}</TableCell>
                     <TableCell>x{rule.points_multiplier}</TableCell>
                     <TableCell>
-                      <div className="flex gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => {
-                          setRuleForm(rule);
-                          setShowRuleDialog(true);
-                        }}>
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleDeleteRule(rule.category)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
+                      <Badge variant={rule.is_active ? 'default' : 'secondary'}>
+                        {rule.is_active ? t('common:active') : t('statuses.inactive', 'Неактивно')}
+                      </Badge>
                     </TableCell>
+                    {canManageLoyalty && (
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button variant={rule.is_active ? 'secondary' : 'outline'} size="sm" onClick={() => handleToggleRuleStatus(rule)}>
+                            {rule.is_active ? t('actions.deactivate', 'Отключить') : t('actions.activate', 'Включить')}
+                          </Button>
+                          <Button variant="outline" size="sm" onClick={() => {
+                            setRuleForm({
+                              ...rule,
+                              is_active: typeof rule.is_active === 'boolean' ? rule.is_active : true,
+                            });
+                            setShowRuleDialog(true);
+                          }}>
+                            <Edit className="w-4 h-4 mr-1" />
+                            {t('common:edit')}
+                          </Button>
+                          <Button variant="outline" size="sm" className="text-red-500" onClick={() => handleDeleteRule(rule.category)}>
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            {t('common:delete')}
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
@@ -532,9 +672,32 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
 
       {/* Loyalty Tiers */}
       <Card className={cardClassName}>
-        <CardHeader>
-          <CardTitle>{t('tiers.title')}</CardTitle>
-          <CardDescription>{t('tiers.description')}</CardDescription>
+        <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 space-y-2 sm:space-y-0">
+          <div className="space-y-1.5">
+            <CardTitle>{t('tiers.title')}</CardTitle>
+            <CardDescription>{t('tiers.description')}</CardDescription>
+          </div>
+          {canManageLoyalty && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full sm:w-auto"
+              onClick={() => {
+                setEditingTier({
+                  id: '',
+                  name: '',
+                  min_points: 0,
+                  discount: 0,
+                  is_active: true,
+                  color: '#CD7F32',
+                });
+                setShowTierDialog(true);
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {t('common:add')}
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -554,17 +717,44 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                     </div>
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full sm:w-auto"
-                  onClick={() => {
-                    setEditingTier(tier);
-                    setShowTierDialog(true);
-                  }}
-                >
-                  <Edit className="w-4 h-4" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Badge variant={tier.is_active ? 'default' : 'secondary'}>
+                    {tier.is_active ? t('common:active') : t('statuses.inactive', 'Неактивно')}
+                  </Badge>
+                </div>
+                {canManageLoyalty && (
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    <Button
+                      variant={tier.is_active ? 'secondary' : 'outline'}
+                      size="sm"
+                      className="w-full sm:w-auto"
+                      onClick={() => handleToggleTierStatus(tier)}
+                    >
+                      {tier.is_active ? t('actions.deactivate', 'Отключить') : t('actions.activate', 'Включить')}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full sm:w-auto"
+                      onClick={() => {
+                        setEditingTier(tier);
+                        setShowTierDialog(true);
+                      }}
+                    >
+                      <Edit className="w-4 h-4 mr-1" />
+                      {t('common:edit')}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full sm:w-auto text-red-500"
+                      onClick={() => handleDeleteTier(tier.id)}
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      {t('common:delete')}
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -573,9 +763,9 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
 
       {/* Recent Transactions */}
       <Card className={cardClassName}>
-        <CardHeader>
+        <CardHeader className="space-y-3">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
-            <div>
+            <div className="space-y-1.5">
               <CardTitle>{t('transactions.title')}</CardTitle>
               <CardDescription>{t('transactions.description')}</CardDescription>
             </div>
@@ -602,6 +792,7 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                   <TableHead>{t('transactions.table.type')}</TableHead>
                   <TableHead>{t('transactions.table.reason')}</TableHead>
                   <TableHead>{t('transactions.table.date')}</TableHead>
+                  {canManageLoyalty && <TableHead className="text-right">{t('common:actions')}</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -625,6 +816,18 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                     </TableCell>
                     <TableCell>{transaction.reason}</TableCell>
                     <TableCell>{new Date(transaction.created_at).toLocaleDateString('ru-RU')}</TableCell>
+                    {canManageLoyalty && (
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-red-500"
+                          onClick={() => handleDeleteTransaction(transaction.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
@@ -635,21 +838,21 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
 
       {/* Edit Tier Dialog */}
       <Dialog open={showTierDialog} onOpenChange={setShowTierDialog}>
-        <DialogContent>
-          <DialogHeader>
+        <DialogContent className="sm:max-w-[560px]">
+          <DialogHeader className="space-y-2 pb-1">
             <DialogTitle>{t('dialogs.edit_tier.title')}</DialogTitle>
             <DialogDescription>{t('dialogs.edit_tier.description')}</DialogDescription>
           </DialogHeader>
           {editingTier && (
-            <div className="space-y-4">
-              <div>
+            <div className="space-y-4 pt-1">
+              <div className="space-y-2">
                 <Label>{t('dialogs.edit_tier.tier_name')}</Label>
                 <Input
                   value={editingTier.name}
                   onChange={(e) => setEditingTier({ ...editingTier, name: e.target.value })}
                 />
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label>{t('dialogs.edit_tier.min_points')}</Label>
                 <Input
                   type="number"
@@ -657,13 +860,27 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                   onChange={(e) => setEditingTier({ ...editingTier, min_points: parseIntegerOrFallback(e.target.value, editingTier.min_points) })}
                 />
               </div>
-              <div>
+              <div className="space-y-2">
                 <Label>{t('dialogs.edit_tier.discount_percent')}</Label>
                 <Input
                   type="number"
                   value={editingTier.discount}
                   onChange={(e) => setEditingTier({ ...editingTier, discount: parseIntegerOrFallback(e.target.value, editingTier.discount) })}
                 />
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2.5">
+                <div className="space-y-0.5">
+                  <p className="text-sm font-medium text-gray-900">{t('dialogs.edit_tier.status_label', 'Статус уровня')}</p>
+                  <p className="text-xs text-gray-500">{t('dialogs.edit_tier.status_hint', 'Неактивный уровень не участвует в авторасчете привилегий')}</p>
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={editingTier.is_active ? 'default' : 'outline'}
+                  onClick={() => setEditingTier({ ...editingTier, is_active: !editingTier.is_active })}
+                >
+                  {editingTier.is_active ? t('common:active') : t('statuses.inactive', 'Неактивно')}
+                </Button>
               </div>
             </div>
           )}
@@ -678,13 +895,13 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
 
       {/* Category Rule Dialog */}
       <Dialog open={showRuleDialog} onOpenChange={setShowRuleDialog}>
-        <DialogContent>
-          <DialogHeader>
+        <DialogContent className="sm:max-w-[560px]">
+          <DialogHeader className="space-y-2 pb-1">
             <DialogTitle>{t('dialogs.rule.title', 'Редактировать правило категории')}</DialogTitle>
             <DialogDescription>{t('dialogs.rule.description', 'Установите множитель баллов для категории услуг')}</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
+          <div className="space-y-4 pt-1">
+            <div className="space-y-2">
               <Label>{t('categories.category', 'Категория')}</Label>
               <Input
                 value={ruleForm.category}
@@ -692,7 +909,7 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                 placeholder={t('categories.category_placeholder', 'Напр. Ногти')}
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <Label>{t('categories.multiplier', 'Множитель')}</Label>
               <Input
                 type="number"
@@ -700,6 +917,20 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                 value={ruleForm.points_multiplier}
                 onChange={(e) => setRuleForm({ ...ruleForm, points_multiplier: parseNumberOrFallback(e.target.value, ruleForm.points_multiplier) })}
               />
+            </div>
+            <div className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2.5">
+              <div className="space-y-0.5">
+                <p className="text-sm font-medium text-gray-900">{t('dialogs.rule.status_label', 'Статус правила')}</p>
+                <p className="text-xs text-gray-500">{t('dialogs.rule.status_hint', 'Если правило отключено, категории начисляются по базовой ставке')}</p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant={ruleForm.is_active ? 'default' : 'outline'}
+                onClick={() => setRuleForm({ ...ruleForm, is_active: !ruleForm.is_active })}
+              >
+                {ruleForm.is_active ? t('common:active') : t('statuses.inactive', 'Неактивно')}
+              </Button>
             </div>
           </div>
           <DialogFooter>

@@ -204,6 +204,7 @@
     "referral_step1": "Share a promo code with a friend",
     "referral_step2": "A friend indicates the code when registering for the first time",
     "referral_step3": "You both get bonus points!",
+    "referral_code_hint": "The code is generated automatically and used to invite friends.",
     "referral_subtitle": "Invite friends and get bonuses",
     "share_bonus": "and get bonuses!",
     "share_text": "Join the beauty salon! ",
@@ -224,7 +225,7 @@
     "total_spent": "Total spent",
     "your_cashback": "Your Cashback",
     "your_discount": "your discount will be",
-    "your_promo": "Your promo code"
+    "your_promo": "Your referral code"
   },
   "masters": {
     "add_favorites_hint": "Add artists to your favorites by clicking on the heart icon",

@@ -10,9 +10,10 @@
   "categories": {
     "category": "Category",
     "category_placeholder": "Eg. ",
-    "description": "Set up point multipliers for individual service categories",
-    "multiplier": "Factor",
-    "title": "Category multipliers"
+    "description": "Set the points earning factor for each service category",
+    "multiplier": "Earning factor",
+    "title": "Category earning rules",
+    "hint": "The factor is applied only to the selected category. If a rule is disabled, the base x1 rate is used."
   },
   "config": {
     "cashback_hint": "Example: {{percent}}% cashback ({{points}} points for every {{unit}} spent)",
@@ -40,11 +41,15 @@
       "discount_percent": "Discount percentage",
       "min_points": "Minimum score threshold",
       "tier_name": "Level name",
-      "title": "Editing a Level"
+      "title": "Editing a Level",
+      "status_label": "Tier status",
+      "status_hint": "An inactive tier is excluded from automatic privilege calculation."
     },
     "rule": {
       "description": "Personal accrual coefficient for the category",
-      "title": "Category Rule"
+      "title": "Category Rule",
+      "status_label": "Rule status",
+      "status_hint": "If a rule is disabled, the category uses the base x1 earning rate."
     }
   },
   "stats": {
@@ -60,7 +65,7 @@
     "starting_level": "Starting level",
     "title": "Privilege levels"
   },
-  "title": "Loyalty program",
+  "title": "Bonus program",
   "toasts": {
     "config_updated": "Settings saved",
     "failed_adjust": "Failed to change balance",
@@ -85,5 +90,12 @@
       "type": "Type"
     },
     "title": "Latest transactions"
+  },
+  "actions": {
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
+  "statuses": {
+    "inactive": "Inactive"
   }
 }

@@ -423,7 +423,7 @@ def init_database():
             menu_config JSONB DEFAULT '{}',
             custom_settings JSONB DEFAULT '{}',
             feature_flags JSONB DEFAULT '{}',
-            loyalty_points_conversion_rate REAL DEFAULT 0.1,
+            loyalty_points_conversion_rate REAL DEFAULT 0,
             points_expiration_days INTEGER DEFAULT 365,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )'''
@@ -435,7 +435,7 @@ def init_database():
         add_column_if_not_exists('salon_settings', 'lunch_end', 'TEXT')
         add_column_if_not_exists('salon_settings', 'timezone_offset', 'INTEGER DEFAULT 4')
         add_column_if_not_exists('salon_settings', 'main_location', 'TEXT')
-        add_column_if_not_exists('salon_settings', 'loyalty_points_conversion_rate', 'REAL DEFAULT 0.1')
+        add_column_if_not_exists('salon_settings', 'loyalty_points_conversion_rate', 'REAL DEFAULT 0')
         add_column_if_not_exists('salon_settings', 'points_expiration_days', 'INTEGER DEFAULT 365')
 
 
@@ -1160,12 +1160,30 @@ def init_database():
         add_column_if_not_exists('client_loyalty_points', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
         add_column_if_not_exists('client_loyalty_points', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
 
+        c.execute('''CREATE TABLE IF NOT EXISTS loyalty_tiers (
+            id SERIAL PRIMARY KEY,
+            name TEXT NOT NULL,
+            min_points INTEGER DEFAULT 0,
+            discount REAL DEFAULT 0,
+            is_active BOOLEAN DEFAULT TRUE,
+            color TEXT DEFAULT '#CD7F32',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        add_column_if_not_exists('loyalty_tiers', 'name', 'TEXT')
+        add_column_if_not_exists('loyalty_tiers', 'min_points', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('loyalty_tiers', 'discount', 'REAL DEFAULT 0')
+        add_column_if_not_exists('loyalty_tiers', 'is_active', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('loyalty_tiers', 'color', "TEXT DEFAULT '#CD7F32'")
+        add_column_if_not_exists('loyalty_tiers', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+
         c.execute('''CREATE TABLE IF NOT EXISTS loyalty_category_rules (
             id SERIAL PRIMARY KEY,
             category TEXT UNIQUE NOT NULL,
             points_multiplier REAL DEFAULT 1.0,
+            is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('loyalty_category_rules', 'is_active', 'BOOLEAN DEFAULT TRUE')
 
         c.execute('''CREATE TABLE IF NOT EXISTS loyalty_transactions (
             id SERIAL PRIMARY KEY,
@@ -1992,9 +2010,9 @@ def init_database():
         # Уровни лояльности
         default_loyalty = [
             ('bronze', 0, 0, 1.0, 'Базовый уровень'),
-            ('silver', 1000, 5, 1.1, 'Серебряный уровень'),
-            ('gold', 5000, 10, 1.2, 'Золотой уровень'),
-            ('platinum', 10000, 15, 1.5, 'Платиновый уровень')
+            ('silver', 1000, 0, 1.1, 'Серебряный уровень'),
+            ('gold', 5000, 0, 1.2, 'Золотой уровень'),
+            ('platinum', 10000, 0, 1.5, 'Платиновый уровень')
         ]
         for name, min_pts, disc, mult, ben in default_loyalty:
             c.execute("""

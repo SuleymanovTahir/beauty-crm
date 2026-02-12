@@ -25,8 +25,7 @@ export function AuthPrompt({ onGuestContinue, onAuthSuccess }: AuthPromptProps) 
     };
 
     const handleGoogleLogin = () => {
-        // Mock Google login
-        window.location.href = '/api/auth/google'; // Hypothetical
+        window.location.href = '/login';
     };
 
     const handleRegister = async () => {

@@ -1343,6 +1343,10 @@
 }
 
 /* Services page layout matching CRM legacy structure */
+.crm-stable-page-height {
+  min-height: 100vh;
+}
+
 .crm-services-page {
   padding: 1.25rem;
   display: flex;

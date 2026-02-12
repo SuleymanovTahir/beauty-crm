@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Star, TrendingUp, Gift, Copy, Loader2 } from 'lucide-react';
+import { Star, TrendingUp, Gift, Copy, Loader2, Target, Ticket } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
@@ -8,7 +9,9 @@ import { formatWhatsAppUrlWithText } from '../../../utils/urlUtils';
 import { useSalonSettings } from '../../../hooks/useSalonSettings';
 
 export function Loyalty() {
-  const { t } = useTranslation(['account', 'common']);
+  const { t } = useTranslation(['account', 'common', 'adminpanel/loyaltymanagement', 'layouts/mainlayout']);
+  const navigate = useNavigate();
+  const location = useLocation();
   const { currency: globalCurrency, formatCurrency } = useCurrency();
   const { phone: salonPhone, salonName } = useSalonSettings();
   const [loading, setLoading] = useState(true);
@@ -42,54 +45,86 @@ export function Loyalty() {
   }
 
   const { loyalty } = loyaltyData || {};
-  const levels = loyalty?.all_tiers?.map((tier: any) => ({
-    ...tier,
-    name: t(`loyalty.tiers.${tier.name.toLowerCase()}`, tier.name),
-    requirement: tier.points === 0
-      ? t('loyalty.tiers.bronze_req', 'Базовый уровень')
-      : t('loyalty.tiers.points_req', 'От {{points}} баллов', { points: tier.points })
-  })) || [
-      { name: t('loyalty.tiers.bronze', 'Bronze'), points: 0, discount: 0, color: '#CD7F32', requirement: t('loyalty.tiers.bronze_req', 'Базовый уровень') },
-      { name: t('loyalty.tiers.silver', 'Silver'), points: 1000, discount: 5, color: '#C0C0C0', requirement: t('loyalty.tiers.points_req', 'От 1000 баллов', { points: 1000 }) },
-      { name: t('loyalty.tiers.gold', 'Gold'), points: 5000, discount: 10, color: '#FFD700', requirement: t('loyalty.tiers.points_req', 'От 5000 баллов', { points: 5000 }) },
-      { name: t('loyalty.tiers.platinum', 'Platinum'), points: 10000, discount: 15, color: '#E5E4E2', requirement: t('loyalty.tiers.points_req', 'От 10000 баллов', { points: 10000 }) },
-    ];
-  const currency = loyalty?.currency || globalCurrency || "AED";
+  const tierList = Array.isArray(loyalty?.all_tiers) ? loyalty.all_tiers : [];
+  const levels = tierList.map((tier: any) => {
+    const tierKey = String(tier.name ?? '').toLowerCase();
+    const tierPoints = Number(tier.points ?? 0);
 
-  const defaultLoyalty = {
-    points: 0,
-    available_points: 0,
-    tier: 'Bronze',
-    discount: 10,
-    total_spent: 150,
-    total_saved: 0,
-    referral_code: 'BEAUTY000',
-    tier_progress: 0,
+    return {
+      key: tierKey,
+      displayName: t(`loyalty.tiers.${tierKey}`, tier.name),
+      points: tierPoints,
+      discount: Number(tier.discount ?? 0),
+      color: tier.color ?? '#CD7F32',
+      requirement: tierPoints === 0
+        ? t('loyalty.tiers.bronze_req', 'Базовый уровень')
+        : t('loyalty.tiers.points_req', 'От {{points}} баллов', { points: tierPoints })
+    };
+  });
+  const currency = loyalty?.currency ?? globalCurrency ?? 'AED';
+
+  const loyaltyInfo = {
+    points: Number(loyalty?.points ?? 0),
+    available_points: Number(loyalty?.available_points ?? loyalty?.points ?? 0),
+    tier: String(loyalty?.tier ?? 'bronze'),
+    discount: Number(loyalty?.discount ?? 0),
+    total_spent: Number(loyalty?.total_spent ?? 0),
+    total_saved: Number(loyalty?.total_saved ?? 0),
+    referral_code: String(loyalty?.referral_code ?? ''),
     referral_stats: {
-      points_for_referrer: 500,
-      points_for_friend: 300,
-      referral_count: 0
+      points_for_referrer: Number(loyalty?.referral_stats?.points_for_referrer ?? 0),
+      points_for_friend: Number(loyalty?.referral_stats?.points_for_friend ?? 0),
+      referral_count: Number(loyalty?.referral_stats?.referral_count ?? 0),
     }
   };
 
-  const loyaltyInfo = loyalty || defaultLoyalty;
-
-  const currentTierIndex = levels.findIndex((t: any) => t.name.toLowerCase() === loyaltyInfo.tier.toLowerCase());
-  const currentLevel = levels[currentTierIndex >= 0 ? currentTierIndex : 0];
-  const nextLevel = levels[currentTierIndex + 1];
+  const currentTierKey = loyaltyInfo.tier.toLowerCase();
+  const currentTierIndex = levels.findIndex((tier: any) => tier.key === currentTierKey);
+  const currentLevel = levels[currentTierIndex >= 0 ? currentTierIndex : 0] ?? {
+    key: currentTierKey,
+    displayName: loyaltyInfo.tier,
+    points: 0,
+    discount: loyaltyInfo.discount,
+    color: '#CD7F32',
+    requirement: t('loyalty.tiers.bronze_req', 'Базовый уровень')
+  };
+  const nextLevel = currentTierIndex >= 0 ? levels[currentTierIndex + 1] : undefined;
+  const levelsToRender = levels.length > 0 ? levels : [currentLevel];
+  const cashbackPercent = Number(loyalty?.discount ?? 0);
+  const referralCode = loyaltyInfo.referral_code;
 
   const handleCopyReferral = () => {
-    navigator.clipboard.writeText(loyaltyInfo.referral_code || '');
-    toast.success(t('loyalty.code_copied', 'Promo code copied'));
+    if (!referralCode) {
+      toast.error(t('common:error_occurred', 'An error occurred'));
+      return;
+    }
+
+    navigator.clipboard.writeText(referralCode)
+      .then(() => {
+        toast.success(t('loyalty.code_copied', 'Promo code copied'));
+      })
+      .catch(() => {
+        toast.error(t('common:error_occurred', 'An error occurred'));
+      });
   };
 
   const shareWhatsApp = () => {
-    const text = `${t('loyalty.share_text', 'Join the beauty salon! Use my promo code')} ${loyaltyInfo.referral_code} ${t('loyalty.share_bonus', 'and get bonuses!')}`;
+    if (!referralCode) {
+      toast.error(t('common:error_occurred', 'An error occurred'));
+      return;
+    }
+
+    const text = `${t('loyalty.share_text', 'Join the beauty salon! Use my promo code')} ${referralCode} ${t('loyalty.share_bonus', 'and get bonuses!')}`;
     window.open(formatWhatsAppUrlWithText(salonPhone, text), '_blank');
   };
 
   const shareInstagram = async () => {
-    const referralText = `${t('loyalty.share_text', 'Join the beauty salon! Use my promo code')} ${loyaltyInfo.referral_code} ${t('loyalty.share_bonus', 'and get bonuses!')}`;
+    if (!referralCode) {
+      toast.error(t('common:error_occurred', 'An error occurred'));
+      return;
+    }
+
+    const referralText = `${t('loyalty.share_text', 'Join the beauty salon! Use my promo code')} ${referralCode} ${t('loyalty.share_bonus', 'and get bonuses!')}`;
 
     if (navigator.share) {
       try {
@@ -116,9 +151,38 @@ export function Loyalty() {
 
   return (
     <div className="max-w-4xl pb-8">
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-2">
+        <div className="flex flex-wrap gap-2">
+          {[
+            { path: '/account/achievements', label: t('layouts/mainlayout:menu.challenges'), icon: Target },
+            { path: '/account/loyalty', label: t('adminpanel/loyaltymanagement:title'), icon: Gift },
+            { path: '/account/promocodes', label: t('layouts/mainlayout:menu.promo_codes'), icon: Ticket },
+          ].map((section) => {
+            const isActive = location.pathname === section.path;
+            const SectionIcon = section.icon;
+
+            return (
+              <button
+                key={section.path}
+                type="button"
+                onClick={() => navigate(section.path)}
+                className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'border-blue-600 bg-blue-600 text-white'
+                    : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                <SectionIcon size={16} />
+                {section.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Loyalty and Cashback */}
       <div className="mb-6">
-        <h2 className="font-semibold mb-4">{t('loyalty.loyalty_cashback', 'Loyalty and Cashback')}</h2>
+        <h2 className="font-semibold mb-4">{t('adminpanel/loyaltymanagement:title')}</h2>
         <p className="text-sm text-gray-600 mb-4">{t('loyalty.subtitle', 'Collect points and get cashback from each service')}</p>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
@@ -127,7 +191,7 @@ export function Loyalty() {
               <TrendingUp className="text-green-600" size={20} />
               <span className="text-sm font-medium">{t('loyalty.your_cashback', 'Your Cashback')}</span>
             </div>
-            <div className="text-3xl font-bold mb-1">{(loyalty?.config?.loyalty_points_conversion_rate * 100 || 10).toFixed(0)}%</div>
+            <div className="text-3xl font-bold mb-1">{cashbackPercent.toFixed(0)}%</div>
             <div className="text-xs text-gray-500">{t('loyalty.cashback_description', 'The cost of each service is refunded in points')}</div>
           </div>
 
@@ -136,7 +200,7 @@ export function Loyalty() {
               <Gift className="text-blue-600" size={20} />
               <span className="text-sm font-medium">{t('loyalty.available_points', 'Points available')}</span>
             </div>
-            <div className="text-3xl font-bold mb-1">{loyaltyInfo.available_points || loyaltyInfo.points}</div>
+            <div className="text-3xl font-bold mb-1">{loyaltyInfo.available_points}</div>
             <div className="text-xs text-gray-500">{t('loyalty.points_value', '1 point = 1 {{currency}} discount', { currency: currency })}</div>
           </div>
         </div>
@@ -147,7 +211,7 @@ export function Loyalty() {
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-2">
             <Star className="text-amber-500 fill-amber-500" size={20} />
-            <span className="font-semibold">{currentLevel.name}</span>
+            <span className="font-semibold">{currentLevel.displayName}</span>
           </div>
           <div className="text-right">
             <div className="text-3xl font-bold">{loyaltyInfo.points}</div>
@@ -162,19 +226,24 @@ export function Loyalty() {
         {nextLevel && (
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-700">{t('loyalty.to_next_level', 'To')} {nextLevel.name} {t('loyalty.level', 'level')}</span>
+              <span className="text-sm text-gray-700">{t('loyalty.to_next_level', 'To')} {nextLevel.displayName} {t('loyalty.level', 'level')}</span>
               <span className="font-semibold">{nextLevel.points} {t('loyalty.points', 'points')}</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
               <div
                 className="bg-gradient-to-r from-gray-400 to-gray-500 h-2 rounded-full"
                 style={{
-                  width: `${Math.min(((loyaltyInfo.points - currentLevel.points) / (nextLevel.points - currentLevel.points)) * 100, 100)}%`
+                  width: `${Math.min(
+                    nextLevel.points > currentLevel.points
+                      ? ((loyaltyInfo.points - currentLevel.points) / (nextLevel.points - currentLevel.points)) * 100
+                      : 0,
+                    100
+                  )}%`
                 }}
               ></div>
             </div>
             <div className="text-xs text-gray-500">
-              {t('loyalty.next_discount', 'Upon reaching')} {nextLevel.name} {t('loyalty.level', 'level')} {t('loyalty.your_discount', 'your discount will be')} {nextLevel.discount}%
+              {t('loyalty.next_discount', 'Upon reaching')} {nextLevel.displayName} {t('loyalty.level', 'level')} {t('loyalty.your_discount', 'your discount will be')} {nextLevel.discount}%
             </div>
           </div>
         )}
@@ -191,12 +260,12 @@ export function Loyalty() {
 
       {/* Levels Grid */}
       <div className="grid grid-cols-2 gap-4">
-        {levels.map((level: any) => {
-          const isCurrent = level.name === currentLevel.name;
+        {levelsToRender.map((level: any) => {
+          const isCurrent = level.key === currentLevel.key;
 
           return (
             <div
-              key={level.name}
+              key={level.key}
               className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-sm transition-shadow"
             >
               <div className="flex items-start justify-between mb-3">
@@ -205,7 +274,7 @@ export function Loyalty() {
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: level.color }}
                   />
-                  <span className="font-semibold">{level.name}</span>
+                  <span className="font-semibold">{level.displayName}</span>
                   {isCurrent && (
                     <span className="bg-gray-900 text-white text-xs px-2 py-0.5 rounded">
                       {t('loyalty.current', 'Current')}
@@ -251,7 +320,7 @@ export function Loyalty() {
 
         <div className="bg-gray-50 rounded-lg p-4 mb-4">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-medium text-gray-700">{t('loyalty.your_promo', 'Your promo code')}</span>
+            <span className="text-sm font-medium text-gray-700">{t('loyalty.your_promo', 'Your referral code')}</span>
             <button
               onClick={handleCopyReferral}
               className="text-gray-500 hover:text-gray-700 p-1"
@@ -259,6 +328,12 @@ export function Loyalty() {
               <Copy size={16} />
             </button>
           </div>
+          <div className="font-mono text-lg font-bold bg-white border border-dashed border-gray-200 rounded-lg p-3 mb-4 text-center">
+            {referralCode || '-'}
+          </div>
+          <p className="text-xs text-gray-500 mb-4">
+            {t('loyalty.referral_code_hint', 'Код создается автоматически и используется для приглашения друзей.')}
+          </p>
 
           <div className="text-sm text-gray-600 space-y-2">
             <p className="font-medium text-gray-700 mb-2">{t('loyalty.referral_how_it_works', 'How does this work:')}</p>
@@ -281,15 +356,15 @@ export function Loyalty() {
 
         <div className="grid grid-cols-3 gap-4 mb-4">
           <div className="text-center p-3 bg-purple-50 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600">+{loyaltyInfo.referral_stats?.points_for_referrer || 500}</div>
+            <div className="text-2xl font-bold text-purple-600">+{loyaltyInfo.referral_stats.points_for_referrer}</div>
             <div className="text-xs text-gray-600 mt-1">{t('loyalty.points_for_you', 'points for you')}</div>
           </div>
           <div className="text-center p-3 bg-pink-50 rounded-lg">
-            <div className="text-2xl font-bold text-pink-600">+{loyaltyInfo.referral_stats?.points_for_friend || 300}</div>
+            <div className="text-2xl font-bold text-pink-600">+{loyaltyInfo.referral_stats.points_for_friend}</div>
             <div className="text-xs text-gray-600 mt-1">{t('loyalty.points_for_friend', 'points for a friend')}</div>
           </div>
           <div className="text-center p-3 bg-blue-50 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">{loyaltyInfo.referral_stats?.referral_count || 0}</div>
+            <div className="text-2xl font-bold text-blue-600">{loyaltyInfo.referral_stats.referral_count}</div>
             <div className="text-xs text-gray-600 mt-1">{t('loyalty.invitations', 'invitations')}</div>
           </div>
         </div>

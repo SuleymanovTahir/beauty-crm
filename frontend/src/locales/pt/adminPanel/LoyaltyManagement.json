@@ -10,9 +10,10 @@
   "categories": {
     "category": "Categoria",
     "category_placeholder": "Ex.: Manicure",
-    "description": "Configure multiplicadores de pontos para categorias de serviço individuais",
-    "multiplier": "Multiplicador",
-    "title": "Multiplicadores de categoria"
+    "description": "Defina o fator de acúmulo de pontos para cada categoria de serviço",
+    "multiplier": "Fator de acúmulo",
+    "title": "Regras de pontuação por categoria",
+    "hint": "O fator se aplica apenas à categoria selecionada. Se a regra estiver desativada, é usada a taxa base x1."
   },
   "config": {
     "cashback_hint": "Exemplo: {{percent}}% de reembolso ({{points}} pontos para cada {{unit}} gasto)",
@@ -40,11 +41,15 @@
       "discount_percent": "Porcentagem de desconto",
       "min_points": "Limite mínimo de pontos",
       "tier_name": "Nome do nível",
-      "title": "Nível de edição"
+      "title": "Nível de edição",
+      "status_label": "Status do nível",
+      "status_hint": "Um nível inativo não participa do cálculo automático de privilégios."
     },
     "rule": {
       "description": "Coeficiente de acúmulo pessoal para a categoria",
-      "title": "Regra da categoria"
+      "title": "Regra da categoria",
+      "status_label": "Status da regra",
+      "status_hint": "Se a regra estiver desativada, a categoria usa a taxa base x1."
     }
   },
   "stats": {
@@ -60,7 +65,7 @@
     "starting_level": "Nível inicial",
     "title": "Níveis de privilégio"
   },
-  "title": "Programa de fidelidade",
+  "title": "Programa de bônus",
   "toasts": {
     "config_updated": "Configurações salvas",
     "failed_adjust": "Falha ao alterar o saldo",
@@ -85,5 +90,12 @@
       "type": "Tipo"
     },
     "title": "Últimas transações"
+  },
+  "actions": {
+    "activate": "Ativar",
+    "deactivate": "Desativar"
+  },
+  "statuses": {
+    "inactive": "Inativo"
   }
 }

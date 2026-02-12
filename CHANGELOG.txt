@@ -1,3 +1,42 @@
+## [2026-02-12] Loyalty UX/RBAC Hardening, Services Tab Continuity, and Bot Booking Verification
+- Loyalty management improvements in `frontend/src/pages/adminPanel/LoyaltyManagement.tsx`:
+  - Fixed embedded layout rhythm in `special-packages?section=loyalty`:
+    - Reworked global settings block so the save button is placed under fields with stable spacing.
+    - Increased section header spacing for category rules, tiers, and recent transactions.
+  - Clarified category section naming by switching title/description to more explicit wording about category accrual rules.
+  - Added missing actions:
+    - Loyalty tiers: create, edit, delete.
+    - Loyalty transactions: delete.
+  - Restricted edit/delete actions in UI to `admin`, `manager`, `director` only.
+  - Removed frontend default cashback preset by changing initial `loyalty_points_conversion_rate` from `0.1` to `0`.
+- Loyalty API/RBAC and data defaults:
+  - `backend/api/admin_features.py`:
+    - Added `POST /admin/loyalty/tiers`.
+    - Added `DELETE /admin/loyalty/tiers/{tier_id}`.
+    - Added `DELETE /admin/loyalty/transactions/{transaction_id}`.
+    - Extended tier update access to `admin`, `manager`, `director`.
+    - Changed default generated `loyalty_tiers` discounts from `5/10/15` to `0/0/0`.
+  - `backend/api/loyalty.py`:
+    - Added compatibility proxies for new loyalty tier/transaction delete/create endpoints.
+  - `backend/db/init.py`:
+    - Added missing SSOT table `loyalty_tiers` (`CREATE TABLE IF NOT EXISTS` + idempotent column sync).
+    - Updated `salon_settings.loyalty_points_conversion_rate` default from `0.1` to `0`.
+    - Updated seeded `loyalty_levels` discounts to zero defaults.
+  - `backend/services/loyalty.py`:
+    - Removed 10% fallback behavior (`0.1`) and switched to zero fallback for conversion rate and booking points.
+- Services/special-packages tab continuity:
+  - `frontend/src/pages/shared/Services.tsx` top tabs now mirror special-packages flow with 6 sections:
+    - `Услуги`, `Спецпакеты`, `Реферальные кампании`, `Челленджи`, `Программа лояльности`, `Промокоды`.
+  - Added section-based navigation from services to `special-packages?section=...` (and `view=history` for referrals).
+- Naming clarity updates:
+  - Replaced loyalty tab label in special-packages with `adminpanel/loyaltymanagement:title` (`Программа лояльности`) instead of short `Лояльность`.
+  - Updated title mapping in `frontend/src/components/layouts/UniversalLayout.tsx` so URL section `loyalty` resolves to `Программа лояльности`.
+- Bot checks and booking flow verification (local):
+  - Confirmed bot settings are loaded from `salon_settings.bot_config`.
+  - Confirmed no OpenAI/ChatGPT keys in bot settings payload.
+  - Executed end-to-end booking write through bot action `save_booking` and verified booking persisted in DB, then cleaned test data.
+  - Executed `backend/tests/verify_bot_logic.py` to validate booking availability behavior around `is_online_booking_enabled`.
+
 ## [2026-02-12] Style Harmonization for Embedded Tools Tabs + Conditional Back Arrow
 - Unified embedded visual rhythm for Special Packages tool tabs (Challenges/Loyalty/Promo Codes) to be closer to the referrals section style:
   - Adjusted typography weight/scale, panel radius, and shadow density in embedded mode.
@@ -2400,3 +2439,55 @@ format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
 ### ФАЙЛЫ
 - `frontend/src/pages/shared/Services.tsx` - MODIFIED
 - `frontend/src/pages/shared/Challenges.tsx` - MODIFIED
+
+## 2026-02-12: Статусы уровней/правил бонусной программы и стабилизация вкладок Services/Special-Packages
+
+### ПРОБЛЕМА
+1. В `special-packages?section=loyalty` было нельзя явно включать/отключать уровни привилегий и правила по категориям из списка.
+2. В диалогах редактирования уровня/правила заголовок и контент выглядели прижатыми.
+3. Термин `Множители категорий` был неочевиден по смыслу для администраторов.
+4. Верхние вкладки и высота контейнеров в `/crm/services` и `/crm/special-packages` оставались не полностью синхронизированы, из-за чего при переходах интерфейс визуально "прыгал".
+
+### РЕШЕНИЕ
+1. В `LoyaltyManagement.tsx` добавлены явные статусы и действия:
+   - кнопки `Включить/Отключить` для правил категорий;
+   - кнопки `Включить/Отключить` для уровней привилегий;
+   - статус в форме редактирования уровня и в форме правила.
+2. В `LoyaltyManagement.tsx` переработаны отступы диалогов и заголовков карточек:
+   - увеличены интервалы в `DialogHeader` и формах;
+   - выровнена компоновка глобальных настроек, включая кнопку `Сохранить`.
+3. Переименованы и уточнены тексты блока категорий:
+   - `Правила начисления по категориям`;
+   - `Коэффициент начисления`;
+   - добавлено пояснение о базовой ставке `x1` при выключенном правиле.
+4. В `Services.tsx` и `SpecialPackages.tsx` подключены общие классы вкладок (`crm-tools-tab*`) и общий контейнер стабильной высоты (`crm-stable-page-height`), плюс единый page-container для special-packages.
+5. В `Challenges.tsx` для embedded-режима убрано лишнее ограничение ширины и смягчен контейнер, чтобы секция выглядела ближе к `loyalty`.
+6. Обновлены локали `adminPanel/LoyaltyManagement.json` для всех 9 языков (RU/EN/AR/HI/KK/ES/DE/PT/FR) под новые названия и статусы.
+
+### ВАЖНО ПОМНИТЬ
+- Для бонусной программы статусы сущностей (`tier`, `rule`) должны быть управляемы из списка и из формы редактирования.
+- Для связанных страниц `services` и `special-packages` использовать единый CSS-паттерн вкладок и одинаковый базовый контейнер, чтобы исключить визуальные скачки.
+
+### ФАЙЛЫ
+- `frontend/src/pages/adminPanel/LoyaltyManagement.tsx` - MODIFIED
+- `frontend/src/pages/shared/Services.tsx` - MODIFIED
+- `frontend/src/pages/admin/SpecialPackages.tsx` - MODIFIED
+- `frontend/src/pages/shared/Challenges.tsx` - MODIFIED
+- `frontend/src/styles/crm-pages.css` - MODIFIED
+- `frontend/src/locales/*/adminPanel/LoyaltyManagement.json` - MODIFIED
+
+## 2026-02-12: Восстановление прежнего визуального стиля вкладок (после регрессии UI)
+
+### ПРОБЛЕМА
+- После унификации вкладок через кастомные `crm-tools-*` классы визуальный стиль в `services/special-packages` стал хуже: вкладки и общая панель выглядели грубее исходного варианта.
+
+### РЕШЕНИЕ
+1. В `SpecialPackages.tsx` восстановлен прежний кнопочный стиль вкладок на базе `Button` (`default/outline`) с исходными классами.
+2. В `Services.tsx` вкладки приведены к этому же стилю, чтобы именно `services` подстроить под `special-packages`.
+3. Удалены временные CSS-классы `crm-special-packages-page` и `crm-tools-*`, которые ухудшали внешний вид.
+4. Сохранен `crm-stable-page-height` для стабильной высоты страницы без изменения визуального паттерна.
+
+### ФАЙЛЫ
+- `frontend/src/pages/admin/SpecialPackages.tsx` - MODIFIED
+- `frontend/src/pages/shared/Services.tsx` - MODIFIED
+- `frontend/src/styles/crm-pages.css` - MODIFIED

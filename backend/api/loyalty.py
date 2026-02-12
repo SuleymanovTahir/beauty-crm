@@ -347,12 +347,14 @@ async def update_loyalty_category_api(
         data = await request.json()
         category = data.get("category")
         multiplier = data.get("points_multiplier")
+        is_active_raw = data.get("is_active", True)
 
         if not category or multiplier is None:
             return JSONResponse({"error": "Missing category or points_multiplier"}, status_code=400)
 
+        is_active = is_active_raw if isinstance(is_active_raw, bool) else str(is_active_raw).strip().lower() in ["1", "true", "yes", "on"]
         loyalty_service = LoyaltyService()
-        success = loyalty_service.update_category_rule(category, float(multiplier))
+        success = loyalty_service.update_category_rule(category, float(multiplier), bool(is_active))
         return {"success": success}
     except Exception as e:
         log_error(f"Error updating category rule: {e}", "loyalty")
@@ -418,12 +420,40 @@ async def update_loyalty_tier_admin(
     from api.admin_features import update_loyalty_tier as update_loyalty_tier_handler
     return await update_loyalty_tier_handler(tier_id, request, session_token)
 
+@router.post("/admin/loyalty/tiers")
+async def create_loyalty_tier_admin(
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """[Admin] Создать уровень лояльности (compat)"""
+    from api.admin_features import create_loyalty_tier as create_loyalty_tier_handler
+    return await create_loyalty_tier_handler(request, session_token)
+
+
+@router.delete("/admin/loyalty/tiers/{tier_id}")
+async def delete_loyalty_tier_admin(
+    tier_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """[Admin] Удалить уровень лояльности (compat)"""
+    from api.admin_features import delete_loyalty_tier as delete_loyalty_tier_handler
+    return await delete_loyalty_tier_handler(tier_id, session_token)
+
 
 @router.get("/admin/loyalty/transactions")
 async def get_loyalty_transactions_admin(session_token: Optional[str] = Cookie(None)):
     """[Admin] Получить историю транзакций лояльности (compat)"""
     from api.admin_features import get_loyalty_transactions as get_loyalty_transactions_handler
     return await get_loyalty_transactions_handler(session_token)
+
+@router.delete("/admin/loyalty/transactions/{transaction_id}")
+async def delete_loyalty_transaction_admin(
+    transaction_id: int,
+    session_token: Optional[str] = Cookie(None)
+):
+    """[Admin] Удалить транзакцию лояльности (compat)"""
+    from api.admin_features import delete_loyalty_transaction as delete_loyalty_transaction_handler
+    return await delete_loyalty_transaction_handler(transaction_id, session_token)
 
 
 @router.post("/admin/loyalty/adjust-points")

@@ -5,6 +5,7 @@ import { api } from '../../../src/services/api';
 import { Button } from '../../../src/components/ui/button';
 import { Input } from '../../../src/components/ui/input';
 import { toast } from 'sonner';
+import { useCurrency } from '../../../src/hooks/useSalonSettings';
 
 interface PromoCode {
     id: number;
@@ -19,6 +20,7 @@ interface PromoCode {
 
 export function PromoCodesView() {
     const { t } = useTranslation(['booking', 'common']);
+    const { formatCurrency } = useCurrency();
     const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -46,9 +48,13 @@ export function PromoCodesView() {
         promo.description?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const copyToClipboard = (code: string) => {
-        navigator.clipboard.writeText(code);
-        toast.success(t('promotions.copied', 'Promo code copied to clipboard!'));
+    const copyToClipboard = async (code: string) => {
+        try {
+            await navigator.clipboard.writeText(code);
+            toast.success(t('promotions.copied', 'Promo code copied to clipboard!'));
+        } catch (error) {
+            toast.error(t('common:error_occurred', 'An error occurred'));
+        }
     };
 
     if (loading) {
@@ -109,7 +115,9 @@ export function PromoCodesView() {
                                     </div>
                                     <div className="text-right">
                                         <div className="text-2xl font-bold text-primary">
-                                            {promo.discount_type === 'percent' ? `${promo.discount_value}%` : `${promo.discount_value}₽`}
+                                            {promo.discount_type === 'percent'
+                                                ? `${promo.discount_value}%`
+                                                : formatCurrency(promo.discount_value)}
                                         </div>
                                         <div className="text-xs text-muted-foreground uppercase font-bold tracking-wider">
                                             {t('common.discount', 'OFF')}
@@ -126,7 +134,7 @@ export function PromoCodesView() {
                                     </p>
                                     {promo.min_booking_amount > 0 && (
                                         <p className="text-xs text-muted-foreground">
-                                            {t('promotions.min_order', 'Min. order')}: {promo.min_booking_amount}₽
+                                            {t('promotions.min_order', 'Min. order')}: {formatCurrency(promo.min_booking_amount)}
                                         </p>
                                     )}
                                     {promo.valid_until && (
