@@ -614,7 +614,12 @@ export default function UniversalServices() {
                                         </button>
                                     </th>
                                 )}
-                                <th>{String(t('common:status', { lng: 'en' })).toLowerCase()}</th>
+                                <th>
+                                    <span className="crm-services-header-inline">
+                                        <span>{String(t('common:status', { lng: 'en' })).toLowerCase()}</span>
+                                        <ArrowUpDown className="crm-services-sort-icon" />
+                                    </span>
+                                </th>
                                 <th className="crm-services-actions-header">{t('common:actions')}</th>
                             </tr>
                         </thead>

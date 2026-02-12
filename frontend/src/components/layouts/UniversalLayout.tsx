@@ -388,8 +388,8 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                             />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <h1 className="text-lg font-bold text-gray-900 truncate leading-tight">{salonSettings?.name || 'Beauty CRM'}</h1>
-                            <div className="text-xs text-gray-500 font-medium">{getRoleLabel()}</div>
+                            <h1 className="sidebar-brand-name">{salonSettings?.name || 'Beauty CRM'}</h1>
+                            <div className="sidebar-brand-role">{getRoleLabel()}</div>
                         </div>
                     </div>
 
@@ -512,7 +512,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                 className="flex items-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-all font-bold shadow-sm"
                             >
                                 <LogOut size={18} />
-                                <span className="text-sm">{t('common:logout') || 'Выйти'}</span>
+                                <span className="text-sm">{t('common:logout')}</span>
                             </button>
                         </div>
                     </div>

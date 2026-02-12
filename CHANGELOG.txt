@@ -18,6 +18,15 @@
   - Service names in table now use existing canonical EN dictionary values via `public_landing/services:items.<service_key>.name` with DB fallback.
   - Status table header now renders as lowercase `status` using existing `common:status` EN translation.
   - Further reduced typography/spacing in `frontend/src/styles/crm-pages.css` to match compact legacy scale.
+- Sidebar/menu sizing parity:
+  - Normalized sidebar typography scale and paddings for a denser desktop layout.
+  - Reduced brand block (`M.Le Diamant` / role), menu item, submenu item, and footer action sizing.
+- Services table parity:
+  - Added sort icon next to `status` column header (visual parity with target table header).
+- Additional size normalization (user feedback):
+  - Reduced sidebar brand typography (`M.Le Diamant` / role) and sidebar spacing in `MainLayout`.
+  - Reduced left menu and submenu font sizes/paddings for denser CRM layout.
+  - Further reduced `/crm/services` typography and control/table element sizes (title, subtitle, tabs, filters, buttons, table headers/cells, badges, action icons).
 - Challenges API compatibility hardening:
   - Updated `backend/api/admin_features.py` to support both legacy and extended `active_challenges` schemas (dynamic column detection).
   - Added `GET /api/admin/challenges/stats` endpoint to eliminate 405 for stats polling from CRM challenges page.
