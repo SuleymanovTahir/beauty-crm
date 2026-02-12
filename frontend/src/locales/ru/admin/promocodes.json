@@ -19,7 +19,7 @@
   "fixed": "Фикс. сумма",
   "limit_label": "Лимит исп.",
   "loading": "Загружаем промокоды...",
-  "min_amount_label": "Миним. сумма записи (AZN)",
+  "min_amount_label": "Миним. сумма записи ({{currency}})",
   "min_order": "От",
   "not_found": "Промокоды не найдены",
   "not_found_desc": "Создайте свой первый промокод, чтобы привлечь больше клиентов!",
@@ -34,7 +34,7 @@
   "total_usage": "Использований всего",
   "type_label": "Тип скидки",
   "used": "исп.",
-  "val_currency": "AZN",
+  "val_currency": "{{currency}}",
   "valid_until_label": "Действует до",
   "value_label": "Размер скидки"
 }

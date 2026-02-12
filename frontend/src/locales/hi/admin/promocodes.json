@@ -19,7 +19,7 @@
   "fixed": "ठीक किया गया। राशि",
   "limit_label": "उपयोग सीमा.",
   "loading": "प्रचार कोड लोड करें...",
-  "min_amount_label": "न्यूनतम. प्रवेश राशि (AZN)",
+  "min_amount_label": "न्यूनतम. प्रवेश राशि ({{currency}})",
   "min_order": "से",
   "not_found": "कोई प्रोमो कोड नहीं मिला",
   "not_found_desc": "अधिक ग्राहकों को आकर्षित करने के लिए अपना पहला प्रचार कोड बनाएं!",
@@ -34,7 +34,7 @@
   "total_usage": "कुल उपयोग",
   "type_label": "छूट प्रकार",
   "used": "प्रयुक्त",
-  "val_currency": "AZN",
+  "val_currency": "{{currency}}",
   "valid_until_label": "जब तक वैध",
   "value_label": "आकार छूट"
 }

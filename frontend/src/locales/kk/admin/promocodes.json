@@ -19,7 +19,7 @@
   "fixed": "Түзету. сома",
   "limit_label": "Қолдану шегі.",
   "loading": "Жарнамалық кодтарды жүктеңіз...",
-  "min_amount_label": "Мин. кіріс сомасы (AZN)",
+  "min_amount_label": "Мин. кіріс сомасы ({{currency}})",
   "min_order": "Кімнен",
   "not_found": "Ешқандай промо-код табылмады",
   "not_found_desc": "Көбірек тұтынушыларды тарту үшін бірінші промо-кодты жасаңыз!",
@@ -34,7 +34,7 @@
   "total_usage": "Жалпы пайдалану",
   "type_label": "Жеңілдік түрі",
   "used": "пайдаланылған",
-  "val_currency": "AZN",
+  "val_currency": "{{currency}}",
   "valid_until_label": "Жарамдылық мерзімі",
   "value_label": "Жеңілдік мөлшері"
 }

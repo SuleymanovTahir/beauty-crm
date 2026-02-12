@@ -1,3 +1,30 @@
+## [2026-02-12] Account/Admin Navigation Unification, Currency De-hardcode, and Notifications API Compatibility
+- Account UX consistency (`frontend/public_landing/pages/account/AccountPage.tsx`):
+  - Added browser title synchronization for `/account/*` pages, including settings sub-tabs (`tab` query).
+  - Kept URL-based tab navigation per account section and normalized redirect for `/account/` -> `/account/dashboard`.
+  - Moved profile card in account sidebar footer to align with CRM layout (just above language switcher/logout).
+- Account naming clarity:
+  - Renamed public account “beauty profile” wording to clearer care-oriented wording in RU/EN:
+    - `frontend/src/locales/ru/account.json`
+    - `frontend/src/locales/en/account.json`
+    - `frontend/public_landing/pages/account/v2_components/BeautyProfile.tsx`
+- Currency inheritance hardcode cleanup for promo codes:
+  - `frontend/src/pages/admin/PromoCodes.tsx` now uses salon currency via `useCurrency()` for fixed discounts and minimum amount labels.
+  - Removed AZN literals from all admin promo locales (`frontend/src/locales/*/admin/promocodes.json`) by replacing with `{{currency}}`.
+- Admin route duplication cleanup:
+  - `/admin/loyalty`, `/admin/referrals`, `/admin/challenges` now render unified Special Packages implementations (entry modes), plus added `/admin/promo-codes` and `/admin/special-packages`:
+    - `frontend/src/App.tsx`
+  - Added admin sidebar menu entry for promo codes and aligned admin loyalty label with shared loyalty title:
+    - `frontend/src/components/layouts/UniversalLayout.tsx`
+- Notifications dashboard 500 fix (`backend/api/admin_features.py`):
+  - Made `/api/admin/notifications` compatible with schemas where `failed_count` does not exist.
+  - Made `/api/admin/notifications/templates` compatible with both legacy template schema (`title/message/notification_type`) and current schema (`subject_*/body_*/category`).
+  - Updated template creation endpoint to support both schemas safely.
+- Client settings enforcement on admin actions:
+  - Notification send flow now filters recipients by saved client notification channel preferences (`push/email/sms`) before delivery.
+  - Admin client gallery upload/add now respects client privacy setting `privacy_prefs.allowPhotos`:
+    - `backend/api/client_gallery_admin.py`
+
 ## [2026-02-12] Loyalty UX/RBAC Hardening, Services Tab Continuity, and Bot Booking Verification
 - Loyalty management improvements in `frontend/src/pages/adminPanel/LoyaltyManagement.tsx`:
   - Fixed embedded layout rhythm in `special-packages?section=loyalty`:
@@ -2491,3 +2518,51 @@ format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
 - `frontend/src/pages/admin/SpecialPackages.tsx` - MODIFIED
 - `frontend/src/pages/shared/Services.tsx` - MODIFIED
 - `frontend/src/styles/crm-pages.css` - MODIFIED
+
+## 2026-02-12: Account бонусная поднавигация и таргетинг промокодов
+
+### ПРОБЛЕМА
+1. В `/account/loyalty` отображался синтетический реферальный код (`REF...`), даже когда код не был задан в базе.
+2. Подвкладки бонусной зоны (`челленджи/промокоды`) пропадали после перехода, потому что рендерились только внутри `Loyalty`.
+3. В WhatsApp/Instagram для бонусной страницы использовалась неуниверсальная логика шаринга (жестко связанная с кодом).
+4. В CRM на `/crm/promo-codes` нельзя было настраивать область применения промокода по категориям, услугам и клиентам.
+
+### РЕШЕНИЕ
+1. В `backend/api/client_auth.py` убрана генерация fallback-кода `REF{...}`:
+   - в `/api/client/dashboard`;
+   - в `/api/client/loyalty`.
+2. В `AccountPage.tsx` добавлена единая поднавигация бонусной программы на уровне страницы:
+   - `Бонусная программа`;
+   - `Челленджи`;
+   - `Промокоды`;
+   - `Специальные предложения`.
+   Поднавигация теперь сохраняется при переходах между бонусными разделами.
+3. Боковое меню account очищено от дублирующих пунктов (`Промокоды`/`Челленджи` как отдельные элементы) и оставляет бонусный блок единым.
+4. В `Loyalty.tsx`:
+   - Instagram-кнопка теперь открывает Instagram салона из настроек;
+   - WhatsApp формирует текст динамически: с кодом, если код есть, и без кода, если кода нет.
+5. `PromoCodesView.tsx` расширен режимами:
+   - `promo-codes`;
+   - `special-offers` (отдельный `/account/special-offers` на базе активных спецпакетов).
+6. CRM промокоды расширены таргетингом:
+   - backend: `backend/api/promo_codes.py`, `backend/db/promo_codes.py`;
+   - schema: `backend/db/init.py` (поля `target_scope`, `target_category_names`, `target_service_ids`, `target_client_ids`);
+   - frontend: `frontend/src/pages/admin/PromoCodes.tsx`, `frontend/src/services/api.ts`.
+   Поддержаны режимы: `all`, `categories`, `services`, `clients` с множественным выбором.
+7. В клиентском бронировании (`ConfirmStep.tsx`) валидация промокода теперь передает контекст выбранных услуг/категорий/клиента.
+
+### ВАЖНО ПОМНИТЬ
+- Поднавигацию связанных бонусных разделов (`/account/loyalty`, `/account/achievements`, `/account/promocodes`, `/account/special-offers`) нужно держать в одном общем контейнере уровня `AccountPage`, а не дублировать внутри отдельных компонентов.
+- Промокоды с таргетингом должны валидироваться с контекстом услуги/категории/клиента, иначе ограничения будут обходиться.
+
+### ФАЙЛЫ
+- `backend/api/client_auth.py` - MODIFIED
+- `backend/api/promo_codes.py` - MODIFIED
+- `backend/db/promo_codes.py` - MODIFIED
+- `backend/db/init.py` - MODIFIED
+- `frontend/public_landing/pages/account/AccountPage.tsx` - MODIFIED
+- `frontend/public_landing/pages/account/v2_components/Loyalty.tsx` - MODIFIED
+- `frontend/public_landing/pages/account/PromoCodesView.tsx` - MODIFIED
+- `frontend/public_landing/pages/account/booking/ConfirmStep.tsx` - MODIFIED
+- `frontend/src/pages/admin/PromoCodes.tsx` - MODIFIED
+- `frontend/src/services/api.ts` - MODIFIED

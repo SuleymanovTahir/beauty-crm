@@ -146,7 +146,7 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             "available_points": points,
             "total_points": loyalty_data.get("total_points", 0) if loyalty_data else points,
             "tier": (loyalty_data.get("loyalty_level", "bronze") if loyalty_data else "bronze").capitalize(),
-            "referral_code": client_row[1] if client_row else f"REF{client_id[:6].upper()}",
+            "referral_code": client_row[1] if client_row and client_row[1] else None,
             "total_saved": total_saved,
             "total_spent": total_spent
         }
@@ -834,7 +834,7 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
         # Get referral code from clients table
         c.execute("SELECT referral_code FROM clients WHERE instagram_id = %s", (client_id,))
         referral_row = c.fetchone()
-        referral_code = referral_row[0] if referral_row else f"REF{client_id[:6].upper()}"
+        referral_code = referral_row[0] if referral_row and referral_row[0] else None
 
         # Calculate actual totals
         user_phone = user.get("phone")

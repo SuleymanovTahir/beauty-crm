@@ -872,6 +872,10 @@ def init_database():
             description TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('promo_codes', 'target_scope', "TEXT DEFAULT 'all'")
+        add_column_if_not_exists('promo_codes', 'target_category_names', 'TEXT')
+        add_column_if_not_exists('promo_codes', 'target_service_ids', 'TEXT')
+        add_column_if_not_exists('promo_codes', 'target_client_ids', 'TEXT')
         
         c.execute('''CREATE TABLE IF NOT EXISTS promo_code_usage (
             id SERIAL PRIMARY KEY,

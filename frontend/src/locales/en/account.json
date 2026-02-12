@@ -107,7 +107,7 @@
     "start_caring": "Start taking care of yourself!",
     "start_caring_message": "Sign up for treatments and start your journey to beauty.",
     "subtitle": "Status analysis and recommendations",
-    "title": "Beauty profile",
+    "title": "Care recommendations",
     "view_all_recommendations": "View all recommendations"
   },
   "dashboard": {
@@ -339,7 +339,7 @@
   "tabs": {
     "achievements": "Achievements",
     "appointments": "Bookings",
-    "beauty": "Beauty profile",
+    "beauty": "Care plan",
     "dashboard": "Home",
     "gallery": "Gallery",
     "loyalty": "Loyalty",

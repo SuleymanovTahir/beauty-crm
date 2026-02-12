@@ -19,7 +19,7 @@
   "fixed": "Corrigé. montant",
   "limit_label": "Utiliser la limite.",
   "loading": "Charger les codes promotionnels...",
-  "min_amount_label": "Min. montant d'réservation (AZN)",
+  "min_amount_label": "Min. montant d'réservation ({{currency}})",
   "min_order": "De",
   "not_found": "Aucun code promotionnel trouvé",
   "not_found_desc": "Créez votre premier code promotionnel pour attirer plus de clients !",
@@ -34,7 +34,7 @@
   "total_usage": "Total des utilisations",
   "type_label": "Type de remise",
   "used": "utilisé",
-  "val_currency": "AZN",
+  "val_currency": "{{currency}}",
   "valid_until_label": "Valable jusqu'à",
   "value_label": "Remises de taille"
 }

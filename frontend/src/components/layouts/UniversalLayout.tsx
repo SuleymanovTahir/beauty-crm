@@ -185,9 +185,10 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             return [
                 { id: 'dashboard', icon: LayoutDashboard, label: t('layouts/adminpanellayout:menu.dashboard'), path: '/admin/dashboard', req: () => true },
                 { id: 'team', icon: Users, label: t('layouts/adminpanellayout:menu.team', 'Команда'), path: '/admin/team', req: () => true },
-                { id: 'loyalty', icon: Gift, label: t('layouts/adminpanellayout:menu.loyalty_management'), path: '/admin/loyalty', req: () => true },
+                { id: 'loyalty', icon: Gift, label: t('adminpanel/loyaltymanagement:title'), path: '/admin/loyalty', req: () => true },
                 { id: 'referrals', icon: Award, label: t('layouts/adminpanellayout:menu.referral_program'), path: '/admin/referrals', req: () => true },
                 { id: 'challenges', icon: Target, label: t('layouts/adminpanellayout:menu.challenges'), path: '/admin/challenges', req: () => true },
+                { id: 'promo-codes', icon: Ticket, label: t('layouts/mainlayout:menu.promo_codes'), path: '/admin/promo-codes', req: () => true },
                 { id: 'notifications', icon: Bell, label: t('layouts/adminpanellayout:menu.notifications'), path: '/admin/notifications', req: () => true },
             ];
         }
@@ -304,7 +305,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         if (isAdminPanel) {
             return [
                 { id: 'dashboard', icon: LayoutDashboard, label: t('layouts/adminpanellayout:menu.dashboard_short', 'Главная'), path: '/admin/dashboard' },
-                { id: 'loyalty', icon: Gift, label: t('layouts/adminpanellayout:menu.loyalty_short', 'Лояльность'), path: '/admin/loyalty' },
+                { id: 'loyalty', icon: Gift, label: t('adminpanel/loyaltymanagement:title'), path: '/admin/loyalty' },
                 { id: 'referrals', icon: Award, label: t('layouts/adminpanellayout:menu.referrals_short', 'Рефералы'), path: '/admin/referrals' },
                 { id: 'challenges', icon: Target, label: t('layouts/adminpanellayout:menu.challenges_short', 'Цели'), path: '/admin/challenges' },
                 { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
