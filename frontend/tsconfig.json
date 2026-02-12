@@ -41,6 +41,9 @@
     "create-locale-structure.js",
     "public_landing"
   ],
+  "exclude": [
+    "src/tests"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"

@@ -22,7 +22,6 @@ interface Employee {
     id: number;
     username: string;
     full_name: string;
-    full_name?: string;
     email: string;
     role: string;
     position?: string;

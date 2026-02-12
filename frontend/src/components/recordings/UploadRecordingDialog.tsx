@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/select';
 import { Upload } from 'lucide-react';
 import { toast } from 'sonner';
-import { api } from "@/services/api";;
 
 interface FolderNode {
   id: number;
@@ -109,11 +108,16 @@ const UploadRecordingDialog: React.FC<UploadRecordingDialogProps> = ({
         formData.append('folder_id', folderId.toString());
       }
 
-      await api.post('/api/internal-chat/upload-recording', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      const response = await fetch('/api/internal-chat/upload-recording', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
       });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Не удалось загрузить запись');
+      }
 
       toast.success(t('telephony:success', 'Успешно'), {
         description: 'Запись загружена',
@@ -131,7 +135,7 @@ const UploadRecordingDialog: React.FC<UploadRecordingDialogProps> = ({
     } catch (error: any) {
       console.error('Failed to upload recording:', error);
       toast.error(t('telephony:error', 'Ошибка'), {
-        description: error.response?.data?.detail || 'Не удалось загрузить запись',
+        description: error?.message || 'Не удалось загрузить запись',
       });
     } finally {
       setUploading(false);

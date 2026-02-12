@@ -565,7 +565,7 @@ export default function VisitorAnalytics() {
     };
 
     // Handle sort
-    const handleSort = (field: 'ip_address' | 'city' | 'country' | 'distance_km' | 'visited_at') => {
+    const handleSort = (field: 'ip_address' | 'city' | 'country' | 'distance_km' | 'visited_at' | 'device_type' | 'referrer') => {
         if (sortField === field) {
             if (sortDirection === 'asc') {
                 setSortDirection('desc');

@@ -1,4 +1,3 @@
-import React from 'react';
 import { WhatsAppIcon, TelegramIcon, TikTokIcon, InstagramIcon } from '../icons/SocialIcons';
 
 export type MessengerType = 'instagram' | 'telegram' | 'whatsapp' | 'tiktok';

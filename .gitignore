@@ -39,6 +39,7 @@ backend/salon_bot.db
 
 
 # Environment variables - CRITICAL: Never commit backend API keys!
+backend/.env
 backend/.env.local
 backend/.env.production
 .env
@@ -63,3 +64,4 @@ frontend/.tmp/
 frontend/.home/
 staff_credentials.txt
 config.py
+*.backup

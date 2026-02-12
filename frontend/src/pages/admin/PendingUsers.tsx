@@ -1,5 +1,5 @@
 // /frontend/src/pages/admin/PendingUsers.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import { CheckCircle, XCircle, Mail, User, Calendar, Loader, Shield, Phone, Briefcase } from "lucide-react";
 import { Button } from "../../components/ui/button";

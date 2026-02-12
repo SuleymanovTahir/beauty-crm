@@ -8,6 +8,7 @@ import { supportedLanguages } from "../../src/utils/i18nUtils";
 import { formatInstagramUrl, formatWhatsAppUrl } from "../utils/urlUtils";
 import { useSalonInfo } from "../hooks/useSalonInfo";
 import { DEFAULT_VALUES } from "../utils/constants";
+import { normalizeSeoLanguage, syncHtmlLanguageMeta, syncLanguageQueryParam } from "../utils/urlUtils";
 import logo from "../styles/img/logo.png";
 import logoWebp from "../styles/img/logo.webp";
 
@@ -35,7 +36,12 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
   const { t, i18n } = useTranslation(['public_landing', 'common', 'account']);
   const { user, logout } = useAuth();
   const language = i18n.language;
-  const changeLanguage = (lang: string) => i18n.changeLanguage(lang);
+  const changeLanguage = async (lang: string) => {
+    const nextLanguage = normalizeSeoLanguage(lang);
+    await i18n.changeLanguage(nextLanguage);
+    syncLanguageQueryParam(nextLanguage);
+    syncHtmlLanguageMeta(nextLanguage);
+  };
   const { salonInfo, salonName, logoUrl } = useSalonInfo(propSalonInfo);
   const [isScrolled, setIsScrolled] = useState(false);
   const isHomePage = window.location.pathname === "/";

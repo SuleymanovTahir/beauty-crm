@@ -21,6 +21,14 @@ import {
     getInitialLetter,
     slugifyAscii,
 } from "../utils/dataHelpers";
+import {
+    buildLocalizedUrl,
+    getLanguageFromQuery,
+    normalizeSeoLanguage,
+    syncCanonicalAndHreflang,
+    syncHtmlLanguageMeta,
+    syncLanguageQueryParam,
+} from "../utils/urlUtils";
 
 type SeoMetadata = {
     salon_name?: string;
@@ -73,7 +81,7 @@ function upsertJsonLd(id: string, data: any) {
 
 export function ServiceDetail() {
     const { t, i18n } = useTranslation(['public_landing/services', 'public_landing', 'common']);
-    const language = i18n.language;
+    const language = normalizeSeoLanguage(i18n.language);
     const { category } = useParams();
     const navigate = useNavigate();
     const { formatCurrency } = useCurrency();
@@ -82,6 +90,17 @@ export function ServiceDetail() {
     const [seo, setSeo] = useState<SeoMetadata | null>(null);
     const [portfolioImages, setPortfolioImages] = useState<any[]>([]);
     const [categoryImage, setCategoryImage] = useState<string>("");
+
+    useEffect(() => {
+        const queryLanguage = getLanguageFromQuery();
+        const targetLanguage = normalizeSeoLanguage(queryLanguage || i18n.language);
+        if (normalizeSeoLanguage(i18n.language) !== targetLanguage) {
+            i18n.changeLanguage(targetLanguage);
+            return;
+        }
+        syncLanguageQueryParam(targetLanguage);
+        syncHtmlLanguageMeta(targetLanguage);
+    }, [i18n, i18n.language]);
 
     useEffect(() => {
         const API_URL = getApiUrl();
@@ -220,8 +239,9 @@ export function ServiceDetail() {
         const baseUrl = getBaseUrl(seo);
         const routeCategory = getSafeString(category);
         const slug = encodeURIComponent(routeCategory.toLowerCase());
-        const canonicalUrl =
-            slug.length > 0 ? `${baseUrl}/service/${slug}` : `${baseUrl}/`;
+        const canonicalPath = slug.length > 0 ? `/service/${slug}` : `/`;
+        const canonicalUrl = syncCanonicalAndHreflang(baseUrl, canonicalPath, language);
+        syncHtmlLanguageMeta(language);
 
         const salonName = getSalonName(seo);
         const city = getSalonCity(seo);
@@ -315,7 +335,7 @@ export function ServiceDetail() {
                     "@type": "ListItem",
                     position: 1,
                     name: t("homeTag", { ns: "public_landing" }),
-                    item: `${baseUrl}/`,
+                    item: buildLocalizedUrl(baseUrl, "/", language),
                 },
                 {
                     "@type": "ListItem",

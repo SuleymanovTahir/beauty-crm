@@ -238,7 +238,6 @@ export function AccountPage() {
     } catch (err) {
       console.error('Logout error:', err);
     } finally {
-      localStorage.removeItem('session_token');
       localStorage.removeItem('user_name');
       localStorage.removeItem('user_email');
       localStorage.removeItem('user_phone');

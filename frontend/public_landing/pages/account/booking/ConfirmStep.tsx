@@ -140,7 +140,7 @@ export function ConfirmStep({
 
             try {
                 if (bookingState.id) {
-                    await api.put(`/ api / bookings / ${bookingState.id} `, {
+                    await api.put(`/api/bookings/${bookingState.id}`, {
                         service: serviceNames,
                         master: bookingState.professional?.username || 'any',
                         date: dateStr,

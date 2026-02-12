@@ -15,6 +15,14 @@ import {
   getSafeString,
   getCurrency,
 } from "../utils/dataHelpers";
+import {
+  buildLocalizedUrl,
+  getLanguageFromQuery,
+  normalizeSeoLanguage,
+  syncCanonicalAndHreflang,
+  syncHtmlLanguageMeta,
+  syncLanguageQueryParam,
+} from "../utils/urlUtils";
 
 type SeoMetadata = {
   salon_name?: string;
@@ -80,7 +88,7 @@ function parseServiceId(serviceParam: string | undefined): number | null {
 
 export function ProcedureDetail() {
   const { t, i18n } = useTranslation(["public_landing", "public_landing/services", "common"]);
-  const language = i18n.language;
+  const language = normalizeSeoLanguage(i18n.language);
   const { category, service: serviceParam } = useParams();
   const navigate = useNavigate();
   const { formatCurrency } = useCurrency();
@@ -89,6 +97,17 @@ export function ProcedureDetail() {
   const [seo, setSeo] = useState<SeoMetadata | null>(null);
   const [service, setService] = useState<PublicService | null>(null);
   const [serviceImage, setServiceImage] = useState<string>("");
+
+  useEffect(() => {
+    const queryLanguage = getLanguageFromQuery();
+    const targetLanguage = normalizeSeoLanguage(queryLanguage || i18n.language);
+    if (normalizeSeoLanguage(i18n.language) !== targetLanguage) {
+      i18n.changeLanguage(targetLanguage);
+      return;
+    }
+    syncLanguageQueryParam(targetLanguage);
+    syncHtmlLanguageMeta(targetLanguage);
+  }, [i18n, i18n.language]);
 
   useEffect(() => {
     const API_URL = getApiUrl();
@@ -149,7 +168,9 @@ export function ProcedureDetail() {
         ? encodeURIComponent(routeCategory)
         : "other";
     const serviceParamSafe = getSafeString(serviceParam);
-    const canonicalUrl = `${baseUrl}/service/${catSlug}/${serviceParamSafe.length > 0 ? serviceParamSafe : serviceId}`;
+    const canonicalPath = `/service/${catSlug}/${serviceParamSafe.length > 0 ? serviceParamSafe : serviceId}`;
+    const canonicalUrl = syncCanonicalAndHreflang(baseUrl, canonicalPath, language);
+    syncHtmlLanguageMeta(language);
 
     const salonName = getSalonName(seo);
     const city = getSalonCity(seo);
@@ -254,13 +275,13 @@ export function ProcedureDetail() {
           "@type": "ListItem",
           position: 1,
           name: t("homeTag", { ns: "public_landing" }),
-          item: `${baseUrl}/`,
+          item: buildLocalizedUrl(baseUrl, "/", language),
         },
         {
           "@type": "ListItem",
           position: 2,
           name: routeCategory.length > 0 ? routeCategory : t("ourServices", { ns: "public_landing" }),
-          item: `${baseUrl}/service/${catSlug}`,
+          item: buildLocalizedUrl(baseUrl, `/service/${catSlug}`, language),
         },
         {
           "@type": "ListItem",
@@ -272,7 +293,7 @@ export function ProcedureDetail() {
     };
     upsertJsonLd("service", serviceSchema);
     upsertJsonLd("breadcrumbs", breadcrumbSchema);
-  }, [seo, service, category, serviceId, serviceParam, t]);
+  }, [seo, service, category, serviceId, serviceParam, t, language]);
 
   const scrollToBooking = () => {
     const bookingSection = document.getElementById('booking-section');
@@ -362,4 +383,3 @@ export function ProcedureDetail() {
     </div>
   );
 }
-

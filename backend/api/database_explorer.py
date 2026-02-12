@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Body
 from fastapi.responses import HTMLResponse
+from psycopg2 import sql
 from db.connection import get_db_connection
 from utils.utils import require_auth
 
@@ -9,6 +10,44 @@ def check_director_access(user: dict = Depends(require_auth)):
     if not user or user.get("role") != "director":
         raise HTTPException(status_code=403, detail="Доступ запрещен. Только для директоров.")
     return user
+
+
+def _get_public_tables(cursor):
+    cursor.execute(
+        """
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+        """
+    )
+    return {row[0] for row in cursor.fetchall()}
+
+
+def _assert_table_allowed(cursor, table_name: str):
+    if table_name not in _get_public_tables(cursor):
+        raise HTTPException(status_code=404, detail="Таблица не найдена")
+
+
+def _get_table_columns(cursor, table_name: str):
+    cursor.execute(
+        """
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'public' AND table_name = %s
+        ORDER BY ordinal_position
+        """,
+        (table_name,),
+    )
+    return [row[0] for row in cursor.fetchall()]
+
+
+def _assert_columns_allowed(requested_columns, allowed_columns):
+    invalid_columns = [col for col in requested_columns if col not in allowed_columns]
+    if invalid_columns:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Недопустимые поля: {', '.join(invalid_columns)}",
+        )
 
 @router.get("/", response_class=HTMLResponse)
 async def get_explorer_ui(user: dict = Depends(check_director_access)):
@@ -492,16 +531,24 @@ async def get_table_data(table_name: str, page: int = 1, limit: int = 100, user:
     conn = get_db_connection()
     c = conn.cursor()
     try:
+        _assert_table_allowed(c, table_name)
+        limit = max(1, min(limit, 500))
         c.execute("SELECT a.attname FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE i.indrelid = %s::regclass AND i.indisprimary;", (table_name,))
         pk_res = c.fetchone()
         pk = pk_res[0] if pk_res else None
-        c.execute(f'SELECT COUNT(*) FROM "{table_name}"')
+        c.execute(sql.SQL("SELECT COUNT(*) FROM {}").format(sql.Identifier(table_name)))
         total = c.fetchone()[0]
-        c.execute(f'SELECT * FROM "{table_name}" LIMIT 0')
+        c.execute(sql.SQL("SELECT * FROM {} LIMIT 0").format(sql.Identifier(table_name)))
         cols = [desc[0] for desc in c.description]
         offset = (page - 1) * limit
-        order = f'ORDER BY "{pk}" DESC' if pk else ""
-        c.execute(f'SELECT * FROM "{table_name}" {order} OFFSET %s LIMIT %s', (offset, limit))
+        if pk:
+            query = sql.SQL("SELECT * FROM {} ORDER BY {} DESC OFFSET %s LIMIT %s").format(
+                sql.Identifier(table_name),
+                sql.Identifier(pk),
+            )
+        else:
+            query = sql.SQL("SELECT * FROM {} OFFSET %s LIMIT %s").format(sql.Identifier(table_name))
+        c.execute(query, (offset, limit))
         rows = [dict(zip(cols, r)) for r in c.fetchall()]
         for row in rows:
             for k, v in row.items():
@@ -515,11 +562,28 @@ async def add_record(table_name: str, body: dict = Body(...), user: dict = Depen
     conn = get_db_connection()
     c = conn.cursor()
     try:
+        _assert_table_allowed(c, table_name)
         data = body.get("data", {})
-        cols, vals = zip(*[(f'"{k}"', v) for k, v in data.items()])
-        c.execute(f'INSERT INTO "{table_name}" ({", ".join(cols)}) VALUES ({", ".join(["%s"]*len(vals))})', vals)
-        conn.commit(); return {"success": True}
-    except Exception as e: return {"success": False, "error": str(e)}
+        if not data:
+            raise HTTPException(status_code=400, detail="Нет данных для вставки")
+
+        allowed_columns = _get_table_columns(c, table_name)
+        _assert_columns_allowed(list(data.keys()), allowed_columns)
+
+        identifiers = [sql.Identifier(col) for col in data.keys()]
+        placeholders = sql.SQL(", ").join([sql.Placeholder()] * len(data))
+        query = sql.SQL("INSERT INTO {} ({}) VALUES ({})").format(
+            sql.Identifier(table_name),
+            sql.SQL(", ").join(identifiers),
+            placeholders,
+        )
+        c.execute(query, list(data.values()))
+        conn.commit()
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        return {"success": False, "error": str(e)}
     finally: conn.close()
 
 @router.put("/data/{table_name}")
@@ -527,12 +591,37 @@ async def update_record(table_name: str, body: dict = Body(...), user: dict = De
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        data = body.get("data", {}); cond = body.get("condition", {})
-        set_expr = ", ".join([f'"{k}" = %s' for k in data.keys()])
-        cond_expr = " AND ".join([f'"{k}" = %s' for k in cond.keys()])
-        c.execute(f'UPDATE "{table_name}" SET {set_expr} WHERE {cond_expr}', list(data.values()) + list(cond.values()))
-        conn.commit(); return {"success": True}
-    except Exception as e: return {"success": False, "error": str(e)}
+        _assert_table_allowed(c, table_name)
+        data = body.get("data", {})
+        cond = body.get("condition", {})
+        if not data:
+            raise HTTPException(status_code=400, detail="Нет данных для обновления")
+        if not cond:
+            raise HTTPException(status_code=400, detail="Нет условия обновления")
+
+        allowed_columns = _get_table_columns(c, table_name)
+        _assert_columns_allowed(list(data.keys()) + list(cond.keys()), allowed_columns)
+
+        set_expr = [
+            sql.SQL("{} = {}").format(sql.Identifier(col), sql.Placeholder())
+            for col in data.keys()
+        ]
+        where_expr = [
+            sql.SQL("{} = {}").format(sql.Identifier(col), sql.Placeholder())
+            for col in cond.keys()
+        ]
+        query = sql.SQL("UPDATE {} SET {} WHERE {}").format(
+            sql.Identifier(table_name),
+            sql.SQL(", ").join(set_expr),
+            sql.SQL(" AND ").join(where_expr),
+        )
+        c.execute(query, list(data.values()) + list(cond.values()))
+        conn.commit()
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        return {"success": False, "error": str(e)}
     finally: conn.close()
 
 @router.delete("/data/{table_name}")
@@ -540,8 +629,26 @@ async def delete_record(table_name: str, condition: dict = Body(...), user: dict
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        expr = " AND ".join([f'"{k}" = %s' for k in condition.keys()])
-        c.execute(f'DELETE FROM "{table_name}" WHERE {expr}', list(condition.values()))
-        conn.commit(); return {"success": True}
-    except Exception as e: return {"success": False, "error": str(e)}
+        _assert_table_allowed(c, table_name)
+        if not condition:
+            raise HTTPException(status_code=400, detail="Нет условия удаления")
+
+        allowed_columns = _get_table_columns(c, table_name)
+        _assert_columns_allowed(list(condition.keys()), allowed_columns)
+
+        where_expr = [
+            sql.SQL("{} = {}").format(sql.Identifier(col), sql.Placeholder())
+            for col in condition.keys()
+        ]
+        query = sql.SQL("DELETE FROM {} WHERE {}").format(
+            sql.Identifier(table_name),
+            sql.SQL(" AND ").join(where_expr),
+        )
+        c.execute(query, list(condition.values()))
+        conn.commit()
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        return {"success": False, "error": str(e)}
     finally: conn.close()

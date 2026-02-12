@@ -32,9 +32,6 @@ const STATE_EXPIRY_TIME = TIMEOUTS.STATE_EXPIRY; // 1 hour
 export interface Service {
   id: number;
   name: string;
-  name?: string;
-  name?: string;
-  name?: string;
   description?: string;
   price: number;
   duration: string;
@@ -69,6 +66,9 @@ interface Props {
 
 import { ArrowLeft } from 'lucide-react';
 
+const isValidDateValue = (value: unknown): value is Date =>
+  value instanceof Date && !Number.isNaN(value.getTime());
+
 export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -94,7 +94,10 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       try {
         const { state, timestamp } = JSON.parse(saved);
         if (Date.now() - timestamp < STATE_EXPIRY_TIME) {
-          if (state.date) state.date = parseISO(state.date);
+          if (state.date) {
+            const parsedDate = parseISO(state.date);
+            state.date = isValidDateValue(parsedDate) ? parsedDate : null;
+          }
           return state;
         }
       } catch (e) { }
@@ -134,8 +137,6 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
       date: null,
       time: null,
       phone: '',
-      name: '',
-      email: '',
       id: null,
     };
     setBookingState(initialState);
@@ -235,10 +236,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           // Prefill date and time
           const dateParam = state?.prefillDate || queryPrefillDate;
           if (dateParam) {
-            try {
-              newState.date = new Date(dateParam);
-            } catch (e) {
-              console.error('[UserBookingWizard] Failed to parse prefillDate:', e);
+            const parsedDate = new Date(dateParam);
+            if (isValidDateValue(parsedDate)) {
+              newState.date = parsedDate;
+            } else {
+              console.error('[UserBookingWizard] Failed to parse prefillDate');
             }
           }
 
@@ -304,8 +306,12 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   }, [location.state, initialMasters, loading]);
 
   useEffect(() => {
+    const persistedDate = isValidDateValue(bookingState.date)
+      ? format(bookingState.date, 'yyyy-MM-dd')
+      : null;
+
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
-      state: { ...bookingState, date: bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : null },
+      state: { ...bookingState, date: persistedDate },
       timestamp: Date.now()
     }));
   }, [bookingState]);
@@ -353,6 +359,8 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
   const updateState = (updates: Partial<BookingState>) => setBookingState((prev: BookingState) => ({ ...prev, ...updates }));
   const totalPrice = bookingState.services.reduce((sum: number, s: Service) => sum + s.price, 0);
+  const hasSelectedDate = isValidDateValue(bookingState.date);
+  const selectedDateValue = hasSelectedDate ? bookingState.date : null;
   const totalDuration = bookingState.services.reduce((sum: number, s: Service) => {
     const duration = parseInt(s.duration || '0');
     // If service has no duration, assume 60 minutes as default
@@ -447,7 +455,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             )}
             {step === 'datetime' && (
               <DateTimeStep
-                selectedDate={bookingState.date}
+                selectedDate={selectedDateValue}
                 selectedTime={bookingState.time}
                 selectedMaster={bookingState.professional}
                 selectedServices={bookingState.services}
@@ -487,7 +495,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             <div className="flex items-center justify-between gap-4">
               {/* Left: Booking info */}
               <div className="flex flex-col min-w-0 flex-1">
-                {(bookingState.services.length > 0 || bookingState.professionalSelected || bookingState.date || bookingState.time) ? (
+                {(bookingState.services.length > 0 || bookingState.professionalSelected || hasSelectedDate || bookingState.time) ? (
                   <>
                     <p className="text-sm font-bold text-gray-900 truncate">
                       {bookingState.services.length > 0 ? (
@@ -510,11 +518,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                           <span className="font-bold text-gray-900">{formatCurrency(totalPrice)}</span>
                         </>
                       )}
-                      {(bookingState.date || bookingState.time) && (
+                      {(hasSelectedDate || bookingState.time) && (
                         <>
                           <span>•</span>
                           <span className="text-gray-900 font-semibold">
-                            {bookingState.date && format(bookingState.date, 'dd MMM')}
+                            {selectedDateValue ? format(selectedDateValue, 'dd MMM') : null}
                             {bookingState.time && ` ${bookingState.time}`}
                           </span>
                         </>
@@ -551,7 +559,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 )}
 
                 {/* DateTime button - show if date/time not selected AND not on datetime step */}
-                {(!bookingState.date || !bookingState.time) && step !== 'datetime' && (
+                {(!hasSelectedDate || !bookingState.time) && step !== 'datetime' && (
                   <button
                     onClick={() => setStep('datetime')}
                     className="h-11 px-5 rounded-lg bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 transition-colors whitespace-nowrap"
@@ -561,7 +569,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 )}
 
                 {/* Confirm button - show if everything is selected */}
-                {bookingState.services.length > 0 && bookingState.professionalSelected && bookingState.date && bookingState.time && (
+                {bookingState.services.length > 0 && bookingState.professionalSelected && hasSelectedDate && bookingState.time && (
                   <button
                     onClick={() => setStep('confirm')}
                     className="h-11 px-6 rounded-lg bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 transition-colors whitespace-nowrap"
@@ -586,7 +594,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
             service_id: bookingState.services[0]?.id,
             master_name: bookingState.professional ? getLocalizedName(bookingState.professional, i18n.language) : t('professional.anyAvailable'),
             master_id: bookingState.professional?.id,
-            date: bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : '',
+            date: selectedDateValue ? format(selectedDateValue, 'yyyy-MM-dd') : '',
             time: bookingState.time || ''
           }}
           onChangeStep={(newStep) => setStep(newStep)}

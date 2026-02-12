@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { User, Lock, Mail, AlertCircle, Eye, EyeOff, Phone } from 'lucide-react';
+import { User, Lock, Mail, Eye, EyeOff, Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -55,13 +55,13 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
 
   // Определяем режим на основе пропса или текущего URL, если компонент переиспользуется
   const isRegisterRoute = location.pathname === '/register';
-  const [isLogin, setIsLogin] = useState(!isRegisterRoute);
+  const [isLogin, setIsLogin] = useState(isRegisterRoute ? false : initialView !== 'register');
 
   // Sync state with URL/prop changes
   useEffect(() => {
     setIsLogin(!isRegisterRoute);
     setFieldErrors({}); // Clear errors on mode switch
-  }, [isRegisterRoute]);
+  }, [isRegisterRoute, initialView]);
 
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -235,8 +235,8 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
       setLoading(true);
       const response = await api.login(formData.username, formData.password);
 
-      if (response.success && response.token) {
-        login(response.user, response.token);
+      if (response.success && response.user) {
+        login(response.user);
         toast.success(`${t('auth/login:welcome', 'Добро пожаловать')} ${response.user.full_name || response.user.username} !`);
 
         // Redirect based on role

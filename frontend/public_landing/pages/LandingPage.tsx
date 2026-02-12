@@ -6,6 +6,13 @@ import { IntroSection } from '../components/IntroSection';
 import { CookieConsent } from '../components/CookieConsent';
 import { Footer } from '../components/Footer';
 import { trackSection } from '../utils/analytics';
+import {
+  getLanguageFromQuery,
+  normalizeSeoLanguage,
+  syncCanonicalAndHreflang,
+  syncHtmlLanguageMeta,
+  syncLanguageQueryParam,
+} from '../utils/urlUtils';
 import '../styles/css/index.css';
 
 // Lazy load components for better performance
@@ -31,15 +38,23 @@ export function LandingPage() {
 
   // SEO: Dynamic meta tags
   useEffect(() => {
-    const salonName = initialData?.salon?.name || '';
+    const language = normalizeSeoLanguage(i18n.language);
+    const baseUrl = (initialData?.seo?.base_url || window.location.origin).toString();
     const description = t('seo.description', 'Professional beauty salon. Manicure, pedicure, hair services, cosmetology.');
-    const keywords = t('seo.keywords', 'beauty salon, manicure, pedicure, hair, cosmetology');
-
-    if (salonName) {
-      document.title = t('seo.title', 'M Le Diamant - Premium Beauty Salon in Dubai | Spa, Nails, Hair, Keratin, Brows, Lashes, Waxing, Permanent Makeup');
-    } else {
-      document.title = t('seo.title', 'M Le Diamant - Premium Beauty Salon in Dubai | Spa, Nails, Hair, Keratin, Brows, Lashes, Waxing, Permanent Makeup');
-    }
+    const title = t('seo.title', 'M Le Diamant - Premium Beauty Salon in Dubai | Spa, Nails, Hair, Keratin, Brows, Lashes, Waxing, Permanent Makeup');
+    const baseKeywords = t('seo.keywords', 'beauty salon, manicure, pedicure, hair, cosmetology');
+    const serviceKeywords = Array.isArray(initialData?.services)
+      ? Array.from(
+        new Set(
+          initialData.services
+            .map((service: any) =>
+              (service?.name || service?.name_en || service?.name_ru || '').toString().trim().toLowerCase()
+            )
+            .filter((name: string) => name.length > 1)
+        )
+      ).slice(0, 20)
+      : [];
+    const keywords = [baseKeywords, ...serviceKeywords].join(', ');
 
     const updateMeta = (name: string, content: string) => {
       let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
@@ -51,8 +66,30 @@ export function LandingPage() {
       meta.setAttribute('content', content);
     };
 
+    const updateMetaProperty = (property: string, content: string) => {
+      let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    const canonicalUrl = syncCanonicalAndHreflang(baseUrl, window.location.pathname || '/', language);
+    syncLanguageQueryParam(language);
+    syncHtmlLanguageMeta(language);
+
+    document.title = title;
     updateMeta('description', description);
     updateMeta('keywords', keywords);
+    updateMeta('robots', 'index, follow');
+    updateMeta('language', language);
+    updateMeta('twitter:title', title);
+    updateMeta('twitter:description', description);
+    updateMetaProperty('og:title', title);
+    updateMetaProperty('og:description', description);
+    updateMetaProperty('og:url', canonicalUrl);
   }, [initialData, t, i18n.language]);
 
   useEffect(() => {
@@ -63,7 +100,17 @@ export function LandingPage() {
     const fetchInitialData = async () => {
       try {
         const { fetchPublicApiWithLanguage } = await import('../utils/apiUtils');
-        const language = localStorage.getItem('i18nextLng') || 'ru';
+        const queryLanguage = getLanguageFromQuery();
+        const storedLanguage = localStorage.getItem('i18nextLng');
+        const browserLanguage = normalizeSeoLanguage(navigator.language || 'en');
+        const language = normalizeSeoLanguage(queryLanguage || storedLanguage || browserLanguage);
+
+        if (normalizeSeoLanguage(i18n.language) !== language) {
+          await i18n.changeLanguage(language);
+        }
+        syncLanguageQueryParam(language);
+        syncHtmlLanguageMeta(language);
+
         const data = await fetchPublicApiWithLanguage('initial-load', language);
 
         if (data && !data.error) {
@@ -94,7 +141,7 @@ export function LandingPage() {
     sections.forEach(section => observer.observe(section));
 
     return () => observer.disconnect();
-  }, []);
+  }, [i18n]);
 
   return (
     <div className="min-h-screen bg-background">

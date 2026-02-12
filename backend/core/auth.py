@@ -7,6 +7,9 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 from pydantic import BaseModel
 import psycopg2
+import threading
+import time
+from collections import deque
 
 from core.config import DATABASE_NAME, PUBLIC_URL
 from db.connection import get_db_connection
@@ -17,6 +20,63 @@ import httpx
 import os
 
 router = APIRouter(tags=["Auth"])
+
+# ===== LOGIN RATE LIMITING =====
+_LOGIN_WINDOW_SECONDS = 10 * 60
+_LOGIN_BLOCK_SECONDS = 15 * 60
+_LOGIN_MAX_ATTEMPTS = 8
+_LOGIN_RATE_LOCK = threading.Lock()
+_LOGIN_RATE_STATE = {}  # {key: {"attempts": deque([ts]), "blocked_until": float}}
+
+
+def _cleanup_login_attempts(state: dict, now: float):
+    attempts = state["attempts"]
+    while attempts and (now - attempts[0]) > _LOGIN_WINDOW_SECONDS:
+        attempts.popleft()
+
+
+def _get_login_block_remaining(key: str) -> int:
+    now = time.time()
+    with _LOGIN_RATE_LOCK:
+        state = _LOGIN_RATE_STATE.get(key)
+        if not state:
+            return 0
+
+        _cleanup_login_attempts(state, now)
+        blocked_until = state.get("blocked_until", 0)
+        if blocked_until and blocked_until > now:
+            return int(blocked_until - now) + 1
+
+        if not state["attempts"]:
+            _LOGIN_RATE_STATE.pop(key, None)
+        else:
+            state["blocked_until"] = 0
+        return 0
+
+
+def _register_login_failure(key: str):
+    now = time.time()
+    with _LOGIN_RATE_LOCK:
+        state = _LOGIN_RATE_STATE.setdefault(
+            key,
+            {"attempts": deque(), "blocked_until": 0},
+        )
+        _cleanup_login_attempts(state, now)
+        state["attempts"].append(now)
+        if len(state["attempts"]) >= _LOGIN_MAX_ATTEMPTS:
+            state["attempts"].clear()
+            state["blocked_until"] = now + _LOGIN_BLOCK_SECONDS
+
+
+def _clear_login_limit(key: str):
+    with _LOGIN_RATE_LOCK:
+        _LOGIN_RATE_STATE.pop(key, None)
+
+
+def _cookie_secure_flag() -> bool:
+    use_ssl = os.getenv("USE_SSL", "false").lower() == "true"
+    base_url = os.getenv("BASE_URL", "")
+    return base_url.startswith("https://") or use_ssl or os.getenv("ENVIRONMENT") == "production"
 
 # ===== MIDDLEWARE =====
 
@@ -32,27 +92,42 @@ def get_current_user_or_redirect(session_token: Optional[str] = Cookie(None)):
 @router.post("/login")
 async def api_login(request: Request, username: str = Form(...), password: str = Form(...)):
     """API: Логин"""
-    # Rate limiting
-    limiter = getattr(request.app.state, "limiter", None)
-    if limiter:
-        # Note: In a real app we would use limiter.limit here,
-        # but for simplicity and to avoid decorator issues with dynamic app state
-        pass
     try:
         # Детальное логирование для отладки мобильных устройств
         client_ip = request.client.host if request.client else "unknown"
         user_agent = request.headers.get("user-agent", "unknown")
         origin = request.headers.get("origin", "unknown")
         referer = request.headers.get("referer", "unknown")
+        username_clean = username.strip().lower()
+
+        ip_key = f"login_ip:{client_ip}"
+        user_key = f"login_user:{username_clean}"
+        ip_block = _get_login_block_remaining(ip_key)
+        user_block = _get_login_block_remaining(user_key)
+        block_seconds = max(ip_block, user_block)
+        if block_seconds > 0:
+            log_warning(
+                f"[LOGIN] Rate limited for '{username_clean}' from {client_ip} ({block_seconds}s)",
+                "auth",
+            )
+            return JSONResponse(
+                {
+                    "error": "too_many_attempts",
+                    "message": "Too many login attempts. Please try again later.",
+                    "retry_after_seconds": block_seconds,
+                },
+                status_code=429,
+                headers={"Retry-After": str(block_seconds)},
+            )
 
         log_info(f"[LOGIN] Attempt: username='{username}' | IP={client_ip} | Origin={origin}", "auth")
         log_info(f"[LOGIN] User-Agent: {user_agent[:100]}...", "auth")
 
-        # Case-insensitive username search
-        username_clean = username.strip().lower()
         user = verify_user(username_clean, password)
 
         if not user:
+            _register_login_failure(ip_key)
+            _register_login_failure(user_key)
             log_warning(f"Invalid credentials for '{username}' (cleaned: '{username_clean}')", "auth")
             return JSONResponse(
                 {"error": "invalid_credentials"},
@@ -66,60 +141,15 @@ async def api_login(request: Request, username: str = Form(...), password: str =
                 "error": "account_not_activated",
                 "message": "registration_pending"
             }, status_code=403)
-        
-        # ============================================================================
-        # 🔒 EMAIL VERIFICATION AND ADMIN APPROVAL CHECKS (NOW ENABLED)
-        # ============================================================================
-        # Проверяем email верификацию и активацию ВСЕХ пользователей
-        # Исключение: admin/admin123 может войти всегда
-        # ============================================================================
-        
-        # Исключение для admin пользователя
-        is_admin_exception = (username.lower() == 'admin')
 
-        if not is_admin_exception:
-            conn = get_db_connection()
-            c = conn.cursor()
-            # Для сотрудников (таблица users) проверяем только is_active
-            # Email верификация нужна только для клиентов (таблица clients)
-            c.execute("SELECT is_active FROM users WHERE id = %s", (user["id"],))
-            result = c.fetchone()
-            conn.close()
-
-            if not result:
-                return JSONResponse(
-                    {"error": "user_not_found"},
-                    status_code=404
-                )
-
-            is_active = result[0]
-
-            # Проверяем активацию администратором
-            if not is_active:
-                log_warning(f"User {username} not activated yet", "auth")
-                return JSONResponse({
-                    "error": "account_not_activated",
-                    "message": "registration_pending"
-                }, status_code=403)
-        
-        
-        # CRITICAL: Check for existing valid sessions to prevent duplicates on mobile
-        conn = get_db_connection()
-        c = conn.cursor()
-        
-        # Note: Expired sessions are now handled by scheduler/user_status_checker every minute
-        from datetime import datetime
-        now = datetime.now().isoformat()
-        
         # ALWAYS create new session for each login to prevent cross-device logout issues
         session_token = create_session(user["id"])
         log_info(f"New unique session created for {username}", "auth")
-        
-        conn.close()
+        _clear_login_limit(ip_key)
+        _clear_login_limit(user_key)
         
         response_data = {
             "success": True,
-            "token": session_token,
             "user": {
                 "id": user["id"],
                 "username": user["username"],
@@ -132,22 +162,14 @@ async def api_login(request: Request, username: str = Form(...), password: str =
         }
         
         response = JSONResponse(response_data)
-        
-        # CRITICAL FIX FOR MOBILE:
-        # We must set path='/' to ensure cookie is sent for all API routes (including /api/internal-chat)
-        # We set samesite='lax' for normal navigation
-        # We set secure=True ONLY if we are on HTTPS
-        use_ssl = os.getenv("USE_SSL", "false").lower() == "true"
-        base_url = os.getenv("BASE_URL", "")
-        is_https = base_url.startswith("https://") or use_ssl
-        
+
         response.set_cookie(
             key="session_token",
             value=session_token,
             httponly=True, 
             max_age=7*24*60*60, # 7 days
             samesite="lax",
-            secure=is_https,
+            secure=_cookie_secure_flag(),
             path="/"
         )
         
@@ -166,7 +188,7 @@ async def logout_api(session_token: Optional[str] = Cookie(None)):
             log_info("Пользователь вышел из системы", "auth")
         
         response = JSONResponse({"success": True, "message": "Logged out"})
-        response.delete_cookie("session_token")
+        response.delete_cookie("session_token", path="/")
         return response
     except Exception as e:
         log_error(f"Error in logout: {e}", "auth")
@@ -311,7 +333,15 @@ async def google_login(data: dict):
                 "phone": phone
             }
         })
-        response.set_cookie(key="session_token", value=session_token, httponly=True, max_age=7*24*60*60)
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            httponly=True,
+            max_age=7*24*60*60,
+            samesite="lax",
+            secure=_cookie_secure_flag(),
+            path="/",
+        )
         return response
 
     except ValueError as ve:
@@ -932,7 +962,6 @@ async def verify_email_token(token: str):
         response_data = {
             "success": True,
             "message": "Email подтвержден! Выполняется вход в систему...",
-            "token": session_token,
             "user": {
                 "id": user_id,
                 "username": username,
@@ -951,7 +980,8 @@ async def verify_email_token(token: str):
             httponly=True,
             max_age=7*24*60*60,
             samesite="lax",
-            secure=os.getenv("ENVIRONMENT") == "production"
+            secure=_cookie_secure_flag(),
+            path="/"
         )
 
         return response

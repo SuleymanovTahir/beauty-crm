@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Label } from '../ui/label';
 import { ScrollArea } from '../ui/scroll-area';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
@@ -36,7 +35,6 @@ interface ManageTaskStagesDialogProps {
 export function ManageTaskStagesDialog({ open, onOpenChange, onSuccess }: ManageTaskStagesDialogProps) {
     const { t } = useTranslation(['admin/tasks', 'common']);
     const [stages, setStages] = useState<Stage[]>([]);
-    const [loading, setLoading] = useState(false);
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
 
     // New stage state
@@ -53,14 +51,11 @@ export function ManageTaskStagesDialog({ open, onOpenChange, onSuccess }: Manage
     }, [open]);
 
     const loadStages = async () => {
-        setLoading(true);
         try {
             const data = await api.get('/api/tasks/stages');
             setStages(data.sort((a: Stage, b: Stage) => a.order_index - b.order_index));
         } catch (error) {
             toast.error(t('failed_to_load_stages', 'Failed to load stages'));
-        } finally {
-            setLoading(false);
         }
     };
 

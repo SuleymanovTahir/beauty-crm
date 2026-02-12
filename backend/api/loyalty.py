@@ -386,14 +386,55 @@ async def get_loyalty_config_admin(session_token: Optional[str] = Cookie(None)):
 
 @router.post("/admin/loyalty/config")
 async def update_loyalty_config_admin(
-    config: dict,
+    request: Request,
     session_token: Optional[str] = Cookie(None)
 ):
     """[Admin] Обновить конфигурацию программы лояльности (admin prefix)"""
-    return await update_loyalty_config_api(config, session_token)
+    return await update_loyalty_config_api(request, session_token)
 
 
 @router.get("/admin/loyalty/categories")
 async def get_loyalty_categories_admin(session_token: Optional[str] = Cookie(None)):
     """[Admin] Получить правила по категориям (admin prefix)"""
     return await get_loyalty_categories_api(session_token)
+
+
+# Admin compatibility endpoints used by frontend loyalty management page.
+# They proxy to admin_features handlers to keep one source of business logic.
+@router.get("/admin/loyalty/tiers")
+async def get_loyalty_tiers_admin(session_token: Optional[str] = Cookie(None)):
+    """[Admin] Получить уровни лояльности (compat)"""
+    from api.admin_features import get_loyalty_tiers as get_loyalty_tiers_handler
+    return await get_loyalty_tiers_handler(session_token)
+
+
+@router.put("/admin/loyalty/tiers/{tier_id}")
+async def update_loyalty_tier_admin(
+    tier_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """[Admin] Обновить уровень лояльности (compat)"""
+    from api.admin_features import update_loyalty_tier as update_loyalty_tier_handler
+    return await update_loyalty_tier_handler(tier_id, request, session_token)
+
+
+@router.get("/admin/loyalty/transactions")
+async def get_loyalty_transactions_admin(session_token: Optional[str] = Cookie(None)):
+    """[Admin] Получить историю транзакций лояльности (compat)"""
+    from api.admin_features import get_loyalty_transactions as get_loyalty_transactions_handler
+    return await get_loyalty_transactions_handler(session_token)
+
+
+@router.post("/admin/loyalty/adjust-points")
+async def adjust_loyalty_points_admin(request: Request, session_token: Optional[str] = Cookie(None)):
+    """[Admin] Скорректировать баллы клиента (compat)"""
+    from api.admin_features import adjust_loyalty_points as adjust_loyalty_points_handler
+    return await adjust_loyalty_points_handler(request, session_token)
+
+
+@router.get("/admin/loyalty/stats")
+async def get_loyalty_stats_admin(session_token: Optional[str] = Cookie(None)):
+    """[Admin] Получить статистику программы лояльности (compat)"""
+    from api.admin_features import get_loyalty_stats as get_loyalty_stats_handler
+    return await get_loyalty_stats_handler(session_token)

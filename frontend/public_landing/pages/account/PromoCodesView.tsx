@@ -10,10 +10,10 @@ interface PromoCode {
     id: number;
     code: string;
     discount_type: 'percent' | 'fixed';
-    value: number;
-    description: string;
-    valid_until: string;
-    min_amount: number;
+    discount_value: number;
+    description: string | null;
+    valid_until: string | null;
+    min_booking_amount: number;
     is_active: boolean;
 }
 
@@ -29,9 +29,7 @@ export function PromoCodesView() {
                 // Fetch only public active promo codes (or personalized ones)
                 // For now, let's fetch non-personalized active ones
                 const response = await api.getPromoCodes();
-                if (response.promo_codes) {
-                    setPromoCodes(response.promo_codes.filter((p: PromoCode) => p.is_active));
-                }
+                setPromoCodes(response.filter((p: PromoCode) => p.is_active));
             } catch (error) {
                 console.error('Failed to fetch promo codes:', error);
                 toast.error(t('errors.fetch_promocodes', 'Failed to load promo codes'));
@@ -111,7 +109,7 @@ export function PromoCodesView() {
                                     </div>
                                     <div className="text-right">
                                         <div className="text-2xl font-bold text-primary">
-                                            {promo.discount_type === 'percent' ? `${promo.value}%` : `${promo.value}₽`}
+                                            {promo.discount_type === 'percent' ? `${promo.discount_value}%` : `${promo.discount_value}₽`}
                                         </div>
                                         <div className="text-xs text-muted-foreground uppercase font-bold tracking-wider">
                                             {t('common.discount', 'OFF')}
@@ -126,9 +124,9 @@ export function PromoCodesView() {
                                     <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">
                                         {promo.description || t('promotions.no_desc', 'No description')}
                                     </p>
-                                    {promo.min_amount > 0 && (
+                                    {promo.min_booking_amount > 0 && (
                                         <p className="text-xs text-muted-foreground">
-                                            {t('promotions.min_order', 'Min. order')}: {promo.min_amount}₽
+                                            {t('promotions.min_order', 'Min. order')}: {promo.min_booking_amount}₽
                                         </p>
                                     )}
                                     {promo.valid_until && (

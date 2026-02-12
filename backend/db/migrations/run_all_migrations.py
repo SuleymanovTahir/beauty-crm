@@ -3,6 +3,7 @@ Unified System Migration Runner
 Executes core initialization and data maintenance.
 """
 import sys
+import os
 from datetime import datetime
 from db.init import init_database
 from db.connection import get_db_connection
@@ -12,6 +13,13 @@ def print_header(text):
     print("\n" + "="*80)
     print(f"  {text}")
     print("="*80)
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
 
 def create_sessions_table():
     """Create sessions table for user authentication."""
@@ -86,32 +94,41 @@ def run_all_migrations():
         # 1.6 Create chat_history table (messaging)
         create_chat_history_table()
         
-        # 2. Data Maintenance & Fixed
-        print_header("DATA MAINTENANCE")
-        try:
-            from scripts.maintenance.fix_data import run_all_fixes
-            run_all_fixes()
-            log_info("✅ Data maintenance tasks completed", "migrations")
-        except Exception as e:
-            log_error(f"⚠️  Data maintenance skipped: {e}", "migrations")
+        # 2. Optional Data Maintenance
+        if _env_flag("RUN_MIGRATION_MAINTENANCE", default=False):
+            print_header("DATA MAINTENANCE")
+            try:
+                from scripts.maintenance.fix_data import run_all_fixes
+                run_all_fixes()
+                log_info("✅ Data maintenance tasks completed", "migrations")
+            except Exception as e:
+                log_error(f"⚠️  Data maintenance skipped: {e}", "migrations")
+        else:
+            log_info("⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)", "migrations")
 
-        # 3. Production Seeding
-        print_header("PRODUCTION SEEDING")
-        try:
-            from scripts.setup.seed_production_data import seed_production_data
-            seed_production_data()
-            log_info("✅ Production data seeded", "migrations")
-        except Exception as e:
-            log_error(f"⚠️  Seeding skipped: {e}", "migrations")
+        # 3. Optional Production Seeding
+        if _env_flag("RUN_MIGRATION_PROD_SEED", default=False):
+            print_header("PRODUCTION SEEDING")
+            try:
+                from scripts.setup.seed_production_data import seed_production_data
+                seed_production_data()
+                log_info("✅ Production data seeded", "migrations")
+            except Exception as e:
+                log_error(f"⚠️  Seeding skipped: {e}", "migrations")
+        else:
+            log_info("⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)", "migrations")
 
-        # 4. User Data Seeding (Admin & Employees)
-        print_header("USER DATA SEEDING")
-        try:
-            from scripts.testing.data.seed_test_data import seed_data
-            seed_data()
-            log_info("✅ User data seeded (including admin)", "migrations")
-        except Exception as e:
-            log_error(f"⚠️  User seeding skipped: {e}", "migrations")
+        # 4. Optional Test Seeding
+        if _env_flag("RUN_MIGRATION_TEST_SEED", default=False):
+            print_header("USER DATA SEEDING")
+            try:
+                from scripts.testing.data.seed_test_data import seed_data
+                seed_data()
+                log_info("✅ User data seeded (including admin)", "migrations")
+            except Exception as e:
+                log_error(f"⚠️  User seeding skipped: {e}", "migrations")
+        else:
+            log_info("⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)", "migrations")
 
         print_header("SYNC COMPLETED SUCCESSFULLY")
         # Release lock before returning (also in finally as backup)

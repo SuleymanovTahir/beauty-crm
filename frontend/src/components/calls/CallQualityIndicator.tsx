@@ -1,5 +1,4 @@
 // Индикатор качества соединения
-import React from 'react';
 import { Wifi, WifiOff } from 'lucide-react';
 
 export type ConnectionQuality = 'excellent' | 'good' | 'poor' | 'disconnected';

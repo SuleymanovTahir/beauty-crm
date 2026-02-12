@@ -41,7 +41,6 @@ interface User {
   id: number;
   username: string;
   full_name?: string;
-  full_name?: string;
   role: string;
   position?: string;
   position_ru?: string;
@@ -50,7 +49,6 @@ interface User {
 interface Service {
   id: number;
   name: string;
-  name?: string;
   service_key: string;
   price?: number;
 }
@@ -414,7 +412,7 @@ export default function BookingDetail() {
                       <SelectContent>
                         {services.map(s => (
                           <SelectItem key={s.id} value={s.name}>
-                            {i18n.language.startsWith('ru') && s.name ? s.name : s.name} ({formatCurrency(s.price)})
+                            {i18n.language.startsWith('ru') && s.name ? s.name : s.name} ({formatCurrency(s.price ?? 0)})
                           </SelectItem>
                         ))}
                       </SelectContent>

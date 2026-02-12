@@ -56,8 +56,8 @@ export default function Login() {
         credentials.password
       );
 
-      if (response.success && response.token) {
-        login(response.user, response.token);
+      if (response.success && response.user) {
+        login(response.user);
 
         toast.success(
           `${t('welcome')} ${response.user.full_name || response.user.username

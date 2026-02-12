@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Home, Filter, Calendar, MessageSquare, MoreHorizontal, X, ChevronDown, ChevronRight, LayoutDashboard, Users, ShoppingBag, TrendingUp, Wallet, Wrench, Plug, Settings, Bell, LogOut, Clipboard, Package, Instagram, Phone, MessagesSquare, Sparkles, Box, BarChart3, UserCircle, FileText, HandshakeIcon, ListTodo, Mail, PhoneCall, CreditCard, Store, UserCog, Globe, Bot, History, Trash2, Languages } from 'lucide-react';
+import { Home, Filter, Calendar, MessageSquare, MoreHorizontal, X, ChevronDown, ChevronRight, LayoutDashboard, Users, ShoppingBag, TrendingUp, Wallet, Wrench, Plug, Settings, Bell, LogOut, Instagram, Phone, MessagesSquare, Sparkles, Box, BarChart3, UserCircle, FileText, HandshakeIcon, ListTodo, Mail, PhoneCall, CreditCard, Store, UserCog, Globe, Bot, History, Trash2 } from 'lucide-react';
 
 interface MenuItem {
   label: string;
@@ -14,8 +14,8 @@ export function FinalVariant() {
   const [currentLanguage, setCurrentLanguage] = useState('🇷🇺 Русский');
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showChatMenu, setShowChatMenu] = useState(false);
-  const [unreadMessages, setUnreadMessages] = useState(12);
-  const [unreadNotifications, setUnreadNotifications] = useState(3);
+  const [unreadMessages] = useState(12);
+  const [unreadNotifications] = useState(3);
 
   const mainTabs = [
     { icon: Home, label: 'Главная' },

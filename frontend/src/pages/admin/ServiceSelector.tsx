@@ -1,8 +1,8 @@
 // /frontend/src/pages/admin/ServiceSelector.tsx
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Checkbox } from '../ui/checkbox';
-import { Button } from '../ui/button';
+import { Checkbox } from '../../components/ui/checkbox';
+import { Button } from '../../components/ui/button';
 
 interface Service {
   id: number;

@@ -107,6 +107,13 @@ class ModernStaticFiles(StaticFiles):
         response.headers["Cache-Control"] = "public, max-age=3600"
         return response
 
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Управление жизненным циклом базы данных, бота и планировщиков"""
@@ -148,20 +155,28 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         log_error(f"⚠️  Проблема при прогреве пула: {e}", "boot")
 
-    # 3. Синхронизация системы (Создание таблиц и миграции)
-    # ОБЯЗАТЕЛЬНО раскомментируйте после пересоздания базы данных или обновления кода
-    from db.migrations.run_all_migrations import run_all_migrations
-    run_all_migrations()
+    # 3. Синхронизация схемы БД (по умолчанию отключено в production)
+    run_db_sync = _env_flag(
+        "RUN_STARTUP_DB_SYNC",
+        default=(os.getenv("ENVIRONMENT") != "production"),
+    )
+    if run_db_sync:
+        from db.migrations.run_all_migrations import run_all_migrations
+        run_all_migrations()
+    else:
+        log_info("⏭️ Startup DB sync skipped (RUN_STARTUP_DB_SYNC=false)", "boot")
     
     # 4. Конфигурация
     global salon_config
     salon_config = get_salon_settings()
     log_info(f"✅ Конфигурация салона: {salon_config['name']}", "boot")
 
-    # [РУЧНОЕ АДМИНИСТРИРОВАНИЕ] - Раскомментируйте при необходимости
-    # log_info("🔧 Выполнение задач ручного администрирования...", "boot")
-    from scripts.maintenance.fix_data import run_all_fixes
-    run_all_fixes()
+    # 4.5 Опциональные data-fixes (по умолчанию выключено)
+    if _env_flag("RUN_STARTUP_DATA_FIXES", default=False):
+        from scripts.maintenance.fix_data import run_all_fixes
+        run_all_fixes()
+    else:
+        log_info("⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)", "boot")
 
     # [ТЕСТИРОВАНИЕ] - Запуск тестов при старте (можно выключить для ускорения запуска)
     # from tests.run_all_tests import run_all_tests

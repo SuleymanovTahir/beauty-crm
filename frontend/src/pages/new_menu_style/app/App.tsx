@@ -1,4 +1,4 @@
-import { FinalVariant } from '@/app/components/FinalVariant';
+import { FinalVariant } from './components/FinalVariant';
 
 export default function App() {
   return (

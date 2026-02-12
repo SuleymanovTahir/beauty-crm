@@ -4,7 +4,6 @@ Provides dynamic SEO metadata from database for public landing page
 """
 import os
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse
 from db.settings import get_salon_settings
 from core.config import (
     DEFAULT_HOURS_WEEKDAYS,
@@ -47,15 +46,50 @@ def get_seo_metadata():
         instagram_url = salon.get('instagram', '')
         if instagram_url and not instagram_url.startswith('http'):
             instagram_url = f"https://www.instagram.com/{instagram_url.replace('@', '')}"
+
+        # Normalize brand name for SEO to avoid legacy/generic labels in snippets.
+        raw_salon_name = (salon.get('name') or '').strip()
+        generic_name_aliases = {
+            'beauty salon',
+            'russian beauty salon',
+            'русский салон красоты'
+        }
+        salon_name = raw_salon_name if raw_salon_name and raw_salon_name.lower() not in generic_name_aliases else 'M Le Diamant'
+
+        city = salon.get('city', 'Dubai')
+        address = salon.get('address', '') or ''
+        address_lc = address.lower()
+        if 'jbr' in address_lc or 'jumeirah beach residence' in address_lc:
+            location_hint = 'JBR Dubai'
+        else:
+            location_hint = city
+
+        seo_keywords = ", ".join([
+            salon_name.lower(),
+            f"beauty salon {location_hint}".lower(),
+            f"premium beauty salon {location_hint}".lower(),
+            "manicure dubai",
+            "pedicure dubai",
+            "hair salon dubai",
+            "brows and lashes dubai",
+            "spa dubai",
+            "massage dubai",
+            "cosmetology dubai",
+            "permanent makeup dubai",
+            "keratin treatment dubai",
+            "waxing dubai",
+            "nail salon dubai marina",
+            "salon jbr dubai",
+        ])
         
         # Build metadata
         metadata = {
             # Basic Info
-            "salon_name": salon.get('name'),
+            "salon_name": salon_name,
             "phone": salon.get('phone'),
             "email": salon.get('email'),
             "address": salon.get('address'),
-            "city": salon.get('city'),
+            "city": city,
             "country": salon.get('country'),
             
             # Social Media
@@ -77,17 +111,19 @@ def get_seo_metadata():
             "longitude": salon.get('longitude', 55.2708),
             
             # SEO Title & Description
-            "seo_title": f"{salon.get('name') or 'Beauty Salon'} - Premium Beauty Salon {salon.get('city', 'Dubai')}",
-            "seo_description": f"Experience luxury beauty services at {salon.get('name') or 'our salon'}. Expert manicure, spa treatments, and personalized care in a premium atmosphere. Book online today!",
+            "seo_title": f"{salon_name} - Premium Beauty Salon in {location_hint} | Manicure, Spa, Hair, Brows, Lashes",
+            "seo_description": f"{salon_name} is a premium beauty salon in {location_hint} for manicure, pedicure, spa, hair, brows, lashes, massage, cosmetology, and permanent makeup.",
+            "seo_keywords": seo_keywords,
+            "supported_languages": ['en', 'ru', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt'],
             
             # Schema.org Data
             "schema": {
-                "name": salon.get('name') or 'Beauty Salon',
+                "name": salon_name,
                 "telephone": salon.get('phone'),
                 "address": {
                     "streetAddress": salon.get('address', 'Dubai'),
-                    "addressLocality": salon.get('city', 'Dubai'),
-                    "addressRegion": salon.get('city', 'Dubai'),
+                    "addressLocality": city,
+                    "addressRegion": city,
                     "addressCountry": "AE"
                 },
                 "geo": {

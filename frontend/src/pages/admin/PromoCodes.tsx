@@ -45,13 +45,23 @@ interface PromoCode {
     created_at: string;
 }
 
+interface NewPromoState {
+    code: string;
+    discount_type: 'percent' | 'fixed';
+    discount_value: number;
+    min_booking_amount: number;
+    valid_from: string;
+    valid_until: string;
+    usage_limit: string;
+}
+
 export default function PromoCodes() {
     const { t } = useTranslation(['admin/promocodes', 'common']);
     const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
     const [loading, setLoading] = useState(true);
     const [showCreateDialog, setShowCreateDialog] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [newPromo, setNewPromo] = useState({
+    const [newPromo, setNewPromo] = useState<NewPromoState>({
         code: '',
         discount_type: 'percent',
         discount_value: 10,

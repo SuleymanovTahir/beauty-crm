@@ -228,7 +228,8 @@ i18n
       escapeValue: false
     },
     detection: {
-      order: ['localStorage'],
+      order: ['querystring', 'localStorage', 'navigator'],
+      lookupQuerystring: 'lang',
       caches: ['localStorage']
     }
   });

@@ -192,7 +192,8 @@ async def resolve_telegram_id(recipient_id: str) -> Optional[str]:
         c.execute("SELECT telegram_id FROM clients WHERE id::text = %s OR telegram_id IS NOT NULL AND instagram_id = %s LIMIT 1", (recipient_id, recipient_id))
         res = c.fetchone()
         if res and res[0]: return str(res[0])
-    except: pass
+    except Exception as e:
+        log_warning(f"Failed to resolve telegram id for recipient '{recipient_id}': {e}", "messenger")
     finally: conn.close()
     return None
 
@@ -220,7 +221,8 @@ def detect_platform(recipient_id: str) -> Platform:
         c.execute("SELECT COUNT(*) FROM chat_history WHERE instagram_id = %s", (recipient_id,))
         if c.fetchone()[0] > 0: return 'instagram'
         
-    except: pass
+    except Exception as e:
+        log_warning(f"Failed to auto-detect platform for recipient '{recipient_id}': {e}", "messenger")
     finally: conn.close()
     
     if recipient_id.isdigit():

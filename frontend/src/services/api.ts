@@ -2,6 +2,55 @@
 import i18n from '../i18n';
 const API_URL = import.meta.env.VITE_API_URL || window.location.origin
 
+type PromoCodeApiItem = {
+  id: number
+  code: string
+  discount_type: 'percent' | 'fixed' | string
+  value: number
+  min_amount: number | null
+  valid_from: string
+  valid_until: string | null
+  max_uses: number | null
+  current_uses: number | null
+  is_active: boolean
+  category?: string | null
+  description?: string | null
+  target_client_id?: string | number | null
+  created_at: string
+}
+
+type PromoCodeListResponse = { promo_codes?: PromoCodeApiItem[] } | PromoCodeApiItem[]
+
+type PromoCodeUiItem = {
+  id: number
+  code: string
+  discount_type: 'percent' | 'fixed'
+  discount_value: number
+  min_booking_amount: number
+  valid_from: string
+  valid_until: string | null
+  usage_limit: number | null
+  times_used: number
+  is_active: boolean
+  is_personalized: boolean
+  description: string | null
+  target_client_id: string | null
+  created_at: string
+}
+
+type CreatePromoCodePayload = {
+  code: string
+  discount_type: 'percent' | 'fixed'
+  discount_value: number
+  min_booking_amount?: number
+  valid_from?: string
+  valid_until?: string | null
+  usage_limit?: number | string | null
+  category?: string
+  description?: string | null
+  is_active?: boolean
+}
+
 export class ApiClient {
   private baseURL: string
 
@@ -75,7 +124,6 @@ export class ApiClient {
           throw error
         }
         localStorage.removeItem('user')
-        localStorage.removeItem('session_token')
         window.location.href = '/login'
         throw new Error('Сессия истекла. Пожалуйста, перезагрузитесь.')
       }
@@ -143,9 +191,6 @@ export class ApiClient {
     if (response.user) {
       localStorage.setItem('user', JSON.stringify(response.user))
     }
-    if (response.token) {
-      localStorage.setItem('session_token', response.token)
-    }
 
     return response
   }
@@ -158,9 +203,6 @@ export class ApiClient {
 
     if (response.user) {
       localStorage.setItem('user', JSON.stringify(response.user))
-    }
-    if (response.token) {
-      localStorage.setItem('session_token', response.token)
     }
 
     return response
@@ -328,7 +370,6 @@ export class ApiClient {
       await this.request('/api/logout', { method: 'POST' })
     } finally {
       localStorage.removeItem('user')
-      localStorage.removeItem('session_token')
     }
   }
 
@@ -521,6 +562,7 @@ export class ApiClient {
     whatsapp?: string;
     instagram_link?: string;
     is_public_visible?: boolean;
+    is_available_online?: boolean;
     sort_order?: number;
   }) {
     return this.request(`/api/users/${userId}/update-profile`, {
@@ -1684,10 +1726,10 @@ export class ApiClient {
     if (start) params.start_date = start;
     if (end) params.end_date = end;
 
-    // Note: We use the public fetch wrapper if available or standard request
     try {
-      // Using 'request' helper which wraps fetch
-      return this.request<any[]>('/api/holidays?' + new URLSearchParams(params).toString());
+      const query = new URLSearchParams(params).toString();
+      const endpoint = query ? `/api/holidays?${query}` : '/api/holidays';
+      return await this.request<any[]>(endpoint);
     } catch (e) {
       console.error("Failed to fetch holidays", e);
       return [];
@@ -1767,6 +1809,17 @@ export class ApiClient {
         updated_at: string
       }>
     }>(`/api/positions?active_only=${activeOnly}`)
+  }
+
+  async createPosition(data: { name: string; description?: string; sort_order?: number }) {
+    return this.request<{
+      success: boolean
+      position_id: number
+      message: string
+    }>('/api/positions', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
   }
   // ===== BROADCASTS =====
   async getUserSubscriptions() {
@@ -1866,14 +1919,65 @@ export class ApiClient {
   }
 
   // ===== PROMO CODES =====
-  async getPromoCodes() {
-    return this.request<any>('/api/promo-codes')
+  async getPromoCodes(): Promise<PromoCodeUiItem[]> {
+    const response = await this.request<PromoCodeListResponse>('/api/promo-codes')
+    const promoCodes = Array.isArray(response)
+      ? response
+      : Array.isArray(response.promo_codes)
+        ? response.promo_codes
+        : []
+
+    return promoCodes.map((promo) => {
+      const category = typeof promo.category === 'string' ? promo.category.toLowerCase() : ''
+      const rawTargetClientId = promo.target_client_id
+      const targetClientId = rawTargetClientId === null || rawTargetClientId === undefined
+        ? null
+        : String(rawTargetClientId)
+
+      return {
+        id: Number(promo.id),
+        code: String(promo.code ?? ''),
+        discount_type: promo.discount_type === 'fixed' ? 'fixed' : 'percent',
+        discount_value: Number(promo.value ?? 0),
+        min_booking_amount: Number(promo.min_amount ?? 0),
+        valid_from: String(promo.valid_from ?? ''),
+        valid_until: promo.valid_until ?? null,
+        usage_limit: typeof promo.max_uses === 'number' ? promo.max_uses : null,
+        times_used: Number(promo.current_uses ?? 0),
+        is_active: Boolean(promo.is_active),
+        is_personalized: category === 'personal' || category === 'personalized' || category === 'birthday' || targetClientId !== null,
+        description: typeof promo.description === 'string' ? promo.description : null,
+        target_client_id: targetClientId,
+        created_at: String(promo.created_at ?? ''),
+      }
+    })
   }
 
-  async createPromoCode(data: any) {
+  async createPromoCode(data: CreatePromoCodePayload) {
+    const parsedUsageLimit = typeof data.usage_limit === 'string'
+      ? data.usage_limit.trim() === '' ? null : Number(data.usage_limit)
+      : data.usage_limit ?? null
+
+    const maxUses = typeof parsedUsageLimit === 'number' && Number.isFinite(parsedUsageLimit)
+      ? parsedUsageLimit
+      : null
+
+    const payload = {
+      code: data.code,
+      discount_type: data.discount_type,
+      value: Number(data.discount_value),
+      min_amount: Number(data.min_booking_amount ?? 0),
+      valid_from: data.valid_from ?? undefined,
+      valid_until: data.valid_until ?? null,
+      max_uses: maxUses,
+      category: data.category ?? 'general',
+      description: data.description ?? null,
+      is_active: data.is_active ?? true,
+    }
+
     return this.request('/api/promo-codes', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(payload)
     })
   }
 

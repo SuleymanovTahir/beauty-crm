@@ -4,10 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Label } from '../ui/label';
 import { api } from '../../services/api';
 import { toast } from 'sonner';
-import { GripVertical, Trash2, Plus, RefreshCw } from 'lucide-react';
+import { GripVertical, Trash2, Plus } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
 
 interface Stage {
@@ -26,7 +25,6 @@ interface ManageFunnelStagesDialogProps {
 export function ManageFunnelStagesDialog({ open, onOpenChange, onSuccess }: ManageFunnelStagesDialogProps) {
     const { t } = useTranslation(['admin/funnel', 'common']);
     const [stages, setStages] = useState<Stage[]>([]);
-    const [loading, setLoading] = useState(false);
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
 
     // New stage state
@@ -40,14 +38,11 @@ export function ManageFunnelStagesDialog({ open, onOpenChange, onSuccess }: Mana
     }, [open]);
 
     const loadStages = async () => {
-        setLoading(true);
         try {
             const data = await api.get('/api/funnel/stages');
             setStages(data.sort((a: Stage, b: Stage) => a.order_index - b.order_index));
         } catch (error) {
             toast.error(t('failed_to_load_stages'));
-        } finally {
-            setLoading(false);
         }
     };
 

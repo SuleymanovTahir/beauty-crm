@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent } from './ui/card';
-import { Button } from './ui/button';
 import { Calendar } from './ui/calendar';
 import { Sparkles, Clock } from 'lucide-react';
 import { motion } from 'motion/react';

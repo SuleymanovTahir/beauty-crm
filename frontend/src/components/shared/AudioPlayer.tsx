@@ -13,8 +13,6 @@ export default function AudioPlayer({ src, className = '' }: AudioPlayerProps) {
   const [duration, setDuration] = useState(0);
   const [waveformData, setWaveformData] = useState<number[]>([]);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
 
   // Extract waveform data from audio
   useEffect(() => {

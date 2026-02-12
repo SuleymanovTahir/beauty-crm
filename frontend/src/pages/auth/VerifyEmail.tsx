@@ -38,13 +38,13 @@ export default function VerifyEmail() {
       try {
         const data = await api.verifyEmailToken(tokenFromUrl);
 
-        if (data.success && data.token && data.user) {
+        if (data.success && data.user) {
           console.log("Token verification successful, logging in");
           setVerified(true);
           toast.success(t('email_verified_login', "Email подтвержден! Выполняется вход в систему..."));
 
           // Используем login из контекста
-          login(data.user, data.token);
+          login(data.user);
 
           // Перенаправляем в зависимости от роли
           setTimeout(() => {

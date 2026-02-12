@@ -1,6 +1,6 @@
 // /frontend/src/pages/adminpanel/notificationsdashboard.tsx
 import { useState, useEffect } from 'react';
-import { Plus, Send, Mail, Smartphone, MessageSquare, Filter, Calendar, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Plus, Send, Mail, Smartphone, MessageSquare, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
@@ -51,7 +51,6 @@ export default function NotificationsDashboard() {
   const { t } = useTranslation(['adminpanel/notificationsdashboard', 'common']);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [templates, setTemplates] = useState<NotificationTemplate[]>([]);
-  const [loading, setLoading] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
   const [selectedType, setSelectedType] = useState<'all' | 'email' | 'push' | 'sms'>('all');
@@ -91,7 +90,6 @@ export default function NotificationsDashboard() {
 
   const loadNotifications = async () => {
     try {
-      setLoading(true);
       const response = await fetch('/api/admin/notifications', {
         credentials: 'include',
       });
@@ -107,8 +105,6 @@ export default function NotificationsDashboard() {
     } catch (error) {
       console.error('Error loading notifications:', error);
       toast.error(t('toasts.failed_load'));
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -147,6 +143,17 @@ export default function NotificationsDashboard() {
           type: 'push',
           target_segment: 'all',
           tier_filter: '',
+          appointment_filter: '',
+          appointment_date: '',
+          appointment_start_date: '',
+          appointment_end_date: '',
+          service_filter: '',
+          scheduled: false,
+          schedule_date: '',
+          schedule_time: '',
+          repeat_enabled: false,
+          repeat_interval: 'daily',
+          repeat_end_date: '',
         });
         loadNotifications();
       } else {

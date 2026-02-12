@@ -21,7 +21,6 @@ export default function EditUser() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isActive, setIsActive] = useState(true);
-  const [userRole, setUserRole] = useState('');
 
   const [profileData, setProfileData] = useState({
     username: '',
@@ -64,7 +63,6 @@ export default function EditUser() {
 
       setUserId(data.id);
       setIsActive(data.is_active !== false);
-      setUserRole(data.role || '');
 
       // Fix photo URL - add API URL if it's a relative path
       const photoUrl = getPhotoUrl(data.photo);
