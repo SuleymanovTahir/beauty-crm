@@ -3,8 +3,8 @@
 // Управление специальными пакетами и акциями
 
 import { useState, useEffect, useMemo } from 'react';
-import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, AlertCircle, Loader, Users, Target, Settings, ChevronRight, TrendingUp, ArrowUpDown, Ticket } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, AlertCircle, Loader, Users, Target, Settings, ChevronRight, TrendingUp, ArrowUpDown, Ticket, Scissors } from 'lucide-react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -134,6 +134,8 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
           : null;
   const isSingleSectionMode = forcedSection !== null;
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const initialSection = forcedSection !== null
     ? forcedSection
     : normalizeSectionParam(searchParams.get('section'));
@@ -146,6 +148,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
     'admin/challenges',
     'admin/promocodes',
     'adminpanel/loyaltymanagement',
+    'admin/services',
     'layouts/mainlayout',
     'common'
   ]);
@@ -217,6 +220,28 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
     is_active: true,
     max_usage: 0
   });
+
+  const routePrefix = useMemo(() => {
+    if (location.pathname.startsWith('/crm')) {
+      return '/crm';
+    }
+    if (location.pathname.startsWith('/manager')) {
+      return '/manager';
+    }
+    if (location.pathname.startsWith('/sales')) {
+      return '/sales';
+    }
+    if (location.pathname.startsWith('/saler')) {
+      return '/sales';
+    }
+    if (location.pathname.startsWith('/marketer')) {
+      return '/marketer';
+    }
+    if (location.pathname.startsWith('/admin')) {
+      return '/admin';
+    }
+    return '/crm';
+  }, [location.pathname]);
 
   const parseNonNegativeNumber = (value: string, fallbackValue: number): number => {
     const parsedValue = Number(value);
@@ -425,6 +450,10 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
 
     setActiveSection(nextSection);
     updateRouteParams(nextSection, 'history');
+  };
+
+  const handleServicesTabClick = () => {
+    navigate(`${routePrefix}/services`);
   };
 
   const handleReferralViewChange = (nextView: ReferralViewType) => {
@@ -767,7 +796,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
     }
   };
 
-  if (loading) {
+  if (loading && activeSection === 'packages') {
     return (
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
@@ -780,35 +809,22 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
 
   return (
     <div className="p-8">
-      {/* Header */}
-      {(activeSection === 'packages' || activeSection === 'referrals') && (
-        <div className="mb-8">
-          <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-            {activeSection === 'referrals' ? (
-              <Users className="w-8 h-8 text-blue-600" />
-            ) : (
-              <Gift className="w-8 h-8 text-pink-600" />
-            )}
-            {activeSection === 'referrals'
-              ? t('adminpanel/referralprogram:title')
-              : t('admin/specialpackages:special_packages_and_promotions')}
-          </h1>
-          <p className="text-gray-600">
-            {activeSection === 'packages'
-              ? `${t('admin/specialpackages:manage_promotional_offers')} ${filteredPackages.length} ${t('admin/specialpackages:packages')}`
-              : t('adminpanel/referralprogram:subtitle')}
-          </p>
-        </div>
-      )}
-
       {/* Tab Navigation */}
       {!isSingleSectionMode && (
         <div className="flex flex-wrap gap-2 mb-6">
           <Button
+            variant="outline"
+            onClick={handleServicesTabClick}
+            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+          >
+            <Scissors className="w-4 h-4 mr-2" />
+            {t('admin/services:services')}
+          </Button>
+          <Button
             variant={activeSection === 'packages' ? 'default' : 'outline'}
             onClick={() => handleSectionChange('packages')}
             className={activeSection === 'packages'
-              ? 'bg-pink-600 text-white hover:bg-pink-700'
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
               : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
           >
             <Gift className="w-4 h-4 mr-2" />
@@ -828,7 +844,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
             variant={activeSection === 'challenges' ? 'default' : 'outline'}
             onClick={() => handleSectionChange('challenges')}
             className={activeSection === 'challenges'
-              ? 'bg-gray-900 text-white hover:bg-black'
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
               : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
           >
             <Target className="w-4 h-4 mr-2" />
@@ -838,7 +854,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
             variant={activeSection === 'loyalty' ? 'default' : 'outline'}
             onClick={() => handleSectionChange('loyalty')}
             className={activeSection === 'loyalty'
-              ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
               : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
           >
             <Gift className="w-4 h-4 mr-2" />
@@ -848,12 +864,33 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
             variant={activeSection === 'promo-codes' ? 'default' : 'outline'}
             onClick={() => handleSectionChange('promo-codes')}
             className={activeSection === 'promo-codes'
-              ? 'bg-violet-600 text-white hover:bg-violet-700'
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
               : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
           >
             <Ticket className="w-4 h-4 mr-2" />
             {t('layouts/mainlayout:menu.promo_codes')}
           </Button>
+        </div>
+      )}
+
+      {/* Header */}
+      {(activeSection === 'packages' || activeSection === 'referrals') && (
+        <div className="mb-8">
+          <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
+            {activeSection === 'referrals' ? (
+              <Users className="w-8 h-8 text-blue-600" />
+            ) : (
+              <Gift className="w-8 h-8 text-pink-600" />
+            )}
+            {activeSection === 'referrals'
+              ? t('adminpanel/referralprogram:title')
+              : t('admin/specialpackages:special_packages_and_promotions')}
+          </h1>
+          <p className="text-gray-600">
+            {activeSection === 'packages'
+              ? `${t('admin/specialpackages:manage_promotional_offers')} ${filteredPackages.length} ${t('admin/specialpackages:packages')}`
+              : t('adminpanel/referralprogram:subtitle')}
+          </p>
         </div>
       )}
 
@@ -1274,7 +1311,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
                       : 'text-gray-700 hover:bg-white hover:text-gray-900'
                     }`}
                   >
-                    {t('adminpanel/referralprogram:table.title')}
+                    {t('referrals_history_tab', 'История приглашений')}
                   </Button>
                   <Button
                     type="button"
@@ -1285,7 +1322,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
                       : 'text-gray-700 hover:bg-white hover:text-gray-900'
                     }`}
                   >
-                    {t('tab_referrals_title')}
+                    {t('referrals_campaigns_tab', 'Кампании и бонусы')}
                   </Button>
                 </div>
 
@@ -1346,7 +1383,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
           {referralView === 'history' && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-base font-semibold text-gray-900">{t('adminpanel/referralprogram:table.title')}</h3>
+                <h3 className="text-base font-semibold text-gray-900">{t('referrals_history_tab', 'История приглашений')}</h3>
               </div>
 
               {referralLoading && (
@@ -1491,7 +1528,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
           {referralView === 'campaigns' && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-base font-semibold text-gray-900">{t('tab_referrals_title')}</h3>
+                <h3 className="text-base font-semibold text-gray-900">{t('referrals_campaigns_tab', 'Кампании и бонусы')}</h3>
                 <span className="text-sm text-gray-500">{campaigns.length}</span>
               </div>
               {campaigns.length > 0 && (
@@ -1796,6 +1833,18 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
             </DialogContent>
           </Dialog>
         </div>
+      )}
+
+      {activeSection === 'challenges' && (
+        <UniversalChallenges embedded={true} />
+      )}
+
+      {activeSection === 'loyalty' && (
+        <LoyaltyManagement embedded={true} />
+      )}
+
+      {activeSection === 'promo-codes' && (
+        <PromoCodes embedded={true} />
       )}
     </div>
   );

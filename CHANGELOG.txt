@@ -1,3 +1,35 @@
+## [2026-02-12] Style Harmonization for Embedded Tools Tabs + Conditional Back Arrow
+- Unified embedded visual rhythm for Special Packages tool tabs (Challenges/Loyalty/Promo Codes) to be closer to the referrals section style:
+  - Adjusted typography weight/scale, panel radius, and shadow density in embedded mode.
+  - `frontend/src/pages/shared/Challenges.tsx`: embedded-specific header, cards, and spacing.
+  - `frontend/src/pages/admin/PromoCodes.tsx`: embedded-specific button/input/card radius and shadow presets.
+  - `frontend/src/pages/adminPanel/LoyaltyManagement.tsx`: embedded mode with aligned header/button/card styling.
+- Referrals back-arrow behavior refined in `frontend/src/pages/admin/SpecialPackages.tsx`:
+  - Arrow is shown only when referrals are opened inside `/crm/special-packages` tab flow.
+  - Arrow is hidden for `/crm/referrals` (tools entry in `referrals-only` mode).
+
+## [2026-02-12] Special Packages Tabs Extended with Challenges/Loyalty/Promo Codes
+- Expanded `frontend/src/pages/admin/SpecialPackages.tsx` section model:
+  - Added new sections: `challenges`, `loyalty`, `promo-codes` (in addition to `packages` and `referrals`).
+  - Kept existing referrals behavior (`history` / `campaigns`) and URL sync.
+  - Added single-section entry modes for tool routes: `referrals-only`, `challenges-only`, `loyalty-only`, `promo-codes-only`.
+- Added same tab-style navigation in Special Packages for all tool sections:
+  - Packages, Referrals, Challenges, Loyalty, Promo Codes now share a unified top-tab UI.
+- Reused existing tool content (no duplicated business logic):
+  - Challenges content rendered via `frontend/src/pages/shared/Challenges.tsx`.
+  - Loyalty content rendered via `frontend/src/pages/adminPanel/LoyaltyManagement.tsx`.
+  - Promo codes content rendered via `frontend/src/pages/admin/PromoCodes.tsx`.
+- CRM routing updates in `frontend/src/App.tsx`:
+  - `/crm/challenges` -> `SpecialPackages` in `challenges-only` mode.
+  - `/crm/loyalty` -> `SpecialPackages` in `loyalty-only` mode (fixed missing/empty loyalty route).
+  - `/crm/promo-codes` -> `SpecialPackages` in `promo-codes-only` mode.
+  - `/crm/referrals` remains `SpecialPackages` in `referrals-only` mode.
+- Embedded rendering support added:
+  - `frontend/src/pages/shared/Challenges.tsx`: added `embedded` mode (hides back button in embedded context).
+  - `frontend/src/pages/admin/PromoCodes.tsx`: added `embedded` mode (container adapts when embedded).
+- Title mapping improved in `frontend/src/components/layouts/UniversalLayout.tsx`:
+  - Added section-title support for `special-packages` query sections `challenges`, `loyalty`, and `promo-codes`.
+
 ## [2026-02-12] CRM Referrals Unification with Entry-Specific UI
 - `/crm/referrals` now uses `frontend/src/pages/admin/SpecialPackages.tsx` in `referrals-only` mode (same referral content/style as inside special packages).
 - Entry-point behavior is now split by route:
@@ -2241,3 +2273,130 @@ format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
 - `backend/db/promo_codes.py` - MODIFIED
 - `backend/api/admin_features.py` - MODIFIED
 - `backend/api/client_auth.py` - MODIFIED
+
+## 2026-02-12: Возврат вкладки "Услуги" на странице special-packages
+
+### ПРОБЛЕМА
+1. При переходе из `/services` на `/special-packages` пропадал быстрый путь обратно в раздел услуг.
+2. Пользователь видел только вкладки маркетингового блока (`спецпакеты`, `рефералы`, `челленджи`, `лояльность`, `промокоды`) без явной вкладки `Услуги`.
+
+### РЕШЕНИЕ
+1. В `SpecialPackages.tsx` добавлен роут-ориентированный переход на `.../services` для всех рабочих префиксов (`/crm`, `/manager`, `/sales`, `/marketer`, `/admin`).
+2. В верхнюю навигацию раздела special-packages добавлена вкладка `Услуги` (иконка `Scissors`) с переходом обратно в список услуг.
+3. Для надписи вкладки использован существующий i18n-ключ `admin/services:services` без добавления дубликатов переводов.
+
+### ВАЖНО ПОМНИТЬ
+- Для экранов, которые объединяют несколько бизнес-разделов, обязательно оставлять явный путь возврата к родительскому разделу.
+- Для имен вкладок использовать существующие переводные ключи из `admin/services`, чтобы не плодить дубликаты в словарях.
+
+### ФАЙЛЫ
+- `frontend/src/pages/admin/SpecialPackages.tsx` - MODIFIED
+
+## 2026-02-12: Рефакторинг адаптивности и UX страницы LoyaltyManagement
+
+### ПРОБЛЕМА
+1. Во вкладке `Лояльность` в embedded-режиме (внутри special-packages) были неадаптивные блоки:
+   - фиксированные ширины;
+   - заголовки и кнопки ломались на узких экранах;
+   - таблицы не имели горизонтального скролла.
+2. В интерфейсе использовались числовые поля с `parseInt/parseFloat` без защит, что могло давать `NaN` при пустом вводе.
+3. Текст подсказки по кэшбэку выводился с шаблонными плейсхолдерами (`{{percent}}`, `{{points}}`) без интерполяции значений.
+
+### РЕШЕНИЕ
+1. Обновлена верстка `LoyaltyManagement`:
+   - адаптивный header и CTA;
+   - адаптивные карточки блоков;
+   - responsive-компоновка настроек;
+   - таблицы категорий и транзакций обернуты в `overflow-x-auto`.
+2. Добавлены безопасные парсеры чисел (`parseNumberOrFallback`, `parseIntegerOrFallback`) и применены во всех критичных `onChange`.
+3. Исправлена интерполяция подсказки `config.cashback_hint` и сообщений по корректировке баллов.
+4. Добавлена фильтрация таблицы транзакций по поиску (клиент/email/причина).
+
+### ВАЖНО ПОМНИТЬ
+- Для форм админки не использовать прямой `parseInt/parseFloat` без fallback, чтобы не протекал `NaN` в state и API payload.
+- Для таблиц в CRM-блоках всегда предусматривать горизонтальный скролл на мобильных.
+
+### ФАЙЛЫ
+- `frontend/src/pages/adminPanel/LoyaltyManagement.tsx` - MODIFIED
+
+## 2026-02-12: Унификация вкладок Services <-> SpecialPackages
+
+### ПРОБЛЕМА
+1. Переход из `/crm/services` в `special-packages` воспринимался как смена на другой паттерн табов:
+   - отличался визуальный стиль вкладок;
+   - в `referrals` оставалась отдельная стрелка назад, что выглядело неединообразно.
+2. Порядок блоков в `special-packages` для `packages/referrals` отличался от `loyalty/challenges`.
+
+### РЕШЕНИЕ
+1. В `SpecialPackages.tsx` удалена стрелка назад для `referrals` и оставлен единый таб-переход через вкладку `Услуги`.
+2. В `SpecialPackages.tsx` порядок секции приведен к единому виду:
+   - сначала таб-навигация;
+   - затем заголовок и контент (`packages/referrals`).
+3. В `crm-pages.css` обновлен стиль табов страницы `Services`:
+   - кнопочный outline-вид;
+   - синий активный таб;
+   - убрана “карточка-контейнер” вокруг табов.
+
+### ВАЖНО ПОМНИТЬ
+- Для связанных разделов (`services`, `special-packages`, `referrals`, `challenges`, `loyalty`, `promo-codes`) использовать один визуальный паттерн вкладок и навигации.
+- Не добавлять параллельные механики возврата, если уже есть явная вкладка перехода (`Услуги`).
+
+### ФАЙЛЫ
+- `frontend/src/pages/admin/SpecialPackages.tsx` - MODIFIED
+- `frontend/src/styles/crm-pages.css` - MODIFIED
+- `frontend/src/pages/shared/Services.tsx` - MODIFIED
+
+## 2026-02-12: Выравнивание embedded-вкладок Loyalty/Challenges и уточнение названий рефералов
+
+### ПРОБЛЕМА
+1. Во вкладке `special-packages?section=loyalty` блок глобальных настроек выглядел сжато: подписи и инпуты были прижаты, кнопка сохранения стояла не в логичном месте.
+2. Во вкладке `special-packages?section=challenges` embedded-стиль визуально отличался от более чистого паттерна `referrals` (слишком агрессивная типографика и пустое состояние).
+3. Названия внутри реферального блока были неочевидны для пользователя (`Все рефералы` vs `Реферальные кампании`).
+
+### РЕШЕНИЕ
+1. В `LoyaltyManagement.tsx` переработана embedded-верстка глобальных настроек:
+   - увеличены отступы и межстрочные интервалы;
+   - поля и подписи выстроены в читаемые группы;
+   - кнопка `Сохранить` вынесена в более предсказуемую позицию и адаптирована под мобильные экраны.
+2. В `Challenges.tsx` для embedded-режима упрощены карточки и пустое состояние:
+   - сняты лишние стили, приведены размеры/тексты к спокойному виду;
+   - улучшена читаемость метрик;
+   - сохранен единый визуальный язык с карточками `referrals`.
+3. Уточнены названия реферальных вкладок и заголовков:
+   - `История приглашений`
+   - `Кампании и бонусы`
+4. Обновлены i18n-значения `table.title` в `adminPanel/ReferralProgram` для RU/EN, чтобы старое имя `Все рефералы` больше не появлялось в связанных экранах.
+
+### ВАЖНО ПОМНИТЬ
+- Для embedded-страниц внутри `special-packages` использовать единый ритм отступов и типографики, близкий к `referrals`, без перегруженных эффектов.
+- Внутренние названия вкладок должны отличаться по смыслу (`история` vs `кампании`), чтобы пользователь сразу понимал разницу.
+
+### ФАЙЛЫ
+- `frontend/src/pages/adminPanel/LoyaltyManagement.tsx` - MODIFIED
+- `frontend/src/pages/shared/Challenges.tsx` - MODIFIED
+- `frontend/src/locales/ru/adminPanel/ReferralProgram.json` - MODIFIED
+- `frontend/src/locales/en/adminPanel/ReferralProgram.json` - MODIFIED
+
+## 2026-02-12: Унификация стиля вкладок Services и цветовой схемы Challenges в special-packages
+
+### ПРОБЛЕМА
+1. Вкладки в `/crm/services` визуально отличались от вкладок в `/crm/special-packages` (высота, отступы, общий стиль кнопок).
+2. Во встроенной вкладке `special-packages?section=challenges` цвет фона и акцентных блоков статистики отличался от `special-packages?section=loyalty`.
+
+### РЕШЕНИЕ
+1. В `Services.tsx` верхние табы (`Услуги`, `Спецпакеты`) переведены на тот же UI-паттерн, что и в `SpecialPackages.tsx`:
+   - `Button` с `variant="default"` для активной вкладки;
+   - `Button` с `variant="outline"` для неактивной;
+   - те же классы (`bg-blue-600`, `border-gray-300`, `hover:bg-gray-100`), чтобы совпали высота и визуальный ритм.
+2. В `Challenges.tsx` для embedded-режима (когда страница открыта внутри `special-packages`) палитра статистических карточек приведена к стилю `loyalty`:
+   - синие/зеленые фоновые акценты `bg-blue-100` / `bg-green-100`;
+   - соответствующие цвета иконок `text-blue-600` / `text-green-600`.
+3. Для standalone-страницы `challenges` (вне `special-packages`) исходная палитра сохранена, чтобы не ломать отдельный сценарий.
+
+### ВАЖНО ПОМНИТЬ
+- Для связки страниц `services` и `special-packages` таб-навигация должна использовать один и тот же компонентный паттерн и размеры.
+- Для embedded-вкладок внутри special-packages цветовые акценты статистики держать единообразными между `loyalty`, `challenges`, `promo-codes`, `referrals`.
+
+### ФАЙЛЫ
+- `frontend/src/pages/shared/Services.tsx` - MODIFIED
+- `frontend/src/pages/shared/Challenges.tsx` - MODIFIED

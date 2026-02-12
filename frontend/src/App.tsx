@@ -343,7 +343,8 @@ export default function App() {
                 <Route path="audit-log" element={<ProtectedRoute element={<AuditLog />} isAuthenticated={!!currentUser} requiredRole="director" currentRole={currentUser?.role} />} />
                 <Route path="internal-chat" element={<InternalChat />} />
                 <Route path="broadcasts" element={<Broadcasts />} />
-                <Route path="promo-codes" element={<PromoCodes />} />
+                <Route path="promo-codes" element={<SpecialPackages entryMode="promo-codes-only" />} />
+                <Route path="loyalty" element={<SpecialPackages entryMode="loyalty-only" />} />
                 <Route path="special-packages" element={<SpecialPackages />} />
                 <Route path="contracts" element={<Contracts />} />
                 <Route path="products" element={<Products />} />
@@ -352,7 +353,7 @@ export default function App() {
                 <Route path="payment-integrations" element={<PaymentIntegrations />} />
                 <Route path="marketplace-integrations" element={<MarketplaceIntegrations />} />
                 <Route path="referrals" element={<SpecialPackages entryMode="referrals-only" />} />
-                <Route path="challenges" element={<UniversalChallenges />} />
+                <Route path="challenges" element={<SpecialPackages entryMode="challenges-only" />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="service-change-requests" element={<ServiceChangeRequests />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />

@@ -1,5 +1,5 @@
 // /frontend/src/pages/adminPanel/LoyaltyManagement.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Plus, Search, Edit, Trash2, TrendingUp, Gift, DollarSign } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
@@ -53,7 +53,11 @@ interface CategoryRule {
   points_multiplier: number;
 }
 
-export default function LoyaltyManagement() {
+interface LoyaltyManagementProps {
+  embedded?: boolean;
+}
+
+export default function LoyaltyManagement({ embedded = false }: LoyaltyManagementProps) {
   const { t } = useTranslation(['adminpanel/loyaltymanagement', 'common']);
   const [tiers, setTiers] = useState<LoyaltyTier[]>([]);
   const [transactions, setTransactions] = useState<LoyaltyTransaction[]>([]);
@@ -83,6 +87,46 @@ export default function LoyaltyManagement() {
     category: '',
     points_multiplier: 1.0
   });
+
+  const parseNumberOrFallback = (value: string, fallbackValue: number): number => {
+    const parsedValue = Number(value);
+    if (!Number.isFinite(parsedValue)) {
+      return fallbackValue;
+    }
+    return parsedValue;
+  };
+
+  const parseIntegerOrFallback = (value: string, fallbackValue: number): number => {
+    const parsedValue = parseNumberOrFallback(value, fallbackValue);
+    return Math.round(parsedValue);
+  };
+
+  const normalizedCashbackRate = Number.isFinite(config.loyalty_points_conversion_rate)
+    ? config.loyalty_points_conversion_rate
+    : 0;
+  const cashbackPercent = Math.round(normalizedCashbackRate * 1000) / 10;
+  const pointsPerHundredCurrencyUnits = Math.round(normalizedCashbackRate * 100);
+
+  const filteredTransactions = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    if (normalizedSearch.length === 0) {
+      return transactions;
+    }
+
+    return transactions.filter((transaction) => {
+      const clientName = transaction.client_name.toLowerCase();
+      const clientEmail = transaction.client_email.toLowerCase();
+      const reason = transaction.reason.toLowerCase();
+
+      if (clientName.includes(normalizedSearch)) {
+        return true;
+      }
+      if (clientEmail.includes(normalizedSearch)) {
+        return true;
+      }
+      return reason.includes(normalizedSearch);
+    });
+  }, [transactions, searchTerm]);
   useEffect(() => {
     loadTransactions();
     loadTiers();
@@ -257,9 +301,10 @@ export default function LoyaltyManagement() {
       });
 
       if (response.ok) {
+        const absolutePoints = Math.abs(adjustForm.points);
         const message = adjustForm.points > 0
-          ? t('toasts.points_adjusted_add', { points: adjustForm.points, email: adjustForm.client_email })
-          : t('toasts.points_adjusted_deduct', { points: Math.abs(adjustForm.points), email: adjustForm.client_email });
+          ? t('toasts.points_adjusted_add', { count: absolutePoints, points: absolutePoints, email: adjustForm.client_email })
+          : t('toasts.points_adjusted_deduct', { count: absolutePoints, points: absolutePoints, email: adjustForm.client_email });
         toast.success(message);
         setShowAdjustDialog(false);
         setAdjustForm({ client_email: '', points: 0, reason: '' });
@@ -297,16 +342,24 @@ export default function LoyaltyManagement() {
     },
   ];
 
+  const cardClassName = embedded ? 'crm-calendar-panel bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden' : '';
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-          <p className="text-gray-500 mt-1">{t('subtitle')}</p>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-3xl font-bold text-gray-900'}>
+            {embedded && <Gift className="w-8 h-8 text-blue-600" />}
+            {t('title')}
+          </h1>
+          <p className={embedded ? 'text-gray-600' : 'text-gray-500 mt-1'}>{t('subtitle')}</p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => setShowAdjustDialog(true)}>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <Button
+            onClick={() => setShowAdjustDialog(true)}
+            className={embedded ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-10 px-4 font-semibold shadow-sm' : ''}
+          >
             <Plus className="w-4 h-4 mr-2" />
             {t('adjust_points')}
           </Button>
@@ -318,10 +371,10 @@ export default function LoyaltyManagement() {
         {statsCards.map((stat) => {
           const Icon = stat.icon;
           return (
-            <Card key={stat.title}>
-              <CardContent className="p-6">
+            <Card key={stat.title} className={cardClassName}>
+              <CardContent className="p-5 sm:p-6">
                 <div className="flex items-center justify-between">
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-sm text-gray-500 font-medium">{stat.title}</p>
                     <p className="text-2xl font-bold text-gray-900 mt-2">{stat.value}</p>
                   </div>
@@ -336,57 +389,104 @@ export default function LoyaltyManagement() {
       </div>
 
       {/* Global Configuration */}
-      <Card>
+      <Card className={cardClassName}>
         <CardHeader>
           <CardTitle>{t('config.title', 'Настройки')}</CardTitle>
           <CardDescription>{t('config.description', 'Управление глобальными настройками лояльности')}</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-end gap-4 max-w-md">
-            <div className="flex-1 space-y-4">
-              <div>
-                <Label>{t('config.cashback_rate', 'Кэшбэк (%)')}</Label>
-                <div className="flex items-center gap-2">
+        <CardContent className={embedded ? 'pt-0' : ''}>
+          {embedded ? (
+            <div className="max-w-4xl space-y-6">
+              <div className="space-y-2">
+                <Label className="text-base font-semibold text-gray-900">{t('config.cashback_rate', 'Кэшбэк (%)')}</Label>
+                <div className="flex flex-wrap items-center gap-3">
                   <Input
                     type="number"
                     step="0.1"
-                    value={config.loyalty_points_conversion_rate * 100}
-                    onChange={(e) => setConfig({ ...config, loyalty_points_conversion_rate: parseFloat(e.target.value) / 100 })}
-                    className="w-24"
+                    value={cashbackPercent}
+                    onChange={(e) => setConfig({ ...config, loyalty_points_conversion_rate: parseNumberOrFallback(e.target.value, cashbackPercent) / 100 })}
+                    className="h-11 w-full sm:w-44"
                   />
-                  <span className="text-gray-500">%</span>
-                  <span className="text-xs text-gray-400 ml-2">
-                    ({config.loyalty_points_conversion_rate} {t('config.points_per_unit', 'баллов за 1 ед. валюты')})
+                  <span className="text-base text-gray-500 font-semibold">%</span>
+                  <span className="text-sm text-gray-500">
+                    ({normalizedCashbackRate} {t('config.points_per_unit', 'баллов за 1 ед. валюты')})
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">{t('config.cashback_hint', 'Пример: 10% кэшбэк (10 баллов за 100 потраченных)')}</p>
+                <p className="text-sm text-gray-500 leading-6">{t('config.cashback_hint', {
+                  percent: cashbackPercent,
+                  points: pointsPerHundredCurrencyUnits,
+                  unit: 100,
+                  defaultValue: 'Пример: 10% кэшбэк (10 баллов за каждые 100 потраченных)'
+                })}</p>
               </div>
-              <div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-4 lg:items-end">
+                <div className="space-y-2">
+                  <Label className="text-base font-semibold text-gray-900">{t('config.expiration_days', 'Срок действия баллов (дней)')}</Label>
+                  <Input
+                    type="number"
+                    value={config.points_expiration_days}
+                    onChange={(e) => setConfig({ ...config, points_expiration_days: parseIntegerOrFallback(e.target.value, config.points_expiration_days) })}
+                    placeholder="365"
+                    className="h-11 w-full"
+                  />
+                  <p className="text-sm text-gray-500 leading-6">
+                    {t('config.expiration_hint', 'Начисленные баллы сгорят через указанное количество дней.')}
+                  </p>
+                </div>
+                <div className="flex w-full lg:w-auto">
+                  <Button onClick={handleUpdateConfig} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-11 px-6 font-semibold shadow-sm">
+                    {t('buttons.save', 'Сохранить')}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-end gap-4 max-w-md">
+              <div className="space-y-2">
+                <Label>{t('config.cashback_rate', 'Кэшбэк (%)')}</Label>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={cashbackPercent}
+                  onChange={(e) => setConfig({ ...config, loyalty_points_conversion_rate: parseNumberOrFallback(e.target.value, cashbackPercent) / 100 })}
+                  className="w-24"
+                />
+                <p className="text-sm text-gray-500">{t('config.cashback_hint', {
+                  percent: cashbackPercent,
+                  points: pointsPerHundredCurrencyUnits,
+                  unit: 100,
+                  defaultValue: 'Пример: 10% кэшбэк (10 баллов за каждые 100 потраченных)'
+                })}</p>
+              </div>
+              <div className="space-y-2">
                 <Label>{t('config.expiration_days', 'Срок действия баллов (дней)')}</Label>
                 <Input
                   type="number"
                   value={config.points_expiration_days}
-                  onChange={(e) => setConfig({ ...config, points_expiration_days: parseInt(e.target.value) })}
+                  onChange={(e) => setConfig({ ...config, points_expiration_days: parseIntegerOrFallback(e.target.value, config.points_expiration_days) })}
                   placeholder="365"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-sm text-gray-500">
                   {t('config.expiration_hint', 'Начисленные баллы сгорят через указанное количество дней.')}
                 </p>
               </div>
+              <Button onClick={handleUpdateConfig}>
+                {t('buttons.save', 'Сохранить')}
+              </Button>
             </div>
-            <Button onClick={handleUpdateConfig}>{t('buttons.save', 'Сохранить')}</Button>
-          </div>
+          )}
         </CardContent>
       </Card>
 
       {/* Category Rules */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+      <Card className={cardClassName}>
+        <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div>
             <CardTitle>{t('categories.title', 'Множители категорий')}</CardTitle>
             <CardDescription>{t('categories.description', 'Настройте множители баллов для категорий услуг')}</CardDescription>
           </div>
-          <Button variant="outline" size="sm" onClick={() => {
+          <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => {
             setRuleForm({ category: '', points_multiplier: 1.0 });
             setShowRuleDialog(true);
           }}>
@@ -395,41 +495,43 @@ export default function LoyaltyManagement() {
           </Button>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('categories.category', 'Категория')}</TableHead>
-                <TableHead>{t('categories.multiplier', 'Множитель')}</TableHead>
-                <TableHead className="w-[100px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categoryRules.map((rule) => (
-                <TableRow key={rule.category}>
-                  <TableCell>{rule.category}</TableCell>
-                  <TableCell>x{rule.points_multiplier}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => {
-                        setRuleForm(rule);
-                        setShowRuleDialog(true);
-                      }}>
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleDeleteRule(rule.category)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table className="min-w-[460px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('categories.category', 'Категория')}</TableHead>
+                  <TableHead>{t('categories.multiplier', 'Множитель')}</TableHead>
+                  <TableHead className="w-[100px]"></TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {categoryRules.map((rule) => (
+                  <TableRow key={rule.category}>
+                    <TableCell>{rule.category}</TableCell>
+                    <TableCell>x{rule.points_multiplier}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => {
+                          setRuleForm(rule);
+                          setShowRuleDialog(true);
+                        }}>
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleDeleteRule(rule.category)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
       {/* Loyalty Tiers */}
-      <Card>
+      <Card className={cardClassName}>
         <CardHeader>
           <CardTitle>{t('tiers.title')}</CardTitle>
           <CardDescription>{t('tiers.description')}</CardDescription>
@@ -437,15 +539,15 @@ export default function LoyaltyManagement() {
         <CardContent>
           <div className="space-y-4">
             {tiers.map((tier) => (
-              <div key={tier.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-4">
+              <div key={tier.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                   <div
                     className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold"
                     style={{ backgroundColor: tier.color }}
                   >
                     {tier.name[0]}
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="font-semibold text-gray-900">{tier.name}</div>
                     <div className="text-sm text-gray-500">
                       {tier.min_points === 0 ? t('tiers.starting_level') : t('tiers.from_points', { points: tier.min_points.toLocaleString() })} • {t('tiers.discount', { percent: tier.discount })}
@@ -455,6 +557,7 @@ export default function LoyaltyManagement() {
                 <Button
                   variant="ghost"
                   size="sm"
+                  className="w-full sm:w-auto"
                   onClick={() => {
                     setEditingTier(tier);
                     setShowTierDialog(true);
@@ -469,62 +572,64 @@ export default function LoyaltyManagement() {
       </Card>
 
       {/* Recent Transactions */}
-      <Card>
+      <Card className={cardClassName}>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
             <div>
               <CardTitle>{t('transactions.title')}</CardTitle>
               <CardDescription>{t('transactions.description')}</CardDescription>
             </div>
-            <div className="flex gap-2">
-              <div className="relative">
+            <div className="w-full lg:w-auto">
+              <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input
                   placeholder={t('transactions.search_placeholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 w-64"
+                  className="pl-9 w-full sm:w-72"
                 />
               </div>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('transactions.table.client')}</TableHead>
-                <TableHead>{t('transactions.table.points')}</TableHead>
-                <TableHead>{t('transactions.table.type')}</TableHead>
-                <TableHead>{t('transactions.table.reason')}</TableHead>
-                <TableHead>{t('transactions.table.date')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {transactions.map((transaction) => (
-                <TableRow key={transaction.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{transaction.client_name}</div>
-                      <div className="text-sm text-gray-500">{transaction.client_email}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className={transaction.points > 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
-                      {transaction.points > 0 ? '+' : ''}{transaction.points}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={transaction.type === 'earn' ? 'default' : 'secondary'}>
-                      {t(`transactions.types.${transaction.type}`)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{transaction.reason}</TableCell>
-                  <TableCell>{new Date(transaction.created_at).toLocaleDateString('ru-RU')}</TableCell>
+          <div className="overflow-x-auto">
+            <Table className="min-w-[720px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t('transactions.table.client')}</TableHead>
+                  <TableHead>{t('transactions.table.points')}</TableHead>
+                  <TableHead>{t('transactions.table.type')}</TableHead>
+                  <TableHead>{t('transactions.table.reason')}</TableHead>
+                  <TableHead>{t('transactions.table.date')}</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredTransactions.map((transaction) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{transaction.client_name}</div>
+                        <div className="text-sm text-gray-500">{transaction.client_email}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className={transaction.points > 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
+                        {transaction.points > 0 ? '+' : ''}{transaction.points}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={transaction.type === 'earn' ? 'default' : 'secondary'}>
+                        {t(`transactions.types.${transaction.type}`)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{transaction.reason}</TableCell>
+                    <TableCell>{new Date(transaction.created_at).toLocaleDateString('ru-RU')}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
@@ -549,7 +654,7 @@ export default function LoyaltyManagement() {
                 <Input
                   type="number"
                   value={editingTier.min_points}
-                  onChange={(e) => setEditingTier({ ...editingTier, min_points: parseInt(e.target.value) })}
+                  onChange={(e) => setEditingTier({ ...editingTier, min_points: parseIntegerOrFallback(e.target.value, editingTier.min_points) })}
                 />
               </div>
               <div>
@@ -557,7 +662,7 @@ export default function LoyaltyManagement() {
                 <Input
                   type="number"
                   value={editingTier.discount}
-                  onChange={(e) => setEditingTier({ ...editingTier, discount: parseInt(e.target.value) })}
+                  onChange={(e) => setEditingTier({ ...editingTier, discount: parseIntegerOrFallback(e.target.value, editingTier.discount) })}
                 />
               </div>
             </div>
@@ -593,7 +698,7 @@ export default function LoyaltyManagement() {
                 type="number"
                 step="0.1"
                 value={ruleForm.points_multiplier}
-                onChange={(e) => setRuleForm({ ...ruleForm, points_multiplier: parseFloat(e.target.value) })}
+                onChange={(e) => setRuleForm({ ...ruleForm, points_multiplier: parseNumberOrFallback(e.target.value, ruleForm.points_multiplier) })}
               />
             </div>
           </div>
@@ -628,7 +733,7 @@ export default function LoyaltyManagement() {
                 type="number"
                 placeholder={t('dialogs.adjust_points.points_placeholder')}
                 value={adjustForm.points}
-                onChange={(e) => setAdjustForm({ ...adjustForm, points: parseInt(e.target.value) })}
+                onChange={(e) => setAdjustForm({ ...adjustForm, points: parseIntegerOrFallback(e.target.value, adjustForm.points) })}
               />
             </div>
             <div>
