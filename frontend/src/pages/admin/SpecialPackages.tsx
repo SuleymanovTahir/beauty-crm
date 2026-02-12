@@ -2,8 +2,8 @@
 // frontend/src/pages/admin/SpecialPackages.tsx
 // Управление специальными пакетами и акциями
 
-import { useState, useEffect, useMemo } from 'react';
-import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, AlertCircle, Loader, Users, Target, Settings, ChevronRight, TrendingUp, ArrowUpDown, Ticket, Scissors } from 'lucide-react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, AlertCircle, Loader, Users, Target, Settings, ChevronRight, TrendingUp, ArrowUpDown, Ticket, Scissors, Trophy, type LucideIcon } from 'lucide-react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -99,6 +99,13 @@ interface SpecialPackagesProps {
   entryMode?: SpecialPackagesEntryMode;
 }
 
+interface EmbeddedSectionHeaderConfig {
+  Icon: LucideIcon;
+  title: string;
+  subtitle: string;
+  actionLabel: string;
+}
+
 const normalizeSectionParam = (value: string | null): SectionType => {
   if (value === 'promo-codes') {
     return 'promo-codes';
@@ -163,6 +170,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
   const [loading, setLoading] = useState(!isSingleSectionMode);
   const [saving, setSaving] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionType>(initialSection);
+  const [embeddedPrimaryActionHandler, setEmbeddedPrimaryActionHandler] = useState<(() => void) | null>(null);
   const [referralView, setReferralView] = useState<ReferralViewType>(() => {
     if (initialSection !== 'referrals') {
       return 'history';
@@ -796,6 +804,47 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
     }
   };
 
+  const handleEmbeddedPrimaryActionReady = useCallback((handler: (() => void) | null) => {
+    setEmbeddedPrimaryActionHandler(() => handler);
+  }, []);
+
+  useEffect(() => {
+    if (activeSection !== 'challenges' && activeSection !== 'loyalty' && activeSection !== 'promo-codes') {
+      setEmbeddedPrimaryActionHandler(null);
+    }
+  }, [activeSection]);
+
+  const embeddedSectionHeaderConfig = useMemo<EmbeddedSectionHeaderConfig | null>(() => {
+    if (activeSection === 'challenges') {
+      return {
+        Icon: Trophy,
+        title: t('admin/challenges:title', 'Челленджи'),
+        subtitle: t('admin/challenges:subtitle', 'Повышайте лояльность клиентов с помощью игровых механик и автоматических наград.'),
+        actionLabel: t('admin/challenges:buttons.add_challenge', 'Создать задание'),
+      };
+    }
+
+    if (activeSection === 'loyalty') {
+      return {
+        Icon: Gift,
+        title: t('adminpanel/loyaltymanagement:title'),
+        subtitle: t('adminpanel/loyaltymanagement:subtitle'),
+        actionLabel: t('adminpanel/loyaltymanagement:adjust_points', 'Изменить баланс баллов'),
+      };
+    }
+
+    if (activeSection === 'promo-codes') {
+      return {
+        Icon: Ticket,
+        title: t('admin/promocodes:title', 'Промокоды'),
+        subtitle: t('admin/promocodes:subtitle', 'Управление скидками и бонусными кодами для клиентов'),
+        actionLabel: t('admin/promocodes:create_btn', 'Создать промокод'),
+      };
+    }
+
+    return null;
+  }, [activeSection, t]);
+
   if (loading && activeSection === 'packages') {
     return (
       <div className="p-8 flex items-center justify-center h-screen">
@@ -891,6 +940,30 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
               ? `${t('admin/specialpackages:manage_promotional_offers')} ${filteredPackages.length} ${t('admin/specialpackages:packages')}`
               : t('adminpanel/referralprogram:subtitle')}
           </p>
+        </div>
+      )}
+
+      {embeddedSectionHeaderConfig !== null && (
+        <div className="mb-8">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0 lg:flex-1">
+              <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
+                <embeddedSectionHeaderConfig.Icon className="w-8 h-8 text-blue-600" />
+                {embeddedSectionHeaderConfig.title}
+              </h1>
+              <p className="text-gray-600">{embeddedSectionHeaderConfig.subtitle}</p>
+            </div>
+            {embeddedPrimaryActionHandler !== null && (
+              <Button
+                type="button"
+                onClick={embeddedPrimaryActionHandler}
+                className="w-full sm:w-auto lg:self-start bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm transition-all flex items-center gap-2 shrink-0"
+              >
+                <Plus className="w-4 h-4" />
+                {embeddedSectionHeaderConfig.actionLabel}
+              </Button>
+            )}
+          </div>
         </div>
       )}
 
@@ -1836,15 +1909,27 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
       )}
 
       {activeSection === 'challenges' && (
-        <UniversalChallenges embedded={true} />
+        <UniversalChallenges
+          embedded={true}
+          showEmbeddedHeader={false}
+          onEmbeddedPrimaryActionReady={handleEmbeddedPrimaryActionReady}
+        />
       )}
 
       {activeSection === 'loyalty' && (
-        <LoyaltyManagement embedded={true} />
+        <LoyaltyManagement
+          embedded={true}
+          showEmbeddedHeader={false}
+          onEmbeddedPrimaryActionReady={handleEmbeddedPrimaryActionReady}
+        />
       )}
 
       {activeSection === 'promo-codes' && (
-        <PromoCodes embedded={true} />
+        <PromoCodes
+          embedded={true}
+          showEmbeddedHeader={false}
+          onEmbeddedPrimaryActionReady={handleEmbeddedPrimaryActionReady}
+        />
       )}
     </div>
   );
