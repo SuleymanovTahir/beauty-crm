@@ -926,7 +926,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
             <Button
               type="button"
               onClick={embeddedPrimaryActionHandler}
-              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm transition-all flex items-center gap-2 shrink-0"
+              className="w-auto max-w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-10 sm:h-11 px-4 sm:px-6 text-sm sm:text-base font-semibold shadow-sm transition-all flex items-center gap-2 shrink-0 whitespace-normal leading-tight"
             >
               <Plus className="w-4 h-4" />
               {embeddedSectionHeaderConfig.actionLabel}
@@ -970,7 +970,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
               <Button
                 type="button"
                 onClick={embeddedPrimaryActionHandler}
-                className="w-full sm:w-auto lg:self-start bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm transition-all flex items-center gap-2 shrink-0"
+                className="w-auto max-w-full lg:self-start bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-10 sm:h-11 px-4 sm:px-6 text-sm sm:text-base font-semibold shadow-sm transition-all flex items-center gap-2 shrink-0 whitespace-normal leading-tight"
               >
                 <Plus className="w-4 h-4" />
                 {embeddedSectionHeaderConfig.actionLabel}
