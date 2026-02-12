@@ -26,6 +26,13 @@ const PendingRegistrations: React.FC = () => {
     const [editForm, setEditForm] = useState<{ full_name: string; email: string; role: string; phone: string }>({ full_name: '', email: '', role: '', phone: '' });
     const [savingEdit, setSavingEdit] = useState(false);
 
+    const getRoleLabel = (roleKey: string) => {
+        if (roleKey === 'sales') {
+            return t('common:role_saler', roleKey);
+        }
+        return t(`common:role_${roleKey}`, roleKey);
+    };
+
     const fetchPendingUsers = async () => {
         setLoading(true);
         setError(null);
@@ -315,7 +322,7 @@ const PendingRegistrations: React.FC = () => {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
-                                                    {t(`common:role_${user.role}`, user.role)}
+                                                    {getRoleLabel(user.role)}
                                                 </span>
                                                 {user.email_verified && (
                                                     <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex items-center gap-1">

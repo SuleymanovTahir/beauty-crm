@@ -9,7 +9,7 @@ from db import (
     get_all_services, get_service_by_key, create_service,
     update_service, delete_service, log_activity,
     get_all_special_packages, create_special_package,
-    update_special_package, delete_special_package
+    update_special_package, delete_special_package, get_special_package_by_id
 )
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
@@ -319,14 +319,28 @@ async def create_special_package_api(
     data = await request.json()
 
     try:
+        original_price = float(data.get('original_price'))
+        special_price = float(data.get('special_price'))
+        if original_price <= 0 or special_price < 0 or special_price >= original_price:
+            return JSONResponse({"error": "Invalid price range"}, status_code=400)
+
+        valid_from = data.get('valid_from')
+        valid_until = data.get('valid_until')
+        if not isinstance(valid_from, str) or len(valid_from) == 0:
+            return JSONResponse({"error": "valid_from is required"}, status_code=400)
+        if not isinstance(valid_until, str) or len(valid_until) == 0:
+            return JSONResponse({"error": "valid_until is required"}, status_code=400)
+        if valid_until < valid_from:
+            return JSONResponse({"error": "valid_until must be after valid_from"}, status_code=400)
+
         package_id = create_special_package(
             name=data.get('name'),
-            original_price=float(data.get('original_price')),
-            special_price=float(data.get('special_price')),
+            original_price=original_price,
+            special_price=special_price,
             currency=data.get('currency', get_salon_currency()),
             keywords=data.get('keywords', []),
-            valid_from=data.get('valid_from'),
-            valid_until=data.get('valid_until'),
+            valid_from=valid_from,
+            valid_until=valid_until,
             description=data.get('description'),
             services_included=data.get('services_included', []),
             promo_code=data.get('promo_code'),
@@ -362,6 +376,30 @@ async def update_special_package_api(
     data = await request.json()
 
     try:
+        if 'original_price' in data or 'special_price' in data or 'valid_from' in data or 'valid_until' in data:
+            existing_package = get_special_package_by_id(package_id)
+            if not existing_package:
+                return JSONResponse({"error": "Package not found"}, status_code=404)
+
+            def resolve_price(raw_value, fallback_value):
+                if raw_value is None:
+                    return float(fallback_value)
+                if isinstance(raw_value, str) and len(raw_value.strip()) == 0:
+                    return float(fallback_value)
+                return float(raw_value)
+
+            resolved_original_price = resolve_price(data.get('original_price'), existing_package[3])
+            resolved_special_price = resolve_price(data.get('special_price'), existing_package[4])
+
+            if resolved_original_price <= 0 or resolved_special_price < 0 or resolved_special_price >= resolved_original_price:
+                return JSONResponse({"error": "Invalid price range"}, status_code=400)
+
+            resolved_valid_from = data.get('valid_from', existing_package[10])
+            resolved_valid_until = data.get('valid_until', existing_package[11])
+            if isinstance(resolved_valid_from, str) and isinstance(resolved_valid_until, str):
+                if len(resolved_valid_from) > 0 and len(resolved_valid_until) > 0 and resolved_valid_until < resolved_valid_from:
+                    return JSONResponse({"error": "valid_until must be after valid_from"}, status_code=400)
+
         update_special_package(package_id, **data)
         log_activity(user["id"], "update_special_package", "package",
                      str(package_id), "Package updated")

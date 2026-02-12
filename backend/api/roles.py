@@ -7,12 +7,11 @@ from typing import Optional
 
 from db import (
     get_all_roles, create_custom_role, delete_custom_role,
-    get_role_permissions, update_role_permissions, 
-    check_user_permission, AVAILABLE_PERMISSIONS, log_activity
+    get_role_permissions, update_role_permissions,
+    log_activity
 )
-from utils.utils import require_auth
 from utils.permissions import require_permission
-from utils.logger import log_error
+from core.config import PERMISSION_DESCRIPTIONS
 
 router = APIRouter(tags=["Roles"])
 
@@ -119,7 +118,7 @@ async def get_role_permissions_api(
     return {
         "role_key": role_key,
         "permissions": permissions,
-        "available_permissions": AVAILABLE_PERMISSIONS
+        "available_permissions": PERMISSION_DESCRIPTIONS
     }
     
 
@@ -154,7 +153,7 @@ async def list_available_permissions(session_token: Optional[str] = Cookie(None)
     return {
         "permissions": [
             {"key": key, "name": name}
-            for key, name in AVAILABLE_PERMISSIONS.items()
+            for key, name in PERMISSION_DESCRIPTIONS.items()
         ]
     }
     

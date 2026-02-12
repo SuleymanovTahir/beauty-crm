@@ -2106,3 +2106,78 @@ format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
 - `frontend/src/pages/shared/Settings.css` - MODIFIED
 - `frontend/src/styles/crm-pages.css` - MODIFIED
 - `frontend/src/locales/*/admin/settings.json` - MODIFIED
+
+## 2026-02-12: Исправление RBAC и устранение дублей в special-packages
+
+### ПРОБЛЕМА
+1. В системе ролей/прав были несогласованные ключи и проверки (`saler` vs `sales`, невалидные permission-ключи в API, несовпадение endpoint для списка прав).
+2. В назначении ролей и управлении custom permissions были риски некорректной валидации и падений при edge-case сценариях.
+3. На `/crm/special-packages` во вкладке рефералов визуально дублировались блоки кампаний, а таблица истории была недостаточно адаптивной.
+
+### РЕШЕНИЕ
+1. **RBAC backend стабилизирован**:
+   - Добавлена нормализация legacy-ролей (`saler` -> `sales`) в `core/config.py` и `utils/permissions.py`.
+   - Исправлены проверки доступа в `api/permissions.py` (`roles_edit`/`roles_view`), добавлен корректный resolver ключей прав.
+   - Исправлена валидация назначения роли в `api/users.py` с учетом custom roles и иерархии.
+   - Источником списка доступных прав сделан `PERMISSION_DESCRIPTIONS` (SSOT) в `api/roles.py`.
+2. **RBAC frontend синхронизирован**:
+   - Роутинг и role-matching унифицированы на `sales` с обратной совместимостью для legacy `/saler/*`.
+   - Исправлены отображения роли продаж в UI через существующий ключ `role_saler`.
+   - Обновлен клиентский endpoint списка прав на `/api/roles/permissions/available`.
+3. **Special Packages (referrals) доработан**:
+   - Убрано дублирование пустых/списковых блоков кампаний во вкладке рефералов.
+   - Улучшена адаптивность фильтров и таблицы истории (горизонтальный скролл, скрытие служебной колонки на mobile).
+
+### ВАЖНО ПОМНИТЬ
+- Для ролей использовать канонический ключ `sales`; `saler` поддерживать только как legacy alias.
+- Любые permission-декораторы должны ссылаться только на ключи из `PERMISSION_DESCRIPTIONS`.
+- Для списка прав в UI использовать единый endpoint `/api/roles/permissions/available`.
+- В special-packages пустое состояние кампаний и список кампаний должны рендериться в одном контейнере, чтобы не возникало визуального дубля.
+
+### ФАЙЛЫ
+- `backend/core/config.py` - MODIFIED
+- `backend/utils/permissions.py` - MODIFIED
+- `backend/api/permissions.py` - MODIFIED
+- `backend/api/users.py` - MODIFIED
+- `backend/api/roles.py` - MODIFIED
+- `frontend/src/utils/permissions.ts` - MODIFIED
+- `frontend/src/App.tsx` - MODIFIED
+- `frontend/src/components/layouts/UniversalLayout.tsx` - MODIFIED
+- `frontend/src/pages/admin/SpecialPackages.tsx` - MODIFIED
+- `frontend/src/services/api.ts` - MODIFIED
+- `frontend/src/api/client.ts` - MODIFIED
+
+## 2026-02-12: Проверка и усиление маркетинговых сценариев (promo/packages/challenges)
+
+### ПРОБЛЕМА
+1. В special-packages оставались сценарии, где числовые поля могли дать `NaN` и привести к ошибкам сохранения.
+2. В API промокодов отсутствовала строгая серверная валидация (диапазоны скидки, даты, лимиты).
+3. В клиентском endpoint `/api/client/achievements` прогресс челленджей читался из legacy-полей (`progress`, `user_id`) и ломался при текущей схеме (`current_value`, `client_id`).
+4. Для спецпакетов требовалась дополнительная защита на backend от некорректных цен/дат при create/update.
+
+### РЕШЕНИЕ
+1. В `SpecialPackages.tsx` добавлен безопасный парсинг числовых полей и дополнительные проверки перед сохранением пакетов, настроек рефералки и кампаний.
+2. В `api/promo_codes.py` добавлена валидация payload при создании промокода:
+   - code обязателен;
+   - `discount_type` только `percent|fixed`;
+   - `value > 0`, для `%` не более 100;
+   - `min_amount >= 0`, `max_uses >= 1` (если задан);
+   - `valid_until >= valid_from`.
+3. В `db/promo_codes.py` проверка промокода дополнена `valid_from` (промокод еще не активен) и нормализацией пустого кода.
+4. В `client_auth.py` чтение челленджей и прогресса сделано schema-aware (определение колонок через `information_schema`) с поддержкой обеих схем.
+5. В `api/services.py` сохранена и расширена серверная валидация спецпакетов (цены/даты) для create/update.
+
+### ВАЖНО ПОМНИТЬ
+- Критические бизнес-валидации (цены, скидки, даты, лимиты) должны дублироваться на backend даже при наличии frontend-проверок.
+- Для таблиц с legacy-историей (`active_challenges`, `challenge_progress`) API должен адаптироваться к реальной схеме, а не полагаться на фиксированные имена колонок.
+
+### ФАЙЛЫ
+- `frontend/src/pages/admin/SpecialPackages.tsx` - MODIFIED
+- `frontend/src/pages/admin/PromoCodes.tsx` - MODIFIED
+- `frontend/src/pages/shared/Challenges.tsx` - MODIFIED
+- `frontend/src/services/api.ts` - MODIFIED
+- `backend/api/services.py` - MODIFIED
+- `backend/api/promo_codes.py` - MODIFIED
+- `backend/db/promo_codes.py` - MODIFIED
+- `backend/api/admin_features.py` - MODIFIED
+- `backend/api/client_auth.py` - MODIFIED

@@ -606,7 +606,7 @@ export default function Register() {
                   <SelectItem value="manager">{t('role_manager')}</SelectItem>
                   <SelectItem value="admin">{t('role_admin')}</SelectItem>
                   <SelectItem value="director">{t('role_director')}</SelectItem>
-                  <SelectItem value="sales">{t('role_sales')}</SelectItem>
+                  <SelectItem value="sales">{t('role_saler')}</SelectItem>
                   <SelectItem value="marketer">{t('role_marketer')}</SelectItem>
                 </SelectContent>
               </Select>

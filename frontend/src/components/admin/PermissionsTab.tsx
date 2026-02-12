@@ -46,6 +46,14 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
   const [selectedRole, setSelectedRole] = useState<string>('');
   const [customPermissions, setCustomPermissions] = useState<Record<string, boolean>>({});
 
+  const getRoleLabel = (roleKey: string, fallback?: string) => {
+    const defaultLabel = fallback ?? roleKey;
+    if (roleKey === 'sales') {
+      return t('common:role_saler', defaultLabel);
+    }
+    return t(`common:role_${roleKey}`, defaultLabel);
+  };
+
   useEffect(() => {
     loadData();
   }, [userId]);
@@ -150,10 +158,10 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
         <div className="space-y-6">
           <div>
             <Label>{t('admin-components:current_role')}</Label>
-            <div className="mt-2 p-4 bg-pink-50 border border-pink-200 rounded-lg">
-              <p className="text-lg font-semibold text-gray-900">
-                {t(`common:role_${userPermissions.user.role}`)}
-              </p>
+                <div className="mt-2 p-4 bg-pink-50 border border-pink-200 rounded-lg">
+                  <p className="text-lg font-semibold text-gray-900">
+                    {getRoleLabel(userPermissions.user.role, userPermissions.role_info.name)}
+                  </p>
               <p className="text-sm text-gray-600">
                 {t('admin-components:hierarchy_level')}: {userPermissions.role_info.hierarchy_level}
               </p>
@@ -168,13 +176,13 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
               onChange={(e) => setSelectedRole(e.target.value)}
               disabled={saving}
               className="mt-2 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-600 focus:border-transparent"
-            >
-              {Object.entries(allRoles).map(([roleKey, roleData]) => (
-                <option key={roleKey} value={roleKey}>
-                  {t(`common:role_${roleKey}`)} ({t('common:level')}: {roleData.hierarchy_level})
-                </option>
-              ))}
-            </select>
+              >
+                {Object.entries(allRoles).map(([roleKey, roleData]) => (
+                  <option key={roleKey} value={roleKey}>
+                    {getRoleLabel(roleKey, roleData.name)} ({t('common:level')}: {roleData.hierarchy_level})
+                  </option>
+                ))}
+              </select>
           </div>
 
           {selectedRole !== userPermissions.user.role && (
@@ -368,7 +376,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
                 key={role}
                 className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
               >
-                {t(`common:role_${role}`) || allRoles[role]?.name || role}
+                {getRoleLabel(role, allRoles[role]?.name)}
               </span>
             ))}
           </div>

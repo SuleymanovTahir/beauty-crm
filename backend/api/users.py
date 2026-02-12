@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 
 import time
-from db import get_all_users, delete_user, log_activity
+from db import get_all_users, delete_user, log_activity, get_all_roles
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.utils import require_auth, sanitize_url, map_image_path, hash_password
@@ -81,9 +81,17 @@ async def create_user_api(
     password = data.get('password', '')
     full_name = data.get('full_name', '').strip()
     email = data.get('email', '').strip() or None
-    role = data.get('role', 'employee')
+    from core.config import normalize_role_key
+    role = normalize_role_key(data.get('role', 'employee'))
     position = data.get('position', '').strip() or None
     phone = data.get('phone', '').strip() or ""
+
+    existing_roles = {role_data['role_key'] for role_data in get_all_roles()}
+    if role not in existing_roles:
+        return JSONResponse(
+            {"error": "Неверная роль пользователя"},
+            status_code=400
+        )
 
     # 🔒 Иерархия: Админ не может создавать других админов или директоров
     if user["role"] == "admin" and role in ["admin", "director"]:
@@ -488,32 +496,41 @@ async def update_user_role(
     user = get_current_user_from_token(session_token)
     
     # Проверяем что пользователь может управлять ролями
-    from core.config import ROLES, can_manage_role
+    from core.config import ROLES, can_manage_role, normalize_role_key
     from utils.logger import log_info, log_warning
     
     if user["id"] == user_id:
         return JSONResponse({"error": "Нельзя изменить свою роль"}, status_code=400)
     
     data = await request.json()
-    new_role = data.get('role')
+    new_role = normalize_role_key(data.get('role'))
+    existing_roles_data = get_all_roles()
+    existing_roles = {role_data["role_key"] for role_data in existing_roles_data}
+    role_labels = {role_data["role_key"]: role_data["role_name"] for role_data in existing_roles_data}
     
     # Детальное логирование для отладки
     log_info(f"🔄 Role change request: user_id={user_id}, new_role={new_role}, by={user['username']}", "api")
-    log_info(f"📋 Available roles: {list(ROLES.keys())}", "api")
+    log_info(f"📋 Available roles: {list(existing_roles)}", "api")
     
-    if not new_role or new_role not in ROLES:
-        log_warning(f"❌ Invalid role received: '{new_role}'. Available: {list(ROLES.keys())}", "api")
+    if not new_role or new_role not in existing_roles:
+        log_warning(f"❌ Invalid role received: '{new_role}'. Available: {list(existing_roles)}", "api")
         return JSONResponse({
-            "error": f"Неверная роль. Доступные роли: {', '.join(ROLES.keys())}"
+            "error": f"Неверная роль. Доступные роли: {', '.join(sorted(existing_roles))}"
         }, status_code=400)
     
     # Директор может назначить любую роль
     if user["role"] != "director":
+        if new_role not in ROLES:
+            return JSONResponse(
+                {"error": "Назначать кастомные роли может только директор"},
+                status_code=403
+            )
+
         # Проверяем может ли текущий пользователь назначить эту роль
-        if not can_manage_role(user["role"], new_role):
+        if not can_manage_role(user["role"], new_role, user.get("secondary_role")):
             log_warning(f"⛔ {user['username']} ({user['role']}) cannot assign role '{new_role}'", "api")
             return JSONResponse(
-                {"error": f"У вас нет прав назначать роль '{ROLES[new_role]['name']}'"}, 
+                {"error": f"У вас нет прав назначать роль '{role_labels.get(new_role, new_role)}'"}, 
                 status_code=403
             )
     
@@ -531,7 +548,7 @@ async def update_user_role(
             conn.close()
             return {
                 "success": True, 
-                "message": f"Роль изменена на '{ROLES[new_role]['name']}'"
+                "message": f"Роль изменена на '{role_labels.get(new_role, new_role)}'"
             }
         else:
             conn.close()

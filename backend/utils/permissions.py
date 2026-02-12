@@ -22,7 +22,7 @@ from functools import wraps
 from fastapi import Cookie
 from fastapi.responses import JSONResponse
 
-from core.config import ROLES, has_permission as config_has_permission
+from core.config import ROLES, has_permission as config_has_permission, normalize_role_key
 from utils.logger import log_info, log_error
 from db.connection import get_db_connection
 
@@ -40,7 +40,8 @@ class RoleHierarchy:
         Returns:
             int: Уровень иерархии (100 для director, 80 для admin, и т.д.)
         """
-        return ROLES.get(role, {}).get('hierarchy_level', 0)
+        normalized_role = normalize_role_key(role)
+        return ROLES.get(normalized_role, {}).get('hierarchy_level', 0)
 
     @staticmethod
     def can_manage_role(manager_role: str, target_role: str, secondary_role: str = None) -> bool:
@@ -107,7 +108,8 @@ class RoleHierarchy:
         """
         Получить все права роли + переопределения из БД
         """
-        role_data = ROLES.get(role, {})
+        normalized_role = normalize_role_key(role)
+        role_data = ROLES.get(normalized_role, {})
         permissions = role_data.get('permissions', [])
 
         if permissions == '*':
@@ -132,7 +134,8 @@ class RoleHierarchy:
         assigner_role: str,
         assigner_id: int,
         target_user_id: int,
-        new_role: str
+        new_role: str,
+        secondary_role: Optional[str] = None
     ) -> Tuple[bool, str]:
         """
         Комплексная проверка возможности назначения роли
@@ -159,15 +162,16 @@ class RoleHierarchy:
             return False, "Нельзя изменить свою собственную роль"
 
         # 2. Проверка существования роли
-        if new_role not in ROLES:
+        normalized_new_role = normalize_role_key(new_role)
+        if normalized_new_role not in ROLES:
             return False, f"Роль '{new_role}' не существует"
 
         # 3. Проверка права управлять этой ролью
-        if not RoleHierarchy.can_manage_role(assigner_role, new_role, kwargs.get('secondary_role')):
-            return False, f"У вас нет прав для назначения роли '{ROLES[new_role]['name']}'"
+        if not RoleHierarchy.can_manage_role(assigner_role, normalized_new_role, secondary_role):
+            return False, f"У вас нет прав для назначения роли '{ROLES[normalized_new_role]['name']}'"
 
         # 4. Проверка, что не назначаем роль выше своей
-        if not RoleHierarchy.can_assign_higher_role(assigner_role, new_role):
+        if not RoleHierarchy.can_assign_higher_role(assigner_role, normalized_new_role):
             return False, "Нельзя назначать роль выше своей"
 
         return True, ""
@@ -547,7 +551,15 @@ def grant_user_permission(user_id: int, resource: str, granted_by_id: int) -> bo
         conn = get_db_connection()
         c = conn.cursor()
 
-        if not can_access_resource(granted_by_id, 'manage_permissions', 'create'):
+        c.execute("SELECT role, secondary_role FROM users WHERE id = %s", (granted_by_id,))
+        granter_row = c.fetchone()
+        if not granter_row:
+            conn.close()
+            return False
+
+        granter_role = normalize_role_key(granter_row[0])
+        granter_secondary_role = normalize_role_key(granter_row[1]) if granter_row[1] else None
+        if not RoleHierarchy.has_permission(granter_role, 'roles_edit', granter_secondary_role, granted_by_id):
             log_error(f"User {granted_by_id} не может давать права", "permissions")
             conn.close()
             return False
@@ -575,7 +587,15 @@ def revoke_user_permission(user_id: int, resource: str, revoked_by_id: int) -> b
         conn = get_db_connection()
         c = conn.cursor()
 
-        if not can_access_resource(revoked_by_id, 'manage_permissions', 'delete'):
+        c.execute("SELECT role, secondary_role FROM users WHERE id = %s", (revoked_by_id,))
+        granter_row = c.fetchone()
+        if not granter_row:
+            conn.close()
+            return False
+
+        granter_role = normalize_role_key(granter_row[0])
+        granter_secondary_role = normalize_role_key(granter_row[1]) if granter_row[1] else None
+        if not RoleHierarchy.has_permission(granter_role, 'roles_edit', granter_secondary_role, revoked_by_id):
             log_error(f"User {revoked_by_id} не может забирать права", "permissions")
             conn.close()
             return False
@@ -603,7 +623,7 @@ def can_approve_users(user_id: int) -> bool:
 
 def can_manage_permissions(user_id: int) -> bool:
     """Может ли пользователь управлять правами других пользователей"""
-    return can_access_resource(user_id, 'manage_permissions', 'edit')
+    return check_user_permission(user_id, 'roles_edit') or can_access_resource(user_id, 'manage_permissions', 'edit')
 
 def can_export_data(user_id: int) -> bool:
     """Может ли пользователь экспортировать данные"""
