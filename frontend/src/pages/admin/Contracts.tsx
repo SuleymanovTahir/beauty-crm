@@ -201,8 +201,8 @@ const Contracts = () => {
     const canManageTypes = ['admin', 'director'].includes(userRole);
 
     return (
-        <div className="crm-page crm-calendar-theme p-0 bg-gray-50/50 flex flex-col h-full overflow-hidden">
-            <div className="px-8 py-6 bg-white border-b sticky top-0 z-20 shadow-sm">
+        <div className="crm-page crm-calendar-theme crm-calendar-page crm-calendar-contracts p-0 bg-gray-50/50 flex flex-col h-full overflow-hidden">
+            <div className="crm-calendar-toolbar px-8 py-6 bg-white border-b sticky top-0 z-20 shadow-sm">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
@@ -326,7 +326,7 @@ const Contracts = () => {
                         {contractStages.map(stage => (
                             <div
                                 key={stage.id}
-                                className="w-80 flex flex-col h-full bg-gray-100/50 rounded-xl border border-gray-200/60"
+                                className="crm-calendar-column w-80 flex flex-col h-full bg-gray-100/50 rounded-xl border border-gray-200/60"
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, stage.id)}
                             >
@@ -356,7 +356,7 @@ const Contracts = () => {
                                             key={contract.id}
                                             draggable
                                             onDragStart={(e) => handleDragStart(e, contract.id)}
-                                            className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing group relative"
+                                            className="crm-calendar-panel bg-white p-4 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing group relative"
                                         >
                                             <div className="flex items-start justify-between mb-2">
                                                 <div className="flex items-center gap-1.5 text-xs font-medium text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full">
@@ -411,7 +411,7 @@ const Contracts = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="h-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+                    <div className="crm-calendar-panel h-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
                         <div className="flex-1 overflow-auto">
                             <table className="crm-table w-full">
                                 <thead className="sticky top-0 bg-gray-50 z-10 shadow-sm">

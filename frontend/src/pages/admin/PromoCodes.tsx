@@ -131,9 +131,9 @@ export default function PromoCodes() {
     );
 
     return (
-        <div className="crm-calendar-theme p-4 sm:p-8 max-w-7xl mx-auto min-h-screen bg-[#fafafa]">
+        <div className="crm-calendar-theme crm-calendar-page crm-calendar-promocodes p-4 sm:p-8 max-w-7xl mx-auto min-h-screen bg-[#fafafa]">
             {/* Header section with glassmorphism feel */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div className="crm-calendar-toolbar flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
                     <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
                         <div className="p-2 bg-pink-100 rounded-xl text-pink-600">
@@ -157,7 +157,7 @@ export default function PromoCodes() {
 
             {/* Stats Quick View */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div className="crm-calendar-panel bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                         <Activity size={24} />
                     </div>
@@ -167,7 +167,7 @@ export default function PromoCodes() {
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div className="crm-calendar-panel bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center">
                         <Zap size={24} />
                     </div>
@@ -177,7 +177,7 @@ export default function PromoCodes() {
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div className="crm-calendar-panel bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4">
                     <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
                         <Gift size={24} />
                     </div>
@@ -201,12 +201,12 @@ export default function PromoCodes() {
 
             {/* Promo Codes List */}
             {loading ? (
-                <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-gray-100">
+                <div className="crm-calendar-panel flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-gray-100">
                     <Loader className="w-10 h-10 text-pink-600 animate-spin mb-4" />
                     <p className="text-gray-500 font-medium">{t('loading', 'Загружаем промокоды...')}</p>
                 </div>
             ) : filteredCodes.length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                <div className="crm-calendar-panel text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
                     <Tag className="w-16 h-16 text-gray-200 mx-auto mb-4" />
                     <h3 className="text-xl font-bold text-gray-900">{t('not_found', 'Промокоды не найдены')}</h3>
                     <p className="text-gray-500 mt-2">{t('not_found_desc', 'Создайте свой первый промокод, чтобы привлечь больше клиентов!')}</p>
@@ -216,7 +216,7 @@ export default function PromoCodes() {
                     {filteredCodes.map((promo) => (
                         <div
                             key={promo.id}
-                            className={`group bg-white rounded-[32px] border border-gray-100 p-8 shadow-sm hover:shadow-xl hover:shadow-pink-50 transition-all duration-300 relative overflow-hidden ${!promo.is_active && 'opacity-70'}`}
+                            className={`crm-calendar-panel group bg-white rounded-[32px] border border-gray-100 p-8 shadow-sm hover:shadow-xl hover:shadow-pink-50 transition-all duration-300 relative overflow-hidden ${!promo.is_active && 'opacity-70'}`}
                         >
                             {/* Status Indicator */}
                             <div className="absolute top-0 right-0 p-6 flex gap-2">

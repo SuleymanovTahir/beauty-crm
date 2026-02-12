@@ -122,8 +122,8 @@ const Products = () => {
     };
 
     return (
-        <div className="crm-page crm-calendar-theme p-0 bg-gray-50/50 flex flex-col h-full overflow-hidden">
-            <div className="px-8 py-6 bg-white border-b sticky top-0 z-20 shadow-sm">
+        <div className="crm-page crm-calendar-theme crm-calendar-page crm-calendar-products p-0 bg-gray-50/50 flex flex-col h-full overflow-hidden">
+            <div className="crm-calendar-toolbar px-8 py-6 bg-white border-b sticky top-0 z-20 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
@@ -185,7 +185,7 @@ const Products = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {filteredAndSortedProducts.map((product) => (
-                            <div key={product.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group overflow-hidden flex flex-col">
+                            <div key={product.id} className="crm-calendar-panel bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group overflow-hidden flex flex-col">
                                 <div
                                     className="aspect-square bg-gray-50 relative cursor-pointer overflow-hidden"
                                     onClick={() => {

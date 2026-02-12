@@ -9,8 +9,22 @@
   - Added delete service action with confirmation and refresh flow.
   - Kept employee-specific history/request flow intact.
 - Added SSOT page styles to `frontend/src/styles/crm-pages.css` under `crm-services-*` classes (no new style file created).
+- Typography refinement:
+  - Reduced header/table/control font sizes on `/crm/services` to remove oversized rendering and align with CRM proportions.
+- i18n key fix:
+  - Replaced missing key usage `admin/services:service_name` with existing dictionary key `admin/services:name` in services table/header form.
+- CRM services visual/text parity (target screenshot):
+  - Referrals tab label switched to existing key `layouts/adminpanellayout:menu.referral_program` (`Реферальная программа` in RU).
+  - Service names in table now use existing canonical EN dictionary values via `public_landing/services:items.<service_key>.name` with DB fallback.
+  - Status table header now renders as lowercase `status` using existing `common:status` EN translation.
+  - Further reduced typography/spacing in `frontend/src/styles/crm-pages.css` to match compact legacy scale.
+- Challenges API compatibility hardening:
+  - Updated `backend/api/admin_features.py` to support both legacy and extended `active_challenges` schemas (dynamic column detection).
+  - Added `GET /api/admin/challenges/stats` endpoint to eliminate 405 for stats polling from CRM challenges page.
+  - Fixed admin challenge list query so it no longer crashes on missing `challenge_type/bonus_points/start_date/end_date` columns.
 - Verification:
   - `frontend`: `npm run lint` (TypeScript strict check) passed.
+  - `backend`: `python3 -m py_compile backend/api/admin_features.py` passed.
 
 ## [2026-02-12] Booking Flow Stability & Validation Hardening
 - 🔧 **Critical Booking API Route Fixes**:

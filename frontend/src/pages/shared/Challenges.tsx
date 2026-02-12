@@ -200,7 +200,7 @@ export default function UniversalChallenges() {
     ];
 
     return (
-        <div className="crm-calendar-theme min-h-screen bg-gray-50/30 p-4 sm:p-8 animate-in fade-in duration-500">
+        <div className="crm-calendar-theme crm-calendar-page crm-calendar-challenges min-h-screen bg-gray-50/30 p-4 sm:p-8 animate-in fade-in duration-500">
             <div className="max-w-6xl mx-auto space-y-8">
                 {/* Back Navigation */}
                 <button
@@ -214,7 +214,7 @@ export default function UniversalChallenges() {
                 </button>
 
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                <div className="crm-calendar-toolbar flex flex-col md:flex-row md:items-start justify-between gap-6">
                     <div className="space-y-3">
                         <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-[0.2em]">
                             <Sparkles className="w-2.5 h-2.5" />
@@ -253,7 +253,7 @@ export default function UniversalChallenges() {
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {statsCards.map((stat, idx) => (
-                        <Card key={idx} className="border-none shadow-sm bg-white rounded-2xl transition-all hover:shadow-md duration-300 overflow-hidden">
+                        <Card key={idx} className="crm-calendar-panel border-none shadow-sm bg-white rounded-2xl transition-all hover:shadow-md duration-300 overflow-hidden">
                             <CardContent className="p-5 flex items-center gap-5">
                                 <div className={`w-14 h-14 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center shrink-0`}>
                                     <stat.icon className="w-7 h-7" />
@@ -273,7 +273,7 @@ export default function UniversalChallenges() {
                 {/* List of Challenges */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {challenges.map((challenge) => (
-                        <div key={challenge.id} className="group bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 p-8 relative overflow-hidden flex flex-col gap-6">
+                        <div key={challenge.id} className="crm-calendar-panel group bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 p-8 relative overflow-hidden flex flex-col gap-6">
                             <div className="flex justify-between items-start">
                                 <div className="flex flex-wrap items-center gap-2">
                                     <Badge className={`${challenge.is_active || challenge.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-gray-50 text-gray-400 border-gray-100'} px-2 py-1 font-bold text-[9px] uppercase tracking-wider border shadow-none`}>
@@ -353,7 +353,7 @@ export default function UniversalChallenges() {
                     ))}
 
                     {challenges.length === 0 && !loading && (
-                        <div className="col-span-full py-20 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
+                        <div className="crm-calendar-panel col-span-full py-20 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
                             <Zap className="w-12 h-12 text-gray-200 mx-auto mb-4 animate-pulse" />
                             <h3 className="text-xl font-black text-gray-900 mb-1">{t('empty.title', 'Челленджи не настроены')}</h3>
                             <p className="text-gray-400 max-w-sm mx-auto font-medium mb-8 px-8 text-sm">

@@ -796,6 +796,70 @@
   background: linear-gradient(135deg, var(--crm-calendar-bg-start) 0%, var(--crm-calendar-bg-mid) 52%, var(--crm-calendar-bg-end) 100%);
 }
 
+.crm-calendar-page .crm-calendar-toolbar {
+  backdrop-filter: blur(8px);
+}
+
+.crm-calendar-products .crm-calendar-toolbar,
+.crm-calendar-contracts .crm-calendar-toolbar,
+.crm-calendar-invoices .crm-calendar-toolbar {
+  background: linear-gradient(90deg, #f8fbff 0%, #eff6ff 48%, #fdf2f8 100%);
+  border-bottom-color: #c9daf4;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12);
+}
+
+.crm-calendar-promocodes .crm-calendar-toolbar,
+.crm-calendar-referrals .crm-calendar-toolbar,
+.crm-calendar-challenges .crm-calendar-toolbar,
+.crm-calendar-service-requests .crm-calendar-toolbar {
+  background: linear-gradient(90deg, rgba(219, 234, 254, 0.7) 0%, rgba(255, 255, 255, 0.9) 52%, rgba(252, 231, 243, 0.72) 100%);
+  border: 1px solid #dbeafe;
+  border-radius: 1.25rem;
+  padding: 1.125rem 1.25rem;
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.11);
+}
+
+.crm-calendar-page .crm-calendar-toolbar .bg-gray-100,
+.crm-calendar-page .crm-calendar-toolbar .bg-gray-100\/50 {
+  background: linear-gradient(90deg, #dbeafe 0%, #fce7f3 100%);
+  border-color: #bfdbfe;
+}
+
+.crm-calendar-page .crm-calendar-toolbar .bg-white {
+  background-color: rgba(255, 255, 255, 0.94);
+}
+
+.crm-calendar-page .crm-calendar-panel {
+  border-color: #dbeafe;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 26px rgba(37, 99, 235, 0.08);
+}
+
+.crm-calendar-page .crm-calendar-panel:hover {
+  box-shadow: 0 16px 36px rgba(37, 99, 235, 0.14);
+}
+
+.crm-calendar-page .crm-calendar-column {
+  background: linear-gradient(180deg, #eef4ff 0%, #f8fbff 100%);
+  border-color: #c9daf4;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.crm-calendar-page .crm-calendar-panel thead,
+.crm-calendar-page thead.bg-gray-50,
+.crm-calendar-page .bg-gray-50\/50 {
+  background: linear-gradient(90deg, #eff6ff 0%, #fdf2f8 100%);
+}
+
+.crm-calendar-page .crm-calendar-panel tr.hover\:bg-gray-50:hover,
+.crm-calendar-page .crm-calendar-panel .hover\:bg-gray-50:hover {
+  background-color: #eef4ff;
+}
+
+.crm-calendar-page .border-dashed {
+  border-color: #bfdbfe;
+}
+
 .crm-calendar-theme .text-gray-900 {
   color: #0f172a;
 }
@@ -1280,10 +1344,10 @@
 
 /* Services page layout matching CRM legacy structure */
 .crm-services-page {
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   min-height: 100%;
   background: #f4f5f7;
 }
@@ -1305,29 +1369,29 @@
 .crm-services-header {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .crm-services-title {
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 2.15rem;
+  gap: 0.6rem;
+  font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: #141b2d;
 }
 
 .crm-services-title-icon {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2rem;
+  height: 2rem;
   color: #ec008c;
 }
 
 .crm-services-subtitle {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: 1rem;
   font-weight: 500;
   color: #4c596b;
 }
@@ -1344,8 +1408,8 @@
 .crm-services-tabs-card {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
+  gap: 0.65rem;
+  padding: 0.65rem;
   overflow-x: auto;
 }
 
@@ -1353,12 +1417,12 @@
   border: 0;
   background: transparent;
   border-radius: 0.9rem;
-  padding: 0.9rem 1.2rem;
+  padding: 0.8rem 1.05rem;
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.55rem;
   color: #4b5565;
-  font-size: 1.12rem;
+  font-size: 0.95rem;
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
@@ -1379,15 +1443,15 @@
 }
 
 .crm-services-tab-icon {
-  width: 1.65rem;
-  height: 1.65rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .crm-services-controls-card {
-  padding: 1.5rem;
+  padding: 1.2rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
 .crm-services-search-wrap {
@@ -1400,19 +1464,19 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  width: 1.45rem;
-  height: 1.45rem;
+  width: 1.3rem;
+  height: 1.3rem;
   color: #8993a4;
   pointer-events: none;
 }
 
 .crm-services-search-input {
-  height: 3.4rem;
+  height: 3.05rem;
   border: 1px solid #ddd5cf;
   background: #efe8e2;
   border-radius: 0.85rem;
-  padding-left: 3rem;
-  font-size: 1.04rem;
+  padding-left: 2.75rem;
+  font-size: 0.97rem;
   color: #3b4453;
 }
 
@@ -1424,18 +1488,18 @@
 
 .crm-services-category-select-wrap {
   position: relative;
-  min-width: 16rem;
+  min-width: 15rem;
 }
 
 .crm-services-category-select {
   width: 100%;
-  height: 3.4rem;
+  height: 3.05rem;
   border: 1px solid #ddd5cf;
   background: #efe8e2;
   border-radius: 0.85rem;
   padding: 0 2.6rem 0 1rem;
   appearance: none;
-  font-size: 1rem;
+  font-size: 0.96rem;
   color: #2f3745;
 }
 
@@ -1451,13 +1515,13 @@
 }
 
 .crm-services-add-button {
-  height: 3.4rem;
+  height: 3.05rem;
   border: 0;
   border-radius: 0.85rem;
-  padding: 0 1.4rem;
+  padding: 0 1.2rem;
   background: #ec008c;
   color: #ffffff;
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
@@ -1496,17 +1560,17 @@
 
 .crm-services-table th {
   text-align: left;
-  padding: 1.15rem 1.5rem;
+  padding: 1rem 1.35rem;
   color: #4b5565;
-  font-size: 1.2rem;
+  font-size: 0.96rem;
   font-weight: 700;
 }
 
 .crm-services-table td {
-  padding: 1.2rem 1.5rem;
+  padding: 1.05rem 1.35rem;
   border-bottom: 1px solid #e6e9ef;
   color: #111827;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 500;
   vertical-align: middle;
 }
@@ -1528,8 +1592,8 @@
 }
 
 .crm-services-sort-icon {
-  width: 1.1rem;
-  height: 1.1rem;
+  width: 1rem;
+  height: 1rem;
   color: #98a2b3;
 }
 
@@ -1549,8 +1613,8 @@
   align-items: center;
   gap: 0.4rem;
   border-radius: 999px;
-  padding: 0.26rem 0.66rem;
-  font-size: 0.95rem;
+  padding: 0.24rem 0.6rem;
+  font-size: 0.84rem;
   line-height: 1;
   font-weight: 600;
 }
@@ -1562,8 +1626,8 @@
 }
 
 .crm-services-duration-icon {
-  width: 1rem;
-  height: 1rem;
+  width: 0.95rem;
+  height: 0.95rem;
 }
 
 .crm-services-category-badge {
@@ -1601,8 +1665,8 @@
 }
 
 .crm-services-icon-button {
-  width: 2.3rem;
-  height: 2.3rem;
+  width: 2.1rem;
+  height: 2.1rem;
   border: 1px solid #d4ddf7;
   border-radius: 0.6rem;
   background: #eff4ff;
@@ -1629,8 +1693,8 @@
 }
 
 .crm-services-action-icon {
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 0.98rem;
+  height: 0.98rem;
 }
 
 .crm-services-history-list {
@@ -1687,11 +1751,11 @@
 
 @media (max-width: 1200px) {
   .crm-services-title {
-    font-size: 1.85rem;
+    font-size: 1.55rem;
   }
 
   .crm-services-subtitle {
-    font-size: 1.2rem;
+    font-size: 0.94rem;
   }
 
   .crm-services-controls-card {
@@ -1712,7 +1776,7 @@
   }
 
   .crm-services-title {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
   }
 
   .crm-services-title-icon {
@@ -1721,11 +1785,11 @@
   }
 
   .crm-services-subtitle {
-    font-size: 1rem;
+    font-size: 0.92rem;
   }
 
   .crm-services-tab {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     padding: 0.7rem 0.9rem;
   }
 

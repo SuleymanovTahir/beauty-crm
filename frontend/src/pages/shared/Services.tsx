@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
     Scissors,
@@ -169,7 +169,14 @@ export default function UniversalServices() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const { user: currentUser } = useAuth();
-    const { t, i18n } = useTranslation(['admin/services', 'employee/services', 'common', 'layouts/mainlayout']);
+    const { t, i18n } = useTranslation([
+        'admin/services',
+        'employee/services',
+        'common',
+        'layouts/mainlayout',
+        'layouts/adminpanellayout',
+        'public_landing/services'
+    ]);
     const { currency, formatCurrency } = useCurrency();
 
     const isEmployee = currentUser?.role === 'employee';
@@ -284,11 +291,22 @@ export default function UniversalServices() {
         return [...uniqueCategories].sort((a, b) => a.localeCompare(b, i18n.language));
     }, [services, i18n.language]);
 
+    const getServiceDisplayName = useCallback((service: Service): string => {
+        const sourceName = typeof service.name === 'string' ? service.name : '';
+        if (typeof service.key === 'string' && service.key.trim().length > 0) {
+            return t(`public_landing/services:items.${service.key}.name`, {
+                lng: 'en',
+                defaultValue: sourceName
+            });
+        }
+        return sourceName;
+    }, [t]);
+
     const filteredAndSortedServices = useMemo(() => {
         const normalizedSearch = searchTerm.trim().toLowerCase();
 
         const result = services.filter((service) => {
-            const serviceName = typeof service.name === 'string' ? service.name.toLowerCase() : '';
+            const serviceName = getServiceDisplayName(service).toLowerCase();
             const serviceCategory = typeof service.category === 'string' ? service.category : '';
 
             const matchesSearch = serviceName.includes(normalizedSearch);
@@ -308,14 +326,14 @@ export default function UniversalServices() {
                 if (key === 'price') return Number(leftService.price ?? 0);
                 if (key === 'duration') return parseDurationToMinutes(leftService.duration);
                 if (key === 'category') return String(leftService.category ?? '').toLowerCase();
-                return String(leftService.name ?? '').toLowerCase();
+                return getServiceDisplayName(leftService).toLowerCase();
             })();
 
             const rightValue = (() => {
                 if (key === 'price') return Number(rightService.price ?? 0);
                 if (key === 'duration') return parseDurationToMinutes(rightService.duration);
                 if (key === 'category') return String(rightService.category ?? '').toLowerCase();
-                return String(rightService.name ?? '').toLowerCase();
+                return getServiceDisplayName(rightService).toLowerCase();
             })();
 
             if (leftValue < rightValue) {
@@ -328,7 +346,7 @@ export default function UniversalServices() {
         });
 
         return sorted;
-    }, [services, searchTerm, categoryFilter, sortConfig]);
+    }, [services, searchTerm, categoryFilter, sortConfig, getServiceDisplayName]);
 
     const formatDurationLabel = (duration: unknown) => {
         const minutes = parseDurationToMinutes(duration);
@@ -482,7 +500,7 @@ export default function UniversalServices() {
                             <>
                                 <button type="button" className="crm-services-tab" onClick={() => openRouteTab(`${rolePrefix}/referrals`)}>
                                     <Users className="crm-services-tab-icon" />
-                                    <span>{t('layouts/mainlayout:menu.referrals')}</span>
+                                    <span>{t('layouts/adminpanellayout:menu.referral_program')}</span>
                                 </button>
 
                                 <button type="button" className="crm-services-tab" onClick={() => openRouteTab(`${rolePrefix}/challenges`)}>
@@ -572,7 +590,7 @@ export default function UniversalServices() {
                             <tr>
                                 <th>
                                     <button type="button" className="crm-services-sort-button" onClick={() => handleSort('name')}>
-                                        <span>{t('admin/services:service_name')}</span>
+                                        <span>{t('admin/services:name')}</span>
                                         <ArrowUpDown className="crm-services-sort-icon" />
                                     </button>
                                 </th>
@@ -596,7 +614,7 @@ export default function UniversalServices() {
                                         </button>
                                     </th>
                                 )}
-                                <th>{t('common:status')}</th>
+                                <th>{String(t('common:status', { lng: 'en' })).toLowerCase()}</th>
                                 <th className="crm-services-actions-header">{t('common:actions')}</th>
                             </tr>
                         </thead>
@@ -608,7 +626,7 @@ export default function UniversalServices() {
 
                                 return (
                                     <tr key={service.id}>
-                                        <td className="crm-services-service-cell">{service.name}</td>
+                                        <td className="crm-services-service-cell">{getServiceDisplayName(service)}</td>
                                         <td>{formatCurrency(service.price)}</td>
                                         <td>
                                             <span className="crm-services-duration-badge">
@@ -720,7 +738,7 @@ export default function UniversalServices() {
                             </>
                         ) : (
                             <>
-                                <Label>{t('admin/services:service_name')}</Label>
+                                <Label>{t('admin/services:name')}</Label>
                                 <Input
                                     value={serviceFormData.name}
                                     onChange={(event) => setServiceFormData((prev) => ({ ...prev, name: event.target.value }))}
