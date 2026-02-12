@@ -14,6 +14,7 @@ import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   Dialog,
   DialogContent,
@@ -46,6 +47,18 @@ interface PreviewData {
     channel: string;
   }>;
 }
+
+const getRoleLabel = (
+  t: TFunction,
+  roleKey: string,
+  fallback?: string
+) => {
+  const defaultValue = fallback ?? roleKey;
+  if (roleKey === 'sales') {
+    return String(t('common:role_saler', { defaultValue }));
+  }
+  return String(t(`common:role_${roleKey}`, { defaultValue }));
+};
 
 export default function Broadcasts() {
   const { t, i18n } = useTranslation(['admin/broadcasts', 'common']);
@@ -681,7 +694,7 @@ export default function Broadcasts() {
                       <SelectItem value="client" className="font-semibold text-pink-600">{t('role_client', 'Клиент')}</SelectItem>
                       {roles.map((role) => (
                         <SelectItem key={role.key} value={role.key}>
-                          {t(`common:role_${role.key}`, role.name)}
+                          {getRoleLabel(t, role.key, role.name)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -2078,7 +2091,7 @@ const ManageSubscriptionTypesDialog = ({ onClose, roles }: { onClose: () => void
                     <option value="all">{t('all_users')}</option>
                     {roles.map((role) => (
                       <option key={role.key} value={role.key}>
-                        {t(`common:role_${role.key}`, role.name)}
+                        {getRoleLabel(t, role.key, role.name)}
                       </option>
                     ))}
                   </select>
@@ -2160,7 +2173,7 @@ const ManageSubscriptionTypesDialog = ({ onClose, roles }: { onClose: () => void
                             }`}>
                             {type.target_role === 'client' ? String(t('common:role_client', 'Клиент')) :
                               type.target_role === 'all' ? String(t('all_users')) :
-                                String(t(`common:role_${type.target_role}`, type.target_role))}
+                                String(getRoleLabel(t, type.target_role, type.target_role))}
                           </span>
                         </td>
                         <td className="font-medium">{t(type.name || type.key)}</td>

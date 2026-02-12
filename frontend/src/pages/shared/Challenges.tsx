@@ -69,6 +69,27 @@ export default function UniversalChallenges() {
         end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     });
 
+    const normalizeChallengeType = (type: Challenge['type'] | string): Challenge['type'] => {
+        if (type === 'spend') {
+            return 'spending';
+        }
+        if (type === 'service_type') {
+            return 'services';
+        }
+        return type as Challenge['type'];
+    };
+
+    const parseNonNegativeInteger = (value: string, fallbackValue: number): number => {
+        const parsedValue = Number(value);
+        if (!Number.isFinite(parsedValue)) {
+            return fallbackValue;
+        }
+        if (parsedValue < 0) {
+            return 0;
+        }
+        return Math.round(parsedValue);
+    };
+
     useEffect(() => {
         loadChallenges();
         loadStats();
@@ -80,7 +101,13 @@ export default function UniversalChallenges() {
             const response = await fetch('/api/admin/challenges', { credentials: 'include' });
             if (response.ok) {
                 const data = await response.json();
-                if (data.success && data.challenges) setChallenges(data.challenges);
+                if (data.success && Array.isArray(data.challenges)) {
+                    const normalizedChallenges = data.challenges.map((challenge: Challenge) => ({
+                        ...challenge,
+                        type: normalizeChallengeType(challenge.type),
+                    }));
+                    setChallenges(normalizedChallenges);
+                }
             }
         } catch (error) {
             console.error('Error:', error);
@@ -102,14 +129,29 @@ export default function UniversalChallenges() {
 
     const handleSave = async () => {
         try {
+            if (formData.title.trim().length === 0) {
+                toast.error(t('common:error_saving', 'Ошибка сохранения'));
+                return;
+            }
+
+            const normalizedType = normalizeChallengeType(formData.type);
+            if (normalizedType === 'services') {
+                toast.error(t('common:error_saving', 'Ошибка сохранения'));
+                return;
+            }
+
             const url = editingChallenge ? `/api/admin/challenges/${editingChallenge.id}` : '/api/admin/challenges';
             const method = editingChallenge ? 'PUT' : 'POST';
+            const payload = {
+                ...formData,
+                type: normalizedType,
+            };
 
             const response = await fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify(formData),
+                body: JSON.stringify(payload),
             });
 
             if (response.ok) {
@@ -291,7 +333,7 @@ export default function UniversalChallenges() {
                                             setFormData({
                                                 title: challenge.title,
                                                 description: challenge.description,
-                                                type: challenge.type,
+                                                type: normalizeChallengeType(challenge.type),
                                                 target_value: challenge.target_value,
                                                 reward_points: challenge.reward_points,
                                                 start_date: challenge.start_date.split('T')[0],
@@ -418,9 +460,8 @@ export default function UniversalChallenges() {
                                         onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
                                     >
                                         <option value="visits">{t('types.visits', 'Количество визитов')}</option>
-                                        <option value="spend">{t('types.spend', 'Общая сумма трат')}</option>
+                                        <option value="spending">{t('types.spend', 'Общая сумма трат')}</option>
                                         <option value="referrals">{t('types.referrals', 'Рекомендации')}</option>
-                                        <option value="services">{t('types.services', 'Услуги')}</option>
                                     </select>
                                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                                 </div>
@@ -433,7 +474,7 @@ export default function UniversalChallenges() {
                                         type="number"
                                         className="h-12 bg-gray-50 border-gray-100 rounded-xl font-black text-lg px-4 focus:bg-white transition-all"
                                         value={formData.target_value}
-                                        onChange={(e) => setFormData({ ...formData, target_value: parseInt(e.target.value) })}
+                                        onChange={(e) => setFormData({ ...formData, target_value: parseNonNegativeInteger(e.target.value, 0) })}
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-gray-300 text-sm">
                                         {formData.type === 'spend' || formData.type === 'spending' ? currency : (formData.type === 'visits' ? 'X' : '')}
@@ -449,7 +490,7 @@ export default function UniversalChallenges() {
                                         type="number"
                                         className="pl-12 h-12 bg-gray-50 border-gray-100 rounded-xl font-black text-lg text-amber-600 focus:bg-white transition-all shadow-inner"
                                         value={formData.reward_points}
-                                        onChange={(e) => setFormData({ ...formData, reward_points: parseInt(e.target.value) })}
+                                        onChange={(e) => setFormData({ ...formData, reward_points: parseNonNegativeInteger(e.target.value, 0) })}
                                     />
                                 </div>
                             </div>

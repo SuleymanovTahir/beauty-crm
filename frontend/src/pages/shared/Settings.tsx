@@ -879,6 +879,7 @@ export default function AdminSettings() {
     if (location.pathname.startsWith('/crm')) return '/crm';
     if (location.pathname.startsWith('/manager')) return '/manager';
     if (location.pathname.startsWith('/sales')) return '/sales';
+    if (location.pathname.startsWith('/saler')) return '/sales';
     if (location.pathname.startsWith('/marketer')) return '/marketer';
     if (location.pathname.startsWith('/employee')) return '/employee';
     return '/crm';

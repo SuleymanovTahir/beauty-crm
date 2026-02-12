@@ -63,23 +63,31 @@ def generate_birthday_promo(client_name: str, client_id: str) -> str:
 
 def validate_promo_code(code: str, booking_amount: float = 0) -> dict:
     """Проверить промокод и вернуть данные о скидке"""
+    normalized_code = code.upper().strip()
+    if len(normalized_code) == 0:
+        return {"valid": False, "error": "Промокод не указан"}
+
     conn = get_db_connection()
     c = conn.cursor()
     try:
         c.execute("""
-            SELECT id, discount_type, value, min_amount, valid_until, max_uses, current_uses, is_active
+            SELECT id, discount_type, value, min_amount, valid_from, valid_until, max_uses, current_uses, is_active
             FROM promo_codes
             WHERE code = %s AND is_active = TRUE
-        """, (code.upper().strip(),))
+        """, (normalized_code,))
         
         res = c.fetchone()
         if not res:
             return {"valid": False, "error": "Промокод не найден или неактивен"}
         
-        p_id, d_type, value, min_amt, until, max_u, curr_u, active = res
+        p_id, d_type, value, min_amt, valid_from, until, max_u, curr_u, _ = res
+
+        now = datetime.now()
+        if valid_from and now < valid_from:
+            return {"valid": False, "error": "Промокод еще не активен"}
         
         # Проверка срока действия
-        if until and datetime.now() > until:
+        if until and now > until:
             return {"valid": False, "error": "Срок действия промокода истек"}
         
         # Проверка количества использований

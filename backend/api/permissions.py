@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Cookie, Query
+from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional, Dict
 
@@ -7,9 +7,39 @@ from utils.permissions import require_permission
 from utils.logger import log_error
 from db import log_activity
 from db.connection import get_db_connection
-from core.config import ROLES, PERMISSION_DESCRIPTIONS
+from core.config import ROLES, PERMISSION_DESCRIPTIONS, normalize_role_key
 
 router = APIRouter(tags=["Permissions"])
+
+
+def _resolve_permission_key(payload: Dict) -> Optional[str]:
+    permission = payload.get('permission')
+    if isinstance(permission, str) and permission.strip():
+        return permission.strip()
+
+    resource = payload.get('resource')
+    action = payload.get('action')
+
+    if not isinstance(resource, str):
+        return None
+
+    normalized_resource = resource.strip()
+    if not normalized_resource:
+        return None
+
+    if normalized_resource in PERMISSION_DESCRIPTIONS:
+        return normalized_resource
+
+    if isinstance(action, str):
+        normalized_action = action.strip()
+        if normalized_action:
+            combined_key = f"{normalized_resource}_{normalized_action}"
+            if combined_key in PERMISSION_DESCRIPTIONS:
+                return combined_key
+            if normalized_resource.endswith(f"_{normalized_action}"):
+                return normalized_resource
+
+    return normalized_resource
 
 @router.get("/permissions/user/{user_id}")
 @require_permission("users_view")
@@ -44,7 +74,7 @@ async def get_user_permissions(
             "email": user_row[4]
         }
         
-        role_key = user_data["role"]
+        role_key = normalize_role_key(user_data["role"])
         
         # 2. Get Role Info
         role_info = ROLES.get(role_key, {
@@ -105,7 +135,7 @@ async def get_user_permissions(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/users/{user_id}/permissions/grant")
-@require_permission("users_manage")
+@require_permission("roles_edit")
 async def grant_permission_api(
     user_id: int,
     request: Request,
@@ -117,19 +147,19 @@ async def grant_permission_api(
     
     admin = get_current_user_from_token(session_token)
     data = await request.json()
-    resource = data.get('resource') or data.get('permission')
-    
-    if not resource:
+    permission_key = _resolve_permission_key(data)
+
+    if not permission_key:
         return JSONResponse({"error": "Missing permission key"}, status_code=400)
-    
-    success = grant_user_permission(user_id, resource, admin["id"])
+
+    success = grant_user_permission(user_id, permission_key, admin["id"])
     if success:
-        log_activity(admin["id"], "grant_permission", "user", str(user_id), f"Granted {resource}")
-        return {"success": True, "message": f"Право {resource} предоставлено"}
+        log_activity(admin["id"], "grant_permission", "user", str(user_id), f"Granted {permission_key}")
+        return {"success": True, "message": f"Право {permission_key} предоставлено"}
     return JSONResponse({"error": "Failed to grant permission"}, status_code=500)
 
 @router.post("/users/{user_id}/permissions/revoke")
-@require_permission("users_manage")
+@require_permission("roles_edit")
 async def revoke_permission_api(
     user_id: int,
     request: Request,
@@ -141,19 +171,19 @@ async def revoke_permission_api(
     
     admin = get_current_user_from_token(session_token)
     data = await request.json()
-    resource = data.get('resource') or data.get('permission')
-    
-    if not resource:
+    permission_key = _resolve_permission_key(data)
+
+    if not permission_key:
         return JSONResponse({"error": "Missing permission key"}, status_code=400)
-    
-    success = revoke_user_permission(user_id, resource, admin["id"])
+
+    success = revoke_user_permission(user_id, permission_key, admin["id"])
     if success:
-        log_activity(admin["id"], "revoke_permission", "user", str(user_id), f"Revoked {resource}")
-        return {"success": True, "message": f"Право {resource} отозвано"}
+        log_activity(admin["id"], "revoke_permission", "user", str(user_id), f"Revoked {permission_key}")
+        return {"success": True, "message": f"Право {permission_key} отозвано"}
     return JSONResponse({"error": "Failed to revoke permission"}, status_code=500)
 
 @router.put("/permissions/user/{user_id}/custom")
-@require_permission("users_manage") # Changed from users_edit for consistency
+@require_permission("roles_edit")
 async def update_user_custom_permissions(
     user_id: int,
     request: Request,
@@ -283,11 +313,24 @@ async def get_users_with_permissions(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.get("/permissions/roles")
+@require_permission("roles_view")
 async def get_all_roles_info(session_token: Optional[str] = Cookie(None)):
     """Get all roles info (for dropdowns etc)"""
     return {"roles": ROLES}
 
 @router.get("/permissions/descriptions")
+@require_permission("roles_view")
 async def get_permission_descriptions(session_token: Optional[str] = Cookie(None)):
     """Get all permission descriptions"""
     return {"permissions": PERMISSION_DESCRIPTIONS}
+
+
+@router.get("/permissions/available")
+@require_permission("roles_view")
+async def get_available_permissions(session_token: Optional[str] = Cookie(None)):
+    """Compatibility endpoint for frontend permission lists."""
+    permissions = [
+        {"key": key, "name": description}
+        for key, description in PERMISSION_DESCRIPTIONS.items()
+    ]
+    return {"permissions": permissions}

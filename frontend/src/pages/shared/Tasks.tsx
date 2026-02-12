@@ -72,11 +72,7 @@ export default function UniversalTasks() {
     const { user: currentUser } = useAuth();
 
     const isAdminLike = useMemo(() => {
-        return currentUser?.role === 'admin' ||
-            currentUser?.role === 'director' ||
-            currentUser?.role === 'manager' ||
-            currentUser?.role === 'saler' ||
-            currentUser?.role === 'marketer';
+        return ['admin', 'director', 'manager', 'sales', 'saler', 'marketer'].includes(currentUser?.role ?? '');
     }, [currentUser]);
 
     const isEmployee = currentUser?.role === 'employee';

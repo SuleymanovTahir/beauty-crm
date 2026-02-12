@@ -86,7 +86,8 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         if (path.startsWith('/admin')) return '/admin';
         if (path.startsWith('/crm')) return '/crm';
         if (path.startsWith('/manager')) return '/manager';
-        if (path.startsWith('/saler')) return '/saler';
+        if (path.startsWith('/sales')) return '/sales';
+        if (path.startsWith('/saler')) return '/sales';
         if (path.startsWith('/marketer')) return '/marketer';
         if (path.startsWith('/employee')) return '/employee';
         return '/crm';
@@ -94,7 +95,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
     const dashboardPath = useMemo(() => {
         if (isAdminPanel) return '/admin/dashboard';
-        if (user?.role === 'saler') return `${rolePrefix}/clients`;
+        if (['sales', 'saler'].includes(user?.role ?? '')) return `${rolePrefix}/clients`;
         if (user?.role === 'marketer') return `${rolePrefix}/analytics`;
         return `${rolePrefix}/dashboard`;
     }, [user?.role, rolePrefix, isAdminPanel]);
@@ -172,6 +173,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             case 'director': return t('roles.director');
             case 'admin': return t('roles.admin');
             case 'manager': return t('roles.manager');
+            case 'sales': return t('roles.saler');
             case 'saler': return t('roles.saler');
             case 'marketer': return t('roles.marketer');
             default: return t('roles.employee');

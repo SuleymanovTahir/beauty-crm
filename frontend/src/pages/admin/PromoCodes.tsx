@@ -72,6 +72,17 @@ export default function PromoCodes() {
         usage_limit: ''
     });
 
+    const parseNonNegativeInteger = (value: string, fallbackValue: number): number => {
+        const parsedValue = Number(value);
+        if (!Number.isFinite(parsedValue)) {
+            return fallbackValue;
+        }
+        if (parsedValue < 0) {
+            return 0;
+        }
+        return Math.round(parsedValue);
+    };
+
     useEffect(() => {
         loadPromoCodes();
     }, []);
@@ -89,12 +100,30 @@ export default function PromoCodes() {
     };
 
     const handleCreate = async () => {
-        if (!newPromo.code) return toast.error(t('code_required', 'Введите код'));
+        if (newPromo.code.trim().length === 0) {
+            toast.error(t('code_required', 'Введите код'));
+            return;
+        }
+
+        if (newPromo.discount_value <= 0) {
+            toast.error(t('error_creating', 'Ошибка создания'));
+            return;
+        }
+
+        if (newPromo.discount_type === 'percent' && newPromo.discount_value > 100) {
+            toast.error(t('error_creating', 'Ошибка создания'));
+            return;
+        }
+
+        if (newPromo.valid_until.length > 0 && newPromo.valid_until < newPromo.valid_from) {
+            toast.error(t('error_creating', 'Ошибка создания'));
+            return;
+        }
 
         try {
             await api.createPromoCode({
                 ...newPromo,
-                usage_limit: newPromo.usage_limit ? parseInt(newPromo.usage_limit) : null,
+                usage_limit: newPromo.usage_limit.length > 0 ? parseNonNegativeInteger(newPromo.usage_limit, 0) : null,
                 valid_until: newPromo.valid_until || null
             });
             toast.success(t('created_success', 'Промокод создан'));
@@ -313,7 +342,7 @@ export default function PromoCodes() {
                                     type="number"
                                     className="h-12 rounded-2xl bg-gray-50 border-transparent focus:bg-white focus:ring-2 focus:ring-pink-500 transition-all"
                                     value={newPromo.discount_value}
-                                    onChange={(e) => setNewPromo({ ...newPromo, discount_value: parseInt(e.target.value) })}
+                                    onChange={(e) => setNewPromo({ ...newPromo, discount_value: parseNonNegativeInteger(e.target.value, 0) })}
                                 />
                             </div>
                         </div>
@@ -324,7 +353,7 @@ export default function PromoCodes() {
                                 type="number"
                                 className="h-12 rounded-2xl bg-gray-50 border-transparent focus:bg-white focus:ring-2 focus:ring-pink-500 transition-all"
                                 value={newPromo.min_booking_amount}
-                                onChange={(e) => setNewPromo({ ...newPromo, min_booking_amount: parseInt(e.target.value) })}
+                                onChange={(e) => setNewPromo({ ...newPromo, min_booking_amount: parseNonNegativeInteger(e.target.value, 0) })}
                             />
                         </div>
 

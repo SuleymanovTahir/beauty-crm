@@ -72,6 +72,14 @@ def _get_table_columns(cursor, table_name: str) -> Set[str]:
     """, (table_name,))
     return {row[0] for row in cursor.fetchall()}
 
+
+def _normalize_challenge_type(raw_type: Optional[str]) -> str:
+    if raw_type == "spend":
+        return "spending"
+    if isinstance(raw_type, str) and len(raw_type) > 0:
+        return raw_type
+    return "visits"
+
 @router.get("/admin/challenges")
 async def get_admin_challenges(session_token: Optional[str] = Cookie(None)):
     """Получить все челленджи для админки"""
@@ -156,7 +164,7 @@ async def get_admin_challenges(session_token: Optional[str] = Cookie(None)):
                 "id": str(row[0]),
                 "title": row[1] or "Challenge",
                 "description": row[2] or "",
-                "type": row[3] or "visits",
+                "type": _normalize_challenge_type(row[3]),
                 "target_value": row[4] or 0,
                 "reward_points": row[5] or 0,
                 "start_date": start_date.isoformat() if hasattr(start_date, "isoformat") else datetime.now().isoformat(),
@@ -238,12 +246,16 @@ async def create_admin_challenge(request: Request, session_token: Optional[str] 
             fields.append("challenge_id")
             values.append(f"challenge_{uuid.uuid4().hex[:12]}")
 
+        normalized_type = _normalize_challenge_type(data.get("type", "visits"))
+        if normalized_type == "services":
+            raise HTTPException(status_code=400, detail="Services type challenges are not supported yet")
+
         if "challenge_type" in challenge_columns:
             fields.append("challenge_type")
-            values.append(data.get("type", "visits"))
+            values.append(normalized_type)
         elif "reward_type" in challenge_columns:
             fields.append("reward_type")
-            values.append(data.get("type", "visits"))
+            values.append(normalized_type)
 
         if "target_value" in challenge_columns:
             fields.append("target_value")
@@ -303,12 +315,16 @@ async def update_admin_challenge(challenge_id: int, request: Request, session_to
             data.get("description", "")
         ]
 
+        normalized_type = _normalize_challenge_type(data.get("type", "visits"))
+        if normalized_type == "services":
+            raise HTTPException(status_code=400, detail="Services type challenges are not supported yet")
+
         if "challenge_type" in challenge_columns:
             updates.append("challenge_type = %s")
-            values.append(data.get("type", "visits"))
+            values.append(normalized_type)
         elif "reward_type" in challenge_columns:
             updates.append("reward_type = %s")
-            values.append(data.get("type", "visits"))
+            values.append(normalized_type)
 
         if "target_value" in challenge_columns:
             updates.append("target_value = %s")
@@ -414,6 +430,7 @@ async def check_challenge_progress(
             raise HTTPException(status_code=404, detail="Challenge not found or inactive")
 
         challenge_type, target_value, bonus_points, start_date, end_date = challenge
+        challenge_type = _normalize_challenge_type(challenge_type)
         if target_value is None:
             target_value = 0
 
@@ -430,7 +447,7 @@ async def check_challenge_progress(
                 HAVING COUNT(*) >= %s
             """, (start_date, start_date, end_date, end_date, target_value))
 
-        elif challenge_type == 'spending':
+        elif challenge_type in ('spending', 'spend'):
             # Считаем общую сумму трат для каждого клиента
             c.execute("""
                 SELECT b.client_id, COALESCE(SUM(b.total_price), 0) as total_spent

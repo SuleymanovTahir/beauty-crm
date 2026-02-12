@@ -329,7 +329,7 @@ export default function EditUser() {
                     <option value="">{t('users:no_secondary_role', 'Нет')}</option>
                     <option value="employee">{t('users:role_employee', 'Мастер (employee)')}</option>
                     <option value="manager">{t('users:role_manager', 'Менеджер')}</option>
-                    <option value="sales">{t('users:role_sales', 'Продажи')}</option>
+                    <option value="sales">{t('common:role_saler', 'Продажи')}</option>
                     <option value="marketer">{t('users:role_marketer', 'Маркетолог')}</option>
                   </select>
                   <p className="text-sm text-gray-500 mt-1">

@@ -222,7 +222,7 @@ export default function CreateUser() {
                   <SelectItem value="director">{t('common:role_director')}</SelectItem>
                   <SelectItem value="admin">{t('common:role_admin')}</SelectItem>
                   <SelectItem value="manager">{t('common:role_manager')}</SelectItem>
-                  <SelectItem value="sales">{t('common:role_sales')}</SelectItem>
+                  <SelectItem value="sales">{t('common:role_saler')}</SelectItem>
                   <SelectItem value="marketer">{t('common:role_marketer')}</SelectItem>
                   <SelectItem value="employee">{t('common:role_employee')}</SelectItem>
                 </SelectContent>

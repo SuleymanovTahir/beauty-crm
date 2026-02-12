@@ -1194,8 +1194,9 @@ export class ApiClient {
   }
 
   // ===== SPECIAL PACKAGES =====
-  async getSpecialPackages() {
-    return this.request<any>('/api/special-packages')
+  async getSpecialPackages(activeOnly: boolean = true) {
+    const activeOnlyParam = activeOnly ? 'true' : 'false';
+    return this.request<any>(`/api/special-packages?active_only=${activeOnlyParam}`)
   }
 
   async createSpecialPackage(data: any) {
@@ -1336,7 +1337,7 @@ export class ApiClient {
   }
 
   async getAvailablePermissions() {
-    return this.request<any>('/api/permissions/available')
+    return this.request<any>('/api/roles/permissions/available')
   }
 
   async getUserPermissions(userId: number) {

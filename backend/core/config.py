@@ -218,6 +218,10 @@ ROLES = {
             'bot_settings_view',
             'settings_view',
             'settings_edit_branding',
+            'settings_edit_finance',
+            'settings_edit_integrations',
+            'settings_edit_loyalty',
+            'settings_edit_schedule',
             'broadcasts_send',
             'roles_view',
             'roles_edit'
@@ -238,7 +242,7 @@ ROLES = {
         'can_manage_roles': [],
         'hierarchy_level': 60
     },
-    'saler': {
+    'sales': {
         'name': 'Менеджер по продажам',
         'permissions': [
             'instagram_chat_view',
@@ -284,10 +288,25 @@ ROLES = {
     }
 }
 
+# Обратная совместимость старых ключей ролей
+ROLE_ALIASES = {
+    'saler': 'sales'
+}
+
+
+def normalize_role_key(role: str | None) -> str | None:
+    """Нормализовать ключ роли (legacy aliases -> canonical)."""
+    if role is None:
+        return None
+    return ROLE_ALIASES.get(role, role)
+
 def has_permission(user_role: str, permission: str, secondary_role: str = None) -> bool:
     """
     Проверка наличия права у роли (основной или вторичной)
     """
+    user_role = normalize_role_key(user_role)
+    secondary_role = normalize_role_key(secondary_role)
+
     if user_role == 'director' or secondary_role == 'director':
         return True
         
@@ -322,6 +341,10 @@ def can_manage_role(manager_role: str, target_role: str, secondary_role: str = N
     - Админ может управлять только ролями из своего списка (НЕ director)
     - Другие роли не могут управлять никем
     """
+    manager_role = normalize_role_key(manager_role)
+    target_role = normalize_role_key(target_role)
+    secondary_role = normalize_role_key(secondary_role)
+
     if manager_role == 'director' or secondary_role == 'director':
         return True
     
@@ -350,6 +373,7 @@ PERMISSION_DESCRIPTIONS = {
     'clients_edit': 'Редактирование клиентов',
     'clients_delete': 'Удаление клиентов',
     'clients_export': 'Экспорт базы клиентов (Excel/CSV)',
+    'clients_view_phone': 'Просмотр полных номеров телефонов',
     
     # Записи
     'bookings_view': 'Просмотр всех записей',
@@ -377,6 +401,7 @@ PERMISSION_DESCRIPTIONS = {
     # Услуги
     'services_view': 'Просмотр услуг',
     'services_edit': 'Редактирование услуг',
+    'services_edit_pricing': 'Редактирование цен на услуги',
     
     # Пользователи
     'users_view': 'Просмотр пользователей',

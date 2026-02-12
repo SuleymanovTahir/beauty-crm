@@ -27,6 +27,18 @@ export interface Role {
   hierarchy_level: number;
 }
 
+const ROLE_ALIASES: Record<string, string> = {
+  saler: 'sales',
+};
+
+const normalizeRole = (role?: string): string => {
+  if (!role) {
+    return '';
+  }
+  const normalizedRole = ROLE_ALIASES[role];
+  return normalizedRole ?? role;
+};
+
 /**
  * Определение всех ролей в системе
  * ВАЖНО: Эта структура должна совпадать с backend/core/config.py ROLES
@@ -61,6 +73,10 @@ export const ROLES: Record<string, Role> = {
       'bot_settings_view',
       'settings_view',
       'settings_edit_branding',
+      'settings_edit_finance',
+      'settings_edit_integrations',
+      'settings_edit_loyalty',
+      'settings_edit_schedule',
       'broadcasts_send',
       'roles_view',
       'roles_edit',
@@ -139,7 +155,8 @@ export class RoleHierarchy {
    * Получить числовой уровень роли
    */
   static getHierarchyLevel(role: string): number {
-    return ROLES[role]?.hierarchy_level || 0;
+    const normalizedRole = normalizeRole(role);
+    return ROLES[normalizedRole]?.hierarchy_level || 0;
   }
 
   /**
@@ -151,21 +168,25 @@ export class RoleHierarchy {
    * - Другие роли не могут управлять никем
    */
   static canManageRole(managerRole: string, targetRole: string, secondaryRole?: string): boolean {
+    const normalizedManagerRole = normalizeRole(managerRole);
+    const normalizedTargetRole = normalizeRole(targetRole);
+    const normalizedSecondaryRole = normalizeRole(secondaryRole);
+
     // Директор может управлять всеми (включая других директоров)
-    if (managerRole === 'director' || secondaryRole === 'director') {
+    if (normalizedManagerRole === 'director' || normalizedSecondaryRole === 'director') {
       return true;
     }
 
     // Проверяем основную роль
-    const managerData = ROLES[managerRole];
-    if (managerData && managerData.can_manage_roles.includes(targetRole)) {
+    const managerData = ROLES[normalizedManagerRole];
+    if (managerData && managerData.can_manage_roles.includes(normalizedTargetRole)) {
       return true;
     }
 
     // Проверяем вторичную роль
-    if (secondaryRole) {
-      const secData = ROLES[secondaryRole];
-      if (secData && secData.can_manage_roles.includes(targetRole)) {
+    if (normalizedSecondaryRole) {
+      const secData = ROLES[normalizedSecondaryRole];
+      if (secData && secData.can_manage_roles.includes(normalizedTargetRole)) {
         return true;
       }
     }
@@ -188,13 +209,15 @@ export class RoleHierarchy {
    * Получить список ролей, которыми может управлять данная роль
    */
   static getManageableRoles(role: string): string[] {
+    const normalizedRole = normalizeRole(role);
+
     // Директор видит все роли (включая director)
-    if (role === 'director') {
+    if (normalizedRole === 'director') {
       return Object.keys(ROLES);
     }
 
     // Остальные видят только те роли, которыми могут управлять
-    const roleData = ROLES[role];
+    const roleData = ROLES[normalizedRole];
     return roleData?.can_manage_roles || [];
   }
 
@@ -202,21 +225,24 @@ export class RoleHierarchy {
    * Проверить, есть ли у роли конкретное право
    */
   static hasPermission(role: string, permission: string, secondaryRole?: string): boolean {
+    const normalizedRole = normalizeRole(role);
+    const normalizedSecondaryRole = normalizeRole(secondaryRole);
+
     // Директор всегда имеет доступ
-    if (role === 'director' || secondaryRole === 'director') {
+    if (normalizedRole === 'director' || normalizedSecondaryRole === 'director') {
       return true;
     }
 
     // Проверка основной роли
-    const roleData = ROLES[role];
+    const roleData = ROLES[normalizedRole];
     if (roleData) {
       if (roleData.permissions === '*') return true;
       if ((roleData.permissions as string[]).includes(permission)) return true;
     }
 
     // Проверка вторичной роли
-    if (secondaryRole) {
-      const secData = ROLES[secondaryRole];
+    if (normalizedSecondaryRole) {
+      const secData = ROLES[normalizedSecondaryRole];
       if (secData) {
         if (secData.permissions === '*') return true;
         if ((secData.permissions as string[]).includes(permission)) return true;
@@ -230,7 +256,8 @@ export class RoleHierarchy {
    * Получить все права роли
    */
   static getAllPermissions(role: string): string[] | '*' {
-    const roleData = ROLES[role];
+    const normalizedRole = normalizeRole(role);
+    const roleData = ROLES[normalizedRole];
     return roleData?.permissions || [];
   }
 
@@ -407,7 +434,14 @@ export class PermissionChecker {
   }
 
   static canEditSettings(role: string, secondaryRole?: string): boolean {
-    return RoleHierarchy.hasPermission(role, 'settings_edit', secondaryRole);
+    return (
+      RoleHierarchy.hasPermission(role, 'settings_edit', secondaryRole) ||
+      RoleHierarchy.hasPermission(role, 'settings_edit_branding', secondaryRole) ||
+      RoleHierarchy.hasPermission(role, 'settings_edit_finance', secondaryRole) ||
+      RoleHierarchy.hasPermission(role, 'settings_edit_integrations', secondaryRole) ||
+      RoleHierarchy.hasPermission(role, 'settings_edit_loyalty', secondaryRole) ||
+      RoleHierarchy.hasPermission(role, 'settings_edit_schedule', secondaryRole)
+    );
   }
 
   static canEditFinancialSettings(role: string, secondaryRole?: string): boolean {

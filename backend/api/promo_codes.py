@@ -1,16 +1,16 @@
 """
 API для управления промокодами
 """
-from fastapi import APIRouter, Depends, HTTPException, Query, Cookie
+from fastapi import APIRouter, Cookie
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional
 from datetime import datetime
 
 from db.connection import get_db_connection
 from utils.utils import require_auth
-from utils.logger import log_error, log_info
-from db.promo_codes import create_promo_code, validate_promo_code
+from utils.logger import log_error
+from db.promo_codes import validate_promo_code
 
 router = APIRouter(tags=["Promo Codes"])
 
@@ -25,6 +25,31 @@ class PromoCodeModel(BaseModel):
     is_active: bool = True
     category: str = 'general'
     description: Optional[str] = None
+
+
+def _validate_promo_payload(promo: PromoCodeModel) -> Optional[str]:
+    if promo.code.strip() == "":
+        return "Code is required"
+
+    if promo.discount_type not in {"percent", "fixed"}:
+        return "Invalid discount_type"
+
+    if promo.value <= 0:
+        return "Promo value must be greater than zero"
+
+    if promo.discount_type == "percent" and promo.value > 100:
+        return "Percent discount cannot exceed 100"
+
+    if promo.min_amount < 0:
+        return "min_amount cannot be negative"
+
+    if promo.max_uses is not None and promo.max_uses < 1:
+        return "max_uses must be greater than zero"
+
+    if promo.valid_from and promo.valid_until and promo.valid_until < promo.valid_from:
+        return "valid_until must be after valid_from"
+
+    return None
 
 @router.get("/promo-codes")
 async def list_promo_codes(session_token: Optional[str] = Cookie(None)):
@@ -72,8 +97,17 @@ async def create_new_promo(promo: PromoCodeModel, session_token: Optional[str] =
     user = require_auth(session_token)
     if not user or user["role"] not in ["admin", "director"]:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-        
+
+    validation_error = _validate_promo_payload(promo)
+    if validation_error:
+        return JSONResponse({"error": validation_error}, status_code=400)
+
     try:
+        normalized_code = promo.code.upper().strip()
+        normalized_category = promo.category.strip()
+        if normalized_category == "":
+            normalized_category = "general"
+
         conn = get_db_connection()
         c = conn.cursor()
         c.execute("""
@@ -82,8 +116,8 @@ async def create_new_promo(promo: PromoCodeModel, session_token: Optional[str] =
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
-            promo.code.upper().strip(), promo.discount_type, promo.value, promo.min_amount,
-            promo.valid_from, promo.valid_until, promo.max_uses, promo.category, promo.description, promo.is_active
+            normalized_code, promo.discount_type, promo.value, promo.min_amount,
+            promo.valid_from, promo.valid_until, promo.max_uses, normalized_category, promo.description, promo.is_active
         ))
         new_id = c.fetchone()[0]
         conn.commit()
@@ -96,7 +130,12 @@ async def create_new_promo(promo: PromoCodeModel, session_token: Optional[str] =
 @router.post("/promo-codes/validate")
 async def api_validate_promo(code: str, amount: float = 0):
     """Проверка промокода (публично или при записи)"""
-    result = validate_promo_code(code, amount)
+    normalized_code = code.strip()
+    if normalized_code == "":
+        return {"valid": False, "error": "Промокод не указан"}
+
+    normalized_amount = amount if amount >= 0 else 0
+    result = validate_promo_code(normalized_code, normalized_amount)
     return result
 
 @router.post("/promo-codes/{promo_id}/toggle")

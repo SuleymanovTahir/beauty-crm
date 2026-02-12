@@ -346,7 +346,7 @@ export default function UniversalTeam() {
     director: { label: t('role_director'), color: roleColors.director },
     admin: { label: t('role_admin'), color: roleColors.admin },
     manager: { label: t('role_manager'), color: roleColors.manager },
-    sales: { label: t('role_sales'), color: roleColors.sales },
+    sales: { label: t('common:role_saler'), color: roleColors.sales },
     marketer: { label: t('role_marketer'), color: roleColors.marketer },
     employee: { label: t('role_employee'), color: roleColors.employee },
   };

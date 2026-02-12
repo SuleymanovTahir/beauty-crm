@@ -229,7 +229,7 @@ export const apiClient = {
     }),
 
   getAvailablePermissions: () =>
-    apiCall('/api/permissions/available'),
+    apiCall('/api/roles/permissions/available'),
   // ===== PUBLIC =====
   getSalonInfo: (lang: string = 'ru') =>
     apiCall(`/api/public/salon-info?language=${lang}`),

@@ -102,6 +102,16 @@ interface ProtectedRouteProps {
   secondaryRole?: string;
 }
 
+const normalizeRole = (inputRole?: string): string => {
+  if (!inputRole) {
+    return '';
+  }
+  if (inputRole === 'saler') {
+    return 'sales';
+  }
+  return inputRole;
+};
+
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   element,
   isAuthenticated,
@@ -126,8 +136,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   const hasRequiredRole = (role?: string, secondaryRole?: string) => {
     if (!requiredRole) return true;
-    const allowed = requiredRole === 'admin' ? ['admin', 'director'] : [requiredRole];
-    return allowed.includes(role || '') || allowed.includes(secondaryRole || '');
+    const normalizedRequiredRole = normalizeRole(requiredRole);
+    const allowed = normalizedRequiredRole === 'admin' ? ['admin', 'director'] : [normalizedRequiredRole];
+    const normalizedRole = normalizeRole(role);
+    const normalizedSecondaryRole = normalizeRole(secondaryRole);
+
+    return [normalizedRole, normalizedSecondaryRole].some((roleKey) => allowed.includes(roleKey));
   };
 
   if (requiredRole && !hasRequiredRole(currentRole, secondaryRole)) {
@@ -135,7 +149,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     if (currentRole === 'director') return <Navigate to="/crm/dashboard" replace />;
     if (currentRole === 'admin') return <Navigate to="/crm/dashboard" replace />;
     if (currentRole === 'manager') return <Navigate to="/manager/dashboard" replace />;
-    if (currentRole === 'sales') return <Navigate to="/sales/clients" replace />;
+    if (normalizeRole(currentRole) === 'sales') return <Navigate to="/sales/clients" replace />;
     if (currentRole === 'marketer') return <Navigate to="/marketer/analytics" replace />;
     if (currentRole === 'employee') return <Navigate to="/employee/dashboard" replace />;
     return <Navigate to="/" replace />;
@@ -189,7 +203,7 @@ export default function App() {
                     currentUser.role === 'director' ? <Navigate to="/crm/dashboard" replace /> :
                       currentUser.role === 'admin' ? <Navigate to="/crm/dashboard" replace /> :
                         currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
-                          currentUser.role === 'saler' ? <Navigate to="/saler/clients" replace /> :
+                          normalizeRole(currentUser.role) === 'sales' ? <Navigate to="/sales/clients" replace /> :
                             currentUser.role === 'marketer' ? <Navigate to="/marketer/analytics" replace /> :
                               currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
                                 currentUser.role === 'client' ? <Navigate to="/account" replace /> :
@@ -384,13 +398,13 @@ export default function App() {
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
-              {/* Saler Routes - Protected */}
+              {/* Sales Routes - Protected */}
               <Route
-                path="/saler/*"
+                path="/sales/*"
                 element={
                   <ProtectedRoute
                     isAuthenticated={!!currentUser}
-                    requiredRole="saler"
+                    requiredRole="sales"
                     currentRole={currentUser?.role}
                     currentUsername={currentUser?.username}
                     secondaryRole={currentUser?.secondary_role}
@@ -421,6 +435,12 @@ export default function App() {
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="" element={<Navigate to="clients" replace />} />
               </Route>
+
+              {/* Legacy saler path redirect */}
+              <Route
+                path="/saler/*"
+                element={<Navigate to="/sales/clients" replace />}
+              />
 
               {/* Marketer Routes - Protected */}
               <Route

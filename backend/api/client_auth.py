@@ -7,7 +7,7 @@ from pydantic import BaseModel
 import hashlib
 import secrets
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, Set
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
@@ -82,6 +82,15 @@ def _get_client_id(user: dict, cursor) -> str:
         
     # 5. Крайний случай - возвращаем user_id как строку
     return user_id
+
+
+def _get_table_columns(cursor, table_name: str) -> Set[str]:
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = %s
+    """, (table_name,))
+    return {row[0] for row in cursor.fetchall()}
 
 # ============================================================================
 # ENDPOINTS
@@ -428,32 +437,65 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
                     })
                 achievement_id += 1
 
-        # Get active challenges
-        c.execute("""
-            SELECT id, title, description, bonus_points, start_date, end_date, target_value
+        challenge_columns = _get_table_columns(c, "active_challenges")
+        progress_columns = _get_table_columns(c, "challenge_progress")
+
+        challenge_reward_expr = "0"
+        if "bonus_points" in challenge_columns:
+            challenge_reward_expr = "COALESCE(bonus_points, 0)"
+        elif "points_reward" in challenge_columns:
+            challenge_reward_expr = "COALESCE(points_reward, 0)"
+
+        challenge_target_expr = "COALESCE(target_value, 0)" if "target_value" in challenge_columns else "0"
+        challenge_start_expr = "start_date" if "start_date" in challenge_columns else "created_at"
+        challenge_end_expr = "end_date" if "end_date" in challenge_columns else "NULL"
+
+        c.execute(f"""
+            SELECT id, title, description,
+                   {challenge_reward_expr} AS reward,
+                   {challenge_start_expr} AS start_date,
+                   {challenge_end_expr} AS end_date,
+                   {challenge_target_expr} AS target_value
             FROM active_challenges
             WHERE is_active = true
         """)
+
+        progress_value_column = None
+        if "current_value" in progress_columns:
+            progress_value_column = "current_value"
+        elif "progress" in progress_columns:
+            progress_value_column = "progress"
+
+        progress_owner_column = None
+        if "client_id" in progress_columns:
+            progress_owner_column = "client_id"
+        elif "user_id" in progress_columns:
+            progress_owner_column = "user_id"
 
         challenges = []
         for row in c.fetchall():
             challenge_id, title, description, bonus_points, start_date, end_date, target_value = row
 
-            # Get user's progress for this challenge
-            c.execute("""
-                SELECT progress FROM challenge_progress
-                WHERE challenge_id = %s AND user_id = %s
-            """, (challenge_id, client_id))
-            progress_row = c.fetchone()
-            progress = progress_row[0] if progress_row else 0
+            progress = 0
+            if progress_value_column and progress_owner_column:
+                progress_lookup_id = client_id if progress_owner_column == "client_id" else user.get("id")
+                if progress_lookup_id is not None:
+                    c.execute(f"""
+                        SELECT COALESCE({progress_value_column}, 0)
+                        FROM challenge_progress
+                        WHERE challenge_id = %s AND {progress_owner_column} = %s
+                    """, (challenge_id, progress_lookup_id))
+                    progress_row = c.fetchone()
+                    if progress_row:
+                        progress = progress_row[0]
 
             challenges.append({
                 "id": challenge_id,
                 "title": title,
                 "description": description,
-                "reward": bonus_points,
+                "reward": bonus_points or 0,
                 "progress": progress,
-                "maxProgress": target_value,
+                "maxProgress": target_value or 0,
                 "deadline": end_date.isoformat() if end_date else None
             })
 
