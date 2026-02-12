@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GripVertical, Eye, EyeOff, RotateCcw, ArrowLeft, Plus, Edit2, Trash2, ChevronDown, ChevronRight, Folder, Link as LinkIcon, X, LayoutGrid } from 'lucide-react';
 import { Button } from '../../components/ui/button';
@@ -103,11 +103,14 @@ export default function MenuCustomization() {
     const location = useLocation();
     const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
+    const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
     const [draggedItem, setDraggedItem] = useState<{ index: number; parentId: string | null } | null>(null);
     const [applyMode, setApplyMode] = useState<'all' | 'selected'>('all');
     const [targetClientIds, setTargetClientIds] = useState<string[]>([]);
     const [clients, setClients] = useState<Array<{ id: string; label: string }>>([]);
+    const autosaveTimerRef = useRef<number | null>(null);
+    const lastSavedSnapshotRef = useRef<string>('');
+    const hasLoadedSettingsRef = useRef<boolean>(false);
 
     const rolePrefix = useMemo(() => {
         if (location.pathname.startsWith('/admin')) return '/admin';
@@ -126,7 +129,12 @@ export default function MenuCustomization() {
 
     const crmCatalog = useMemo(
         () => buildCrmMenuCatalog({
-            t,
+            t: (key: string, options?: any) => {
+                const translated = key.includes(':')
+                    ? t(key, options)
+                    : t(`layouts/mainlayout:${key}`, options);
+                return typeof translated === 'string' ? translated : String(translated);
+            },
             rolePrefix: '/crm',
             dashboardPath: '/crm/dashboard',
             permissions: {
@@ -212,6 +220,7 @@ export default function MenuCustomization() {
     const [editForm, setEditForm] = useState({ label: '', path: '', type: 'link' as 'group' | 'link' });
 
     useEffect(() => {
+        hasLoadedSettingsRef.current = false;
         loadMenuSettings();
     }, [portalMode, defaultMenuItems, accountDefaultMenuItems]);
 
@@ -225,6 +234,143 @@ export default function MenuCustomization() {
             }));
         };
         return applyVisibility(items);
+    };
+
+    const getHiddenIds = (items: MenuItem[]): string[] => {
+        let ids: string[] = [];
+        items.forEach((item) => {
+            if (item.visible !== true) {
+                ids.push(item.id);
+            }
+            if (Array.isArray(item.children)) {
+                ids = [...ids, ...getHiddenIds(item.children)];
+            }
+        });
+        return ids;
+    };
+
+    const normalizeMenuOrderIds = (rawMenuOrder: unknown): string[] => {
+        if (!Array.isArray(rawMenuOrder)) {
+            return [];
+        }
+
+        const ids: string[] = [];
+        rawMenuOrder.forEach((entry) => {
+            if (typeof entry === 'string' && entry.length > 0) {
+                ids.push(entry);
+                return;
+            }
+
+            if (typeof entry === 'object' && entry !== null) {
+                const maybeId = (entry as { id?: unknown }).id;
+                if (typeof maybeId === 'string' && maybeId.length > 0) {
+                    ids.push(maybeId);
+                }
+            }
+        });
+
+        const uniqueIds: string[] = [];
+        ids.forEach((id) => {
+            if (uniqueIds.includes(id)) {
+                return;
+            }
+            uniqueIds.push(id);
+        });
+
+        return uniqueIds;
+    };
+
+    const cloneMenuItems = (items: MenuItem[]): MenuItem[] => {
+        return items.map((item) => ({
+            ...item,
+            children: Array.isArray(item.children) ? cloneMenuItems(item.children) : undefined,
+        }));
+    };
+
+    const buildCrmMenuFromOrder = (rawMenuOrder: unknown): MenuItem[] => {
+        const orderedIds = normalizeMenuOrderIds(rawMenuOrder);
+        const defaultById = new Map<string, MenuItem>();
+        defaultMenuItems.forEach((item) => {
+            defaultById.set(item.id, item);
+        });
+
+        const orderedItems: MenuItem[] = [];
+        orderedIds.forEach((id) => {
+            const item = defaultById.get(id);
+            if (item === undefined) {
+                return;
+            }
+            orderedItems.push({
+                ...item,
+                children: Array.isArray(item.children) ? cloneMenuItems(item.children) : undefined,
+            });
+            defaultById.delete(id);
+        });
+
+        defaultMenuItems.forEach((item) => {
+            if (defaultById.has(item.id) === false) {
+                return;
+            }
+            orderedItems.push({
+                ...item,
+                children: Array.isArray(item.children) ? cloneMenuItems(item.children) : undefined,
+            });
+        });
+
+        return orderedItems;
+    };
+
+    const buildSaveSnapshot = (
+        items: MenuItem[],
+        nextApplyMode: 'all' | 'selected',
+        nextTargetClientIds: string[]
+    ): string => {
+        const hiddenItems = getHiddenIds(items).sort();
+        if (portalMode === 'account') {
+            const normalizedTargets = [...nextTargetClientIds].sort();
+            return JSON.stringify({
+                portal: portalMode,
+                hidden_items: hiddenItems,
+                apply_mode: nextApplyMode,
+                target_client_ids: normalizedTargets,
+            });
+        }
+
+        return JSON.stringify({
+            portal: portalMode,
+            hidden_items: hiddenItems,
+            menu_order: items.map((item) => item.id),
+        });
+    };
+
+    const persistMenuSettings = async (
+        itemsToSave: MenuItem[],
+        nextApplyMode: 'all' | 'selected',
+        nextTargetClientIds: string[],
+        showToast: boolean
+    ) => {
+        const hidden_items = getHiddenIds(itemsToSave);
+        if (portalMode === 'account') {
+            localStorage.setItem('account_menu_hidden_items_preview', JSON.stringify(hidden_items));
+            await api.saveAccountMenuSettings({
+                hidden_items,
+                apply_mode: nextApplyMode,
+                target_client_ids: nextApplyMode === 'selected' ? nextTargetClientIds : [],
+            });
+        } else {
+            await api.saveMenuSettings({
+                menu_order: itemsToSave.map((item) => item.id),
+                hidden_items,
+            });
+            localStorage.setItem('crm_menu_settings_updated_at', String(Date.now()));
+            window.dispatchEvent(new Event('crm-menu-settings-updated'));
+        }
+
+        lastSavedSnapshotRef.current = buildSaveSnapshot(itemsToSave, nextApplyMode, nextTargetClientIds);
+        setAutoSaveStatus('saved');
+        if (showToast) {
+            toast.success(t('settings_saved'));
+        }
     };
 
     const loadClients = async () => {
@@ -245,6 +391,7 @@ export default function MenuCustomization() {
     const loadMenuSettings = async () => {
         try {
             setLoading(true);
+            setAutoSaveStatus('idle');
 
             if (portalMode === 'account') {
                 const [settings] = await Promise.all([
@@ -253,65 +400,85 @@ export default function MenuCustomization() {
                 ]);
 
                 const hiddenItems = Array.isArray(settings.hidden_items) ? settings.hidden_items : [];
-                setApplyMode(settings.apply_mode === 'selected' ? 'selected' : 'all');
-                setTargetClientIds(Array.isArray(settings.target_client_ids) ? settings.target_client_ids : []);
-                setMenuItems(applyHiddenItemsToMenu(accountDefaultMenuItems, hiddenItems));
+                const loadedApplyMode: 'all' | 'selected' = settings.apply_mode === 'selected' ? 'selected' : 'all';
+                const loadedTargetClientIds = Array.isArray(settings.target_client_ids) ? settings.target_client_ids : [];
+                const loadedMenuItems = applyHiddenItemsToMenu(accountDefaultMenuItems, hiddenItems);
+
+                setApplyMode(loadedApplyMode);
+                setTargetClientIds(loadedTargetClientIds);
+                setMenuItems(loadedMenuItems);
+                lastSavedSnapshotRef.current = buildSaveSnapshot(loadedMenuItems, loadedApplyMode, loadedTargetClientIds);
+                hasLoadedSettingsRef.current = true;
+                setAutoSaveStatus('saved');
                 return;
             }
 
             const settings = await api.getMenuSettings();
-            if (Array.isArray(settings.menu_order) && settings.menu_order.length > 0 && typeof settings.menu_order[0] === 'object') {
-                setMenuItems(settings.menu_order as unknown as MenuItem[]);
-            } else {
-                setMenuItems(defaultMenuItems);
-            }
+            const hiddenItems = Array.isArray(settings.hidden_items) ? settings.hidden_items : [];
+            const orderedMenuItems = buildCrmMenuFromOrder(settings.menu_order);
+            const loadedMenuItems = applyHiddenItemsToMenu(orderedMenuItems, hiddenItems);
+
+            setMenuItems(loadedMenuItems);
+            lastSavedSnapshotRef.current = buildSaveSnapshot(loadedMenuItems, applyMode, targetClientIds);
+            hasLoadedSettingsRef.current = true;
+            setAutoSaveStatus('saved');
         } catch (error) {
             if (portalMode === 'account') {
-                setMenuItems(accountDefaultMenuItems);
+                const fallbackMenuItems = accountDefaultMenuItems;
+                setMenuItems(fallbackMenuItems);
                 setApplyMode('all');
                 setTargetClientIds([]);
+                lastSavedSnapshotRef.current = buildSaveSnapshot(fallbackMenuItems, 'all', []);
             } else {
-                setMenuItems(defaultMenuItems);
+                const fallbackMenuItems = defaultMenuItems;
+                setMenuItems(fallbackMenuItems);
+                lastSavedSnapshotRef.current = buildSaveSnapshot(fallbackMenuItems, applyMode, targetClientIds);
             }
+            hasLoadedSettingsRef.current = true;
+            setAutoSaveStatus('error');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleSave = async () => {
-        try {
-            setSaving(true);
-            const hidden_items = extractHiddenIds(menuItems);
-
-            if (portalMode === 'account') {
-                await api.saveAccountMenuSettings({
-                    hidden_items,
-                    apply_mode: applyMode,
-                    target_client_ids: applyMode === 'selected' ? targetClientIds : [],
-                });
-            } else {
-                await api.saveMenuSettings({ menu_order: menuItems as any, hidden_items });
-            }
-
-            toast.success(t('settings_saved'));
-            if (portalMode !== 'account') {
-                setTimeout(() => window.location.reload(), 500);
-            }
-        } catch (error) {
-            toast.error(t('save_error'));
-        } finally {
-            setSaving(false);
+    useEffect(() => {
+        if (loading || !hasLoadedSettingsRef.current) {
+            return;
         }
-    };
 
-    const extractHiddenIds = (items: MenuItem[]): string[] => {
-        let ids: string[] = [];
-        items.forEach(item => {
-            if (!item.visible) ids.push(item.id);
-            if (item.children) ids = [...ids, ...extractHiddenIds(item.children)];
-        });
-        return ids;
-    };
+        const nextSnapshot = buildSaveSnapshot(menuItems, applyMode, targetClientIds);
+        if (nextSnapshot === lastSavedSnapshotRef.current) {
+            setAutoSaveStatus((previousStatus) => previousStatus === 'saving' ? 'saved' : previousStatus);
+            return;
+        }
+
+        if (autosaveTimerRef.current !== null) {
+            window.clearTimeout(autosaveTimerRef.current);
+        }
+
+        setAutoSaveStatus('saving');
+        autosaveTimerRef.current = window.setTimeout(() => {
+            void persistMenuSettings(menuItems, applyMode, targetClientIds, false).catch(() => {
+                setAutoSaveStatus('error');
+            });
+        }, 500);
+
+        return () => {
+            if (autosaveTimerRef.current !== null) {
+                window.clearTimeout(autosaveTimerRef.current);
+                autosaveTimerRef.current = null;
+            }
+        };
+    }, [applyMode, loading, menuItems, targetClientIds]);
+
+    useEffect(() => {
+        return () => {
+            if (autosaveTimerRef.current !== null) {
+                window.clearTimeout(autosaveTimerRef.current);
+                autosaveTimerRef.current = null;
+            }
+        };
+    }, []);
 
     const handleReset = async () => {
         if (!confirm(t('reset_confirm'))) return;
@@ -353,7 +520,8 @@ export default function MenuCustomization() {
                 return item;
             });
         };
-        setMenuItems(updateVisibility(menuItems));
+        const nextMenuItems = updateVisibility(menuItems);
+        setMenuItems(nextMenuItems);
     };
 
     const toggleGroup = (id: string) => {
@@ -543,6 +711,12 @@ export default function MenuCustomization() {
 
     if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>;
 
+    const autosaveStatusLabel = autoSaveStatus === 'saving'
+        ? t('autosave_saving', { defaultValue: 'Автосохранение...' })
+        : autoSaveStatus === 'error'
+            ? t('autosave_error', { defaultValue: 'Ошибка автосохранения' })
+            : t('autosave_saved', { defaultValue: 'Сохраняется автоматически' });
+
     return (
         <div className="p-8 max-w-[1400px] mx-auto pb-32">
             <div className="flex items-center justify-between mb-10">
@@ -561,9 +735,13 @@ export default function MenuCustomization() {
                         </p>
                     </div>
                 </div>
-                <div className="flex gap-4">
-                    <Button variant="outline" onClick={handleReset} className="rounded-2xl h-12 px-6 border-2 font-bold hover:bg-gray-50 border-gray-100"><RotateCcw className="w-4 h-4 mr-2" />{t('reset')}</Button>
-                    <Button onClick={handleSave} disabled={saving} className="bg-gray-900 hover:bg-black text-white rounded-2xl h-12 px-10 shadow-xl font-black text-lg">{saving ? t('saving') : t('save_changes')}</Button>
+                <div className="flex flex-col items-end gap-2">
+                    <div className={`text-sm font-medium ${autoSaveStatus === 'error' ? 'text-red-500' : 'text-gray-500'}`}>
+                        {autosaveStatusLabel}
+                    </div>
+                    <div className="flex gap-4">
+                        <Button variant="outline" onClick={handleReset} className="rounded-2xl h-12 px-6 border-2 font-bold hover:bg-gray-50 border-gray-100"><RotateCcw className="w-4 h-4 mr-2" />{t('reset')}</Button>
+                    </div>
                 </div>
             </div>
 

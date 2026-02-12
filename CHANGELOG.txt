@@ -1,3 +1,66 @@
+## [2026-02-13] Account Dashboard Link Visibility and CRM Menu Live Sync Fixes
+- Fixed account menu hidden-items application inconsistency:
+  - Removed stale preview override when API returns a valid (including empty) `hidden_items` array.
+  - This prevents unrelated account links from disappearing when only one item is hidden.
+- Improved account dashboard section behavior:
+  - Achievements link card now stays available when the menu item is visible, even if summary stats are empty.
+- Finalized autosave UX in menu customization:
+  - Removed manual "Save changes" button from menu customization UI because autosave is always active.
+- Improved CRM menu propagation without hard refresh:
+  - On CRM menu changes, writes `crm_menu_settings_updated_at` to localStorage and broadcasts update event.
+  - CRM layout now reloads menu settings on storage updates, window focus, visibility return, and periodic refresh.
+- Fixed CRM access-guard loop:
+  - Prevented infinite `access_denied` redirects by navigating to first allowed route instead of always forcing dashboard.
+  - Added duplicate-toast protection for the same denied path.
+- Files:
+  - `frontend/src/pages/admin/MenuCustomization.tsx`
+  - `frontend/src/components/layouts/UniversalLayout.tsx`
+  - `frontend/public_landing/pages/account/AccountPage.tsx`
+  - `frontend/public_landing/pages/account/v2_components/Dashboard.tsx`
+
+## [2026-02-13] CRM Menu Order Normalization and Sidebar Visibility Fix
+- Fixed `/crm/*` sidebar disappearing after menu settings load:
+  - `menu_order` is now normalized to item IDs in layout (supports both legacy object entries and string IDs).
+  - Missing default items are appended automatically so newly added items (e.g. `trash`) are not lost from navigation.
+- Fixed untranslated keys (`menu.dashboard`, `menu.bookings`, etc.) in `/admin/menu-customization`:
+  - CRM menu catalog in customization now resolves labels from `layouts/mainlayout` namespace.
+  - Saved CRM menu is now rebuilt from catalog IDs, so labels come from i18n instead of stale stored raw keys.
+- Stabilized CRM menu settings persistence format:
+  - CRM customization now saves `menu_order` as ID list, matching runtime sidebar expectations.
+- Files:
+  - `frontend/src/pages/admin/MenuCustomization.tsx`
+  - `frontend/src/components/layouts/UniversalLayout.tsx`
+
+## [2026-02-13] Menu Customization Autosave for CRM and Account Portals
+- Added automatic save (without pressing save button) for both:
+  - `/admin/menu-customization`
+  - `/admin/menu-customization?portal=account`
+- Autosave now covers:
+  - visibility toggles,
+  - drag-and-drop order,
+  - add/edit/delete items (CRM mode),
+  - account apply mode and selected clients list.
+- Added debounced autosave status in UI (`autosave_saving`, `autosave_saved`, `autosave_error`).
+- Removed dependency on forced page reload for CRM menu customization; menu is refreshed via window event `crm-menu-settings-updated`.
+- Files:
+  - `frontend/src/pages/admin/MenuCustomization.tsx`
+  - `frontend/src/components/layouts/UniversalLayout.tsx`
+  - `frontend/src/locales/ru/admin/menucustomization.json`
+  - `frontend/src/locales/en/admin/menucustomization.json`
+
+## [2026-02-12] Account Menu Visibility Consistency Fix (admin/account preview)
+- Fixed remaining case where hidden account items could still appear in `/account/*`:
+  - `/api/client/account-menu-settings` now serves settings for any authenticated role, while keeping client-targeting logic only for `client` role.
+  - `AccountPage` now supports hidden group IDs (`account-main`, `account-bonus-program`, `account-profile-tools`) by expanding them to child items before rendering.
+  - Added fallback loading of account menu settings via admin endpoint if client endpoint fails in preview context.
+  - Added periodic/focus refresh of account menu settings so latest visibility changes are applied without stale UI.
+  - In account menu customization, hide/show toggle now auto-saves visibility for account portal immediately on click.
+  - Added preview fallback via local storage (`account_menu_hidden_items_preview`) so hidden items are applied in `/account` even if API temporarily returns stale/empty data.
+- Files:
+  - `backend/api/menu_settings.py`
+  - `frontend/public_landing/pages/account/AccountPage.tsx`
+  - `frontend/src/pages/admin/MenuCustomization.tsx`
+
 ## [2026-02-12] Account Menu Groups, Tab Hiding, and Access Guard for Hidden/Restricted Routes
 - Account menu customization (`/admin/menu-customization?portal=account`) was extended:
   - Added grouped structure for account navigation:

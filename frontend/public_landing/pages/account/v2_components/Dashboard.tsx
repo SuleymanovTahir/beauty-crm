@@ -22,7 +22,7 @@ interface DashboardProps {
 export function Dashboard({ visibleMenuIds }: DashboardProps) {
   const { t, i18n } = useTranslation(['account', 'common']);
   const navigate = useNavigate();
-  const { currency: globalCurrency, formatCurrency } = useCurrency();
+  const { currency, formatCurrency } = useCurrency();
   const { salonName, phone: salonPhone } = useSalonSettings();
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<any>(null);
@@ -146,9 +146,10 @@ export function Dashboard({ visibleMenuIds }: DashboardProps) {
 
   const { client, loyalty, next_booking, last_visit, achievements_summary, visit_stats } = dashboardData || {};
   const userName = client?.name || localStorage.getItem('user_name') || 'Гость';
-  const currency = loyalty?.currency || globalCurrency;
   const canOpenMasters = visibleMenuSet.has('masters');
   const canOpenAchievements = visibleMenuSet.has('achievements');
+  const achievementsUnlocked = Number(achievements_summary?.unlocked ?? 0);
+  const achievementsTotal = Number(achievements_summary?.total ?? 0);
 
   return (
     <div className="space-y-6 pb-8">
@@ -327,7 +328,7 @@ export function Dashboard({ visibleMenuIds }: DashboardProps) {
       )}
 
       {/* Достижения */}
-      {canOpenAchievements && achievements_summary && (
+      {canOpenAchievements && (
         <Card
           className="bg-gradient-to-br from-purple-50 to-pink-50 cursor-pointer hover:border-purple-300 transition-all"
           onClick={() => navigate('/account/achievements')}
@@ -344,10 +345,10 @@ export function Dashboard({ visibleMenuIds }: DashboardProps) {
           <CardContent className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">{t('dashboard.unlocked', 'Ваш прогресс')}</span>
-              <span className="font-semibold text-lg">{achievements_summary.unlocked} / {achievements_summary.total}</span>
+              <span className="font-semibold text-lg">{achievementsUnlocked} / {achievementsTotal}</span>
             </div>
             <div className="text-xs text-purple-600 font-medium">
-              {achievements_summary.unlocked === 0
+              {achievementsUnlocked === 0
                 ? t('dashboard.achievements_hint', 'Вас ждут первые награды! Запишитесь на процедуру сегодня')
                 : t('dashboard.achievements_progress', 'Вы на верном пути! Откройте новые награды при следующем визите')}
             </div>

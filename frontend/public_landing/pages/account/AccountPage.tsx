@@ -29,6 +29,7 @@ import { Notifications } from './v2_components/Notifications';
 import { Settings } from './v2_components/Settings';
 import { PromoCodesView } from './PromoCodesView';
 import { apiClient } from '../../../src/api/client';
+import { api } from '../../../src/services/api';
 import LanguageSwitcher from '../../../src/components/LanguageSwitcher';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -81,6 +82,19 @@ export function AccountPage() {
 
   const menuItems = useMemo<AccountMenuItem[]>(() => {
     const hiddenSet = new Set(accountHiddenMenuItems);
+    const groupedHiddenMap: Record<string, Tab[]> = {
+      'account-main': ['dashboard', 'appointments', 'gallery', 'masters', 'beauty'],
+      'account-bonus-program': ['loyalty', 'achievements', 'promocodes', 'specialoffers'],
+      'account-profile-tools': ['notifications', 'settings'],
+    };
+
+    Object.entries(groupedHiddenMap).forEach(([groupId, children]) => {
+      if (hiddenSet.has(groupId) !== true) {
+        return;
+      }
+      children.forEach((childId) => hiddenSet.add(childId));
+    });
+
     const challengesHiddenByFeature = features.challenges === false;
 
     return [
@@ -224,6 +238,7 @@ export function AccountPage() {
 
     // Set up polling for notifications every 30 seconds
     const notifInterval = setInterval(loadNotifications, 30000);
+    const accountMenuInterval = setInterval(loadAccountMenuSettings, 30000);
 
     // Window event listeners for reactive updates
     const handleProfileUpdated = () => {
@@ -238,15 +253,30 @@ export function AccountPage() {
       loadNotifications();
     };
 
+    const handleWindowFocus = () => {
+      loadAccountMenuSettings();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadAccountMenuSettings();
+      }
+    };
+
     window.addEventListener('profile-updated', handleProfileUpdated);
     window.addEventListener('messengers-updated', handleMessengersUpdated);
     window.addEventListener('notification-received', handleNotificationReceived);
+    window.addEventListener('focus', handleWindowFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       clearInterval(notifInterval);
+      clearInterval(accountMenuInterval);
       window.removeEventListener('profile-updated', handleProfileUpdated);
       window.removeEventListener('messengers-updated', handleMessengersUpdated);
       window.removeEventListener('notification-received', handleNotificationReceived);
+      window.removeEventListener('focus', handleWindowFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
@@ -353,16 +383,57 @@ export function AccountPage() {
   };
 
   const loadAccountMenuSettings = async () => {
+    const loadHiddenItemsPreview = (): string[] => {
+      try {
+        const rawPreviewValue = localStorage.getItem('account_menu_hidden_items_preview');
+        if (rawPreviewValue === null) {
+          return [];
+        }
+        const parsedPreviewValue = JSON.parse(rawPreviewValue);
+        if (!Array.isArray(parsedPreviewValue)) {
+          return [];
+        }
+        return parsedPreviewValue
+          .map((value) => String(value))
+          .map((value) => value.trim())
+          .filter((value) => value.length > 0);
+      } catch (error) {
+        return [];
+      }
+    };
+
+    const applyHiddenItems = (hiddenItems: unknown) => {
+      if (!Array.isArray(hiddenItems)) {
+        const previewHiddenItems = loadHiddenItemsPreview();
+        setAccountHiddenMenuItems(previewHiddenItems);
+        return;
+      }
+
+      const normalizedHiddenItems = hiddenItems
+        .map((value) => String(value))
+        .map((value) => value.trim())
+        .filter((value) => value.length > 0);
+
+      setAccountHiddenMenuItems(normalizedHiddenItems);
+    };
+
     try {
       const response = await apiClient.getClientAccountMenuSettings();
-      if (Array.isArray(response.hidden_items)) {
-        setAccountHiddenMenuItems(response.hidden_items.map((id: any) => String(id)));
-      } else {
-        setAccountHiddenMenuItems([]);
-      }
+      applyHiddenItems(response.hidden_items);
+      return;
     } catch (error) {
-      setAccountHiddenMenuItems([]);
+      console.error('Error loading client account menu settings:', error);
     }
+
+    try {
+      const response = await api.getAccountMenuSettings();
+      applyHiddenItems(response.hidden_items);
+      return;
+    } catch (error) {
+      console.error('Error loading admin account menu settings:', error);
+    }
+
+    setAccountHiddenMenuItems([]);
   };
 
 
