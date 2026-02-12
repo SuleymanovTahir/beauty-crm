@@ -72,10 +72,8 @@ async def send_universal_message(
     if template_name:
         template = get_notification_template(template_name)
         if template:
-            # Выбираем язык (по умолчанию RU, можно расширить)
-            lang = context.get('lang', 'ru') if context else 'ru'
-            final_text = template.get(f'body_{lang}') or template.get('body_ru')
-            final_subject = subject or template.get(f'subject_{lang}') or template.get('subject_ru')
+            final_text = template.get('body') or final_text
+            final_subject = subject or template.get('subject')
             
             # Подстановка переменных
             if context and final_text:

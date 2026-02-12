@@ -1,171 +1,191 @@
-2026-02-12 22:18:53 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-12 22:18:55 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 22:18:56 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 22:18:56 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 22:18:56 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 5.66ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:18:56 - crm - INFO - [chat] ✅ [unread-count] Total request took 6.25ms (DB: 5.66ms)
-2026-02-12 22:18:57 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 22:19:00 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.77ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:19:00 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.96ms (DB: 1.77ms)
-2026-02-12 22:19:00 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 22:19:00 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 22:19:00 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.28ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:19:00 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.83ms (DB: 1.28ms)
-2026-02-12 22:19:28 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 22:19:34 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
-2026-02-12 22:19:34 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
-2026-02-12 22:19:34 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-02-12 22:19:35 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-02-12 22:19:35 - crm - INFO - [boot] ============================================================
-2026-02-12 22:19:35 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-02-12 22:19:35 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-02-12 22:19:35 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-02-12 22:19:35 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-12 22:19:35 - crm - INFO - [boot] ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
-2026-02-12 22:19:35 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-02-12 22:19:35 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-02-12 22:19:36 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-02-12 22:19:36 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-02-12 22:19:36 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-02-12 22:19:36 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
-2026-02-12 22:19:36 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
-2026-02-12 22:19:36 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
-2026-02-12 22:19:36 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-02-12 22:19:36 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
-2026-02-12 22:19:36 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-12 22:19:36 - crm - INFO - [modules] ======================================================================
-2026-02-12 22:19:36 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-02-12 22:19:36 - crm - INFO - [modules] ======================================================================
-2026-02-12 22:19:36 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-02-12 22:19:36 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-02-12 22:19:36 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-02-12 22:19:36 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-02-12 22:19:36 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-02-12 22:19:36 - crm - INFO - [modules] ======================================================================
-2026-02-12 22:19:36 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-02-12 22:19:36 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-12 22:19:36 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-12 22:19:36 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-12 22:19:36 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
-2026-02-12 22:19:36 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-12 22:19:36 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-12 22:19:36 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-12 22:19:36 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-12 22:19:39 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 22:19:39 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 22:19:39 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 22:19:39 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.28ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:19:39 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.34ms (DB: 1.28ms)
-2026-02-12 22:19:39 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 22:19:39 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.53ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:19:39 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.65ms (DB: 0.53ms)
-2026-02-12 22:19:46 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
-2026-02-12 22:19:46 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
-2026-02-12 22:19:47 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-02-12 22:19:47 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-02-12 22:19:48 - crm - INFO - [boot] ============================================================
-2026-02-12 22:19:48 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-02-12 22:19:48 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-02-12 22:19:48 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-02-12 22:19:48 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-12 22:19:48 - crm - INFO - [boot] ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
-2026-02-12 22:19:48 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-02-12 22:19:48 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-02-12 22:19:48 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-02-12 22:19:48 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-02-12 22:19:48 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-02-12 22:19:48 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
-2026-02-12 22:19:48 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
-2026-02-12 22:19:48 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
-2026-02-12 22:19:48 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-02-12 22:19:48 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
-2026-02-12 22:19:48 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-12 22:19:48 - crm - INFO - [modules] ======================================================================
-2026-02-12 22:19:48 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-02-12 22:19:48 - crm - INFO - [modules] ======================================================================
-2026-02-12 22:19:48 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-02-12 22:19:48 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-02-12 22:19:48 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-02-12 22:19:48 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-02-12 22:19:48 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-02-12 22:19:48 - crm - INFO - [modules] ======================================================================
-2026-02-12 22:19:48 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-02-12 22:19:48 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-12 22:19:48 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-12 22:19:48 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-12 22:19:48 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
-2026-02-12 22:19:48 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-12 22:19:48 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-12 22:19:48 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-12 22:19:48 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-12 22:19:51 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 22:19:51 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 22:19:51 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 22:19:51 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 22:19:51 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.44ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:19:51 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.37ms (DB: 0.44ms)
-2026-02-12 22:19:51 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.70ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:19:51 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.79ms (DB: 0.70ms)
-2026-02-12 22:19:58 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 22:20:25 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
-2026-02-12 22:20:25 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
-2026-02-12 22:20:26 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-02-12 22:20:26 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-02-12 22:20:27 - crm - INFO - [boot] ============================================================
-2026-02-12 22:20:27 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-02-12 22:20:27 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-02-12 22:20:27 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-02-12 22:20:27 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-12 22:20:27 - crm - INFO - [boot] ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
-2026-02-12 22:20:27 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-02-12 22:20:27 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-02-12 22:20:27 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-02-12 22:20:27 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-02-12 22:20:27 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-02-12 22:20:27 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
-2026-02-12 22:20:27 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
-2026-02-12 22:20:27 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
-2026-02-12 22:20:27 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-02-12 22:20:27 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
-2026-02-12 22:20:27 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-12 22:20:27 - crm - INFO - [modules] ======================================================================
-2026-02-12 22:20:27 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-02-12 22:20:27 - crm - INFO - [modules] ======================================================================
-2026-02-12 22:20:27 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-02-12 22:20:27 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-02-12 22:20:27 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-02-12 22:20:27 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-02-12 22:20:27 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-02-12 22:20:27 - crm - INFO - [modules] ======================================================================
-2026-02-12 22:20:27 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-02-12 22:20:27 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-12 22:20:27 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-12 22:20:27 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-12 22:20:27 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
-2026-02-12 22:20:27 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-12 22:20:27 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-12 22:20:27 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-12 22:20:27 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-12 22:20:28 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 22:20:30 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 22:20:30 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 22:20:30 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.27ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:20:30 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.73ms (DB: 1.27ms)
-2026-02-12 22:20:30 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 22:20:30 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 22:20:30 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.99ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:20:30 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.29ms (DB: 0.99ms)
-2026-02-12 22:20:42 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.58ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:20:42 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.97ms (DB: 1.58ms)
-2026-02-12 22:20:42 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 22:20:42 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
-2026-02-12 22:20:42 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 22:20:42 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.59ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:20:42 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.82ms (DB: 1.59ms)
-2026-02-12 22:20:42 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 22:20:42 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 22:20:42 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 22:20:42 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.59ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:20:42 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.93ms (DB: 0.59ms)
-2026-02-12 22:20:43 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.68ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 22:20:43 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.86ms (DB: 0.68ms)
+2026-02-12 23:40:22 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
+2026-02-12 23:40:22 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
+2026-02-12 23:40:22 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-02-12 23:40:22 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
+2026-02-12 23:40:22 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
+2026-02-12 23:40:22 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
+2026-02-12 23:40:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-12 23:40:22 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-02-12 23:40:25 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 23:40:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:40:25 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 23:40:25 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 23:40:25 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 23:40:25 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.66ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 23:40:25 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.86ms (DB: 0.66ms)
+2026-02-12 23:40:25 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.98ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 23:40:25 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.18ms (DB: 0.98ms)
+2026-02-12 23:41:21 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:41:34 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:42:04 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:43:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:43:34 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:43:37 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 23:43:37 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 23:44:04 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:44:41 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:45:04 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:45:34 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:46:04 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:46:44 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:47:04 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:47:34 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:48:04 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:48:34 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:49:00 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-02-12 23:49:00 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=21, username=admin, role=director
+2026-02-12 23:49:00 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=21
+2026-02-12 23:49:00 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Admin (System Admin)
+2026-02-12 23:49:00 - crm - INFO - [api] ⏱️ get_users took 0.0029s returning 7 users
+2026-02-12 23:49:00 - crm - INFO - [subscriptions] Получены подписки пользователя 21
+2026-02-12 23:49:04 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:49:34 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:50:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-12 23:50:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:51:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:52:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:53:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:54:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:55:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:56:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:57:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:58:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 23:59:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:00:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-13 00:00:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:01:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:02:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:03:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:04:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:05:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:05:50 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.99ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:05:50 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.28ms (DB: 0.99ms)
+2026-02-13 00:05:50 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:05:50 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.53ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:05:50 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.63ms (DB: 0.53ms)
+2026-02-13 00:05:50 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-13 00:05:50 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:05:50 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:05:50 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:05:51 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.49ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:05:51 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.59ms (DB: 0.49ms)
+2026-02-13 00:05:51 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.80ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:05:51 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.01ms (DB: 0.80ms)
+2026-02-13 00:06:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:06:31 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.57ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:06:31 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.93ms (DB: 0.57ms)
+2026-02-13 00:06:31 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-13 00:06:31 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:06:31 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 5.27ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:06:31 - crm - INFO - [chat] ✅ [unread-count] Total request took 6.26ms (DB: 5.27ms)
+2026-02-13 00:06:31 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:06:31 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:06:31 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:06:31 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.74ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:06:31 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.90ms (DB: 0.74ms)
+2026-02-13 00:06:31 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.86ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:06:31 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.03ms (DB: 0.86ms)
+2026-02-13 00:07:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:08:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:09:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:10:22 - crm - INFO - 🔔 Checking for reminders...
+2026-02-13 00:10:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-13 00:10:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:11:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:12:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:13:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:14:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:15:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:16:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:16:58 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:16:58 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:17:17 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:17:17 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 4.42ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:17:17 - crm - INFO - [chat] ✅ [unread-count] Total request took 4.84ms (DB: 4.42ms)
+2026-02-13 00:17:17 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:17:17 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.61ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:17:17 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.79ms (DB: 0.61ms)
+2026-02-13 00:17:17 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:17:17 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:17:17 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:17:17 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.69ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:17:17 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.80ms (DB: 0.69ms)
+2026-02-13 00:17:17 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:17:18 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:17:18 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.06ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:17:18 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.30ms (DB: 1.06ms)
+2026-02-13 00:17:31 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:17:31 - crm - ERROR - [client_auth] Error getting gallery: column cg.service_id does not exist
+LINE 5:             LEFT JOIN services s ON cg.service_id = s.id
+                                            ^
+
+2026-02-13 00:17:31 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:18:02 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:18:28 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-13 00:18:28 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
+2026-02-13 00:18:28 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2026-02-13 00:18:28 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2026-02-13 00:18:29 - crm - INFO - [boot] ============================================================
+2026-02-13 00:18:29 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-02-13 00:18:29 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
+2026-02-13 00:18:29 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
+2026-02-13 00:18:29 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-13 00:18:29 - crm - INFO - [boot] ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
+2026-02-13 00:18:29 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-02-13 00:18:29 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-02-13 00:18:29 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-02-13 00:18:29 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-02-13 00:18:29 - crm - INFO - [migrations] ✅ Chat history table created/verified
+2026-02-13 00:18:29 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
+2026-02-13 00:18:29 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
+2026-02-13 00:18:29 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
+2026-02-13 00:18:29 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
+2026-02-13 00:18:29 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
+2026-02-13 00:18:29 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-13 00:18:29 - crm - INFO - [modules] ======================================================================
+2026-02-13 00:18:29 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-02-13 00:18:29 - crm - INFO - [modules] ======================================================================
+2026-02-13 00:18:29 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
+2026-02-13 00:18:29 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-02-13 00:18:29 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-02-13 00:18:29 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-02-13 00:18:29 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-02-13 00:18:29 - crm - INFO - [modules] ======================================================================
+2026-02-13 00:18:29 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-02-13 00:18:29 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
+2026-02-13 00:18:29 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
+2026-02-13 00:18:29 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-02-13 00:18:29 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
+2026-02-13 00:18:29 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
+2026-02-13 00:18:29 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
+2026-02-13 00:18:29 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-13 00:18:29 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-02-13 00:18:32 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:18:33 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:18:33 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:18:33 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:18:33 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.90ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:18:33 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.02ms (DB: 0.90ms)
+2026-02-13 00:18:33 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:18:33 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:18:33 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:18:33 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.73ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:18:33 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.85ms (DB: 0.73ms)
+2026-02-13 00:19:02 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:19:32 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:20:02 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:21:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:22:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:23:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:23:29 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-13 00:23:29 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.79ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 00:23:29 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.02ms (DB: 0.79ms)
+2026-02-13 00:23:29 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 00:23:29 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:23:29 - crm - ERROR - [client_auth] Error getting gallery: column cg.service_id does not exist
+LINE 5:             LEFT JOIN services s ON cg.service_id = s.id
+                                            ^
+
+2026-02-13 00:23:29 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-13 00:23:29 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-13 00:23:29 - crm - INFO - [notifications] 🔔 New WS connection accepted

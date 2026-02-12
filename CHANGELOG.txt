@@ -1,3 +1,35 @@
+## [2026-02-12] Promo Codes Edit/Filters, Gallery Privacy Visibility, and Bonus Tabs Stability
+- Promo codes management improvements:
+  - Added promo-code update API endpoint:
+    - `PUT /api/promo-codes/{promo_id}` with the same server-side validation rules as create.
+    - File: `backend/api/promo_codes.py`.
+  - Added frontend API method:
+    - `api.updatePromoCode(...)`.
+    - File: `frontend/src/services/api.ts`.
+  - Expanded CRM promo-code UI in `frontend/src/pages/admin/PromoCodes.tsx`:
+    - Existing promo codes can now be edited.
+    - Added filtering by promo code text.
+    - Added filtering by target scope and service category.
+    - Added sorting (newest/oldest/discount/usage/code).
+- Client gallery privacy visibility for admin/manager:
+  - Backend gallery endpoint now returns privacy status flags:
+    - `photo_upload_allowed`, `photo_upload_reason`.
+    - File: `backend/api/client_gallery_admin.py`.
+  - Client detail page now visibly shows when client disabled photo uploads and disables add/upload actions accordingly:
+    - File: `frontend/src/pages/admin/ClientDetail.tsx`.
+- Bonus program tabs stability in account:
+  - Prevented accidental disappearance of `Challenges` tab when feature payload is partial by merging feature flags instead of hard overwrite.
+  - Reduced duplication in account bonus navigation by deriving bonus subgroup tabs from one `menuItems` source.
+  - File: `frontend/public_landing/pages/account/AccountPage.tsx`.
+- Bookings KPI card style alignment:
+  - Restored per-card period text (`За все время`) and adjusted stats-card sizing/spacing to match expected panel style.
+  - Files:
+    - `frontend/src/pages/shared/Bookings.tsx`
+    - `frontend/src/pages/admin/Bookings.css`
+- Dynamic page loading stability:
+  - Switched `PromoCodes` and `SpecialPackages` in app routing to direct imports to avoid intermittent lazy-load module fetch failures.
+  - File: `frontend/src/App.tsx`.
+
 ## [2026-02-12] Account/Admin Navigation Unification, Currency De-hardcode, and Notifications API Compatibility
 - Account UX consistency (`frontend/public_landing/pages/account/AccountPage.tsx`):
   - Added browser title synchronization for `/account/*` pages, including settings sub-tabs (`tab` query).
@@ -2566,3 +2598,30 @@ format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
 - `frontend/public_landing/pages/account/booking/ConfirmStep.tsx` - MODIFIED
 - `frontend/src/pages/admin/PromoCodes.tsx` - MODIFIED
 - `frontend/src/services/api.ts` - MODIFIED
+
+## 2026-02-12: Удаление языковых полей из notification_templates (SSOT subject/body)
+
+### ПРОБЛЕМА
+- В шаблонах уведомлений использовались языковые колонки (`subject_*`, `body_*`) и логика выбора языка в backend, хотя переводы должны жить только в `locales`.
+
+### РЕШЕНИЕ
+1. Базовая схема `notification_templates` в `init.py` переведена на единые поля `subject` и `body`.
+2. Добавлена совместимая миграция в `init.py`:
+   - добавляет `subject/body` в существующей БД, если их нет;
+   - переносит значения из legacy `subject_*`/`body_*` в canonical поля.
+3. Все API сохранения/чтения шаблонов переведены на `subject/body`:
+   - `backend/api/admin_features.py`;
+   - `backend/api/notifications.py`.
+4. Сиды базовых шаблонов (`fix_data.py`) переведены на `subject/body`.
+5. Универсальный отправщик (`universal_messenger.py`) теперь использует только `template.subject` и `template.body`.
+6. Удалены прямые вхождения `subject_ru/en/ar`, `body_ru/en/ar` из backend-кода.
+
+### ВАЖНО ПОМНИТЬ
+- Для `notification_templates` использовать только `subject/body`; языковую адаптацию делать через `locales`, а не отдельные языковые поля в БД.
+
+### ФАЙЛЫ
+- `backend/db/init.py` - MODIFIED
+- `backend/scripts/maintenance/fix_data.py` - MODIFIED
+- `backend/api/admin_features.py` - MODIFIED
+- `backend/api/notifications.py` - MODIFIED
+- `backend/services/universal_messenger.py` - MODIFIED

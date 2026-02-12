@@ -23,6 +23,49 @@ router = APIRouter(tags=["Notifications"])
 # create_notifications_table removed (moved to db/init.py)
 
 
+def _quote_sql_identifier(identifier: str) -> str:
+    escaped_identifier = identifier.replace('"', '""')
+    return f'"{escaped_identifier}"'
+
+
+def _get_notification_template_columns(cursor) -> set[str]:
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'public' AND table_name = 'notification_templates'
+    """)
+    return {row[0] for row in cursor.fetchall()}
+
+
+def _get_template_value_expression(template_columns: set[str], base_column: str) -> str:
+    if base_column in template_columns:
+        return _quote_sql_identifier(base_column)
+
+    prefixed_columns = sorted([
+        column_name
+        for column_name in template_columns
+        if column_name.startswith(f"{base_column}_")
+    ])
+    if len(prefixed_columns) == 0:
+        return "''::text"
+
+    prefixed_sql = ", ".join([
+        f"NULLIF({_quote_sql_identifier(column_name)}, '')"
+        for column_name in prefixed_columns
+    ])
+    return f"COALESCE({prefixed_sql}, '')"
+
+
+def _get_template_storage_columns(template_columns: set[str], base_column: str) -> List[str]:
+    if base_column in template_columns:
+        return [base_column]
+    return sorted([
+        column_name
+        for column_name in template_columns
+        if column_name.startswith(f"{base_column}_")
+    ])
+
+
 @router.get("/notifications")
 async def get_notifications(
     unread_only: bool = Query(False),
@@ -667,12 +710,8 @@ async def send_batch_reminders(
 class TemplateModel(BaseModel):
     name: str
     category: Optional[str] = "transactional"
-    subject_ru: Optional[str] = ""
-    subject_en: Optional[str] = ""
-    subject_ar: Optional[str] = ""
-    body_ru: str
-    body_en: Optional[str] = ""
-    body_ar: Optional[str] = ""
+    subject: Optional[str] = ""
+    body: str
     variables: Optional[List[str]] = []
 
 @router.get("/notifications/templates")
@@ -684,10 +723,38 @@ async def get_templates(session_token: Optional[str] = Cookie(None)):
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("SELECT * FROM notification_templates ORDER BY name ASC")
+        template_columns = _get_notification_template_columns(c)
+        has_legacy_columns = {"title", "message", "notification_type"}.issubset(template_columns)
+
+        if has_legacy_columns:
+            c.execute("""
+                SELECT id, name, category, title AS subject, message AS body, variables, is_system, created_at, updated_at
+                FROM notification_templates
+                ORDER BY name ASC
+            """)
+        else:
+            subject_sql = _get_template_value_expression(template_columns, "subject")
+            body_sql = _get_template_value_expression(template_columns, "body")
+            c.execute("""
+                SELECT id, name, category, {subject_sql} AS subject, {body_sql} AS body, variables, is_system, created_at, updated_at
+                FROM notification_templates
+                ORDER BY name ASC
+            """.format(subject_sql=subject_sql, body_sql=body_sql))
+
         rows = c.fetchall()
-        column_names = [desc[0] for desc in c.description]
-        templates = [dict(zip(column_names, row)) for row in rows]
+        templates = []
+        for row in rows:
+            templates.append({
+                "id": row[0],
+                "name": row[1],
+                "category": row[2],
+                "subject": row[3],
+                "body": row[4],
+                "variables": row[5],
+                "is_system": row[6],
+                "created_at": row[7],
+                "updated_at": row[8]
+            })
         return {"templates": templates}
     finally:
         conn.close()
@@ -702,26 +769,41 @@ async def save_template(template: TemplateModel, session_token: Optional[str] = 
     conn = get_db_connection()
     c = conn.cursor()
     try:
+        template_columns = _get_notification_template_columns(c)
+        insert_columns = ["name", "category"]
+        insert_values = [template.name, template.category]
+        update_clauses = ["category = EXCLUDED.category"]
+
+        for subject_column in _get_template_storage_columns(template_columns, "subject"):
+            insert_columns.append(subject_column)
+            insert_values.append(template.subject)
+            quoted_column = _quote_sql_identifier(subject_column)
+            update_clauses.append(f"{quoted_column} = EXCLUDED.{quoted_column}")
+
+        for body_column in _get_template_storage_columns(template_columns, "body"):
+            insert_columns.append(body_column)
+            insert_values.append(template.body)
+            quoted_column = _quote_sql_identifier(body_column)
+            update_clauses.append(f"{quoted_column} = EXCLUDED.{quoted_column}")
+
+        if "variables" in template_columns:
+            insert_columns.append("variables")
+            insert_values.append(json.dumps(template.variables))
+            update_clauses.append("variables = EXCLUDED.variables")
+
+        if "updated_at" in template_columns:
+            update_clauses.append("updated_at = CURRENT_TIMESTAMP")
+
         c.execute("""
-            INSERT INTO notification_templates 
-            (name, category, subject_ru, subject_en, subject_ar, body_ru, body_en, body_ar, variables)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO notification_templates ({columns})
+            VALUES ({placeholders})
             ON CONFLICT (name) DO UPDATE SET
-                category = EXCLUDED.category,
-                subject_ru = EXCLUDED.subject_ru,
-                subject_en = EXCLUDED.subject_en,
-                subject_ar = EXCLUDED.subject_ar,
-                body_ru = EXCLUDED.body_ru,
-                body_en = EXCLUDED.body_en,
-                body_ar = EXCLUDED.body_ar,
-                variables = EXCLUDED.variables,
-                updated_at = CURRENT_TIMESTAMP
-        """, (
-            template.name, template.category, 
-            template.subject_ru, template.subject_en, template.subject_ar,
-            template.body_ru, template.body_en, template.body_ar,
-            json.dumps(template.variables)
-        ))
+                {updates}
+        """.format(
+            columns=", ".join(insert_columns),
+            placeholders=", ".join(["%s"] * len(insert_values)),
+            updates=", ".join(update_clauses)
+        ), tuple(insert_values))
         conn.commit()
         return {"success": True}
     except Exception as e:

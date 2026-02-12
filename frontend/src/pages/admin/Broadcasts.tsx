@@ -48,6 +48,14 @@ interface PreviewData {
   }>;
 }
 
+interface NotificationTemplate {
+  id: number;
+  name: string;
+  category?: string;
+  subject?: string;
+  body?: string;
+}
+
 const getRoleLabel = (
   t: TFunction,
   roleKey: string,
@@ -105,6 +113,9 @@ export default function Broadcasts() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [roles, setRoles] = useState<Array<{ key: string; name: string }>>([]);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [notificationTemplates, setNotificationTemplates] = useState<NotificationTemplate[]>([]);
+  const [selectedTemplateName, setSelectedTemplateName] = useState('');
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
 
   // Новые состояния для добавления контактов вручную
   const [showAddManualContacts, setShowAddManualContacts] = useState(false);
@@ -135,11 +146,8 @@ export default function Broadcasts() {
     Promise.all([
       loadSubscriptions(),
       loadHistory(),
-      loadSubscriptions(),
-      loadHistory(),
-      // loadUsers(), // Loading users depends on selected type now
       loadRoles(),
-      loadRoles(),
+      loadNotificationTemplates(),
       loadUnsubscribed()
     ]).catch(error => {
       console.error('Error loading broadcasts data:', error);
@@ -180,6 +188,36 @@ export default function Broadcasts() {
     } catch (err) {
       console.error('Error loading roles:', err);
     }
+  };
+
+  const loadNotificationTemplates = async () => {
+    try {
+      setLoadingTemplates(true);
+      const response = await api.getNotificationTemplates();
+      if (Array.isArray(response?.templates)) {
+        setNotificationTemplates(response.templates);
+      } else {
+        setNotificationTemplates([]);
+      }
+    } catch (err) {
+      setNotificationTemplates([]);
+    } finally {
+      setLoadingTemplates(false);
+    }
+  };
+
+  const handleApplyTemplate = (templateName: string) => {
+    const template = notificationTemplates.find((item) => item.name === templateName);
+    if (template === undefined) {
+      return;
+    }
+
+    setForm((previousState) => ({
+      ...previousState,
+      subject: previousState.channels.includes('email') ? (template.subject ?? previousState.subject) : previousState.subject,
+      message: template.body ?? previousState.message,
+    }));
+    toast.success(t('template_applied', { defaultValue: 'Шаблон вставлен' }));
   };
 
   const loadSubscribers = async (includeInactive: boolean = showInactive) => {
@@ -660,6 +698,36 @@ export default function Broadcasts() {
                         ))}
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Subject - Only show when email is selected */}
+                <div>
+                  <Label className="block mb-2.5 text-sm font-semibold text-gray-700">
+                    {t('template_selector_label', { defaultValue: 'Готовый шаблон' })}
+                  </Label>
+                  <div className="flex gap-3">
+                    <Select value={selectedTemplateName} onValueChange={setSelectedTemplateName}>
+                      <SelectTrigger className="flex-1">
+                        <SelectValue placeholder={t('template_selector_placeholder', { defaultValue: 'Выберите шаблон' })} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {notificationTemplates.map((template) => (
+                          <SelectItem key={template.id} value={template.name}>
+                            {template.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => handleApplyTemplate(selectedTemplateName)}
+                      disabled={selectedTemplateName.length === 0 || loadingTemplates}
+                      className="shrink-0"
+                    >
+                      {t('template_insert_button', { defaultValue: 'Вставить' })}
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Subject - Only show when email is selected */}

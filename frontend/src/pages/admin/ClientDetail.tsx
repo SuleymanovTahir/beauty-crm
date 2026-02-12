@@ -1,6 +1,6 @@
 // /frontend/src/pages/admin/ClientDetail.tsx
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Phone, Calendar, MessageSquare, Edit2, Save, X, Clock, Instagram, User, Upload, Plus, Trash2, Target, Loader, TrendingUp } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -63,8 +63,10 @@ interface ClientStats {
 export default function ClientDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation(['admin/clientdetail', 'common']);
   const { formatCurrency } = useCurrency();
+  const clientsPath = location.pathname.startsWith('/admin') ? '/admin/clients' : '/crm/clients';
 
   const [client, setClient] = useState<Client | null>(null);
   const [stats, setStats] = useState<ClientStats | null>(null);
@@ -90,6 +92,8 @@ export default function ClientDetail() {
 
   // Gallery state
   const [clientGallery, setClientGallery] = useState<any[]>([]);
+  const [photoUploadAllowed, setPhotoUploadAllowed] = useState(true);
+  const [photoUploadReason, setPhotoUploadReason] = useState('');
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [galleryFormData, setGalleryFormData] = useState({
     before_photo: '',
@@ -153,7 +157,7 @@ export default function ClientDetail() {
     } catch (err) {
       toast.error(t('common:loading_error'));
       console.error('Error:', err);
-      navigate('/crm/clients');
+      navigate(clientsPath);
     } finally {
       setLoading(false);
     }
@@ -162,7 +166,10 @@ export default function ClientDetail() {
   const loadClientGallery = async (clientId: string) => {
     try {
       const data = await api.getAdminClientGallery(clientId);
-      setClientGallery(data.gallery || []);
+      setClientGallery(Array.isArray(data.gallery) ? data.gallery : []);
+      setPhotoUploadAllowed(data.photo_upload_allowed !== false);
+      const reason = typeof data.photo_upload_reason === 'string' ? data.photo_upload_reason : '';
+      setPhotoUploadReason(reason);
     } catch (error) {
       console.error('Error loading gallery:', error);
     }
@@ -170,6 +177,10 @@ export default function ClientDetail() {
 
   const handleUploadGalleryPhoto = async (photoType: 'before' | 'after', file: File) => {
     if (!client) return;
+    if (!photoUploadAllowed) {
+      toast.error(t('photo_access_disabled'));
+      return;
+    }
     try {
       if (photoType === 'before') setUploadingBefore(true);
       else setUploadingAfter(true);
@@ -187,6 +198,10 @@ export default function ClientDetail() {
 
   const handleSaveGalleryEntry = async () => {
     if (!client) return;
+    if (!photoUploadAllowed) {
+      toast.error(t('photo_access_disabled'));
+      return;
+    }
     try {
       setSaving(true);
       await api.addClientGalleryEntry({ ...galleryFormData, client_id: client.id });
@@ -265,7 +280,7 @@ export default function ClientDetail() {
   if (!client) {
     return (
       <div className="p-8">
-        <Button onClick={() => navigate('/crm/clients')} variant="ghost">
+        <Button onClick={() => navigate(clientsPath)} variant="ghost">
           ← {t('common:back_to_clients')}
         </Button>
         <p className="text-gray-600 mt-4">{t('not_found')}</p>
@@ -278,7 +293,7 @@ export default function ClientDetail() {
       {/* Header */}
       <div className="flex items-center gap-4 mb-8">
         <button
-          onClick={() => navigate('/crm/clients')}
+          onClick={() => navigate(clientsPath)}
           className="p-2 hover:bg-gray-100 rounded-lg"
         >
           <ArrowLeft className="w-6 h-6" />
@@ -808,10 +823,19 @@ export default function ClientDetail() {
             <Calendar className="w-6 h-6 text-pink-600" />
             {t('client_gallery')}
           </h2>
-          <Button onClick={() => setIsGalleryModalOpen(true)} className="bg-pink-600 hover:bg-pink-700">
+          <Button
+            onClick={() => setIsGalleryModalOpen(true)}
+            className="bg-pink-600 hover:bg-pink-700"
+            disabled={!photoUploadAllowed}
+          >
             <Plus className="w-4 h-4 mr-2" /> {t('add_work')}
           </Button>
         </div>
+        {!photoUploadAllowed && (
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            {photoUploadReason.length > 0 ? photoUploadReason : t('photo_access_disabled')}
+          </div>
+        )}
 
         {clientGallery.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

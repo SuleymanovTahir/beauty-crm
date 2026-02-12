@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import {
     Ticket,
     Plus,
+    Pencil,
     Trash2,
     Loader,
     CheckCircle2,
@@ -33,6 +34,8 @@ import {
 } from '../../components/ui/dialog';
 
 type PromoTargetScope = 'all' | 'categories' | 'services' | 'clients';
+type PromoScopeFilter = 'all_scopes' | PromoTargetScope;
+type PromoSortKey = 'newest' | 'oldest' | 'discount_desc' | 'usage_desc' | 'code_asc';
 
 interface PromoCode {
     id: number;
@@ -103,7 +106,11 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
     const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
     const [loading, setLoading] = useState(true);
     const [showCreateDialog, setShowCreateDialog] = useState(false);
+    const [editingPromo, setEditingPromo] = useState<PromoCode | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [scopeFilter, setScopeFilter] = useState<PromoScopeFilter>('all_scopes');
+    const [categoryFilter, setCategoryFilter] = useState('all');
+    const [sortBy, setSortBy] = useState<PromoSortKey>('newest');
     const [newPromo, setNewPromo] = useState<NewPromoState>(createInitialPromoState());
     const [serviceOptions, setServiceOptions] = useState<ServiceOption[]>([]);
     const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
@@ -118,6 +125,17 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
             return 0;
         }
         return Math.round(parsedValue);
+    };
+
+    const normalizeDateInput = (value: string | null): string => {
+        if (typeof value !== 'string') {
+            return '';
+        }
+        const trimmedValue = value.trim();
+        if (trimmedValue.length === 0) {
+            return '';
+        }
+        return trimmedValue.slice(0, 10);
     };
 
     useEffect(() => {
@@ -182,10 +200,30 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
 
     const resetForm = () => {
         setNewPromo(createInitialPromoState());
+        setEditingPromo(null);
     };
 
     const handleOpenCreateDialog = () => {
         resetForm();
+        setShowCreateDialog(true);
+    };
+
+    const handleOpenEditDialog = (promo: PromoCode) => {
+        const normalizedValidFrom = normalizeDateInput(promo.valid_from);
+        setEditingPromo(promo);
+        setNewPromo({
+            code: promo.code,
+            discount_type: promo.discount_type,
+            discount_value: promo.discount_value,
+            min_booking_amount: promo.min_booking_amount,
+            valid_from: normalizedValidFrom.length > 0 ? normalizedValidFrom : new Date().toISOString().split('T')[0],
+            valid_until: normalizeDateInput(promo.valid_until),
+            usage_limit: promo.usage_limit === null ? '' : String(promo.usage_limit),
+            target_scope: promo.target_scope,
+            target_categories: promo.target_categories,
+            target_service_ids: promo.target_service_ids.map((value) => String(value)),
+            target_client_ids: promo.target_client_ids,
+        });
         setShowCreateDialog(true);
     };
 
@@ -226,14 +264,21 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
         }
 
         try {
-            await api.createPromoCode({
+            const payload = {
                 ...newPromo,
                 usage_limit: newPromo.usage_limit.length > 0 ? parseNonNegativeInteger(newPromo.usage_limit, 0) : null,
                 valid_until: newPromo.valid_until.length > 0 ? newPromo.valid_until : null,
                 target_service_ids: newPromo.target_service_ids.map((value: string) => Number(value)),
-            });
-            toast.success(t('created_success', 'Промокод создан'));
+            };
+            if (editingPromo === null) {
+                await api.createPromoCode(payload);
+                toast.success(t('created_success', 'Промокод создан'));
+            } else {
+                await api.updatePromoCode(editingPromo.id, payload);
+                toast.success(t('updated_success', 'Промокод обновлен'));
+            }
             setShowCreateDialog(false);
+            resetForm();
             await loadData();
         } catch (err: any) {
             toast.error(err?.error ?? t('error_creating', 'Ошибка создания'));
@@ -285,10 +330,69 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
         return clientOptions.filter((client) => selectedIds.has(client.id)).map((client) => client.label);
     }, [newPromo.target_client_ids, clientOptions]);
 
-    const filteredCodes = promoCodes.filter((promo) =>
-        promo.code.toLowerCase().includes(searchQuery.toLowerCase())
-        || (promo.target_scope ?? 'all').toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const serviceCategoryById = useMemo(() => {
+        const categoryMap = new Map<number, string>();
+        serviceOptions.forEach((service) => {
+            categoryMap.set(service.id, service.category);
+        });
+        return categoryMap;
+    }, [serviceOptions]);
+
+    const filteredCodes = useMemo(() => {
+        const normalizedQuery = searchQuery.trim().toLowerCase();
+        const filteredByQuery = promoCodes.filter((promo) => {
+            if (normalizedQuery.length === 0) {
+                return true;
+            }
+            return promo.code.toLowerCase().includes(normalizedQuery);
+        });
+
+        const filteredByScope = filteredByQuery.filter((promo) => {
+            if (scopeFilter === 'all_scopes') {
+                return true;
+            }
+            return promo.target_scope === scopeFilter;
+        });
+
+        const filteredByCategory = filteredByScope.filter((promo) => {
+            if (categoryFilter === 'all') {
+                return true;
+            }
+            if (promo.target_scope === 'all') {
+                return true;
+            }
+            if (promo.target_scope === 'categories') {
+                return promo.target_categories.some((category) => category === categoryFilter);
+            }
+            if (promo.target_scope === 'services') {
+                return promo.target_service_ids.some((serviceId) => serviceCategoryById.get(serviceId) === categoryFilter);
+            }
+            return false;
+        });
+
+        const sorted = [...filteredByCategory];
+        sorted.sort((leftPromo, rightPromo) => {
+            if (sortBy === 'code_asc') {
+                return leftPromo.code.localeCompare(rightPromo.code);
+            }
+            if (sortBy === 'discount_desc') {
+                return rightPromo.discount_value - leftPromo.discount_value;
+            }
+            if (sortBy === 'usage_desc') {
+                return rightPromo.times_used - leftPromo.times_used;
+            }
+
+            const leftDateValue = new Date(leftPromo.created_at).getTime();
+            const rightDateValue = new Date(rightPromo.created_at).getTime();
+            const safeLeftDate = Number.isFinite(leftDateValue) ? leftDateValue : 0;
+            const safeRightDate = Number.isFinite(rightDateValue) ? rightDateValue : 0;
+            if (sortBy === 'oldest') {
+                return safeLeftDate - safeRightDate;
+            }
+            return safeRightDate - safeLeftDate;
+        });
+        return sorted;
+    }, [categoryFilter, promoCodes, scopeFilter, searchQuery, serviceCategoryById, sortBy]);
 
     const getScopeLabel = (promo: PromoCode): string => {
         if (promo.target_scope === 'categories') {
@@ -369,16 +473,59 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
                 </div>
             </div>
 
-            <div className="relative mb-6">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <Input
-                    placeholder={t('search_placeholder', 'Поиск по коду...')}
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 mb-6">
+                <div className="relative lg:col-span-2">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <Input
+                        placeholder={t('search_placeholder', 'Поиск по коду...')}
+                        className={embedded
+                            ? 'pl-12 h-10 bg-white border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm'
+                            : 'pl-12 h-14 bg-white border-gray-100 rounded-2xl focus:ring-pink-500 focus:border-pink-500 shadow-sm'}
+                        value={searchQuery}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                    />
+                </div>
+
+                <select
                     className={embedded
-                        ? 'pl-12 h-10 bg-white border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm'
-                        : 'pl-12 h-14 bg-white border-gray-100 rounded-2xl focus:ring-pink-500 focus:border-pink-500 shadow-sm'}
-                    value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                />
+                        ? 'h-10 bg-white border border-gray-200 rounded-lg px-3 text-sm'
+                        : 'h-14 bg-white border border-gray-100 rounded-2xl px-4 text-sm'}
+                    value={scopeFilter}
+                    onChange={(event) => setScopeFilter(event.target.value as PromoScopeFilter)}
+                >
+                    <option value="all_scopes">{t('filter_scope_all', 'Все области')}</option>
+                    <option value="all">{t('scope_all_clients', 'Все клиенты')}</option>
+                    <option value="categories">{t('scope_categories', 'Определенные категории')}</option>
+                    <option value="services">{t('scope_services', 'Определенные услуги')}</option>
+                    <option value="clients">{t('scope_clients', 'Определенные клиенты')}</option>
+                </select>
+
+                <select
+                    className={embedded
+                        ? 'h-10 bg-white border border-gray-200 rounded-lg px-3 text-sm'
+                        : 'h-14 bg-white border border-gray-100 rounded-2xl px-4 text-sm'}
+                    value={categoryFilter}
+                    onChange={(event) => setCategoryFilter(event.target.value)}
+                >
+                    <option value="all">{t('admin/services:all_categories')}</option>
+                    {categoryOptions.map((category) => (
+                        <option key={category} value={category}>{category}</option>
+                    ))}
+                </select>
+
+                <select
+                    className={embedded
+                        ? 'h-10 bg-white border border-gray-200 rounded-lg px-3 text-sm'
+                        : 'h-14 bg-white border border-gray-100 rounded-2xl px-4 text-sm'}
+                    value={sortBy}
+                    onChange={(event) => setSortBy(event.target.value as PromoSortKey)}
+                >
+                    <option value="newest">{t('sort_newest', 'Сначала новые')}</option>
+                    <option value="oldest">{t('sort_oldest', 'Сначала старые')}</option>
+                    <option value="discount_desc">{t('sort_discount_desc', 'По скидке')}</option>
+                    <option value="usage_desc">{t('sort_usage_desc', 'По использованиям')}</option>
+                    <option value="code_asc">{t('sort_code_asc', 'По коду А-Я')}</option>
+                </select>
             </div>
 
             {loading ? (
@@ -406,6 +553,13 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
                                     title={promo.is_active ? t('deactivate', 'Деактивировать') : t('activate', 'Активировать')}
                                 >
                                     {promo.is_active ? <CheckCircle2 size={24} /> : <XCircle size={24} />}
+                                </button>
+                                <button
+                                    onClick={() => handleOpenEditDialog(promo)}
+                                    className="p-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                                    title={t('common:edit')}
+                                >
+                                    <Pencil size={24} />
                                 </button>
                                 <button
                                     onClick={() => handleDelete(promo.id)}
@@ -460,10 +614,22 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
                 </div>
             )}
 
-            <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+            <Dialog
+                open={showCreateDialog}
+                onOpenChange={(open) => {
+                    setShowCreateDialog(open);
+                    if (!open) {
+                        resetForm();
+                    }
+                }}
+            >
                 <DialogContent className="max-w-md bg-white rounded-[40px] p-8 border-0 shadow-2xl">
                     <DialogHeader className="mb-6">
-                        <DialogTitle className="text-2xl font-bold text-gray-900">{t('create_title', 'Новый промокод')}</DialogTitle>
+                        <DialogTitle className="text-2xl font-bold text-gray-900">
+                            {editingPromo === null
+                                ? t('create_title', 'Новый промокод')
+                                : t('edit_title', 'Редактирование промокода')}
+                        </DialogTitle>
                     </DialogHeader>
 
                     <div className="space-y-6">
@@ -629,12 +795,17 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
                             className="flex-1 h-14 bg-pink-600 hover:bg-pink-700 text-white rounded-2xl font-bold shadow-lg shadow-pink-100 transition-all"
                             onClick={handleCreate}
                         >
-                            {t('create_action_btn', 'Подтвердить создание')}
+                            {editingPromo === null
+                                ? t('create_action_btn', 'Подтвердить создание')
+                                : t('save_action_btn', 'Сохранить изменения')}
                         </Button>
                         <Button
                             variant="outline"
                             className="flex-1 h-14 rounded-2xl font-bold border-gray-100"
-                            onClick={() => setShowCreateDialog(false)}
+                            onClick={() => {
+                                setShowCreateDialog(false);
+                                resetForm();
+                            }}
                         >
                             {t('cancel', 'Отмена')}
                         </Button>

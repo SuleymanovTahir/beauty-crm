@@ -1,29 +1,31 @@
 from fastapi import APIRouter, Request, Cookie, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
-from typing import Optional, List
+from typing import Optional, Tuple
 from db.connection import get_db_connection
 from utils.utils import require_auth
-from utils.logger import log_info, log_error
 from pathlib import Path
 from core.config import UPLOAD_DIR
 
 router = APIRouter(tags=["Admin Client Gallery"])
 
 
-def _is_gallery_allowed(cursor, client_id: str) -> bool:
+def _get_gallery_access_status(cursor, client_id: str) -> Tuple[bool, str]:
     cursor.execute("SELECT preferences FROM clients WHERE instagram_id = %s", (client_id,))
     client_row = cursor.fetchone()
     if client_row is None or client_row[0] is None:
-        return True
+        return True, ""
 
     try:
         import json
         preferences = json.loads(client_row[0])
     except Exception:
-        return True
+        return True, ""
 
     privacy_prefs = preferences.get("privacy_prefs", {})
-    return privacy_prefs.get("allowPhotos", True) is not False
+    is_allowed = privacy_prefs.get("allowPhotos", True) is not False
+    if is_allowed:
+        return True, ""
+    return False, "Client disabled photo access"
 
 @router.get("/admin/client-gallery/{client_id}")
 async def get_admin_client_gallery(client_id: str, session_token: Optional[str] = Cookie(None)):
@@ -35,6 +37,7 @@ async def get_admin_client_gallery(client_id: str, session_token: Optional[str] 
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        photo_upload_allowed, photo_upload_reason = _get_gallery_access_status(c, client_id)
         c.execute("""
             SELECT id, before_photo, after_photo, created_at, category, notes, master_id
             FROM client_gallery
@@ -54,7 +57,14 @@ async def get_admin_client_gallery(client_id: str, session_token: Optional[str] 
                 "master_id": row[6]
             })
         conn.close()
-        return {"success": True, "gallery": gallery}
+        return {
+            "success": True,
+            "gallery": gallery,
+            "photo_upload_allowed": photo_upload_allowed,
+            "photo_upload_reason": photo_upload_reason
+        }
+    except HTTPException:
+        raise
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 
@@ -73,9 +83,10 @@ async def upload_client_gallery_photo(
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        if not _is_gallery_allowed(c, client_id):
+        photo_upload_allowed, photo_upload_reason = _get_gallery_access_status(c, client_id)
+        if not photo_upload_allowed:
             conn.close()
-            raise HTTPException(status_code=403, detail="Client disabled photo access")
+            raise HTTPException(status_code=403, detail=photo_upload_reason)
         conn.close()
 
         target_dir = Path(UPLOAD_DIR) / "client_galleries" / client_id
@@ -88,6 +99,8 @@ async def upload_client_gallery_photo(
         
         image_path = f"/static/uploads/client_galleries/{client_id}/{photo_type}_{file.filename}"
         return {"success": True, "image_path": image_path}
+    except HTTPException:
+        raise
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 
@@ -103,9 +116,10 @@ async def add_gallery_entry(request: Request, session_token: Optional[str] = Coo
         conn = get_db_connection()
         c = conn.cursor()
         client_id = data.get("client_id")
-        if not _is_gallery_allowed(c, client_id):
+        photo_upload_allowed, photo_upload_reason = _get_gallery_access_status(c, client_id)
+        if not photo_upload_allowed:
             conn.close()
-            raise HTTPException(status_code=403, detail="Client disabled photo access")
+            raise HTTPException(status_code=403, detail=photo_upload_reason)
 
         c.execute("""
             INSERT INTO client_gallery (client_id, before_photo, after_photo, category, notes, master_id)
@@ -123,6 +137,8 @@ async def add_gallery_entry(request: Request, session_token: Optional[str] = Coo
         conn.commit()
         conn.close()
         return {"success": True, "id": new_id}
+    except HTTPException:
+        raise
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 

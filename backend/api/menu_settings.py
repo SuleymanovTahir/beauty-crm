@@ -1,11 +1,11 @@
 
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Optional, List, Any
 from pydantic import BaseModel
 from db.connection import get_db_connection
 from utils.utils import get_current_user
 from utils.cache import cache
-from utils.logger import log_error
 import json
 import logging
 import time
@@ -24,6 +24,105 @@ class MenuSettings(BaseModel):
 class MenuSettingsResponse(BaseModel):
     menu_order: Optional[List[Any]]
     hidden_items: Optional[List[str]]
+
+class AccountMenuSettings(BaseModel):
+    hidden_items: Optional[List[str]] = None
+    apply_mode: Optional[str] = "all"
+    target_client_ids: Optional[List[str]] = None
+
+class AccountMenuSettingsResponse(BaseModel):
+    hidden_items: List[str]
+    apply_mode: str
+    target_client_ids: List[str]
+
+ADMIN_ROLES = {"director", "admin", "manager"}
+
+def _normalize_string_list(values: Optional[List[Any]]) -> List[str]:
+    if values is None:
+        return []
+    normalized: List[str] = []
+    for raw_value in values:
+        value = str(raw_value).strip()
+        if len(value) == 0:
+            continue
+        normalized.append(value)
+    return normalized
+
+def _load_salon_menu_config(cursor) -> dict:
+    cursor.execute("SELECT menu_config FROM salon_settings WHERE id = 1")
+    row = cursor.fetchone()
+    if row is None:
+        return {}
+    raw_value = row[0]
+    if raw_value is None:
+        return {}
+    if isinstance(raw_value, dict):
+        return raw_value
+    if isinstance(raw_value, str):
+        try:
+            loaded = json.loads(raw_value)
+            if isinstance(loaded, dict):
+                return loaded
+        except json.JSONDecodeError:
+            logger.warning("Failed to parse salon_settings.menu_config")
+            return {}
+    return {}
+
+def _save_salon_menu_config(cursor, config: dict) -> None:
+    cursor.execute(
+        """
+            INSERT INTO salon_settings (id, menu_config, updated_at)
+            VALUES (1, %s::jsonb, CURRENT_TIMESTAMP)
+            ON CONFLICT (id) DO UPDATE SET
+                menu_config = EXCLUDED.menu_config,
+                updated_at = CURRENT_TIMESTAMP
+        """,
+        (json.dumps(config, ensure_ascii=False),)
+    )
+
+def _resolve_client_id(cursor, current_user: dict) -> Optional[str]:
+    user_id = current_user.get("id")
+    user_email = current_user.get("email")
+    user_phone = current_user.get("phone")
+    username = current_user.get("username")
+
+    if user_id is not None:
+        cursor.execute(
+            "SELECT instagram_id FROM clients WHERE user_id = %s ORDER BY created_at DESC LIMIT 1",
+            (user_id,)
+        )
+        row = cursor.fetchone()
+        if row is not None and row[0]:
+            return str(row[0])
+
+    if user_email:
+        cursor.execute(
+            "SELECT instagram_id FROM clients WHERE email = %s ORDER BY created_at DESC LIMIT 1",
+            (user_email,)
+        )
+        row = cursor.fetchone()
+        if row is not None and row[0]:
+            return str(row[0])
+
+    if user_phone:
+        cursor.execute(
+            "SELECT instagram_id FROM clients WHERE phone = %s ORDER BY created_at DESC LIMIT 1",
+            (user_phone,)
+        )
+        row = cursor.fetchone()
+        if row is not None and row[0]:
+            return str(row[0])
+
+    if username:
+        cursor.execute(
+            "SELECT instagram_id FROM clients WHERE instagram_id = %s LIMIT 1",
+            (username,)
+        )
+        row = cursor.fetchone()
+        if row is not None and row[0]:
+            return str(row[0])
+
+    return None
 
 @router.get("/menu-settings", response_model=MenuSettingsResponse)
 async def get_menu_settings(current_user: dict = Depends(get_current_user)):
@@ -169,6 +268,106 @@ async def save_menu_settings(
         conn.rollback()
         logger.error(f"Error saving menu settings: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.get("/account-menu-settings", response_model=AccountMenuSettingsResponse)
+async def get_account_menu_settings(current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") not in ADMIN_ROLES:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        config = _load_salon_menu_config(cursor)
+        account_config = config.get("account")
+        if not isinstance(account_config, dict):
+            account_config = {}
+
+        hidden_items = _normalize_string_list(account_config.get("hidden_items"))
+        apply_mode_raw = str(account_config.get("apply_mode") or "all").lower()
+        apply_mode = "selected" if apply_mode_raw == "selected" else "all"
+        target_client_ids = _normalize_string_list(account_config.get("target_client_ids"))
+
+        return {
+            "hidden_items": hidden_items,
+            "apply_mode": apply_mode,
+            "target_client_ids": target_client_ids,
+        }
+    except Exception as exc:
+        logger.error("Error loading account menu settings: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to load account menu settings")
+    finally:
+        conn.close()
+
+@router.post("/account-menu-settings")
+async def save_account_menu_settings(
+    payload: AccountMenuSettings,
+    current_user: dict = Depends(get_current_user)
+):
+    if current_user.get("role") not in ADMIN_ROLES:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    hidden_items = _normalize_string_list(payload.hidden_items)
+    apply_mode = "selected" if payload.apply_mode == "selected" else "all"
+    target_client_ids = _normalize_string_list(payload.target_client_ids)
+
+    if apply_mode == "all":
+        target_client_ids = []
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        config = _load_salon_menu_config(cursor)
+        config["account"] = {
+            "hidden_items": hidden_items,
+            "apply_mode": apply_mode,
+            "target_client_ids": target_client_ids,
+            "updated_at": datetime.utcnow().isoformat(),
+            "updated_by": current_user.get("id"),
+        }
+        _save_salon_menu_config(cursor, config)
+        conn.commit()
+        return {"success": True}
+    except Exception as exc:
+        conn.rollback()
+        logger.error("Error saving account menu settings: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to save account menu settings")
+    finally:
+        conn.close()
+
+@router.get("/client/account-menu-settings")
+async def get_client_account_menu_settings(current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "client":
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        config = _load_salon_menu_config(cursor)
+        account_config = config.get("account")
+        if not isinstance(account_config, dict):
+            return {"hidden_items": [], "apply_mode": "all", "is_targeted": True}
+
+        hidden_items = _normalize_string_list(account_config.get("hidden_items"))
+        apply_mode_raw = str(account_config.get("apply_mode") or "all").lower()
+        apply_mode = "selected" if apply_mode_raw == "selected" else "all"
+        target_client_ids = set(_normalize_string_list(account_config.get("target_client_ids")))
+
+        if apply_mode == "all":
+            return {"hidden_items": hidden_items, "apply_mode": apply_mode, "is_targeted": True}
+
+        current_client_id = _resolve_client_id(cursor, current_user)
+        is_targeted = current_client_id in target_client_ids if current_client_id else False
+
+        return {
+            "hidden_items": hidden_items if is_targeted else [],
+            "apply_mode": apply_mode,
+            "is_targeted": is_targeted,
+        }
+    except Exception as exc:
+        logger.error("Error loading client account menu settings: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to load client account menu settings")
     finally:
         conn.close()
 

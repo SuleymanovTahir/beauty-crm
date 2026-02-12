@@ -467,6 +467,10 @@ export const apiClient = {
       method: 'POST',
       body: data,
     }),
+
+  getClientAccountMenuSettings: () =>
+    apiCall('/api/client/account-menu-settings'),
+
   // ===== FEATURES =====
   getFeatures: () =>
     apiCall('/api/client/features'),

@@ -29,7 +29,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Checkbox } from "../../components/ui/checkbox";
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { api } from "../../services/api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../components/ui/dialog";
@@ -73,6 +73,7 @@ interface Client {
 
 export default function Clients() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { statuses: statusConfig } = useClientStatuses()
 
   const [clients, setClients] = useState<Client[]>([]);
@@ -143,6 +144,9 @@ export default function Clients() {
     const userStr = localStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;
   }, []);
+  const panelPrefix = useMemo(() => {
+    return location.pathname.startsWith('/admin') ? '/admin' : '/crm';
+  }, [location.pathname]);
   const isSales = currentUser?.role === 'sales';
 
   // Sorting states
@@ -919,7 +923,7 @@ export default function Clients() {
                   <tr
                     key={client.id}
                     className={`clients-tr hover:bg-gray-50 transition-colors cursor-pointer ${selectedClients.has(client.id) ? 'clients-tr-selected' : ''}`}
-                    onClick={() => navigate(`/crm/clients/${encodeURIComponent(client.username || client.instagram_id)}`)}
+                    onClick={() => navigate(`${panelPrefix}/clients/${encodeURIComponent(client.username || client.instagram_id)}`)}
                   >
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <Checkbox
@@ -1030,7 +1034,7 @@ export default function Clients() {
                           className="h-8 w-8 p-0"
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/crm/clients/${encodeURIComponent(client.id)}`);
+                            navigate(`${panelPrefix}/clients/${encodeURIComponent(client.id)}`);
                           }}
                           title={t('view_client_info')}
                         >

@@ -233,17 +233,58 @@ def init_database():
             id SERIAL PRIMARY KEY,
             name TEXT UNIQUE NOT NULL, -- e.g. "booking_confirmation"
             category TEXT DEFAULT 'transactional', -- transactional, marketing, alert
-            subject_ru TEXT,
-            subject_en TEXT,
-            subject_ar TEXT,
-            body_ru TEXT,
-            body_en TEXT,
-            body_ar TEXT,
+            subject TEXT,
+            body TEXT,
             variables JSONB DEFAULT '[]', -- List of allowed variables like ["name", "time"]
             is_system BOOLEAN DEFAULT FALSE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('notification_templates', 'subject', 'TEXT')
+        add_column_if_not_exists('notification_templates', 'body', 'TEXT')
+
+        # Backward-safe migration: fill canonical subject/body from any legacy subject_*/body_* columns.
+        try:
+            c.execute("""
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_schema = 'public' AND table_name = 'notification_templates'
+            """)
+            notification_template_columns = [row[0] for row in c.fetchall()]
+            legacy_subject_columns = sorted([
+                column_name
+                for column_name in notification_template_columns
+                if column_name.startswith('subject_')
+            ])
+            legacy_body_columns = sorted([
+                column_name
+                for column_name in notification_template_columns
+                if column_name.startswith('body_')
+            ])
+
+            if 'subject' in notification_template_columns and len(legacy_subject_columns) > 0:
+                legacy_subject_sql = ", ".join([
+                    f'NULLIF("{column_name}", \'\')'
+                    for column_name in legacy_subject_columns
+                ])
+                c.execute(f"""
+                    UPDATE notification_templates
+                    SET subject = COALESCE(NULLIF(subject, ''), {legacy_subject_sql}, '')
+                    WHERE subject IS NULL OR subject = ''
+                """)
+
+            if 'body' in notification_template_columns and len(legacy_body_columns) > 0:
+                legacy_body_sql = ", ".join([
+                    f'NULLIF("{column_name}", \'\')'
+                    for column_name in legacy_body_columns
+                ])
+                c.execute(f"""
+                    UPDATE notification_templates
+                    SET body = COALESCE(NULLIF(body, ''), {legacy_body_sql}, '')
+                    WHERE body IS NULL OR body = ''
+                """)
+        except Exception as e:
+            log_error(f"Ошибка синхронизации колонок notification_templates: {e}", "db")
 
         # Add indexes for speed (Unread count queries and scheduling)
         c.execute("CREATE INDEX IF NOT EXISTS idx_unified_log_user_unread ON unified_communication_log (user_id, is_read, medium)")

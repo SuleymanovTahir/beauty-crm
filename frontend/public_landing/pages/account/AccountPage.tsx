@@ -58,6 +58,7 @@ export function AccountPage() {
   const [userData, setUserData] = useState<any>(null);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  const [accountHiddenMenuItems, setAccountHiddenMenuItems] = useState<string[]>([]);
 
   const { settings } = useSalonSettings();
   const salonName = settings?.name || 'Beauty Salon';
@@ -68,29 +69,35 @@ export function AccountPage() {
     challenges: true
   });
 
-  const menuItems = useMemo(() => [
-    { id: 'dashboard' as Tab, label: t('tabs.dashboard', 'Главная'), icon: Home, path: '/account/dashboard' },
-    { id: 'appointments' as Tab, label: t('tabs.appointments', 'Записи'), icon: Calendar, path: '/account/appointments' },
-    { id: 'gallery' as Tab, label: t('tabs.gallery', 'Галерея'), icon: Image, path: '/account/gallery' },
-    { id: 'loyalty' as Tab, label: t('adminpanel/loyaltymanagement:title'), icon: Award, path: '/account/loyalty' },
-    { id: 'achievements' as Tab, label: t('layouts/mainlayout:menu.challenges', 'Челленджи'), icon: Trophy, path: '/account/achievements', hidden: true },
-    { id: 'promocodes' as Tab, label: t('layouts/mainlayout:menu.promo_codes', 'Промокоды'), icon: Ticket, path: '/account/promocodes', hidden: true },
-    { id: 'specialoffers' as Tab, label: t('settings.special_offers', 'Специальные предложения и скидки'), icon: Gift, path: '/account/special-offers', hidden: true },
-    { id: 'masters' as Tab, label: t('tabs.masters', 'Мастера'), icon: Users, path: '/account/masters' },
-    { id: 'beauty' as Tab, label: t('tabs.beauty', 'Уход и рекомендации'), icon: Sparkles, path: '/account/beauty' },
-    { id: 'notifications' as Tab, label: t('tabs.notifications', 'Уведомления'), icon: Bell, path: '/account/notifications', badge: unreadCount },
-    { id: 'settings' as Tab, label: t('tabs.settings', 'Настройки'), icon: SettingsIcon, path: '/account/settings' },
-  ], [t, unreadCount]);
+  const menuItems = useMemo(() => {
+    const hiddenSet = new Set(accountHiddenMenuItems);
+    return [
+      { id: 'dashboard' as Tab, label: t('tabs.dashboard', 'Главная'), icon: Home, path: '/account/dashboard', hidden: hiddenSet.has('dashboard') },
+      { id: 'appointments' as Tab, label: t('tabs.appointments', 'Записи'), icon: Calendar, path: '/account/appointments', hidden: hiddenSet.has('appointments') },
+      { id: 'gallery' as Tab, label: t('tabs.gallery', 'Галерея'), icon: Image, path: '/account/gallery', hidden: hiddenSet.has('gallery') },
+      { id: 'loyalty' as Tab, label: t('adminpanel/loyaltymanagement:title'), icon: Award, path: '/account/loyalty', hidden: hiddenSet.has('loyalty') },
+      { id: 'achievements' as Tab, label: t('layouts/mainlayout:menu.challenges', 'Челленджи'), icon: Trophy, path: '/account/achievements', hidden: true },
+      { id: 'promocodes' as Tab, label: t('layouts/mainlayout:menu.promo_codes', 'Промокоды'), icon: Ticket, path: '/account/promocodes', hidden: true },
+      { id: 'specialoffers' as Tab, label: t('settings.special_offers', 'Специальные предложения и скидки'), icon: Gift, path: '/account/special-offers', hidden: true },
+      { id: 'masters' as Tab, label: t('tabs.masters', 'Мастера'), icon: Users, path: '/account/masters', hidden: hiddenSet.has('masters') },
+      { id: 'beauty' as Tab, label: t('tabs.beauty', 'Уход и рекомендации'), icon: Sparkles, path: '/account/beauty', hidden: hiddenSet.has('beauty') },
+      { id: 'notifications' as Tab, label: t('tabs.notifications', 'Уведомления'), icon: Bell, path: '/account/notifications', badge: unreadCount, hidden: hiddenSet.has('notifications') },
+      { id: 'settings' as Tab, label: t('tabs.settings', 'Настройки'), icon: SettingsIcon, path: '/account/settings', hidden: hiddenSet.has('settings') },
+    ];
+  }, [t, unreadCount, accountHiddenMenuItems]);
 
   const bonusProgramTabs = useMemo(() => {
-    const tabs: Array<{ id: Tab; path: string; label: string; icon: any; hidden?: boolean }> = [
-      { id: 'loyalty', path: '/account/loyalty', label: t('adminpanel/loyaltymanagement:title'), icon: Award },
-      { id: 'achievements', path: '/account/achievements', label: t('layouts/mainlayout:menu.challenges'), icon: Trophy, hidden: !features.challenges },
-      { id: 'promocodes', path: '/account/promocodes', label: t('layouts/mainlayout:menu.promo_codes'), icon: Ticket },
-      { id: 'specialoffers', path: '/account/special-offers', label: t('settings.special_offers'), icon: Gift },
-    ];
-    return tabs.filter((tab) => !tab.hidden);
-  }, [t, features.challenges]);
+    const bonusProgramIds = new Set<Tab>(['loyalty', 'achievements', 'promocodes', 'specialoffers']);
+    return menuItems
+      .filter((item) => bonusProgramIds.has(item.id))
+      .filter((item) => !(item.id === 'achievements' && features.challenges === false))
+      .map((item) => ({
+        id: item.id,
+        path: item.path,
+        label: item.label,
+        icon: item.icon
+      }));
+  }, [features.challenges, menuItems]);
 
   const mainTabs = useMemo(() => {
     const candidates: MobileTab[] = [
@@ -146,6 +153,7 @@ export function AccountPage() {
     loadUserData();
     loadNotifications();
     loadFeatures();
+    loadAccountMenuSettings();
 
     // Set up polling for notifications every 30 seconds
     const notifInterval = setInterval(loadNotifications, 30000);
@@ -267,10 +275,26 @@ export function AccountPage() {
     try {
       const data = await apiClient.getFeatures();
       if (data.success && data.features) {
-        setFeatures(data.features);
+        setFeatures((previousState) => ({
+          ...previousState,
+          ...data.features
+        }));
       }
     } catch (error) {
       console.error('Error loading features:', error);
+    }
+  };
+
+  const loadAccountMenuSettings = async () => {
+    try {
+      const response = await apiClient.getClientAccountMenuSettings();
+      if (response.success && Array.isArray(response.hidden_items)) {
+        setAccountHiddenMenuItems(response.hidden_items.map((id: any) => String(id)));
+      } else {
+        setAccountHiddenMenuItems([]);
+      }
+    } catch (error) {
+      setAccountHiddenMenuItems([]);
     }
   };
 
@@ -402,6 +426,23 @@ export function AccountPage() {
           <div className="flex-1 p-2 bg-gray-50 rounded-xl">
             <LanguageSwitcher variant="minimal" />
           </div>
+          <button
+            onClick={() => navigate('/account/notifications')}
+            className={cn(
+              "p-3 rounded-xl transition-colors shadow-sm relative",
+              location.pathname.includes('/notifications')
+                ? "bg-pink-50 text-pink-600"
+                : "bg-white text-gray-600 hover:bg-gray-100"
+            )}
+            title={t('tabs.notifications', 'Уведомления')}
+          >
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 badge-premium badge-premium-orange badge-header">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
+          </button>
           <button
             onClick={handleLogout}
             className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors shadow-sm"

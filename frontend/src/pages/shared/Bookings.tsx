@@ -552,6 +552,7 @@ export default function UniversalBookings() {
                         <div className="bookings-stat-info">
                             <p className="bookings-stat-label">{t('bookings:pending')}</p>
                             <h3 className="bookings-stat-value">{stats.pending}</h3>
+                            <p className="bookings-stat-period">{t('common:all_time')}</p>
                         </div>
                         <div className="bookings-stat-icon-wrapper stat-yellow"><Clock className="bookings-stat-icon" /></div>
                     </div>
@@ -561,6 +562,7 @@ export default function UniversalBookings() {
                         <div className="bookings-stat-info">
                             <p className="bookings-stat-label">{t('bookings:completed')}</p>
                             <h3 className="bookings-stat-value">{stats.completed}</h3>
+                            <p className="bookings-stat-period">{t('common:all_time')}</p>
                         </div>
                         <div className="bookings-stat-icon-wrapper stat-green"><CheckCircle2 className="bookings-stat-icon" /></div>
                     </div>
@@ -570,6 +572,7 @@ export default function UniversalBookings() {
                         <div className="bookings-stat-info">
                             <p className="bookings-stat-label">{t('bookings:total')}</p>
                             <h3 className="bookings-stat-value">{stats.total}</h3>
+                            <p className="bookings-stat-period">{t('common:all_time')}</p>
                         </div>
                         <div className="bookings-stat-icon-wrapper stat-blue"><CalendarDays className="bookings-stat-icon" /></div>
                     </div>
@@ -579,6 +582,7 @@ export default function UniversalBookings() {
                         <div className="bookings-stat-info">
                             <p className="bookings-stat-label">{t('bookings:revenue')}</p>
                             <h3 className="bookings-stat-value">{stats.revenue} {currency}</h3>
+                            <p className="bookings-stat-period">{t('common:all_time')}</p>
                         </div>
                         <div className="bookings-stat-icon-wrapper stat-emerald"><DollarSign className="bookings-stat-icon" /></div>
                     </div>

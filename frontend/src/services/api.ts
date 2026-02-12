@@ -909,6 +909,25 @@ export class ApiClient {
     return this.request('/api/menu-settings', { method: 'DELETE' })
   }
 
+  async getAccountMenuSettings() {
+    return this.request<{
+      hidden_items: string[]
+      apply_mode: 'all' | 'selected'
+      target_client_ids: string[]
+    }>('/api/account-menu-settings')
+  }
+
+  async saveAccountMenuSettings(data: {
+    hidden_items: string[]
+    apply_mode: 'all' | 'selected'
+    target_client_ids: string[]
+  }) {
+    return this.request('/api/account-menu-settings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   // ===== КОРЗИНА (TRASH) =====
   async getTrashItems(entityType?: string) {
     const url = entityType ? `/api/admin/trash?entity_type=${entityType}` : '/api/admin/trash'
@@ -1162,6 +1181,10 @@ export class ApiClient {
   }
   async getNotifications(unreadOnly: boolean = false, limit: number = 50) {
     return this.request<{ notifications: any[] }>(`/api/notifications?unread_only=${unreadOnly}&limit=${limit}`)
+  }
+
+  async getNotificationTemplates() {
+    return this.request<{ templates: Array<{ id: number; name: string; category?: string; subject?: string; body?: string }> }>('/api/notifications/templates')
   }
 
   async markNotificationRead(id: number) {
@@ -2021,6 +2044,38 @@ export class ApiClient {
 
     return this.request('/api/promo-codes', {
       method: 'POST',
+      body: JSON.stringify(payload)
+    })
+  }
+
+  async updatePromoCode(promoId: number, data: CreatePromoCodePayload) {
+    const parsedUsageLimit = typeof data.usage_limit === 'string'
+      ? data.usage_limit.trim() === '' ? null : Number(data.usage_limit)
+      : data.usage_limit ?? null
+
+    const maxUses = typeof parsedUsageLimit === 'number' && Number.isFinite(parsedUsageLimit)
+      ? parsedUsageLimit
+      : null
+
+    const payload = {
+      code: data.code,
+      discount_type: data.discount_type,
+      value: Number(data.discount_value),
+      min_amount: Number(data.min_booking_amount ?? 0),
+      valid_from: data.valid_from ?? undefined,
+      valid_until: data.valid_until ?? null,
+      max_uses: maxUses,
+      category: data.category ?? 'general',
+      description: data.description ?? null,
+      is_active: data.is_active ?? true,
+      target_scope: data.target_scope ?? 'all',
+      target_categories: Array.isArray(data.target_categories) ? data.target_categories : [],
+      target_service_ids: Array.isArray(data.target_service_ids) ? data.target_service_ids : [],
+      target_client_ids: Array.isArray(data.target_client_ids) ? data.target_client_ids : [],
+    }
+
+    return this.request(`/api/promo-codes/${promoId}`, {
+      method: 'PUT',
       body: JSON.stringify(payload)
     })
   }

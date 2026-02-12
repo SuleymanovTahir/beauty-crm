@@ -46,6 +46,7 @@
   "phone": "Телефон",
   "phone_not_specified": "Номер телефона не указан",
   "photo_after": "Фото ПОСЛЕ",
+  "photo_access_disabled": "Клиент запретил добавление фото в галерею.",
   "photo_before": "Фото ДО",
   "photo_uploaded": "Фото загружено",
   "procedure": "Процедура",
