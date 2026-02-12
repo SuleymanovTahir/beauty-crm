@@ -1,3 +1,76 @@
+## [2026-02-13] Embedded Section Header Button Alignment Tuning
+- Normalized header alignment for embedded special-packages sections so primary action buttons stop dropping below title when width is sufficient:
+  - loyalty (`Изменить баланс баллов`),
+  - promo codes (`Создать промокод`),
+  - challenges (`Создать задание`).
+- Adjusted flex breakpoints/alignment in section headers for consistent desktop placement.
+- Files:
+  - `frontend/src/pages/adminPanel/LoyaltyManagement.tsx`
+  - `frontend/src/pages/admin/PromoCodes.tsx`
+  - `frontend/src/pages/shared/Challenges.tsx`
+
+## [2026-02-13] Mobile Responsiveness Pass: Loyalty Tables and Promo Cards
+- Loyalty embedded tables now force horizontal scrolling on small screens:
+  - `Правила начисления по категориям`
+  - `Последние операции`
+  - Increased table minimum widths and applied no-wrap columns so content scrolls horizontally instead of collapsing.
+- Promo cards in embedded promo-codes section improved for narrow screens:
+  - actions moved to mobile action row until `md`,
+  - desktop absolute action buttons start from `md`,
+  - card content switches to stacked layout on small widths,
+  - date/usage blocks no longer collide on small screens.
+- Embedded challenges header made less aggressive on medium widths:
+  - action button now stacks with title until `lg` to prevent horizontal overflow.
+- Files:
+  - `frontend/src/pages/adminPanel/LoyaltyManagement.tsx`
+  - `frontend/src/pages/admin/PromoCodes.tsx`
+  - `frontend/src/pages/shared/Challenges.tsx`
+
+## [2026-02-13] Promo Codes Embedded Layout and Filter Controls Fix
+- Fixed promo card content overlap on `/crm/special-packages?section=promo-codes`:
+  - action buttons no longer cover text on small screens (desktop keeps top-right controls, mobile uses separate action row),
+  - promo code/title and scope/date text can wrap safely (`min-w-0`, responsive date grid, break handling),
+  - increased reserved right padding for desktop action controls.
+- Replaced top promo filter native `<select>` elements with shared `Select` UI components:
+  - scope filter,
+  - category filter,
+  - sorting filter.
+  This aligns arrow/icon behavior with referrals filter controls.
+- Unified embedded primary action button style with loyalty section:
+  - promo button (`Создать промокод`) updated to `rounded-xl`, `h-11`, `px-6`.
+  - challenges button (`Создать задание`) updated to same style in embedded mode.
+- Files:
+  - `frontend/src/pages/admin/PromoCodes.tsx`
+  - `frontend/src/pages/shared/Challenges.tsx`
+
+## [2026-02-13] Loyalty Tier Actions Switched to Icon Buttons
+- Updated loyalty tiers action controls to icon-only buttons (no text) in embedded loyalty view:
+  - toggle active/inactive,
+  - edit,
+  - delete.
+- Added `title` and `aria-label` for each icon action for clarity and accessibility.
+- File:
+  - `frontend/src/pages/adminPanel/LoyaltyManagement.tsx`
+
+## [2026-02-13] Loyalty Buttons Alignment Fix in Special Packages (Embedded)
+- Fixed visual regression for loyalty action buttons on:
+  - `/crm/special-packages?section=loyalty`
+- Changes in embedded loyalty view:
+  - `adjust points` button size/shape aligned with page style (`h-11`, `rounded-xl`, consistent horizontal padding).
+  - `save` button in points expiration block aligned to input row (removed bottom-sticking behavior caused by end alignment with helper text).
+  - unified button corner radius for loyalty header/save actions.
+- File:
+  - `frontend/src/pages/adminPanel/LoyaltyManagement.tsx`
+
+## [2026-02-13] Admin Panel Content Container Alignment Fix
+- Fixed admin page content sticking to the sidebar on:
+  - `/admin/dashboard`
+  - `/admin/gallery`
+- Added consistent outer content padding (`p-4 md:p-8`) for both pages so spacing matches other admin sections.
+- Files:
+  - `frontend/src/pages/adminPanel/Dashboard.tsx`
+  - `frontend/src/pages/adminPanel/PhotoGallery.tsx`
+
 ## [2026-02-13] Account Dashboard Link Visibility and CRM Menu Live Sync Fixes
 - Fixed account menu hidden-items application inconsistency:
   - Removed stale preview override when API returns a valid (including empty) `hidden_items` array.

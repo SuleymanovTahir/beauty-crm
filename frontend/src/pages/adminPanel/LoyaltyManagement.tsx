@@ -1,6 +1,6 @@
 // /frontend/src/pages/adminPanel/LoyaltyManagement.tsx
 import { useState, useEffect, useMemo } from 'react';
-import { Plus, Search, Edit, Trash2, TrendingUp, Gift, DollarSign } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, TrendingUp, Gift, DollarSign, Power } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
@@ -462,7 +462,7 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="min-w-0">
           <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-3xl font-bold text-gray-900'}>
             {embedded && <Gift className="w-8 h-8 text-blue-600" />}
@@ -474,7 +474,7 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
           <div className="flex gap-2 w-full sm:w-auto">
             <Button
               onClick={() => setShowAdjustDialog(true)}
-              className={embedded ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-10 px-4 font-semibold shadow-sm' : ''}
+              className={embedded ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm' : ''}
             >
               <Plus className="w-4 h-4 mr-2" />
               {t('adjust_points')}
@@ -539,7 +539,7 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
 
               <div className="space-y-2">
                 <Label className="text-base font-semibold text-gray-900">{t('config.expiration_days', 'Срок действия баллов (дней)')}</Label>
-                <div className="flex flex-col lg:flex-row lg:items-end gap-3">
+                <div className="flex flex-col lg:flex-row lg:items-start gap-3">
                   <div className="w-full space-y-2">
                     <Input
                       type="number"
@@ -553,9 +553,11 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                     </p>
                   </div>
                   {canManageLoyalty && (
-                    <Button onClick={handleUpdateConfig} className="w-full lg:w-auto lg:min-w-[170px] bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-11 px-6 font-semibold shadow-sm">
-                      {t('buttons.save', 'Сохранить')}
-                    </Button>
+                    <div className="w-full lg:w-auto lg:min-w-[170px]">
+                      <Button onClick={handleUpdateConfig} className="w-full lg:w-auto lg:min-w-[170px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm">
+                        {t('buttons.save', 'Сохранить')}
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -620,20 +622,20 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <Table className="min-w-[720px]">
+            <Table className="min-w-[900px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('categories.category', 'Категория')}</TableHead>
-                  <TableHead>{t('categories.multiplier', 'Коэффициент начисления')}</TableHead>
-                  <TableHead className="w-[140px]">{t('common:status')}</TableHead>
-                  {canManageLoyalty && <TableHead className="w-[260px] text-right">{t('common:actions')}</TableHead>}
+                  <TableHead className="whitespace-nowrap">{t('categories.category', 'Категория')}</TableHead>
+                  <TableHead className="whitespace-nowrap">{t('categories.multiplier', 'Коэффициент начисления')}</TableHead>
+                  <TableHead className="w-[140px] whitespace-nowrap">{t('common:status')}</TableHead>
+                  {canManageLoyalty && <TableHead className="w-[260px] text-right whitespace-nowrap">{t('common:actions')}</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {categoryRules.map((rule) => (
                   <TableRow key={rule.category}>
-                    <TableCell>{rule.category}</TableCell>
-                    <TableCell>x{rule.points_multiplier}</TableCell>
+                    <TableCell className="whitespace-nowrap">{rule.category}</TableCell>
+                    <TableCell className="whitespace-nowrap">x{rule.points_multiplier}</TableCell>
                     <TableCell>
                       <Badge variant={rule.is_active ? 'default' : 'secondary'}>
                         {rule.is_active ? t('common:active') : t('statuses.inactive', 'Неактивно')}
@@ -723,35 +725,39 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                   </Badge>
                 </div>
                 {canManageLoyalty && (
-                  <div className="flex gap-2 w-full sm:w-auto">
+                  <div className="flex gap-2 w-full sm:w-auto sm:justify-end">
                     <Button
                       variant={tier.is_active ? 'secondary' : 'outline'}
-                      size="sm"
-                      className="w-full sm:w-auto"
+                      size="icon"
+                      title={tier.is_active ? t('actions.deactivate', 'Отключить') : t('actions.activate', 'Включить')}
+                      aria-label={tier.is_active ? t('actions.deactivate', 'Отключить') : t('actions.activate', 'Включить')}
+                      className={`h-9 w-9 ${tier.is_active ? 'text-gray-700' : 'text-green-600'}`}
                       onClick={() => handleToggleTierStatus(tier)}
                     >
-                      {tier.is_active ? t('actions.deactivate', 'Отключить') : t('actions.activate', 'Включить')}
+                      <Power className="w-4 h-4" />
                     </Button>
                     <Button
                       variant="outline"
-                      size="sm"
-                      className="w-full sm:w-auto"
+                      size="icon"
+                      title={t('common:edit')}
+                      aria-label={t('common:edit')}
+                      className="h-9 w-9"
                       onClick={() => {
                         setEditingTier(tier);
                         setShowTierDialog(true);
                       }}
                     >
-                      <Edit className="w-4 h-4 mr-1" />
-                      {t('common:edit')}
+                      <Edit className="w-4 h-4" />
                     </Button>
                     <Button
                       variant="outline"
-                      size="sm"
-                      className="w-full sm:w-auto text-red-500"
+                      size="icon"
+                      title={t('common:delete')}
+                      aria-label={t('common:delete')}
+                      className="h-9 w-9 text-red-500"
                       onClick={() => handleDeleteTier(tier.id)}
                     >
-                      <Trash2 className="w-4 h-4 mr-1" />
-                      {t('common:delete')}
+                      <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 )}
@@ -784,15 +790,15 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <Table className="min-w-[720px]">
+            <Table className="min-w-[980px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('transactions.table.client')}</TableHead>
-                  <TableHead>{t('transactions.table.points')}</TableHead>
-                  <TableHead>{t('transactions.table.type')}</TableHead>
-                  <TableHead>{t('transactions.table.reason')}</TableHead>
-                  <TableHead>{t('transactions.table.date')}</TableHead>
-                  {canManageLoyalty && <TableHead className="text-right">{t('common:actions')}</TableHead>}
+                  <TableHead className="whitespace-nowrap">{t('transactions.table.client')}</TableHead>
+                  <TableHead className="whitespace-nowrap">{t('transactions.table.points')}</TableHead>
+                  <TableHead className="whitespace-nowrap">{t('transactions.table.type')}</TableHead>
+                  <TableHead className="whitespace-nowrap">{t('transactions.table.reason')}</TableHead>
+                  <TableHead className="whitespace-nowrap">{t('transactions.table.date')}</TableHead>
+                  {canManageLoyalty && <TableHead className="text-right whitespace-nowrap">{t('common:actions')}</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -814,8 +820,8 @@ export default function LoyaltyManagement({ embedded = false }: LoyaltyManagemen
                         {t(`transactions.types.${transaction.type}`)}
                       </Badge>
                     </TableCell>
-                    <TableCell>{transaction.reason}</TableCell>
-                    <TableCell>{new Date(transaction.created_at).toLocaleDateString('ru-RU')}</TableCell>
+                    <TableCell className="whitespace-nowrap">{transaction.reason}</TableCell>
+                    <TableCell className="whitespace-nowrap">{new Date(transaction.created_at).toLocaleDateString('ru-RU')}</TableCell>
                     {canManageLoyalty && (
                       <TableCell className="text-right">
                         <Button
