@@ -85,7 +85,9 @@ class ConnectionManager:
 
     async def send_to_user(self, user_id: int, message: dict):
         """Публикуем сообщение в Redis для доставки пользователю на любой воркер"""
-        await redis_pubsub.publish(f"crm:webrtc:user:{user_id}", message)
+        published = await redis_pubsub.publish(f"crm:webrtc:user:{user_id}", message)
+        if not published:
+            return await self.send_to_user_local(user_id, message)
         return True
 
     async def send_to_user_local(self, user_id: int, message: dict):
@@ -111,7 +113,9 @@ class ConnectionManager:
 
     async def broadcast(self, message: dict):
         """Публикуем сообщение в Redis для рассылки всем воркерам"""
-        await redis_pubsub.publish("crm:webrtc:broadcast", message)
+        published = await redis_pubsub.publish("crm:webrtc:broadcast", message)
+        if not published:
+            await self.broadcast_local(message)
 
     async def broadcast_local(self, message: dict):
         """Разослать сообщение всем локально подключенным пользователям"""

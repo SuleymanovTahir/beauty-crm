@@ -1,6 +1,6 @@
 // /frontend/src/pages/shared/Referrals.tsx
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
     Users, Gift, TrendingUp, Search, Settings,
     ChevronRight, ArrowLeft
@@ -40,14 +40,30 @@ interface Referral {
     created_at: string;
 }
 
+type ReferralStatusFilter = 'all' | 'pending' | 'completed' | 'cancelled';
+
+const normalizeStatusFilter = (value: string | null): ReferralStatusFilter => {
+    if (value === 'pending') {
+        return 'pending';
+    }
+    if (value === 'completed') {
+        return 'completed';
+    }
+    if (value === 'cancelled') {
+        return 'cancelled';
+    }
+    return 'all';
+};
+
 export default function UniversalReferrals() {
     const { t } = useTranslation(['adminpanel/referralprogram', 'common', 'services']);
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const [referrals, setReferrals] = useState<Referral[]>([]);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [statusFilter, setStatusFilter] = useState<string>('all');
+    const [statusFilter, setStatusFilter] = useState<ReferralStatusFilter>(() => normalizeStatusFilter(searchParams.get('tab')));
     const [showSettingsDialog, setShowSettingsDialog] = useState(false);
     const [stats, setStats] = useState({
         total_referrals: 0,
@@ -66,6 +82,24 @@ export default function UniversalReferrals() {
         loadSettings();
         loadStats();
     }, [statusFilter]);
+
+    useEffect(() => {
+        const statusFromUrl = normalizeStatusFilter(searchParams.get('tab'));
+        if (statusFilter !== statusFromUrl) {
+            setStatusFilter(statusFromUrl);
+        }
+    }, [searchParams, statusFilter]);
+
+    const handleStatusFilterChange = (nextStatus: ReferralStatusFilter) => {
+        setStatusFilter(nextStatus);
+
+        const nextParams = new URLSearchParams(searchParams);
+        nextParams.set('tab', nextStatus);
+
+        if (nextParams.toString() !== searchParams.toString()) {
+            setSearchParams(nextParams, { replace: true });
+        }
+    };
 
     const loadReferrals = async () => {
         try {
@@ -235,10 +269,10 @@ export default function UniversalReferrals() {
                                 </div>
 
                                 <div className="flex items-center gap-1 p-1 bg-gray-100/50 rounded-lg border border-gray-100">
-                                    {['all', 'pending', 'completed', 'cancelled'].map((status) => (
+                                    {(['all', 'pending', 'completed', 'cancelled'] as ReferralStatusFilter[]).map((status) => (
                                         <button
                                             key={status}
-                                            onClick={() => setStatusFilter(status)}
+                                            onClick={() => handleStatusFilterChange(status)}
                                             className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all ${statusFilter === status
                                                 ? 'bg-white text-blue-700 shadow-sm border border-gray-100'
                                                 : 'text-gray-500 hover:text-gray-700'

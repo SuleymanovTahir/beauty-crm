@@ -27,6 +27,21 @@ _processing_suggestions = set()
 _unread_cache = {}
 _unread_cache_ttl = 0  # Disabled for CRM - always fetch fresh data
 
+
+def _normalize_unread_payload(payload):
+    """Normalize unread payload from cache to the current API schema."""
+    if isinstance(payload, dict):
+        total = int(payload.get("total", payload.get("count", 0) or 0))
+        return {
+            "total": total,
+            "chat": int(payload.get("chat", 0) or 0),
+            "notifications": int(payload.get("notifications", 0) or 0),
+            "internal_chat": int(payload.get("internal_chat", 0) or 0),
+        }
+
+    total = int(payload or 0)
+    return {"total": total, "chat": total, "notifications": 0, "internal_chat": 0}
+
 def get_messenger_chat_history(client_id: str, messenger_type: str = 'instagram', limit: int = 50):
     """Получить историю чата по типу мессенджера"""
 
@@ -395,23 +410,24 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
         cache_duration = (time_module.time() - cache_start) * 1000
         if cached_count is not None:
             log_info(f"✅ [unread-count] Redis cache hit ({cache_duration:.2f}ms)", "chat")
-            return {"count": cached_count}
+            return _normalize_unread_payload(cached_count)
         log_info(f"⚠️ [unread-count] Redis cache miss ({cache_duration:.2f}ms)", "chat")
     
     # Fallback to in-memory cache
-    if cache_key in _unread_cache:
+    use_memory_cache = _unread_cache_ttl > 0
+    if use_memory_cache and cache_key in _unread_cache:
         cached_count, cached_time = _unread_cache[cache_key]
         cache_age = time_module.time() - cached_time
         if cache_age < _unread_cache_ttl:
             log_info(f"✅ [unread-count] Memory cache hit (age: {cache_age:.1f}s)", "chat")
-            return {"count": cached_count}
+            return _normalize_unread_payload(cached_count)
         log_info(f"⚠️ [unread-count] Memory cache expired (age: {cache_age:.1f}s)", "chat")
     
     # Get fresh count from database
     db_start = time_module.time()
     try:
         # Check if we have stale cache to return immediately if DB is slow
-        stale_cache_available = cache_key in _unread_cache
+        stale_cache_available = use_memory_cache and cache_key in _unread_cache
         stale_count, stale_time = None, 0
         if stale_cache_available:
             stale_count, stale_time = _unread_cache[cache_key]
@@ -432,18 +448,19 @@ async def get_unread_count(session_token: Optional[str] = Cookie(None)):
         db_duration = (time_module.time() - db_start) * 1000
         log_error(f"❌ [unread-count] Error getting unread count ({db_duration:.2f}ms): {e}", "chat")
         # Return cached value if available, otherwise default
-        if cache_key in _unread_cache:
+        if use_memory_cache and cache_key in _unread_cache:
             cached_data, _ = _unread_cache[cache_key]
             log_info(f"⚠️ [unread-count] Returning stale cache due to error", "chat")
-            return cached_data
-        return {"total": 0, "chat": 0, "notifications": 0}
+            return _normalize_unread_payload(cached_data)
+        return {"total": 0, "chat": 0, "notifications": 0, "internal_chat": 0}
     
     # Cache in Redis (if available)
     if cache.enabled:
         cache.set(cache_key, data, expire=60)  # 60 seconds
     
     # Cache in memory as fallback
-    _unread_cache[cache_key] = (data, time_module.time())
+    if use_memory_cache:
+        _unread_cache[cache_key] = (data, time_module.time())
     
     total_duration = (time_module.time() - request_start) * 1000
     log_info(f"✅ [unread-count] Total request took {total_duration:.2f}ms (DB: {db_duration:.2f}ms)", "chat")

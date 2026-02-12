@@ -80,7 +80,7 @@ interface ChangeRequest {
 }
 
 type TabType = 'services' | 'history';
-type SortKey = 'name' | 'price' | 'duration' | 'category';
+type SortKey = 'name' | 'price' | 'duration' | 'category' | 'status';
 
 const EMPTY_SERVICE_FORM: ServiceFormData = {
     key: '',
@@ -348,6 +348,7 @@ export default function UniversalServices() {
                 if (key === 'price') return Number(leftService.price ?? 0);
                 if (key === 'duration') return parseDurationToMinutes(leftService.duration);
                 if (key === 'category') return String(leftService.category ?? '').toLowerCase();
+                if (key === 'status') return leftService.is_active ? 'active' : 'inactive';
                 return getServiceDisplayName(leftService).toLowerCase();
             })();
 
@@ -355,6 +356,7 @@ export default function UniversalServices() {
                 if (key === 'price') return Number(rightService.price ?? 0);
                 if (key === 'duration') return parseDurationToMinutes(rightService.duration);
                 if (key === 'category') return String(rightService.category ?? '').toLowerCase();
+                if (key === 'status') return rightService.is_active ? 'active' : 'inactive';
                 return getServiceDisplayName(rightService).toLowerCase();
             })();
 
@@ -629,10 +631,10 @@ export default function UniversalServices() {
                                     </th>
                                 )}
                                 <th>
-                                    <span className="crm-services-header-inline">
+                                    <button type="button" className="crm-services-sort-button" onClick={() => handleSort('status')}>
                                         <span>{t('common:status')}</span>
                                         <ArrowUpDown className="crm-services-sort-icon" />
-                                    </span>
+                                    </button>
                                 </th>
                                 <th className="crm-services-actions-header">{t('common:actions')}</th>
                             </tr>
@@ -665,8 +667,12 @@ export default function UniversalServices() {
                                                     <span>{t('employee/services:pending_approval')}</span>
                                                 </span>
                                             ) : (
-                                                <span className="crm-services-status-badge crm-services-status-badge-active">
-                                                    <span>{isEmployee ? t('common:active') : t('admin/services:active')}</span>
+                                                <span className={`crm-services-status-badge ${service.is_active ? 'crm-services-status-badge-active' : 'crm-services-status-badge-inactive'}`}>
+                                                    <span>
+                                                        {service.is_active
+                                                            ? (isEmployee ? t('common:active') : t('admin/services:active'))
+                                                            : t('common:inactive')}
+                                                    </span>
                                                 </span>
                                             )}
                                         </td>

@@ -1,3 +1,63 @@
+## [2026-02-12] CRM Referrals Unification with Entry-Specific UI
+- `/crm/referrals` now uses `frontend/src/pages/admin/SpecialPackages.tsx` in `referrals-only` mode (same referral content/style as inside special packages).
+- Entry-point behavior is now split by route:
+  - From tools (`/crm/referrals`): referral-only view, no top switch with special packages.
+  - From services/special packages (`/crm/special-packages`): full behavior remains unchanged, including top section tabs.
+- URL behavior in referral-only mode:
+  - Keeps only referral view state via `view` query param.
+  - Removes `section` query param to prevent switching into packages from tool entry.
+  - Defaults to `view=history` when not provided.
+- Routing updates in `frontend/src/App.tsx`:
+  - Admin panel `/admin/referrals` kept on existing `UniversalReferrals`.
+  - CRM `/crm/referrals` switched to `<SpecialPackages entryMode="referrals-only" />`.
+
+## [2026-02-12] URL/Title Sync for Referral Tabs and CRM Navigation
+- Referral tab state is now reflected in the address bar:
+  - `frontend/src/pages/admin/SpecialPackages.tsx` now syncs `section` and `view` query params with referral tab switches (`packages/referrals`, `history/campaigns`).
+  - `frontend/src/pages/shared/Referrals.tsx` now syncs referral status tabs via `tab` query param (`all/pending/completed/cancelled`).
+- Browser title behavior was expanded in `frontend/src/components/layouts/UniversalLayout.tsx`:
+  - Keeps menu-based page title as SSOT for protected CRM/admin routes.
+  - Adds tab context from URL (`tab`, `section`, `view`, and path-based `:tab` segments) so titles match selected page tab/subsection.
+  - Supports nested/dynamic paths by matching the closest menu prefix (for example detail pages under a menu route).
+- Public landing pages were not changed (title logic update is inside `UniversalLayout` only).
+
+## [2026-02-12] Redis Optional-Mode Logging Cleanup
+- Redis now behaves as optional by default for local runs:
+  - `backend/utils/cache.py` no longer logs startup `ERROR` when local Redis is down; it switches to info-level fallback (`continuing without Redis cache`).
+  - `backend/utils/redis_pubsub.py` no longer emits startup `WARNING` in optional mode; it uses info-level local-only delivery logs.
+- Added env flags for explicit control:
+  - `REDIS_ENABLED` (`true` by default) — fully enables/disables Redis usage.
+  - `REDIS_REQUIRED` (`false` by default) — keeps strict error-level semantics when Redis is mandatory.
+- Updated startup message in `backend/main.py` to reflect optional local-only WebSocket delivery without warning-style noise.
+
+## [2026-02-12] Referrals UI Simplification & Services Table Sort Restore
+- Referral dashboard simplification in `frontend/src/pages/admin/SpecialPackages.tsx`:
+  - Removed the extra history/campaigns toggle inside the referrals section to avoid duplicated-tab UX.
+  - Kept referrals in one continuous flow (history table + campaign cards) without nested tab switching.
+  - Added column sorting in referral history table (`referrer`, `referred friend`, `date`, `status`, `points`).
+- Services table behavior restore in `frontend/src/pages/shared/Services.tsx`:
+  - Restored sort interaction for `status` column so all key data columns are sortable.
+  - Fixed status rendering to respect `service.is_active` instead of always showing active.
+- Styling update in `frontend/src/styles/crm-pages.css`:
+  - Added explicit inactive status badge style (`.crm-services-status-badge-inactive`) for clear visual state.
+
+## [2026-02-12] Broadcast & Notifications Reliability Hotfix
+- Redis Pub/Sub graceful degradation:
+  - Reworked `backend/utils/redis_pubsub.py` to validate Redis with `PING` before marking connection as active.
+  - Added auto-reconnect listener loop and local-only fallback mode when Redis is unavailable (`127.0.0.1:6379` down).
+  - Prevented background listener crash traces from failed `psubscribe/connect_check_health`.
+- WebSocket delivery continuity without Redis:
+  - Updated `backend/api/notifications_ws.py` to fallback to local in-process delivery when Redis publish fails.
+  - Updated `backend/api/webrtc_signaling.py` with the same fallback for direct and broadcast signaling events.
+- Broadcast API recovery and role-safe targeting:
+  - Added missing `GET /api/broadcasts/history` endpoint (required by admin broadcasts UI).
+  - Extended `BroadcastRequest.user_ids` to support mixed staff/client identifiers (`int | str`).
+  - Fixed recipient filtering in both preview/send paths so selected staff and selected clients are resolved correctly.
+  - Enriched preview samples with `contact` and `channel` fields consumed by `frontend/src/pages/admin/Broadcasts.tsx`.
+- Unread counter stability:
+  - Fixed cached unread response normalization in `backend/api/chat.py` to always return `{total, chat, notifications, internal_chat}`.
+  - Disabled noisy in-memory cache-expired logs when memory TTL is intentionally set to `0`.
+
 ## [2026-02-12] Schedule, Special Packages, and Stage Canonicalization Fixes
 - Special Packages / Referrals UX and functionality convergence:
   - Extended referral tab in `frontend/src/pages/admin/SpecialPackages.tsx` with referral-program dashboard functionality from `/crm/referrals` while preserving special-packages page style.

@@ -2,8 +2,9 @@
 // frontend/src/pages/admin/SpecialPackages.tsx
 // Управление специальными пакетами и акциями
 
-import { useState, useEffect } from 'react';
-import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, AlertCircle, Loader, Users, Target, Settings, ChevronRight, TrendingUp } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, AlertCircle, Loader, Users, Target, Settings, ChevronRight, TrendingUp, ArrowUpDown, Ticket } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -25,6 +26,9 @@ import { api } from '../../services/api';
 import { useCurrency } from '../../hooks/useSalonSettings';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
+import UniversalChallenges from '../shared/Challenges';
+import PromoCodes from './PromoCodes';
+import LoyaltyManagement from '../adminPanel/LoyaltyManagement';
 
 interface SpecialPackage {
   id: number;
@@ -86,9 +90,65 @@ interface ReferralSettings {
   min_purchase_amount: number;
 }
 
-export default function SpecialPackages() {
+type ReferralSortKey = 'referrer' | 'referred' | 'date' | 'status' | 'points';
+type SectionType = 'packages' | 'referrals' | 'challenges' | 'loyalty' | 'promo-codes';
+type ReferralViewType = 'history' | 'campaigns';
+type SpecialPackagesEntryMode = 'default' | 'referrals-only' | 'challenges-only' | 'loyalty-only' | 'promo-codes-only';
+
+interface SpecialPackagesProps {
+  entryMode?: SpecialPackagesEntryMode;
+}
+
+const normalizeSectionParam = (value: string | null): SectionType => {
+  if (value === 'promo-codes') {
+    return 'promo-codes';
+  }
+  if (value === 'challenges') {
+    return 'challenges';
+  }
+  if (value === 'loyalty') {
+    return 'loyalty';
+  }
+  if (value === 'referrals') {
+    return 'referrals';
+  }
+  return 'packages';
+};
+
+const normalizeReferralViewParam = (value: string | null): ReferralViewType => {
+  if (value === 'campaigns') {
+    return 'campaigns';
+  }
+  return 'history';
+};
+
+export default function SpecialPackages({ entryMode = 'default' }: SpecialPackagesProps) {
+  const forcedSection: SectionType | null = entryMode === 'referrals-only'
+    ? 'referrals'
+    : entryMode === 'challenges-only'
+      ? 'challenges'
+      : entryMode === 'loyalty-only'
+        ? 'loyalty'
+        : entryMode === 'promo-codes-only'
+          ? 'promo-codes'
+          : null;
+  const isSingleSectionMode = forcedSection !== null;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialSection = forcedSection !== null
+    ? forcedSection
+    : normalizeSectionParam(searchParams.get('section'));
+  const initialReferralView = normalizeReferralViewParam(searchParams.get('view'));
+
   const [packages, setPackages] = useState<SpecialPackage[]>([]);
-  const { t } = useTranslation(['admin/specialpackages', 'adminpanel/referralprogram', 'common']);
+  const { t } = useTranslation([
+    'admin/specialpackages',
+    'adminpanel/referralprogram',
+    'admin/challenges',
+    'admin/promocodes',
+    'adminpanel/loyaltymanagement',
+    'layouts/mainlayout',
+    'common'
+  ]);
   const { currency, formatCurrency } = useCurrency();
   const { user } = useAuth();
   const permissions = usePermissions(user?.role ?? '');
@@ -97,9 +157,15 @@ export default function SpecialPackages() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPackage, setEditingPackage] = useState<SpecialPackage | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isSingleSectionMode);
   const [saving, setSaving] = useState(false);
-  const [activeSection, setActiveSection] = useState<'packages' | 'referrals'>('packages');
+  const [activeSection, setActiveSection] = useState<SectionType>(initialSection);
+  const [referralView, setReferralView] = useState<ReferralViewType>(() => {
+    if (initialSection !== 'referrals') {
+      return 'history';
+    }
+    return initialReferralView;
+  });
 
   // Referral campaigns state
   const [campaigns, setCampaigns] = useState<ReferralCampaign[]>([]);
@@ -117,7 +183,10 @@ export default function SpecialPackages() {
     referred_bonus: 200,
     min_purchase_amount: 0
   });
-  const [referralView, setReferralView] = useState<'history' | 'campaigns'>('history');
+  const [referralSortConfig, setReferralSortConfig] = useState<{ key: ReferralSortKey; direction: 'asc' | 'desc' }>({
+    key: 'date',
+    direction: 'desc'
+  });
   const [isReferralSettingsOpen, setIsReferralSettingsOpen] = useState(false);
   const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<ReferralCampaign | null>(null);
@@ -166,8 +235,60 @@ export default function SpecialPackages() {
   };
 
   useEffect(() => {
+    if (isSingleSectionMode) {
+      return;
+    }
+
     loadPackages();
-  }, []);
+  }, [isSingleSectionMode]);
+
+  useEffect(() => {
+    if (forcedSection !== null) {
+      const viewFromUrl = normalizeReferralViewParam(searchParams.get('view'));
+      const hasViewParam = searchParams.has('view');
+
+      if (activeSection !== forcedSection) {
+        setActiveSection(forcedSection);
+      }
+
+      if (forcedSection === 'referrals' && referralView !== viewFromUrl) {
+        setReferralView(viewFromUrl);
+      }
+
+      const shouldSetDefaultView = forcedSection === 'referrals' && !hasViewParam;
+      const shouldCleanView = forcedSection !== 'referrals' && searchParams.has('view');
+
+      if (searchParams.has('section') || shouldSetDefaultView || shouldCleanView) {
+        const nextParams = new URLSearchParams(searchParams);
+        nextParams.delete('section');
+
+        if (forcedSection === 'referrals') {
+          nextParams.set('view', viewFromUrl);
+        } else {
+          nextParams.delete('view');
+        }
+
+        if (nextParams.toString() !== searchParams.toString()) {
+          setSearchParams(nextParams, { replace: true });
+        }
+      }
+
+      return;
+    }
+
+    const sectionFromUrl = normalizeSectionParam(searchParams.get('section'));
+    const viewFromUrl = normalizeReferralViewParam(searchParams.get('view'));
+
+    const normalizedView = sectionFromUrl === 'referrals' ? viewFromUrl : 'history';
+
+    if (activeSection !== sectionFromUrl) {
+      setActiveSection(sectionFromUrl);
+    }
+
+    if (referralView !== normalizedView) {
+      setReferralView(normalizedView);
+    }
+  }, [searchParams, activeSection, referralView, forcedSection, setSearchParams]);
 
   // Load referral metadata when switching to referrals tab
   useEffect(() => {
@@ -176,12 +297,12 @@ export default function SpecialPackages() {
     }
   }, [activeSection]);
 
-  // Load referral history when changing status filter
+  // Load referral history only for history view to avoid extra requests
   useEffect(() => {
-    if (activeSection === 'referrals') {
+    if (activeSection === 'referrals' && referralView === 'history') {
       loadReferralHistory();
     }
-  }, [activeSection, referralStatusFilter]);
+  }, [activeSection, referralStatusFilter, referralView]);
 
   useEffect(() => {
     const filtered = packages.filter(pkg => {
@@ -252,6 +373,64 @@ export default function SpecialPackages() {
     } finally {
       setReferralLoading(false);
     }
+  };
+
+  const updateRouteParams = (nextSection: SectionType, nextView: ReferralViewType) => {
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (isSingleSectionMode) {
+      nextParams.delete('section');
+
+      if (forcedSection === 'referrals') {
+        nextParams.set('view', nextView);
+      } else {
+        nextParams.delete('view');
+      }
+    } else {
+      nextParams.set('section', nextSection);
+
+      if (nextSection === 'referrals') {
+        nextParams.set('view', nextView);
+      } else {
+        nextParams.delete('view');
+      }
+    }
+
+    if (nextParams.toString() !== searchParams.toString()) {
+      setSearchParams(nextParams, { replace: true });
+    }
+  };
+
+  const handleSectionChange = (nextSection: SectionType) => {
+    if (isSingleSectionMode) {
+      if (forcedSection !== null) {
+        setActiveSection(forcedSection);
+        updateRouteParams(forcedSection, referralView);
+      }
+      return;
+    }
+
+    if (nextSection === 'packages') {
+      setActiveSection('packages');
+      updateRouteParams('packages', 'history');
+      return;
+    }
+
+    if (nextSection === 'referrals') {
+      setActiveSection('referrals');
+      setReferralView('history');
+      updateRouteParams('referrals', 'history');
+      return;
+    }
+
+    setActiveSection(nextSection);
+    updateRouteParams(nextSection, 'history');
+  };
+
+  const handleReferralViewChange = (nextView: ReferralViewType) => {
+    setReferralView(nextView);
+    const targetSection = isSingleSectionMode && forcedSection !== null ? forcedSection : activeSection;
+    updateRouteParams(targetSection, nextView);
   };
 
   const handleSaveReferralSettings = async () => {
@@ -374,18 +553,63 @@ export default function SpecialPackages() {
     }
   };
 
-  const filteredReferralHistory = referralHistory.filter((item) => {
+  const handleReferralSort = (key: ReferralSortKey) => {
+    setReferralSortConfig((previousConfig) => {
+      if (previousConfig.key === key) {
+        return {
+          key,
+          direction: previousConfig.direction === 'asc' ? 'desc' : 'asc'
+        };
+      }
+      return { key, direction: 'asc' };
+    });
+  };
+
+  const filteredReferralHistory = useMemo(() => {
     const normalizedSearch = referralSearchTerm.trim().toLowerCase();
-    if (normalizedSearch.length === 0) {
-      return true;
-    }
-    return (
-      item.referrer_name.toLowerCase().includes(normalizedSearch) ||
-      item.referrer_email.toLowerCase().includes(normalizedSearch) ||
-      item.referred_name.toLowerCase().includes(normalizedSearch) ||
-      item.referred_email.toLowerCase().includes(normalizedSearch)
-    );
-  });
+    const filteredHistory = referralHistory.filter((item) => {
+      if (normalizedSearch.length === 0) {
+        return true;
+      }
+      return (
+        item.referrer_name.toLowerCase().includes(normalizedSearch) ||
+        item.referrer_email.toLowerCase().includes(normalizedSearch) ||
+        item.referred_name.toLowerCase().includes(normalizedSearch) ||
+        item.referred_email.toLowerCase().includes(normalizedSearch)
+      );
+    });
+
+    const sortedHistory = [...filteredHistory];
+    sortedHistory.sort((leftItem, rightItem) => {
+      const { key, direction } = referralSortConfig;
+
+      const leftValue = (() => {
+        if (key === 'referrer') return `${leftItem.referrer_name} ${leftItem.referrer_email}`.toLowerCase();
+        if (key === 'referred') return `${leftItem.referred_name} ${leftItem.referred_email}`.toLowerCase();
+        if (key === 'status') return leftItem.status;
+        if (key === 'points') return leftItem.points_awarded;
+        return new Date(leftItem.created_at).getTime();
+      })();
+
+      const rightValue = (() => {
+        if (key === 'referrer') return `${rightItem.referrer_name} ${rightItem.referrer_email}`.toLowerCase();
+        if (key === 'referred') return `${rightItem.referred_name} ${rightItem.referred_email}`.toLowerCase();
+        if (key === 'status') return rightItem.status;
+        if (key === 'points') return rightItem.points_awarded;
+        return new Date(rightItem.created_at).getTime();
+      })();
+
+      if (leftValue < rightValue) {
+        return direction === 'asc' ? -1 : 1;
+      }
+      if (leftValue > rightValue) {
+        return direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+
+    return sortedHistory;
+  }, [referralHistory, referralSearchTerm, referralSortConfig]);
 
   const handleOpenAddModal = () => {
     setEditingPackage(null);
@@ -557,39 +781,83 @@ export default function SpecialPackages() {
   return (
     <div className="p-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-          <Gift className="w-8 h-8 text-pink-600" />
-          {t('admin/specialpackages:special_packages_and_promotions')}
-        </h1>
-        <p className="text-gray-600">
-          {activeSection === 'packages'
-            ? `${t('admin/specialpackages:manage_promotional_offers')} ${filteredPackages.length} ${t('admin/specialpackages:packages')}`
-            : t('adminpanel/referralprogram:subtitle')}
-        </p>
-      </div>
+      {(activeSection === 'packages' || activeSection === 'referrals') && (
+        <div className="mb-8">
+          <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
+            {activeSection === 'referrals' ? (
+              <Users className="w-8 h-8 text-blue-600" />
+            ) : (
+              <Gift className="w-8 h-8 text-pink-600" />
+            )}
+            {activeSection === 'referrals'
+              ? t('adminpanel/referralprogram:title')
+              : t('admin/specialpackages:special_packages_and_promotions')}
+          </h1>
+          <p className="text-gray-600">
+            {activeSection === 'packages'
+              ? `${t('admin/specialpackages:manage_promotional_offers')} ${filteredPackages.length} ${t('admin/specialpackages:packages')}`
+              : t('adminpanel/referralprogram:subtitle')}
+          </p>
+        </div>
+      )}
 
       {/* Tab Navigation */}
-      <div className="flex gap-2 mb-6">
-        <Button
-          variant={activeSection === 'packages' ? 'default' : 'outline'}
-          onClick={() => setActiveSection('packages')}
-          className={activeSection === 'packages' ? 'bg-pink-600 hover:bg-pink-700' : ''}
-        >
-          <Gift className="w-4 h-4 mr-2" />
-          {t('tab_packages')}
-        </Button>
-        <Button
-          variant={activeSection === 'referrals' ? 'default' : 'outline'}
-          onClick={() => setActiveSection('referrals')}
-          className={activeSection === 'referrals' ? 'bg-blue-600 hover:bg-blue-700' : ''}
-        >
-          <Users className="w-4 h-4 mr-2" />
-          {t('tab_referrals')}
-        </Button>
-      </div>
+      {!isSingleSectionMode && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          <Button
+            variant={activeSection === 'packages' ? 'default' : 'outline'}
+            onClick={() => handleSectionChange('packages')}
+            className={activeSection === 'packages'
+              ? 'bg-pink-600 text-white hover:bg-pink-700'
+              : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
+          >
+            <Gift className="w-4 h-4 mr-2" />
+            {t('tab_packages')}
+          </Button>
+          <Button
+            variant={activeSection === 'referrals' ? 'default' : 'outline'}
+            onClick={() => handleSectionChange('referrals')}
+            className={activeSection === 'referrals'
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
+              : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
+          >
+            <Users className="w-4 h-4 mr-2" />
+            {t('tab_referrals')}
+          </Button>
+          <Button
+            variant={activeSection === 'challenges' ? 'default' : 'outline'}
+            onClick={() => handleSectionChange('challenges')}
+            className={activeSection === 'challenges'
+              ? 'bg-gray-900 text-white hover:bg-black'
+              : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
+          >
+            <Target className="w-4 h-4 mr-2" />
+            {t('layouts/mainlayout:menu.challenges')}
+          </Button>
+          <Button
+            variant={activeSection === 'loyalty' ? 'default' : 'outline'}
+            onClick={() => handleSectionChange('loyalty')}
+            className={activeSection === 'loyalty'
+              ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+              : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
+          >
+            <Gift className="w-4 h-4 mr-2" />
+            {t('layouts/mainlayout:menu.loyalty')}
+          </Button>
+          <Button
+            variant={activeSection === 'promo-codes' ? 'default' : 'outline'}
+            onClick={() => handleSectionChange('promo-codes')}
+            className={activeSection === 'promo-codes'
+              ? 'bg-violet-600 text-white hover:bg-violet-700'
+              : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
+          >
+            <Ticket className="w-4 h-4 mr-2" />
+            {t('layouts/mainlayout:menu.promo_codes')}
+          </Button>
+        </div>
+      )}
 
-      {activeSection === 'packages' && (
+      {!isSingleSectionMode && activeSection === 'packages' && (
         <>
           {/* Alert */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
@@ -994,26 +1262,56 @@ export default function SpecialPackages() {
 
           {/* Referral Controls */}
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <div className="flex flex-col xl:flex-row xl:items-center gap-4">
-              <div className="flex w-full sm:w-auto p-1 bg-gray-100 rounded-lg border border-gray-200">
-                <Button
-                  variant={referralView === 'history' ? 'default' : 'ghost'}
-                  className={referralView === 'history' ? 'bg-white text-gray-900 shadow-sm flex-1 sm:flex-none' : 'text-gray-600 hover:text-gray-900 flex-1 sm:flex-none'}
-                  onClick={() => setReferralView('history')}
-                >
-                  {t('adminpanel/referralprogram:table.title')}
-                </Button>
-                <Button
-                  variant={referralView === 'campaigns' ? 'default' : 'ghost'}
-                  className={referralView === 'campaigns' ? 'bg-white text-gray-900 shadow-sm flex-1 sm:flex-none' : 'text-gray-600 hover:text-gray-900 flex-1 sm:flex-none'}
-                  onClick={() => setReferralView('campaigns')}
-                >
-                  {t('tab_referrals_title')}
-                </Button>
+            <div className="space-y-4">
+              <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+                <div className="inline-flex w-full xl:w-auto rounded-lg bg-gray-100 p-1">
+                  <Button
+                    type="button"
+                    variant={referralView === 'history' ? 'default' : 'ghost'}
+                    onClick={() => handleReferralViewChange('history')}
+                    className={`flex-1 xl:flex-none ${referralView === 'history'
+                      ? 'bg-white text-blue-700 hover:bg-white'
+                      : 'text-gray-700 hover:bg-white hover:text-gray-900'
+                    }`}
+                  >
+                    {t('adminpanel/referralprogram:table.title')}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={referralView === 'campaigns' ? 'default' : 'ghost'}
+                    onClick={() => handleReferralViewChange('campaigns')}
+                    className={`flex-1 xl:flex-none ${referralView === 'campaigns'
+                      ? 'bg-white text-blue-700 hover:bg-white'
+                      : 'text-gray-700 hover:bg-white hover:text-gray-900'
+                    }`}
+                  >
+                    {t('tab_referrals_title')}
+                  </Button>
+                </div>
+
+                {permissions.canEditLoyalty && (
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsReferralSettingsOpen(true)}
+                      className="w-full sm:w-auto"
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      {t('adminpanel/referralprogram:settings')}
+                    </Button>
+                    <Button
+                      onClick={handleCreateReferralCampaign}
+                      className="w-full sm:w-auto bg-blue-600 text-white hover:bg-blue-700"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      {t('create_campaign_button')}
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {referralView === 'history' && (
-                <>
+                <div className="flex flex-col xl:flex-row xl:items-center gap-4">
                   <div className="flex-1 relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
@@ -1038,29 +1336,10 @@ export default function SpecialPackages() {
                       <SelectItem value="cancelled">{t('adminpanel/referralprogram:table.statuses.cancelled')}</SelectItem>
                     </SelectContent>
                   </Select>
-                </>
-              )}
-
-              {permissions.canEditLoyalty && (
-                <>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsReferralSettingsOpen(true)}
-                    className="w-full sm:w-auto"
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    {t('adminpanel/referralprogram:settings')}
-                  </Button>
-                  <Button
-                    onClick={handleCreateReferralCampaign}
-                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    {t('create_campaign_button')}
-                  </Button>
-                </>
+                </div>
               )}
             </div>
+
           </div>
 
           {/* Referral History */}
@@ -1089,14 +1368,39 @@ export default function SpecialPackages() {
                     <Table className="min-w-[760px]">
                       <TableHeader>
                         <TableRow>
-                          <TableHead>{t('adminpanel/referralprogram:table.columns.referrer')}</TableHead>
+                          <TableHead>
+                            <button type="button" className="inline-flex items-center gap-2" onClick={() => handleReferralSort('referrer')}>
+                              <span>{t('adminpanel/referralprogram:table.columns.referrer')}</span>
+                              <ArrowUpDown className="w-4 h-4" />
+                            </button>
+                          </TableHead>
                           <TableHead className="w-10 text-center">
                             <ChevronRight className="w-4 h-4 mx-auto text-gray-300" />
                           </TableHead>
-                          <TableHead>{t('adminpanel/referralprogram:table.columns.referred_friend')}</TableHead>
-                          <TableHead>{t('adminpanel/referralprogram:table.columns.date')}</TableHead>
-                          <TableHead>{t('adminpanel/referralprogram:table.columns.status')}</TableHead>
-                          <TableHead className="text-right">{t('adminpanel/referralprogram:table.columns.points_awarded')}</TableHead>
+                          <TableHead>
+                            <button type="button" className="inline-flex items-center gap-2" onClick={() => handleReferralSort('referred')}>
+                              <span>{t('adminpanel/referralprogram:table.columns.referred_friend')}</span>
+                              <ArrowUpDown className="w-4 h-4" />
+                            </button>
+                          </TableHead>
+                          <TableHead>
+                            <button type="button" className="inline-flex items-center gap-2" onClick={() => handleReferralSort('date')}>
+                              <span>{t('adminpanel/referralprogram:table.columns.date')}</span>
+                              <ArrowUpDown className="w-4 h-4" />
+                            </button>
+                          </TableHead>
+                          <TableHead>
+                            <button type="button" className="inline-flex items-center gap-2" onClick={() => handleReferralSort('status')}>
+                              <span>{t('adminpanel/referralprogram:table.columns.status')}</span>
+                              <ArrowUpDown className="w-4 h-4" />
+                            </button>
+                          </TableHead>
+                          <TableHead className="text-right">
+                            <button type="button" className="inline-flex items-center gap-2 justify-end w-full" onClick={() => handleReferralSort('points')}>
+                              <span>{t('adminpanel/referralprogram:table.columns.points_awarded')}</span>
+                              <ArrowUpDown className="w-4 h-4" />
+                            </button>
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>

@@ -137,9 +137,15 @@ async def lifespan(app: FastAPI):
     init_connection_pool()
     
     # 3. Redis Pub/Sub (Sink for multi-worker synchronization)
-    await redis_pubsub.connect()
+    redis_ready = await redis_pubsub.connect()
     app.state.redis_listener = asyncio.create_task(redis_pubsub.start_listening())
-    log_info("✅ Redis Pub/Sub listener started", "boot")
+    if redis_ready:
+        log_info("✅ Redis Pub/Sub listener started", "boot")
+    else:
+        if redis_pubsub.redis_enabled:
+            log_info("ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.", "boot")
+        else:
+            log_info("ℹ️ Redis Pub/Sub disabled (REDIS_ENABLED=false). Local-only WS delivery is active.", "boot")
 
     try:
         def warmup():
