@@ -1981,7 +1981,7 @@ export class ApiClient {
   }
 
   async adjustLoyaltyPoints(data: { client_email: string; points: number; reason: string }) {
-    return this.request('/api/admin/loyalty/adjust', {
+    return this.request('/api/admin/loyalty/adjust-points', {
       method: 'POST',
       body: JSON.stringify(data),
     })
