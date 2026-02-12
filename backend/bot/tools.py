@@ -5,7 +5,7 @@
 
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
-from core.config import DATABASE_NAME, DEFAULT_HOURS_WEEKDAYS, DEFAULT_LUNCH_START, DEFAULT_LUNCH_END
+from core.config import DEFAULT_HOURS_WEEKDAYS
 from db.connection import get_db_connection
 from services.master_schedule import MasterScheduleService
 
@@ -286,8 +286,8 @@ def check_time_slot_available(
             salon = get_salon_settings()
             # Use specific weekday hours if available, else fallback
             hours_str = salon.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)
-            lunch_start = salon.get('lunch_start', DEFAULT_LUNCH_START)  # ✅ Используем константу
-            lunch_end = salon.get('lunch_end', DEFAULT_LUNCH_END)  # ✅ Используем константу
+            lunch_start = salon.get('lunch_start')
+            lunch_end = salon.get('lunch_end')
             
             # Парсим время работы
             try:

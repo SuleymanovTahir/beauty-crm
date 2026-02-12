@@ -5,29 +5,62 @@ from typing import List, Dict, Optional
 from datetime import datetime
 import json
 from db.connection import get_db_connection
-from utils.logger import log_error, log_info
+from utils.logger import log_error
 from utils.currency import get_salon_currency
+
+INVOICE_STATUS_ALIASES = {
+    'черновик': 'draft',
+    'отправлено': 'sent',
+    'оплачено': 'paid',
+    'частично_оплачено': 'partial',
+    'частично': 'partial',
+    'просрочено': 'overdue',
+    'отменено': 'cancelled',
+}
+
+
+def normalize_invoice_status(status: str) -> str:
+    normalized = str(status or '').strip().lower().replace(' ', '_')
+    return INVOICE_STATUS_ALIASES.get(normalized, normalized)
+
 
 def get_invoices(client_id: Optional[str] = None, status: Optional[str] = None) -> List[Dict]:
     conn = get_db_connection()
     c = conn.cursor()
     try:
         query = """
-            SELECT i.*, cl.name as client_name, cl.phone as client_phone
+            SELECT i.*, cl.name as client_name, cl.phone as client_phone, ws.name as workflow_stage_name
             FROM invoices i
             LEFT JOIN clients cl ON i.client_id = cl.instagram_id
+            LEFT JOIN workflow_stages ws ON i.stage_id = ws.id
             WHERE 1=1
         """
         params = []
         if client_id:
             query += " AND i.client_id = %s"; params.append(client_id)
         if status:
-            query += " AND i.status = %s"; params.append(status)
+            normalized_status = normalize_invoice_status(status)
+            comparable_statuses = [
+                source_status
+                for source_status, canonical_status in INVOICE_STATUS_ALIASES.items()
+                if canonical_status == normalized_status
+            ]
+            comparable_statuses.append(normalized_status)
+            comparable_statuses = list(dict.fromkeys(comparable_statuses))
+            query += " AND LOWER(REPLACE(COALESCE(i.status, ''), ' ', '_')) = ANY(%s)"
+            params.append(comparable_statuses)
         
         query += " ORDER BY i.created_at DESC"
         c.execute(query, params)
         columns = [desc[0] for desc in c.description]
-        return [dict(zip(columns, row)) for row in c.fetchall()]
+        result = []
+        for row in c.fetchall():
+            invoice = dict(zip(columns, row))
+            workflow_stage_name = invoice.get("workflow_stage_name")
+            invoice["status"] = normalize_invoice_status(workflow_stage_name or invoice.get("status"))
+            invoice.pop("workflow_stage_name", None)
+            result.append(invoice)
+        return result
     finally:
         conn.close()
 

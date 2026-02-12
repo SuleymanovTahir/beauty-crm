@@ -12,8 +12,6 @@ from core.config import (
     DEFAULT_HOURS_WEEKENDS,
     DEFAULT_HOURS_START,
     DEFAULT_HOURS_END,
-    DEFAULT_LUNCH_START,
-    DEFAULT_LUNCH_END,
     DEFAULT_REPORT_TIME,
     get_default_hours_dict,
     get_default_working_hours_response
@@ -457,8 +455,10 @@ async def get_salon_working_hours():
         # Парсим часы работы
         hours_weekdays = salon.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)  # ✅ Используем константу
         hours_weekends = salon.get('hours_weekends', DEFAULT_HOURS_WEEKENDS)  # ✅ Используем константу
-        lunch_start = salon.get('lunch_start', DEFAULT_LUNCH_START)  # ✅ Используем константу
-        lunch_end = salon.get('lunch_end', DEFAULT_LUNCH_END)  # ✅ Используем константу
+        lunch_start_raw = salon.get('lunch_start')
+        lunch_end_raw = salon.get('lunch_end')
+        lunch_start = lunch_start_raw[:5] if isinstance(lunch_start_raw, str) and ':' in lunch_start_raw else ''
+        lunch_end = lunch_end_raw[:5] if isinstance(lunch_end_raw, str) and ':' in lunch_end_raw else ''
         
         # Парсим время начала и конца
         def parse_hours(hours_str):

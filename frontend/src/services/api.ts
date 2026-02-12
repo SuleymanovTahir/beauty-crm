@@ -2095,8 +2095,24 @@ export class ApiClient {
     return this.request<any>('/api/admin/loyalty/stats')
   }
 
-  async getReferrals(limit: number = 100) {
-    return this.request<any>(`/api/admin/referrals?limit=${limit}`)
+  async getReferrals(params?: {
+    status?: 'pending' | 'completed' | 'cancelled';
+    sort_by?: 'date' | 'points' | 'status';
+    order?: 'asc' | 'desc';
+  }) {
+    const query = new URLSearchParams();
+    if (typeof params?.status === 'string' && params.status.length > 0) {
+      query.append('status', params.status);
+    }
+    if (typeof params?.sort_by === 'string' && params.sort_by.length > 0) {
+      query.append('sort_by', params.sort_by);
+    }
+    if (typeof params?.order === 'string' && params.order.length > 0) {
+      query.append('order', params.order);
+    }
+    const queryString = query.toString();
+    const endpoint = queryString.length > 0 ? `/api/admin/referrals?${queryString}` : '/api/admin/referrals';
+    return this.request<any>(endpoint)
   }
 
   async getReferralStats() {
@@ -2109,7 +2125,7 @@ export class ApiClient {
 
   async updateReferralSettings(data: { referrer_bonus?: number; referred_bonus?: number; min_purchase_amount?: number }) {
     return this.request('/api/admin/referrals/settings', {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify(data),
     })
   }

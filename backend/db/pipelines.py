@@ -1,7 +1,26 @@
 
 from typing import List, Dict, Optional
 from db.connection import get_db_connection
-from utils.logger import log_error, log_info
+from utils.logger import log_error
+
+PIPELINE_STAGE_ALIASES = {
+    'новое': 'new',
+    'новый_лид': 'new',
+    'new_lead': 'new',
+    'переговоры': 'negotiation',
+    'отправленное_предложение': 'sent_offer',
+    'предложение_отправлено': 'sent_offer',
+    'закрыто_выиграно': 'closed_won',
+    'успешно_реализовано': 'closed_won',
+    'закрыто_проиграно': 'closed_lost',
+    'закрыто_не_реализовано': 'closed_lost',
+}
+
+
+def normalize_pipeline_stage_key(stage_name: str) -> str:
+    normalized = str(stage_name or '').strip().lower().replace(' ', '_')
+    return PIPELINE_STAGE_ALIASES.get(normalized, normalized)
+
 
 def get_pipeline_stages() -> List[Dict]:
     """Get all pipeline stages from unified workflow_stages"""
@@ -15,16 +34,24 @@ def get_pipeline_stages() -> List[Dict]:
             ORDER BY sort_order ASC
         """)
         rows = c.fetchall()
-        return [
-            {
-                "id": row[0],
-                "name": row[1],
-                "key": row[1].lower().replace(" ", "_"),
-                "order_index": row[2],
-                "color": row[3]
-            }
-            for row in rows
-        ]
+        stages_by_key: Dict[str, Dict] = {}
+        for row in rows:
+            stage_key = normalize_pipeline_stage_key(row[1])
+            current = stages_by_key.get(stage_key)
+            should_replace = (
+                current is None
+                or str(row[1]).strip().lower().replace(' ', '_') == stage_key
+            )
+            if should_replace:
+                stages_by_key[stage_key] = {
+                    "id": row[0],
+                    "name": row[1],
+                    "key": stage_key,
+                    "order_index": row[2],
+                    "color": row[3]
+                }
+
+        return sorted(stages_by_key.values(), key=lambda stage: stage["order_index"])
     except Exception as e:
         log_error(f"Error getting pipeline stages: {e}", "db.pipelines")
         return []
@@ -100,7 +127,7 @@ def get_funnel_stats(user_id: int = None) -> List[Dict]:
         return [
             {
                 "stage_id": row[0], "stage_name": row[1],
-                "count": row[2], "total_value": row[3] or 0, "key": row[1].lower().replace(" ", "_")
+                "count": row[2], "total_value": row[3] or 0, "key": normalize_pipeline_stage_key(row[1])
             }
             for row in rows
         ]

@@ -4,19 +4,14 @@
 from datetime import datetime, timedelta, time as dt_time
 from zoneinfo import ZoneInfo
 from typing import Dict, List, Any, Optional
-from core.config import DATABASE_NAME
 from db.connection import get_db_connection
-from utils.logger import log_info, log_error
+from utils.logger import log_info, log_error, log_warning
 from utils.datetime_utils import get_current_time, get_salon_timezone
 from core.config import (
     DEFAULT_HOURS_WEEKDAYS,
     DEFAULT_HOURS_WEEKENDS,
     DEFAULT_HOURS_START,
-    DEFAULT_HOURS_END,
-    DEFAULT_LUNCH_START,
-    DEFAULT_LUNCH_END,
-    get_default_hours_dict,
-    get_default_working_hours_response
+    DEFAULT_HOURS_END
 )
 
 class MasterScheduleService:
@@ -873,14 +868,22 @@ class MasterScheduleService:
                     is_on_leave = False
                     user_offs = time_offs_map.get(uid, [])
                     
-                    # Lunch logic
-                    lunch_start = settings.get('lunch_start', DEFAULT_LUNCH_START)
-                    lunch_end = settings.get('lunch_end', DEFAULT_LUNCH_END)
-                    lunch_start_full = f"{date_str} {lunch_start}:00"
-                    lunch_end_full = f"{date_str} {lunch_end}:00"
-                    
-                    # Prepare unavailability intervals for this day
-                    unavailability_intervals = [(lunch_start_full, lunch_end_full)]
+                    # Lunch logic (apply only when explicitly configured)
+                    lunch_start = settings.get('lunch_start')
+                    lunch_end = settings.get('lunch_end')
+                    unavailability_intervals = []
+
+                    if (
+                        isinstance(lunch_start, str)
+                        and isinstance(lunch_end, str)
+                        and lunch_start.strip() not in {'', '-'}
+                        and lunch_end.strip() not in {'', '-'}
+                        and ':' in lunch_start
+                        and ':' in lunch_end
+                    ):
+                        lunch_start_full = f"{date_str} {lunch_start[:5]}:00"
+                        lunch_end_full = f"{date_str} {lunch_end[:5]}:00"
+                        unavailability_intervals.append((lunch_start_full, lunch_end_full))
                     
                     start_dt_full = f"{date_str} {start_time}:00"
                     end_dt_full = f"{date_str} {end_time}:00"
@@ -967,4 +970,3 @@ class MasterScheduleService:
             return []
         finally:
             conn.close()
-
