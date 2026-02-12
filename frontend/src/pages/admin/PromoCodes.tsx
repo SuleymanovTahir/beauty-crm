@@ -602,12 +602,12 @@ export default function PromoCodes({
                                 </button>
                             </div>
 
-                            <div className="flex flex-col md:flex-row items-start gap-4 sm:gap-6">
-                                <div className={`p-5 rounded-3xl shrink-0 ${promo.discount_type === 'percent' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'}`}>
+                            <div className="flex items-start gap-4 sm:gap-6">
+                                <div className={`p-4 sm:p-5 rounded-3xl shrink-0 ${promo.discount_type === 'percent' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'}`}>
                                     {promo.discount_type === 'percent' ? <Percent size={32} /> : <Gift size={32} />}
                                 </div>
 
-                                <div className="flex-1 min-w-0 md:pr-40">
+                                <div className="flex-1 min-w-0 w-full md:pr-40">
                                     <div className="flex flex-wrap items-center gap-2 mb-1">
                                         <span className="text-xl sm:text-2xl font-black text-gray-900 uppercase tracking-wider break-all">{promo.code}</span>
                                         {promo.target_scope === 'clients' && (
@@ -640,7 +640,7 @@ export default function PromoCodes({
                                         </div>
                                     </div>
 
-                                    <div className="flex md:hidden items-center gap-2 mt-4">
+                                    <div className="flex md:hidden items-center justify-end gap-2 mt-4 w-full">
                                         <button
                                             onClick={() => handleToggle(promo.id)}
                                             className={`p-2 rounded-full transition-colors ${promo.is_active ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}

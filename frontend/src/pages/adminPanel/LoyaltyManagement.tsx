@@ -494,14 +494,14 @@ export default function LoyaltyManagement({
             </h1>
             <p className={embedded ? 'text-gray-600' : 'text-gray-500 mt-1'}>{t('subtitle')}</p>
           </div>
-          {canManageLoyalty && (
-            <div className="flex gap-2 w-full sm:w-auto lg:self-start">
-              <Button
-                onClick={handleOpenAdjustDialog}
-                className={embedded ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm' : ''}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                {t('adjust_points')}
+        {canManageLoyalty && (
+          <div className="flex gap-2 w-full sm:w-auto lg:self-start">
+            <Button
+              onClick={handleOpenAdjustDialog}
+              className={embedded ? 'w-auto max-w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-10 sm:h-11 px-4 sm:px-6 text-sm sm:text-base font-semibold shadow-sm whitespace-normal leading-tight' : ''}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {t('adjust_points')}
               </Button>
             </div>
           )}
@@ -564,26 +564,24 @@ export default function LoyaltyManagement({
 
               <div className="space-y-2">
                 <Label className="text-base font-semibold text-gray-900">{t('config.expiration_days', 'Срок действия баллов (дней)')}</Label>
-                <div className="flex flex-col lg:flex-row lg:items-start gap-3">
-                  <div className="w-full space-y-2">
+                <div className="space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                     <Input
                       type="number"
                       value={config.points_expiration_days}
                       onChange={(e) => setConfig({ ...config, points_expiration_days: parseIntegerOrFallback(e.target.value, config.points_expiration_days) })}
                       placeholder="365"
-                      className="h-11 w-full"
+                      className="h-11 w-full sm:w-64 md:w-72"
                     />
-                    <p className="text-sm text-gray-500 leading-6">
-                      {t('config.expiration_hint', 'Начисленные баллы сгорят через указанное количество дней.')}
-                    </p>
-                  </div>
-                  {canManageLoyalty && (
-                    <div className="w-full lg:w-auto lg:min-w-[170px]">
-                      <Button onClick={handleUpdateConfig} className="w-full lg:w-auto lg:min-w-[170px] bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm">
+                    {canManageLoyalty && (
+                      <Button onClick={handleUpdateConfig} className="w-auto max-w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-10 sm:h-11 px-4 sm:px-6 text-sm sm:text-base font-semibold shadow-sm whitespace-normal leading-tight sm:min-w-[140px]">
                         {t('buttons.save', 'Сохранить')}
                       </Button>
-                    </div>
-                  )}
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-500 leading-6">
+                    {t('config.expiration_hint', 'Начисленные баллы сгорят через указанное количество дней.')}
+                  </p>
                 </div>
               </div>
             </div>
