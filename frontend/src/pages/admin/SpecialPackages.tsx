@@ -844,6 +844,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
 
     return null;
   }, [activeSection, t]);
+  const showTabsActionButton = !isSingleSectionMode && embeddedSectionHeaderConfig !== null && embeddedPrimaryActionHandler !== null;
 
   if (loading && activeSection === 'packages') {
     return (
@@ -860,65 +861,77 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
     <div className="p-8 min-h-screen">
       {/* Tab Navigation */}
       {!isSingleSectionMode && (
-        <div className="flex flex-wrap gap-2 mb-6">
-          <Button
-            variant="outline"
-            onClick={handleServicesTabClick}
-            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-          >
-            <Scissors className="w-4 h-4 mr-2" />
-            {t('admin/services:services')}
-          </Button>
-          <Button
-            variant={activeSection === 'packages' ? 'default' : 'outline'}
-            onClick={() => handleSectionChange('packages')}
-            className={activeSection === 'packages'
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
-          >
-            <Gift className="w-4 h-4 mr-2" />
-            {t('tab_packages')}
-          </Button>
-          <Button
-            variant={activeSection === 'referrals' ? 'default' : 'outline'}
-            onClick={() => handleSectionChange('referrals')}
-            className={activeSection === 'referrals'
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
-          >
-            <Users className="w-4 h-4 mr-2" />
-            {t('tab_referrals')}
-          </Button>
-          <Button
-            variant={activeSection === 'challenges' ? 'default' : 'outline'}
-            onClick={() => handleSectionChange('challenges')}
-            className={activeSection === 'challenges'
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
-          >
-            <Target className="w-4 h-4 mr-2" />
-            {t('layouts/mainlayout:menu.challenges')}
-          </Button>
-          <Button
-            variant={activeSection === 'loyalty' ? 'default' : 'outline'}
-            onClick={() => handleSectionChange('loyalty')}
-            className={activeSection === 'loyalty'
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
-          >
-            <Gift className="w-4 h-4 mr-2" />
-            {t('adminpanel/loyaltymanagement:title')}
-          </Button>
-          <Button
-            variant={activeSection === 'promo-codes' ? 'default' : 'outline'}
-            onClick={() => handleSectionChange('promo-codes')}
-            className={activeSection === 'promo-codes'
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
-          >
-            <Ticket className="w-4 h-4 mr-2" />
-            {t('layouts/mainlayout:menu.promo_codes')}
-          </Button>
+        <div className="mb-6 flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              onClick={handleServicesTabClick}
+              className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            >
+              <Scissors className="w-4 h-4 mr-2" />
+              {t('admin/services:services')}
+            </Button>
+            <Button
+              variant={activeSection === 'packages' ? 'default' : 'outline'}
+              onClick={() => handleSectionChange('packages')}
+              className={activeSection === 'packages'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
+            >
+              <Gift className="w-4 h-4 mr-2" />
+              {t('tab_packages')}
+            </Button>
+            <Button
+              variant={activeSection === 'referrals' ? 'default' : 'outline'}
+              onClick={() => handleSectionChange('referrals')}
+              className={activeSection === 'referrals'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
+            >
+              <Users className="w-4 h-4 mr-2" />
+              {t('tab_referrals')}
+            </Button>
+            <Button
+              variant={activeSection === 'challenges' ? 'default' : 'outline'}
+              onClick={() => handleSectionChange('challenges')}
+              className={activeSection === 'challenges'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
+            >
+              <Target className="w-4 h-4 mr-2" />
+              {t('layouts/mainlayout:menu.challenges')}
+            </Button>
+            <Button
+              variant={activeSection === 'loyalty' ? 'default' : 'outline'}
+              onClick={() => handleSectionChange('loyalty')}
+              className={activeSection === 'loyalty'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
+            >
+              <Gift className="w-4 h-4 mr-2" />
+              {t('adminpanel/loyaltymanagement:title')}
+            </Button>
+            <Button
+              variant={activeSection === 'promo-codes' ? 'default' : 'outline'}
+              onClick={() => handleSectionChange('promo-codes')}
+              className={activeSection === 'promo-codes'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900'}
+            >
+              <Ticket className="w-4 h-4 mr-2" />
+              {t('layouts/mainlayout:menu.promo_codes')}
+            </Button>
+          </div>
+          {showTabsActionButton && (
+            <Button
+              type="button"
+              onClick={embeddedPrimaryActionHandler}
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm transition-all flex items-center gap-2 shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              {embeddedSectionHeaderConfig.actionLabel}
+            </Button>
+          )}
         </div>
       )}
 
@@ -953,7 +966,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
               </h1>
               <p className="text-gray-600">{embeddedSectionHeaderConfig.subtitle}</p>
             </div>
-            {embeddedPrimaryActionHandler !== null && (
+            {isSingleSectionMode && embeddedPrimaryActionHandler !== null && (
               <Button
                 type="button"
                 onClick={embeddedPrimaryActionHandler}

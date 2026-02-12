@@ -1,3 +1,11 @@
+## [2026-02-13] Special Packages: Action Button Moved to Tabs Row
+- Updated `/crm/special-packages` structure for embedded sections (`challenges`, `loyalty`, `promo-codes`):
+  - primary action button now appears in the same top row as section tabs (right side),
+  - title/subtitle block is rendered below tabs without duplicated action button.
+- This removes the visual effect where action buttons looked like they dropped to the next structural block while free space remained in the tabs row.
+- File:
+  - `frontend/src/pages/admin/SpecialPackages.tsx`
+
 ## [2026-02-13] Unified Embedded Header Structure in Special Packages
 - Switched `challenges`, `loyalty`, and `promo-codes` sections in `/crm/special-packages` to one shared top structure from the orchestrator page:
   - common icon + title + subtitle block,
