@@ -301,7 +301,7 @@ export default function UniversalChallenges({ embedded = false }: UniversalChall
                             setShowAddDialog(true);
                         }}
                         className={embedded
-                            ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-10 px-4 font-semibold transition-all flex items-center gap-2 shrink-0'
+                            ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm transition-all flex items-center gap-2 shrink-0'
                             : 'bg-gray-900 hover:bg-black text-white rounded-xl h-12 px-6 font-bold shadow-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center gap-2 shrink-0'}
                     >
                         <Plus className={embedded ? 'w-4 h-4' : 'w-5 h-5'} />
@@ -430,7 +430,7 @@ export default function UniversalChallenges({ embedded = false }: UniversalChall
                             </p>
                             <Button
                                 onClick={() => setShowAddDialog(true)}
-                                className={embedded ? 'bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold px-6 h-11' : 'bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black px-8 h-12'}
+                                className={embedded ? 'bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold px-6 h-11 shadow-sm' : 'bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black px-8 h-12'}
                             >
                                 {t('buttons.create_challenge', 'Запустить челлендж')}
                             </Button>

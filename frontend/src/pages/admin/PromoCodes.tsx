@@ -32,6 +32,13 @@ import {
     DialogTitle,
     DialogFooter,
 } from '../../components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '../../components/ui/select';
 
 type PromoTargetScope = 'all' | 'categories' | 'services' | 'clients';
 type PromoScopeFilter = 'all_scopes' | PromoTargetScope;
@@ -413,7 +420,7 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
 
     return (
         <div className={containerClassName}>
-            <div className={embedded ? 'flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8' : 'crm-calendar-toolbar flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8'}>
+            <div className={embedded ? 'flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8' : 'crm-calendar-toolbar flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8'}>
                 <div>
                     <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3'}>
                         {embedded ? (
@@ -433,7 +440,7 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
                 <Button
                     onClick={handleOpenCreateDialog}
                     className={embedded
-                        ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-10 px-4 font-semibold shadow-sm flex items-center gap-2 transition-all'
+                        ? 'w-full sm:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm flex items-center gap-2 transition-all'
                         : 'bg-pink-600 hover:bg-pink-700 text-white shadow-lg shadow-pink-100 px-6 py-6 rounded-2xl flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-95'}
                 >
                     <Plus size={embedded ? 16 : 20} />
@@ -486,46 +493,49 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
                     />
                 </div>
 
-                <select
-                    className={embedded
+                <Select value={scopeFilter} onValueChange={(value) => setScopeFilter(value as PromoScopeFilter)}>
+                    <SelectTrigger className={embedded
                         ? 'h-10 bg-white border border-gray-200 rounded-lg px-3 text-sm'
-                        : 'h-14 bg-white border border-gray-100 rounded-2xl px-4 text-sm'}
-                    value={scopeFilter}
-                    onChange={(event) => setScopeFilter(event.target.value as PromoScopeFilter)}
-                >
-                    <option value="all_scopes">{t('filter_scope_all', 'Все области')}</option>
-                    <option value="all">{t('scope_all_clients', 'Все клиенты')}</option>
-                    <option value="categories">{t('scope_categories', 'Определенные категории')}</option>
-                    <option value="services">{t('scope_services', 'Определенные услуги')}</option>
-                    <option value="clients">{t('scope_clients', 'Определенные клиенты')}</option>
-                </select>
+                        : 'h-14 bg-white border border-gray-100 rounded-2xl px-4 text-sm'}>
+                        <SelectValue placeholder={t('filter_scope_all', 'Все области')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all_scopes">{t('filter_scope_all', 'Все области')}</SelectItem>
+                        <SelectItem value="all">{t('scope_all_clients', 'Все клиенты')}</SelectItem>
+                        <SelectItem value="categories">{t('scope_categories', 'Определенные категории')}</SelectItem>
+                        <SelectItem value="services">{t('scope_services', 'Определенные услуги')}</SelectItem>
+                        <SelectItem value="clients">{t('scope_clients', 'Определенные клиенты')}</SelectItem>
+                    </SelectContent>
+                </Select>
 
-                <select
-                    className={embedded
+                <Select value={categoryFilter} onValueChange={(value) => setCategoryFilter(value)}>
+                    <SelectTrigger className={embedded
                         ? 'h-10 bg-white border border-gray-200 rounded-lg px-3 text-sm'
-                        : 'h-14 bg-white border border-gray-100 rounded-2xl px-4 text-sm'}
-                    value={categoryFilter}
-                    onChange={(event) => setCategoryFilter(event.target.value)}
-                >
-                    <option value="all">{t('admin/services:all_categories')}</option>
-                    {categoryOptions.map((category) => (
-                        <option key={category} value={category}>{category}</option>
-                    ))}
-                </select>
+                        : 'h-14 bg-white border border-gray-100 rounded-2xl px-4 text-sm'}>
+                        <SelectValue placeholder={t('admin/services:all_categories')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">{t('admin/services:all_categories')}</SelectItem>
+                        {categoryOptions.map((category) => (
+                            <SelectItem key={category} value={category}>{category}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
 
-                <select
-                    className={embedded
+                <Select value={sortBy} onValueChange={(value) => setSortBy(value as PromoSortKey)}>
+                    <SelectTrigger className={embedded
                         ? 'h-10 bg-white border border-gray-200 rounded-lg px-3 text-sm'
-                        : 'h-14 bg-white border border-gray-100 rounded-2xl px-4 text-sm'}
-                    value={sortBy}
-                    onChange={(event) => setSortBy(event.target.value as PromoSortKey)}
-                >
-                    <option value="newest">{t('sort_newest', 'Сначала новые')}</option>
-                    <option value="oldest">{t('sort_oldest', 'Сначала старые')}</option>
-                    <option value="discount_desc">{t('sort_discount_desc', 'По скидке')}</option>
-                    <option value="usage_desc">{t('sort_usage_desc', 'По использованиям')}</option>
-                    <option value="code_asc">{t('sort_code_asc', 'По коду А-Я')}</option>
-                </select>
+                        : 'h-14 bg-white border border-gray-100 rounded-2xl px-4 text-sm'}>
+                        <SelectValue placeholder={t('sort_newest', 'Сначала новые')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="newest">{t('sort_newest', 'Сначала новые')}</SelectItem>
+                        <SelectItem value="oldest">{t('sort_oldest', 'Сначала старые')}</SelectItem>
+                        <SelectItem value="discount_desc">{t('sort_discount_desc', 'По скидке')}</SelectItem>
+                        <SelectItem value="usage_desc">{t('sort_usage_desc', 'По использованиям')}</SelectItem>
+                        <SelectItem value="code_asc">{t('sort_code_asc', 'По коду А-Я')}</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
             {loading ? (
@@ -546,7 +556,7 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
                             key={promo.id}
                             className={`crm-calendar-panel group bg-white ${embedded ? 'rounded-xl border-gray-200 p-6 shadow-sm hover:shadow-md' : 'rounded-[32px] border-gray-100 p-8 shadow-sm hover:shadow-xl hover:shadow-pink-50'} border transition-all duration-300 relative overflow-hidden ${!promo.is_active ? 'opacity-70' : ''}`}
                         >
-                            <div className="absolute top-0 right-0 p-6 flex gap-2">
+                            <div className="hidden md:flex absolute top-0 right-0 p-6 gap-2">
                                 <button
                                     onClick={() => handleToggle(promo.id)}
                                     className={`p-2 rounded-full transition-colors ${promo.is_active ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}
@@ -570,14 +580,14 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
                                 </button>
                             </div>
 
-                            <div className="flex items-start gap-6">
-                                <div className={`p-5 rounded-3xl ${promo.discount_type === 'percent' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'}`}>
+                            <div className="flex flex-col md:flex-row items-start gap-4 sm:gap-6">
+                                <div className={`p-5 rounded-3xl shrink-0 ${promo.discount_type === 'percent' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'}`}>
                                     {promo.discount_type === 'percent' ? <Percent size={32} /> : <Gift size={32} />}
                                 </div>
 
-                                <div className="flex-1 pr-20">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className="text-2xl font-black text-gray-900 uppercase tracking-wider">{promo.code}</span>
+                                <div className="flex-1 min-w-0 md:pr-40">
+                                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                                        <span className="text-xl sm:text-2xl font-black text-gray-900 uppercase tracking-wider break-all">{promo.code}</span>
                                         {promo.target_scope === 'clients' && (
                                             <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
                                                 {t('personal', 'Personal')}
@@ -594,18 +604,42 @@ export default function PromoCodes({ embedded = false }: PromoCodesProps) {
 
                                     <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
                                         <Target size={14} />
-                                        <span>{getScopeLabel(promo)}</span>
+                                        <span className="break-words">{getScopeLabel(promo)}</span>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                                         <div className="flex items-center gap-2 text-sm text-gray-400">
                                             <Calendar size={14} />
-                                            <span>{new Date(promo.valid_from).toLocaleDateString()} — {promo.valid_until ? new Date(promo.valid_until).toLocaleDateString() : '∞'}</span>
+                                            <span className="break-words">{new Date(promo.valid_from).toLocaleDateString()} — {promo.valid_until ? new Date(promo.valid_until).toLocaleDateString() : '∞'}</span>
                                         </div>
                                         <div className="flex items-center gap-2 text-sm text-gray-400">
                                             <Users size={14} />
                                             <span>{promo.times_used} / {(promo.usage_limit ?? '∞')} {t('used', 'исп.')}</span>
                                         </div>
+                                    </div>
+
+                                    <div className="flex md:hidden items-center gap-2 mt-4">
+                                        <button
+                                            onClick={() => handleToggle(promo.id)}
+                                            className={`p-2 rounded-full transition-colors ${promo.is_active ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}
+                                            title={promo.is_active ? t('deactivate', 'Деактивировать') : t('activate', 'Активировать')}
+                                        >
+                                            {promo.is_active ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
+                                        </button>
+                                        <button
+                                            onClick={() => handleOpenEditDialog(promo)}
+                                            className="p-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                                            title={t('common:edit')}
+                                        >
+                                            <Pencil size={20} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(promo.id)}
+                                            className="p-2 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                                            title={t('delete', 'Удалить')}
+                                        >
+                                            <Trash2 size={20} />
+                                        </button>
                                     </div>
                                 </div>
                             </div>
