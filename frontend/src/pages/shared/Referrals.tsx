@@ -161,7 +161,7 @@ export default function UniversalReferrals() {
     );
 
     return (
-        <div className="crm-calendar-theme min-h-screen bg-gray-50/30 p-4 sm:p-8 animate-in fade-in duration-500">
+        <div className="crm-calendar-theme crm-calendar-page crm-calendar-referrals min-h-screen bg-gray-50/30 p-4 sm:p-8 animate-in fade-in duration-500">
             <div className="max-w-6xl mx-auto space-y-8">
                 {/* Back Navigation */}
                 <button
@@ -174,7 +174,7 @@ export default function UniversalReferrals() {
                     <span className="font-bold text-xs tracking-tight">{t('common:back', 'Назад')}</span>
                 </button>
 
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="crm-calendar-toolbar flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
                         <h1 className="text-2xl font-black text-gray-900 flex items-center gap-2.5">
                             <div className="p-1.5 bg-blue-100 rounded-lg">
@@ -199,7 +199,7 @@ export default function UniversalReferrals() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {statsCards.map((stat, idx) => (
-                        <Card key={idx} className="overflow-hidden border-none shadow-sm bg-white rounded-xl border border-gray-100 group transition-all hover:shadow-md">
+                        <Card key={idx} className="crm-calendar-panel overflow-hidden border-none shadow-sm bg-white rounded-xl border border-gray-100 group transition-all hover:shadow-md">
                             <CardContent className="p-5">
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-0.5">
@@ -215,7 +215,7 @@ export default function UniversalReferrals() {
                     ))}
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="crm-calendar-panel bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-5 border-b border-gray-50 bg-gray-50/30">
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                             <div className="flex items-center gap-2.5">

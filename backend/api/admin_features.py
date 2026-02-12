@@ -3,11 +3,11 @@ API endpoints for admin panel features: Challenges, Referrals, Loyalty, Notifica
 """
 from fastapi import APIRouter, Request, Cookie, HTTPException, UploadFile, File, Form
 from fastapi.responses import JSONResponse, StreamingResponse
-from typing import Optional, List
+from typing import Optional, List, Set
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_info, log_error
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import uuid
 import json
@@ -64,6 +64,14 @@ async def get_admin_stats(session_token: Optional[str] = Cookie(None)):
 # CHALLENGES API
 # ============================================================================
 
+def _get_table_columns(cursor, table_name: str) -> Set[str]:
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'public' AND table_name = %s
+    """, (table_name,))
+    return {row[0] for row in cursor.fetchall()}
+
 @router.get("/admin/challenges")
 async def get_admin_challenges(session_token: Optional[str] = Cookie(None)):
     """Получить все челленджи для админки"""
@@ -74,18 +82,42 @@ async def get_admin_challenges(session_token: Optional[str] = Cookie(None)):
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        challenge_columns = _get_table_columns(c, "active_challenges")
 
-        # Получаем все челленджи с информацией об участниках
-        c.execute("""
+        challenge_type_expr = "'visits'"
+        if "challenge_type" in challenge_columns:
+            challenge_type_expr = "c.challenge_type"
+        elif "reward_type" in challenge_columns:
+            challenge_type_expr = "c.reward_type"
+
+        target_value_expr = "0"
+        if "target_value" in challenge_columns:
+            target_value_expr = "COALESCE(c.target_value, 0)"
+
+        reward_points_expr = "0"
+        if "bonus_points" in challenge_columns:
+            reward_points_expr = "COALESCE(c.bonus_points, 0)"
+        elif "points_reward" in challenge_columns:
+            reward_points_expr = "COALESCE(c.points_reward, 0)"
+
+        start_date_expr = "c.created_at"
+        if "start_date" in challenge_columns:
+            start_date_expr = "COALESCE(c.start_date::timestamp, c.created_at)"
+
+        end_date_expr = "(c.created_at + INTERVAL '30 days')"
+        if "end_date" in challenge_columns:
+            end_date_expr = "COALESCE(c.end_date::timestamp, c.created_at + INTERVAL '30 days')"
+
+        c.execute(f"""
             SELECT
                 c.id,
                 c.title,
                 c.description,
-                c.challenge_type as type,
-                c.target_value,
-                c.bonus_points as reward_points,
-                c.start_date,
-                c.end_date,
+                {challenge_type_expr} as type,
+                {target_value_expr} as target_value,
+                {reward_points_expr} as reward_points,
+                {start_date_expr} as start_date,
+                {end_date_expr} as end_date,
                 c.is_active,
                 COUNT(DISTINCT cp.client_id) as participants,
                 COUNT(DISTINCT CASE WHEN cp.is_completed THEN cp.client_id END) as completions
@@ -97,23 +129,28 @@ async def get_admin_challenges(session_token: Optional[str] = Cookie(None)):
 
         challenges = []
         for row in c.fetchall():
-            # Определяем статус
-            status = 'upcoming'
-            if row[8]:  # is_active
-                now = datetime.now().date()
-                start_date = row[6]
-                end_date = row[7]
-                if start_date and end_date:
-                    if start_date <= now <= end_date:
-                        status = 'active'
-                    elif now < start_date:
-                        status = 'upcoming'
-                    else:
-                        status = 'completed'
-                else:
-                    status = 'active'
-            else:
-                status = 'completed'
+            is_active = bool(row[8])
+            status = "active" if is_active else "completed"
+
+            start_date = row[6]
+            end_date = row[7]
+            participants = int(row[9] or 0)
+            completions = int(row[10] or 0)
+            completion_rate = int((completions * 100 / participants) if participants > 0 else 0)
+
+            if start_date is None:
+                start_date = datetime.now()
+            if end_date is None:
+                end_date = datetime.now() + timedelta(days=30)
+
+            if hasattr(start_date, "date"):
+                now_date = datetime.now().date()
+                start_date_only = start_date.date()
+                end_date_only = end_date.date() if hasattr(end_date, "date") else now_date
+                if is_active and now_date < start_date_only:
+                    status = "upcoming"
+                elif is_active and now_date > end_date_only:
+                    status = "completed"
 
             challenges.append({
                 "id": str(row[0]),
@@ -122,17 +159,59 @@ async def get_admin_challenges(session_token: Optional[str] = Cookie(None)):
                 "type": row[3] or "visits",
                 "target_value": row[4] or 0,
                 "reward_points": row[5] or 0,
-                "start_date": row[6].isoformat() if row[6] else datetime.now().isoformat(),
-                "end_date": row[7].isoformat() if row[7] else datetime.now().isoformat(),
+                "start_date": start_date.isoformat() if hasattr(start_date, "isoformat") else datetime.now().isoformat(),
+                "end_date": end_date.isoformat() if hasattr(end_date, "isoformat") else (datetime.now() + timedelta(days=30)).isoformat(),
                 "status": status,
-                "participants": row[9] or 0,
-                "completions": row[10] or 0
+                "participants": participants,
+                "participants_count": participants,
+                "completions": completions,
+                "completion_rate": completion_rate,
+                "is_active": is_active
             })
 
         conn.close()
         return {"success": True, "challenges": challenges}
     except Exception as e:
         log_error(f"Error getting admin challenges: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+@router.get("/admin/challenges/stats")
+async def get_admin_challenges_stats(session_token: Optional[str] = Cookie(None)):
+    """Получить статистику челленджей"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        c.execute("SELECT COUNT(*) FROM active_challenges WHERE is_active = TRUE")
+        active_challenges = int(c.fetchone()[0] or 0)
+
+        c.execute("SELECT COUNT(DISTINCT client_id) FROM challenge_progress")
+        total_participants = int(c.fetchone()[0] or 0)
+
+        c.execute("""
+            SELECT COUNT(*)
+            FROM challenge_progress
+            WHERE is_completed = TRUE
+              AND completed_at IS NOT NULL
+              AND DATE(completed_at) = CURRENT_DATE
+        """)
+        completed_today = int(c.fetchone()[0] or 0)
+
+        conn.close()
+        return {
+            "success": True,
+            "stats": {
+                "active_challenges": active_challenges,
+                "total_participants": total_participants,
+                "completed_today": completed_today
+            }
+        }
+    except Exception as e:
+        log_error(f"Error getting challenge stats: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.post("/admin/challenges")
@@ -146,24 +225,52 @@ async def create_admin_challenge(request: Request, session_token: Optional[str] 
         data = await request.json()
         conn = get_db_connection()
         c = conn.cursor()
+        challenge_columns = _get_table_columns(c, "active_challenges")
 
-        c.execute("""
-            INSERT INTO active_challenges (
-                title, description,
-                challenge_type, target_value, bonus_points,
-                start_date, end_date, is_active
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING id
-        """, (
+        fields: List[str] = ["title", "description", "is_active"]
+        values: List[object] = [
             data.get("title", ""),
             data.get("description", ""),
-            data.get("type", "visits"),
-            data.get("target_value", 0),
-            data.get("reward_points", 0),
-            data.get("start_date"),
-            data.get("end_date"),
             True
-        ))
+        ]
+
+        if "challenge_id" in challenge_columns:
+            fields.append("challenge_id")
+            values.append(f"challenge_{uuid.uuid4().hex[:12]}")
+
+        if "challenge_type" in challenge_columns:
+            fields.append("challenge_type")
+            values.append(data.get("type", "visits"))
+        elif "reward_type" in challenge_columns:
+            fields.append("reward_type")
+            values.append(data.get("type", "visits"))
+
+        if "target_value" in challenge_columns:
+            fields.append("target_value")
+            values.append(data.get("target_value", 0))
+
+        if "bonus_points" in challenge_columns:
+            fields.append("bonus_points")
+            values.append(data.get("reward_points", 0))
+        elif "points_reward" in challenge_columns:
+            fields.append("points_reward")
+            values.append(data.get("reward_points", 0))
+
+        if "start_date" in challenge_columns:
+            fields.append("start_date")
+            values.append(data.get("start_date"))
+        if "end_date" in challenge_columns:
+            fields.append("end_date")
+            values.append(data.get("end_date"))
+
+        placeholders = ", ".join(["%s"] * len(values))
+        sql = f"""
+            INSERT INTO active_challenges ({", ".join(fields)})
+            VALUES ({placeholders})
+            RETURNING id
+        """
+
+        c.execute(sql, tuple(values))
 
         new_id = c.fetchone()[0]
         conn.commit()
@@ -185,28 +292,47 @@ async def update_admin_challenge(challenge_id: int, request: Request, session_to
         data = await request.json()
         conn = get_db_connection()
         c = conn.cursor()
+        challenge_columns = _get_table_columns(c, "active_challenges")
 
-        c.execute("""
-            UPDATE active_challenges SET
-                title = %s,
-                description = %s,
-                challenge_type = %s,
-                target_value = %s,
-                bonus_points = %s,
-                start_date = %s,
-                end_date = %s,
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = %s
-        """, (
+        updates: List[str] = [
+            "title = %s",
+            "description = %s"
+        ]
+        values: List[object] = [
             data.get("title", ""),
-            data.get("description", ""),
-            data.get("type", "visits"),
-            data.get("target_value", 0),
-            data.get("reward_points", 0),
-            data.get("start_date"),
-            data.get("end_date"),
-            challenge_id
-        ))
+            data.get("description", "")
+        ]
+
+        if "challenge_type" in challenge_columns:
+            updates.append("challenge_type = %s")
+            values.append(data.get("type", "visits"))
+        elif "reward_type" in challenge_columns:
+            updates.append("reward_type = %s")
+            values.append(data.get("type", "visits"))
+
+        if "target_value" in challenge_columns:
+            updates.append("target_value = %s")
+            values.append(data.get("target_value", 0))
+
+        if "bonus_points" in challenge_columns:
+            updates.append("bonus_points = %s")
+            values.append(data.get("reward_points", 0))
+        elif "points_reward" in challenge_columns:
+            updates.append("points_reward = %s")
+            values.append(data.get("reward_points", 0))
+
+        if "start_date" in challenge_columns:
+            updates.append("start_date = %s")
+            values.append(data.get("start_date"))
+        if "end_date" in challenge_columns:
+            updates.append("end_date = %s")
+            values.append(data.get("end_date"))
+        if "updated_at" in challenge_columns:
+            updates.append("updated_at = CURRENT_TIMESTAMP")
+
+        values.append(challenge_id)
+        sql = f"UPDATE active_challenges SET {', '.join(updates)} WHERE id = %s"
+        c.execute(sql, tuple(values))
 
         conn.commit()
         conn.close()
@@ -252,10 +378,33 @@ async def check_challenge_progress(
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        challenge_columns = _get_table_columns(c, "active_challenges")
 
-        # Получаем информацию о челлендже
-        c.execute("""
-            SELECT challenge_type, target_value, bonus_points, start_date, end_date
+        challenge_type_col = None
+        if "challenge_type" in challenge_columns:
+            challenge_type_col = "challenge_type"
+        elif "reward_type" in challenge_columns:
+            challenge_type_col = "reward_type"
+
+        target_value_col = "target_value" if "target_value" in challenge_columns else None
+        reward_points_col = None
+        if "bonus_points" in challenge_columns:
+            reward_points_col = "bonus_points"
+        elif "points_reward" in challenge_columns:
+            reward_points_col = "points_reward"
+        start_date_col = "start_date" if "start_date" in challenge_columns else None
+        end_date_col = "end_date" if "end_date" in challenge_columns else None
+
+        select_parts = [
+            f"{challenge_type_col} AS challenge_type" if challenge_type_col else "'visits' AS challenge_type",
+            f"{target_value_col} AS target_value" if target_value_col else "0 AS target_value",
+            f"{reward_points_col} AS reward_points" if reward_points_col else "0 AS reward_points",
+            f"{start_date_col} AS start_date" if start_date_col else "NULL::timestamp AS start_date",
+            f"{end_date_col} AS end_date" if end_date_col else "NULL::timestamp AS end_date"
+        ]
+
+        c.execute(f"""
+            SELECT {", ".join(select_parts)}
             FROM active_challenges
             WHERE id = %s AND is_active = TRUE
         """, (challenge_id,))
@@ -265,6 +414,8 @@ async def check_challenge_progress(
             raise HTTPException(status_code=404, detail="Challenge not found or inactive")
 
         challenge_type, target_value, bonus_points, start_date, end_date = challenge
+        if target_value is None:
+            target_value = 0
 
         # Проверяем прогресс в зависимости от типа челленджа
         if challenge_type == 'visits':
@@ -332,8 +483,7 @@ async def check_challenge_progress(
                         UPDATE challenge_progress
                         SET current_value = %s,
                             is_completed = TRUE,
-                            completed_at = CURRENT_TIMESTAMP,
-                            updated_at = CURRENT_TIMESTAMP
+                            completed_at = CURRENT_TIMESTAMP
                         WHERE id = %s
                     """, (current_value, progress_id))
 
@@ -1592,4 +1742,3 @@ async def export_report(request: Request, session_token: Optional[str] = Cookie(
     except Exception as e:
         log_error(f"Export error: {e}", "api")
         raise HTTPException(status_code=500, detail=str(e))
-

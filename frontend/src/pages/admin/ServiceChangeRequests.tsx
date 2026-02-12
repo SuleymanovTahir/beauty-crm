@@ -113,15 +113,15 @@ export default function ServiceChangeRequests() {
 
   if (loading) {
     return (
-      <div className="crm-calendar-theme p-8 flex items-center justify-center">
+      <div className="crm-calendar-theme crm-calendar-page crm-calendar-service-requests p-8 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-pink-600" />
       </div>
     );
   }
 
   return (
-    <div className="crm-calendar-theme p-8">
-      <div className="mb-8">
+    <div className="crm-calendar-theme crm-calendar-page crm-calendar-service-requests p-8">
+      <div className="crm-calendar-toolbar mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
           <Scissors className="w-8 h-8 text-pink-600" />
           {t('change_requests.title')}
@@ -132,13 +132,13 @@ export default function ServiceChangeRequests() {
       </div>
 
       {requests.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <div className="crm-calendar-panel bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
           <Check className="w-16 h-16 text-green-300 mx-auto mb-4" />
           <h3 className="text-xl text-gray-900 mb-2">{t('change_requests.no_pending')}</h3>
           <p className="text-gray-600">{t('change_requests.all_processed')}</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="crm-calendar-panel bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
