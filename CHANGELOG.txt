@@ -1,3 +1,11 @@
+## [2026-02-13] Promo Card Mobile Space Distribution Fix
+- Improved promo card layout on small screens in embedded special-packages promo section:
+  - removed mobile column structure that left large unused space on the right side,
+  - switched to horizontal icon/content composition with full-width content area,
+  - aligned mobile action buttons to the right edge to use space more consistently.
+- File:
+  - `frontend/src/pages/admin/PromoCodes.tsx`
+
 ## [2026-02-13] Responsive Button Width Fix for Embedded Special Packages
 - Fixed oversized/full-width action buttons on small screens in `/crm/special-packages` sections:
   - `Создать задание`,
