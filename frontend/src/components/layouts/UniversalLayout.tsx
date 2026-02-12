@@ -397,20 +397,29 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                 if (value === 'referrals') {
                     return t('admin/specialpackages:tab_referrals');
                 }
+                if (value === 'challenges') {
+                    return t('layouts/mainlayout:menu.challenges');
+                }
+                if (value === 'loyalty') {
+                    return t('layouts/mainlayout:menu.loyalty');
+                }
+                if (value === 'promo-codes') {
+                    return t('layouts/mainlayout:menu.promo_codes');
+                }
                 if (value === 'history') {
-                    return t('adminpanel/referralprogram:table.title');
+                    return t('admin/specialpackages:referrals_history_tab', 'История приглашений');
                 }
                 if (value === 'campaigns') {
-                    return t('admin/specialpackages:tab_referrals_title');
+                    return t('admin/specialpackages:referrals_campaigns_tab', 'Кампании и бонусы');
                 }
             }
 
             if (location.pathname.endsWith('/referrals')) {
                 if (value === 'history') {
-                    return t('adminpanel/referralprogram:table.title');
+                    return t('admin/specialpackages:referrals_history_tab', 'История приглашений');
                 }
                 if (value === 'campaigns') {
-                    return t('admin/specialpackages:tab_referrals_title');
+                    return t('admin/specialpackages:referrals_campaigns_tab', 'Кампании и бонусы');
                 }
                 if (value === 'all') {
                     return t('adminpanel/referralprogram:table.filters.all_statuses');

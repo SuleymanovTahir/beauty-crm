@@ -1396,7 +1396,6 @@
   color: #4c596b;
 }
 
-.crm-services-tabs-card,
 .crm-services-controls-card,
 .crm-services-table-card {
   border: 1px solid #d9dde5;
@@ -1408,16 +1407,20 @@
 .crm-services-tabs-card {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.55rem;
+  gap: 0.6rem;
+  padding: 0;
   overflow-x: auto;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .crm-services-tab {
-  border: 0;
-  background: transparent;
-  border-radius: 0.9rem;
-  padding: 0.7rem 0.92rem;
+  border: 1px solid #c8d2e0;
+  background: #ffffff;
+  border-radius: 0.8rem;
+  padding: 0.68rem 1.02rem;
   display: inline-flex;
   align-items: center;
   gap: 0.48rem;
@@ -1426,20 +1429,24 @@
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .crm-services-tab:hover {
-  background: #f4f6fb;
+  background: #f8fbff;
+  border-color: #b8c9e5;
 }
 
 .crm-services-tab-active {
-  background: #ec008c;
+  background: #2563eb;
+  border-color: #2563eb;
   color: #ffffff;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
 }
 
 .crm-services-tab-active:hover {
-  background: #d90080;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
 }
 
 .crm-services-tab-icon {

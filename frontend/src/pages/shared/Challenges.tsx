@@ -43,7 +43,11 @@ interface Challenge {
     status?: 'active' | 'upcoming' | 'completed'; // compat
 }
 
-export default function UniversalChallenges() {
+interface UniversalChallengesProps {
+    embedded?: boolean;
+}
+
+export default function UniversalChallenges({ embedded = false }: UniversalChallengesProps) {
     const { t } = useTranslation(['admin/challenges', 'adminpanel/challenges', 'common', 'services', 'dynamic']);
     const { currency } = useSalonSettings();
     const navigate = useNavigate();
@@ -219,54 +223,65 @@ export default function UniversalChallenges() {
 
     const statsCards = [
         {
-            title: t('stats.active_challenges', 'АКТИВНЫЕ ЗАДАНИЯ'),
+            title: t('stats.active_challenges', 'Активные задания'),
             value: stats.active_challenges,
             icon: Flame,
-            color: 'text-orange-600',
-            bg: 'bg-orange-50'
+            color: embedded ? 'text-blue-600' : 'text-orange-600',
+            bg: embedded ? 'bg-blue-100' : 'bg-orange-50'
         },
         {
-            title: t('stats.total_participants', 'УЧАСТНИКОВ ВСЕГО'),
+            title: t('stats.total_participants', 'Участников всего'),
             value: stats.total_participants,
             icon: Users,
-            color: 'text-indigo-600',
-            bg: 'bg-indigo-50'
+            color: embedded ? 'text-green-600' : 'text-indigo-600',
+            bg: embedded ? 'bg-green-100' : 'bg-indigo-50'
         },
         {
-            title: t('stats.completed_today', 'ВЫПОЛНЕНО СЕГОДНЯ'),
+            title: t('stats.completed_today', 'Выполнено сегодня'),
             value: stats.completed_today,
             icon: Trophy,
-            color: 'text-amber-500',
-            bg: 'bg-amber-50'
+            color: embedded ? 'text-blue-600' : 'text-amber-500',
+            bg: embedded ? 'bg-blue-100' : 'bg-amber-50'
         }
     ];
 
+    const containerClassName = embedded
+        ? 'animate-in fade-in duration-500'
+        : 'crm-calendar-theme crm-calendar-page crm-calendar-challenges min-h-screen bg-gray-50/30 p-4 sm:p-8 animate-in fade-in duration-500';
+
     return (
-        <div className="crm-calendar-theme crm-calendar-page crm-calendar-challenges min-h-screen bg-gray-50/30 p-4 sm:p-8 animate-in fade-in duration-500">
+        <div className={containerClassName}>
             <div className="max-w-6xl mx-auto space-y-8">
                 {/* Back Navigation */}
-                <button
-                    onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-gray-400 hover:text-gray-900 transition-colors group"
-                >
-                    <div className="p-1.5 rounded-lg group-hover:bg-white border border-transparent group-hover:border-gray-100 transition-all">
-                        <ArrowLeft className="w-4 h-4" />
-                    </div>
-                    <span className="font-bold text-xs tracking-tight">{t('common:back', 'Назад')}</span>
-                </button>
+                {!embedded && (
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="flex items-center gap-2 text-gray-400 hover:text-gray-900 transition-colors group"
+                    >
+                        <div className="p-1.5 rounded-lg group-hover:bg-white border border-transparent group-hover:border-gray-100 transition-all">
+                            <ArrowLeft className="w-4 h-4" />
+                        </div>
+                        <span className="font-bold text-xs tracking-tight">{t('common:back', 'Назад')}</span>
+                    </button>
+                )}
 
                 {/* Header Section */}
-                <div className="crm-calendar-toolbar flex flex-col md:flex-row md:items-start justify-between gap-6">
-                    <div className="space-y-3">
-                        <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-[0.2em]">
-                            <Sparkles className="w-2.5 h-2.5" />
-                            Gamification Engine
-                        </div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-none">
+                <div className={embedded ? 'flex flex-col md:flex-row md:items-center justify-between gap-4' : 'crm-calendar-toolbar flex flex-col md:flex-row md:items-start justify-between gap-6'}>
+                    <div className={embedded ? '' : 'space-y-3'}>
+                        {!embedded && (
+                            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-[0.2em]">
+                                <Sparkles className="w-2.5 h-2.5" />
+                                Gamification Engine
+                            </div>
+                        )}
+                        <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-none'}>
+                            {embedded && (
+                                <Trophy className="w-8 h-8 text-blue-600" />
+                            )}
                             {t('title', 'Челленджи')}
-                            <span className="text-blue-600">.</span>
+                            {!embedded && <span className="text-blue-600">.</span>}
                         </h1>
-                        <p className="text-gray-500 font-medium max-w-lg text-sm leading-relaxed">
+                        <p className={embedded ? 'text-gray-600' : 'text-gray-500 font-medium max-w-lg text-sm leading-relaxed'}>
                             {t('subtitle', 'Повышайте лояльность клиентов с помощью игровых механик и автоматических наград.')}
                         </p>
                     </div>
@@ -285,26 +300,33 @@ export default function UniversalChallenges() {
                             });
                             setShowAddDialog(true);
                         }}
-                        className="bg-gray-900 hover:bg-black text-white rounded-xl h-12 px-6 font-bold shadow-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center gap-2 shrink-0"
+                        className={embedded
+                            ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-10 px-4 font-semibold transition-all flex items-center gap-2 shrink-0'
+                            : 'bg-gray-900 hover:bg-black text-white rounded-xl h-12 px-6 font-bold shadow-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center gap-2 shrink-0'}
                     >
-                        <Plus className="w-5 h-5" />
+                        <Plus className={embedded ? 'w-4 h-4' : 'w-5 h-5'} />
                         {t('buttons.add_challenge', 'Создать задание')}
                     </Button>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {statsCards.map((stat, idx) => (
-                        <Card key={idx} className="crm-calendar-panel border-none shadow-sm bg-white rounded-2xl transition-all hover:shadow-md duration-300 overflow-hidden">
-                            <CardContent className="p-5 flex items-center gap-5">
-                                <div className={`w-14 h-14 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center shrink-0`}>
-                                    <stat.icon className="w-7 h-7" />
+                        <Card
+                            key={idx}
+                            className={embedded
+                                ? 'crm-calendar-panel bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden'
+                                : 'crm-calendar-panel border-none shadow-sm bg-white rounded-2xl transition-all hover:shadow-md duration-300 overflow-hidden'}
+                        >
+                            <CardContent className={embedded ? 'p-6 flex items-center justify-between gap-4' : 'p-5 flex items-center gap-5'}>
+                                <div className={`shrink-0 ${embedded ? 'w-12 h-12 rounded-lg' : 'w-14 h-14 rounded-xl'} ${stat.bg} ${stat.color} flex items-center justify-center`}>
+                                    <stat.icon className={embedded ? 'w-6 h-6' : 'w-7 h-7'} />
                                 </div>
-                                <div>
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-2">{stat.title}</p>
+                                <div className="min-w-0">
+                                    <p className={embedded ? 'text-sm text-gray-500 font-medium mb-2' : 'text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-2'}>{stat.title}</p>
                                     <div className="flex items-baseline gap-1.5">
-                                        <p className="text-xl font-bold text-gray-900 leading-none tracking-tight">{stat.value}</p>
-                                        <TrendingUp className="w-4 h-4 text-emerald-500" />
+                                        <p className={embedded ? 'text-2xl font-bold text-gray-900 leading-none' : 'text-xl font-bold text-gray-900 leading-none tracking-tight'}>{stat.value}</p>
+                                        {!embedded && <TrendingUp className="w-4 h-4 text-emerald-500" />}
                                     </div>
                                 </div>
                             </CardContent>
@@ -315,15 +337,20 @@ export default function UniversalChallenges() {
                 {/* List of Challenges */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {challenges.map((challenge) => (
-                        <div key={challenge.id} className="crm-calendar-panel group bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 p-8 relative overflow-hidden flex flex-col gap-6">
+                        <div
+                            key={challenge.id}
+                            className={embedded
+                                ? 'crm-calendar-panel bg-white rounded-xl border border-gray-200 shadow-sm p-6 relative overflow-hidden flex flex-col gap-5'
+                                : 'crm-calendar-panel group bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 p-8 relative overflow-hidden flex flex-col gap-6'}
+                        >
                             <div className="flex justify-between items-start">
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <Badge className={`${challenge.is_active || challenge.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-gray-50 text-gray-400 border-gray-100'} px-2 py-1 font-bold text-[9px] uppercase tracking-wider border shadow-none`}>
-                                        {(challenge.is_active || challenge.status === 'active') ? t('status.active', 'АКТИВЕН') : t('status.inactive', 'ПАУЗА')}
+                                    <Badge className={`${challenge.is_active || challenge.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-gray-50 text-gray-400 border-gray-100'} ${embedded ? 'px-2.5 py-1 text-xs font-medium' : 'px-2 py-1 font-bold text-[9px] uppercase tracking-wider'} border shadow-none`}>
+                                        {(challenge.is_active || challenge.status === 'active') ? t('status.active', 'Активно') : t('status.inactive', 'Пауза')}
                                     </Badge>
-                                    <Badge className="bg-amber-50 text-amber-600 border-amber-100 px-2 py-1 font-bold text-[9px] uppercase tracking-wider border shadow-none flex items-center gap-1.5">
+                                    <Badge className={`bg-amber-50 text-amber-600 border-amber-100 ${embedded ? 'px-2.5 py-1 text-xs font-medium' : 'px-2 py-1 font-bold text-[9px] uppercase tracking-wider'} border shadow-none flex items-center gap-1.5`}>
                                         <Star className="w-2.5 h-2.5 fill-amber-500" />
-                                        {challenge.reward_points} {t('common:points_sc', 'БАЛЛОВ')}
+                                        {challenge.reward_points} {t('common:points_sc', 'баллов')}
                                     </Badge>
                                 </div>
                                 <div className="flex gap-2">
@@ -355,25 +382,25 @@ export default function UniversalChallenges() {
                             </div>
 
                             <div className="space-y-2">
-                                <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight tracking-tight">{t(challenge.title)}</h3>
-                                <p className="text-gray-500 font-medium leading-relaxed max-w-md text-sm">{t(challenge.description)}</p>
+                                <h3 className={embedded ? 'text-lg font-semibold text-gray-900 leading-tight' : 'text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight tracking-tight'}>{t(challenge.title)}</h3>
+                                <p className={embedded ? 'text-sm text-gray-500 leading-6 max-w-2xl' : 'text-gray-500 font-medium leading-relaxed max-w-md text-sm'}>{t(challenge.description)}</p>
                             </div>
 
-                            <div className="bg-gray-50/80 rounded-2xl p-6 border border-gray-100 space-y-4">
+                            <div className={embedded ? 'bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-3' : 'bg-gray-50/80 rounded-2xl p-6 border border-gray-100 space-y-4'}>
                                 <div className="flex justify-between items-end">
                                     <div className="space-y-1">
-                                        <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{t('card.progress', 'ПРОГРЕСС ВЫПОЛНЕНИЯ')}</p>
+                                        <p className={embedded ? 'text-sm text-gray-500' : 'text-[9px] font-bold uppercase tracking-widest text-gray-400'}>{t('card.progress', 'Прогресс')}</p>
                                         <p className="text-lg font-bold text-gray-900 leading-none">{challenge.completion_rate}%</p>
                                     </div>
                                     <div className="text-right space-y-1">
-                                        <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">{t('card.participants', 'УЧАСТНИКИ')}</p>
-                                        <p className="text-base font-bold text-gray-900 leading-none">{challenge.participants_count || challenge.participants || 0}</p>
+                                        <p className={embedded ? 'text-sm text-gray-500' : 'text-[9px] font-bold uppercase tracking-widest text-gray-400'}>{t('card.participants', 'Участники')}</p>
+                                        <p className="text-base font-bold text-gray-900 leading-none">{challenge.participants_count ?? challenge.participants ?? 0}</p>
                                     </div>
                                 </div>
                                 <Progress value={challenge.completion_rate} className="h-2.5 bg-gray-200" />
                             </div>
 
-                            <div className="flex items-center justify-between pt-4 border-t border-gray-50 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+                            <div className={embedded ? 'flex flex-col gap-3 pt-4 border-t border-gray-100 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between' : 'flex items-center justify-between pt-4 border-t border-gray-50 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400'}>
                                 <div className="flex items-center gap-2">
                                     <Calendar className="w-3.5 h-3.5" />
                                     {new Date(challenge.start_date).toLocaleDateString('ru-RU')} — {new Date(challenge.end_date).toLocaleDateString('ru-RU')}
@@ -395,15 +422,15 @@ export default function UniversalChallenges() {
                     ))}
 
                     {challenges.length === 0 && !loading && (
-                        <div className="crm-calendar-panel col-span-full py-20 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
-                            <Zap className="w-12 h-12 text-gray-200 mx-auto mb-4 animate-pulse" />
-                            <h3 className="text-xl font-black text-gray-900 mb-1">{t('empty.title', 'Челленджи не настроены')}</h3>
-                            <p className="text-gray-400 max-w-sm mx-auto font-medium mb-8 px-8 text-sm">
+                        <div className={embedded ? 'crm-calendar-panel col-span-full text-center bg-white rounded-xl border border-gray-200 shadow-sm p-10 sm:p-14' : 'crm-calendar-panel col-span-full py-20 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100'}>
+                            <Zap className={embedded ? 'w-10 h-10 text-gray-300 mx-auto mb-4' : 'w-12 h-12 text-gray-200 mx-auto mb-4 animate-pulse'} />
+                            <h3 className={embedded ? 'text-2xl font-semibold text-gray-900 mb-2' : 'text-xl font-black text-gray-900 mb-1'}>{t('empty.title', 'Челленджи не настроены')}</h3>
+                            <p className={embedded ? 'text-gray-500 max-w-lg mx-auto mb-6 px-4 text-base leading-7' : 'text-gray-400 max-w-sm mx-auto font-medium mb-8 px-8 text-sm'}>
                                 {t('empty.subtitle', 'Создайте первое игровое задание, чтобы стимулировать клиентов записываться чаще.')}
                             </p>
                             <Button
                                 onClick={() => setShowAddDialog(true)}
-                                className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black px-8 h-12"
+                                className={embedded ? 'bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold px-6 h-11' : 'bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black px-8 h-12'}
                             >
                                 {t('buttons.create_challenge', 'Запустить челлендж')}
                             </Button>

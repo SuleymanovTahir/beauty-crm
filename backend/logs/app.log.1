@@ -1,181 +1,317 @@
-2026-02-12 18:28:55 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
-2026-02-12 18:28:55 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
-2026-02-12 18:28:55 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-02-12 18:28:55 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
-2026-02-12 18:28:55 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-12 18:28:55 - crm - INFO - [modules] ======================================================================
-2026-02-12 18:28:55 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-02-12 18:28:55 - crm - INFO - [modules] ======================================================================
-2026-02-12 18:28:55 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-02-12 18:28:55 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-02-12 18:28:55 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-02-12 18:28:55 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-02-12 18:28:55 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-02-12 18:28:55 - crm - INFO - [modules] ======================================================================
-2026-02-12 18:28:55 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-02-12 18:28:55 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-12 18:28:55 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-12 18:28:55 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-12 18:28:55 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
-2026-02-12 18:28:55 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-12 18:28:55 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-12 18:28:55 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-12 18:28:55 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-12 18:28:58 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 18:28:58 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 18:28:58 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.56ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:28:58 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.63ms (DB: 0.56ms)
-2026-02-12 18:28:58 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 18:28:58 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 18:28:58 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.89ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:28:58 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.04ms (DB: 0.89ms)
-2026-02-12 18:29:10 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
-2026-02-12 18:29:10 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
-2026-02-12 18:29:10 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-02-12 18:29:10 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-02-12 18:29:11 - crm - INFO - [boot] ============================================================
-2026-02-12 18:29:11 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-02-12 18:29:11 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-02-12 18:29:11 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-02-12 18:29:11 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-12 18:29:11 - crm - INFO - [boot] ⚠️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
-2026-02-12 18:29:11 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-02-12 18:29:11 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-02-12 18:29:11 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-02-12 18:29:11 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-02-12 18:29:11 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-02-12 18:29:11 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
-2026-02-12 18:29:11 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
-2026-02-12 18:29:11 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
-2026-02-12 18:29:11 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-02-12 18:29:11 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
-2026-02-12 18:29:11 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-12 18:29:11 - crm - INFO - [modules] ======================================================================
-2026-02-12 18:29:11 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-02-12 18:29:11 - crm - INFO - [modules] ======================================================================
-2026-02-12 18:29:11 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-02-12 18:29:11 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-02-12 18:29:11 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-02-12 18:29:11 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-02-12 18:29:11 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-02-12 18:29:11 - crm - INFO - [modules] ======================================================================
-2026-02-12 18:29:11 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-02-12 18:29:11 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-12 18:29:11 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-12 18:29:11 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-12 18:29:11 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
-2026-02-12 18:29:11 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-12 18:29:11 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-12 18:29:11 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-12 18:29:11 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-12 18:29:15 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 18:29:15 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 18:29:15 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.99ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:29:15 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.43ms (DB: 0.99ms)
-2026-02-12 18:29:15 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 18:29:15 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 18:29:15 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.84ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:29:15 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.94ms (DB: 0.84ms)
-2026-02-12 18:29:20 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
-2026-02-12 18:29:20 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
-2026-02-12 18:29:21 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-02-12 18:29:21 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-02-12 18:29:21 - crm - INFO - [boot] ============================================================
-2026-02-12 18:29:21 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-02-12 18:29:21 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-02-12 18:29:21 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-02-12 18:29:21 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-12 18:29:21 - crm - INFO - [boot] ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
-2026-02-12 18:29:22 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-02-12 18:29:22 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-02-12 18:29:22 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-02-12 18:29:22 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-02-12 18:29:22 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-02-12 18:29:22 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
-2026-02-12 18:29:22 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
-2026-02-12 18:29:22 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
-2026-02-12 18:29:22 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-02-12 18:29:22 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
-2026-02-12 18:29:22 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-12 18:29:22 - crm - INFO - [modules] ======================================================================
-2026-02-12 18:29:22 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-02-12 18:29:22 - crm - INFO - [modules] ======================================================================
-2026-02-12 18:29:22 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-02-12 18:29:22 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-02-12 18:29:22 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-02-12 18:29:22 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-02-12 18:29:22 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-02-12 18:29:22 - crm - INFO - [modules] ======================================================================
-2026-02-12 18:29:22 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-02-12 18:29:22 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-12 18:29:22 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-12 18:29:22 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-12 18:29:22 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
-2026-02-12 18:29:22 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-12 18:29:22 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-12 18:29:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-12 18:29:22 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-12 18:29:25 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 18:29:25 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 18:29:25 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.60ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:29:25 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.71ms (DB: 0.60ms)
-2026-02-12 18:29:26 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 18:29:26 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 18:29:26 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.61ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:29:26 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.71ms (DB: 0.61ms)
-2026-02-12 18:29:31 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-12 18:29:31 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-02-12 18:39:22 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-12 18:39:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-12 18:44:39 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
-2026-02-12 18:44:39 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 18:44:39 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.32ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:44:39 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.66ms (DB: 2.32ms)
-2026-02-12 18:44:39 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 18:44:39 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.71ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:44:39 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.84ms (DB: 0.71ms)
-2026-02-12 18:44:39 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 18:44:39 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 18:44:39 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.83ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:44:39 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.19ms (DB: 0.83ms)
-2026-02-12 18:44:39 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.91ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:44:39 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.01ms (DB: 0.91ms)
-2026-02-12 18:47:00 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 18:47:00 - crm - ERROR - [main] Error in dashboard: column "total_saved" does not exist
+2026-02-12 19:16:34 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:16:35 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:16:42 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:16:42 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:16:43 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:16:55 - crm - INFO - [perf] ⏱️ get_all_services took 0.0010s returning 81 items
+2026-02-12 19:17:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:17:40 - crm - INFO - [perf] ⏱️ get_all_services took 0.0007s returning 81 items
+2026-02-12 19:18:11 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:18:24 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:18:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:18:29 - crm - INFO - [perf] ⏱️ get_all_services took 0.0006s returning 81 items
+2026-02-12 19:19:19 - crm - INFO - [perf] ⏱️ get_all_services took 0.0006s returning 81 items
+2026-02-12 19:19:22 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-12 19:19:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-12 19:19:24 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:19:24 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:19:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:19:27 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:19:28 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:19:29 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:19:29 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:19:30 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:19:32 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:19:32 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:19:41 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:19:41 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:20:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:20:38 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:21:15 - crm - INFO - [perf] ⏱️ get_all_services took 0.0007s returning 81 items
+2026-02-12 19:21:16 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:21:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:21:26 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:21:41 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:21:41 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:21:51 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:22:18 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:22:18 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:22:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:23:10 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:23:11 - crm - INFO - [perf] ⏱️ get_all_services took 0.0005s returning 81 items
+2026-02-12 19:23:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:23:50 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:23:50 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:24:25 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:24:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:24:27 - crm - INFO - [perf] ⏱️ get_all_services took 0.0004s returning 81 items
+2026-02-12 19:24:33 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:24:52 - crm - INFO - [perf] ⏱️ get_all_services took 0.0005s returning 81 items
+2026-02-12 19:25:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:26:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:26:35 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:26:35 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:26:36 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:26:38 - crm - INFO - [perf] ⏱️ get_all_services took 0.0008s returning 81 items
+2026-02-12 19:27:03 - crm - INFO - [perf] ⏱️ get_all_services took 0.0007s returning 81 items
+2026-02-12 19:27:10 - crm - INFO - [perf] ⏱️ get_all_services took 0.0008s returning 81 items
+2026-02-12 19:27:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:27:33 - crm - INFO - [perf] ⏱️ get_all_services took 0.0005s returning 81 items
+2026-02-12 19:27:37 - crm - INFO - [perf] ⏱️ get_all_services took 0.0005s returning 81 items
+2026-02-12 19:27:38 - crm - INFO - [perf] ⏱️ get_all_services took 0.0008s returning 81 items
+2026-02-12 19:28:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:28:29 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:28:29 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:28:31 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:28:33 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:28:33 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:28:34 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:28:36 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:28:36 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:28:37 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:29:17 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.74ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:29:17 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.14ms (DB: 0.74ms)
+2026-02-12 19:29:17 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 19:29:17 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 19:29:17 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.75ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:29:17 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.98ms (DB: 0.75ms)
+2026-02-12 19:29:22 - crm - INFO - 🔔 Checking for reminders...
+2026-02-12 19:29:22 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-12 19:29:22 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-12 19:29:22 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-12 19:29:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-12 19:29:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:29:29 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:29:29 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:30:00 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:30:09 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:30:09 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:30:24 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:30:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:30:56 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:30:57 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:31:11 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:31:11 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:31:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:32:20 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.60ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:20 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.69ms (DB: 0.60ms)
+2026-02-12 19:32:20 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 19:32:20 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 19:32:20 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.51ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:20 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.61ms (DB: 0.51ms)
+2026-02-12 19:32:20 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.78ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:20 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.06ms (DB: 0.78ms)
+2026-02-12 19:32:20 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 19:32:20 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.58ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:20 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.74ms (DB: 0.58ms)
+2026-02-12 19:32:20 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 19:32:20 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 19:32:20 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 12.19ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:20 - crm - INFO - [chat] ✅ [unread-count] Total request took 12.70ms (DB: 12.19ms)
+2026-02-12 19:32:20 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 19:32:20 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.65ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:20 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.88ms (DB: 0.65ms)
+2026-02-12 19:32:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:32:35 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.83ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:35 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.92ms (DB: 0.83ms)
+2026-02-12 19:32:35 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 19:32:35 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 19:32:35 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.49ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:35 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.58ms (DB: 0.49ms)
+2026-02-12 19:32:35 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 19:32:35 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.74ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:35 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.00ms (DB: 0.74ms)
+2026-02-12 19:32:35 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 19:32:35 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.57ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:35 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.70ms (DB: 0.57ms)
+2026-02-12 19:32:35 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 19:32:35 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 19:32:35 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.59ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:35 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.71ms (DB: 0.59ms)
+2026-02-12 19:32:35 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.70ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:35 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.79ms (DB: 0.70ms)
+2026-02-12 19:32:48 - crm - ERROR - [api] Error getting loyalty tiers: relation "loyalty_tiers" does not exist
+LINE 3:             FROM loyalty_tiers
+                         ^
+
+2026-02-12 19:32:48 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.66ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:48 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.81ms (DB: 0.66ms)
+2026-02-12 19:32:48 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 19:32:48 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 19:32:48 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.50ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:48 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.65ms (DB: 0.50ms)
+2026-02-12 19:32:48 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 19:32:48 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 19:32:48 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.53ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:48 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.68ms (DB: 0.53ms)
+2026-02-12 19:32:48 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:32:48 - crm - ERROR - [main] Error in dashboard: column "total_saved" does not exist
 LINE 2:             SELECT loyalty_points, referral_code, total_save...
                                                           ^
 HINT:  Perhaps you meant to reference the column "clients.total_spend".
 
-2026-02-12 18:47:00 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 18:47:08 - crm - INFO - [perf] ⏱️ get_all_services took 0.0012s returning 81 items
-2026-02-12 18:47:10 - crm - INFO - [perf] ⏱️ get_all_services took 0.0008s returning 81 items
-2026-02-12 18:47:10 - crm - INFO - [perf] ⏱️ get_filtered_bookings took 0.0018s for 50 items
-2026-02-12 18:47:10 - crm - INFO - [perf] ⏱️ get_booking_stats took 0.0003s
-2026-02-12 18:47:10 - crm - INFO - [perf] ⏱️ get_all_client_messengers took 0.0000s for 0 clients
-2026-02-12 18:47:10 - crm - INFO - [perf] ⏱️ fetching_client_phones took 0.0000s
-2026-02-12 18:47:10 - crm - INFO - [perf] ⏱️ formatting_response took 0.0000s
-2026-02-12 18:47:10 - crm - INFO - [perf] ⏱️ TOTAL list_bookings took 0.0028s
-2026-02-12 18:47:10 - crm - INFO - [api] ⏱️ get_users took 0.0025s returning 7 users
-2026-02-12 18:47:14 - crm - INFO - [DEBUG_MOBILE] [InternalChat] Requesting users. Token present: True
-2026-02-12 18:47:14 - crm - INFO - [perf] ⏱️ get_chat_users query took 0.0007s
-2026-02-12 18:47:14 - crm - INFO - [webrtc] 🔌 WebRTC WS: Connection accepted
-2026-02-12 18:47:14 - crm - ERROR - [webrtc] WebSocket error: 21
-2026-02-12 18:47:14 - crm - INFO - [webrtc] 🔌 WebRTC WS: Connection accepted
-2026-02-12 18:47:14 - crm - ERROR - [webrtc] WebSocket error: 21
-2026-02-12 18:47:25 - crm - INFO - [perf] ⏱️ get_all_services took 0.0007s returning 81 items
-2026-02-12 18:47:30 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 18:48:00 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 18:48:30 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 18:49:00 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 18:49:22 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-12 18:49:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-12 18:49:30 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 18:50:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 18:51:25 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
-2026-02-12 18:52:08 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.11ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:52:08 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.24ms (DB: 2.11ms)
-2026-02-12 18:52:08 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-12 18:52:08 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-12 18:52:08 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.60ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-12 18:52:08 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.71ms (DB: 0.60ms)
-2026-02-12 18:52:09 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.74ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:48 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 21 (admin)
+2026-02-12 19:32:48 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 19:32:48 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.88ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 19:32:48 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.99ms (DB: 0.88ms)
+2026-02-12 19:32:48 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 19:32:48 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.78ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}

@@ -495,6 +495,31 @@ export default function UniversalServices() {
 
     return (
         <div className="crm-services-page">
+            {!isEmployee && (
+                <>
+                    <div className="flex flex-wrap gap-2 mb-6">
+                        <Button
+                            type="button"
+                            variant="default"
+                            className="bg-blue-600 text-white hover:bg-blue-700"
+                        >
+                            <Scissors className="w-4 h-4 mr-2" />
+                            <span>{t('admin/services:services')} ({services.length})</span>
+                        </Button>
+
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                            onClick={() => openRouteTab(`${rolePrefix}/special-packages`)}
+                        >
+                            <Gift className="w-4 h-4 mr-2" />
+                            <span>{t('admin/services:special_packages')} ({specialPackagesCount})</span>
+                        </Button>
+                    </div>
+                </>
+            )}
+
             <div className="crm-services-header">
                 <h1 className="crm-services-title">
                     <Scissors className="crm-services-title-icon" />
@@ -507,18 +532,6 @@ export default function UniversalServices() {
 
             {!isEmployee && (
                 <>
-                    <div className="crm-services-tabs-card">
-                        <button type="button" className="crm-services-tab crm-services-tab-active">
-                            <Scissors className="crm-services-tab-icon" />
-                            <span>{t('admin/services:services')} ({services.length})</span>
-                        </button>
-
-                        <button type="button" className="crm-services-tab" onClick={() => openRouteTab(`${rolePrefix}/special-packages`)}>
-                            <Gift className="crm-services-tab-icon" />
-                            <span>{t('admin/services:special_packages')} ({specialPackagesCount})</span>
-                        </button>
-                    </div>
-
                     <div className="crm-services-controls-card">
                         <div className="crm-services-search-wrap">
                             <Search className="crm-services-search-icon" />

@@ -56,7 +56,11 @@ interface NewPromoState {
     usage_limit: string;
 }
 
-export default function PromoCodes() {
+interface PromoCodesProps {
+    embedded?: boolean;
+}
+
+export default function PromoCodes({ embedded = false }: PromoCodesProps) {
     const { t } = useTranslation(['admin/promocodes', 'common']);
     const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
     const [loading, setLoading] = useState(true);
@@ -159,34 +163,43 @@ export default function PromoCodes() {
         p.code.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const containerClassName = embedded
+        ? 'crm-calendar-promocodes'
+        : 'crm-calendar-theme crm-calendar-page crm-calendar-promocodes p-4 sm:p-8 max-w-7xl mx-auto min-h-screen bg-[#fafafa]';
+
     return (
-        <div className="crm-calendar-theme crm-calendar-page crm-calendar-promocodes p-4 sm:p-8 max-w-7xl mx-auto min-h-screen bg-[#fafafa]">
-            {/* Header section with glassmorphism feel */}
-            <div className="crm-calendar-toolbar flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div className={containerClassName}>
+            <div className={embedded ? 'flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8' : 'crm-calendar-toolbar flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8'}>
                 <div>
-                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
-                        <div className="p-2 bg-pink-100 rounded-xl text-pink-600">
-                            <Ticket size={28} />
-                        </div>
+                    <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3'}>
+                        {embedded ? (
+                            <Ticket size={32} className="text-blue-600" />
+                        ) : (
+                            <div className="p-2 bg-pink-100 rounded-xl text-pink-600">
+                                <Ticket size={28} />
+                            </div>
+                        )}
                         {t('title', 'Промокоды')}
                     </h1>
-                    <p className="text-gray-500 mt-2 font-medium">
+                    <p className={embedded ? 'text-gray-600' : 'text-gray-500 mt-2 font-medium'}>
                         {t('subtitle', 'Управление скидками и бонусными кодами для клиентов')}
                     </p>
                 </div>
 
                 <Button
                     onClick={() => setShowCreateDialog(true)}
-                    className="bg-pink-600 hover:bg-pink-700 text-white shadow-lg shadow-pink-100 px-6 py-6 rounded-2xl flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-95"
+                    className={embedded
+                        ? 'w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-10 px-4 font-semibold shadow-sm flex items-center gap-2 transition-all'
+                        : 'bg-pink-600 hover:bg-pink-700 text-white shadow-lg shadow-pink-100 px-6 py-6 rounded-2xl flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-95'}
                 >
-                    <Plus size={20} />
+                    <Plus size={embedded ? 16 : 20} />
                     {t('create_btn', 'Создать промокод')}
                 </Button>
             </div>
 
             {/* Stats Quick View */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="crm-calendar-panel bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div className={embedded ? 'crm-calendar-panel bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4' : 'crm-calendar-panel bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4'}>
                     <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                         <Activity size={24} />
                     </div>
@@ -196,7 +209,7 @@ export default function PromoCodes() {
                     </div>
                 </div>
 
-                <div className="crm-calendar-panel bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div className={embedded ? 'crm-calendar-panel bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4' : 'crm-calendar-panel bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4'}>
                     <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center">
                         <Zap size={24} />
                     </div>
@@ -206,8 +219,8 @@ export default function PromoCodes() {
                     </div>
                 </div>
 
-                <div className="crm-calendar-panel bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                <div className={embedded ? 'crm-calendar-panel bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4' : 'crm-calendar-panel bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4'}>
+                    <div className="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center">
                         <Gift size={24} />
                     </div>
                     <div>
@@ -222,7 +235,9 @@ export default function PromoCodes() {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
                     placeholder={t('search_placeholder', 'Поиск по коду...')}
-                    className="pl-12 h-14 bg-white border-gray-100 rounded-2xl focus:ring-pink-500 focus:border-pink-500 shadow-sm"
+                    className={embedded
+                        ? 'pl-12 h-10 bg-white border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm'
+                        : 'pl-12 h-14 bg-white border-gray-100 rounded-2xl focus:ring-pink-500 focus:border-pink-500 shadow-sm'}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -230,12 +245,12 @@ export default function PromoCodes() {
 
             {/* Promo Codes List */}
             {loading ? (
-                <div className="crm-calendar-panel flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-gray-100">
+                <div className={embedded ? 'crm-calendar-panel flex flex-col items-center justify-center py-16 bg-white rounded-xl border border-gray-200' : 'crm-calendar-panel flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-gray-100'}>
                     <Loader className="w-10 h-10 text-pink-600 animate-spin mb-4" />
                     <p className="text-gray-500 font-medium">{t('loading', 'Загружаем промокоды...')}</p>
                 </div>
             ) : filteredCodes.length === 0 ? (
-                <div className="crm-calendar-panel text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                <div className={embedded ? 'crm-calendar-panel text-center py-16 bg-white rounded-xl border border-dashed border-gray-200' : 'crm-calendar-panel text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200'}>
                     <Tag className="w-16 h-16 text-gray-200 mx-auto mb-4" />
                     <h3 className="text-xl font-bold text-gray-900">{t('not_found', 'Промокоды не найдены')}</h3>
                     <p className="text-gray-500 mt-2">{t('not_found_desc', 'Создайте свой первый промокод, чтобы привлечь больше клиентов!')}</p>
@@ -245,7 +260,7 @@ export default function PromoCodes() {
                     {filteredCodes.map((promo) => (
                         <div
                             key={promo.id}
-                            className={`crm-calendar-panel group bg-white rounded-[32px] border border-gray-100 p-8 shadow-sm hover:shadow-xl hover:shadow-pink-50 transition-all duration-300 relative overflow-hidden ${!promo.is_active && 'opacity-70'}`}
+                            className={`crm-calendar-panel group bg-white ${embedded ? 'rounded-xl border-gray-200 p-6 shadow-sm hover:shadow-md' : 'rounded-[32px] border-gray-100 p-8 shadow-sm hover:shadow-xl hover:shadow-pink-50'} border transition-all duration-300 relative overflow-hidden ${!promo.is_active && 'opacity-70'}`}
                         >
                             {/* Status Indicator */}
                             <div className="absolute top-0 right-0 p-6 flex gap-2">
