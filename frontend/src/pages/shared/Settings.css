@@ -82,8 +82,14 @@
 
 .settings-label-spacing {
   margin-bottom: 0.25rem;
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-weight: 500;
+}
+
+.settings-label-spacing svg {
+  flex-shrink: 0;
 }
 
 .settings-loader {

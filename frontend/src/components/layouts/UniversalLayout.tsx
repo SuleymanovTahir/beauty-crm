@@ -408,7 +408,8 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                                 onClick={() => setExpandedMenu(isExpanded ? null : item.id)}
                                                 className={cn(
                                                     "w-full flex items-center gap-3 menu-item-premium",
-                                                    isActive && !isExpanded && "active"
+                                                    isActive && !isExpanded && "active",
+                                                    isExpanded && "expanded"
                                                 )}
                                             >
                                                 <item.icon size={20} className="shrink-0" />

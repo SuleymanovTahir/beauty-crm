@@ -27,6 +27,14 @@
   - Reduced sidebar brand typography (`M.Le Diamant` / role) and sidebar spacing in `MainLayout`.
   - Reduced left menu and submenu font sizes/paddings for denser CRM layout.
   - Further reduced `/crm/services` typography and control/table element sizes (title, subtitle, tabs, filters, buttons, table headers/cells, badges, action icons).
+- Sidebar visual parity refinement:
+  - Restored expanded group state styling for desktop sidebar (`Каталог`) with light-blue background and blue icon/text.
+  - Restored active submenu (`Услуги`) gradient pill style with white text/icons.
+  - Kept mobile bottom navigation untouched (desktop sidebar classes only).
+- Services controls visual consistency:
+  - Updated `/crm/services` search and category input backgrounds/borders to shared Settings input palette (`var(--input-background)` / `var(--input)`).
+- Settings profile label alignment:
+  - Fixed profile form labels so icon and text render on one line via `settings-label-spacing` flex alignment.
 - Challenges API compatibility hardening:
   - Updated `backend/api/admin_features.py` to support both legacy and extended `active_challenges` schemas (dynamic column detection).
   - Added `GET /api/admin/challenges/stats` endpoint to eliminate 405 for stats polling from CRM challenges page.
