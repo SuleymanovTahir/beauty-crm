@@ -247,8 +247,12 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             if (item && item.req()) {
                 if (groups[id]) {
                     const subItems = groups[id]
-                        .map(subid => items[subid])
-                        .filter(sub => sub && sub.req() && !menuSettings?.hidden_items?.includes(sub.id));
+                        .map((subid) => {
+                            const subItem = items[subid];
+                            if (!subItem) return null;
+                            return { ...subItem, id: subid };
+                        })
+                        .filter((sub) => sub && sub.req() && !menuSettings?.hidden_items?.includes(sub.id));
 
                     if (subItems.length > 0) {
                         finalItems.push({ ...item, id, items: subItems });

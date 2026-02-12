@@ -9,8 +9,6 @@ import { toast } from 'sonner';
 interface Position {
   id: number;
   name: string;
-  name?: string;
-  name?: string;
   description?: string;
   is_active: number;
 }

@@ -39,7 +39,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { useChatWebSocket } from '../../hooks/useChatWebSocket';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 
 interface Client {
   id: string;

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
-import { useTranslation } from 'react-i18next';
 
 declare global {
     interface Window {
@@ -19,7 +18,6 @@ interface GoogleLoginButtonProps {
 export default function GoogleLoginButton({ text = "signin_with", className }: GoogleLoginButtonProps) {
     const { login } = useAuth();
     const navigate = useNavigate();
-    const { t } = useTranslation('common');
     const [isGoogleLoaded, setIsGoogleLoaded] = React.useState(false);
     const [clientIdError, setClientIdError] = React.useState(false);
 
@@ -84,8 +82,8 @@ export default function GoogleLoginButton({ text = "signin_with", className }: G
         try {
             const res = await api.googleLogin(response.credential);
 
-            if (res.success && res.token) {
-                login(res.user, res.token);
+            if (res.success && res.user) {
+                login(res.user);
                 toast.success(`Welcome back, ${res.user.full_name || res.user.username}!`);
                 navigate("/crm/dashboard");
             } else {

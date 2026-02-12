@@ -161,7 +161,7 @@ const PendingRegistrations: React.FC = () => {
 
         setActionLoading(userId);
         try {
-            const response = await fetch(`/ api / admin / registrations / ${userId} `, {
+            const response = await fetch(`/api/admin/registrations/${userId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });

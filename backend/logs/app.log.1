@@ -1,235 +1,187 @@
-2026-02-11 04:53:27 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
+2026-02-12 13:52:58 - crm - INFO - [modules] ======================================================================
+2026-02-12 13:52:58 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-02-12 13:52:58 - crm - INFO - [modules] ======================================================================
+2026-02-12 13:52:58 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
+2026-02-12 13:52:58 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-02-12 13:52:58 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-02-12 13:52:58 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-02-12 13:52:58 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-02-12 13:52:58 - crm - INFO - [modules] ======================================================================
+2026-02-12 13:52:58 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-02-12 13:52:58 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
+2026-02-12 13:52:58 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
+2026-02-12 13:52:58 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-02-12 13:52:58 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
+2026-02-12 13:52:58 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
+2026-02-12 13:52:58 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-12 13:52:58 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-02-12 13:52:58 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.92ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:52:58 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.12ms (DB: 1.92ms)
+2026-02-12 13:52:58 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:52:58 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:52:58 - crm - INFO - [notifications] 🔔 WS disconnected for user None
+2026-02-12 13:52:58 - crm - INFO - [notifications] 🔔 WS disconnected for user None
+2026-02-12 13:53:00 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:53:00 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 2.1s)
+2026-02-12 13:53:00 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 4.77ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:53:00 - crm - INFO - [chat] ✅ [unread-count] Total request took 5.13ms (DB: 4.77ms)
+2026-02-12 13:53:00 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 13:53:00 - crm - INFO - [notifications] 🔔 WS disconnected for user 21
+2026-02-12 13:53:00 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-12 13:53:05 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:53:05 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 13:53:05 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 5.0s)
+2026-02-12 13:53:05 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.71ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:53:05 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.02ms (DB: 0.71ms)
+2026-02-12 13:53:07 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:53:07 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 1.1s)
+2026-02-12 13:53:07 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.89ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:53:07 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.01ms (DB: 0.89ms)
+2026-02-12 13:53:07 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 13:53:07 - crm - INFO - [notifications] 🔔 WS disconnected for user 21
+2026-02-12 13:53:12 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:53:12 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 13:53:12 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 5.0s)
+2026-02-12 13:53:12 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.73ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:53:12 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.99ms (DB: 0.73ms)
+2026-02-12 13:55:17 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:55:17 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 125.7s)
+2026-02-12 13:55:17 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.33ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:55:17 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.19ms (DB: 1.33ms)
+2026-02-12 13:55:17 - crm - INFO - [notifications] 🔔 WS disconnected for user None
+2026-02-12 13:55:22 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:55:22 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 13:55:22 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 5.0s)
+2026-02-12 13:55:22 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.64ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:55:22 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.90ms (DB: 0.64ms)
+2026-02-12 13:56:17 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-12 13:56:17 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
+2026-02-12 13:56:18 - crm - ERROR - [cache] ❌ Redis connection failed: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2026-02-12 13:56:18 - crm - INFO - [cache] ⚠️ Continuing without Redis cache
+2026-02-12 13:56:18 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2026-02-12 13:56:19 - crm - INFO - [boot] ============================================================
+2026-02-12 13:56:19 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-02-12 13:56:19 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
+2026-02-12 13:56:19 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
+2026-02-12 13:56:19 - crm - INFO - [pubsub] 📡 Redis Pub/Sub connected to redis://127.0.0.1:6379/0
+2026-02-12 13:56:19 - crm - INFO - [boot] ✅ Redis Pub/Sub listener started
+2026-02-12 13:56:19 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-02-12 13:56:19 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-02-12 13:56:19 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-02-12 13:56:19 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-02-12 13:56:19 - crm - INFO - [migrations] ✅ Chat history table created/verified
+2026-02-12 13:56:19 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
+2026-02-12 13:56:19 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
+2026-02-12 13:56:19 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
+2026-02-12 13:56:19 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
+2026-02-12 13:56:19 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
+2026-02-12 13:56:19 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-12 13:56:19 - crm - INFO - [modules] ======================================================================
+2026-02-12 13:56:19 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-02-12 13:56:19 - crm - INFO - [modules] ======================================================================
+2026-02-12 13:56:19 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
+2026-02-12 13:56:19 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-02-12 13:56:19 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-02-12 13:56:19 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-02-12 13:56:19 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-02-12 13:56:19 - crm - INFO - [modules] ======================================================================
+2026-02-12 13:56:19 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-02-12 13:56:19 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
+2026-02-12 13:56:19 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
+2026-02-12 13:56:19 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-02-12 13:56:19 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
+2026-02-12 13:56:19 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
+2026-02-12 13:56:19 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-12 13:56:19 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-02-12 13:56:22 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:56:22 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 13:56:22 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.34ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:56:22 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.19ms (DB: 0.34ms)
+2026-02-12 13:56:22 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:56:22 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 13:56:22 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
+2026-02-12 13:56:22 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.62ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:56:22 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.83ms (DB: 0.62ms)
+2026-02-12 13:56:22 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:56:22 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 13:56:22 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
+2026-02-12 13:56:22 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.47ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:56:22 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.60ms (DB: 0.47ms)
+2026-02-12 13:56:25 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-12 13:56:27 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 4.9s)
+2026-02-12 13:56:27 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.61ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:56:27 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.99ms (DB: 0.61ms)
+2026-02-12 13:56:27 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:56:27 - crm - INFO - [notifications] 🔔 WS disconnected for user None
+2026-02-12 13:56:32 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 5.0s)
+2026-02-12 13:56:32 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.65ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:56:32 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.33ms (DB: 0.65ms)
+2026-02-12 13:56:32 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:56:32 - crm - INFO - [notifications] 🔔 WS disconnected for user None
+2026-02-12 13:56:37 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 13:56:37 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 13:56:37 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 5.0s)
+2026-02-12 13:56:37 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.70ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 13:56:37 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.82ms (DB: 0.70ms)
+2026-02-12 14:00:29 - crm - ERROR - [cache] ❌ Redis connection failed: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2026-02-12 14:00:29 - crm - INFO - [cache] ⚠️ Continuing without Redis cache
+2026-02-12 14:00:30 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2026-02-12 14:01:04 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-12 14:01:05 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 268.5s)
+2026-02-12 14:01:05 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.19ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 14:01:05 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.87ms (DB: 1.19ms)
+2026-02-12 14:01:05 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 14:01:05 - crm - INFO - [notifications] 🔔 WS disconnected for user None
+2026-02-12 14:01:10 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 14:01:10 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 14:01:10 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 5.0s)
+2026-02-12 14:01:10 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.86ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 14:01:10 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.01ms (DB: 0.86ms)
+2026-02-12 14:03:15 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 124.4s)
+2026-02-12 14:03:15 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.84ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 14:03:15 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.54ms (DB: 0.84ms)
+2026-02-12 14:03:15 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 14:03:15 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 14:03:15 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
+2026-02-12 14:03:15 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.49ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 14:03:15 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.61ms (DB: 0.49ms)
+2026-02-12 14:04:04 - crm - ERROR - [api] Error getting admin challenges: column c.challenge_type does not exist
+LINE 6:                 c.challenge_type as type,
+                        ^
 
-2026-02-11 04:55:13 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
+2026-02-12 14:04:30 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-12 14:04:32 - crm - ERROR - [api] Error getting admin challenges: column c.challenge_type does not exist
+LINE 6:                 c.challenge_type as type,
+                        ^
 
-2026-02-11 04:55:53 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 04:56:05 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 04:58:17 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 04:58:21 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 416.1s)
-2026-02-11 04:58:21 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.61ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 04:58:21 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.81ms (DB: 0.61ms)
-2026-02-11 04:58:21 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 04:58:21 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 04:58:21 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
-2026-02-11 04:58:21 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.81ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 04:58:21 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.99ms (DB: 0.81ms)
-2026-02-11 05:00:43 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:01:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-11 05:04:24 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:05:14 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 413.5s)
-2026-02-11 05:05:14 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.65ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:05:14 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.85ms (DB: 0.65ms)
-2026-02-11 05:05:14 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:05:14 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:05:14 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
-2026-02-11 05:05:14 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 3.06ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:05:14 - crm - INFO - [chat] ✅ [unread-count] Total request took 3.16ms (DB: 3.06ms)
-2026-02-11 05:05:19 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 5.0s)
-2026-02-11 05:05:19 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.35ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:05:19 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.65ms (DB: 0.35ms)
-2026-02-11 05:05:19 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:05:19 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:05:19 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
-2026-02-11 05:05:19 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.38ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:05:19 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.47ms (DB: 0.38ms)
-2026-02-11 05:06:32 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:06:46 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:06:46 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 86.6s)
-2026-02-11 05:06:46 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.63ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:06:46 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.85ms (DB: 0.63ms)
-2026-02-11 05:06:46 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:06:46 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:06:46 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
-2026-02-11 05:06:46 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.67ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:06:46 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.01ms (DB: 0.67ms)
-2026-02-11 05:10:39 - crm - INFO - [db] 📸 [Gallery DB] Получено 19 элементов из public_gallery
-2026-02-11 05:10:39 - crm - INFO - [geolocation] Using mock geolocation for local IP: 127.0.0.1
-2026-02-11 05:10:39 - crm - INFO - [db] 📸 [Gallery DB] Получено 10 элементов из public_gallery
-2026-02-11 05:10:39 - crm - INFO - [visitor_tracking] Tracked new visitor from 127.0.0.1 (Localhost) on Desktop/Chrome
-2026-02-11 05:11:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-11 05:11:23 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:13:31 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:13:34 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:13:42 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:13:52 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:13:55 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 429.1s)
-2026-02-11 05:13:55 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 4.92ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:13:55 - crm - INFO - [chat] ✅ [unread-count] Total request took 8.11ms (DB: 4.92ms)
-2026-02-11 05:13:55 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:13:55 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:13:55 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:13:55 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
-2026-02-11 05:13:55 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.76ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:13:55 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.11ms (DB: 0.76ms)
-2026-02-11 05:14:04 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:15:45 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:16:59 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:16:59 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 184.0s)
-2026-02-11 05:16:59 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.77ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:16:59 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.00ms (DB: 0.77ms)
-2026-02-11 05:16:59 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:16:59 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:16:59 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
-2026-02-11 05:16:59 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.67ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:16:59 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.79ms (DB: 0.67ms)
-2026-02-11 05:18:21 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:18:40 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:19:25 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 145.2s)
-2026-02-11 05:19:25 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.55ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:19:25 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.77ms (DB: 0.55ms)
-2026-02-11 05:19:25 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:19:25 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:19:25 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:19:25 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
-2026-02-11 05:19:25 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.63ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:19:25 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.87ms (DB: 0.63ms)
-2026-02-11 05:20:33 - crm - ERROR - [cache] ❌ Redis connection failed: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-02-11 05:20:33 - crm - INFO - [cache] ⚠️ Continuing without Redis cache
-2026-02-11 05:20:33 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-02-11 05:21:22 - crm - INFO - 🔔 Checking for reminders...
-2026-02-11 05:21:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-11 05:25:03 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 338.0s)
-2026-02-11 05:25:03 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.81ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:25:03 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.61ms (DB: 0.81ms)
-2026-02-11 05:25:03 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:25:03 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:25:03 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
-2026-02-11 05:25:03 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.49ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:25:03 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.69ms (DB: 0.49ms)
-2026-02-11 05:25:03 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:25:03 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:25:03 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:25:03 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
-2026-02-11 05:25:03 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.46ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:25:03 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.59ms (DB: 0.46ms)
-2026-02-11 05:25:03 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
-2026-02-11 05:25:03 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.51ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:25:03 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.67ms (DB: 0.51ms)
-2026-02-11 05:25:08 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:25:08 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:25:08 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 4.9s)
-2026-02-11 05:25:08 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.49ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:25:08 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.59ms (DB: 0.49ms)
-2026-02-11 05:25:09 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:25:09 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:25:09 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 1.0s)
-2026-02-11 05:25:09 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.72ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:25:09 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.82ms (DB: 0.72ms)
-2026-02-11 05:25:36 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:25:57 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:30:25 - crm - INFO - [geolocation] Using mock geolocation for local IP: 127.0.0.1
-2026-02-11 05:30:25 - crm - INFO - [visitor_tracking] Tracked new visitor from 127.0.0.1 (Localhost) on Desktop/Chrome
-2026-02-11 05:30:26 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:31:22 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-11 05:33:56 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 527.1s)
-2026-02-11 05:33:56 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.09ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:33:56 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.05ms (DB: 1.09ms)
-2026-02-11 05:33:56 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
-2026-02-11 05:33:56 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:33:56 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:33:56 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.1s)
-2026-02-11 05:33:56 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.01ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:33:56 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.14ms (DB: 1.01ms)
-2026-02-11 05:36:35 - crm - INFO - [geolocation] Using mock geolocation for local IP: 127.0.0.1
-2026-02-11 05:36:35 - crm - INFO - [visitor_tracking] Tracked new visitor from 127.0.0.1 (Localhost) on Desktop/Chrome
-2026-02-11 05:41:13 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:41:13 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:41:13 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 436.8s)
-2026-02-11 05:41:13 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.07ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:41:13 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.18ms (DB: 1.07ms)
-2026-02-11 05:41:13 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:41:13 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:41:13 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
-2026-02-11 05:41:13 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.90ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:41:13 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.04ms (DB: 0.90ms)
-2026-02-11 05:41:15 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:41:15 - crm - INFO - [db] 📸 [Gallery DB] Получено 19 элементов из public_gallery
-2026-02-11 05:41:15 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:41:15 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 2.0s)
-2026-02-11 05:41:15 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.55ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-11 05:41:15 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.66ms (DB: 0.55ms)
-2026-02-11 05:41:15 - crm - INFO - [db] 📸 [Gallery DB] Получено 10 элементов из public_gallery
-2026-02-11 05:41:15 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-11 05:41:15 - crm - INFO - [geolocation] Using mock geolocation for local IP: 127.0.0.1
-2026-02-11 05:41:15 - crm - INFO - [visitor_tracking] Tracked new visitor from 127.0.0.1 (Localhost) on Desktop/Chrome
-2026-02-11 05:41:15 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
-2026-02-11 05:41:15 - crm - ERROR - [db.tasks] Error getting tasks: column s.key does not exist
-LINE 5: ...    s.name as stage_name, s.color as stage_color, s.key as s...
-                                                             ^
-
+2026-02-12 14:04:32 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 77.1s)
+2026-02-12 14:04:32 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.91ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 14:04:32 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.31ms (DB: 0.91ms)
+2026-02-12 14:04:32 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 14:04:32 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 connected locally. Local users: 1
+2026-02-12 14:04:32 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 0.0s)
+2026-02-12 14:04:32 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.63ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-12 14:04:32 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.93ms (DB: 0.63ms)
+2026-02-12 14:04:43 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-02-12 14:04:43 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=21, username=admin, role=director
+2026-02-12 14:04:43 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=21
+2026-02-12 14:04:43 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Admin (System Admin)
+2026-02-12 14:04:43 - crm - INFO - [subscriptions] Получены подписки пользователя 21
+2026-02-12 14:04:43 - crm - INFO - [api] ⏱️ get_users took 0.0029s returning 7 users
+2026-02-12 14:04:46 - crm - INFO - [api] ⏱️ get_users took 0.0011s returning 7 users
+2026-02-12 14:04:49 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-02-12 14:04:49 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=21, username=admin, role=director
+2026-02-12 14:04:49 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=21
+2026-02-12 14:04:49 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Admin (System Admin)
+2026-02-12 14:04:49 - crm - INFO - [api] ⏱️ get_users took 0.0010s returning 7 users
+2026-02-12 14:04:49 - crm - INFO - [subscriptions] Получены подписки пользователя 21
+2026-02-12 14:05:12 - crm - INFO - [notifications] 🔔 Notifications WS: User 21 disconnected locally. Local users: 0
+2026-02-12 14:05:14 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-02-12 14:05:14 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=21, username=admin, role=director
+2026-02-12 14:05:14 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=21
+2026-02-12 14:05:14 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Admin (System Admin)
+2026-02-12 14:05:14 - crm - INFO - [subscriptions] Получены подписки пользователя 21
+2026-02-12 14:05:14 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-12 14:05:14 - crm - INFO - [api] ⏱️ get_users took 0.0009s returning 7 users
+2026-02-12 14:05:14 - crm - INFO - [chat] ⚠️ [unread-count] Memory cache expired (age: 41.6s)
+2026-02-12 14:05:14 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.61ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}

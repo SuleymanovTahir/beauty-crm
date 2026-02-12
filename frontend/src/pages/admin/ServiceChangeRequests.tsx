@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Check, X, Loader2, AlertCircle, Clock, User, Scissors } from 'lucide-react';
+import { Check, X, Loader2, Clock, User, Scissors } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
@@ -10,9 +10,7 @@ interface ChangeRequest {
   id: number;
   user_id: number;
   employee_name: string;
-  employee_name: string;
   service_id: number;
-  service_name: string;
   service_name: string;
   request_type: string;
   status: string;
@@ -158,13 +156,13 @@ export default function ServiceChangeRequests() {
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-gray-400" />
                       <span className="font-medium text-gray-900">
-                        {req.employee_name || req.employee_name}
+                        {req.employee_name}
                       </span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <span className="text-gray-900">
-                      {req.service_name || req.service_name}
+                      {req.service_name}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -253,7 +251,7 @@ export default function ServiceChangeRequests() {
           </DialogHeader>
           <div className="py-4">
             <p className="text-sm text-gray-600 mb-4">
-              {t('change_requests.approve_confirm', { service: selectedRequest?.service_name || selectedRequest?.service_name, employee: selectedRequest?.employee_name || selectedRequest?.employee_name })}
+              {t('change_requests.approve_confirm', { service: selectedRequest?.service_name, employee: selectedRequest?.employee_name })}
             </p>
             <label className="text-sm font-medium text-gray-700 block mb-1">
               {t('change_requests.comment_optional')}

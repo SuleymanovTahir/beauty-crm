@@ -685,7 +685,6 @@ export default function AdminSettings() {
       toast.success(t('account_deleted_successfully'));
       setTimeout(() => {
         localStorage.removeItem('user');
-        localStorage.removeItem('session_token');
         window.location.href = '/';
       }, 1500);
     } catch (err: any) {

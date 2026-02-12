@@ -11,7 +11,6 @@ import '../../styles/crm-pages.css';
 interface Product {
     id: number;
     name: string;
-    name?: string;
     category?: string;
     price: number;
     stock_quantity: number;
@@ -100,7 +99,7 @@ const Products = () => {
 
     const filteredAndSortedProducts = useMemo(() => {
         return products.filter(p => {
-            const name = (p.name || p.name || '').toLowerCase();
+            const name = (p.name || '').toLowerCase();
             const category = (p.category || '').toLowerCase();
             const search = searchQuery.toLowerCase();
             return name.includes(search) || category.includes(search);
@@ -223,7 +222,7 @@ const Products = () => {
                                             setShowDetailDialog(true);
                                         }}
                                     >
-                                        {product.name || product.name}
+                                        {product.name}
                                     </h3>
 
                                     <div className="mt-auto flex items-end justify-between">

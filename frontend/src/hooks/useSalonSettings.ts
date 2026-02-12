@@ -44,7 +44,7 @@ export async function getSalonSettings(): Promise<SalonSettings> {
  */
 export async function getCurrency(): Promise<string> {
     const settings = await getSalonSettings();
-    return settings.currency;
+    return settings.currency ?? 'AED';
 }
 
 /**
@@ -60,7 +60,7 @@ export function useSalonSettings() {
             .finally(() => setLoading(false));
     }, []);
 
-    const currency = settings.currency;
+    const currency = settings.currency ?? 'AED';
 
     const formatCurrency = useCallback((amount: number | string, overrideCurrency?: string) => {
         return formatCurrencyUtil(amount, overrideCurrency || currency);

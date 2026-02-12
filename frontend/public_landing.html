@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
@@ -47,6 +47,12 @@
   <meta property="og:locale" content="en_US" />
   <meta property="og:locale:alternate" content="ru_RU" />
   <meta property="og:locale:alternate" content="ar_AE" />
+  <meta property="og:locale:alternate" content="es_ES" />
+  <meta property="og:locale:alternate" content="de_DE" />
+  <meta property="og:locale:alternate" content="fr_FR" />
+  <meta property="og:locale:alternate" content="hi_IN" />
+  <meta property="og:locale:alternate" content="kk_KZ" />
+  <meta property="og:locale:alternate" content="pt_PT" />
 
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -58,6 +64,12 @@
   <link rel="alternate" hreflang="en" href="https://mlediamant.com/" />
   <link rel="alternate" hreflang="ru" href="https://mlediamant.com/?lang=ru" />
   <link rel="alternate" hreflang="ar" href="https://mlediamant.com/?lang=ar" />
+  <link rel="alternate" hreflang="es" href="https://mlediamant.com/?lang=es" />
+  <link rel="alternate" hreflang="de" href="https://mlediamant.com/?lang=de" />
+  <link rel="alternate" hreflang="fr" href="https://mlediamant.com/?lang=fr" />
+  <link rel="alternate" hreflang="hi" href="https://mlediamant.com/?lang=hi" />
+  <link rel="alternate" hreflang="kk" href="https://mlediamant.com/?lang=kk" />
+  <link rel="alternate" hreflang="pt" href="https://mlediamant.com/?lang=pt" />
   <link rel="alternate" hreflang="x-default" href="https://mlediamant.com/" />
 
   <!-- Schema.org Structured Data - BeautySalon -->
@@ -108,7 +120,7 @@
       "@type": "ContactPoint",
       "telephone": "+971526961100",
       "contactType": "customer service",
-      "availableLanguage": ["English", "Russian", "Arabic"]
+      "availableLanguage": ["English", "Russian", "Arabic", "Spanish", "German", "French", "Hindi", "Kazakh", "Portuguese"]
     },
     "sameAs": [
       "https://instagram.com/mlediamant"
@@ -146,6 +158,10 @@
         // Update title and meta
         document.title = seo.seo_title;
         document.querySelector('meta[name="description"]').setAttribute('content', seo.seo_description);
+        if (seo.seo_keywords) {
+          const keywordsMeta = document.querySelector('meta[name="keywords"]');
+          if (keywordsMeta) keywordsMeta.setAttribute('content', seo.seo_keywords);
+        }
 
         // Update Open Graph and Twitter
         const updateMeta = (selector, attr, value) => {

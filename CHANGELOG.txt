@@ -1,3 +1,24 @@
+## [2026-02-12] Booking Flow Stability & Validation Hardening
+- 🔧 **Critical Booking API Route Fixes**:
+  - Fixed malformed API paths with whitespace that caused runtime failures:
+    - `frontend/public_landing/pages/account/booking/ConfirmStep.tsx` (`PUT /api/bookings/:id`)
+    - `frontend/src/pages/admin/PendingRegistrations.tsx` (`DELETE /api/admin/registrations/:id`)
+- 🛡️ **Date Safety in Public Booking Wizard**:
+  - Added strict date validation and safe serialization/deserialization in `frontend/public_landing/pages/account/UserBookingWizard.tsx` to prevent `Invalid Date` crashes from query params/session state.
+  - Updated rendering and step-gating logic to rely on validated dates only.
+- ✅ **Task Creation Payload Integrity**:
+  - Hardened `frontend/src/components/tasks/CreateTaskDialog.tsx`:
+    - Prevented `NaN` `stage_id` submission.
+    - Added stage validation before submit.
+    - Sanitized `assignee_ids` before API request.
+- 🌐 **Holiday API Error Handling**:
+  - Fixed `frontend/src/services/api.ts` `getHolidays()` so network failures are correctly caught (`await` in `try/catch`) and return fallback `[]` as designed.
+- 🌍 **i18n Consistency**:
+  - Resolved missing Hindi plural keys in `frontend/src/locales/hi/admin/audit-log.json` via project translation automation workflow.
+  - Verified locale integrity with `npm run i18n:check-only` (0 missing, 0 empty).
+- 🧪 **Tooling Reliability**:
+  - Updated frontend `lint` script to strict TypeScript validation (`--noUnusedLocals --noUnusedParameters`) in `frontend/package.json`, eliminating environment failure from missing ESLint binary.
+
 ## [2026-02-11] Unread Counts & Premium Communication Indicators
 - 🔔 **Intelligent Unread Tracking**:
   - **Granular Counts**: Refactored the unread tracking system to distinguish between customer chats (Instagram/Messengers), internal staff chats, and system notifications.

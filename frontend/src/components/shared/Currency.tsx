@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCurrency } from '../hooks/useSalonSettings';
+import { useCurrency } from '../../hooks/useSalonSettings';
 
 interface CurrencyProps {
     amount: number | string;

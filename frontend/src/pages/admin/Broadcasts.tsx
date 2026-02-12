@@ -76,7 +76,7 @@ export default function Broadcasts() {
     additional_emails: [],
   });
 
-  const [manualEmailsText, setManualEmailsText] = useState("");
+  const [manualEmailsText] = useState("");
 
   const [uploadingFile, setUploadingFile] = useState(false);
 

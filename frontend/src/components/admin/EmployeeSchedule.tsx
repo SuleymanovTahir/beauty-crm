@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Copy, Trash2, Plus, X, Calendar as CalendarIcon, Edit } from 'lucide-react';
+import { Copy, Trash2, Plus, X, Edit } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';

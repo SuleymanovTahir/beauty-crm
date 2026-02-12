@@ -22,10 +22,6 @@ import {
 } from "../../components/ui/select";
 import { api } from '../../services/api';
 import { toast } from 'sonner';
-import { Popover, PopoverContent, PopoverTrigger } from "../../components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../../components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "../../components/ui/utils";
 
 interface Stage {
     id: number;
@@ -57,6 +53,9 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
     const { t, i18n } = useTranslation(['admin/tasks', 'common']);
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState<Array<{ id: number; username: string; full_name: string; role: string }>>([]);
+    const resolvedInitialStageId = defaultStageId !== undefined
+        ? defaultStageId.toString()
+        : (stages[0]?.id !== undefined ? stages[0].id.toString() : '');
 
     // Load assignable users based on role hierarchy
     useEffect(() => {
@@ -87,7 +86,7 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
     const initialFormState = {
         title: '',
         description: '',
-        stage_id: defaultStageId?.toString() || stages[0]?.id?.toString() || '',
+        stage_id: resolvedInitialStageId,
         priority: 'medium',
         due_date: '',
         assignee_ids: [] as string[],  // Changed to array for multiple assignees
@@ -104,7 +103,7 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
                 setFormData({
                     title: taskToEdit.title || '',
                     description: taskToEdit.description || '',
-                    stage_id: taskToEdit.stage_id?.toString() || stages[0]?.id?.toString() || '',
+                    stage_id: taskToEdit.stage_id?.toString() || resolvedInitialStageId,
                     priority: taskToEdit.priority || 'medium',
                     due_date: taskToEdit.due_date ? taskToEdit.due_date.split('T')[0] : '',
                     assignee_ids: assigneeIds.map(String),
@@ -112,21 +111,30 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
             } else {
                 setFormData({
                     ...initialFormState,
-                    stage_id: defaultStageId?.toString() || stages[0]?.id?.toString() || ''
+                    stage_id: resolvedInitialStageId
                 });
             }
         }
-    }, [open, taskToEdit, defaultStageId, stages]);
+    }, [open, taskToEdit, resolvedInitialStageId, stages]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
+            const parsedStageId = Number.parseInt(formData.stage_id, 10);
+            if (Number.isNaN(parsedStageId)) {
+                toast.error(t('select_stage'));
+                setLoading(false);
+                return;
+            }
+
             const payload = {
                 ...formData,
-                stage_id: parseInt(formData.stage_id),
-                assignee_ids: formData.assignee_ids.map(id => parseInt(id)),
+                stage_id: parsedStageId,
+                assignee_ids: formData.assignee_ids
+                    .map((id) => Number.parseInt(id, 10))
+                    .filter((id) => !Number.isNaN(id)),
                 due_date: formData.due_date || null,
             };
 

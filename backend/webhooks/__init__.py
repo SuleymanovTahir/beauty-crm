@@ -893,13 +893,6 @@ async def handle_webhook(request: Request, background_tasks: BackgroundTasks):
         import traceback
         logger.error(traceback.format_exc())
         return {"status": "ok"}
-        
-    except Exception as e:
-        logger.error("=" * 70)
-        logger.error(f"❌ CRITICAL ERROR: {e}")
-        import traceback
-        logger.error(traceback.format_exc())
-        return {"status": "ok"}
     
 
 @router.get("/webhook/test")

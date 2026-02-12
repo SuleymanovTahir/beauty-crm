@@ -14,7 +14,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (user: User, token: string) => void;
+  login: (user: User) => void;
   logout: () => void;
   updateUser: (user: User) => void;
 }
@@ -33,10 +33,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const checkAuth = () => {
       try {
-        const savedToken = localStorage.getItem('session_token');
         const savedUser = localStorage.getItem('user');
 
-        if (savedToken && savedUser) {
+        if (savedUser) {
           const userData = JSON.parse(savedUser);
           setUser({
             id: userData.id,
@@ -50,7 +49,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
       } catch (err) {
         console.error('Auth check error:', err);
-        localStorage.removeItem('session_token');
         localStorage.removeItem('user');
       } finally {
         setIsLoading(false);
@@ -60,8 +58,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkAuth();
   }, []);
 
-  const login = (userData: User, token: string) => {
-    localStorage.setItem('session_token', token);
+  const login = (userData: User) => {
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('username', userData.username);
     if (userData.full_name) localStorage.setItem('user_name', userData.full_name);
@@ -72,7 +69,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = () => {
-    localStorage.removeItem('session_token');
     localStorage.removeItem('user');
     localStorage.removeItem('username');
     localStorage.removeItem('user_name');

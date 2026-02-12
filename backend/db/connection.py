@@ -100,8 +100,9 @@ class CursorWrapper:
 
 class ConnectionWrapper:
     """Wrapper for pool connection to handle automatic return to pool"""
-    def __init__(self, conn):
+    def __init__(self, conn, from_pool=True):
         self._conn = conn
+        self._from_pool = from_pool
         self.row_factory = None
 
     def cursor(self, cursor_factory=None):
@@ -118,14 +119,19 @@ class ConnectionWrapper:
         return self._conn.rollback()
 
     def close(self):
-        """Returns the connection to the pool instead of closing it"""
+        """Return pool connections to pool; close direct fallback connections."""
         global _connection_pool
-        if _connection_pool and self._conn:
-            try:
+        if not self._conn:
+            return
+        try:
+            if self._from_pool and _connection_pool:
                 _connection_pool.putconn(self._conn)
-                self._conn = None
-            except Exception as e:
-                log_error(f"Error returning connection to pool: {e}", "db")
+            else:
+                self._conn.close()
+        except Exception as e:
+            log_error(f"Error closing connection: {e}", "db")
+        finally:
+            self._conn = None
 
     def __getattr__(self, name):
         return getattr(self._conn, name)
@@ -153,7 +159,7 @@ def get_db_connection():
         duration = (time.time() - start_time) * 1000
         if duration > 100:
             log_warning(f"🕒 Connection acquisition took {duration:.2f}ms", "db")
-        return ConnectionWrapper(conn)
+        return ConnectionWrapper(conn, from_pool=True)
     except pool.PoolError as e:
         # Pool exhausted - fallback to a direct connection quickly
         duration = (time.time() - start_time) * 1000
@@ -168,7 +174,7 @@ def get_db_connection():
                 connect_timeout=1,
             )
             log_warning("⚠️ Using direct connection fallback (pool exhausted)", "db")
-            return ConnectionWrapper(direct_conn)
+            return ConnectionWrapper(direct_conn, from_pool=False)
         except Exception as direct_e:
             log_error(f"❌ Direct connection fallback failed: {direct_e}", "db")
             raise
@@ -197,4 +203,3 @@ def close_connection_pool():
             log_error(f"Error closing connection pool: {e}", "db")
         finally:
             _connection_pool = None
-
