@@ -53,21 +53,20 @@ const buildMenuItemsFromCatalog = (
 
         const groupChildren = groups[id];
         if (Array.isArray(groupChildren)) {
-            const children: MenuItem[] = groupChildren
-                .map((childId) => {
-                    const child = catalogItems[childId];
-                    if (child === undefined) {
-                        return null;
-                    }
-                    return {
-                        id: childId,
-                        label: child.label ?? childId,
-                        path: child.path,
-                        type: 'link',
-                        visible: true,
-                    };
-                })
-                .filter((child): child is MenuItem => child !== null);
+            const children: MenuItem[] = [];
+            groupChildren.forEach((childId) => {
+                const child = catalogItems[childId];
+                if (child === undefined) {
+                    return;
+                }
+                children.push({
+                    id: childId,
+                    label: child.label ?? childId,
+                    path: child.path,
+                    type: 'link',
+                    visible: true,
+                });
+            });
 
             result.push({
                 id,

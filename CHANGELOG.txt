@@ -2625,3 +2625,48 @@ format_duration_display(90, 'hi')  # → "1घंटा 30मिनट"
 - `backend/api/admin_features.py` - MODIFIED
 - `backend/api/notifications.py` - MODIFIED
 - `backend/services/universal_messenger.py` - MODIFIED
+
+## 2026-02-12: Разделение admin notifications/broadcasts и управление меню account
+
+### ПРОБЛЕМА
+1. В админке `/admin/notifications` открывал страницу рассылок, из-за чего колокольчик вел не в входящие уведомления.
+2. В рассылках не было быстрого вставления готового шаблона уведомления.
+3. Настройка меню в `/crm/menu-customization` дублировала структуру бокового меню вручную.
+4. Не было централизованного управления видимостью меню в `/account` (для всех клиентов или выборочно).
+
+### РЕШЕНИЕ
+1. Маршруты админки разделены:
+   - `/admin/notifications` -> общая страница уведомлений (`NotificationsPage`);
+   - `/admin/broadcasts` -> страница рассылок (`Broadcasts`).
+2. В `Broadcasts` добавлен выбор и вставка шаблона из `/api/notifications/templates`.
+3. `MenuCustomization` для CRM переведен на автогенерацию структуры из общего каталога `UniversalLayout` (`buildCrmMenuCatalog`, `CRM_MENU_GROUPS`, `CRM_MENU_DEFAULT_ORDER`), без ручного дублирования списков.
+4. Добавлены backend API для клиентского меню на базе `salon_settings.menu_config`:
+   - `GET /api/account-menu-settings`
+   - `POST /api/account-menu-settings`
+   - `GET /api/client/account-menu-settings`
+   Поддержаны режимы применения: `all` и `selected` + список `target_client_ids`.
+5. В настройках CRM/Admin добавлена отдельная кнопка для настройки меню клиентского кабинета (`?portal=account`).
+6. В `AccountPage` добавлены:
+   - загрузка скрытых пунктов меню из `GET /api/client/account-menu-settings`;
+   - колокольчик в футере бокового меню по логике CRM;
+   - учет скрытых пунктов в мобильной нижней навигации.
+
+### ВАЖНО ПОМНИТЬ
+- Для структуры CRM-меню использовать общий каталог `UniversalLayout`, чтобы не поддерживать одни и те же пункты в двух местах.
+- Настройки видимости меню `/account` хранятся в `salon_settings.menu_config.account` и применяются либо всем клиентам, либо только списку `target_client_ids`.
+
+### ФАЙЛЫ
+- `frontend/src/App.tsx` - MODIFIED
+- `frontend/src/pages/admin/Broadcasts.tsx` - MODIFIED
+- `frontend/src/pages/admin/MenuCustomization.tsx` - MODIFIED
+- `frontend/src/pages/shared/Settings.tsx` - MODIFIED
+- `frontend/public_landing/pages/account/AccountPage.tsx` - MODIFIED
+- `frontend/src/services/api.ts` - MODIFIED
+- `frontend/src/api/client.ts` - MODIFIED
+- `backend/api/menu_settings.py` - MODIFIED
+- `frontend/src/locales/en/admin/settings.json` - MODIFIED
+- `frontend/src/locales/ru/admin/settings.json` - MODIFIED
+- `frontend/src/locales/en/admin/menucustomization.json` - MODIFIED
+- `frontend/src/locales/ru/admin/menucustomization.json` - MODIFIED
+- `frontend/src/locales/en/admin/broadcasts.json` - MODIFIED
+- `frontend/src/locales/ru/admin/broadcasts.json` - MODIFIED
