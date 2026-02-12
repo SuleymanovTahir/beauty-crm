@@ -1687,6 +1687,12 @@
   color: #11833b;
 }
 
+.crm-services-status-badge-inactive {
+  border: 1px solid #d6dde8;
+  background: #f3f6fb;
+  color: #475467;
+}
+
 .crm-services-status-badge-pending {
   border: 1px solid #f4dfa8;
   background: #fff6dc;

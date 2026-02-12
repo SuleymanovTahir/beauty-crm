@@ -15,12 +15,32 @@ REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 REDIS_DB = int(os.getenv("REDIS_DB", 0))
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", None)
 
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+REDIS_ENABLED = _env_flag("REDIS_ENABLED", default=True)
+REDIS_REQUIRED = _env_flag("REDIS_REQUIRED", default=False)
+
 class Cache:
     def __init__(self):
+        self.enabled = False
+        self.client = None
+        self._connection_lost_logged = False
+
+        if not REDIS_ENABLED:
+            log_info("ℹ️ Redis cache disabled by REDIS_ENABLED=false", "cache")
+            return
+
         if not REDIS_AVAILABLE:
-            log_info("⚠️ Redis library not installed - cache disabled", "cache")
-            self.enabled = False
-            self.client = None
+            if REDIS_REQUIRED:
+                log_error("❌ Redis library not installed but REDIS_REQUIRED=true", "cache")
+            else:
+                log_info("ℹ️ Redis library not installed - cache disabled", "cache")
             return
 
         try:
@@ -40,8 +60,10 @@ class Cache:
             self.enabled = True
             log_info(f"🚀 Redis connected: {REDIS_HOST}:{REDIS_PORT}", "cache")
         except Exception as e:
-            log_error(f"❌ Redis connection failed: {e}", "cache")
-            log_info("⚠️ Continuing without Redis cache", "cache")
+            if REDIS_REQUIRED:
+                log_error(f"❌ Redis connection failed (REDIS_REQUIRED=true): {e}", "cache")
+            else:
+                log_info(f"ℹ️ Redis unavailable, continuing without Redis cache: {e}", "cache")
             self.enabled = False
             self.client = None
 
@@ -50,11 +72,18 @@ class Cache:
             return None
         try:
             data = self.client.get(key)
+            self._connection_lost_logged = False
             return json.loads(data) if data else None
         except (redis.ConnectionError, redis.TimeoutError) as e:
             # Connection lost - disable Redis for this session
-            log_error(f"Redis connection lost ({key}): {e}", "cache")
+            if not self._connection_lost_logged:
+                if REDIS_REQUIRED:
+                    log_error(f"Redis connection lost ({key}): {e}", "cache")
+                else:
+                    log_info(f"ℹ️ Redis connection lost ({key}), fallback to in-memory mode: {e}", "cache")
+                self._connection_lost_logged = True
             self.enabled = False
+            self.client = None
             return None
         except Exception as e:
             log_error(f"Redis get error ({key}): {e}", "cache")
@@ -72,11 +101,18 @@ class Cache:
 
             json_data = json.dumps(value, default=datetime_handler)
             self.client.set(key, json_data, ex=expire)
+            self._connection_lost_logged = False
             return True
         except (redis.ConnectionError, redis.TimeoutError) as e:
             # Connection lost - disable Redis for this session
-            log_error(f"Redis connection lost ({key}): {e}", "cache")
+            if not self._connection_lost_logged:
+                if REDIS_REQUIRED:
+                    log_error(f"Redis connection lost ({key}): {e}", "cache")
+                else:
+                    log_info(f"ℹ️ Redis connection lost ({key}), fallback to in-memory mode: {e}", "cache")
+                self._connection_lost_logged = True
             self.enabled = False
+            self.client = None
             return False
         except Exception as e:
             log_error(f"Redis set error ({key}): {e}", "cache")

@@ -324,35 +324,196 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         { id: 'internal', icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, badge: internalChatUnreadCount },
     ], [t, rolePrefix, chatUnreadCount, internalChatUnreadCount]);
 
-    // Update document title based on current page
+    // Update document title based on current page and selected tab
     useEffect(() => {
-        let currentLabel = '';
+        const collectNavigableEntries = (items: any[]): Array<{ path: string; label: string }> => {
+            const entries: Array<{ path: string; label: string }> = [];
 
-        // Check main tabs first
-        const activeTab = mainTabs.find(tab => tab.path && location.pathname === tab.path);
-        if (activeTab) {
-            currentLabel = activeTab.label;
-        } else {
-            // Check menu items
-            const findLabel = (items: any[]): string | null => {
-                for (const item of items) {
-                    if (item.path === location.pathname) return item.label;
-                    if (item.items) {
-                        const subLabel = findLabel(item.items);
-                        if (subLabel) return subLabel;
-                    }
+            for (const item of items) {
+                if (typeof item.path === 'string' && item.path.length > 0) {
+                    entries.push({ path: item.path, label: item.label });
                 }
-                return null;
+
+                if (Array.isArray(item.items) && item.items.length > 0) {
+                    entries.push(...collectNavigableEntries(item.items));
+                }
+            }
+
+            return entries;
+        };
+
+        const menuEntries = collectNavigableEntries(menuItems);
+        const tabEntries = mainTabs
+            .filter((tab: any) => typeof tab.path === 'string' && tab.path.length > 0)
+            .map((tab: any) => ({ path: tab.path as string, label: tab.label as string }));
+
+        const allEntries = [...tabEntries, ...menuEntries];
+        const exactEntry = allEntries.find((entry) => entry.path === location.pathname);
+        const nestedEntry = allEntries
+            .filter((entry) => location.pathname.startsWith(`${entry.path}/`))
+            .sort((left, right) => right.path.length - left.path.length)[0];
+
+        const currentPageLabel = exactEntry?.label ?? nestedEntry?.label ?? '';
+        const searchParams = new URLSearchParams(location.search);
+        const pathSegments = location.pathname.split('/').filter((segment) => segment.length > 0);
+
+        const getPathTabValue = (): string | null => {
+            const tabParentRoutes = ['settings', 'bot-settings', 'public-content'];
+
+            for (const parentRoute of tabParentRoutes) {
+                const routeIndex = pathSegments.indexOf(parentRoute);
+                if (routeIndex >= 0 && pathSegments.length > routeIndex + 1) {
+                    return pathSegments[routeIndex + 1];
+                }
+            }
+
+            const teamIndex = pathSegments.indexOf('team');
+            if (teamIndex >= 0 && pathSegments.length > teamIndex + 2) {
+                return pathSegments[teamIndex + 2];
+            }
+
+            return null;
+        };
+
+        const humanizeTabValue = (value: string): string => {
+            const normalizedValue = value.trim();
+            if (normalizedValue.length === 0) {
+                return '';
+            }
+
+            return normalizedValue
+                .replace(/[-_]+/g, ' ')
+                .split(' ')
+                .filter((segment) => segment.length > 0)
+                .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+                .join(' ');
+        };
+
+        const getMappedTabLabel = (value: string): string => {
+            if (location.pathname.endsWith('/special-packages')) {
+                if (value === 'packages') {
+                    return t('admin/specialpackages:tab_packages');
+                }
+                if (value === 'referrals') {
+                    return t('admin/specialpackages:tab_referrals');
+                }
+                if (value === 'history') {
+                    return t('adminpanel/referralprogram:table.title');
+                }
+                if (value === 'campaigns') {
+                    return t('admin/specialpackages:tab_referrals_title');
+                }
+            }
+
+            if (location.pathname.endsWith('/referrals')) {
+                if (value === 'history') {
+                    return t('adminpanel/referralprogram:table.title');
+                }
+                if (value === 'campaigns') {
+                    return t('admin/specialpackages:tab_referrals_title');
+                }
+                if (value === 'all') {
+                    return t('adminpanel/referralprogram:table.filters.all_statuses');
+                }
+                if (value === 'pending') {
+                    return t('adminpanel/referralprogram:table.statuses.pending');
+                }
+                if (value === 'completed') {
+                    return t('adminpanel/referralprogram:table.statuses.completed');
+                }
+                if (value === 'cancelled') {
+                    return t('adminpanel/referralprogram:table.statuses.cancelled');
+                }
+            }
+
+            const tabKeyMap: Record<string, string> = {
+                compose: 'admin/broadcasts:create_broadcast',
+                history: 'admin/broadcasts:history',
+                subscribers: 'admin/broadcasts:subscribers',
+                unsubscribed: 'admin/broadcasts:unsubscribed_tab',
+                profile: 'settings:profile',
+                general: 'settings:general',
+                notifications: 'settings:notifications',
+                subscriptions: 'settings:subscriptions',
+                holidays: 'settings:holidays',
+                roles: 'settings:manage_roles',
+                security: 'settings:security',
+                danger: 'settings:danger_zone',
+                information: 'admin/users:tab_information',
+                services: 'menu.services',
+                online_booking: 'admin/users:tab_online_booking',
+                settings: 'menu.settings',
+                schedule: 'admin/users:tab_schedule',
+                payroll: 'admin/users:tab_payroll',
+                analytics: 'admin/botsettings:tab_analytics',
+                personality: 'admin/botsettings:tabs.personality',
+                pricing: 'admin/botsettings:tabs.pricing',
+                objections: 'admin/botsettings:tabs.objections',
+                communication: 'admin/botsettings:tabs.communication',
+                advanced: 'admin/botsettings:tabs.advanced',
+                safety: 'admin/botsettings:tabs.safety',
+                examples: 'admin/botsettings:tabs.examples',
+                reviews: 'admin/publiccontent:tabs.reviews',
+                faq: 'admin/publiccontent:tabs.faq',
+                gallery: 'admin/publiccontent:tabs.gallery',
+                banners: 'admin/publiccontent:tabs.banners',
             };
 
-            const label = findLabel(menuItems);
-            if (label) currentLabel = label;
+            const translationKey = tabKeyMap[value];
+            if (translationKey !== undefined) {
+                const translatedLabel = t(translationKey);
+                if (translatedLabel !== translationKey) {
+                    return translatedLabel;
+                }
+            }
+
+            return humanizeTabValue(value);
+        };
+
+        const rawTabValues: string[] = [];
+        const sectionValue = searchParams.get('section');
+        const viewValue = searchParams.get('view');
+        const queryTabValue = searchParams.get('tab');
+        const pathTabValue = getPathTabValue();
+
+        if (sectionValue !== null && sectionValue.length > 0) {
+            rawTabValues.push(sectionValue);
+        }
+        if (viewValue !== null && viewValue.length > 0) {
+            rawTabValues.push(viewValue);
+        }
+        if (queryTabValue !== null && queryTabValue.length > 0) {
+            rawTabValues.push(queryTabValue);
+        }
+        if (pathTabValue !== null && pathTabValue.length > 0) {
+            rawTabValues.push(pathTabValue);
         }
 
-        if (currentLabel) {
-            document.title = currentLabel;
+        const tabLabels: string[] = [];
+        for (const tabValue of rawTabValues) {
+            const tabLabel = getMappedTabLabel(tabValue);
+            if (tabLabel.length === 0) {
+                continue;
+            }
+            if (tabLabel === currentPageLabel) {
+                continue;
+            }
+            if (tabLabels.includes(tabLabel)) {
+                continue;
+            }
+            tabLabels.push(tabLabel);
         }
-    }, [location.pathname, mainTabs, menuItems]);
+
+        const titleParts: string[] = [];
+        if (currentPageLabel.length > 0) {
+            titleParts.push(currentPageLabel);
+        }
+        titleParts.push(...tabLabels);
+
+        if (titleParts.length > 0) {
+            document.title = titleParts.join(' · ');
+        }
+    }, [location.pathname, location.search, mainTabs, menuItems, t]);
 
     useEffect(() => {
         if (activeDesktopGroupId !== null) {

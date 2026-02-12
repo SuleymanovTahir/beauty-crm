@@ -3,13 +3,10 @@ API для массовых рассылок
 """
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Union, Tuple
 
-from datetime import datetime
-import asyncio
 import json
 
-from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.utils import get_current_user
 from utils.logger import log_info, log_error
@@ -24,7 +21,7 @@ class BroadcastRequest(BaseModel):
     subject: str
     message: str
     target_role: Optional[str] = None
-    user_ids: Optional[List[int]] = None
+    user_ids: Optional[List[Union[int, str]]] = None
     additional_emails: Optional[List[str]] = []
     manual_contacts: Optional[List[dict]] = []  # [{name, email, telegram, instagram, whatsapp}]
     force_send: bool = False
@@ -40,6 +37,39 @@ class BroadcastPreviewResponse(BaseModel):
     total_users: int
     by_channel: dict
     users_sample: List[dict]
+
+
+def _split_target_ids(user_ids: Optional[List[Union[int, str]]]) -> Tuple[List[int], List[str]]:
+    """Split selected recipients into staff IDs and client IDs."""
+    staff_ids: List[int] = []
+    client_ids: List[str] = []
+
+    if not user_ids:
+        return staff_ids, client_ids
+
+    for user_id in user_ids:
+        if isinstance(user_id, int):
+            staff_ids.append(user_id)
+            continue
+
+        value = str(user_id).strip()
+        if value:
+            client_ids.append(value)
+
+    return staff_ids, client_ids
+
+
+def _resolve_preview_contact(channels: List[str], email: Optional[str], telegram: Optional[str], instagram: Optional[str], allow_notification: bool = False) -> Tuple[str, str]:
+    """Pick a human-readable preview contact based on selected channels."""
+    if "email" in channels and email:
+        return email, "email"
+    if "telegram" in channels and telegram:
+        return str(telegram), "telegram"
+    if "instagram" in channels and instagram:
+        return str(instagram), "instagram"
+    if "notification" in channels and allow_notification:
+        return "in_app", "notification"
+    return "-", "none"
 
 @router.delete("/broadcasts/history/clear")
 async def clear_broadcast_history(
@@ -88,6 +118,60 @@ async def clear_broadcast_history(
         log_error(f"Error clearing history: {e}", "broadcasts")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@router.get("/broadcasts/history")
+async def get_broadcast_history(
+    limit: int = 100,
+    current_user: dict = Depends(get_current_user)
+):
+    """Получить историю рассылок."""
+    if current_user.get('role') not in ['admin', 'director']:
+        raise HTTPException(status_code=403, detail="Доступ запрещен")
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        safe_limit = max(1, min(limit, 500))
+        c.execute("""
+            SELECT id, subscription_type, channels, subject, total_sent, results, created_at
+            FROM broadcast_history
+            ORDER BY created_at DESC
+            LIMIT %s
+        """, (safe_limit,))
+
+        history = []
+        for row in c.fetchall():
+            raw_results = row[5]
+            parsed_results = {}
+            if isinstance(raw_results, dict):
+                parsed_results = raw_results
+            elif raw_results:
+                try:
+                    parsed_results = json.loads(raw_results)
+                except Exception:
+                    parsed_results = {}
+
+            channels = []
+            if row[2]:
+                channels = [channel.strip() for channel in str(row[2]).split(",") if channel.strip()]
+
+            history.append({
+                "id": row[0],
+                "subscription_type": row[1] or "",
+                "channels": channels,
+                "subject": row[3] or "",
+                "total_sent": row[4] or 0,
+                "results": parsed_results,
+                "created_at": row[6].isoformat() if row[6] and hasattr(row[6], "isoformat") else row[6]
+            })
+
+        conn.close()
+        return {"history": history}
+    except Exception as e:
+        log_error(f"Error loading broadcast history: {e}", "broadcasts")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/broadcasts/preview", response_model=BroadcastPreviewResponse)
 async def preview_broadcast(
     broadcast: BroadcastRequest,
@@ -102,9 +186,17 @@ async def preview_broadcast(
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        staff_ids, client_ids = _split_target_ids(broadcast.user_ids)
 
         if broadcast.is_test:
-            sample = [{"id": current_user['id'], "username": current_user['username'], "full_name": current_user.get('full_name'), "channel": "test"}]
+            sample = [{
+                "id": current_user['id'],
+                "username": current_user['username'],
+                "full_name": current_user.get('full_name'),
+                "role": current_user.get("role", "staff"),
+                "contact": current_user.get("email") or current_user.get("username"),
+                "channel": "test"
+            }]
             return {"total_users": 1, "by_channel": {"test": 1}, "users_sample": sample}
 
         by_channel = {"email": 0, "telegram": 0, "instagram": 0, "notification": 0}
@@ -121,9 +213,12 @@ async def preview_broadcast(
             params = [broadcast.subscription_type]
             
             if broadcast.user_ids:
-                placeholders = ','.join(['%s'] * len(broadcast.user_ids))
-                query_users += f" AND u.id IN ({placeholders})"
-                params.extend(broadcast.user_ids)
+                if staff_ids:
+                    placeholders = ','.join(['%s'] * len(staff_ids))
+                    query_users += f" AND u.id IN ({placeholders})"
+                    params.extend(staff_ids)
+                else:
+                    query_users += " AND FALSE"
             elif broadcast.target_role and broadcast.target_role != 'all':
                 query_users += " AND u.role = %s"
                 params.append(broadcast.target_role)
@@ -137,7 +232,21 @@ async def preview_broadcast(
                     elif ch == "instagram" and ig_link: by_channel["instagram"] += 1
                     elif ch == "notification": by_channel["notification"] += 1
                 if len(users_sample) < 3:
-                    users_sample.append({"id": user_id, "username": username, "full_name": full_name, "type": "staff"})
+                    contact, channel = _resolve_preview_contact(
+                        broadcast.channels,
+                        email,
+                        str(telegram_id) if telegram_id else None,
+                        ig_link,
+                        allow_notification=True
+                    )
+                    users_sample.append({
+                        "id": user_id,
+                        "username": username,
+                        "full_name": full_name or username or str(user_id),
+                        "role": role or "staff",
+                        "contact": contact,
+                        "channel": channel
+                    })
 
         # 2. FETCH FROM CLIENTS
         if not broadcast.target_role or broadcast.target_role in ['all', 'client']:
@@ -148,7 +257,17 @@ async def preview_broadcast(
                      AND s.mailing_type = %s
                 WHERE s.id IS NULL
             """
-            c.execute(query_clients, (broadcast.subscription_type,))
+            params = [broadcast.subscription_type]
+            if broadcast.user_ids:
+                if client_ids:
+                    placeholders = ','.join(['%s'] * len(client_ids))
+                    query_clients += f" AND (c.instagram_id IN ({placeholders}) OR c.id::text IN ({placeholders}))"
+                    params.extend(client_ids)
+                    params.extend(client_ids)
+                else:
+                    query_clients += " AND FALSE"
+
+            c.execute(query_clients, params)
             for client in c.fetchall():
                 ig_id, name, email, tg_id = client
                 for ch in broadcast.channels:
@@ -156,7 +275,20 @@ async def preview_broadcast(
                     elif ch == "telegram" and tg_id: by_channel["telegram"] += 1
                     elif ch == "instagram" and ig_id: by_channel["instagram"] += 1
                 if len(users_sample) < 6:
-                    users_sample.append({"id": ig_id, "username": ig_id, "full_name": name, "type": "client"})
+                    contact, channel = _resolve_preview_contact(
+                        broadcast.channels,
+                        email,
+                        str(tg_id) if tg_id else None,
+                        ig_id
+                    )
+                    users_sample.append({
+                        "id": ig_id,
+                        "username": ig_id,
+                        "full_name": name or ig_id,
+                        "role": "client",
+                        "contact": contact,
+                        "channel": channel
+                    })
 
         conn.close()
         return {
@@ -200,6 +332,7 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int)
         c = conn.cursor()
         sent_count = 0
         failed_count = 0
+        staff_ids, client_ids = _split_target_ids(broadcast.user_ids)
 
         # Collect targets
         targets = [] # List of (id, name, email, tg_id, platform_id, type)
@@ -219,8 +352,11 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int)
                 """
                 params = [broadcast.subscription_type]
                 if broadcast.user_ids:
-                    query_users += " AND u.id IN ({})".format(','.join(['%s']*len(broadcast.user_ids)))
-                    params.extend(broadcast.user_ids)
+                    if staff_ids:
+                        query_users += " AND u.id IN ({})".format(','.join(['%s'] * len(staff_ids)))
+                        params.extend(staff_ids)
+                    else:
+                        query_users += " AND FALSE"
                 elif broadcast.target_role and broadcast.target_role != 'all':
                     query_users += " AND u.role = %s"
                     params.append(broadcast.target_role)
@@ -242,12 +378,14 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int)
                 """
                 params = [broadcast.subscription_type]
 
-                # ADD FILTER FOR SPECIFIC CLIENTS
-                if broadcast.user_ids and broadcast.target_role == 'client':
-                    # Filter clients by integer ID if user_ids are provided
-                    placeholders = ','.join(['%s'] * len(broadcast.user_ids))
-                    query_clients += f" AND c.id IN ({placeholders})"
-                    params.extend(broadcast.user_ids)
+                if broadcast.user_ids:
+                    if client_ids:
+                        placeholders = ','.join(['%s'] * len(client_ids))
+                        query_clients += f" AND (c.instagram_id IN ({placeholders}) OR c.id::text IN ({placeholders}))"
+                        params.extend(client_ids)
+                        params.extend(client_ids)
+                    else:
+                        query_clients += " AND FALSE"
 
                 c.execute(query_clients, params)
                 for r in c.fetchall(): targets.append((r[0], r[1], r[2], r[3], r[4], 'client'))

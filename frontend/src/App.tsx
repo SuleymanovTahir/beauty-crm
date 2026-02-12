@@ -351,7 +351,7 @@ export default function App() {
                 <Route path="messengers" element={<Messengers />} />
                 <Route path="payment-integrations" element={<PaymentIntegrations />} />
                 <Route path="marketplace-integrations" element={<MarketplaceIntegrations />} />
-                <Route path="referrals" element={<UniversalReferrals />} />
+                <Route path="referrals" element={<SpecialPackages entryMode="referrals-only" />} />
                 <Route path="challenges" element={<UniversalChallenges />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="service-change-requests" element={<ServiceChangeRequests />} />

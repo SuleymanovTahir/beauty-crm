@@ -37,7 +37,9 @@ class NotificationsConnectionManager:
 
     async def send_to_user(self, user_id: int, message: dict):
         """Публикуем уведомление в Redis для доставки на все воркеры"""
-        await redis_pubsub.publish(f"crm:notifications:user:{user_id}", message)
+        published = await redis_pubsub.publish(f"crm:notifications:user:{user_id}", message)
+        if not published:
+            await self.send_to_user_local(user_id, message)
 
     async def send_to_user_local(self, user_id: int, message: dict):
         """Отправить сообщение локально подключенному пользователю"""
@@ -55,7 +57,9 @@ class NotificationsConnectionManager:
 
     async def broadcast_to_all(self, message: dict):
         """Публикуем шировещательное уведомление в Redis"""
-        await redis_pubsub.publish("crm:notifications:broadcast", message)
+        published = await redis_pubsub.publish("crm:notifications:broadcast", message)
+        if not published:
+            await self.broadcast_to_all_local(message)
 
     async def broadcast_to_all_local(self, message: dict):
         """Отправить сообщение всем локально подключенным пользователям"""
