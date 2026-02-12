@@ -19,7 +19,7 @@
   "fixed": "Corrigido. valor",
   "limit_label": "Limite de uso.",
   "loading": "Carregar códigos promocionais...",
-  "min_amount_label": "Mín. valor de reserva (AZN)",
+  "min_amount_label": "Mín. valor de reserva ({{currency}})",
   "min_order": "De",
   "not_found": "Nenhum código promocional encontrado",
   "not_found_desc": "Crie seu primeiro código promocional para atrair mais clientes!",
@@ -34,7 +34,7 @@
   "total_usage": "Total de usos",
   "type_label": "Tipo de desconto",
   "used": "usado",
-  "val_currency": "AZN",
+  "val_currency": "{{currency}}",
   "valid_until_label": "Válido até",
   "value_label": "Descontos até data tamanho"
 }

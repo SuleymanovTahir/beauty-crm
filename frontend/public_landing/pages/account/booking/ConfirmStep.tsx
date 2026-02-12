@@ -101,7 +101,26 @@ export function ConfirmStep({
         setValidatingPromo(true);
         setPromoError('');
         try {
-            const result: any = await api.validatePromoCode(normalizedPromoCode, totalPrice);
+            const selectedServiceIds = Array.isArray(bookingState.services)
+                ? bookingState.services
+                    .map((service: any) => Number(service?.id))
+                    .filter((serviceId: number) => Number.isFinite(serviceId) && serviceId > 0)
+                : [];
+            const selectedServiceCategories = Array.isArray(bookingState.services)
+                ? bookingState.services
+                    .map((service: any) => (typeof service?.category === 'string' ? service.category.trim() : ''))
+                    .filter((category: string) => category.length > 0)
+                : [];
+            const fallbackClientId = typeof bookingState?.instagram_id === 'string' ? bookingState.instagram_id : '';
+            const requestClientId = typeof user?.username === 'string' && user.username.length > 0
+                ? user.username
+                : fallbackClientId;
+
+            const result: any = await api.validatePromoCode(normalizedPromoCode, totalPrice, {
+                service_ids: selectedServiceIds,
+                service_categories: selectedServiceCategories,
+                client_id: requestClientId,
+            });
             if (result.valid) {
                 const promoValue = Number(result.value) || 0;
                 const discountAmount = result.discount_type === 'percent'

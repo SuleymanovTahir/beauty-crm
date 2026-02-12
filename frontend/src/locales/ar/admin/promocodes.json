@@ -19,7 +19,7 @@
   "fixed": "تم الإصلاح. المبلغ",
   "limit_label": "حد الاستخدام.",
   "loading": "تحميل الرموز الترويجية...",
-  "min_amount_label": "الحد الأدنى. مبلغ الإدخال (AZN)",
+  "min_amount_label": "الحد الأدنى. مبلغ الإدخال ({{currency}})",
   "min_order": "من",
   "not_found": "لم يتم العثور على رموز ترويجية",
   "not_found_desc": "أنشئ أول رمز ترويجي لك لجذب المزيد من العملاء!",
@@ -34,7 +34,7 @@
   "total_usage": "إجمالي الاستخدامات",
   "type_label": "نوع الخصم",
   "used": "المستخدم",
-  "val_currency": "AZN",
+  "val_currency": "{{currency}}",
   "valid_until_label": "صالح حتى",
   "value_label": "الحجم الخصومات"
 }

@@ -19,7 +19,7 @@
   "fixed": "Fijo. cantidad",
   "limit_label": "Límite de uso.",
   "loading": "Cargar códigos promocionales...",
-  "min_amount_label": "Mín. importe de reserva (AZN)",
+  "min_amount_label": "Mín. importe de reserva ({{currency}})",
   "min_order": "De",
   "not_found": "No se encontraron códigos promocionales",
   "not_found_desc": "¡Crea tu primer código promocional para atraer más clientes!",
@@ -34,7 +34,7 @@
   "total_usage": "Total usos",
   "type_label": "Tipo de descuento",
   "used": "usado",
-  "val_currency": "AZN",
+  "val_currency": "{{currency}}",
   "valid_until_label": "Válido hasta",
   "value_label": "Descuentos hasta fecha talla"
 }

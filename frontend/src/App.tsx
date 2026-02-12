@@ -39,8 +39,6 @@ const Invoices = React.lazy(() => import('./pages/admin/Invoices'));
 const PaymentIntegrations = React.lazy(() => import('./pages/admin/PaymentIntegrations'));
 const MarketplaceIntegrations = React.lazy(() => import('./pages/admin/MarketplaceIntegrations'));
 const Messengers = React.lazy(() => import('./pages/admin/Messengers'));
-const UniversalReferrals = React.lazy(() => import('./pages/shared/Referrals'));
-const UniversalChallenges = React.lazy(() => import('./pages/shared/Challenges'));
 const ServiceChangeRequests = React.lazy(() => import('./pages/admin/ServiceChangeRequests'));
 
 // Aliases for shared components across roles
@@ -53,9 +51,6 @@ const CRMClients = Clients;
 
 // Admin Panel pages
 const AdminPanelDashboard = React.lazy(() => import('./pages/adminPanel/Dashboard'));
-const LoyaltyManagement = React.lazy(() => import('./pages/adminPanel/LoyaltyManagement'));
-// ReferralProgram is now shared as UniversalReferrals
-// Challenges is now shared as UniversalChallenges
 const NotificationsDashboard = React.lazy(() => import('./pages/adminPanel/NotificationsDashboard'));
 
 const PhotoGallery = React.lazy(() => import('./pages/adminPanel/PhotoGallery'));
@@ -282,9 +277,11 @@ export default function App() {
                 }
               >
                 <Route path="dashboard" element={<AdminPanelDashboard />} />
-                <Route path="loyalty" element={<LoyaltyManagement />} />
-                <Route path="referrals" element={<UniversalReferrals />} />
-                <Route path="challenges" element={<UniversalChallenges />} />
+                <Route path="loyalty" element={<SpecialPackages entryMode="loyalty-only" />} />
+                <Route path="referrals" element={<SpecialPackages entryMode="referrals-only" />} />
+                <Route path="challenges" element={<SpecialPackages entryMode="challenges-only" />} />
+                <Route path="promo-codes" element={<SpecialPackages entryMode="promo-codes-only" />} />
+                <Route path="special-packages" element={<SpecialPackages />} />
                 <Route path="notifications" element={<NotificationsDashboard />} />
                 <Route path="features" element={<FeatureManagement />} />
                 <Route path="gallery" element={<PhotoGallery />} />

@@ -1122,16 +1122,18 @@ async def get_admin_notifications(session_token: Optional[str] = Cookie(None)):
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        notification_columns = _get_table_columns(c, "notification_history")
+        failed_count_expr = "COALESCE(failed_count, 0) AS failed_count" if "failed_count" in notification_columns else "0 AS failed_count"
 
         c.execute("""
             SELECT
                 id, title, message, notification_type,
-                recipients_count, sent_count, failed_count,
+                recipients_count, sent_count, {failed_count_expr},
                 status, created_at, sent_at
             FROM notification_history
             ORDER BY created_at DESC
             LIMIT 100
-        """)
+        """.format(failed_count_expr=failed_count_expr))
 
         notifications = []
         for row in c.fetchall():
@@ -1164,22 +1166,45 @@ async def get_notification_templates(session_token: Optional[str] = Cookie(None)
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        template_columns = _get_table_columns(c, "notification_templates")
+        has_legacy_columns = {"title", "message", "notification_type"}.issubset(template_columns)
 
-        c.execute("""
-            SELECT id, name, title, message, notification_type
-            FROM notification_templates
-            ORDER BY created_at DESC
-        """)
+        if has_legacy_columns:
+            c.execute("""
+                SELECT id, name, title, message, notification_type
+                FROM notification_templates
+                ORDER BY created_at DESC
+            """)
+        else:
+            c.execute("""
+                SELECT id, name, category, subject_ru, subject_en, body_ru, body_en
+                FROM notification_templates
+                ORDER BY COALESCE(updated_at, created_at) DESC
+            """)
 
         templates = []
-        for row in c.fetchall():
-            templates.append({
-                "id": str(row[0]),
-                "name": row[1] or "",
-                "title": row[2] or "",
-                "message": row[3] or "",
-                "type": row[4] or "push"
-            })
+        rows = c.fetchall()
+
+        if has_legacy_columns:
+            for row in rows:
+                templates.append({
+                    "id": str(row[0]),
+                    "name": row[1] or "",
+                    "title": row[2] or "",
+                    "message": row[3] or "",
+                    "type": row[4] or "push"
+                })
+        else:
+            for row in rows:
+                category_value = row[2] or ""
+                mapped_type = category_value if category_value in ["email", "push", "sms"] else "push"
+                templates.append({
+                    "id": str(row[0]),
+                    "name": row[1] or "",
+                    "title": row[3] or row[4] or row[1] or "",
+                    "message": row[5] or row[6] or "",
+                    "type": mapped_type
+                })
 
         conn.close()
         return {"success": True, "templates": templates}
@@ -1198,17 +1223,46 @@ async def create_notification_template(request: Request, session_token: Optional
         data = await request.json()
         conn = get_db_connection()
         c = conn.cursor()
+        template_columns = _get_table_columns(c, "notification_templates")
+        has_legacy_columns = {"title", "message", "notification_type"}.issubset(template_columns)
+        template_name = data.get("name") or f"template_{uuid.uuid4().hex[:8]}"
+        template_type = data.get("type", "push")
 
-        c.execute("""
-            INSERT INTO notification_templates (name, title, message, notification_type)
-            VALUES (%s, %s, %s, %s)
-            RETURNING id
-        """, (
-            data.get("name"),
-            data.get("title"),
-            data.get("message"),
-            data.get("type", "push")
-        ))
+        if has_legacy_columns:
+            c.execute("""
+                INSERT INTO notification_templates (name, title, message, notification_type)
+                VALUES (%s, %s, %s, %s)
+                RETURNING id
+            """, (
+                template_name,
+                data.get("title"),
+                data.get("message"),
+                template_type
+            ))
+        else:
+            template_category = template_type if template_type in ["email", "push", "sms"] else "transactional"
+            c.execute("""
+                INSERT INTO notification_templates (
+                    name, category, subject_ru, subject_en, body_ru, body_en, variables
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (name) DO UPDATE SET
+                    category = EXCLUDED.category,
+                    subject_ru = EXCLUDED.subject_ru,
+                    subject_en = EXCLUDED.subject_en,
+                    body_ru = EXCLUDED.body_ru,
+                    body_en = EXCLUDED.body_en,
+                    updated_at = CURRENT_TIMESTAMP
+                RETURNING id
+            """, (
+                template_name,
+                template_category,
+                data.get("title"),
+                data.get("title"),
+                data.get("message"),
+                data.get("message"),
+                json.dumps([])
+            ))
 
         new_id = c.fetchone()[0]
         conn.commit()
@@ -1230,6 +1284,7 @@ async def send_notification(request: Request, session_token: Optional[str] = Coo
         data = await request.json()
         conn = get_db_connection()
         c = conn.cursor()
+        notification_columns = _get_table_columns(c, "notification_history")
 
         # Определить целевую аудиторию
         target_segment = data.get("target_segment", "all")
@@ -1243,8 +1298,8 @@ async def send_notification(request: Request, session_token: Optional[str] = Coo
         service_filter = data.get("service_filter", "")
 
         # Получить список клиентов
-        # Выбираем instagram_id и telegram_id для отправки
-        columns = "instagram_id, telegram_id"
+        # Выбираем instagram_id, telegram_id и preferences для фильтрации по настройкам клиента
+        columns = "instagram_id, telegram_id, preferences"
         
         if target_segment == "all":
             c.execute(f"SELECT {columns} FROM clients WHERE telegram_id IS NOT NULL OR instagram_id LIKE 'telegram_%'")
@@ -1298,7 +1353,29 @@ async def send_notification(request: Request, session_token: Optional[str] = Coo
             c.execute(f"SELECT {columns} FROM clients WHERE telegram_id IS NOT NULL OR instagram_id LIKE 'telegram_%'")
 
         recipients = c.fetchall()
-        recipients_count = len(recipients)
+        notification_type = data.get("type", "push")
+
+        filtered_recipients = []
+        for recipient in recipients:
+            recipient_preferences = {}
+            preferences_raw = recipient[2] if len(recipient) > 2 else None
+            if preferences_raw:
+                try:
+                    recipient_preferences = json.loads(preferences_raw)
+                except Exception:
+                    recipient_preferences = {}
+
+            notification_preferences = recipient_preferences.get("notification_prefs", {})
+            if notification_type == "email" and notification_preferences.get("email") is False:
+                continue
+            if notification_type == "sms" and notification_preferences.get("sms") is False:
+                continue
+            if notification_type == "push" and notification_preferences.get("push") is False:
+                continue
+
+            filtered_recipients.append(recipient)
+
+        recipients_count = len(filtered_recipients)
 
         # Параметры планирования
         scheduled = data.get("scheduled", False)
@@ -1340,7 +1417,7 @@ async def send_notification(request: Request, session_token: Optional[str] = Coo
         """, (
             data.get("title"),
             data.get("message"),
-            data.get("type", "push"),
+            notification_type,
             recipients_count,
             status,
             scheduled,
@@ -1364,7 +1441,7 @@ async def send_notification(request: Request, session_token: Optional[str] = Coo
             failed_count = 0
             message_text = data.get("message")
             
-            for row in recipients:
+            for row in filtered_recipients:
                 inst_id = row[0]
                 tg_id = row[1] if len(row) > 1 else None
                 
@@ -1386,11 +1463,18 @@ async def send_notification(request: Request, session_token: Optional[str] = Coo
                         failed_count += 1
                         log_error(f"Error sending to {chat_id}: {e}", "api")
 
-            c.execute("""
-                UPDATE notification_history
-                SET sent_count = %s, failed_count = %s, sent_at = CURRENT_TIMESTAMP, status = 'sent'
-                WHERE id = %s
-            """, (sent_count, failed_count, notification_id))
+            if "failed_count" in notification_columns:
+                c.execute("""
+                    UPDATE notification_history
+                    SET sent_count = %s, failed_count = %s, sent_at = CURRENT_TIMESTAMP, status = 'sent'
+                    WHERE id = %s
+                """, (sent_count, failed_count, notification_id))
+            else:
+                c.execute("""
+                    UPDATE notification_history
+                    SET sent_count = %s, sent_at = CURRENT_TIMESTAMP, status = 'sent'
+                    WHERE id = %s
+                """, (sent_count, notification_id))
 
         conn.commit()
         conn.close()

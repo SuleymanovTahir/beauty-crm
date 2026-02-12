@@ -16,6 +16,10 @@ type PromoCodeApiItem = {
   category?: string | null
   description?: string | null
   target_client_id?: string | number | null
+  target_scope?: 'all' | 'categories' | 'services' | 'clients' | string
+  target_categories?: string[]
+  target_service_ids?: number[]
+  target_client_ids?: (string | number)[]
   created_at: string
 }
 
@@ -35,6 +39,10 @@ type PromoCodeUiItem = {
   is_personalized: boolean
   description: string | null
   target_client_id: string | null
+  target_scope: 'all' | 'categories' | 'services' | 'clients'
+  target_categories: string[]
+  target_service_ids: number[]
+  target_client_ids: string[]
   created_at: string
 }
 
@@ -49,6 +57,10 @@ type CreatePromoCodePayload = {
   category?: string
   description?: string | null
   is_active?: boolean
+  target_scope?: 'all' | 'categories' | 'services' | 'clients'
+  target_categories?: string[]
+  target_service_ids?: number[]
+  target_client_ids?: string[]
 }
 
 export class ApiClient {
@@ -1938,6 +1950,20 @@ export class ApiClient {
       const targetClientId = rawTargetClientId === null || rawTargetClientId === undefined
         ? null
         : String(rawTargetClientId)
+      const parsedTargetScope = promo.target_scope === 'categories'
+        || promo.target_scope === 'services'
+        || promo.target_scope === 'clients'
+        ? promo.target_scope
+        : 'all'
+      const targetCategories = Array.isArray(promo.target_categories)
+        ? promo.target_categories.filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
+        : []
+      const targetServiceIds = Array.isArray(promo.target_service_ids)
+        ? promo.target_service_ids.filter((value): value is number => typeof value === 'number' && Number.isFinite(value) && value > 0)
+        : []
+      const targetClientIds = Array.isArray(promo.target_client_ids)
+        ? promo.target_client_ids.map((value) => String(value).trim()).filter((value) => value.length > 0)
+        : []
 
       return {
         id: Number(promo.id),
@@ -1950,9 +1976,18 @@ export class ApiClient {
         usage_limit: typeof promo.max_uses === 'number' ? promo.max_uses : null,
         times_used: Number(promo.current_uses ?? 0),
         is_active: Boolean(promo.is_active),
-        is_personalized: category === 'personal' || category === 'personalized' || category === 'birthday' || targetClientId !== null,
+        is_personalized: category === 'personal'
+          || category === 'personalized'
+          || category === 'birthday'
+          || targetClientId !== null
+          || parsedTargetScope === 'clients'
+          || targetClientIds.length > 0,
         description: typeof promo.description === 'string' ? promo.description : null,
         target_client_id: targetClientId,
+        target_scope: parsedTargetScope,
+        target_categories: targetCategories,
+        target_service_ids: targetServiceIds,
+        target_client_ids: targetClientIds,
         created_at: String(promo.created_at ?? ''),
       }
     })
@@ -1978,6 +2013,10 @@ export class ApiClient {
       category: data.category ?? 'general',
       description: data.description ?? null,
       is_active: data.is_active ?? true,
+      target_scope: data.target_scope ?? 'all',
+      target_categories: Array.isArray(data.target_categories) ? data.target_categories : [],
+      target_service_ids: Array.isArray(data.target_service_ids) ? data.target_service_ids : [],
+      target_client_ids: Array.isArray(data.target_client_ids) ? data.target_client_ids : [],
     }
 
     return this.request('/api/promo-codes', {
@@ -1986,8 +2025,30 @@ export class ApiClient {
     })
   }
 
-  async validatePromoCode(code: string, amount: number = 0) {
-    return this.request(`/api/promo-codes/validate?code=${code}&amount=${amount}`, {
+  async validatePromoCode(
+    code: string,
+    amount: number = 0,
+    context?: {
+      service_ids?: number[]
+      service_categories?: string[]
+      client_id?: string
+    }
+  ) {
+    const params = new URLSearchParams({
+      code,
+      amount: String(amount),
+    })
+    if (Array.isArray(context?.service_ids) && context.service_ids.length > 0) {
+      params.set('service_ids', context.service_ids.join(','))
+    }
+    if (Array.isArray(context?.service_categories) && context.service_categories.length > 0) {
+      params.set('service_categories', context.service_categories.join(','))
+    }
+    if (typeof context?.client_id === 'string' && context.client_id.trim().length > 0) {
+      params.set('client_id', context.client_id.trim())
+    }
+
+    return this.request(`/api/promo-codes/validate?${params.toString()}`, {
       method: 'POST'
     })
   }

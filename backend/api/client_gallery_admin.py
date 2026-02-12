@@ -9,6 +9,22 @@ from core.config import UPLOAD_DIR
 
 router = APIRouter(tags=["Admin Client Gallery"])
 
+
+def _is_gallery_allowed(cursor, client_id: str) -> bool:
+    cursor.execute("SELECT preferences FROM clients WHERE instagram_id = %s", (client_id,))
+    client_row = cursor.fetchone()
+    if client_row is None or client_row[0] is None:
+        return True
+
+    try:
+        import json
+        preferences = json.loads(client_row[0])
+    except Exception:
+        return True
+
+    privacy_prefs = preferences.get("privacy_prefs", {})
+    return privacy_prefs.get("allowPhotos", True) is not False
+
 @router.get("/admin/client-gallery/{client_id}")
 async def get_admin_client_gallery(client_id: str, session_token: Optional[str] = Cookie(None)):
     """Получить галерею конкретного клиента для админа"""
@@ -55,6 +71,13 @@ async def upload_client_gallery_photo(
         raise HTTPException(status_code=403, detail="Forbidden")
     
     try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        if not _is_gallery_allowed(c, client_id):
+            conn.close()
+            raise HTTPException(status_code=403, detail="Client disabled photo access")
+        conn.close()
+
         target_dir = Path(UPLOAD_DIR) / "client_galleries" / client_id
         target_dir.mkdir(parents=True, exist_ok=True)
         
@@ -79,12 +102,17 @@ async def add_gallery_entry(request: Request, session_token: Optional[str] = Coo
         data = await request.json()
         conn = get_db_connection()
         c = conn.cursor()
+        client_id = data.get("client_id")
+        if not _is_gallery_allowed(c, client_id):
+            conn.close()
+            raise HTTPException(status_code=403, detail="Client disabled photo access")
+
         c.execute("""
             INSERT INTO client_gallery (client_id, before_photo, after_photo, category, notes, master_id)
             VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
-            data.get("client_id"),
+            client_id,
             data.get("before_photo"),
             data.get("after_photo"),
             data.get("category"),

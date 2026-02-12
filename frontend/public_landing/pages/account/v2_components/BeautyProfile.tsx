@@ -110,7 +110,7 @@ export function BeautyProfile() {
     <div className="space-y-6 pb-8">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1>{t('beauty.title', 'Бьюти-профиль')}</h1>
+          <h1>{t('beauty.title', 'Рекомендации по уходу')}</h1>
           <p className="text-muted-foreground">{t('beauty.subtitle', 'Анализ состояния и рекомендации')}</p>
         </div>
         <Button onClick={requestConsultation} className="gap-2">

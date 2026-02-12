@@ -13,7 +13,8 @@ import {
   LogOut,
   X,
   Ticket,
-  MoreHorizontal
+  MoreHorizontal,
+  Gift
 } from 'lucide-react';
 import { Toaster } from '../../components/ui/sonner';
 import { Avatar, AvatarImage, AvatarFallback } from './v2_components/ui/avatar';
@@ -36,7 +37,7 @@ import { getPhotoUrl } from '../../../src/utils/photoUtils';
 import { cn } from '../../../src/lib/utils';
 import '../../../src/components/layouts/MainLayout.css';
 
-type Tab = 'dashboard' | 'appointments' | 'gallery' | 'loyalty' | 'achievements' | 'masters' | 'beauty' | 'notifications' | 'settings' | 'promocodes';
+type Tab = 'dashboard' | 'appointments' | 'gallery' | 'loyalty' | 'achievements' | 'masters' | 'beauty' | 'notifications' | 'settings' | 'promocodes' | 'specialoffers';
 type MobileTab = {
   id: string;
   icon: any;
@@ -49,7 +50,7 @@ type MobileTab = {
 
 
 export function AccountPage() {
-  const { t, i18n } = useTranslation(['account', 'common', 'adminpanel/loyaltymanagement']);
+  const { t, i18n } = useTranslation(['account', 'common', 'adminpanel/loyaltymanagement', 'layouts/mainlayout']);
   const navigate = useNavigate();
   const location = useLocation();
   const [showMoreModal, setShowMoreModal] = useState(false);
@@ -72,13 +73,24 @@ export function AccountPage() {
     { id: 'appointments' as Tab, label: t('tabs.appointments', 'Записи'), icon: Calendar, path: '/account/appointments' },
     { id: 'gallery' as Tab, label: t('tabs.gallery', 'Галерея'), icon: Image, path: '/account/gallery' },
     { id: 'loyalty' as Tab, label: t('adminpanel/loyaltymanagement:title'), icon: Award, path: '/account/loyalty' },
-    { id: 'achievements' as Tab, label: t('tabs.achievements', 'Достижения'), icon: Trophy, path: '/account/achievements', hidden: !features.challenges },
+    { id: 'achievements' as Tab, label: t('layouts/mainlayout:menu.challenges', 'Челленджи'), icon: Trophy, path: '/account/achievements', hidden: true },
+    { id: 'promocodes' as Tab, label: t('layouts/mainlayout:menu.promo_codes', 'Промокоды'), icon: Ticket, path: '/account/promocodes', hidden: true },
+    { id: 'specialoffers' as Tab, label: t('settings.special_offers', 'Специальные предложения и скидки'), icon: Gift, path: '/account/special-offers', hidden: true },
     { id: 'masters' as Tab, label: t('tabs.masters', 'Мастера'), icon: Users, path: '/account/masters' },
-    { id: 'beauty' as Tab, label: t('tabs.beauty', 'Бьюти-профиль'), icon: Sparkles, path: '/account/beauty' },
+    { id: 'beauty' as Tab, label: t('tabs.beauty', 'Уход и рекомендации'), icon: Sparkles, path: '/account/beauty' },
     { id: 'notifications' as Tab, label: t('tabs.notifications', 'Уведомления'), icon: Bell, path: '/account/notifications', badge: unreadCount },
-    { id: 'promocodes' as Tab, label: t('tabs.promocodes', 'Промокоды'), icon: Ticket, path: '/account/promocodes' },
     { id: 'settings' as Tab, label: t('tabs.settings', 'Настройки'), icon: SettingsIcon, path: '/account/settings' },
-  ], [t, features, unreadCount]);
+  ], [t, unreadCount]);
+
+  const bonusProgramTabs = useMemo(() => {
+    const tabs: Array<{ id: Tab; path: string; label: string; icon: any; hidden?: boolean }> = [
+      { id: 'loyalty', path: '/account/loyalty', label: t('adminpanel/loyaltymanagement:title'), icon: Award },
+      { id: 'achievements', path: '/account/achievements', label: t('layouts/mainlayout:menu.challenges'), icon: Trophy, hidden: !features.challenges },
+      { id: 'promocodes', path: '/account/promocodes', label: t('layouts/mainlayout:menu.promo_codes'), icon: Ticket },
+      { id: 'specialoffers', path: '/account/special-offers', label: t('settings.special_offers'), icon: Gift },
+    ];
+    return tabs.filter((tab) => !tab.hidden);
+  }, [t, features.challenges]);
 
   const mainTabs = useMemo(() => {
     const candidates: MobileTab[] = [
@@ -103,6 +115,31 @@ export function AccountPage() {
   };
 
   const activeTab = getActiveTabFromPath();
+  const isBonusProgramSection = activeTab === 'loyalty'
+    || activeTab === 'achievements'
+    || activeTab === 'promocodes'
+    || activeTab === 'specialoffers';
+
+  useEffect(() => {
+    const activeMenuLabel = menuItems.find((item) => item.id === activeTab)?.label ?? salonName;
+    const tabParam = new URLSearchParams(location.search).get('tab');
+    const settingsTabLabels: Record<string, string> = {
+      profile: t('settings.profile', 'Профиль'),
+      security: t('settings.security', 'Безопасность'),
+      notifications: t('settings.notifications', 'Уведомления'),
+      privacy: t('settings.privacy', 'Приватность'),
+    };
+    const titleParts: string[] = [activeMenuLabel];
+
+    if (activeTab === 'settings' && tabParam !== null && tabParam.length > 0) {
+      const tabLabel = settingsTabLabels[tabParam];
+      if (tabLabel !== undefined && tabLabel.length > 0) {
+        titleParts.push(tabLabel);
+      }
+    }
+
+    document.title = titleParts.join(' · ');
+  }, [activeTab, location.search, menuItems, salonName, t]);
 
   // Load user data and notifications count
   useEffect(() => {
@@ -140,7 +177,7 @@ export function AccountPage() {
 
   // Sync URL on mount - if user navigates to /account, redirect to /account/dashboard
   useEffect(() => {
-    if (location.pathname === '/account') {
+    if (location.pathname === '/account' || location.pathname === '/account/') {
       navigate('/account/dashboard', { replace: true });
     }
   }, [location.pathname, navigate]);
@@ -286,7 +323,9 @@ export function AccountPage() {
       case 'settings':
         return <Settings />;
       case 'promocodes':
-        return <PromoCodesView />;
+        return <PromoCodesView mode="promo-codes" />;
+      case 'specialoffers':
+        return <PromoCodesView mode="special-offers" />;
       default:
         return <Dashboard />;
     }
@@ -315,25 +354,11 @@ export function AccountPage() {
         <h1 className="text-lg font-bold text-gray-900 truncate">{salonName}</h1>
       </div>
 
-      {/* User Profile Hook */}
-      <div className="user-card-sidebar shadow-sm border border-pink-50/50">
-        <div className="flex items-center gap-3">
-          <Avatar className="w-10 h-10 rounded-xl">
-            <AvatarImage src={userData?.avatar} alt={userData?.name} className="object-cover" />
-            <AvatarFallback className="bg-pink-100 text-pink-600 font-bold">{userData?.name?.[0] || 'G'}</AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 flex-1">
-            <div className="text-sm font-bold text-gray-900 truncate">{userData?.name || 'Guest'}</div>
-            <div className="text-[11px] font-semibold text-pink-600 uppercase tracking-wider">{userData?.currentTier || 'bronze'}</div>
-          </div>
-        </div>
-      </div>
-
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
         {menuItems.map((item) => {
           if (item.hidden) return null;
-          const isActive = location.pathname === item.path;
+          const isActive = location.pathname === item.path || (item.id === 'loyalty' && isBonusProgramSection);
           const Icon = item.icon;
 
           return (
@@ -360,6 +385,19 @@ export function AccountPage() {
 
       {/* Sidebar Footer */}
       <div className="sidebar-footer-premium mt-auto">
+        <div className="user-card-sidebar px-4 mb-4">
+          <div className="flex items-center gap-3">
+            <Avatar className="w-10 h-10 rounded-xl">
+              <AvatarImage src={userData?.avatar} alt={userData?.name} className="object-cover" />
+              <AvatarFallback className="bg-pink-100 text-pink-600 font-bold">{userData?.name?.[0] ?? 'G'}</AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-bold text-gray-900 truncate">{userData?.name ?? 'Guest'}</div>
+              <div className="text-[11px] text-gray-400 font-medium truncate">{userData?.email ?? ''}</div>
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-center gap-2 mb-4">
           <div className="flex-1 p-2 bg-gray-50 rounded-xl">
             <LanguageSwitcher variant="minimal" />
@@ -463,7 +501,7 @@ export function AccountPage() {
             }}
             className={cn(
               "mobile-nav-btn",
-              location.pathname === tab.path && "active"
+              (location.pathname === tab.path || (tab.id === 'loyalty' && isBonusProgramSection)) && "active"
             )}
           >
             <div className="mobile-nav-icon-container">
@@ -564,6 +602,33 @@ export function AccountPage() {
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
           <div className="flex-1 overflow-y-auto pb-[80px] lg:pb-0">
             <div className="max-w-7xl mx-auto p-4 lg:p-8">
+              {isBonusProgramSection && (
+                <div className="mb-6 rounded-xl border border-gray-200 bg-white p-2">
+                  <div className="flex flex-wrap gap-2">
+                    {bonusProgramTabs.map((section) => {
+                      const isActive = location.pathname === section.path;
+                      const SectionIcon = section.icon;
+
+                      return (
+                        <button
+                          key={section.path}
+                          type="button"
+                          onClick={() => navigate(section.path)}
+                          className={cn(
+                            'inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors',
+                            isActive
+                              ? 'border-blue-600 bg-blue-600 text-white'
+                              : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                          )}
+                        >
+                          <SectionIcon size={16} />
+                          {section.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
               {renderContent()}
             </div>
           </div>

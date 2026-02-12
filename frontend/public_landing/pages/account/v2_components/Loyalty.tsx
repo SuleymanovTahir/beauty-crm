@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Star, TrendingUp, Gift, Copy, Loader2, Target, Ticket } from 'lucide-react';
+import { Star, TrendingUp, Gift, Copy, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { apiClient } from '../../../../src/api/client';
 import { toast } from 'sonner';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
-import { formatWhatsAppUrlWithText } from '../../../utils/urlUtils';
+import { formatInstagramUrl, formatWhatsAppUrlWithText } from '../../../utils/urlUtils';
 import { useSalonSettings } from '../../../hooks/useSalonSettings';
 
 export function Loyalty() {
   const { t } = useTranslation(['account', 'common', 'adminpanel/loyaltymanagement', 'layouts/mainlayout']);
-  const navigate = useNavigate();
-  const location = useLocation();
   const { currency: globalCurrency, formatCurrency } = useCurrency();
-  const { phone: salonPhone, salonName } = useSalonSettings();
+  const { phone: salonPhone, salonName, instagram: salonInstagram } = useSalonSettings();
   const [loading, setLoading] = useState(true);
   const [loyaltyData, setLoyaltyData] = useState<any>(null);
 
@@ -61,7 +58,7 @@ export function Loyalty() {
         : t('loyalty.tiers.points_req', 'От {{points}} баллов', { points: tierPoints })
     };
   });
-  const currency = loyalty?.currency ?? globalCurrency ?? 'AED';
+  const currency = loyalty?.currency ?? globalCurrency;
 
   const loyaltyInfo = {
     points: Number(loyalty?.points ?? 0),
@@ -91,10 +88,14 @@ export function Loyalty() {
   const nextLevel = currentTierIndex >= 0 ? levels[currentTierIndex + 1] : undefined;
   const levelsToRender = levels.length > 0 ? levels : [currentLevel];
   const cashbackPercent = Number(loyalty?.discount ?? 0);
-  const referralCode = loyaltyInfo.referral_code;
+  const referralCode = loyaltyInfo.referral_code.trim();
+  const hasReferralCode = referralCode.length > 0;
+  const shareText = hasReferralCode
+    ? `${t('loyalty.share_text', 'Join the beauty salon! Use my promo code')} ${referralCode} ${t('loyalty.share_bonus', 'and get bonuses!')}`
+    : `${salonName}. ${t('loyalty.referral_subtitle', 'Invite friends and get bonuses')}`;
 
   const handleCopyReferral = () => {
-    if (!referralCode) {
+    if (!hasReferralCode) {
       toast.error(t('common:error_occurred', 'An error occurred'));
       return;
     }
@@ -109,77 +110,27 @@ export function Loyalty() {
   };
 
   const shareWhatsApp = () => {
-    if (!referralCode) {
+    const whatsappUrl = formatWhatsAppUrlWithText(salonPhone, shareText);
+    if (!whatsappUrl.startsWith('http')) {
       toast.error(t('common:error_occurred', 'An error occurred'));
       return;
     }
 
-    const text = `${t('loyalty.share_text', 'Join the beauty salon! Use my promo code')} ${referralCode} ${t('loyalty.share_bonus', 'and get bonuses!')}`;
-    window.open(formatWhatsAppUrlWithText(salonPhone, text), '_blank');
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
 
-  const shareInstagram = async () => {
-    if (!referralCode) {
+  const shareInstagram = () => {
+    const instagramUrl = formatInstagramUrl(salonInstagram);
+    if (instagramUrl.length === 0) {
       toast.error(t('common:error_occurred', 'An error occurred'));
       return;
     }
 
-    const referralText = `${t('loyalty.share_text', 'Join the beauty salon! Use my promo code')} ${referralCode} ${t('loyalty.share_bonus', 'and get bonuses!')}`;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: salonName,
-          text: referralText,
-        });
-        toast.success(t('loyalty.shared', 'Successfully shared'));
-      } catch (error) {
-        if ((error as Error).name !== 'AbortError') {
-          await navigator.clipboard.writeText(`${referralText}\n\n#beautysalon #beauty`);
-          toast.success(t('loyalty.code_copied_instagram', 'Promo code copied! Paste in Instagram Stories'));
-        }
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(`${referralText}\n\n#beautysalon #beauty`);
-        toast.info(t('loyalty.code_copied_instagram', 'Promo code copied! Paste in Instagram Stories'));
-      } catch (error) {
-        toast.error(t('common:error_occurred', 'An error occurred'));
-      }
-    }
+    window.open(instagramUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
     <div className="max-w-4xl pb-8">
-      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-2">
-        <div className="flex flex-wrap gap-2">
-          {[
-            { path: '/account/achievements', label: t('layouts/mainlayout:menu.challenges'), icon: Target },
-            { path: '/account/loyalty', label: t('adminpanel/loyaltymanagement:title'), icon: Gift },
-            { path: '/account/promocodes', label: t('layouts/mainlayout:menu.promo_codes'), icon: Ticket },
-          ].map((section) => {
-            const isActive = location.pathname === section.path;
-            const SectionIcon = section.icon;
-
-            return (
-              <button
-                key={section.path}
-                type="button"
-                onClick={() => navigate(section.path)}
-                className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'border-blue-600 bg-blue-600 text-white'
-                    : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <SectionIcon size={16} />
-                {section.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Loyalty and Cashback */}
       <div className="mb-6">
         <h2 className="font-semibold mb-4">{t('adminpanel/loyaltymanagement:title')}</h2>
@@ -323,13 +274,14 @@ export function Loyalty() {
             <span className="text-sm font-medium text-gray-700">{t('loyalty.your_promo', 'Your referral code')}</span>
             <button
               onClick={handleCopyReferral}
+              disabled={!hasReferralCode}
               className="text-gray-500 hover:text-gray-700 p-1"
             >
               <Copy size={16} />
             </button>
           </div>
           <div className="font-mono text-lg font-bold bg-white border border-dashed border-gray-200 rounded-lg p-3 mb-4 text-center">
-            {referralCode || '-'}
+            {hasReferralCode ? referralCode : '-'}
           </div>
           <p className="text-xs text-gray-500 mb-4">
             {t('loyalty.referral_code_hint', 'Код создается автоматически и используется для приглашения друзей.')}

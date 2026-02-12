@@ -19,7 +19,7 @@
   "fixed": "Fixed. amount",
   "limit_label": "Use limit",
   "loading": "Load promotional codes...",
-  "min_amount_label": "Min. booking amount (AZN)",
+  "min_amount_label": "Min. booking amount ({{currency}})",
   "min_order": "From",
   "not_found": "No promo codes found",
   "not_found_desc": "Create your first promotional code to attract more customers!",
@@ -34,7 +34,7 @@
   "total_usage": "Total uses",
   "type_label": "Discount type",
   "used": "use",
-  "val_currency": "AZN",
+  "val_currency": "{{currency}}",
   "valid_until_label": "Valid until",
   "value_label": "Size discounts"
 }

@@ -19,7 +19,7 @@
   "fixed": "Behoben. Betrag",
   "limit_label": "Limit verwenden.",
   "loading": "Aktionscodes laden...",
-  "min_amount_label": "Min. Teilnahmebetrag (AZN)",
+  "min_amount_label": "Min. Teilnahmebetrag ({{currency}})",
   "min_order": "Ab",
   "not_found": "Keine Aktionscodes gefunden",
   "not_found_desc": "Erstellen Sie Ihren ersten Aktionscode, um mehr Kunden anzulocken!",
@@ -34,7 +34,7 @@
   "total_usage": "Gesamtverwendungen",
   "type_label": "Rabattart",
   "used": "verwendet",
-  "val_currency": "AZN",
+  "val_currency": "{{currency}}",
   "valid_until_label": "Gültig bis",
   "value_label": "Größenrabatte"
 }

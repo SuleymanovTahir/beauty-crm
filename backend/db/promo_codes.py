@@ -6,6 +6,22 @@ from datetime import datetime, timedelta
 from utils.logger import log_info, log_error
 import random
 import string
+from typing import Optional
+
+
+def _split_csv(value: Optional[str]) -> list[str]:
+    if value is None:
+        return []
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
+def _get_promo_columns(cursor) -> set[str]:
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = 'promo_codes'
+    """)
+    return {row[0] for row in cursor.fetchall()}
 
 def create_promo_code(
     code: str, 
@@ -61,7 +77,13 @@ def generate_birthday_promo(client_name: str, client_id: str) -> str:
     
     return code if success else "BDAY15"
 
-def validate_promo_code(code: str, booking_amount: float = 0) -> dict:
+def validate_promo_code(
+    code: str,
+    booking_amount: float = 0,
+    service_ids: Optional[list[int]] = None,
+    service_categories: Optional[list[str]] = None,
+    client_id: Optional[str] = None
+) -> dict:
     """Проверить промокод и вернуть данные о скидке"""
     normalized_code = code.upper().strip()
     if len(normalized_code) == 0:
@@ -70,17 +92,55 @@ def validate_promo_code(code: str, booking_amount: float = 0) -> dict:
     conn = get_db_connection()
     c = conn.cursor()
     try:
+        promo_columns = _get_promo_columns(c)
+        scope_sql = "COALESCE(target_scope, 'all')" if "target_scope" in promo_columns else "'all'"
+        category_sql = "target_category_names" if "target_category_names" in promo_columns else "NULL"
+        service_sql = "target_service_ids" if "target_service_ids" in promo_columns else "NULL"
+        client_sql = "target_client_ids" if "target_client_ids" in promo_columns else "NULL"
+
         c.execute("""
-            SELECT id, discount_type, value, min_amount, valid_from, valid_until, max_uses, current_uses, is_active
+            SELECT
+                id,
+                discount_type,
+                value,
+                min_amount,
+                valid_from,
+                valid_until,
+                max_uses,
+                current_uses,
+                is_active,
+                {scope_sql},
+                {category_sql},
+                {service_sql},
+                {client_sql}
             FROM promo_codes
             WHERE code = %s AND is_active = TRUE
-        """, (normalized_code,))
+        """.format(
+            scope_sql=scope_sql,
+            category_sql=category_sql,
+            service_sql=service_sql,
+            client_sql=client_sql,
+        ), (normalized_code,))
         
         res = c.fetchone()
         if not res:
             return {"valid": False, "error": "Промокод не найден или неактивен"}
         
-        p_id, d_type, value, min_amt, valid_from, until, max_u, curr_u, _ = res
+        (
+            p_id,
+            d_type,
+            value,
+            min_amt,
+            valid_from,
+            until,
+            max_u,
+            curr_u,
+            _,
+            target_scope,
+            target_categories_raw,
+            target_services_raw,
+            target_clients_raw,
+        ) = res
 
         now = datetime.now()
         if valid_from and now < valid_from:
@@ -97,6 +157,43 @@ def validate_promo_code(code: str, booking_amount: float = 0) -> dict:
         # Проверка минимальной суммы
         if booking_amount < (min_amt or 0):
             return {"valid": False, "error": f"Минимальная сумма для этого промокода: {min_amt}"}
+
+        normalized_scope = (target_scope or "all").strip().lower()
+        promo_categories = [category.lower() for category in _split_csv(target_categories_raw)]
+        promo_service_ids = [int(value) for value in _split_csv(target_services_raw) if value.isdigit()]
+        promo_client_ids = _split_csv(target_clients_raw)
+
+        request_categories: list[str] = []
+        if service_categories:
+            request_categories = [str(category).strip().lower() for category in service_categories if str(category).strip()]
+
+        request_service_ids: list[int] = []
+        if service_ids:
+            request_service_ids = [int(service_id) for service_id in service_ids if isinstance(service_id, int) and service_id > 0]
+
+        if normalized_scope == "categories":
+            if len(promo_categories) == 0:
+                return {"valid": False, "error": "Промокод настроен с ошибкой"}
+            if len(request_categories) == 0:
+                return {"valid": False, "error": "Промокод доступен не для всех категорий услуг"}
+            if not any(category in promo_categories for category in request_categories):
+                return {"valid": False, "error": "Промокод не действует для выбранной категории услуг"}
+
+        if normalized_scope == "services":
+            if len(promo_service_ids) == 0:
+                return {"valid": False, "error": "Промокод настроен с ошибкой"}
+            if len(request_service_ids) == 0:
+                return {"valid": False, "error": "Промокод доступен только для отдельных услуг"}
+            if not any(service_id in promo_service_ids for service_id in request_service_ids):
+                return {"valid": False, "error": "Промокод не действует для выбранной услуги"}
+
+        if normalized_scope == "clients":
+            if len(promo_client_ids) == 0:
+                return {"valid": False, "error": "Промокод настроен с ошибкой"}
+            if not client_id:
+                return {"valid": False, "error": "Промокод персональный и недоступен для текущего клиента"}
+            if str(client_id).strip() not in promo_client_ids:
+                return {"valid": False, "error": "Промокод не назначен этому клиенту"}
             
         return {
             "valid": True,
