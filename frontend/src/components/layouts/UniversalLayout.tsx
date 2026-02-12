@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import LanguageSwitcher from '../LanguageSwitcher';
@@ -77,6 +77,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     const [mobileExpandedGroups, setMobileExpandedGroups] = useState<Set<string>>(new Set());
     const [menuSettings, setMenuSettings] = useState<{ menu_order: any[] | null; hidden_items: string[] | null } | null>(null);
     const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
+    const sidebarNavRef = useRef<HTMLElement | null>(null);
 
     const permissions = usePermissions(user?.role || 'employee', user?.secondary_role);
 
@@ -286,6 +287,17 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         });
     }, [allMenuItems, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount, isAdminPanel]);
 
+    const activeDesktopGroupId = useMemo(() => {
+        const activeGroup = menuItems.find((item: any) => {
+            if (!Array.isArray(item.items)) {
+                return false;
+            }
+            return item.items.some((sub: any) => sub.path === location.pathname);
+        });
+
+        return activeGroup?.id ?? null;
+    }, [menuItems, location.pathname]);
+
     const mainTabs = useMemo(() => {
         if (isAdminPanel) {
             return [
@@ -339,6 +351,37 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             document.title = currentLabel;
         }
     }, [location.pathname, mainTabs, menuItems]);
+
+    useEffect(() => {
+        if (activeDesktopGroupId !== null) {
+            setExpandedMenu(activeDesktopGroupId);
+        }
+    }, [location.pathname, activeDesktopGroupId]);
+
+    useEffect(() => {
+        const navElement = sidebarNavRef.current;
+        if (navElement === null) {
+            return;
+        }
+
+        let secondFrameId = 0;
+        const frameId = window.requestAnimationFrame(() => {
+            secondFrameId = window.requestAnimationFrame(() => {
+                const activeElement =
+                    navElement.querySelector('.submenu-item-premium.active') ||
+                    navElement.querySelector('.menu-item-premium.active');
+
+                if (activeElement instanceof HTMLElement) {
+                    activeElement.scrollIntoView({ block: 'center', inline: 'nearest' });
+                }
+            });
+        });
+
+        return () => {
+            window.cancelAnimationFrame(frameId);
+            window.cancelAnimationFrame(secondFrameId);
+        };
+    }, [location.pathname, activeDesktopGroupId]);
 
     // Close mobile menu on resize
     useEffect(() => {
@@ -394,7 +437,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                     </div>
 
                     {/* Navigation */}
-                    <nav className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
+                    <nav ref={sidebarNavRef} className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
                         {menuItems.map((item: any) => {
                             const isGroup = !!(item.items && item.items.length > 0);
                             const isExpanded = expandedMenu === item.id;

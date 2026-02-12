@@ -7,8 +7,6 @@ import {
     History,
     Loader2,
     Gift,
-    Users,
-    Target,
     ArrowUpDown,
     Clock3,
     Pencil,
@@ -173,8 +171,6 @@ export default function UniversalServices() {
         'admin/services',
         'employee/services',
         'common',
-        'layouts/mainlayout',
-        'layouts/adminpanellayout',
         'public_landing/services'
     ]);
     const { currency, formatCurrency } = useCurrency();
@@ -461,8 +457,6 @@ export default function UniversalServices() {
         }
     };
 
-    const showFullTabs = !isEmployee && rolePrefix === '/crm';
-
     if (loading) {
         return (
             <div className="crm-services-loading">
@@ -495,20 +489,6 @@ export default function UniversalServices() {
                             <Gift className="crm-services-tab-icon" />
                             <span>{t('admin/services:special_packages')} ({specialPackagesCount})</span>
                         </button>
-
-                        {showFullTabs && (
-                            <>
-                                <button type="button" className="crm-services-tab" onClick={() => openRouteTab(`${rolePrefix}/referrals`)}>
-                                    <Users className="crm-services-tab-icon" />
-                                    <span>{t('layouts/adminpanellayout:menu.referral_program')}</span>
-                                </button>
-
-                                <button type="button" className="crm-services-tab" onClick={() => openRouteTab(`${rolePrefix}/challenges`)}>
-                                    <Target className="crm-services-tab-icon" />
-                                    <span>{t('layouts/mainlayout:menu.challenges')}</span>
-                                </button>
-                            </>
-                        )}
                     </div>
 
                     <div className="crm-services-controls-card">
@@ -616,7 +596,7 @@ export default function UniversalServices() {
                                 )}
                                 <th>
                                     <span className="crm-services-header-inline">
-                                        <span>{String(t('common:status', { lng: 'en' })).toLowerCase()}</span>
+                                        <span>{t('common:status')}</span>
                                         <ArrowUpDown className="crm-services-sort-icon" />
                                     </span>
                                 </th>

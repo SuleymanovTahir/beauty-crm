@@ -1480,6 +1480,11 @@
   color: #3b4453;
 }
 
+.crm-services-search-input::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
 .crm-services-controls-right {
   display: flex;
   align-items: center;
