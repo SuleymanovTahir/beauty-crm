@@ -251,12 +251,19 @@ const CreatePaymentDialog = ({ provider, providerInfo, onClose }: any) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const parsedAmount = Number(amount);
+        if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+            toast.error(t('errors.createLinkFailed', 'Ошибка создания ссылки'));
+            return;
+        }
+
         setLoading(true);
         try {
             const res = await api.post('/api/create-payment', {
-                amount: parseFloat(amount),
+                amount: parsedAmount,
                 currency,
                 provider,
+                return_url: `${window.location.origin}/crm/payment-integrations`,
                 description,
                 metadata: { description: description || 'Manual Payment Link' }
             });

@@ -807,7 +807,7 @@ export class ApiClient {
 
   async getCalls(search?: string, limit: number = 50, offset: number = 0, dateFrom?: string, dateTo?: string, bookingId?: number, sortBy?: string, order?: string, status?: string, direction?: string) {
     let url = `/api/telephony/calls?limit=${limit}&offset=${offset}`
-    if (search) url += `&search=${search}`
+    if (search) url += `&search=${encodeURIComponent(search)}`
     if (dateFrom) url += `&start_date=${dateFrom}`
     if (dateTo) url += `&end_date=${dateTo}`
     if (bookingId) url += `&booking_id=${bookingId}`
@@ -830,11 +830,15 @@ export class ApiClient {
     formData.append('file', file)
 
     const token = localStorage.getItem('token')
-    const response = await fetch(`/api/telephony/upload-recording/${callId}`, {
+    const headers: Record<string, string> = {}
+    if (token && token.length > 0) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+
+    const response = await fetch(`${this.baseURL}/api/telephony/upload-recording/${callId}`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
+      headers,
+      credentials: 'include',
       body: formData
     })
 

@@ -4,12 +4,10 @@ API для интеграции с платежными системами
 """
 from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any
+from typing import Optional, Dict, Any, Set
 from datetime import datetime
 import json
 import base64
-import hmac
-import hashlib
 
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
@@ -35,9 +33,178 @@ class PaymentRequest(BaseModel):
     return_url: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
 
-# ... (PaymentWebhook remains same)
+def _has_access_for_integrations(current_user: dict) -> bool:
+    return current_user.get("role") in ["director", "admin", "sales"]
 
-# ... (get_payment_providers, create_payment_provider remain same)
+
+def _can_manage_providers(current_user: dict) -> bool:
+    return current_user.get("role") in ["director", "admin"]
+
+
+def _get_table_columns(cursor, table_name: str) -> Set[str]:
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = %s
+    """, (table_name,))
+    return {row[0] for row in cursor.fetchall()}
+
+
+# ===== ПРОВАЙДЕРЫ ПЛАТЕЖЕЙ =====
+
+@router.get("/payment-providers")
+async def get_payment_providers(current_user: dict = Depends(get_current_user)):
+    """Получить список платежных провайдеров"""
+    if not _has_access_for_integrations(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        provider_columns = _get_table_columns(cursor, "payment_providers")
+        has_webhook_secret = "webhook_secret" in provider_columns
+        has_created_at = "created_at" in provider_columns
+        has_updated_at = "updated_at" in provider_columns
+
+        cursor.execute(f"""
+            SELECT
+                id,
+                name,
+                is_active,
+                settings,
+                {"webhook_secret" if has_webhook_secret else "NULL"} as webhook_secret,
+                {"created_at" if has_created_at else "NULL"} as created_at,
+                {"updated_at" if has_updated_at else "NULL"} as updated_at
+            FROM payment_providers
+            ORDER BY name
+        """)
+
+        providers = []
+        for row in cursor.fetchall():
+            raw_settings = row[3]
+            parsed_settings = raw_settings if isinstance(raw_settings, dict) else (json.loads(raw_settings) if raw_settings else {})
+            providers.append({
+                "id": row[0],
+                "name": row[1],
+                "is_active": bool(row[2]),
+                "settings": parsed_settings,
+                "webhook_secret": row[4],
+                "created_at": row[5],
+                "updated_at": row[6],
+            })
+        return {"providers": providers}
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_error(f"Error loading payment providers: {e}", "payment")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+
+@router.post("/payment-providers")
+async def create_payment_provider(
+    provider: PaymentProvider,
+    current_user: dict = Depends(get_current_user)
+):
+    """Создать/обновить настройки платежного провайдера"""
+    if not _can_manage_providers(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    normalized_name = provider.name.strip().lower()
+    if normalized_name == "":
+        raise HTTPException(status_code=400, detail="Provider name is required")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        provider_columns = _get_table_columns(cursor, "payment_providers")
+        has_webhook_secret = "webhook_secret" in provider_columns
+        has_created_at = "created_at" in provider_columns
+        has_updated_at = "updated_at" in provider_columns
+        now = datetime.now().isoformat()
+        settings_json = json.dumps(provider.settings) if provider.settings is not None else json.dumps({})
+
+        cursor.execute("SELECT id FROM payment_providers WHERE name = %s", (normalized_name,))
+        existing = cursor.fetchone()
+
+        if existing:
+            current_columns = ["api_key", "secret_key"]
+            if has_webhook_secret:
+                current_columns.append("webhook_secret")
+
+            cursor.execute(f"""
+                SELECT {", ".join(current_columns)}
+                FROM payment_providers
+                WHERE name = %s
+            """, (normalized_name,))
+            current_provider_row = cursor.fetchone() or (None, None, None)
+            current_api_key = current_provider_row[0] if len(current_provider_row) > 0 else None
+            current_secret_key = current_provider_row[1] if len(current_provider_row) > 1 else None
+            current_webhook_secret = current_provider_row[2] if len(current_provider_row) > 2 else None
+
+            resolved_api_key = provider.api_key if provider.api_key not in [None, ""] else current_api_key
+            resolved_secret_key = provider.secret_key if provider.secret_key not in [None, ""] else current_secret_key
+            resolved_webhook_secret = provider.webhook_secret if provider.webhook_secret not in [None, ""] else current_webhook_secret
+
+            set_parts = [
+                "api_key = %s",
+                "secret_key = %s",
+                "is_active = %s",
+                "settings = %s",
+            ]
+            params = [resolved_api_key, resolved_secret_key, provider.is_active, settings_json]
+
+            if has_webhook_secret:
+                set_parts.append("webhook_secret = %s")
+                params.append(resolved_webhook_secret)
+            if has_updated_at:
+                set_parts.append("updated_at = %s")
+                params.append(now)
+
+            params.append(normalized_name)
+            cursor.execute(f"""
+                UPDATE payment_providers
+                SET {", ".join(set_parts)}
+                WHERE name = %s
+            """, params)
+            provider_id = existing[0]
+        else:
+            fields = ["name", "api_key", "secret_key", "is_active", "settings"]
+            values = [normalized_name, provider.api_key, provider.secret_key, provider.is_active, settings_json]
+            placeholders = ["%s", "%s", "%s", "%s", "%s"]
+
+            if has_webhook_secret:
+                fields.append("webhook_secret")
+                values.append(provider.webhook_secret)
+                placeholders.append("%s")
+            if has_created_at:
+                fields.append("created_at")
+                values.append(now)
+                placeholders.append("%s")
+            if has_updated_at:
+                fields.append("updated_at")
+                values.append(now)
+                placeholders.append("%s")
+
+            cursor.execute(f"""
+                INSERT INTO payment_providers ({", ".join(fields)})
+                VALUES ({", ".join(placeholders)})
+                RETURNING id
+            """, values)
+            provider_id = cursor.fetchone()[0]
+
+        conn.commit()
+        log_info(f"Payment provider {normalized_name} saved by {current_user.get('username')}", "payment")
+        return {"success": True, "provider_id": provider_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        conn.rollback()
+        log_error(f"Error saving payment provider: {e}", "payment")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 
 # ===== СОЗДАНИЕ ПЛАТЕЖА =====
 
@@ -47,10 +214,12 @@ async def create_payment(
     current_user: dict = Depends(get_current_user)
 ):
     """Создать платежную ссылку"""
+    if not _has_access_for_integrations(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
         # Получаем настройки провайдера
         cursor.execute("""
             SELECT api_key, secret_key, settings
@@ -63,7 +232,7 @@ async def create_payment(
             raise HTTPException(status_code=400, detail=f"Provider {payment_request.provider} not configured")
         
         api_key, secret_key, settings = provider_data
-        settings = json.loads(settings) if settings else {}
+        _ = settings if isinstance(settings, dict) else (json.loads(settings) if settings else {})
         
         # Создаем запись о платеже
         now = datetime.now().isoformat()
@@ -88,26 +257,24 @@ async def create_payment(
         if payment_request.provider == "stripe":
             payment_url = await create_stripe_payment(
                 transaction_id, payment_request.amount,
-                payment_request.currency, api_key, payment_request.return_url
+                payment_request.currency, api_key, payment_request.return_url or ""
             )
         elif payment_request.provider == "yookassa":
             payment_url = await create_yookassa_payment(
                 transaction_id, payment_request.amount,
-                payment_request.currency, api_key, secret_key, payment_request.return_url
+                payment_request.currency, api_key, secret_key, payment_request.return_url or ""
             )
         elif payment_request.provider == "tinkoff":
             payment_url = await create_tinkoff_payment(
                 transaction_id, payment_request.amount,
-                payment_request.currency, api_key, payment_request.return_url
+                payment_request.currency, api_key, payment_request.return_url or ""
             )
         elif payment_request.provider == "paypal":
              payment_url = await create_paypal_payment(
                 transaction_id, payment_request.amount,
-                payment_request.currency, api_key, secret_key, payment_request.return_url
+                payment_request.currency, api_key, secret_key, payment_request.return_url or ""
             )
-        
-        conn.close()
-        
+
         log_info(f"Payment created: {transaction_id} via {payment_request.provider}", "payment")
         
         return {
@@ -117,38 +284,54 @@ async def create_payment(
             "provider": payment_request.provider
         }
         
+    except HTTPException:
+        raise
     except Exception as e:
         log_error(f"Error creating payment: {e}", "payment")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 
 # ===== ВЕБХУКИ =====
 
 @router.post("/webhook/{provider}")
 async def payment_webhook(provider: str, request: Request):
     """Обработка вебхуков от платежных систем"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
     try:
         body = await request.body()
         headers = dict(request.headers)
-        
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        # Получаем webhook_secret
-        cursor.execute(
-            "SELECT webhook_secret FROM payment_providers WHERE name = %s",
-            (provider,)
-        )
-        result = cursor.fetchone()
+
+        provider_columns = _get_table_columns(cursor, "payment_providers")
+        has_webhook_secret = "webhook_secret" in provider_columns
+
+        if has_webhook_secret:
+            cursor.execute(
+                "SELECT webhook_secret FROM payment_providers WHERE name = %s",
+                (provider,)
+            )
+            result = cursor.fetchone()
+        else:
+            cursor.execute(
+                "SELECT id FROM payment_providers WHERE name = %s",
+                (provider,)
+            )
+            provider_row = cursor.fetchone()
+            result = (None,) if provider_row else None
+
         if not result:
             raise HTTPException(status_code=400, detail="Provider not found")
-        
+
         webhook_secret = result[0]
-        
+
         # Проверяем подпись
-        if provider == "stripe":
+        if provider == "stripe" and webhook_secret:
             signature = headers.get("stripe-signature")
             if not verify_stripe_signature(body, signature, webhook_secret):
                 raise HTTPException(status_code=400, detail="Invalid signature")
+        elif provider == "stripe":
+            log_warning("Stripe webhook_secret is not configured. Signature check skipped.", "payment")
         
         # Парсим данные
         data = json.loads(body)
@@ -161,13 +344,15 @@ async def payment_webhook(provider: str, request: Request):
         elif provider == "tinkoff":
             await handle_tinkoff_webhook(data, cursor, conn)
         
-        conn.close()
-        
         return {"success": True}
         
+    except HTTPException:
+        raise
     except Exception as e:
         log_error(f"Error processing webhook from {provider}: {e}", "payment")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 
 # ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
 
@@ -534,10 +719,12 @@ async def get_transactions(
     current_user: dict = Depends(get_current_user)
 ):
     """Получить историю платежных транзакций"""
+    if not _has_access_for_integrations(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
         query = """
             SELECT id, invoice_id, amount, currency, provider, status,
                    provider_transaction_id, metadata, created_at, completed_at
@@ -564,6 +751,8 @@ async def get_transactions(
         
         transactions = []
         for row in cursor.fetchall():
+            raw_metadata = row[7]
+            parsed_metadata = raw_metadata if isinstance(raw_metadata, dict) else (json.loads(raw_metadata) if raw_metadata else {})
             transactions.append({
                 "id": row[0],
                 "invoice_id": row[1],
@@ -572,14 +761,17 @@ async def get_transactions(
                 "provider": row[4],
                 "status": row[5],
                 "provider_transaction_id": row[6],
-                "metadata": json.loads(row[7]) if row[7] else {},
+                "metadata": parsed_metadata,
                 "created_at": row[8],
                 "completed_at": row[9]
             })
         
-        conn.close()
         return {"transactions": transactions}
         
+    except HTTPException:
+        raise
     except Exception as e:
         log_error(f"Error getting transactions: {e}", "payment")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()

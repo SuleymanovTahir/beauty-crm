@@ -106,32 +106,6 @@ async def get_task_analytics(current_user: dict = Depends(get_current_user)):
     }
 
 
-@router.get("/payment-providers")
-async def get_payment_providers(current_user: dict = Depends(get_current_user)):
-    """Получить список платежных провайдеров"""
-    return {
-        "providers": []
-    }
-
-
-@router.get("/marketplace-providers")
-async def get_marketplace_providers(current_user: dict = Depends(get_current_user)):
-    """Получить список маркетплейсов"""
-    return {
-        "providers": []
-    }
-
-
-@router.get("/marketplace/stats")
-async def get_marketplace_stats(current_user: dict = Depends(get_current_user)):
-    """Получить статистику по маркетплейсам"""
-    return {
-        "total_sales": 0,
-        "total_revenue": 0,
-        "by_provider": []
-    }
-
-
 @router.get("/admin/trash")
 async def get_trash(current_user: dict = Depends(get_current_user)):
     """Получить удаленные элементы (корзина)"""

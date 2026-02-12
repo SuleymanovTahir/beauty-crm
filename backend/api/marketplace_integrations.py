@@ -44,10 +44,9 @@ class MarketplaceBooking(BaseModel):
 @router.get("/marketplace-providers")
 async def get_marketplace_providers(current_user: dict = Depends(get_current_user)):
     """Получить список настроенных маркетплейсов"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
         cursor.execute("""
             SELECT id, name, is_active, settings, sync_enabled, last_sync_at, created_at
             FROM marketplace_providers
@@ -65,13 +64,14 @@ async def get_marketplace_providers(current_user: dict = Depends(get_current_use
                 "last_sync_at": row[5],
                 "created_at": row[6]
             })
-        
-        conn.close()
+
         return {"providers": providers}
         
     except Exception as e:
         log_error(f"Error getting marketplace providers: {e}", "marketplace")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 
 @router.post("/marketplace-providers")
 async def create_marketplace_provider(
@@ -79,13 +79,12 @@ async def create_marketplace_provider(
     current_user: dict = Depends(get_current_user)
 ):
     """Создать/обновить настройки маркетплейса"""
+    if current_user["role"] not in ["admin", "director"]:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
     try:
-        if current_user["role"] not in ["admin", "director"]:
-            raise HTTPException(status_code=403, detail="Access denied")
-        
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
         # Проверяем существование
         cursor.execute(
             "SELECT id FROM marketplace_providers WHERE name = %s",
@@ -122,24 +121,27 @@ async def create_marketplace_provider(
             provider_id = cursor.fetchone()[0]
         
         conn.commit()
-        conn.close()
         
         log_info(f"Marketplace provider {provider.name} configured by {current_user['username']}", "marketplace")
         return {"success": True, "provider_id": provider_id}
         
+    except HTTPException:
+        raise
     except Exception as e:
+        conn.rollback()
         log_error(f"Error configuring marketplace provider: {e}", "marketplace")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 
 # ===== СТАТИСТИКА =====
 
 @router.get("/marketplace/stats")
 async def get_marketplace_stats(current_user: dict = Depends(get_current_user)):
     """Получить статистику по маркетплейсам"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-
         # Статистика по записям
         cursor.execute("""
             SELECT provider, COUNT(*) as count
@@ -161,8 +163,6 @@ async def get_marketplace_stats(current_user: dict = Depends(get_current_user)):
                 "avg_rating": float(row[2]) if row[2] else 0
             }
 
-        conn.close()
-
         return {
             "bookings_by_provider": bookings_by_provider,
             "reviews_by_provider": reviews_by_provider
@@ -171,10 +171,12 @@ async def get_marketplace_stats(current_user: dict = Depends(get_current_user)):
     except Exception as e:
         log_error(f"Error getting marketplace stats: {e}", "marketplace")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
 
 # ===== ВЕБХУКИ ОТ МАРКЕТПЛЕЙСОВ =====
 
-@router.post("/webhook/{provider}")
+@router.post("/marketplace/webhook/{provider}")
 async def marketplace_webhook(
     provider: str,
     request: Request,
@@ -198,10 +200,9 @@ async def marketplace_webhook(
 
 async def process_marketplace_webhook(provider: str, data: dict):
     """Обработать webhook от маркетплейса"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
         # Определяем тип события
         if provider == "yandex_maps":
             await handle_yandex_maps_webhook(data, cursor, conn)
@@ -219,11 +220,12 @@ async def process_marketplace_webhook(provider: str, data: dict):
             await handle_ozon_webhook(data, cursor, conn)
         elif provider == "amazon":
             await handle_amazon_webhook(data, cursor, conn)
-        
-        conn.close()
-        
+
     except Exception as e:
+        conn.rollback()
         log_error(f"Error in process_marketplace_webhook: {e}", "marketplace")
+    finally:
+        conn.close()
 
 # ===== ОБРАБОТЧИКИ ВЕБХУКОВ =====
 
@@ -778,6 +780,7 @@ async def save_marketplace_review(provider: str, review_data: dict, cursor, conn
 # ===== СИНХРОНИЗАЦИЯ =====
 
 @router.post("/sync/{provider}")
+@router.post("/marketplace/sync/{provider}")
 async def sync_marketplace(
     provider: str,
     background_tasks: BackgroundTasks,
@@ -792,6 +795,8 @@ async def sync_marketplace(
         
         return {"success": True, "message": f"Sync started for {provider}"}
         
+    except HTTPException:
+        raise
     except Exception as e:
         log_error(f"Error starting sync: {e}", "marketplace")
         raise HTTPException(status_code=500, detail=str(e))

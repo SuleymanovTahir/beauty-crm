@@ -1,6 +1,6 @@
 
-from fastapi import APIRouter, Depends, Query, HTTPException, Request, BackgroundTasks, UploadFile, File, Form
-from typing import List, Optional, Dict, Any
+from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks, UploadFile, File
+from typing import List, Optional, Dict, Any, Set
 from pydantic import BaseModel
 from db.connection import get_db_connection
 from utils.utils import get_current_user
@@ -73,10 +73,26 @@ class TelephonySettings(BaseModel):
     webhook_token: Optional[str] = None
     is_active: bool = True
 
+
+ALLOWED_TELEPHONY_ROLES = ["director", "admin", "sales"]
+
+
+def _has_telephony_access(current_user: dict) -> bool:
+    return current_user.get("role") in ALLOWED_TELEPHONY_ROLES
+
+
+def _get_table_columns(cursor, table_name: str) -> Set[str]:
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = %s
+    """, (table_name,))
+    return {row[0] for row in cursor.fetchall()}
+
 @router.get("/telephony/settings")
 async def get_telephony_settings(current_user: dict = Depends(get_current_user)):
     # 🔒 Только director, admin, sales могут видеть настройки телефонии
-    if current_user.get("role") not in ["director", "admin", "sales"]:
+    if not _has_telephony_access(current_user):
         raise HTTPException(status_code=403, detail="Access denied")
     
     conn = get_db_connection()
@@ -95,6 +111,9 @@ async def get_telephony_settings(current_user: dict = Depends(get_current_user))
 
 @router.post("/telephony/settings")
 async def save_telephony_settings(settings: TelephonySettings, current_user: dict = Depends(get_current_user)):
+    if not _has_telephony_access(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -113,6 +132,9 @@ async def save_telephony_settings(settings: TelephonySettings, current_user: dic
 
 @router.post("/telephony/test-integration")
 async def test_telephony_integration(settings: TelephonySettings, current_user: dict = Depends(get_current_user)):
+    if not _has_telephony_access(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+
     # Simple validation logic for now
     if settings.provider == 'binotel':
         if not settings.api_key or not settings.api_secret:
@@ -145,7 +167,7 @@ async def get_calls(
     current_user: dict = Depends(get_current_user)
 ):
     # 🔒 Только director, admin, sales могут видеть звонки
-    if current_user.get("role") not in ["director", "admin", "sales"]:
+    if not _has_telephony_access(current_user):
         raise HTTPException(status_code=403, detail="Access denied")
     conn = get_db_connection()
     c = conn.cursor()
@@ -177,8 +199,16 @@ async def get_calls(
         params = []
         
         if search:
-            query += " AND (cl.phone ILIKE %s OR c.name ILIKE %s OR c.username ILIKE %s)"
-            params.extend([f"%{search}%"] * 3)
+            query += """
+                AND (
+                    cl.phone ILIKE %s OR
+                    c.name ILIKE %s OR
+                    c.username ILIKE %s OR
+                    cl.manual_client_name ILIKE %s OR
+                    cl.manual_manager_name ILIKE %s
+                )
+            """
+            params.extend([f"%{search}%"] * 5)
 
         if start_date:
             query += " AND cl.created_at >= %s"
@@ -255,7 +285,7 @@ async def get_telephony_stats(
     current_user: dict = Depends(get_current_user)
 ):
     # 🔒 Только director, admin, sales
-    if current_user.get("role") not in ["director", "admin", "sales"]:
+    if not _has_telephony_access(current_user):
         raise HTTPException(status_code=403, detail="Access denied")
     conn = get_db_connection()
     c = conn.cursor()
@@ -301,10 +331,11 @@ async def get_telephony_analytics(
     status: Optional[str] = None,
     direction: Optional[str] = None,
     min_duration: Optional[int] = None,
+    max_duration: Optional[int] = None,
     current_user: dict = Depends(get_current_user)
 ):
     # 🔒 Только director, admin, sales
-    if current_user.get("role") not in ["director", "admin", "sales"]:
+    if not _has_telephony_access(current_user):
         raise HTTPException(status_code=403, detail="Access denied")
 
     conn = get_db_connection()
@@ -332,8 +363,8 @@ async def get_telephony_analytics(
             params.append(end_date)
             
         if manager_name:
-            query += " AND b.master = %s"
-            params.append(manager_name)
+            query += " AND (b.master = %s OR cl.manual_manager_name = %s)"
+            params.extend([manager_name, manager_name])
 
         if status and status != 'all':
             query += " AND cl.status = %s"
@@ -374,9 +405,21 @@ async def get_telephony_analytics(
 
 @router.post("/telephony/calls")
 async def create_call(call: CallLogCreate, current_user: dict = Depends(get_current_user)):
+    if not _has_telephony_access(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+
     conn = get_db_connection()
     c = conn.cursor()
     try:
+        call_logs_columns = _get_table_columns(c, "call_logs")
+        has_folder_id = "folder_id" in call_logs_columns
+        has_custom_name = "custom_name" in call_logs_columns
+        allowed_directions = {"inbound", "outbound"}
+        allowed_statuses = {"completed", "missed", "rejected", "ongoing"}
+        resolved_direction = call.direction if call.direction in allowed_directions else "outbound"
+        resolved_status = call.status if call.status in allowed_statuses else "completed"
+        resolved_duration = int(call.duration) if call.duration and call.duration > 0 else 0
+
         # Auto-link client if not provided
         if not call.client_id and call.phone:
             clean_phone = ''.join(filter(str.isdigit, call.phone))
@@ -397,9 +440,9 @@ async def create_call(call: CallLogCreate, current_user: dict = Depends(get_curr
             
             c.execute("""
                 SELECT id FROM bookings 
-                WHERE client_id = %s 
-                AND start_time::timestamp BETWEEN %s AND %s
-                ORDER BY ABS(EXTRACT(EPOCH FROM (start_time::timestamp - %s::timestamp)))
+                WHERE instagram_id = %s
+                AND datetime BETWEEN %s AND %s
+                ORDER BY ABS(EXTRACT(EPOCH FROM (datetime - %s::timestamp)))
                 LIMIT 1
             """, (call.client_id, time_window_start, time_window_end, created_at))
             
@@ -416,12 +459,12 @@ async def create_call(call: CallLogCreate, current_user: dict = Depends(get_curr
             folder_row = c.fetchone()
             if folder_row:
                 folder_id = folder_row[0]
-        except:
+        except Exception:
             pass  # Если таблица еще не создана
 
         # Генерируем автоматическое имя для записи если есть запись
         custom_name = None
-        if call.recording_url or call.recording_file:
+        if call.recording_url:
             # Формат: {client_name} - {manager_name} - DD.MM.YYYY HH:MM
             client_name = call.manual_client_name if call.manual_client_name else "Клиент"
             manager_name = call.manual_manager_name if call.manual_manager_name else "Менеджер"
@@ -429,20 +472,30 @@ async def create_call(call: CallLogCreate, current_user: dict = Depends(get_curr
             date_str = call_datetime.strftime('%d.%m.%Y %H:%M')
             custom_name = f"{client_name} - {manager_name} - {date_str}"
 
-        c.execute("""
-            INSERT INTO call_logs (
-                phone, client_id, booking_id, direction, status, duration, recording_url,
-                created_at, transcription, notes, external_id,
-                manual_client_name, manual_manager_name, manual_service_name,
-                folder_id, custom_name
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING id
-        """, (
-            call.phone, call.client_id, call.booking_id, call.direction, call.status, call.duration,
+        insert_fields = [
+            "phone", "client_id", "booking_id", "direction", "status", "duration", "recording_url",
+            "created_at", "transcription", "notes", "external_id",
+            "manual_client_name", "manual_manager_name", "manual_service_name",
+        ]
+        insert_values = [
+            call.phone, call.client_id, call.booking_id, resolved_direction, resolved_status, resolved_duration,
             call.recording_url, created_at, call.transcription, call.notes, call.external_id,
             call.manual_client_name, call.manual_manager_name, call.manual_service_name,
-            folder_id, custom_name
-        ))
+        ]
+
+        if has_folder_id:
+            insert_fields.append("folder_id")
+            insert_values.append(folder_id)
+        if has_custom_name:
+            insert_fields.append("custom_name")
+            insert_values.append(custom_name)
+
+        placeholders = ", ".join(["%s"] * len(insert_fields))
+        c.execute(f"""
+            INSERT INTO call_logs ({", ".join(insert_fields)})
+            VALUES ({placeholders})
+            RETURNING id
+        """, insert_values)
         call_id = c.fetchone()[0]
         conn.commit()
         return {"id": call_id, "success": True}
@@ -460,10 +513,14 @@ async def upload_recording(
     current_user: dict = Depends(get_current_user)
 ):
     """Upload audio recording file for a call"""
+    if not _has_telephony_access(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+
     try:
         # Validate file type
         allowed_extensions = ['.mp3', '.wav', '.ogg', '.m4a', '.webm']
-        file_ext = os.path.splitext(file.filename)[1].lower()
+        filename = file.filename if isinstance(file.filename, str) else ""
+        file_ext = os.path.splitext(filename)[1].lower()
         if file_ext not in allowed_extensions:
             raise HTTPException(status_code=400, detail=f"Invalid file type. Allowed: {', '.join(allowed_extensions)}")
         
@@ -483,11 +540,23 @@ async def upload_recording(
         conn = get_db_connection()
         c = conn.cursor()
         try:
-            c.execute("""
+            call_logs_columns = _get_table_columns(c, "call_logs")
+            update_parts = ["recording_file = %s"]
+            update_params = [filename]
+
+            if "file_size" in call_logs_columns:
+                update_parts.append("file_size = %s")
+                update_params.append(file_size)
+            if "file_format" in call_logs_columns:
+                update_parts.append("file_format = %s")
+                update_params.append(file_ext.lstrip('.'))
+
+            update_params.append(call_id)
+            c.execute(f"""
                 UPDATE call_logs
-                SET recording_file = %s, file_size = %s, file_format = %s
+                SET {", ".join(update_parts)}
                 WHERE id = %s
-            """, (filename, file_size, file_ext.lstrip('.'), call_id))
+            """, update_params)
             conn.commit()
         finally:
             conn.close()
@@ -499,12 +568,17 @@ async def upload_recording(
             "file_size": file_size,
             "file_format": file_ext.lstrip('.')
         }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error uploading recording: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.put("/telephony/calls/{call_id}")
 async def update_call(call_id: int, update: CallLogUpdate, current_user: dict = Depends(get_current_user)):
+    if not _has_telephony_access(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -520,17 +594,22 @@ async def update_call(call_id: int, update: CallLogUpdate, current_user: dict = 
             fields.append("booking_id = %s")
             params.append(update.booking_id)
         if update.status is not None:
+             allowed_statuses = {"completed", "missed", "rejected", "ongoing"}
+             resolved_status = update.status if update.status in allowed_statuses else "completed"
              fields.append("status = %s")
-             params.append(update.status)
+             params.append(resolved_status)
         if update.phone is not None:
              fields.append("phone = %s")
              params.append(update.phone)
         if update.direction is not None:
+             allowed_directions = {"inbound", "outbound"}
+             resolved_direction = update.direction if update.direction in allowed_directions else "outbound"
              fields.append("direction = %s")
-             params.append(update.direction)
+             params.append(resolved_direction)
         if update.duration is not None:
+             resolved_duration = int(update.duration) if update.duration > 0 else 0
              fields.append("duration = %s")
-             params.append(update.duration)
+             params.append(resolved_duration)
         if update.manual_client_name is not None:
              fields.append("manual_client_name = %s")
              params.append(update.manual_client_name)
@@ -561,6 +640,9 @@ async def update_call(call_id: int, update: CallLogUpdate, current_user: dict = 
 
 @router.delete("/telephony/calls/{call_id}")
 async def delete_call(call_id: int, current_user: dict = Depends(get_current_user)):
+    if not _has_telephony_access(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -612,11 +694,18 @@ def normalize_webhook_data(provider: str, data: Dict[str, Any]) -> Optional[Dict
         # Binotel sends specific fields
         # Example: requestType, callID, generalCallID, externalNumber, internalNumber, duration, recording, disposition
         if data.get('requestType') == 'completed':
+            disposition = data.get('disposition')
+            normalized_status = 'completed'
+            if disposition in ['busy', 'noanswer']:
+                normalized_status = 'missed'
+            elif disposition in ['rejected', 'cancelled']:
+                normalized_status = 'rejected'
+
             return {
                 'external_id': data.get('generalCallID'),
                 'phone': data.get('externalNumber'),
                 'direction': 'inbound' if data.get('direction') == 'incoming' else 'outbound',
-                'status': data.get('disposition') if data.get('disposition') in ['answered', 'busy', 'noanswer'] else 'completed',
+                'status': normalized_status,
                 'duration': int(data.get('duration', 0)),
                 'recording_url': data.get('recording'),
                 'created_at': datetime.fromtimestamp(int(data.get('startTime'))).isoformat() if data.get('startTime') else datetime.now().isoformat()
@@ -722,5 +811,3 @@ def save_webhook_call(call_data: Dict[str, Any]):
         logger.error(f"Error saving webhook call: {e}")
     finally:
         conn.close()
-
-

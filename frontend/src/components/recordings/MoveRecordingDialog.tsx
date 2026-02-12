@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dialog,
@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { api } from "@/services/api";;
+import { api } from "@/services/api";
 
 interface FolderNode {
   id: number;
@@ -29,6 +29,8 @@ interface FolderNode {
 
 interface Recording {
   id: number;
+  source?: 'telephony' | 'chat';
+  type?: 'telephony' | 'chat';
   custom_name: string;
   folder_id?: number;
 }
@@ -50,9 +52,13 @@ const MoveRecordingDialog: React.FC<MoveRecordingDialogProps> = ({
 }) => {
   const { t } = useTranslation(['telephony']);
   const [selectedFolderId, setSelectedFolderId] = useState<number | null>(
-    recording.folder_id || null
+    recording.folder_id !== undefined ? recording.folder_id : null
   );
   const [moving, setMoving] = useState(false);
+
+  useEffect(() => {
+    setSelectedFolderId(recording.folder_id !== undefined ? recording.folder_id : null);
+  }, [recording]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +70,11 @@ const MoveRecordingDialog: React.FC<MoveRecordingDialogProps> = ({
 
     try {
       setMoving(true);
-      await api.post(`/api/recordings/${recording.id}/move`, {
+      const isChatSource = recording.source === 'chat';
+      const isChatType = recording.type === 'chat';
+      const source = isChatSource ? 'chat' : (isChatType ? 'chat' : 'telephony');
+
+      await api.put(`/api/recordings/${source}/${recording.id}`, {
         folder_id: selectedFolderId,
       });
 
@@ -117,7 +127,7 @@ const MoveRecordingDialog: React.FC<MoveRecordingDialogProps> = ({
                 {t('telephony:select_folder', 'Выберите папку')}
               </Label>
               <Select
-                value={selectedFolderId?.toString() || 'none'}
+                value={selectedFolderId !== null ? selectedFolderId.toString() : 'none'}
                 onValueChange={(value) =>
                   setSelectedFolderId(value === 'none' ? null : parseInt(value))
                 }
