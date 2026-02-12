@@ -714,6 +714,14 @@ class TemplateModel(BaseModel):
     body: str
     variables: Optional[List[str]] = []
 
+
+class TemplateUpdateModel(BaseModel):
+    name: str
+    category: Optional[str] = "transactional"
+    subject: Optional[str] = ""
+    body: str
+    variables: Optional[List[str]] = []
+
 @router.get("/notifications/templates")
 async def get_templates(session_token: Optional[str] = Cookie(None)):
     """Получить все шаблоны"""
@@ -809,6 +817,77 @@ async def save_template(template: TemplateModel, session_token: Optional[str] = 
     except Exception as e:
         log_error(f"Error saving template: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        conn.close()
+
+
+@router.put("/notifications/templates/{template_id}")
+async def update_template(
+    template_id: int,
+    template: TemplateUpdateModel,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Обновить шаблон по ID (включая имя)."""
+    user = require_auth(session_token)
+    if not user or user.get('role') not in ['admin', 'director']:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    if template_id <= 0:
+        return JSONResponse({"error": "Invalid template id"}, status_code=400)
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        template_columns = _get_notification_template_columns(c)
+        update_clauses = [
+            "name = %s",
+            "category = %s"
+        ]
+        update_values = [
+            template.name,
+            template.category
+        ]
+
+        for subject_column in _get_template_storage_columns(template_columns, "subject"):
+            quoted_column = _quote_sql_identifier(subject_column)
+            update_clauses.append(f"{quoted_column} = %s")
+            update_values.append(template.subject)
+
+        for body_column in _get_template_storage_columns(template_columns, "body"):
+            quoted_column = _quote_sql_identifier(body_column)
+            update_clauses.append(f"{quoted_column} = %s")
+            update_values.append(template.body)
+
+        if "variables" in template_columns:
+            update_clauses.append("variables = %s")
+            update_values.append(json.dumps(template.variables))
+
+        if "updated_at" in template_columns:
+            update_clauses.append("updated_at = CURRENT_TIMESTAMP")
+
+        update_values.append(template_id)
+        c.execute(
+            """
+            UPDATE notification_templates
+            SET {updates}
+            WHERE id = %s
+            """.format(updates=", ".join(update_clauses)),
+            tuple(update_values)
+        )
+
+        if c.rowcount == 0:
+            conn.rollback()
+            return JSONResponse({"error": "Template not found"}, status_code=404)
+
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        conn.rollback()
+        error_text = str(e)
+        if "duplicate key value" in error_text.lower():
+            return JSONResponse({"error": "Template name already exists"}, status_code=409)
+        log_error(f"Error updating template: {e}", "api")
+        return JSONResponse({"error": error_text}, status_code=500)
     finally:
         conn.close()
 

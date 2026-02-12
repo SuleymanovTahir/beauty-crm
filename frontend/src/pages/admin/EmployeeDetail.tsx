@@ -25,7 +25,6 @@ interface Employee {
     email: string;
     role: string;
     position?: string;
-    position_ru?: string;
     phone?: string;
     bio?: string;
     photo?: string;
@@ -197,7 +196,7 @@ export default function EmployeeDetail() {
                                     {(i18n.language === 'ru' && emp.full_name) ? emp.full_name : emp.full_name}
                                 </p>
                                 <p className="text-xs text-gray-500 uppercase">
-                                    {(i18n.language === 'ru' && emp.position_ru) ? emp.position_ru : (emp.position || emp.role)}
+                                    {emp.position || emp.role}
                                 </p>
                             </div>
                         </button>

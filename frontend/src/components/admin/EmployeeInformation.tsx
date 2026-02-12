@@ -19,7 +19,6 @@ interface Employee {
     birth_date?: string;
     birthday?: string;
     position?: string;
-    position_ru?: string;
     instagram_link?: string;
     whatsapp?: string;
     telegram?: string;
@@ -50,7 +49,6 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
         whatsapp: '',
         telegram: '',
         position: '',
-        position_ru: '',
         years_of_experience: '',
         specialization: '',
         about_me: '',
@@ -71,7 +69,6 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
             whatsapp: employee.whatsapp || '',
             telegram: employee.telegram || '',
             position: employee.position || '',
-            position_ru: employee.position_ru || '',
             years_of_experience: String(employee.years_of_experience || ''),
             specialization: employee.specialization || '',
             about_me: employee.about_me || '',
@@ -163,7 +160,6 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                 whatsapp: form.whatsapp,
                 telegram: form.telegram,
                 position: form.position,
-                position_ru: form.position_ru,
                 years_of_experience: form.years_of_experience,
                 specialization: form.specialization,
                 about_me: form.about_me,
@@ -522,22 +518,6 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 onChange={(e) => setForm({ ...form, position: e.target.value })}
                                 className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
                                 placeholder="Hairstylist"
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <Label htmlFor="position_ru" className="text-sm font-medium text-gray-700 mb-2">
-                            {t('position', 'Position')} (RU)
-                        </Label>
-                        <div className="relative">
-                            <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <Input
-                                id="position_ru"
-                                value={form.position_ru}
-                                onChange={(e) => setForm({ ...form, position_ru: e.target.value })}
-                                className="pl-10 pr-3 h-12 bg-gray-50 border-gray-200 focus:bg-white transition-colors"
-                                placeholder="Стилист"
                             />
                         </div>
                     </div>

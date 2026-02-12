@@ -48,7 +48,7 @@ export function LandingPage() {
         new Set(
           initialData.services
             .map((service: any) =>
-              (service?.name || service?.name_en || service?.name_ru || '').toString().trim().toLowerCase()
+              (service?.name ?? '').toString().trim().toLowerCase()
             )
             .filter((name: string) => name.length > 1)
         )

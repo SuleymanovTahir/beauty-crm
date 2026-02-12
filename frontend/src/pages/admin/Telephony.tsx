@@ -184,7 +184,6 @@ export default function Telephony() {
         if (showAddDialog && formData.manual_manager_name === '') {
             const defaultManager = allMasters.find(m =>
                 (m.position && m.position.toLowerCase().includes('менеджер')) ||
-                (m.position_ru && m.position_ru.toLowerCase().includes('менеджер')) ||
                 (m.role && m.role.toLowerCase().includes('manager'))
             );
             if (defaultManager) {

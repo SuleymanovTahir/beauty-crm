@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 import { Calendar, Clock, Star, TrendingUp, Repeat, Users, MessageCircle, Sparkles, Loader2, X, Edit } from 'lucide-react';
@@ -15,7 +15,11 @@ import { TIME_INTERVALS, EXTERNAL_SERVICES } from '../../../utils/constants';
 import { formatDateForGoogle } from '../../../utils/dateUtils';
 import { useSalonSettings } from '../../../hooks/useSalonSettings';
 
-export function Dashboard() {
+interface DashboardProps {
+  visibleMenuIds: string[];
+}
+
+export function Dashboard({ visibleMenuIds }: DashboardProps) {
   const { t, i18n } = useTranslation(['account', 'common']);
   const navigate = useNavigate();
   const { currency: globalCurrency, formatCurrency } = useCurrency();
@@ -23,6 +27,7 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [showRepeatModal, setShowRepeatModal] = useState(false);
+  const visibleMenuSet = useMemo(() => new Set(visibleMenuIds), [visibleMenuIds]);
 
   useEffect(() => {
     loadDashboard();
@@ -142,6 +147,8 @@ export function Dashboard() {
   const { client, loyalty, next_booking, last_visit, achievements_summary, visit_stats } = dashboardData || {};
   const userName = client?.name || localStorage.getItem('user_name') || 'Гость';
   const currency = loyalty?.currency || globalCurrency;
+  const canOpenMasters = visibleMenuSet.has('masters');
+  const canOpenAchievements = visibleMenuSet.has('achievements');
 
   return (
     <div className="space-y-6 pb-8">
@@ -264,10 +271,12 @@ export function Dashboard() {
           <Repeat className="w-5 h-5" />
           <span className="text-sm">{t('dashboard.repeat', 'Повторить')}</span>
         </Button>
-        <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/account/masters')}>
-          <Users className="w-5 h-5" />
-          <span className="text-sm">{t('dashboard.my_masters', 'Мои мастера')}</span>
-        </Button>
+        {canOpenMasters && (
+          <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/account/masters')}>
+            <Users className="w-5 h-5" />
+            <span className="text-sm">{t('dashboard.my_masters', 'Мои мастера')}</span>
+          </Button>
+        )}
         <Button
           variant="outline"
           className="h-20 flex-col gap-2"
@@ -318,7 +327,7 @@ export function Dashboard() {
       )}
 
       {/* Достижения */}
-      {achievements_summary && (
+      {canOpenAchievements && achievements_summary && (
         <Card
           className="bg-gradient-to-br from-purple-50 to-pink-50 cursor-pointer hover:border-purple-300 transition-all"
           onClick={() => navigate('/account/achievements')}

@@ -1552,8 +1552,10 @@ class SalonBot:
     def _get_fallback_response(self, language: str = 'ru') -> str:
         """Резервный ответ при ошибке (синхронный контекст - без AI)"""
         # Простой fallback без AI (синхронный метод)
-        msg_ru = "Наш менеджер скоро ответит! 💎"
-        msg_en = "Our manager will respond soon! 💎"
+        fallback_messages = {
+            'ru': "Наш менеджер скоро ответит! 💎",
+            'en': "Our manager will respond soon! 💎",
+        }
         
         # 🔔 Notify manager since we failed
         try:
@@ -1563,7 +1565,7 @@ class SalonBot:
         except:
              pass
 
-        return msg_en if language == 'en' else msg_ru
+        return fallback_messages.get(language, fallback_messages['ru'])
 
     async def _handle_bot_action(self, action_data: dict, instagram_id: str):
         """Обработка действий от бота (сохранение записи и т.д.)"""

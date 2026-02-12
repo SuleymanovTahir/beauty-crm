@@ -72,7 +72,6 @@ interface User {
   last_contact?: string;
   is_public_visible?: boolean;
   sort_order?: number;
-  position_ru?: string;
 }
 
 // Sortable Row Component

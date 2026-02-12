@@ -47,6 +47,16 @@ type MobileTab = {
   hidden?: boolean;
 };
 
+type AccountMenuItem = {
+  id: Tab;
+  icon: any;
+  label: string;
+  path: string;
+  badge?: number;
+  hidden: boolean;
+  showInSidebar?: boolean;
+};
+
 
 
 export function AccountPage() {
@@ -69,35 +79,73 @@ export function AccountPage() {
     challenges: true
   });
 
-  const menuItems = useMemo(() => {
+  const menuItems = useMemo<AccountMenuItem[]>(() => {
     const hiddenSet = new Set(accountHiddenMenuItems);
+    const challengesHiddenByFeature = features.challenges === false;
+
     return [
-      { id: 'dashboard' as Tab, label: t('tabs.dashboard', 'Главная'), icon: Home, path: '/account/dashboard', hidden: hiddenSet.has('dashboard') },
-      { id: 'appointments' as Tab, label: t('tabs.appointments', 'Записи'), icon: Calendar, path: '/account/appointments', hidden: hiddenSet.has('appointments') },
-      { id: 'gallery' as Tab, label: t('tabs.gallery', 'Галерея'), icon: Image, path: '/account/gallery', hidden: hiddenSet.has('gallery') },
-      { id: 'loyalty' as Tab, label: t('adminpanel/loyaltymanagement:title'), icon: Award, path: '/account/loyalty', hidden: hiddenSet.has('loyalty') },
-      { id: 'achievements' as Tab, label: t('layouts/mainlayout:menu.challenges', 'Челленджи'), icon: Trophy, path: '/account/achievements', hidden: true },
-      { id: 'promocodes' as Tab, label: t('layouts/mainlayout:menu.promo_codes', 'Промокоды'), icon: Ticket, path: '/account/promocodes', hidden: true },
-      { id: 'specialoffers' as Tab, label: t('settings.special_offers', 'Специальные предложения и скидки'), icon: Gift, path: '/account/special-offers', hidden: true },
-      { id: 'masters' as Tab, label: t('tabs.masters', 'Мастера'), icon: Users, path: '/account/masters', hidden: hiddenSet.has('masters') },
-      { id: 'beauty' as Tab, label: t('tabs.beauty', 'Уход и рекомендации'), icon: Sparkles, path: '/account/beauty', hidden: hiddenSet.has('beauty') },
-      { id: 'notifications' as Tab, label: t('tabs.notifications', 'Уведомления'), icon: Bell, path: '/account/notifications', badge: unreadCount, hidden: hiddenSet.has('notifications') },
-      { id: 'settings' as Tab, label: t('tabs.settings', 'Настройки'), icon: SettingsIcon, path: '/account/settings', hidden: hiddenSet.has('settings') },
+      { id: 'dashboard', label: t('tabs.dashboard', 'Главная'), icon: Home, path: '/account/dashboard', hidden: hiddenSet.has('dashboard') },
+      { id: 'appointments', label: t('tabs.appointments', 'Записи'), icon: Calendar, path: '/account/appointments', hidden: hiddenSet.has('appointments') },
+      { id: 'gallery', label: t('tabs.gallery', 'Галерея'), icon: Image, path: '/account/gallery', hidden: hiddenSet.has('gallery') },
+      { id: 'loyalty', label: t('adminpanel/loyaltymanagement:title'), icon: Award, path: '/account/loyalty', hidden: hiddenSet.has('loyalty') },
+      {
+        id: 'achievements',
+        label: t('layouts/mainlayout:menu.challenges', 'Челленджи'),
+        icon: Trophy,
+        path: '/account/achievements',
+        hidden: hiddenSet.has('achievements') ? true : challengesHiddenByFeature,
+        showInSidebar: false,
+      },
+      {
+        id: 'promocodes',
+        label: t('layouts/mainlayout:menu.promo_codes', 'Промокоды'),
+        icon: Ticket,
+        path: '/account/promocodes',
+        hidden: hiddenSet.has('promocodes'),
+        showInSidebar: false,
+      },
+      {
+        id: 'specialoffers',
+        label: t('settings.special_offers', 'Специальные предложения и скидки'),
+        icon: Gift,
+        path: '/account/special-offers',
+        hidden: hiddenSet.has('specialoffers'),
+        showInSidebar: false,
+      },
+      { id: 'masters', label: t('tabs.masters', 'Мастера'), icon: Users, path: '/account/masters', hidden: hiddenSet.has('masters') },
+      { id: 'beauty', label: t('tabs.beauty', 'Уход и рекомендации'), icon: Sparkles, path: '/account/beauty', hidden: hiddenSet.has('beauty') },
+      { id: 'notifications', label: t('tabs.notifications', 'Уведомления'), icon: Bell, path: '/account/notifications', badge: unreadCount, hidden: hiddenSet.has('notifications') },
+      { id: 'settings', label: t('tabs.settings', 'Настройки'), icon: SettingsIcon, path: '/account/settings', hidden: hiddenSet.has('settings') },
     ];
-  }, [t, unreadCount, accountHiddenMenuItems]);
+  }, [accountHiddenMenuItems, features.challenges, t, unreadCount]);
+
+  const visibleMenuIds = useMemo(
+    () => menuItems.filter((item) => item.hidden !== true).map((item) => item.id),
+    [menuItems]
+  );
+
+  const canOpenNotifications = useMemo(
+    () => visibleMenuIds.includes('notifications'),
+    [visibleMenuIds]
+  );
+
+  const fallbackAccountPath = useMemo(() => {
+    const firstVisibleItem = menuItems.find((item) => item.hidden !== true);
+    return firstVisibleItem?.path ?? '/account/dashboard';
+  }, [menuItems]);
 
   const bonusProgramTabs = useMemo(() => {
     const bonusProgramIds = new Set<Tab>(['loyalty', 'achievements', 'promocodes', 'specialoffers']);
     return menuItems
       .filter((item) => bonusProgramIds.has(item.id))
-      .filter((item) => !(item.id === 'achievements' && features.challenges === false))
+      .filter((item) => item.hidden !== true)
       .map((item) => ({
         id: item.id,
         path: item.path,
         label: item.label,
         icon: item.icon
       }));
-  }, [features.challenges, menuItems]);
+  }, [menuItems]);
 
   const mainTabs = useMemo(() => {
     const visibilityById = new Map(menuItems.map((item) => [item.id, item.hidden !== true]));
@@ -148,6 +196,24 @@ export function AccountPage() {
 
     document.title = titleParts.join(' · ');
   }, [activeTab, location.search, menuItems, salonName, t]);
+
+  useEffect(() => {
+    const activeItem = menuItems.find((item) => item.id === activeTab);
+    if (activeItem === undefined) {
+      return;
+    }
+
+    if (activeItem.hidden !== true) {
+      return;
+    }
+
+    if (location.pathname === fallbackAccountPath) {
+      return;
+    }
+
+    toast.error(t('common:access_denied', 'Доступ запрещен'));
+    navigate(fallbackAccountPath, { replace: true });
+  }, [activeTab, fallbackAccountPath, location.pathname, menuItems, navigate, t]);
 
   // Load user data and notifications count
   useEffect(() => {
@@ -330,7 +396,7 @@ export function AccountPage() {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard visibleMenuIds={visibleMenuIds} />;
       case 'appointments':
         return <Appointments />;
       case 'gallery':
@@ -352,7 +418,7 @@ export function AccountPage() {
       case 'specialoffers':
         return <PromoCodesView mode="special-offers" />;
       default:
-        return <Dashboard />;
+        return <Dashboard visibleMenuIds={visibleMenuIds} />;
     }
   };
 
@@ -383,6 +449,7 @@ export function AccountPage() {
       <nav className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
         {menuItems.map((item) => {
           if (item.hidden) return null;
+          if (item.showInSidebar === false) return null;
           const isActive = location.pathname === item.path || (item.id === 'loyalty' && isBonusProgramSection);
           const Icon = item.icon;
 
@@ -427,23 +494,25 @@ export function AccountPage() {
           <div className="flex-1 p-2 bg-gray-50 rounded-xl">
             <LanguageSwitcher variant="minimal" />
           </div>
-          <button
-            onClick={() => navigate('/account/notifications')}
-            className={cn(
-              "p-3 rounded-xl transition-colors shadow-sm relative",
-              location.pathname.includes('/notifications')
-                ? "bg-pink-50 text-pink-600"
-                : "bg-white text-gray-600 hover:bg-gray-100"
-            )}
-            title={t('tabs.notifications', 'Уведомления')}
-          >
-            <Bell size={20} />
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 badge-premium badge-premium-orange badge-header">
-                {unreadCount > 99 ? '99+' : unreadCount}
-              </span>
-            )}
-          </button>
+          {canOpenNotifications && (
+            <button
+              onClick={() => navigate('/account/notifications')}
+              className={cn(
+                "p-3 rounded-xl transition-colors shadow-sm relative",
+                location.pathname.includes('/notifications')
+                  ? "bg-pink-50 text-pink-600"
+                  : "bg-white text-gray-600 hover:bg-gray-100"
+              )}
+              title={t('tabs.notifications', 'Уведомления')}
+            >
+              <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 badge-premium badge-premium-orange badge-header">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </button>
+          )}
           <button
             onClick={handleLogout}
             className="p-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors shadow-sm"
@@ -464,7 +533,7 @@ export function AccountPage() {
       <Toaster />
 
       {/* Notification Bell - Fixed Top Right */}
-      {activeTab === 'dashboard' && (
+      {activeTab === 'dashboard' && canOpenNotifications && (
         <div className="fixed top-4 right-4 z-50">
           <button
             onClick={() => setShowNotifDropdown(!showNotifDropdown)}
@@ -573,6 +642,7 @@ export function AccountPage() {
               {menuItems.map((item: any) => {
                 if (mainTabs.some(t => t.id === item.id)) return null;
                 if (item.hidden) return null;
+                if (item.showInSidebar === false) return null;
 
                 const Icon = item.icon;
                 return (
@@ -593,18 +663,20 @@ export function AccountPage() {
                   <div className="quick-action-item justify-center">
                     <LanguageSwitcher variant="minimal" />
                   </div>
-                  <button
-                    onClick={() => { navigate('/account/notifications'); setShowMoreModal(false); }}
-                    className="quick-action-btn"
-                  >
-                    <div className="quick-action-text-part">
-                      <span className="quick-action-label">{t('tabs.notifications')}</span>
-                    </div>
-                    <div className="quick-action-icon-wrapper">
-                      <Bell size={20} className="text-gray-700" />
-                      {unreadCount > 0 && <span className="quick-action-badge">{unreadCount}</span>}
-                    </div>
-                  </button>
+                  {canOpenNotifications && (
+                    <button
+                      onClick={() => { navigate('/account/notifications'); setShowMoreModal(false); }}
+                      className="quick-action-btn"
+                    >
+                      <div className="quick-action-text-part">
+                        <span className="quick-action-label">{t('tabs.notifications')}</span>
+                      </div>
+                      <div className="quick-action-icon-wrapper">
+                        <Bell size={20} className="text-gray-700" />
+                        {unreadCount > 0 && <span className="quick-action-badge">{unreadCount}</span>}
+                      </div>
+                    </button>
+                  )}
                 </div>
 
                 <div className="profile-logout-row">
@@ -644,7 +716,7 @@ export function AccountPage() {
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
           <div className="flex-1 overflow-y-auto pb-[80px] lg:pb-0">
             <div className="max-w-7xl mx-auto p-4 lg:p-8">
-              {isBonusProgramSection && (
+              {isBonusProgramSection && bonusProgramTabs.length > 0 && (
                 <div className="mb-6 rounded-xl border border-gray-200 bg-white p-2">
                   <div className="flex flex-wrap gap-2">
                     {bonusProgramTabs.map((section) => {

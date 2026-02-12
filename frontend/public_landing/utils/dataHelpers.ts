@@ -5,42 +5,17 @@
 
 /**
  * Получить локализованное имя услуги из данных БД
- * Приоритет: name_{language} -> name_en -> name_ru -> name (базовое поле)
+ * Используется только canonical поле name.
  */
 export function getLocalizedServiceName(
   service: any,
-  language: string
+  _language: string
 ): string {
   if (!service || typeof service !== "object") {
     return "";
   }
 
-  const langKey = language ? language.slice(0, 2) : "en";
-
-  // Проверяем в порядке приоритета
-  const localizedField = `name_${langKey}`;
-  if (service[localizedField] && typeof service[localizedField] === "string") {
-    const trimmed = service[localizedField].trim();
-    if (trimmed.length > 0) {
-      return trimmed;
-    }
-  }
-
-  if (service.name && typeof service.name === "string") {
-    const trimmed = service.name.trim();
-    if (trimmed.length > 0) {
-      return trimmed;
-    }
-  }
-
-  if (service.name && typeof service.name === "string") {
-    const trimmed = service.name.trim();
-    if (trimmed.length > 0) {
-      return trimmed;
-    }
-  }
-
-  if (service.name && typeof service.name === "string") {
+  if (typeof service.name === "string") {
     const trimmed = service.name.trim();
     if (trimmed.length > 0) {
       return trimmed;
@@ -55,40 +30,13 @@ export function getLocalizedServiceName(
  */
 export function getLocalizedServiceDescription(
   service: any,
-  language: string
+  _language: string
 ): string {
   if (!service || typeof service !== "object") {
     return "";
   }
 
-  const langKey = language ? language.slice(0, 2) : "en";
-
-  const localizedField = `description_${langKey}`;
-  if (
-    service[localizedField] &&
-    typeof service[localizedField] === "string"
-  ) {
-    const trimmed = service[localizedField].trim();
-    if (trimmed.length > 0) {
-      return trimmed;
-    }
-  }
-
-  if (service.description && typeof service.description === "string") {
-    const trimmed = service.description.trim();
-    if (trimmed.length > 0) {
-      return trimmed;
-    }
-  }
-
-  if (service.description && typeof service.description === "string") {
-    const trimmed = service.description.trim();
-    if (trimmed.length > 0) {
-      return trimmed;
-    }
-  }
-
-  if (service.description && typeof service.description === "string") {
+  if (typeof service.description === "string") {
     const trimmed = service.description.trim();
     if (trimmed.length > 0) {
       return trimmed;

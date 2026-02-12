@@ -100,8 +100,6 @@ def _load_translations(language: str) -> dict:
             if len(parts) >= 3:
                 table, item_id, field_part = parts[0], parts[1], parts[2]
                 base_field = field_part
-                if '_ru' in field_part:
-                    base_field = field_part.split('_ru')[0]
                 prefix = f"{table}.{item_id}.{base_field}"
                 if prefix not in index:
                     index[prefix] = []
@@ -156,12 +154,7 @@ def get_dynamic_translation(table: str, item_id: int, field: str, language: str,
         if key == prefix:
             return value
             
-    # Priority 3: Keys containing '_ru.' (legacy support)
-    for key, value in matches:
-        if "_ru." in key:
-            return value
-
-    # Priority 4: Keys with hash suffixes (backwards compatibility)
+    # Priority 3: Keys with hash suffixes (backwards compatibility)
     for key, value in matches:
         if "." in key and len(key.split('.')[-1]) > 5:
             return value
