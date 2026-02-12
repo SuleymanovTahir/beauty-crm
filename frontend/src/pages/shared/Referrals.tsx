@@ -27,6 +27,7 @@ import {
 } from '../../components/ui/dialog';
 import { Label } from '../../components/ui/label';
 import { toast } from 'sonner';
+import '../../styles/crm-pages.css';
 
 interface Referral {
     id: string;
@@ -160,7 +161,7 @@ export default function UniversalReferrals() {
     );
 
     return (
-        <div className="min-h-screen bg-gray-50/30 p-4 sm:p-8 animate-in fade-in duration-500">
+        <div className="crm-calendar-theme min-h-screen bg-gray-50/30 p-4 sm:p-8 animate-in fade-in duration-500">
             <div className="max-w-6xl mx-auto space-y-8">
                 {/* Back Navigation */}
                 <button

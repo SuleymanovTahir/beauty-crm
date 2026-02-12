@@ -21,6 +21,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { toast } from 'sonner';
+import '../../styles/crm-pages.css';
 import {
     Dialog,
     DialogContent,
@@ -130,7 +131,7 @@ export default function PromoCodes() {
     );
 
     return (
-        <div className="p-4 sm:p-8 max-w-7xl mx-auto min-h-screen bg-[#fafafa]">
+        <div className="crm-calendar-theme p-4 sm:p-8 max-w-7xl mx-auto min-h-screen bg-[#fafafa]">
             {/* Header section with glassmorphism feel */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>

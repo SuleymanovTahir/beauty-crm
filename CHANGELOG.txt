@@ -1,3 +1,17 @@
+## [2026-02-12] CRM Services Page Structure Restore
+- Restored `/crm/services` visual structure to match the previous CRM style:
+  - Added top navigation tabs block for Services, Special Packages, Referrals, and Challenges.
+  - Added dedicated control bar with service search, category selector, and primary add-service action.
+  - Reworked services table layout with sortable columns, category badges, duration badges, and compact action icons.
+- Updated `frontend/src/pages/shared/Services.tsx` logic:
+  - Added category filtering from loaded services.
+  - Added special packages counter via existing API (`getSpecialPackages`).
+  - Added delete service action with confirmation and refresh flow.
+  - Kept employee-specific history/request flow intact.
+- Added SSOT page styles to `frontend/src/styles/crm-pages.css` under `crm-services-*` classes (no new style file created).
+- Verification:
+  - `frontend`: `npm run lint` (TypeScript strict check) passed.
+
 ## [2026-02-12] Booking Flow Stability & Validation Hardening
 - 🔧 **Critical Booking API Route Fixes**:
   - Fixed malformed API paths with whitespace that caused runtime failures:
