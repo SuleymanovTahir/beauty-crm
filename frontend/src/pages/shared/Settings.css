@@ -81,15 +81,26 @@
 }
 
 .settings-label-spacing {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.45rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
+  line-height: 1.25;
 }
 
 .settings-label-spacing svg {
   flex-shrink: 0;
+}
+
+.settings-general-form input::placeholder,
+.settings-general-form textarea::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+.settings-general-form [data-placeholder] {
+  color: #6b7280;
 }
 
 .settings-loader {
