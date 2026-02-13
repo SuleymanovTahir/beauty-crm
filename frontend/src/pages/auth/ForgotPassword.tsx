@@ -9,6 +9,11 @@ import { toast } from "sonner";
 import { api } from "../../services/api";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
+import {
+  DEFAULT_PLATFORM_GATES,
+  getUnauthenticatedSitePathByGates,
+  normalizePlatformGates,
+} from "../../utils/platformRouting";
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
@@ -17,6 +22,24 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const [platformGates, setPlatformGates] = useState(DEFAULT_PLATFORM_GATES);
+  const loginPath = React.useMemo(
+    () => getUnauthenticatedSitePathByGates(platformGates.site_enabled, platformGates.crm_enabled),
+    [platformGates.crm_enabled, platformGates.site_enabled],
+  );
+
+  React.useEffect(() => {
+    const loadPlatformGates = async () => {
+      try {
+        const gateResponse = await api.getPlatformGates();
+        setPlatformGates(normalizePlatformGates(gateResponse));
+      } catch (gateError) {
+        console.error("Platform gate loading error:", gateError);
+        setPlatformGates(DEFAULT_PLATFORM_GATES);
+      }
+    };
+    loadPlatformGates();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +102,7 @@ export default function ForgotPassword() {
             <div className="space-y-3">
               <Button
                 className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate(loginPath)}
               >
                 {t('back_to_login')}
               </Button>
@@ -166,7 +189,7 @@ export default function ForgotPassword() {
             <Button
               variant="ghost"
               className="w-full"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate(loginPath)}
               disabled={loading}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />

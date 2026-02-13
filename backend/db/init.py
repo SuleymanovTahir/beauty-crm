@@ -455,6 +455,10 @@ def init_database():
             booking_url TEXT, timezone TEXT DEFAULT 'Asia/Dubai',
             timezone_offset INTEGER DEFAULT 4,
             currency TEXT DEFAULT '{SALON_CURRENCY_DEFAULT}',
+            business_type TEXT DEFAULT 'beauty',
+            product_mode TEXT DEFAULT 'both',
+            crm_enabled BOOLEAN DEFAULT TRUE,
+            site_enabled BOOLEAN DEFAULT TRUE,
             city TEXT, country TEXT,
             latitude REAL, longitude REAL,
             logo_url TEXT, base_url TEXT,
@@ -478,6 +482,10 @@ def init_database():
         add_column_if_not_exists('salon_settings', 'main_location', 'TEXT')
         add_column_if_not_exists('salon_settings', 'loyalty_points_conversion_rate', 'REAL DEFAULT 0')
         add_column_if_not_exists('salon_settings', 'points_expiration_days', 'INTEGER DEFAULT 365')
+        add_column_if_not_exists('salon_settings', 'business_type', "TEXT DEFAULT 'beauty'")
+        add_column_if_not_exists('salon_settings', 'product_mode', "TEXT DEFAULT 'both'")
+        add_column_if_not_exists('salon_settings', 'crm_enabled', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('salon_settings', 'site_enabled', 'BOOLEAN DEFAULT TRUE')
 
 
         # Registration Audit Log
@@ -2222,6 +2230,42 @@ def init_database():
         # Critical migrations for salon_settings
         add_column_if_not_exists('salon_settings', 'bot_config', "JSONB DEFAULT '{}'")
         add_column_if_not_exists('salon_settings', 'messenger_config', "JSONB DEFAULT '[]'")
+        add_column_if_not_exists('salon_settings', 'business_type', "TEXT DEFAULT 'beauty'")
+        add_column_if_not_exists('salon_settings', 'product_mode', "TEXT DEFAULT 'both'")
+        add_column_if_not_exists('salon_settings', 'crm_enabled', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('salon_settings', 'site_enabled', 'BOOLEAN DEFAULT TRUE')
+
+        c.execute("""
+            UPDATE salon_settings
+            SET business_type = 'beauty'
+            WHERE business_type IS NULL OR TRIM(business_type) = ''
+        """)
+        c.execute("""
+            UPDATE salon_settings
+            SET product_mode = 'both'
+            WHERE product_mode IS NULL OR TRIM(product_mode) = ''
+        """)
+        c.execute("""
+            UPDATE salon_settings
+            SET crm_enabled = TRUE
+            WHERE crm_enabled IS NULL
+        """)
+        c.execute("""
+            UPDATE salon_settings
+            SET site_enabled = TRUE
+            WHERE site_enabled IS NULL
+        """)
+        c.execute("""
+            UPDATE salon_settings
+            SET custom_settings = jsonb_set(
+                COALESCE(custom_settings, '{}'::jsonb),
+                '{business_profile_config}',
+                COALESCE(custom_settings -> 'business_profile_config', '{"schema_version": 1}'::jsonb),
+                TRUE
+            )
+            WHERE custom_settings IS NULL
+               OR (custom_settings ? 'business_profile_config') = FALSE
+        """)
         add_column_if_not_exists('newsletter_subscribers', 'name', 'TEXT')
 
         # Ensure workflow_stages table exists (critical for tasks)

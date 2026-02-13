@@ -3,6 +3,7 @@
 """
 
 from datetime import datetime
+from copy import deepcopy
 import json
 import os
 import psycopg2
@@ -14,7 +15,8 @@ from utils.logger import log_error, log_warning, log_info
 from core.config import (
     DEFAULT_HOURS_WEEKDAYS,
     DEFAULT_HOURS_WEEKENDS,
-    DEFAULT_REPORT_TIME
+    DEFAULT_REPORT_TIME,
+    ROLES
 )
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -55,6 +57,389 @@ def _normalize_timezone_offset(raw_offset):
     except (TypeError, ValueError):
         return None
 
+
+_ALLOWED_BUSINESS_TYPES = {
+    "beauty",
+    "restaurant",
+    "construction",
+    "factory",
+    "taxi",
+    "delivery",
+    "other",
+}
+_ALLOWED_PRODUCT_MODES = {"crm", "site", "both"}
+_BUSINESS_CONFIG_SCHEMA_VERSION = 1
+_BUSINESS_CONFIG_KEY = "business_profile_config"
+
+_CRM_MODULE_KEYS = [
+    "dashboard",
+    "bookings",
+    "calendar",
+    "clients",
+    "team",
+    "services",
+    "tasks",
+    "analytics",
+    "visitor_analytics",
+    "funnel",
+    "products",
+    "invoices",
+    "contracts",
+    "telephony",
+    "messengers",
+    "internal_chat",
+    "broadcasts",
+    "referrals",
+    "loyalty",
+    "challenges",
+    "promo_codes",
+    "service_change_requests",
+    "settings",
+    "public_content",
+    "bot_settings",
+    "notifications",
+    "plans",
+    "payment_integrations",
+    "marketplace_integrations",
+    "trash",
+    "audit_log",
+]
+
+_SITE_MODULE_KEYS = [
+    "landing",
+    "service_catalog",
+    "public_booking",
+    "account_portal",
+    "account_booking",
+    "referral_landing",
+    "gallery",
+    "faq",
+    "reviews",
+    "terms_privacy",
+    "data_deletion",
+    "unsubscribe",
+    "lead_capture",
+]
+
+_BUSINESS_DISABLED_MODULES = {
+    "beauty": {"crm": set(), "site": set()},
+    "restaurant": {
+        "crm": {"service_change_requests"},
+        "site": set(),
+    },
+    "construction": {
+        "crm": {"loyalty", "challenges", "promo_codes", "referrals", "service_change_requests"},
+        "site": {"public_booking", "account_portal", "account_booking", "gallery", "reviews"},
+    },
+    "factory": {
+        "crm": {"loyalty", "challenges", "promo_codes", "referrals", "funnel", "service_change_requests"},
+        "site": {"public_booking", "account_portal", "account_booking", "gallery", "reviews", "faq"},
+    },
+    "taxi": {
+        "crm": {"loyalty", "challenges", "service_change_requests", "plans"},
+        "site": {"gallery", "faq", "reviews"},
+    },
+    "delivery": {
+        "crm": {"loyalty", "challenges", "referrals", "service_change_requests"},
+        "site": {"gallery", "faq"},
+    },
+    "other": {"crm": set(), "site": set()},
+}
+
+_MODULE_PERMISSION_KEYS = {
+    "bookings": {
+        "bookings_view",
+        "bookings_view_own",
+        "bookings_create",
+        "bookings_edit",
+        "bookings_delete",
+    },
+    "calendar": {"calendar_view_all", "calendar_view_all_readonly", "calendar_view_own"},
+    "clients": {
+        "clients_view",
+        "clients_view_limited",
+        "clients_view_own",
+        "clients_view_stats_only",
+        "clients_create",
+        "clients_edit",
+        "clients_delete",
+        "clients_export",
+        "clients_view_phone",
+        "clients_view_phones",
+    },
+    "team": {"users_view", "users_create", "users_edit", "users_delete", "roles_view", "roles_edit"},
+    "services": {"services_view", "services_edit", "services_edit_pricing", "services_edit_prices"},
+    "tasks": {"tasks_view", "tasks_view_own", "tasks_create", "tasks_edit", "tasks_delete"},
+    "analytics": {
+        "analytics_view",
+        "analytics_view_anonymized",
+        "analytics_view_stats_only",
+        "analytics_view_financial",
+        "analytics_export_full",
+        "analytics_export_anonymized",
+    },
+    "visitor_analytics": {"analytics_view", "analytics_view_anonymized", "analytics_view_stats_only"},
+    "funnel": {"analytics_view", "analytics_view_anonymized", "analytics_view_stats_only"},
+    "telephony": {"telephony_access"},
+    "messengers": {"instagram_chat_view", "instagram_chat_reply"},
+    "internal_chat": {"staff_chat_own", "staff_chat_view_all"},
+    "broadcasts": {"broadcasts_send", "broadcasts_view"},
+    "referrals": {"settings_edit_loyalty"},
+    "loyalty": {"settings_edit_loyalty"},
+    "challenges": {"settings_edit_loyalty"},
+    "promo_codes": {"settings_edit_loyalty"},
+    "invoices": {"payroll_manage"},
+    "contracts": {"payroll_manage"},
+    "settings": {
+        "settings_view",
+        "settings_edit",
+        "settings_edit_branding",
+        "settings_edit_finance",
+        "settings_edit_integrations",
+        "settings_edit_loyalty",
+        "settings_edit_schedule",
+    },
+    "public_content": {"settings_edit_branding"},
+    "bot_settings": {"bot_settings_view", "bot_settings_edit"},
+    "payment_integrations": {"settings_edit_integrations"},
+    "marketplace_integrations": {"settings_edit_integrations"},
+    "trash": {"settings_edit"},
+    "audit_log": {"roles_view"},
+}
+
+_SHARED_DOMAIN_MATRIX = {
+    "auth": "shared",
+    "bookings": "shared",
+    "services": "shared",
+    "clients": "shared",
+}
+
+
+def _build_module_matrix_for_business_type(business_type: str) -> dict:
+    normalized_business_type = _normalize_business_type(business_type)
+    disabled_map = _BUSINESS_DISABLED_MODULES.get(normalized_business_type, _BUSINESS_DISABLED_MODULES["beauty"])
+
+    crm_modules = {module_key: True for module_key in _CRM_MODULE_KEYS}
+    site_modules = {module_key: True for module_key in _SITE_MODULE_KEYS}
+
+    for disabled_module in disabled_map.get("crm", set()):
+        if disabled_module in crm_modules:
+            crm_modules[disabled_module] = False
+
+    for disabled_module in disabled_map.get("site", set()):
+        if disabled_module in site_modules:
+            site_modules[disabled_module] = False
+
+    return {
+        "crm": crm_modules,
+        "site": site_modules,
+    }
+
+
+def _collect_disabled_permissions(module_matrix: dict) -> set:
+    disabled_permissions: set = set()
+    crm_modules = module_matrix.get("crm") if isinstance(module_matrix, dict) else {}
+
+    if not isinstance(crm_modules, dict):
+        return disabled_permissions
+
+    for module_key, is_enabled in crm_modules.items():
+        if is_enabled is True:
+            continue
+        permission_keys = _MODULE_PERMISSION_KEYS.get(module_key, set())
+        disabled_permissions.update(permission_keys)
+
+    return disabled_permissions
+
+
+def _build_role_permissions_from_modules(module_matrix: dict) -> dict:
+    disabled_permissions = _collect_disabled_permissions(module_matrix)
+    role_permissions: dict = {}
+
+    for role_key, role_data in ROLES.items():
+        permissions = role_data.get("permissions", [])
+        if permissions == "*":
+            role_permissions[role_key] = "*"
+            continue
+
+        cleaned_permissions: list[str] = []
+        if isinstance(permissions, list):
+            for permission_key in permissions:
+                if not isinstance(permission_key, str):
+                    continue
+                if permission_key in disabled_permissions:
+                    continue
+                cleaned_permissions.append(permission_key)
+
+        role_permissions[role_key] = cleaned_permissions
+
+    return role_permissions
+
+
+def _normalize_module_matrix(raw_modules, default_modules: dict) -> dict:
+    normalized_modules = deepcopy(default_modules)
+    if not isinstance(raw_modules, dict):
+        return normalized_modules
+
+    for suite_key in ("crm", "site"):
+        suite_value = raw_modules.get(suite_key)
+        if not isinstance(suite_value, dict):
+            continue
+
+        for module_key in normalized_modules[suite_key].keys():
+            if module_key not in suite_value:
+                continue
+            normalized_flag = _normalize_bool(suite_value[module_key])
+            if normalized_flag is None:
+                continue
+            normalized_modules[suite_key][module_key] = normalized_flag
+
+    return normalized_modules
+
+
+def _normalize_role_permissions(raw_permissions, default_permissions: dict, module_matrix: dict) -> dict:
+    normalized_permissions = deepcopy(default_permissions)
+
+    if isinstance(raw_permissions, dict):
+        for role_key in normalized_permissions.keys():
+            default_role_permissions = normalized_permissions[role_key]
+            if default_role_permissions == "*":
+                continue
+
+            role_override = raw_permissions.get(role_key)
+            if not isinstance(role_override, list):
+                continue
+
+            cleaned_override: list[str] = []
+            for permission_value in role_override:
+                if not isinstance(permission_value, str):
+                    continue
+                if permission_value in cleaned_override:
+                    continue
+                cleaned_override.append(permission_value)
+            normalized_permissions[role_key] = cleaned_override
+
+    disabled_permissions = _collect_disabled_permissions(module_matrix)
+    for role_key, role_permission_values in normalized_permissions.items():
+        if role_permission_values == "*":
+            continue
+        normalized_permissions[role_key] = [
+            permission_key
+            for permission_key in role_permission_values
+            if permission_key not in disabled_permissions
+        ]
+
+    return normalized_permissions
+
+
+def _build_default_business_profile_config(business_type: str) -> dict:
+    normalized_business_type = _normalize_business_type(business_type)
+    module_matrix = _build_module_matrix_for_business_type(normalized_business_type)
+    role_permissions = _build_role_permissions_from_modules(module_matrix)
+
+    return {
+        "schema_version": _BUSINESS_CONFIG_SCHEMA_VERSION,
+        "business_type": normalized_business_type,
+        "modules": module_matrix,
+        "role_permissions": role_permissions,
+        "shared_domains": deepcopy(_SHARED_DOMAIN_MATRIX),
+    }
+
+
+def _normalize_business_profile_config(raw_config, business_type: str) -> dict:
+    normalized_business_type = _normalize_business_type(business_type)
+    default_config = _build_default_business_profile_config(normalized_business_type)
+
+    if not isinstance(raw_config, dict):
+        return default_config
+
+    schema_version = raw_config.get("schema_version")
+    if schema_version != _BUSINESS_CONFIG_SCHEMA_VERSION:
+        return default_config
+
+    modules = _normalize_module_matrix(raw_config.get("modules"), default_config["modules"])
+    role_permissions = _normalize_role_permissions(
+        raw_config.get("role_permissions"),
+        default_config["role_permissions"],
+        modules,
+    )
+
+    shared_domains = deepcopy(default_config["shared_domains"])
+    raw_shared_domains = raw_config.get("shared_domains")
+    if isinstance(raw_shared_domains, dict):
+        for domain_key in shared_domains.keys():
+            raw_domain_value = raw_shared_domains.get(domain_key)
+            if isinstance(raw_domain_value, str) and len(raw_domain_value.strip()) > 0:
+                shared_domains[domain_key] = raw_domain_value.strip()
+
+    return {
+        "schema_version": _BUSINESS_CONFIG_SCHEMA_VERSION,
+        "business_type": normalized_business_type,
+        "modules": modules,
+        "role_permissions": role_permissions,
+        "shared_domains": shared_domains,
+    }
+
+
+def get_business_profile_matrix() -> dict:
+    profiles = {}
+    for business_type in sorted(_ALLOWED_BUSINESS_TYPES):
+        profiles[business_type] = _build_default_business_profile_config(business_type)
+
+    return {
+        "schema_version": _BUSINESS_CONFIG_SCHEMA_VERSION,
+        "module_catalog": {
+            "crm": list(_CRM_MODULE_KEYS),
+            "site": list(_SITE_MODULE_KEYS),
+        },
+        "role_catalog": sorted(list(ROLES.keys())),
+        "profiles": profiles,
+    }
+
+
+def get_effective_business_profile_config(business_type: str, custom_settings) -> dict:
+    raw_profile_config = None
+    if isinstance(custom_settings, dict):
+        raw_profile_config = custom_settings.get(_BUSINESS_CONFIG_KEY)
+
+    return _normalize_business_profile_config(raw_profile_config, business_type)
+
+
+def _normalize_business_type(raw_value) -> str:
+    value = str(raw_value or "").strip().lower()
+    if value in _ALLOWED_BUSINESS_TYPES:
+        return value
+    return "beauty"
+
+
+def _normalize_product_mode(raw_value) -> str:
+    value = str(raw_value or "").strip().lower()
+    if value in _ALLOWED_PRODUCT_MODES:
+        return value
+    return "both"
+
+
+def _normalize_bool(raw_value):
+    if isinstance(raw_value, bool):
+        return raw_value
+    if isinstance(raw_value, (int, float)):
+        return bool(raw_value)
+    if isinstance(raw_value, str):
+        lowered = raw_value.strip().lower()
+        if lowered in {"true", "1", "yes", "on"}:
+            return True
+        if lowered in {"false", "0", "no", "off"}:
+            return False
+    return None
+
+
+def _product_mode_to_flags(product_mode: str):
+    if product_mode == "crm":
+        return True, False
+    if product_mode == "site":
+        return False, True
+    return True, True
+
 # ===== НАСТРОЙКИ САЛОНА =====
 
 def get_salon_settings() -> dict:
@@ -79,6 +464,9 @@ def get_salon_settings() -> dict:
                 except:
                     custom = {}
 
+            normalized_business_type = _normalize_business_type(row.get("business_type"))
+            business_profile_config = get_effective_business_profile_config(normalized_business_type, custom)
+
             return {
                 "id": row.get("id", 1),
                 "name": row.get("name"),
@@ -96,6 +484,10 @@ def get_salon_settings() -> dict:
                 "timezone": row.get("timezone", "Asia/Dubai"),
                 "timezone_offset": row.get("timezone_offset", 4),
                 "currency": row.get("currency") or get_salon_currency(),
+                "business_type": normalized_business_type,
+                "product_mode": row.get("product_mode") or "both",
+                "crm_enabled": row.get("crm_enabled") if row.get("crm_enabled") is not None else True,
+                "site_enabled": row.get("site_enabled") if row.get("site_enabled") is not None else True,
                 "city": row.get("city", ""),
                 "country": row.get("country", ""),
                 "latitude": row.get("latitude"),
@@ -108,6 +500,7 @@ def get_salon_settings() -> dict:
                 "portfolio_display_count": custom.get("portfolio_display_count", 6),
                 "services_display_count": custom.get("services_display_count", 6),
                 "faces_display_count": custom.get("faces_display_count", 6),
+                "business_profile_config": business_profile_config,
                 "updated_at": row.get("updated_at")
             }
         else:
@@ -123,6 +516,7 @@ def get_salon_settings() -> dict:
 def _get_default_salon_settings() -> dict:
     """Дефолтные настройки салона"""
     from utils.currency import get_salon_currency
+    default_business_type = "beauty"
     return {
         "id": 1,
         "name": os.getenv('SALON_NAME', 'Beauty Salon'),
@@ -137,10 +531,15 @@ def _get_default_salon_settings() -> dict:
         "timezone": "Asia/Dubai",
         "timezone_offset": 4,
         "currency": get_salon_currency(),
+        "business_type": default_business_type,
+        "product_mode": "both",
+        "crm_enabled": True,
+        "site_enabled": True,
         "gallery_display_count": 6,
         "portfolio_display_count": 6,
         "services_display_count": 6,
-        "faces_display_count": 6
+        "faces_display_count": 6,
+        "business_profile_config": _build_default_business_profile_config(default_business_type)
     }
 
 def update_salon_settings(data: dict) -> bool:
@@ -149,10 +548,11 @@ def update_salon_settings(data: dict) -> bool:
     c = conn.cursor()
 
     try:
-        # 1. Fetch current for merging custom_settings
-        c.execute("SELECT custom_settings FROM salon_settings WHERE id = 1")
+        # 1. Fetch current for merging custom_settings and business profile
+        c.execute("SELECT custom_settings, business_type FROM salon_settings WHERE id = 1")
         row = c.fetchone()
         custom = row[0] if row and row[0] else {}
+        current_business_type = _normalize_business_type(row[1] if row and len(row) > 1 else "beauty")
         if isinstance(custom, str):
             try:
                 custom = json.loads(custom)
@@ -163,7 +563,8 @@ def update_salon_settings(data: dict) -> bool:
         direct_fields = [
             'name', 'address', 'google_maps', 'hours_weekdays', 'hours_weekends',
             'lunch_start', 'lunch_end', 'phone', 'email', 'instagram', 'whatsapp',
-            'booking_url', 'timezone', 'timezone_offset', 'currency', 'city', 'country',
+            'booking_url', 'timezone', 'timezone_offset', 'currency', 'business_type',
+            'product_mode', 'crm_enabled', 'site_enabled', 'city', 'country',
             'latitude', 'longitude', 'logo_url', 'base_url', 'bot_name'
         ]
         
@@ -174,10 +575,34 @@ def update_salon_settings(data: dict) -> bool:
 
         set_parts = []
         params = []
+        normalized_product_mode = None
+        effective_business_type = current_business_type
 
         # Handle direct fields
         for field in direct_fields:
             if field in data:
+                if field == 'business_type':
+                    normalized_business_type = _normalize_business_type(data[field])
+                    set_parts.append(f"{field} = %s")
+                    params.append(normalized_business_type)
+                    effective_business_type = normalized_business_type
+                    continue
+
+                if field == 'product_mode':
+                    normalized_product_mode = _normalize_product_mode(data[field])
+                    set_parts.append(f"{field} = %s")
+                    params.append(normalized_product_mode)
+                    continue
+
+                if field in {'crm_enabled', 'site_enabled'}:
+                    normalized_flag = _normalize_bool(data[field])
+                    if normalized_flag is None:
+                        log_warning(f"⚠️ Невалидный булев флаг пропущен для {field}: {data[field]}", "database")
+                        continue
+                    set_parts.append(f"{field} = %s")
+                    params.append(normalized_flag)
+                    continue
+
                 if field == 'timezone_offset':
                     normalized_offset = _normalize_timezone_offset(data[field])
                     if normalized_offset is None:
@@ -200,12 +625,33 @@ def update_salon_settings(data: dict) -> bool:
                 set_parts.append(f"{field} = %s")
                 params.append(data[field])
 
-        # Handle custom fields (consolidate into JSONB)
+        if normalized_product_mode is not None:
+            crm_enabled, site_enabled = _product_mode_to_flags(normalized_product_mode)
+            if 'crm_enabled' not in data:
+                set_parts.append("crm_enabled = %s")
+                params.append(crm_enabled)
+            if 'site_enabled' not in data:
+                set_parts.append("site_enabled = %s")
+                params.append(site_enabled)
+
         custom_updated = False
+
+        # Handle custom fields (consolidate into JSONB)
         for field in custom_fields:
             if field in data:
                 custom[field] = data[field]
                 custom_updated = True
+
+        # Versioned business profile config (migration-compatible schema in custom_settings JSONB)
+        if _BUSINESS_CONFIG_KEY in data:
+            custom[_BUSINESS_CONFIG_KEY] = _normalize_business_profile_config(data[_BUSINESS_CONFIG_KEY], effective_business_type)
+            custom_updated = True
+        elif 'business_type' in data:
+            custom[_BUSINESS_CONFIG_KEY] = _normalize_business_profile_config(custom.get(_BUSINESS_CONFIG_KEY), effective_business_type)
+            custom_updated = True
+        elif _BUSINESS_CONFIG_KEY not in custom:
+            custom[_BUSINESS_CONFIG_KEY] = _build_default_business_profile_config(effective_business_type)
+            custom_updated = True
         
         if custom_updated:
             set_parts.append("custom_settings = %s")

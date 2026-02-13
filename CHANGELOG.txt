@@ -1,3 +1,77 @@
+## [2026-02-13] Registration Industry Profile + CRM/Site Product Mode Foundation
+- Registration flow updated to collect company profile on signup:
+  - Added required fields in `frontend/src/pages/auth/Register.tsx`:
+    - `business_type` (beauty, restaurant, construction, factory, taxi, delivery, other),
+    - `product_mode` (crm, site, both).
+  - Extended API payload wiring in `frontend/src/services/api.ts`.
+- Added multilingual dictionary keys for new registration fields in all 9 locales:
+  - `frontend/src/locales/*/auth/Register.json`.
+- Backend registration now accepts and applies company profile values:
+  - `backend/core/auth.py` accepts `business_type` and `product_mode` in `/register` and `/register/employee`.
+  - On initial/default profile state, registration updates `salon_settings` with:
+    - `business_type`, `product_mode`, `crm_enabled`, `site_enabled`.
+- Database schema extended (idempotent SSOT migration path):
+  - `backend/db/init.py` now ensures `salon_settings` columns:
+    - `business_type`, `product_mode`, `crm_enabled`, `site_enabled`.
+  - Added safe backfill for existing rows with null values.
+- Salon settings domain model and API extended:
+  - `backend/db/settings.py` now returns/updates the new fields with validation/normalization.
+  - `backend/api/settings.py` includes new fields in public settings response and permission-based update mapping.
+- Shared frontend types updated:
+  - `frontend/shared/src/types/auth.ts`,
+  - `frontend/shared/src/types/common.ts`.
+
+## [2026-02-13] Feature-Gated Route Split: Site+Account vs CRM
+- Frontend route groups are now technically separated by platform gates:
+  - `frontend/src/App.tsx` now loads `site_enabled/crm_enabled` via `api.getPlatformGates()` before route rendering.
+  - Added conditional route mounting with safe redirects:
+    - Site suite group (`/`, `/ref/*`, `/service/*`, `/terms`, `/privacy-policy`, `/data-deletion`, `/unsubscribe`, `/account/*`, `/new-booking`, `/admin/*`) only when `site_enabled=true`.
+    - CRM suite group (`/crm/*`, `/manager/*`, `/sales/*`, `/marketer/*`, `/employee/*`, `/saler/*`) only when `crm_enabled=true`.
+  - Login/register routes now auto-switch between `/login` and `/crm/login` depending on enabled product group.
+  - Added role-aware fallback redirect logic to avoid route loops when one suite is disabled.
+- API client support:
+  - `frontend/src/services/api.ts` added `getPlatformGates()` for lightweight gate bootstrap.
+- Backend support for gate bootstrap and isolation:
+  - `backend/api/settings.py` added public `GET /api/platform-gates` returning `business_type`, `product_mode`, `crm_enabled`, `site_enabled`.
+  - `backend/main.py` added feature-gate middleware for CRM rental mode:
+    - when `site_enabled=false`, site/account API surface is hidden (`/api/public*`, `/api/client*`, `/api/public-admin*`, `/api/register/client`).
+- Validation:
+  - `npm run type-check` passed.
+  - `python3 -m py_compile backend/api/settings.py backend/main.py backend/core/auth.py backend/db/init.py backend/db/settings.py` passed.
+
+## [2026-02-13] Auth Flow Consolidation + Business-Type Matrix Schema (SSOT)
+- Unified auth/navigation routing logic for split products (site+account vs crm):
+  - Added shared resolver `frontend/src/utils/platformRouting.ts` (role normalization, home-path resolver, suite-aware unauthenticated paths, platform gate normalization).
+  - Connected shared resolver in:
+    - `frontend/src/App.tsx`,
+    - `frontend/public_landing/pages/LoginPage.tsx`,
+    - `frontend/src/pages/auth/Login.tsx`,
+    - `frontend/src/pages/auth/Register.tsx`,
+    - `frontend/src/pages/auth/VerifyEmail.tsx`.
+  - Result: login/register/verify now redirect consistently using the same gate+role policy, instead of divergent hardcoded paths.
+- Added missing admin booking access in site-suite admin group:
+  - Routes: `/admin/bookings`, `/admin/bookings/:id` in `frontend/src/App.tsx`.
+  - Admin panel menu item added in `frontend/src/components/layouts/UniversalLayout.tsx`.
+- Added strict admin URL guard by business module matrix:
+  - `frontend/src/components/layouts/UniversalLayout.tsx` now builds admin route-access entries from unified admin menu catalog and enforces redirect when a disabled module URL is opened directly (not only hidden from menu).
+- Added business-type modules/permissions matrix and migration-compatible config schema:
+  - SSOT matrix implemented in `backend/db/settings.py` for `beauty`, `restaurant`, `construction`, `factory`, `taxi`, `delivery`, `other`:
+    - module matrix (`crm` + `site`),
+    - role permission matrix derived from active modules.
+  - Effective profile stored as versioned JSON in existing `salon_settings.custom_settings.business_profile_config` (no new duplicate tables).
+  - New backend API:
+    - `GET /api/business-profile/matrix` (matrix + current effective workspace profile),
+    - `POST /api/business-profile/config` (override modules/role permissions/business type).
+  - `backend/core/auth.py` and `backend/db/init.py` now seed `business_profile_config` skeleton (`schema_version=1`) idempotently for compatibility during registration/migrations.
+- Frontend API surface extended:
+  - `frontend/src/services/api.ts`:
+    - `getBusinessProfileMatrix()`,
+    - `updateBusinessProfileConfig(...)`.
+  - Shared types extended in `frontend/shared/src/types/common.ts` (`BusinessProfileConfig`, `BusinessProfileMatrixResponse`).
+- Validation:
+  - `npm run type-check` passed.
+  - `python3 -m py_compile backend/api/settings.py backend/core/auth.py backend/db/init.py backend/db/settings.py backend/main.py` passed.
+
 ## [2026-02-13] Mobile UX Cleanup + Referral Attribution Persistence
 - CRM mobile “More” menu profile block:
   - Reworked bottom profile/actions area in `frontend/src/components/layouts/UniversalLayout.tsx` to match card-style layout (language, notifications, profile card, logout button).

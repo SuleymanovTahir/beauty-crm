@@ -47,6 +47,11 @@ import { api } from '../../services/api';
 import { usePermissions } from '../../utils/permissions';
 import { webrtcService } from '../../services/webrtc';
 import { cn } from '../../lib/utils';
+import {
+    getUnauthenticatedCrmPathByGates,
+    getUnauthenticatedSitePathByGates,
+    normalizePlatformGates,
+} from '../../utils/platformRouting';
 import './MainLayout.css';
 
 interface MainLayoutProps {
@@ -77,6 +82,57 @@ export const CRM_MENU_GROUPS: Record<string, string[]> = {
     'tools-group': ['tasks', 'broadcasts', 'telephony', 'referrals', 'promo-codes', 'loyalty', 'challenges'],
     'integrations-group': ['messengers', 'payment-integrations', 'marketplace-integrations'],
     'settings-group': ['settings', 'team', 'public-content', 'bot-settings', 'audit-log', 'trash'],
+};
+
+type BusinessModuleBinding = {
+    suite: 'crm' | 'site';
+    module: string;
+};
+
+const MENU_MODULE_BINDINGS: Record<string, BusinessModuleBinding> = {
+    dashboard: { suite: 'crm', module: 'dashboard' },
+    bookings: { suite: 'crm', module: 'bookings' },
+    calendar: { suite: 'crm', module: 'calendar' },
+    clients: { suite: 'crm', module: 'clients' },
+    team: { suite: 'crm', module: 'team' },
+    services: { suite: 'crm', module: 'services' },
+    tasks: { suite: 'crm', module: 'tasks' },
+    analytics: { suite: 'crm', module: 'analytics' },
+    'visitor-analytics': { suite: 'crm', module: 'visitor_analytics' },
+    funnel: { suite: 'crm', module: 'funnel' },
+    products: { suite: 'crm', module: 'products' },
+    invoices: { suite: 'crm', module: 'invoices' },
+    contracts: { suite: 'crm', module: 'contracts' },
+    telephony: { suite: 'crm', module: 'telephony' },
+    messengers: { suite: 'crm', module: 'messengers' },
+    'internal-chat': { suite: 'crm', module: 'internal_chat' },
+    broadcasts: { suite: 'crm', module: 'broadcasts' },
+    referrals: { suite: 'crm', module: 'referrals' },
+    loyalty: { suite: 'crm', module: 'loyalty' },
+    challenges: { suite: 'crm', module: 'challenges' },
+    'promo-codes': { suite: 'crm', module: 'promo_codes' },
+    'service-change-requests': { suite: 'crm', module: 'service_change_requests' },
+    settings: { suite: 'crm', module: 'settings' },
+    'public-content': { suite: 'crm', module: 'public_content' },
+    'bot-settings': { suite: 'crm', module: 'bot_settings' },
+    notifications: { suite: 'crm', module: 'notifications' },
+    plans: { suite: 'crm', module: 'plans' },
+    'payment-integrations': { suite: 'crm', module: 'payment_integrations' },
+    'marketplace-integrations': { suite: 'crm', module: 'marketplace_integrations' },
+    trash: { suite: 'crm', module: 'trash' },
+    'audit-log': { suite: 'crm', module: 'audit_log' },
+    gallery: { suite: 'site', module: 'gallery' },
+};
+
+type LayoutSalonSettings = {
+    name?: string;
+    logo_url?: string;
+    business_profile_config?: {
+        modules?: {
+            crm?: Record<string, boolean>;
+            site?: Record<string, boolean>;
+        };
+    };
 };
 
 export const buildCrmMenuCatalog = ({
@@ -135,6 +191,29 @@ export const buildCrmMenuCatalog = ({
     return { items, groups: CRM_MENU_GROUPS, defaultOrder: CRM_MENU_DEFAULT_ORDER };
 };
 
+export const buildAdminMenuCatalog = ({
+    t,
+}: {
+    t: (key: string, options?: any) => string;
+}) => {
+    const items: Record<string, any> = {
+        'dashboard': { icon: LayoutDashboard, label: t('layouts/adminpanellayout:menu.dashboard'), path: '/admin/dashboard', req: () => true },
+        'bookings': { icon: Calendar, label: t('menu.bookings'), path: '/admin/bookings', req: () => true },
+        'team': { icon: Users, label: t('layouts/adminpanellayout:menu.team', 'Команда'), path: '/admin/team', req: () => true },
+        'clients': { icon: Users, label: t('menu.clients'), path: '/admin/clients', req: () => true },
+        'loyalty': { icon: Gift, label: t('adminpanel/loyaltymanagement:title'), path: '/admin/loyalty', req: () => true },
+        'referrals': { icon: Award, label: t('layouts/adminpanellayout:menu.referral_program'), path: '/admin/referrals', req: () => true },
+        'challenges': { icon: Target, label: t('layouts/adminpanellayout:menu.challenges'), path: '/admin/challenges', req: () => true },
+        'promo-codes': { icon: Ticket, label: t('layouts/mainlayout:menu.promo_codes'), path: '/admin/promo-codes', req: () => true },
+        'gallery': { icon: ImageIcon, label: t('layouts/adminpanellayout:menu.photo_gallery'), path: '/admin/gallery', req: () => true },
+        'broadcasts': { icon: Send, label: t('menu.broadcasts'), path: '/admin/broadcasts', req: () => true },
+        'notifications': { icon: Bell, label: t('layouts/adminpanellayout:menu.notifications'), path: '/admin/notifications', req: () => true },
+        'settings': { icon: Settings, label: t('menu.settings'), path: '/admin/settings', req: () => true },
+    };
+
+    return { items };
+};
+
 export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     const navigate = useNavigate();
     const location = useLocation();
@@ -158,11 +237,57 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
     const [mobileExpandedGroups, setMobileExpandedGroups] = useState<Set<string>>(new Set());
     const [menuSettings, setMenuSettings] = useState<{ menu_order: any[] | null; hidden_items: string[] | null } | null>(null);
-    const [salonSettings, setSalonSettings] = useState<{ name?: string; logo_url?: string } | null>(null);
+    const [salonSettings, setSalonSettings] = useState<LayoutSalonSettings | null>(null);
     const sidebarNavRef = useRef<HTMLElement | null>(null);
     const lastDeniedPathRef = useRef<string>('');
 
     const permissions = usePermissions(user?.role || 'employee', user?.secondary_role);
+
+    const normalizedPlatformGates = useMemo(() => normalizePlatformGates(salonSettings), [salonSettings]);
+    const logoutPath = useMemo(() => {
+        if (isAdminPanel) {
+            return getUnauthenticatedSitePathByGates(
+                normalizedPlatformGates.site_enabled,
+                normalizedPlatformGates.crm_enabled,
+            );
+        }
+
+        return getUnauthenticatedCrmPathByGates(
+            normalizedPlatformGates.site_enabled,
+            normalizedPlatformGates.crm_enabled,
+        );
+    }, [isAdminPanel, normalizedPlatformGates.crm_enabled, normalizedPlatformGates.site_enabled]);
+
+    const businessModules = useMemo(() => {
+        const modules = salonSettings?.business_profile_config?.modules;
+        if (modules && typeof modules === 'object') {
+            return modules;
+        }
+        return null;
+    }, [salonSettings]);
+
+    const isModuleEnabled = useMemo(() => {
+        return (menuId: string): boolean => {
+            const binding = MENU_MODULE_BINDINGS[menuId];
+            if (binding === undefined) {
+                return true;
+            }
+            if (businessModules === null) {
+                return true;
+            }
+
+            const suiteModules = businessModules[binding.suite];
+            if (suiteModules === undefined || typeof suiteModules !== 'object') {
+                return true;
+            }
+
+            const moduleFlag = suiteModules[binding.module];
+            if (typeof moduleFlag === 'boolean') {
+                return moduleFlag;
+            }
+            return true;
+        };
+    }, [businessModules]);
 
     const rolePrefix = useMemo(() => {
         const path = location.pathname;
@@ -280,7 +405,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
     const handleLogout = () => {
         onLogout();
-        navigate('/login');
+        navigate(logoutPath);
     };
 
     const getRoleLabel = () => {
@@ -299,19 +424,11 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
     const allMenuItems: any[] = useMemo(() => {
         if (isAdminPanel) {
-            return [
-                { id: 'dashboard', icon: LayoutDashboard, label: t('layouts/adminpanellayout:menu.dashboard'), path: '/admin/dashboard', req: () => true },
-                { id: 'team', icon: Users, label: t('layouts/adminpanellayout:menu.team', 'Команда'), path: '/admin/team', req: () => true },
-                { id: 'clients', icon: Users, label: t('menu.clients'), path: '/admin/clients', req: () => true },
-                { id: 'loyalty', icon: Gift, label: t('adminpanel/loyaltymanagement:title'), path: '/admin/loyalty', req: () => true },
-                { id: 'referrals', icon: Award, label: t('layouts/adminpanellayout:menu.referral_program'), path: '/admin/referrals', req: () => true },
-                { id: 'challenges', icon: Target, label: t('layouts/adminpanellayout:menu.challenges'), path: '/admin/challenges', req: () => true },
-                { id: 'promo-codes', icon: Ticket, label: t('layouts/mainlayout:menu.promo_codes'), path: '/admin/promo-codes', req: () => true },
-                { id: 'gallery', icon: ImageIcon, label: t('layouts/adminpanellayout:menu.photo_gallery'), path: '/admin/gallery', req: () => true },
-                { id: 'broadcasts', icon: Send, label: t('menu.broadcasts'), path: '/admin/broadcasts', req: () => true },
-                { id: 'notifications', icon: Bell, label: t('layouts/adminpanellayout:menu.notifications'), path: '/admin/notifications', req: () => true },
-                { id: 'settings', icon: Settings, label: t('menu.settings'), path: '/admin/settings', req: () => true },
-            ];
+            const adminCatalog = buildAdminMenuCatalog({ t });
+
+            return Object.entries(adminCatalog.items)
+                .map(([id, item]) => ({ ...item, id }))
+                .filter((item) => item.req() && isModuleEnabled(item.id));
         }
 
         const crmCatalog = buildCrmMenuCatalog({
@@ -347,6 +464,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
         order.forEach(id => {
             if (menuSettings?.hidden_items?.includes(id)) return;
+            if (!isModuleEnabled(id)) return;
             const item = items[id];
             if (item && item.req()) {
                 if (groups[id]) {
@@ -356,7 +474,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                             if (!subItem) return null;
                             return { ...subItem, id: subid };
                         })
-                        .filter((sub) => sub && sub.req() && !menuSettings?.hidden_items?.includes(sub.id));
+                        .filter((sub) => sub && sub.req() && !menuSettings?.hidden_items?.includes(sub.id) && isModuleEnabled(sub.id));
 
                     if (subItems.length > 0) {
                         finalItems.push({ ...item, id, items: subItems });
@@ -368,7 +486,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         });
 
         return finalItems;
-    }, [t, rolePrefix, dashboardPath, permissions, user?.role, menuSettings, isAdminPanel]);
+    }, [t, rolePrefix, dashboardPath, permissions, user?.role, menuSettings, isAdminPanel, isModuleEnabled]);
 
     const menuItems = useMemo(() => {
         return allMenuItems.map((item: any) => {
@@ -393,7 +511,23 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
     const routeAccessEntries = useMemo(() => {
         if (isAdminPanel) {
-            return [] as Array<{ id: string; path: string; allowed: boolean }>;
+            const adminCatalog = buildAdminMenuCatalog({ t });
+            const adminItems: Record<string, any> = adminCatalog.items;
+
+            return Object.entries(adminItems)
+                .map(([id, item]) => {
+                    const path = typeof item.path === 'string' ? item.path : '';
+                    if (path.length === 0) {
+                        return null;
+                    }
+
+                    return {
+                        id,
+                        path,
+                        allowed: item.req() === true && isModuleEnabled(id),
+                    };
+                })
+                .filter((entry): entry is { id: string; path: string; allowed: boolean } => entry !== null);
         }
 
         const crmCatalog = buildCrmMenuCatalog({
@@ -414,15 +548,16 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
                 const hiddenBySettings = menuSettings?.hidden_items?.includes(id) === true;
                 const allowedByRole = item.req() === true;
+                const moduleEnabled = isModuleEnabled(id);
 
                 return {
                     id,
                     path,
-                    allowed: allowedByRole && hiddenBySettings !== true,
+                    allowed: allowedByRole && hiddenBySettings !== true && moduleEnabled,
                 };
             })
             .filter((entry): entry is { id: string; path: string; allowed: boolean } => entry !== null);
-    }, [dashboardPath, isAdminPanel, menuSettings?.hidden_items, permissions, rolePrefix, t, user?.role]);
+    }, [dashboardPath, isAdminPanel, menuSettings?.hidden_items, permissions, rolePrefix, t, user?.role, isModuleEnabled]);
 
     const activeDesktopGroupId = useMemo(() => {
         const activeGroup = menuItems.find((item: any) => {
@@ -437,13 +572,14 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
     const mainTabs = useMemo(() => {
         if (isAdminPanel) {
-            return [
+            const adminTabs = [
                 { id: 'dashboard', icon: LayoutDashboard, label: t('layouts/adminpanellayout:menu.dashboard_short', 'Главная'), path: '/admin/dashboard' },
                 { id: 'loyalty', icon: Gift, label: t('adminpanel/loyaltymanagement:title'), path: '/admin/loyalty' },
                 { id: 'referrals', icon: Award, label: t('layouts/adminpanellayout:menu.referrals_short', 'Рефералы'), path: '/admin/referrals' },
                 { id: 'challenges', icon: Target, label: t('layouts/adminpanellayout:menu.challenges_short', 'Цели'), path: '/admin/challenges' },
                 { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
             ];
+            return adminTabs.filter((tab) => tab.id === 'more' || isModuleEnabled(tab.id));
         }
         return [
             { id: 'dashboard', icon: LayoutDashboard, label: t('menu.dashboard'), path: dashboardPath },
@@ -452,7 +588,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             { id: 'chat', icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: chatUnreadCount + internalChatUnreadCount },
             { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
         ];
-    }, [t, dashboardPath, rolePrefix, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount, isAdminPanel]);
+    }, [t, dashboardPath, rolePrefix, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount, isAdminPanel, isModuleEnabled]);
 
     const chatSubItems = useMemo(() => [
         { id: 'messengers', icon: Send, label: t('menu.messengers'), path: `${rolePrefix}/messengers`, badge: chatUnreadCount },
@@ -667,10 +803,6 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     }, [location.pathname, activeDesktopGroupId]);
 
     useEffect(() => {
-        if (isAdminPanel) {
-            return;
-        }
-
         const matchedRoute = routeAccessEntries
             .filter((entry) => {
                 if (location.pathname === entry.path) {
@@ -700,7 +832,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             lastDeniedPathRef.current = location.pathname;
         }
         navigate(fallbackPath, { replace: true });
-    }, [isAdminPanel, location.pathname, navigate, routeAccessEntries, t]);
+    }, [location.pathname, navigate, routeAccessEntries, t]);
 
     useEffect(() => {
         const navElement = sidebarNavRef.current;

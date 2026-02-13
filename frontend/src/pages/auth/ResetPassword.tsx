@@ -9,6 +9,11 @@ import { toast } from "sonner";
 import { api } from "../../services/api";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
+import {
+  DEFAULT_PLATFORM_GATES,
+  getUnauthenticatedSitePathByGates,
+  normalizePlatformGates,
+} from "../../utils/platformRouting";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -21,6 +26,24 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [platformGates, setPlatformGates] = useState(DEFAULT_PLATFORM_GATES);
+  const loginPath = React.useMemo(
+    () => getUnauthenticatedSitePathByGates(platformGates.site_enabled, platformGates.crm_enabled),
+    [platformGates.crm_enabled, platformGates.site_enabled],
+  );
+
+  useEffect(() => {
+    const loadPlatformGates = async () => {
+      try {
+        const gateResponse = await api.getPlatformGates();
+        setPlatformGates(normalizePlatformGates(gateResponse));
+      } catch (gateError) {
+        console.error("Platform gate loading error:", gateError);
+        setPlatformGates(DEFAULT_PLATFORM_GATES);
+      }
+    };
+    loadPlatformGates();
+  }, []);
 
   useEffect(() => {
     if (!token) {
@@ -61,7 +84,7 @@ export default function ResetPassword() {
 
         // Перенаправляем на логин через 2 секунды
         setTimeout(() => {
-          navigate("/login");
+          navigate(loginPath);
         }, 2000);
       } else {
         setError(response.error || t('reset_error', "Ошибка при сбросе пароля"));
@@ -179,7 +202,7 @@ export default function ResetPassword() {
             <Button
               variant="link"
               className="text-pink-600"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate(loginPath)}
               disabled={loading}
             >
               {t('back_to_login', "Вернуться к входу")}

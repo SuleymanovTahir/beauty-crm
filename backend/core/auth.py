@@ -78,6 +78,40 @@ def _cookie_secure_flag() -> bool:
     base_url = os.getenv("BASE_URL", "")
     return base_url.startswith("https://") or use_ssl or os.getenv("ENVIRONMENT") == "production"
 
+
+_ALLOWED_BUSINESS_TYPES = {
+    "beauty",
+    "restaurant",
+    "construction",
+    "factory",
+    "taxi",
+    "delivery",
+    "other",
+}
+_ALLOWED_PRODUCT_MODES = {"crm", "site", "both"}
+
+
+def _normalize_business_type(raw_value: Optional[str]) -> str:
+    value = (raw_value or "").strip().lower()
+    if value in _ALLOWED_BUSINESS_TYPES:
+        return value
+    return "beauty"
+
+
+def _normalize_product_mode(raw_value: Optional[str]) -> str:
+    value = (raw_value or "").strip().lower()
+    if value in _ALLOWED_PRODUCT_MODES:
+        return value
+    return "both"
+
+
+def _product_mode_to_flags(product_mode: str) -> tuple[bool, bool]:
+    if product_mode == "crm":
+        return True, False
+    if product_mode == "site":
+        return False, True
+    return True, True
+
 # ===== MIDDLEWARE =====
 
 def get_current_user_or_redirect(session_token: Optional[str] = Cookie(None)):
@@ -426,6 +460,8 @@ async def register_employee_api(
     email: str = Form(...),
     role: str = Form("employee"),
     phone: str = Form(""),
+    business_type: str = Form("beauty"),
+    product_mode: str = Form("both"),
     privacy_accepted: bool = Form(False),
     newsletter_subscribed: bool = Form(True),
     captcha_token: str = Form(None),
@@ -494,6 +530,8 @@ async def register_employee_api(
         role=role,
         position="",
         phone=phone,
+        business_type=business_type,
+        product_mode=product_mode,
         privacy_accepted=privacy_accepted,
         preferred_language=preferred_language
     )
@@ -556,11 +594,17 @@ async def api_register(
     role: str = Form("employee"),
     position: str = Form(""),
     phone: str = Form(""),
+    business_type: str = Form("beauty"),
+    product_mode: str = Form("both"),
     privacy_accepted: bool = Form(False),
     newsletter_subscribed: bool = Form(True),
     preferred_language: str = Form("en")
 ):
     """API: Регистрация нового пользователя (базовый метод)"""
+    normalized_business_type = _normalize_business_type(business_type)
+    normalized_product_mode = _normalize_product_mode(product_mode)
+    crm_enabled, site_enabled = _product_mode_to_flags(normalized_product_mode)
+
     user_info = {
         'username': username,
         'email': email,
@@ -568,6 +612,8 @@ async def api_register(
         'role': role,
         'position': position,
         'phone': phone,
+        'business_type': normalized_business_type,
+        'product_mode': normalized_product_mode,
         'preferred_language': preferred_language
     }
     
@@ -705,6 +751,28 @@ async def api_register(
                          VALUES (%s, %s, %s, %s, %s, 'new', 'registration', %s, %s, %s)
                          ON CONFLICT (instagram_id) DO NOTHING""",
                       (client_id, username, full_name, email, phone, user_id, now, now))
+
+        current_stage = "Применение профиля бизнеса"
+        c.execute("""
+            UPDATE salon_settings
+            SET business_type = %s,
+                product_mode = %s,
+                crm_enabled = %s,
+                custom_settings = jsonb_set(
+                    COALESCE(custom_settings, '{}'::jsonb),
+                    '{business_profile_config}',
+                    COALESCE(custom_settings -> 'business_profile_config', '{"schema_version": 1}'::jsonb),
+                    TRUE
+                ),
+                site_enabled = %s,
+                updated_at = NOW()
+            WHERE id = 1
+              AND (
+                    business_type IS NULL
+                    OR TRIM(business_type) = ''
+                    OR (business_type = 'beauty' AND COALESCE(product_mode, 'both') = 'both')
+                  )
+        """, (normalized_business_type, normalized_product_mode, crm_enabled, site_enabled))
 
         conn.commit()
         conn.close()
