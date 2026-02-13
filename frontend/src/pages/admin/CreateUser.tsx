@@ -221,6 +221,7 @@ export default function CreateUser() {
                 <SelectContent>
                   <SelectItem value="director">{t('common:role_director')}</SelectItem>
                   <SelectItem value="admin">{t('common:role_admin')}</SelectItem>
+                  <SelectItem value="accountant">{t('common:role_accountant', 'Бухгалтер')}</SelectItem>
                   <SelectItem value="manager">{t('common:role_manager')}</SelectItem>
                   <SelectItem value="sales">{t('common:role_saler')}</SelectItem>
                   <SelectItem value="marketer">{t('common:role_marketer')}</SelectItem>
@@ -230,6 +231,7 @@ export default function CreateUser() {
               <div className="mt-2 p-4 bg-gray-50 rounded-lg text-sm text-gray-600 space-y-1">
                 <p><strong>{t('common:role_director')}:</strong> {t('role_director_desc')}</p>
                 <p><strong>{t('common:role_admin')}:</strong> {t('role_admin_desc')}</p>
+                <p><strong>{t('common:role_accountant', 'Бухгалтер')}:</strong> {t('role_accountant_desc', 'Доступ к расчету и учету зарплаты')}</p>
                 <p><strong>{t('common:role_manager')}:</strong> {t('role_manager_desc')}</p>
                 <p><strong>{t('common:role_employee')}:</strong> {t('role_employee_desc')}</p>
               </div>

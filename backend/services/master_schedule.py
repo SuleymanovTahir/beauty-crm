@@ -247,11 +247,19 @@ class MasterScheduleService:
             start_dt = f"{start_date} 00:00:00"
             end_dt = f"{end_date} 23:59:59"
 
-            c.execute("""
-                INSERT INTO user_time_off
-                (user_id, start_date, end_date, reason)
-                VALUES (%s, %s, %s, %s)
-            """, (user_id, start_dt, end_dt, reason))
+            has_type_column = self._has_table_column("user_time_off", "type")
+            if has_type_column:
+                c.execute("""
+                    INSERT INTO user_time_off
+                    (user_id, start_date, end_date, type, reason)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (user_id, start_dt, end_dt, time_off_type, reason))
+            else:
+                c.execute("""
+                    INSERT INTO user_time_off
+                    (user_id, start_date, end_date, reason)
+                    VALUES (%s, %s, %s, %s)
+                """, (user_id, start_dt, end_dt, reason))
 
             conn.commit()
             log_info(f"Time off added for {master_name}: {start_date} to {end_date}", "schedule")
@@ -276,11 +284,13 @@ class MasterScheduleService:
         c = conn.cursor()
 
         try:
+            has_type_column = self._has_table_column("user_time_off", "type")
+            type_select = "COALESCE(type, 'vacation') as type," if has_type_column else "'vacation' as type,"
             query = """
-                SELECT id, start_date, end_date, reason
+                SELECT id, start_date, end_date, {type_select} reason
                 FROM user_time_off
                 WHERE user_id = %s
-            """
+            """.format(type_select=type_select)
             params = [user_id]
 
             if start_date:
@@ -305,7 +315,8 @@ class MasterScheduleService:
                     "id": row[0],
                     "start_date": start_dt,
                     "end_date": end_dt,
-                    "reason": row[3] if len(row) > 3 else None
+                    "type": row[3] if len(row) > 3 else "vacation",
+                    "reason": row[4] if len(row) > 4 else (row[3] if len(row) > 3 else None)
                 })
 
             return time_offs

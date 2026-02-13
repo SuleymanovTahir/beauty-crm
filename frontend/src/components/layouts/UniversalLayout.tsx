@@ -288,6 +288,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         switch (user?.role) {
             case 'director': return t('roles.director');
             case 'admin': return t('roles.admin');
+            case 'accountant': return t('roles.accountant', { defaultValue: t('common:role_accountant', 'Бухгалтер') });
             case 'manager': return t('roles.manager');
             case 'sales': return t('roles.saler');
             case 'saler': return t('roles.saler');
@@ -1040,45 +1041,47 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                         </div>
 
                         <div className="user-profile-section">
-                            {/* User Info - Left */}
-                            <div className="flex items-center gap-3 overflow-hidden flex-1 min-w-0 pr-4">
-                                <div className="relative shrink-0">
-                                    <img
-                                        src={getDynamicAvatar(user?.full_name || 'User')}
-                                        alt="Avatar"
-                                        className="w-10 h-10 rounded-xl object-cover border-2 border-white shadow-sm ring-1 ring-gray-100"
-                                    />
-                                    <div className="user-status-indicator" />
-                                </div>
-                                <div className="flex flex-col min-w-0 justify-center">
-                                    <div className="text-sm font-bold text-gray-900 truncate leading-snug">{user?.full_name}</div>
-                                    <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide truncate">{getRoleLabel()}</div>
-                                </div>
-                            </div>
-
-                            {/* Actions - Right */}
-                            <div className="flex items-center gap-6 shrink-0">
-                                <div className="scale-100 origin-right">
+                            <div className="quick-actions-row">
+                                <div className="quick-action-item justify-center">
                                     <LanguageSwitcher variant="minimal" />
                                 </div>
-
-                                <div className="w-px h-6 bg-gray-200"></div>
-
                                 <button
                                     onClick={() => { navigate(`${rolePrefix}/notifications`); setShowMoreModal(false); }}
-                                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors relative"
+                                    className="quick-action-btn"
                                 >
-                                    <Bell size={20} strokeWidth={2} />
-                                    {notificationsUnreadCount > 0 && (
-                                        <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white shadow-sm"></span>
-                                    )}
+                                    <div className="quick-action-text-part">
+                                        <span className="quick-action-label">{t('menu.notifications')}</span>
+                                    </div>
+                                    <div className="quick-action-icon-wrapper">
+                                        <Bell size={20} strokeWidth={2} className="text-gray-700" />
+                                        {notificationsUnreadCount > 0 && (
+                                            <span className="quick-action-badge">
+                                                {notificationsUnreadCount > 99 ? '99+' : notificationsUnreadCount}
+                                            </span>
+                                        )}
+                                    </div>
                                 </button>
+                            </div>
 
-                                <div className="w-px h-6 bg-gray-200"></div>
-
+                            <div className="profile-logout-row">
+                                <div className="user-card-premium flex-1">
+                                    <div className="user-card-content">
+                                        <div className="relative shrink-0">
+                                            <img
+                                                src={getDynamicAvatar(user?.full_name || 'User')}
+                                                alt="Avatar"
+                                                className="user-avatar-img"
+                                            />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <div className="user-name-premium">{user?.full_name}</div>
+                                            <div className="user-role-premium">{getRoleLabel()}</div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <button
                                     onClick={() => { handleLogout(); setShowMoreModal(false); }}
-                                    className="p-2 text-red-500/80 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                                    className="logout-btn-minimal"
                                 >
                                     <LogOut size={20} strokeWidth={2} />
                                 </button>

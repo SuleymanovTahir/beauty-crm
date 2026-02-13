@@ -1,56 +1,56 @@
 {
   "items": [
     {
-      "question": "Cómo inscribirse en el trámite",
-      "answer": "Puedes apuntarte al trámite a través del formulario de nuestra web, llamándonos o escribiéndonos hasta fecha Instagram. Nos pondremos en contacto contigo para confirmar tu cita."
+      "answer": "Puedes apuntarte al trámite a través del formulario de nuestra web, llamándonos o escribiéndonos hasta fecha Instagram. Nos pondremos en contacto contigo para confirmar tu cita.",
+      "question": "Cómo inscribirse en el trámite"
     },
     {
-      "question": "¿Qué métodos de pago aceptan?",
-      "answer": "Aceptamos pago en efectivo y tarjetas (Visa, MasterCard, American Express). El pago se realiza después de la prestación del servicio."
+      "answer": "Aceptamos pago en efectivo y tarjetas (Visa, MasterCard, American Express). El pago se realiza después de la prestación del servicio.",
+      "question": "¿Qué métodos de pago aceptan?"
     },
     {
-      "question": "¿Qué materiales utilizas?",
-      "answer": "Utilizamos únicamente materiales premium certificados de las marcas líderes del mundo. Todos los pigmentos son hipoalergénicos y seguros para la salud."
+      "answer": "Utilizamos únicamente materiales premium certificados de las marcas líderes del mundo. Todos los pigmentos son hipoalergénicos y seguros para la salud.",
+      "question": "¿Qué materiales utilizas?"
     },
     {
-      "question": "¿Tienen sus artesanos certificados?",
-      "answer": "Sí, todos nuestros másteres cuentan con certificados internacionales y realizan periódicamente cursos de formación avanzada."
+      "answer": "Sí, todos nuestros másteres cuentan con certificados internacionales y realizan periódicamente cursos de formación avanzada.",
+      "question": "¿Tienen sus artesanos certificados?"
     },
     {
-      "question": "¿Es necesaria preparación antes del procedimiento?",
-      "answer": "Sí, algunos procedimientos requieren preparación. Proporcionamos recomendaciones detalladas al registrarse."
+      "answer": "Sí, algunos procedimientos requieren preparación. Proporcionamos recomendaciones detalladas al registrarse.",
+      "question": "¿Es necesaria preparación antes del procedimiento?"
     },
     {
-      "question": "¿Existe alguna contraindicación para los procedimientos?",
-      "answer": "Sí, cada procedimiento tiene sus propias contraindicaciones. Principal: embarazo, lactancia, procesos inflamatorios agudos, enfermedades de la sangre, oncología. Antes del procedimiento es necesaria la consulta con un especialista."
+      "answer": "Sí, cada procedimiento tiene sus propias contraindicaciones. Principal: embarazo, lactancia, procesos inflamatorios agudos, enfermedades de la sangre, oncología. Antes del procedimiento es necesaria la consulta con un especialista.",
+      "question": "¿Existe alguna contraindicación para los procedimientos?"
     },
     {
-      "question": "¿Ofrecen una garantía hasta fecha los servicios?",
-      "answer": "Sí, garantizamos la calidad de todos nuestros servicios. Si no está satisfecho con el resultado, contáctenos dentro de los 7 días y encontraremos una solución."
+      "answer": "Sí, garantizamos la calidad de todos nuestros servicios. Si no está satisfecho con el resultado, contáctenos dentro de los 7 días y encontraremos una solución.",
+      "question": "¿Ofrecen una garantía hasta fecha los servicios?"
     },
     {
-      "question": "¿Tienes un programa de fidelización?",
-      "answer": "Sí, tenemos un programa de fidelización acumulativo. Después de cada visita, recibe bonificaciones que puede utilizar para pagar visitas futuras."
+      "answer": "Sí, tenemos un programa de fidelización acumulativo. Después de cada visita, recibe bonificaciones que puede utilizar para pagar visitas futuras.",
+      "question": "¿Tienes un programa de fidelización?"
     },
     {
-      "question": "¿Trabajas los fines de semana?",
-      "answer": "Sí, trabajamos los 7 días de la semana."
+      "answer": "Sí, trabajamos los 7 días de la semana.",
+      "question": "¿Trabajas los fines de semana?"
     },
     {
-      "question": "¿Es posible emitir un certificado de servicios?",
-      "answer": "Sí, ofrecemos certificados de regalo hasta fecha cualquier monto o para servicios específicos. Contáctenos para obtener un certificado."
+      "answer": "Sí, ofrecemos certificados de regalo hasta fecha cualquier monto o para servicios específicos. Contáctenos para obtener un certificado.",
+      "question": "¿Es posible emitir un certificado de servicios?"
     },
     {
-      "question": "¿Dónde está ubicado tu salón?",
-      "answer": "Estamos ubicados en el centro de Dubai. Puede encontrar información detallada sobre cómo llegar en la página de Contactos."
+      "answer": "Estamos ubicados en el centro de Dubai. Puede encontrar información detallada sobre cómo llegar en la página de Contactos.",
+      "question": "¿Dónde está ubicado tu salón?"
     },
     {
-      "question": "¿Haces procedimientos a 4 manos?",
-      "answer": "Sí, valoramos su tiempo y podemos organizar la realización de múltiples procedimientos simultáneamente."
+      "answer": "Sí, valoramos su tiempo y podemos organizar la realización de múltiples procedimientos simultáneamente.",
+      "question": "¿Haces procedimientos a 4 manos?"
     },
     {
-      "question": "¿Hay estacionamiento?",
-      "answer": "Sí, disponemos de parking gratuito para los clientes."
+      "answer": "Sí, disponemos de parking gratuito para los clientes.",
+      "question": "¿Hay estacionamiento?"
     }
   ]
 }

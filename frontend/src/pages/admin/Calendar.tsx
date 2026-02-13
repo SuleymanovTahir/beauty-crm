@@ -94,18 +94,70 @@ const generateTimeSlots = (startHour: number, endHour: number) => {
 
 interface CalendarProps {
   employeeFilter?: boolean;
+  employeeIdFilter?: number | string | null;
+  storageScope?: string;
+  defaultViewMode?: 'day' | 'week';
+  showFilterControls?: boolean;
 }
 
 
-export default function Calendar({ employeeFilter = false }: CalendarProps) {
+export default function Calendar({
+  employeeFilter = false,
+  employeeIdFilter = null,
+  storageScope = '',
+  defaultViewMode = 'week',
+  showFilterControls
+}: CalendarProps) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  const currentUser = useMemo(() => {
+    const rawUser = localStorage.getItem('user');
+    return JSON.parse(rawUser ?? '{}');
+  }, []);
+  const resolvedEmployeeId = useMemo(() => {
+    const explicitEmployeeId = employeeIdFilter == null
+      ? ''
+      : String(employeeIdFilter).trim();
+    if (explicitEmployeeId.length > 0) {
+      return explicitEmployeeId;
+    }
+    if (!employeeFilter) {
+      return null;
+    }
+    if (!currentUser?.id) {
+      return null;
+    }
+    return String(currentUser.id);
+  }, [employeeFilter, employeeIdFilter, currentUser]);
+  const resolvedStorageScope = useMemo(() => {
+    const normalizedScope = String(storageScope).trim();
+    if (normalizedScope.length > 0) {
+      return normalizedScope;
+    }
+    if (resolvedEmployeeId) {
+      return `employee_${resolvedEmployeeId}`;
+    }
+    return 'global';
+  }, [resolvedEmployeeId, storageScope]);
+  const viewModeStorageKey = useMemo(() => `calendar_view_mode_${resolvedStorageScope}`, [resolvedStorageScope]);
+  const canShowFilterControls = showFilterControls === undefined ? !employeeFilter : showFilterControls;
+  const normalizeViewMode = (rawValue: string | null | undefined): 'day' | 'week' => {
+    if (rawValue === 'day') {
+      return 'day';
+    }
+    if (rawValue === 'week') {
+      return 'week';
+    }
+    return defaultViewMode;
+  };
+
   const [currentDate, setCurrentDate] = useState<Date>(new Date(today));
-  const [viewMode, setViewMode] = useState<'day' | 'week'>('week');
+  const [viewMode, setViewMode] = useState<'day' | 'week'>(() => normalizeViewMode(localStorage.getItem(viewModeStorageKey)));
   const [bookings, setBookings] = useState<Booking[]>([]);
   const { t, i18n } = useTranslation(['admin/calendar', 'common']);
   const { currency, formatCurrency } = useCurrency();
+  const employeeId = resolvedEmployeeId;
 
   const statusLabels: Record<string, string> = {
     pending: t('calendar:pending'),
@@ -124,7 +176,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [addingBooking, setAddingBooking] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<string>('all');
+  const [selectedEmployee, setSelectedEmployee] = useState<string>(() => resolvedEmployeeId ?? 'all');
   const [selectedService, setSelectedService] = useState<string>('all');
 
   const [clientSearch, setClientSearch] = useState('');
@@ -134,16 +186,6 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const [serviceSearch, setServiceSearch] = useState('');
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
   const [selectedServiceItem, setSelectedServiceItem] = useState<Service | null>(null);
-  const currentUser = useMemo(() => JSON.parse(localStorage.getItem('user') || '{}'), []);
-  const employeeId = useMemo(() => {
-    if (!employeeFilter) {
-      return null;
-    }
-    if (!currentUser?.id) {
-      return null;
-    }
-    return String(currentUser.id);
-  }, [employeeFilter, currentUser]);
   const canEdit = currentUser?.role === 'director' || currentUser?.role === 'admin' || currentUser?.role === 'sales';
 
   const [addForm, setAddForm] = useState({
@@ -178,6 +220,22 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
     };
     loadSalonHours();
   }, []);
+
+  useEffect(() => {
+    if (!employeeId) {
+      return;
+    }
+    setSelectedEmployee(String(employeeId));
+  }, [employeeId]);
+
+  useEffect(() => {
+    const storedMode = localStorage.getItem(viewModeStorageKey);
+    setViewMode(normalizeViewMode(storedMode));
+  }, [defaultViewMode, viewModeStorageKey]);
+
+  useEffect(() => {
+    localStorage.setItem(viewModeStorageKey, viewMode);
+  }, [viewMode, viewModeStorageKey]);
 
   const loadData = async () => {
     try {
@@ -424,7 +482,11 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
   const handleSaveBooking = async () => {
     const manualClientName = clientSearch.trim();
-    if ((!selectedClient && !manualClientName) || !selectedServiceItem || !addForm.date || !addForm.time) {
+    const selectedClientPhone = selectedClient?.phone ?? '';
+    const enteredPhone = String(addForm.phone ?? '').trim();
+    const resolvedPhone = enteredPhone.length > 0 ? enteredPhone : selectedClientPhone;
+
+    if (!selectedServiceItem || !addForm.date || !addForm.time || resolvedPhone.length === 0) {
       toast.error(t('calendar:fill_required_fields'));
       return;
     }
@@ -432,20 +494,19 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
     try {
       setAddingBooking(true);
       const selectedClientName = selectedClient?.display_name ?? '';
-      const bookingName = selectedClientName || manualClientName;
+      const bookingName = selectedClientName || manualClientName || t('calendar:client');
       const bookingInstagramId = selectedClient?.instagram_id;
-      const selectedClientPhone = selectedClient?.phone ?? '';
       const serviceDuration = Number(selectedServiceItem?.duration);
       const bookingPayload = {
         instagram_id: bookingInstagramId,
         name: bookingName,
-        phone: addForm.phone || selectedClientPhone,
+        phone: resolvedPhone,
         service: selectedServiceItem.name,
         date: addForm.date,
         time: addForm.time,
         revenue: addForm.revenue || selectedServiceItem.price,
         master: addForm.master,
-        source: selectedBooking?.source || 'manual',
+        source: selectedBooking?.source ?? 'manual',
         duration_minutes: Number.isFinite(serviceDuration) && serviceDuration > 0 ? serviceDuration : undefined,
       };
 
@@ -588,7 +649,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-              {!employeeFilter && (
+              {canShowFilterControls && (
                 <Button
                   onClick={() => setShowFilters(!showFilters)}
                   variant="outline"
@@ -633,7 +694,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
           </div>
 
           {/* Filters Section */}
-          {showFilters && (
+          {showFilters && canShowFilterControls && (
             <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl border-2 border-blue-200">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -888,7 +949,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
               {/* Client Search */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  {t('calendar:client')} *
+                  {t('calendar:client')}
                 </label>
                 <div className="relative z-30">
                   <input

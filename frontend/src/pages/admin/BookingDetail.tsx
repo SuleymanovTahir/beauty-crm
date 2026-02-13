@@ -180,15 +180,25 @@ export default function BookingDetail() {
     }
   };
 
-  const masterInfo = booking?.master
-    ? masters.find(m =>
-      (m.username && booking.master && m.username.toLowerCase() === booking.master.toLowerCase()) ||
-      (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase()) ||
-      (m.full_name && booking.master && m.full_name.toLowerCase() === booking.master.toLowerCase())
-    )
+  const masterInfo = booking
+    ? masters.find((masterItem) => {
+      if (booking.master_user_id !== null && booking.master_user_id !== undefined) {
+        return masterItem.id === booking.master_user_id;
+      }
+      const normalizedBookingMaster = String(booking.master ?? '').trim().toLowerCase();
+      const normalizedUsername = String(masterItem.username ?? '').trim().toLowerCase();
+      const normalizedFullName = String(masterItem.full_name ?? '').trim().toLowerCase();
+      if (normalizedBookingMaster.length === 0) {
+        return false;
+      }
+      return [normalizedUsername, normalizedFullName].includes(normalizedBookingMaster);
+    })
     : null;
 
-  const masterName = (i18n.language.startsWith('ru') && masterInfo?.full_name) ? masterInfo.full_name : (masterInfo?.full_name || booking?.master || t('common:not_specified'));
+  const masterName = String(booking?.master ?? '').trim().length > 0
+    ? String(booking?.master)
+    : String(masterInfo?.full_name ?? t('common:not_specified'));
+  const masterTargetId = booking?.master_user_id ?? masterInfo?.id ?? null;
 
   const getChartData = (type: 'service' | 'master') => {
     if (!booking || !allBookings.length) return [];
@@ -202,10 +212,19 @@ export default function BookingDetail() {
       startDate = new Date(chartDateFrom);
       endDate = new Date(chartDateTo);
       endDate.setHours(23, 59, 59, 999);
+    } else if (chartPeriod === 'today') {
+      startDate = new Date(now);
+      startDate.setHours(0, 0, 0, 0);
     } else {
-      const periodDays = parseInt(chartPeriod);
+      const periodDays = parseInt(chartPeriod, 10);
+      if (!Number.isFinite(periodDays)) {
+        return [];
+      }
+      if (periodDays <= 0) {
+        return [];
+      }
       startDate = new Date();
-      startDate.setDate(now.getDate() - periodDays);
+      startDate.setDate(now.getDate() - (periodDays - 1));
       startDate.setHours(0, 0, 0, 0);
     }
 
@@ -220,6 +239,12 @@ export default function BookingDetail() {
         const targetService = (booking.service || '').toLowerCase().trim();
         return bService === targetService;
       } else {
+        const bookingMasterId = booking.master_user_id;
+        const rowMasterId = b.master_user_id;
+        if (bookingMasterId !== null && bookingMasterId !== undefined && rowMasterId !== null && rowMasterId !== undefined) {
+          return Number(bookingMasterId) === Number(rowMasterId);
+        }
+
         const bMaster = (b.master || '').toLowerCase().trim();
         const targetMaster = (booking.master || '').toLowerCase().trim();
         // Also check if master's full name matches
@@ -689,7 +714,13 @@ export default function BookingDetail() {
                   ) : (
                     <p
                       className="text-lg text-gray-900 font-bold cursor-pointer hover:text-indigo-600 transition-colors"
-                      onClick={() => navigate('/crm/staff')}
+                      onClick={() => {
+                        if (masterTargetId !== null && masterTargetId !== undefined) {
+                          navigate(`/crm/team/${masterTargetId}/information`);
+                          return;
+                        }
+                        navigate('/crm/team');
+                      }}
                       title={t('common:view_staff', 'Перейти к сотрудникам')}
                     >
                       {masterName}
@@ -752,9 +783,11 @@ export default function BookingDetail() {
                       <div className="flex items-center gap-2">
                         <CalendarDays className="w-5 h-5 text-indigo-500" />
                         <span>
-                          {chartPeriod === '7' ? `7 ${t('days', 'дней')}` :
-                            chartPeriod === '30' ? `30 ${t('days', 'дней')}` :
-                              chartPeriod === '90' ? `90 ${t('days', 'дней')}` :
+                          {chartPeriod === 'today' ? t('common:today') :
+                            chartPeriod === '3' ? `3 ${t('days', 'дней')}` :
+                              chartPeriod === '7' ? `7 ${t('days', 'дней')}` :
+                                chartPeriod === '30' ? `30 ${t('days', 'дней')}` :
+                                  chartPeriod === '90' ? `90 ${t('days', 'дней')}` :
                                 chartPeriod === 'custom' ? (chartDateFrom && chartDateTo ? `${chartDateFrom} - ${chartDateTo}` : t('custom_range', 'Свой период')) :
                                   t('period', 'Период')}
                         </span>
@@ -762,50 +795,51 @@ export default function BookingDetail() {
                       <ChevronDown className="w-4 h-4 text-gray-400" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-80 p-4 rounded-2xl shadow-xl border-indigo-50" align="end">
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 gap-2">
-                        {['7', '30', '90'].map(p => (
+                  <PopoverContent className="w-64 p-3 rounded-xl shadow-lg border-indigo-50" align="end">
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-1 gap-1.5">
+                        {['today', '3', '7', '30', '90', 'custom'].map((periodValue) => (
                           <button
-                            key={p}
-                            onClick={() => setChartPeriod(p)}
-                            className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${chartPeriod === p ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                            key={periodValue}
+                            onClick={() => setChartPeriod(periodValue)}
+                            className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all ${chartPeriod === periodValue ? 'bg-indigo-600 text-white shadow-sm' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
                           >
-                            <span>{p} {t('days', 'дней')}</span>
-                            {chartPeriod === p && <CalendarDays className="w-4 h-4" />}
+                            <span>
+                              {periodValue === 'today'
+                                ? t('common:today')
+                                : periodValue === 'custom'
+                                  ? t('custom_range', 'Свой период')
+                                  : `${periodValue} ${t('days', 'дней')}`}
+                            </span>
+                            {chartPeriod === periodValue && <CalendarDays className="w-3.5 h-3.5" />}
                           </button>
                         ))}
                       </div>
 
-                      <div className="border-t border-gray-100 pt-4">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 px-1">{t('custom_range', 'Свой период')}</p>
-                        <div className="grid grid-cols-1 gap-3">
-                          <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-gray-500 ml-1">ОТ</label>
-                            <input
-                              type="date"
-                              value={chartDateFrom}
-                              onChange={e => {
-                                setChartDateFrom(e.target.value);
-                                setChartPeriod('custom');
-                              }}
-                              className="w-full h-10 px-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:border-indigo-200 transition-all"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-gray-500 ml-1">ДО</label>
-                            <input
-                              type="date"
-                              value={chartDateTo}
-                              onChange={e => {
-                                setChartDateTo(e.target.value);
-                                setChartPeriod('custom');
-                              }}
-                              className="w-full h-10 px-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:border-indigo-200 transition-all"
-                            />
+                      {chartPeriod === 'custom' && (
+                        <div className="border-t border-gray-100 pt-2">
+                          <div className="grid grid-cols-1 gap-2">
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-semibold text-gray-500 ml-1">{t('from', 'ОТ')}</label>
+                              <input
+                                type="date"
+                                value={chartDateFrom}
+                                onChange={event => setChartDateFrom(event.target.value)}
+                                className="w-full h-9 px-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:border-indigo-200 transition-all"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[10px] font-semibold text-gray-500 ml-1">{t('to', 'ДО')}</label>
+                              <input
+                                type="date"
+                                value={chartDateTo}
+                                onChange={event => setChartDateTo(event.target.value)}
+                                className="w-full h-9 px-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:border-indigo-200 transition-all"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </PopoverContent>
                 </Popover>

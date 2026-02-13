@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { Shield, Check, X, Loader, AlertCircle, Save, Info } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
+import { Switch } from '../ui/switch';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
@@ -145,6 +146,11 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
   const currentPermissions = userPermissions.role_info.permissions === '*'
     ? Object.keys(permissionDescriptions)
     : userPermissions.role_info.permissions;
+  const canEditCustomPermissions = ['director', 'admin'].includes(String(currentUser?.role ?? '').toLowerCase());
+  const payrollPermissionKey = 'payroll_manage';
+  const payrollRoleValue = currentPermissions.includes(payrollPermissionKey);
+  const payrollCustomValue = customPermissions[payrollPermissionKey];
+  const payrollAccessEnabled = payrollCustomValue !== undefined ? payrollCustomValue : payrollRoleValue;
 
   return (
     <div className="space-y-6">
@@ -185,6 +191,32 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
               </select>
           </div>
 
+          <div className="rounded-xl border border-gray-200 p-4 bg-gray-50">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="font-semibold text-gray-900">
+                  {t('common:perm_payroll_manage', permissionDescriptions[payrollPermissionKey] ?? 'Доступ к расчету и учету зарплаты')}
+                </p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {permissionDescriptions[payrollPermissionKey] ?? 'Разрешает доступ к расчету зарплаты и истории выплат'}
+                </p>
+              </div>
+              <Switch
+                checked={payrollAccessEnabled}
+                disabled={!canEditCustomPermissions}
+                onCheckedChange={(checked) => {
+                  setCustomPermissions(prev => ({
+                    ...prev,
+                    [payrollPermissionKey]: checked
+                  }));
+                }}
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-3">
+              {t('common:status', 'Статус')}: {payrollAccessEnabled ? t('admin-components:status_active', 'Активно') : t('admin-components:status_inactive', 'Неактивно')}
+            </p>
+          </div>
+
           {selectedRole !== userPermissions.user.role && (
             <Button
               onClick={handleUpdateRole}
@@ -213,7 +245,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
           <h2 className="text-xl text-gray-900 font-semibold">
             {t('admin-components:access_rights')}
           </h2>
-          {currentUser?.role === 'director' && hasCustomChanges() && (
+          {canEditCustomPermissions && hasCustomChanges() && (
             <Button
               onClick={handleSaveCustomPermissions}
               disabled={savingPermissions}
@@ -243,7 +275,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
           </div>
         ) : null}
 
-        {currentUser?.role === 'director' && (
+        {canEditCustomPermissions && (
           <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
             <p className="text-sm text-blue-800 flex items-center gap-1.5">
               <Info className="w-4 h-4 text-blue-600" />
@@ -288,7 +320,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
                     const hasCustomPermission = customPermissions[permKey];
                     const finalPermission = hasCustomPermission !== undefined ? hasCustomPermission : hasRolePermission;
                     const isCustomized = hasCustomPermission !== undefined;
-                    const canEdit = currentUser?.role === 'director';
+                    const canEdit = canEditCustomPermissions;
 
                     return (
                       <div

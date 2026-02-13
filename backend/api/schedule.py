@@ -224,6 +224,20 @@ class TimeOffCreate(BaseModel):
 
 # --- New Endpoints for Admin UI (User ID based) ---
 
+
+def _column_exists(cursor, table_name: str, column_name: str) -> bool:
+    cursor.execute(
+        """
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = %s
+          AND column_name = %s
+        LIMIT 1
+        """,
+        (table_name, column_name),
+    )
+    return bool(cursor.fetchone())
+
 # ✅ ИСПОЛЬЗОВАТЬ MasterScheduleService для получения расписания
 @router.get("/schedule/user/{user_id}", response_model=List[WorkScheduleItem])
 async def get_user_schedule(user_id: int):
@@ -321,13 +335,28 @@ async def get_user_time_off(user_id: int):
     conn = get_db_connection()
     try:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        
-        cursor.execute("""
-            SELECT id, start_date as start_datetime, end_date as end_datetime, reason 
-            FROM user_time_off 
-            WHERE user_id = %s 
-            ORDER BY start_date DESC
-        """, (user_id,))
+
+        has_type_column = _column_exists(cursor, "user_time_off", "type")
+        if has_type_column:
+            cursor.execute(
+                """
+                SELECT id, start_date as start_datetime, end_date as end_datetime, COALESCE(type, 'vacation') AS type, reason
+                FROM user_time_off
+                WHERE user_id = %s
+                ORDER BY start_date DESC
+                """,
+                (user_id,),
+            )
+        else:
+            cursor.execute(
+                """
+                SELECT id, start_date as start_datetime, end_date as end_datetime, 'vacation'::TEXT AS type, reason
+                FROM user_time_off
+                WHERE user_id = %s
+                ORDER BY start_date DESC
+                """,
+                (user_id,),
+            )
         
         rows = cursor.fetchall()
         return [dict(row) for row in rows]
@@ -339,11 +368,24 @@ async def add_user_time_off(user_id: int, data: TimeOffCreate):
     conn = get_db_connection()
     try:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        
-        cursor.execute("""
-            INSERT INTO user_time_off (user_id, start_date, end_date, reason)
-            VALUES (%s, %s, %s, %s) RETURNING id
-        """, (user_id, data.start_datetime, data.end_datetime, data.reason))
+
+        has_type_column = _column_exists(cursor, "user_time_off", "type")
+        if has_type_column:
+            cursor.execute(
+                """
+                INSERT INTO user_time_off (user_id, start_date, end_date, type, reason)
+                VALUES (%s, %s, %s, %s, %s) RETURNING id
+                """,
+                (user_id, data.start_datetime, data.end_datetime, data.type, data.reason),
+            )
+        else:
+            cursor.execute(
+                """
+                INSERT INTO user_time_off (user_id, start_date, end_date, reason)
+                VALUES (%s, %s, %s, %s) RETURNING id
+                """,
+                (user_id, data.start_datetime, data.end_datetime, data.reason),
+            )
         
         time_off_id = cursor.fetchone()['id']
         conn.commit()
@@ -367,11 +409,25 @@ async def update_time_off(id: int, data: TimeOffCreate):
     conn = get_db_connection()
     try:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute("""
-            UPDATE user_time_off 
-            SET start_date = %s, end_date = %s, reason = %s 
-            WHERE id = %s
-        """, (data.start_datetime, data.end_datetime, data.reason, id))
+        has_type_column = _column_exists(cursor, "user_time_off", "type")
+        if has_type_column:
+            cursor.execute(
+                """
+                UPDATE user_time_off
+                SET start_date = %s, end_date = %s, type = %s, reason = %s
+                WHERE id = %s
+                """,
+                (data.start_datetime, data.end_datetime, data.type, data.reason, id),
+            )
+        else:
+            cursor.execute(
+                """
+                UPDATE user_time_off
+                SET start_date = %s, end_date = %s, reason = %s
+                WHERE id = %s
+                """,
+                (data.start_datetime, data.end_datetime, data.reason, id),
+            )
         conn.commit()
         return {"status": "success"}
     finally:

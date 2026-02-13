@@ -129,7 +129,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const hasRequiredRole = (role?: string, secondaryRole?: string) => {
     if (!requiredRole) return true;
     const normalizedRequiredRole = normalizeRole(requiredRole);
-    const allowed = normalizedRequiredRole === 'admin' ? ['admin', 'director'] : [normalizedRequiredRole];
+    const allowed = normalizedRequiredRole === 'admin' ? ['admin', 'director', 'accountant'] : [normalizedRequiredRole];
     const normalizedRole = normalizeRole(role);
     const normalizedSecondaryRole = normalizeRole(secondaryRole);
 
@@ -140,6 +140,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     // Редирект на панель в зависимости от роли (приоритет основной роли)
     if (currentRole === 'director') return <Navigate to="/crm/dashboard" replace />;
     if (currentRole === 'admin') return <Navigate to="/crm/dashboard" replace />;
+    if (currentRole === 'accountant') return <Navigate to="/crm/dashboard" replace />;
     if (currentRole === 'manager') return <Navigate to="/manager/dashboard" replace />;
     if (normalizeRole(currentRole) === 'sales') return <Navigate to="/sales/clients" replace />;
     if (currentRole === 'marketer') return <Navigate to="/marketer/analytics" replace />;
@@ -194,6 +195,7 @@ export default function App() {
                     // ✅ Редирект в зависимости от роли
                     currentUser.role === 'director' ? <Navigate to="/crm/dashboard" replace /> :
                       currentUser.role === 'admin' ? <Navigate to="/crm/dashboard" replace /> :
+                        currentUser.role === 'accountant' ? <Navigate to="/crm/dashboard" replace /> :
                         currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
                           normalizeRole(currentUser.role) === 'sales' ? <Navigate to="/sales/clients" replace /> :
                             currentUser.role === 'marketer' ? <Navigate to="/marketer/analytics" replace /> :
@@ -512,7 +514,8 @@ export default function App() {
 
               {/* New Public Routes (Standalone) */}
               <Route element={<Outlet />}>
-                <Route path="/" element={<LandingPage />} />
+              <Route path="/" element={<LandingPage />} />
+                <Route path="/ref/:shareToken" element={<LandingPage />} />
                 <Route path="/service/:category" element={<ServiceDetail />} />
                 <Route path="/service/:category/:service" element={<ProcedureDetail />} />
                 <Route path="/terms" element={<TermsOfUseNew />} />

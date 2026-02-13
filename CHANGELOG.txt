@@ -1,3 +1,135 @@
+## [2026-02-13] Mobile UX Cleanup + Referral Attribution Persistence
+- CRM mobile “More” menu profile block:
+  - Reworked bottom profile/actions area in `frontend/src/components/layouts/UniversalLayout.tsx` to match card-style layout (language, notifications, profile card, logout button).
+  - Added missing helper classes and badge wrapper in `frontend/src/components/layouts/MainLayout.css`.
+  - Hid online status dot globally by disabling `.user-status-indicator`.
+- Referral link persistence and attribution:
+  - Added unified referral attribution storage helpers (capture/persist/read/build source, TTL) in `frontend/public_landing/utils/urlUtils.ts`.
+  - Landing referral entry now stores attribution and redirects `/ref/...` traffic to personal cabinet route (`/account?ref_share=...`) while keeping optional `cabinet=1` mode in `frontend/public_landing/pages/LandingPage.tsx`.
+  - Booking sources now consistently include referral metadata for both landing and account booking flows:
+    - `frontend/public_landing/components/BookingSection.tsx`
+    - `frontend/public_landing/pages/account/booking/ConfirmStep.tsx`
+  - Account page now also captures referral params from URL:
+    - `frontend/public_landing/pages/account/AccountPage.tsx`.
+- Employee schedule/payroll mobile fixes:
+  - Improved responsive layout of schedule autofill controls, mode buttons, clear button, and weekly table horizontal scrolling in `frontend/src/components/admin/EmployeeSchedule.tsx`.
+  - Fixed payroll date controls responsiveness and calendar input clipping on mobile, increased icon/input paddings in `frontend/src/components/admin/EmployeePayroll.tsx`.
+- Employee detail tabs responsiveness:
+  - Added horizontal scroll container and non-shrinking tab triggers for small screens in `frontend/src/pages/admin/EmployeeDetail.tsx`.
+- Referral section tab order:
+  - Swapped referral view order to “Кампании и бонусы” first, “История приглашений” second, and updated referral default view to campaigns in `frontend/src/pages/admin/SpecialPackages.tsx`.
+
+## [2026-02-13] Referral Token Links + Public Cabinet + Team Payroll Access
+- Referral links and fallback URL normalization:
+  - Replaced ugly fallback `/?ref_campaign={id}` with tokenized `/ref/...` fallback format (`/ref/cmp{id}`) in:
+    - `backend/api/settings.py`,
+    - `frontend/src/pages/admin/SpecialPackages.tsx`.
+  - Added backend support to resolve fallback campaign tokens (`cmp{id}`) in public referral profile endpoint:
+    - `GET /api/public/referral-links/{share_token}`.
+- Public landing referral cabinet (`/ref/:shareToken`):
+  - Added query-to-token normalization for old links (`?ref_campaign`, `?ref_share`) with clean URL replacement to `/ref/{token}`:
+    - `frontend/public_landing/pages/LandingPage.tsx`.
+  - Added explicit “Share” action (Web Share API with copy fallback), QR download, assignment display, and clicks-vs-unique explanation in the public referral cabinet block.
+- Team permissions / payroll access:
+  - Added dedicated payroll access toggle (`payroll_manage`) in role assignment dialog:
+    - `frontend/src/components/admin/PermissionsTab.tsx`.
+  - Extended custom permission edit/save visibility to admin + director in this dialog.
+- Team page UI fix:
+  - Fixed broken utility class strings in team table/cards view to restore proper sizing/hover/layout:
+    - `frontend/src/pages/shared/Team.tsx`.
+- Schedule edit mode clarity:
+  - Improved active-state visibility for mode buttons (`Записи`, `Отпуск`, `Больничный`) in:
+    - `frontend/src/components/admin/EmployeeSchedule.tsx`.
+
+## [2026-02-13] Payroll Logic Hardening + Booking Filter Compactness
+- Booking detail analytics filter (`/crm/bookings/:id`):
+  - Reduced period popover size and density in `frontend/src/pages/admin/BookingDetail.tsx`.
+  - Moved custom date inputs behind explicit `custom` period selection to avoid half-screen popover.
+- Employee payroll UI (`/crm/team/:id/payroll`):
+  - Reworked salary type form in `frontend/src/components/admin/EmployeePayroll.tsx`:
+    - removed visible "per booking" model from selector,
+    - added clearer dynamic field visibility per selected payroll model,
+    - improved spacing between labels/inputs and icon/input paddings.
+  - Mixed model now explicitly communicates combined components (base + revenue % + hourly + daily + client %).
+- Payroll backend formulas and authorization:
+  - In `backend/api/payroll.py`:
+    - `per_client` now calculates as percentage of revenue from completed client bookings (not fixed amount per client),
+    - `mixed` now includes base + commission + hourly + daily + client percentage,
+    - legacy `per_booking` salary type normalized to `per_client` for compatibility,
+    - payroll API endpoints restricted to `director` and `accountant` roles.
+- Employee detail navigation:
+  - In `frontend/src/pages/admin/EmployeeDetail.tsx`, back button now uses history step-back (`navigate(-1)`) with fallback to team list.
+- Referral campaign audience targeting:
+  - In `frontend/src/pages/admin/SpecialPackages.tsx`, `specific_users` target type is available during campaign creation.
+  - Added existing client multi-select with validation and payload mapping to `target_criteria.user_ids`.
+
+## [2026-02-13] CRM UI Refinement + Referral Link Analytics
+- Referrals campaigns (`/crm/special-packages?section=referrals&view=campaigns`):
+  - Added campaign-level unique referral link + QR rendering in cards:
+    - `frontend/src/pages/admin/SpecialPackages.tsx`.
+  - Added campaign analytics API endpoint:
+    - `GET /api/referral-campaigns/{campaign_id}/analytics`
+    - `backend/api/settings.py`.
+  - Analytics now includes clicks/unique clicks/bookings/registered and lead events (visit/booking with phone/location/status where available).
+  - Frontend API client support added:
+    - `frontend/src/services/api.ts::getReferralCampaignAnalytics`.
+  - Public tracking binding for referral query parameter:
+    - `frontend/public_landing/utils/analytics.ts` now preserves query string in tracked `page_url`.
+    - `frontend/public_landing/components/BookingSection.tsx` writes booking source as `public_landing_ref_campaign_{id}`.
+- Team/employee detail cleanup:
+  - `frontend/src/pages/admin/EmployeeDetail.tsx`:
+    - added back button in header,
+    - removed redundant header edit/delete actions,
+    - removed legacy `bookings` tab and mapped it to `schedule` route.
+- Schedule legend and markers:
+  - `frontend/src/components/admin/EmployeeSchedule.tsx` now shows separate dot markers for:
+    - booking (red),
+    - vacation (amber),
+    - sick leave (purple).
+- Employee settings localization:
+  - Added missing visibility labels in users dictionaries:
+    - `frontend/src/locales/ru/admin/Users.json`,
+    - `frontend/src/locales/en/admin/users.json`.
+- Booking creation UX (name optional):
+  - Client name is no longer mandatory for booking creation in:
+    - `frontend/src/pages/admin/Calendar.tsx`,
+    - `frontend/src/pages/shared/Bookings.tsx`.
+  - Save validation now requires service/date/time and resolved phone only.
+- Bookings dashboard card sizing:
+  - Reduced stat card visual footprint to match Clients panel proportions:
+    - `frontend/src/pages/admin/Bookings.css`.
+
+## [2026-02-13] Team/Payroll/Bookings Consistency Fixes
+- Clients detail message count (`/crm/clients/:id`) now uses only inbound client messages from `chat_history(sender='client')` + `messenger_messages(sender_type='client')`, instead of stale aggregate counters:
+  - `backend/api/clients.py`.
+- Language normalization hardened for locale variants like `ru-RU`, `en_US`:
+  - `backend/utils/language_utils.py::validate_language`.
+  - This fixes transliteration/localized name fallback issues (including masters rendered in bookings).
+- Employee card navigation and layout cleanup:
+  - Booking master click from `frontend/src/pages/admin/BookingDetail.tsx` now opens `/crm/team/{id}/information`.
+  - `frontend/src/pages/admin/EmployeeDetail.tsx` removed legacy left sidebar list and added new `bookings` tab with embedded calendar.
+- Employee bookings tab and calendar memory:
+  - `frontend/src/pages/admin/Calendar.tsx` now supports `employeeIdFilter`, `storageScope`, `defaultViewMode`.
+  - Team employee bookings open with weekly mode by default and persist user-selected view mode.
+  - Stabilized initial employee filter state to use resolved `employeeId` directly during first render.
+- Schedule editor behavior fixed:
+  - `frontend/src/components/admin/EmployeeSchedule.tsx` no longer redirects on green slot click.
+  - Prevented accidental long-range merge when clicking far slot before shift start.
+  - Clicking booked slots now shows info and does not navigate away.
+- Payroll logic redesigned for real scenarios:
+  - New robust payroll backend in `backend/api/payroll.py` with salary settings endpoints:
+    - `GET/POST /api/payroll/settings/{employee_id}`
+    - `POST /api/payroll/calculate`
+    - dynamic support for `fixed`, `commission`, `hourly`, `daily`, `per_booking`, `per_client`, `mixed`.
+  - Calculations use completed bookings only, unique clients, worked days/hours, prorated base salary, bonuses/penalties.
+  - History/payment endpoints now adapt to schema differences in `payroll_payments`.
+  - Router connected in `backend/api/__init__.py`.
+- Payroll UI updated:
+  - `frontend/src/components/admin/EmployeePayroll.tsx` loads/saves settings via new payroll endpoints, adds extended salary types and richer breakdown metrics.
+  - Input spacing improved (labels/icons no longer cramped).
+- Employee settings page simplified:
+  - `frontend/src/components/admin/EmployeeSettings.tsx` removed duplicated payroll/notification blocks, keeps only public visibility control.
+
 ## [2026-02-13] Booking Time Ranges + Client Reschedule Flow + Messenger Stabilization
 - CRM bookings time-range UX:
   - `frontend/src/pages/shared/Bookings.tsx` now shows booking time as `start - end` in list rows (end computed from service duration SSOT with safe fallback).
@@ -55,6 +187,7 @@
   - client detail payload now returns `display_name`.
 - Fixed booking detail route path in `backend/api/bookings.py`:
   - corrected `GET` endpoint to `/bookings/{booking_id}` (under `/api` router prefix).
+  - fixed localized master name resolution for detail/list row shapes (`master_user_id` extraction), and improved alias matching via transliterated full-name aliases.
 
 ## [2026-02-13] CRM Period Filters/Stats Fix + Non-Blocking Booking Confirmation
 - Fixed CRM bookings period filtering and card behavior:

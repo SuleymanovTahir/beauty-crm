@@ -1403,6 +1403,36 @@ export class ApiClient {
     })
   }
 
+  async getReferralCampaignAnalytics(
+    id: number,
+    params?: { period?: string; date_from?: string; date_to?: string }
+  ) {
+    const query = new URLSearchParams()
+    if (params?.period) query.set('period', params.period)
+    if (params?.date_from) query.set('date_from', params.date_from)
+    if (params?.date_to) query.set('date_to', params.date_to)
+    const queryString = query.toString()
+    const endpoint = queryString.length > 0
+      ? `/api/referral-campaigns/${id}/analytics?${queryString}`
+      : `/api/referral-campaigns/${id}/analytics`
+    return this.request<any>(endpoint)
+  }
+
+  async getPublicReferralLinkProfile(
+    shareToken: string,
+    params?: { period?: string; date_from?: string; date_to?: string }
+  ) {
+    const query = new URLSearchParams()
+    if (params?.period) query.set('period', params.period)
+    if (params?.date_from) query.set('date_from', params.date_from)
+    if (params?.date_to) query.set('date_to', params.date_to)
+    const queryString = query.toString()
+    const endpoint = queryString.length > 0
+      ? `/api/public/referral-links/${encodeURIComponent(shareToken)}?${queryString}`
+      : `/api/public/referral-links/${encodeURIComponent(shareToken)}`
+    return this.request<any>(endpoint)
+  }
+
   // ===== ADMIN CLIENT GALLERY =====
   async getAdminClientGallery(clientId: string) {
     return this.request<any>(`/api/admin/client-gallery/${clientId}`)
