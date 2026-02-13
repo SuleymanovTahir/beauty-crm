@@ -2228,23 +2228,75 @@ export class ApiClient {
   async getPublicAvailableSlots(
     date: string,
     employeeId?: number,
-    serviceId?: number
+    serviceId?: number,
+    context?: {
+      serviceIds?: number[]
+      durationMinutes?: number
+    }
   ) {
     const params = new URLSearchParams({ date });
     if (employeeId) params.append('employee_id', String(employeeId));
     if (serviceId) params.append('service_id', String(serviceId));
+    if (Array.isArray(context?.serviceIds) && context.serviceIds.length > 0) {
+      const normalizedServiceIds = context.serviceIds
+        .map((serviceItem) => Number(serviceItem))
+        .filter((serviceItem) => Number.isFinite(serviceItem) && serviceItem > 0)
+        .map((serviceItem) => Math.trunc(serviceItem));
+      if (normalizedServiceIds.length > 0) {
+        params.append('service_ids', normalizedServiceIds.join(','));
+      }
+    }
+    if (
+      typeof context?.durationMinutes === 'number' &&
+      Number.isFinite(context.durationMinutes) &&
+      context.durationMinutes > 0
+    ) {
+      params.append('duration_minutes', String(Math.trunc(context.durationMinutes)));
+    }
 
     return this.request<{
       date: string;
-      slots: { time: string; available: boolean }[];
+      slots: { time: string; available: boolean; isOptimal?: boolean; is_optimal?: boolean }[];
     }>(`/api/public/available-slots?${params.toString()}`);
   }
 
-  async getPublicBatchAvailability(date: string) {
+  async getPublicBatchAvailability(
+    date: string,
+    context?: {
+      serviceId?: number
+      serviceIds?: number[]
+      durationMinutes?: number
+    }
+  ) {
+    const params = new URLSearchParams({ date });
+    if (
+      typeof context?.serviceId === 'number' &&
+      Number.isFinite(context.serviceId) &&
+      context.serviceId > 0
+    ) {
+      params.append('service_id', String(Math.trunc(context.serviceId)));
+    }
+    if (Array.isArray(context?.serviceIds) && context.serviceIds.length > 0) {
+      const normalizedServiceIds = context.serviceIds
+        .map((serviceItem) => Number(serviceItem))
+        .filter((serviceItem) => Number.isFinite(serviceItem) && serviceItem > 0)
+        .map((serviceItem) => Math.trunc(serviceItem));
+      if (normalizedServiceIds.length > 0) {
+        params.append('service_ids', normalizedServiceIds.join(','));
+      }
+    }
+    if (
+      typeof context?.durationMinutes === 'number' &&
+      Number.isFinite(context.durationMinutes) &&
+      context.durationMinutes > 0
+    ) {
+      params.append('duration_minutes', String(Math.trunc(context.durationMinutes)));
+    }
+
     return this.request<{
       date: string;
       availability: Record<number, string[]>;
-    }>(`/api/public/available-slots/batch?date=${date}`);
+    }>(`/api/public/available-slots/batch?${params.toString()}`);
   }
   // ===== ADMIN PANEL =====
   async getAdminStats() {

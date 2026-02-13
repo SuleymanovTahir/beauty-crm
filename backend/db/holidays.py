@@ -4,24 +4,64 @@ Handles all holiday and salon-day-off operations.
 """
 from datetime import datetime, date
 from typing import List, Optional, Dict, Any
+import json
 from db.connection import get_db_connection
-from utils.logger import log_info, log_error
+from utils.logger import log_error
 
 class SalonHoliday:
     """Holiday data model"""
-    def __init__(self, id: int, date: str, name: str, is_closed: bool = True, created_at: Optional[str] = None):
+    def __init__(
+        self,
+        id: int,
+        date: str,
+        name: str,
+        is_closed: bool = True,
+        created_at: Optional[str] = None,
+        master_exceptions: Optional[List[int]] = None,
+    ):
         self.id = id
         self.date = date  # YYYY-MM-DD
         self.name = name
         self.is_closed = is_closed
         self.created_at = created_at
+        self.master_exceptions = master_exceptions or []
+
+
+def _normalize_master_exceptions(raw_value: Any) -> List[int]:
+    if raw_value is None:
+        return []
+
+    values = raw_value
+    if isinstance(raw_value, str):
+        try:
+            values = json.loads(raw_value)
+        except Exception:
+            values = []
+
+    if not isinstance(values, list):
+        return []
+
+    normalized: List[int] = []
+    seen = set()
+    for item in values:
+        try:
+            master_id = int(item)
+        except Exception:
+            continue
+
+        if master_id in seen:
+            continue
+        seen.add(master_id)
+        normalized.append(master_id)
+
+    return normalized
 
 def get_holidays(start_date: Optional[str] = None, end_date: Optional[str] = None) -> List[Dict[str, Any]]:
     """Fetch all holidays from DB within range"""
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        query = "SELECT id, date, name, is_closed, created_at FROM salon_holidays"
+        query = "SELECT id, date, name, is_closed, master_exceptions, created_at FROM salon_holidays"
         params = []
         
         if start_date and end_date:
@@ -38,7 +78,8 @@ def get_holidays(start_date: Optional[str] = None, end_date: Optional[str] = Non
                 "date": r[1].isoformat() if isinstance(r[1], (date, datetime)) else r[1],
                 "name": r[2],
                 "is_closed": r[3],
-                "created_at": r[4].isoformat() if isinstance(r[4], (date, datetime)) else r[4]
+                "master_exceptions": _normalize_master_exceptions(r[4]),
+                "created_at": r[5].isoformat() if isinstance(r[5], (date, datetime)) else r[5]
             }
             for r in rows
         ]
@@ -53,11 +94,15 @@ def add_holiday(h_date: str, name: str, is_closed: bool = True, master_exception
     conn = get_db_connection()
     c = conn.cursor()
     try:
+        exceptions = _normalize_master_exceptions(master_exceptions)
         c.execute("""
-            INSERT INTO salon_holidays (date, name, is_closed)
-            VALUES (%s, %s, %s)
-            ON CONFLICT (date) DO UPDATE SET name = EXCLUDED.name, is_closed = EXCLUDED.is_closed
-        """, (h_date, name, is_closed))
+            INSERT INTO salon_holidays (date, name, is_closed, master_exceptions)
+            VALUES (%s, %s, %s, %s::jsonb)
+            ON CONFLICT (date) DO UPDATE SET
+                name = EXCLUDED.name,
+                is_closed = EXCLUDED.is_closed,
+                master_exceptions = EXCLUDED.master_exceptions
+        """, (h_date, name, is_closed, json.dumps(exceptions)))
         conn.commit()
         return True
     except Exception as e:
@@ -92,8 +137,10 @@ def create_holidays_table():
             date DATE UNIQUE NOT NULL,
             name TEXT,
             is_closed BOOLEAN DEFAULT TRUE,
+            master_exceptions JSONB DEFAULT '[]',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        c.execute("ALTER TABLE salon_holidays ADD COLUMN IF NOT EXISTS master_exceptions JSONB DEFAULT '[]'")
         conn.commit()
     except Exception as e:
         log_error(f"Error creating holidays table: {e}", "db.holidays")

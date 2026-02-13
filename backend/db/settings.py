@@ -697,8 +697,11 @@ def update_role_permissions(role_key: str, permissions: dict) -> bool:
     c = conn.cursor()
 
     if role_key == 'admin':
-        log_error("❌ Нельзя изменить права роли admin", "database")
-        return False
+        # Admin always has full access by design.
+        # Keep request successful to avoid client-side 400 errors.
+        log_warning("⚠️ Изменение прав роли admin проигнорировано: у admin всегда полный доступ", "database")
+        conn.close()
+        return True
 
     try:
         c.execute("DELETE FROM role_permissions WHERE role_key = %s", (role_key,))

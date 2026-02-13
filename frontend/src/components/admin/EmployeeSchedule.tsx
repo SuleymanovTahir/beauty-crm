@@ -40,6 +40,13 @@ interface EmployeeScheduleProps {
 const TIME_SLOTS = Array.from({ length: 29 }, (_, i) => 8 + i * 0.5);
 const DAY_KEYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
+const getWeekStart = (date: Date) => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(d.setDate(diff));
+};
+
 export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps) {
     const { t, i18n } = useTranslation(['admin/users', 'common']);
     const navigate = useNavigate();
@@ -51,6 +58,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
     const [schedule, setSchedule] = useState<ScheduleEntry[]>([]);
     const [timeOffs, setTimeOffs] = useState<TimeOff[]>([]);
     const [bookings, setBookings] = useState<Booking[]>([]);
+    const [holidays, setHolidays] = useState<Array<{ date: string; name: string; is_closed: boolean; master_exceptions?: number[] }>>([]);
     const [loading, setLoading] = useState(true);
 
     // Autofill template state
@@ -130,6 +138,15 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
             const allBookings = bookingsData?.bookings || [];
             const employeeBookings = allBookings.filter((b: Booking) => b.master === employee?.full_name);
             setBookings(employeeBookings);
+
+            // Load holidays for current week to reflect automatic day-off state
+            const weekStart = getWeekStart(new Date());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            const weekStartKey = weekStart.toISOString().split('T')[0];
+            const weekEndKey = weekEnd.toISOString().split('T')[0];
+            const holidaysData = await api.getHolidays(weekStartKey, weekEndKey);
+            setHolidays(Array.isArray(holidaysData) ? holidaysData : []);
 
         } catch (error) {
             console.error('Error loading schedule data:', error);
@@ -258,14 +275,21 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         workStartTime: string,
         workEndTime: string
     ): ScheduleEntry[] => {
-        const [workRaw, offRaw] = patternValue.split('/');
-        const parsedWorkDays = Number.parseInt(workRaw, 10);
-        const parsedOffDays = Number.parseInt(offRaw, 10);
-        const safeWorkDays = Number.isFinite(parsedWorkDays) && parsedWorkDays > 0 ? parsedWorkDays : 5;
-        const safeOffDays = Number.isFinite(parsedOffDays) && parsedOffDays > 0 ? parsedOffDays : 2;
-        const workDays = Math.max(1, safeWorkDays);
-        const offDays = Math.max(1, safeOffDays);
-        const cycleLength = workDays + offDays;
+        const [workRaw, offRaw] = patternValue.split(/[/:]/);
+        const parsePatternPart = (value: string | undefined, defaultValue: number) => {
+            if (value === undefined || value === null || value.trim() === '') {
+                return defaultValue;
+            }
+            const parsed = Number.parseInt(value, 10);
+            if (!Number.isFinite(parsed)) {
+                return defaultValue;
+            }
+            return Math.max(0, parsed);
+        };
+
+        const workDays = parsePatternPart(workRaw, 5);
+        const offDays = parsePatternPart(offRaw, 2);
+        const cycleLength = Math.max(1, workDays + offDays);
 
         const startDate = new Date(`${startDateValue}T00:00:00`);
         const templateWeekStart = getWeekStart(startDate);
@@ -276,7 +300,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
             dateForDay.setDate(templateWeekStart.getDate() + dayOfWeek);
             const diffDays = Math.floor((dateForDay.getTime() - startDate.getTime()) / dayInMs);
             const normalizedCycleDay = ((diffDays % cycleLength) + cycleLength) % cycleLength;
-            const isWorking = normalizedCycleDay < workDays;
+            const isWorking = workDays > 0 && normalizedCycleDay < workDays;
 
             return {
                 day_of_week: dayOfWeek,
@@ -287,12 +311,20 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         });
     };
 
-    // Helper functions
-    const getWeekStart = (date: Date) => {
-        const d = new Date(date);
-        const day = d.getDay();
-        const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-        return new Date(d.setDate(diff));
+    const getHolidayForDay = (dayIndex: number) => {
+        const today = new Date();
+        const weekStart = getWeekStart(today);
+        const slotDate = new Date(weekStart);
+        slotDate.setDate(slotDate.getDate() + dayIndex);
+        const dateKey = slotDate.toISOString().split('T')[0];
+
+        const holiday = holidays.find((item) => item.date === dateKey && item.is_closed);
+        if (!holiday) {
+            return null;
+        }
+
+        const exceptions = Array.isArray(holiday.master_exceptions) ? holiday.master_exceptions : [];
+        return exceptions.includes(employeeId) ? null : holiday;
     };
 
     const isSlotBooked = (dayIndex: number, hour: number) => {
@@ -314,6 +346,10 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
     };
 
     const isSlotAvailable = (dayIndex: number, hour: number) => {
+        if (getHolidayForDay(dayIndex)) {
+            return false;
+        }
+
         const daySchedule = schedule.find(s => s.day_of_week === dayIndex);
         if (!daySchedule || !daySchedule.is_working) return false;
 
@@ -327,6 +363,10 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
 
         return hour >= startHour && hour < endHour;
     };
+
+    const patternParts = schedulePattern.split(/[/:]/);
+    const patternDaysOn = patternParts[0] !== undefined ? patternParts[0] : '5';
+    const patternDaysOff = patternParts[1] !== undefined ? patternParts[1] : '2';
 
     if (loading) {
         return (
@@ -348,12 +388,10 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                         <div className="flex items-center gap-2 mt-2">
                             <Input
                                 type="number"
-                                min="1"
-                                max="31"
-                                value={schedulePattern.split('/')[0] || '5'}
+                                value={patternDaysOn}
                                 onChange={(e) => {
                                     const daysOn = e.target.value;
-                                    const daysOff = schedulePattern.split('/')[1] || '2';
+                                    const daysOff = patternDaysOff;
                                     setSchedulePattern(`${daysOn}/${daysOff}`);
                                 }}
                                 className="w-20"
@@ -362,11 +400,9 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                             <span>/</span>
                             <Input
                                 type="number"
-                                min="1"
-                                max="31"
-                                value={schedulePattern.split('/')[1] || '2'}
+                                value={patternDaysOff}
                                 onChange={(e) => {
-                                    const daysOn = schedulePattern.split('/')[0] || '5';
+                                    const daysOn = patternDaysOn;
                                     const daysOff = e.target.value;
                                     setSchedulePattern(`${daysOn}/${daysOff}`);
                                 }}
@@ -447,8 +483,6 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                         <div className="flex items-center gap-2 mt-2">
                             <Input
                                 type="number"
-                                min="1"
-                                max="4"
                                 value={weeksAhead}
                                 onChange={(e) => setWeeksAhead(e.target.value)}
                                 className="w-24"
@@ -483,12 +517,20 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                         <thead>
                             <tr>
                                 <th className="border p-2 text-xs font-medium text-gray-500"></th>
-                                {DAY_KEYS.map(dayKey => {
+                                {DAY_KEYS.map((dayKey, dayIndex) => {
                                     const translatedDay = t(`days.${dayKey}`, dayKey);
                                     const shortDay = i18n.language === 'ar' ? translatedDay : translatedDay.substring(0, 2).toUpperCase();
+                                    const holidayForDay = getHolidayForDay(dayIndex);
                                     return (
                                         <th key={dayKey} className="border p-2 text-xs font-medium text-gray-700">
-                                            {shortDay}
+                                            <div className="flex flex-col items-center gap-1">
+                                                <span>{shortDay}</span>
+                                                {holidayForDay ? (
+                                                    <span className="text-[10px] text-red-500" title={holidayForDay.name || ''}>
+                                                        {t('day_off', 'Day Off')}
+                                                    </span>
+                                                ) : null}
+                                            </div>
                                         </th>
                                     );
                                 })}
@@ -508,6 +550,12 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                             const isAvailable = isSlotAvailable(dayIndex, hour);
 
                                             const handleCellClick = async () => {
+                                                const holidayForDay = getHolidayForDay(dayIndex);
+                                                if (holidayForDay) {
+                                                    toast.info(t('day_off', 'Day Off'));
+                                                    return;
+                                                }
+
                                                 const daySchedule = schedule.find(s => s.day_of_week === dayIndex);
                                                 const parseTimeToFloat = (timeStr: string) => {
                                                     const [h_part, m_part] = timeStr.split(':').map(Number);
@@ -631,7 +679,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
 
                 <div className="mt-4 flex items-center gap-2">
                     <Label>{t('copy_schedule_for', 'Copy schedule for')}</Label>
-                    <Input type="number" min="1" max="4" defaultValue="1" className="w-20" />
+                    <Input type="number" defaultValue="1" className="w-20" />
                     <span>{t('weeks_ahead', 'weeks ahead')}</span>
                     <Button variant="outline" size="sm">
                         <Copy className="w-4 h-4 mr-2" />

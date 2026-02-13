@@ -4,11 +4,11 @@ API для запросов на изменение услуг сотрудни�
 """
 from fastapi import APIRouter, Request, Depends, Query
 from fastapi.responses import JSONResponse
-from typing import Optional
 from datetime import datetime
 
 from db.connection import get_db_connection
 from utils.logger import log_error, log_info
+from utils.duration_utils import parse_duration_to_minutes
 from core.auth import get_current_user_or_redirect as get_current_user
 
 router = APIRouter(tags=["Service Change Requests"])
@@ -32,10 +32,10 @@ async def get_my_services(
         c.execute("""
             SELECT
                 s.id, s.name, s.category,
-                s.price as default_price, s.duration as default_duration,
+                s.price as default_price, s.duration as default_duration_raw,
                 COALESCE(us.price, s.price) as price,
                 us.price_min, us.price_max,
-                COALESCE(us.duration, s.duration::INTEGER) as duration,
+                s.duration as duration_raw,
                 us.is_online_booking_enabled,
                 us.is_calendar_enabled
             FROM services s
@@ -46,16 +46,18 @@ async def get_my_services(
 
         services = []
         for row in c.fetchall():
+            default_duration_minutes = parse_duration_to_minutes(row[4]) or 60
+            duration_minutes = parse_duration_to_minutes(row[8]) or default_duration_minutes
             services.append({
                 "id": row[0],
                 "name": row[1],
                 "category": row[2],
                 "default_price": row[3],
-                "default_duration": row[4],
+                "default_duration": default_duration_minutes,
                 "price": row[5],
                 "price_min": row[6],
                 "price_max": row[7],
-                "duration": row[8],
+                "duration": duration_minutes,
                 "is_online_booking_enabled": bool(row[9]) if row[9] is not None else True,
                 "is_calendar_enabled": bool(row[10]) if row[10] is not None else True
             })
@@ -286,7 +288,8 @@ async def get_pending_requests(
                 scr.requested_is_calendar_enabled,
                 scr.employee_comment,
                 scr.created_at,
-                us.price as current_price, us.duration as current_duration
+                us.price as current_price,
+                s.duration as current_duration_raw
             FROM service_change_requests scr
             JOIN users u ON u.id = scr.user_id
             JOIN services s ON s.id = scr.service_id
@@ -297,6 +300,7 @@ async def get_pending_requests(
 
         requests = []
         for row in c.fetchall():
+            current_duration = parse_duration_to_minutes(row[16]) or 60
             requests.append({
                 "id": row[0],
                 "user_id": row[1],
@@ -314,7 +318,7 @@ async def get_pending_requests(
                 "employee_comment": row[13],
                 "created_at": row[14].isoformat() if row[14] else None,
                 "current_price": row[15],
-                "current_duration": row[16]
+                "current_duration": current_duration
             })
 
         conn.close()
@@ -374,10 +378,6 @@ async def approve_request(
             updates.append("price_max = %s")
             params.append(req[4])
 
-        if req[5] is not None:  # requested_duration
-            updates.append("duration = %s")
-            params.append(req[5])
-
         if req[6] is not None:  # requested_is_online_booking_enabled
             updates.append("is_online_booking_enabled = %s")
             params.append(req[6])
@@ -393,6 +393,15 @@ async def approve_request(
                 SET {', '.join(updates)}
                 WHERE user_id = %s AND service_id = %s
             """, params)
+
+        if req[5] is not None:  # requested_duration
+            normalized_duration = parse_duration_to_minutes(req[5])
+            if normalized_duration:
+                c.execute(
+                    "UPDATE services SET duration = %s WHERE id = %s",
+                    (str(normalized_duration), service_id),
+                )
+                c.execute("UPDATE user_services SET duration = NULL WHERE service_id = %s", (service_id,))
 
         # Обновить статус запроса
         c.execute("""

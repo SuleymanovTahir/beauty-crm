@@ -681,7 +681,9 @@ def init_database():
         add_column_if_not_exists('bookings', 'reminder_sent_2h', 'BOOLEAN DEFAULT FALSE')
         add_column_if_not_exists('bookings', 'special_package_id', 'INTEGER')
         add_column_if_not_exists('bookings', 'user_id', 'INTEGER')
+        add_column_if_not_exists('bookings', 'master_user_id', 'INTEGER REFERENCES users(id)')
         add_column_if_not_exists('bookings', 'promo_code', 'TEXT')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_master_user_id_datetime ON bookings (master_user_id, datetime)")
 
         # Tasks and Project Management
         c.execute('''CREATE TABLE IF NOT EXISTS tasks (
@@ -1207,12 +1209,33 @@ def init_database():
         c.execute('''CREATE TABLE IF NOT EXISTS booking_drafts (
             id SERIAL PRIMARY KEY,
             client_id TEXT,
+            instagram_id TEXT,
+            data JSONB DEFAULT '{}',
             master TEXT,
+            master_user_id INTEGER REFERENCES users(id),
             service_id INTEGER,
             datetime TIMESTAMP,
             expires_at TIMESTAMP,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('booking_drafts', 'instagram_id', 'TEXT')
+        add_column_if_not_exists('booking_drafts', 'data', "JSONB DEFAULT '{}'")
+        add_column_if_not_exists('booking_drafts', 'master_user_id', 'INTEGER REFERENCES users(id)')
+        add_column_if_not_exists('booking_drafts', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        c.execute("""
+            UPDATE booking_drafts
+            SET instagram_id = client_id
+            WHERE instagram_id IS NULL AND client_id IS NOT NULL
+        """)
+        c.execute("""
+            DELETE FROM booking_drafts d1
+            USING booking_drafts d2
+            WHERE d1.id < d2.id
+              AND COALESCE(d1.instagram_id, d1.client_id, '') = COALESCE(d2.instagram_id, d2.client_id, '')
+              AND COALESCE(d1.instagram_id, d1.client_id, '') <> ''
+        """)
+        c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_booking_drafts_instagram_id_unique ON booking_drafts (instagram_id) WHERE instagram_id IS NOT NULL")
 
         c.execute('''CREATE TABLE IF NOT EXISTS funnel_stages (
             id SERIAL PRIMARY KEY,

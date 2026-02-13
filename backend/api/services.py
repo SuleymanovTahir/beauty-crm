@@ -547,15 +547,16 @@ async def update_service_employees(
         conn = get_db_connection()
         c = conn.cursor()
         
-        # Получаем текущую цену и длительность услуги для дефолтных значений
-        c.execute("SELECT price, duration FROM services WHERE id = %s", (service_id,))
+        # Получаем текущую цену услуги для дефолтных значений.
+        # Длительность хранится только в services.duration (SSOT),
+        # поэтому user_services.duration не заполняем.
+        c.execute("SELECT price FROM services WHERE id = %s", (service_id,))
         svc = c.fetchone()
         if not svc:
             conn.close()
             return JSONResponse({"error": "Service not found"}, status_code=404)
         
         default_price = svc[0]
-        default_duration = svc[1]
         
         # Удаляем старые назначения
         c.execute("DELETE FROM user_services WHERE service_id = %s", (service_id,))
@@ -565,9 +566,9 @@ async def update_service_employees(
             for uid in employee_ids:
                 c.execute("""
                     INSERT INTO user_services (user_id, service_id, price, duration)
-                    VALUES (%s, %s, %s, %s)
+                    VALUES (%s, %s, %s, NULL)
                     ON CONFLICT (user_id, service_id) DO NOTHING
-                """, (uid, service_id, default_price, default_duration))
+                """, (uid, service_id, default_price))
         
         conn.commit()
         conn.close()
