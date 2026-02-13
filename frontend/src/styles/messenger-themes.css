@@ -2,8 +2,8 @@
 
 :root {
   /* Instagram */
-  --instagram-gradient: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
-  --instagram-message-own: linear-gradient(135deg, #833ab4 0%, #fd1d1d 100%);
+  --instagram-gradient: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%);
+  --instagram-message-own: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%);
   --instagram-message-other: #efefef;
   
   /* Telegram */
@@ -59,7 +59,7 @@
 .messenger-instagram .message-own {
   background: var(--instagram-message-own) !important;
   color: white !important;
-  box-shadow: 0 4px 15px rgba(225, 48, 108, 0.2);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
 }
 
 .messenger-instagram .message-other {

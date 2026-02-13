@@ -89,11 +89,32 @@ export const apiClient = {
     }),
 
   // ===== BOOKINGS =====
-  getBookings: () =>
-    apiCall('/api/bookings'),
+  getBookings: (params?: { page?: number; limit?: number; language?: string }) => {
+    if (!params) {
+      return apiCall('/api/bookings')
+    }
 
-  getBooking: (id: number) =>
-    apiCall(`/api/bookings/${id}`),
+    const searchParams = new URLSearchParams()
+    if (typeof params.page === 'number' && Number.isFinite(params.page)) {
+      searchParams.append('page', String(params.page))
+    }
+    if (typeof params.limit === 'number' && Number.isFinite(params.limit)) {
+      searchParams.append('limit', String(params.limit))
+    }
+    if (typeof params.language === 'string' && params.language.trim().length > 0) {
+      searchParams.append('language', params.language.trim())
+    }
+
+    const query = searchParams.toString()
+    return apiCall(`/api/bookings${query.length > 0 ? `?${query}` : ''}`)
+  },
+
+  getBooking: (id: number, language?: string) => {
+    const languageParam = typeof language === 'string' && language.trim().length > 0
+      ? `?language=${encodeURIComponent(language.trim())}`
+      : ''
+    return apiCall(`/api/bookings/${id}${languageParam}`)
+  },
 
   createBooking: (data: any) =>
     apiCall('/api/bookings', {
@@ -384,8 +405,12 @@ export const apiClient = {
   getClientDashboard: () =>
     apiCall('/api/client/dashboard'),
 
-  getClientBookings: () =>
-    apiCall('/api/client/my-bookings'),
+  getClientBookings: (language?: string) => {
+    const normalizedLanguage = typeof language === 'string' && language.trim().length > 0
+      ? language.trim()
+      : i18n.language;
+    return apiCall(`/api/client/my-bookings?language=${encodeURIComponent(normalizedLanguage)}`);
+  },
 
   getClientAchievements: () =>
     apiCall('/api/client/achievements'),

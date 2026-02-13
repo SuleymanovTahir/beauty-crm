@@ -25,6 +25,33 @@ interface ConfirmStepProps {
     onOpenRescheduleDialog?: () => void;
 }
 
+const parseDurationToMinutes = (rawDuration: unknown): number => {
+    if (typeof rawDuration === 'number' && Number.isFinite(rawDuration) && rawDuration > 0) {
+        return Math.trunc(rawDuration);
+    }
+
+    if (typeof rawDuration !== 'string') {
+        return 60;
+    }
+
+    const normalized = rawDuration.trim();
+    if (normalized === '') {
+        return 60;
+    }
+
+    if (/^\d+$/.test(normalized)) {
+        const parsed = Number(normalized);
+        return parsed > 0 ? Math.trunc(parsed) : 60;
+    }
+
+    const hoursMatch = normalized.match(/(\d+)\s*(h|hr|час|ч)/i);
+    const minsMatch = normalized.match(/(\d+)\s*(m|min|мин)/i);
+    const hours = hoursMatch && hoursMatch[1] ? Number(hoursMatch[1]) : 0;
+    const mins = minsMatch && minsMatch[1] ? Number(minsMatch[1]) : 0;
+    const total = hours * 60 + mins;
+    return total > 0 ? Math.trunc(total) : 60;
+};
+
 export function ConfirmStep({
     bookingState,
     totalPrice,
@@ -170,22 +197,33 @@ export function ConfirmStep({
         try {
             const dateStr = bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : '';
             const serviceNames = bookingState.services.map((s: any) => getLocalizedName(s, i18n.language)).join(', ');
+            const finalAmount = appliedPromo ? (appliedPromo.final_price ?? totalPrice) : totalPrice;
             const selectedServiceIds = Array.isArray(bookingState.services)
                 ? bookingState.services
                     .map((service: any) => Number(service?.id))
                     .filter((serviceId: number) => Number.isFinite(serviceId) && serviceId > 0)
                 : [];
+            const durationMinutes = Array.isArray(bookingState.services) && bookingState.services.length > 0
+                ? bookingState.services.reduce(
+                    (sum: number, service: any) => sum + parseDurationToMinutes(service?.duration),
+                    0
+                )
+                : 60;
 
             if (bookingState.id && user) {
-                await api.put(`/api/bookings/${bookingState.id}`, {
+                await api.post(`/api/client/bookings/${bookingState.id}/update`, {
                     service: serviceNames,
+                    service_id: bookingState.services?.[0]?.id,
                     master: bookingState.professional?.username || 'any',
+                    master_id: bookingState.professional?.id,
                     date: dateStr,
                     time: bookingState.time || '',
                     phone,
                     name: user?.full_name || user?.username || bookingState.name || 'Guest',
                     source: 'client_cabinet',
-                    promo_code: appliedPromo?.code
+                    promo_code: appliedPromo?.code,
+                    revenue: finalAmount,
+                    duration_minutes: durationMinutes
                 });
             } else if (!user) {
                 await api.createPublicBooking({
@@ -196,7 +234,8 @@ export function ConfirmStep({
                     phone,
                     name: bookingState.name ?? 'Guest',
                     source: 'client_cabinet',
-                    promo_code: appliedPromo?.code
+                    promo_code: appliedPromo?.code,
+                    duration_minutes: durationMinutes
                 });
             } else {
                 await api.createBooking({
@@ -208,7 +247,9 @@ export function ConfirmStep({
                     phone,
                     name: user?.full_name || user?.username || bookingState.name || 'Guest',
                     source: 'client_cabinet',
-                    promo_code: appliedPromo?.code
+                    promo_code: appliedPromo?.code,
+                    revenue: finalAmount,
+                    duration_minutes: durationMinutes
                 });
             }
 
@@ -257,15 +298,15 @@ export function ConfirmStep({
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            <div className="max-w-3xl mx-auto px-4 py-8 pb-32 w-full min-w-0 space-y-6">
+        <div className="min-h-screen bg-gray-50 flex flex-col booking-confirm-root">
+            <div className="booking-confirm-shell max-w-3xl mx-auto px-4 py-8 pb-32 w-full min-w-0 space-y-6">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-2"
                 >
-                    <h2 className="text-2xl font-bold text-gray-900">{t('confirm.title', 'Confirm Booking')}</h2>
+                    <h2 className="booking-confirm-title text-2xl font-bold text-gray-900">{t('confirm.title', 'Confirm Booking')}</h2>
                 </motion.div>
 
                 {/* Summary Card */}
@@ -274,8 +315,8 @@ export function ConfirmStep({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
                 >
-                    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-                        <div className="p-6 space-y-6">
+                    <div className="booking-confirm-card bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                        <div className="booking-confirm-body p-6 space-y-6">
                             {/* Services */}
                             <div>
                                 <div className="flex items-center justify-between mb-4">
@@ -293,18 +334,18 @@ export function ConfirmStep({
                                 </div>
                                 <div className="space-y-3">
                                     {bookingState.services.map((service: any) => (
-                                        <div key={service.id} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between group">
-                                            <div className="flex items-start gap-3 min-w-0">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-gray-900" />
-                                                <span className="text-gray-900 font-semibold break-words">
+                                        <div key={service.id} className="booking-confirm-service-item group">
+                                            <div className="booking-confirm-service-main min-w-0">
+                                                <div className="booking-confirm-service-bullet" />
+                                                <span className="booking-confirm-service-name text-gray-900 font-semibold break-words">
                                                     {getLocalizedName(service, i18n.language)}
                                                 </span>
                                             </div>
-                                            <div className="flex items-center gap-3 sm:gap-4 text-sm w-full sm:w-auto sm:justify-end">
-                                                <span className="text-gray-400 font-medium whitespace-nowrap">
+                                            <div className="booking-confirm-service-meta text-sm">
+                                                <span className="booking-confirm-service-duration text-gray-400 font-medium whitespace-nowrap">
                                                     {service.duration} {t('min', 'min')}
                                                 </span>
-                                                <span className="font-bold text-gray-900 whitespace-nowrap">{formatCurrency(service.price)}</span>
+                                                <span className="booking-confirm-service-price font-bold text-gray-900 whitespace-nowrap">{formatCurrency(service.price)}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -326,7 +367,7 @@ export function ConfirmStep({
                                         </button>
                                     )}
                                 </div>
-                                <div className="bg-gray-50 rounded-lg p-3">
+                                <div className="booking-confirm-box bg-gray-50 rounded-lg p-3">
                                     <p className="text-gray-900 font-semibold">
                                         {bookingState.professional ? getLocalizedName(bookingState.professional, i18n.language) : t('professional.anyAvailable', 'Flexible Match')}
                                     </p>
@@ -349,7 +390,7 @@ export function ConfirmStep({
                                     )}
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div className="bg-gray-50 rounded-lg p-3">
+                                    <div className="booking-confirm-box bg-gray-50 rounded-lg p-3">
                                         <div className="flex items-center gap-2 mb-1.5">
                                             <Calendar size={14} className="text-gray-400" />
                                             <span className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
@@ -360,7 +401,7 @@ export function ConfirmStep({
                                             {bookingState.date && format(bookingState.date, 'EEEE, MMM d', { locale: dateLocale })}
                                         </p>
                                     </div>
-                                    <div className="bg-gray-50 rounded-lg p-3">
+                                    <div className="booking-confirm-box bg-gray-50 rounded-lg p-3">
                                         <div className="flex items-center gap-2 mb-1.5">
                                             <Clock size={14} className="text-gray-400" />
                                             <span className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
@@ -380,7 +421,7 @@ export function ConfirmStep({
                                     <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3">
                                         {t('confirm.contactNumber', 'Contact Number')}
                                     </p>
-                                    <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
+                                    <div className="booking-confirm-box flex items-center gap-3 bg-gray-50 rounded-lg p-3">
                                         <Phone size={16} className="text-gray-400" />
                                         <span className="text-gray-900 font-semibold">{phone}</span>
                                     </div>
@@ -415,7 +456,7 @@ export function ConfirmStep({
                                             placeholder={t('promotions.enter_code', 'Enter code')}
                                             value={promoCode}
                                             onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                                            className="uppercase"
+                                            className="booking-confirm-input uppercase"
                                         />
                                         <Button
                                             variant="outline"
@@ -513,7 +554,7 @@ export function ConfirmStep({
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
                                 placeholder="+7"
-                                className="h-14 text-2xl font-bold text-center bg-gray-50 border-gray-100 focus-visible:ring-gray-200 rounded-xl"
+                                className="booking-confirm-input h-14 text-2xl font-bold text-center bg-gray-50 border-gray-100 focus-visible:ring-gray-200 rounded-xl"
                             />
                         </div>
 

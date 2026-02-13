@@ -20,6 +20,56 @@ from services.smart_assistant import SmartAssistant, get_smart_greeting, get_sma
 
 router = APIRouter(tags=["Clients"])
 
+def _to_int(value: object, default: int = 0) -> int:
+    try:
+        return int(value)
+    except Exception:
+        return default
+
+def _resolve_client_temperature(
+    stored_temperature: Optional[str],
+    total_bookings: object,
+    total_messages: object
+) -> str:
+    normalized = str(stored_temperature or "").strip().lower()
+    bookings_count = max(0, _to_int(total_bookings, 0))
+    messages_count = max(0, _to_int(total_messages, 0))
+
+    if bookings_count >= 4:
+        return "hot"
+    if bookings_count >= 1:
+        return "hot" if normalized == "hot" else "warm"
+
+    if messages_count >= 8:
+        return "warm" if normalized != "hot" else "hot"
+
+    if normalized in {"hot", "warm", "cold"}:
+        return normalized
+
+    return "warm"
+
+def _get_client_inbound_messages_count(c, client_id: str) -> int:
+    try:
+        c.execute(
+            """
+            SELECT
+                COALESCE(
+                    (SELECT COUNT(*) FROM chat_history WHERE instagram_id = %s AND sender = 'client'),
+                    0
+                )
+                +
+                COALESCE(
+                    (SELECT COUNT(*) FROM messenger_messages WHERE client_id = %s AND sender_type = 'client'),
+                    0
+                ) AS total_client_messages
+            """,
+            (client_id, client_id)
+        )
+        row = c.fetchone()
+        return _to_int(row[0] if row else 0, 0)
+    except Exception:
+        return 0
+
 def get_client_messengers(client_id: str):
     """Получить список мессенджеров, которыми пользуется клиент"""
     conn = get_db_connection()
@@ -56,7 +106,7 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
         c.execute("""
             SELECT DISTINCT
                 c.instagram_id, c.username, c.phone, c.name, c.first_contact,
-                c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
+                c.last_contact, COALESCE(ch.client_messages, 0) + COALESCE(mm.client_messages, 0) as total_messages, c.labels, c.status, c.lifetime_value,
                 c.profile_pic, c.notes, c.is_pinned, c.gender, 1 as has_messages,
                 c.created_at,
                 COALESCE(b.total_spend, 0) as total_spend,
@@ -65,11 +115,24 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
                 c.email
             FROM clients c
             LEFT JOIN (
+                SELECT instagram_id, COUNT(*) as client_messages
+                FROM chat_history
+                WHERE sender = 'client'
+                GROUP BY instagram_id
+            ) ch ON c.instagram_id = ch.instagram_id
+            LEFT JOIN (
+                SELECT client_id, COUNT(*) as client_messages
+                FROM messenger_messages
+                WHERE sender_type = 'client'
+                GROUP BY client_id
+            ) mm ON c.instagram_id = mm.client_id
+            LEFT JOIN (
                 SELECT instagram_id,
                        SUM(revenue) as total_spend,
                        COUNT(*) as total_bookings
                 FROM bookings
-                WHERE status = 'completed'
+                WHERE COALESCE(status, '') <> 'cancelled'
+                  AND deleted_at IS NULL
                 GROUP BY instagram_id
             ) b ON c.instagram_id = b.instagram_id
             WHERE EXISTS (
@@ -84,7 +147,7 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
         c.execute("""
             SELECT DISTINCT
                 c.instagram_id, c.username, c.phone, c.name, c.first_contact,
-                c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
+                c.last_contact, COALESCE(ch.client_messages, 0) + COALESCE(mm.client_messages, 0) as total_messages, c.labels, c.status, c.lifetime_value,
                 c.profile_pic, c.notes, c.is_pinned, c.gender, 1 as has_messages,
                 c.created_at,
                 COALESCE(b.total_spend, 0) as total_spend,
@@ -93,15 +156,28 @@ def get_clients_by_messenger(messenger_type: str = 'instagram'):
                 c.email
             FROM clients c
             LEFT JOIN (
+                SELECT instagram_id, COUNT(*) as client_messages
+                FROM chat_history
+                WHERE sender = 'client'
+                GROUP BY instagram_id
+            ) ch ON c.instagram_id = ch.instagram_id
+            LEFT JOIN (
+                SELECT client_id, COUNT(*) as client_messages
+                FROM messenger_messages
+                WHERE sender_type = 'client'
+                GROUP BY client_id
+            ) mm ON c.instagram_id = mm.client_id
+            LEFT JOIN (
                 SELECT instagram_id,
                        SUM(revenue) as total_spend,
                        COUNT(*) as total_bookings
                 FROM bookings
-                WHERE status = 'completed'
+                WHERE COALESCE(status, '') <> 'cancelled'
+                  AND deleted_at IS NULL
                 GROUP BY instagram_id
             ) b ON c.instagram_id = b.instagram_id
-            JOIN messenger_messages mm ON c.instagram_id = mm.client_id
-            WHERE mm.messenger_type = %s
+            JOIN messenger_messages mmsg ON c.instagram_id = mmsg.client_id
+            WHERE mmsg.messenger_type = %s
             ORDER BY c.is_pinned DESC, c.last_contact DESC
         """, (messenger_type,))
 
@@ -139,7 +215,7 @@ def get_clients_by_master(master_name: str):
             1 as has_messages,
             c.created_at,
             0 as total_spend,  -- ❌ Скрываем выручку
-            COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed' AND master = %s), 0) as total_bookings,
+            COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id AND COALESCE(status, '') <> 'cancelled' AND deleted_at IS NULL AND master = %s), 0) as total_bookings,
             c.temperature
         FROM clients c
         INNER JOIN bookings b ON c.instagram_id = b.instagram_id
@@ -182,7 +258,7 @@ def get_clients_limited():
             1 as has_messages,
             c.created_at,
             0 as total_spend,  -- ❌ Скрываем выручку
-            COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id AND status = 'completed'), 0) as total_bookings,
+            COALESCE((SELECT COUNT(*) FROM bookings WHERE instagram_id = c.instagram_id AND COALESCE(status, '') <> 'cancelled' AND deleted_at IS NULL), 0) as total_bookings,
             c.temperature
         FROM clients c
         WHERE EXISTS (
@@ -246,7 +322,7 @@ def get_clients_all():
     c.execute("""
         SELECT DISTINCT
             c.instagram_id, c.username, c.phone, c.name, c.first_contact,
-            c.last_contact, c.total_messages, c.labels, c.status, c.lifetime_value,
+            c.last_contact, COALESCE(ch.client_messages, 0) + COALESCE(mm.client_messages, 0) as total_messages, c.labels, c.status, c.lifetime_value,
             c.profile_pic, c.notes, c.is_pinned, c.gender,
             CASE WHEN EXISTS (SELECT 1 FROM chat_history ch WHERE ch.instagram_id = c.instagram_id) THEN 1 ELSE 0 END as has_messages,
             c.created_at,
@@ -256,11 +332,24 @@ def get_clients_all():
             c.email
         FROM clients c
         LEFT JOIN (
+            SELECT instagram_id, COUNT(*) as client_messages
+            FROM chat_history
+            WHERE sender = 'client'
+            GROUP BY instagram_id
+        ) ch ON c.instagram_id = ch.instagram_id
+        LEFT JOIN (
+            SELECT client_id, COUNT(*) as client_messages
+            FROM messenger_messages
+            WHERE sender_type = 'client'
+            GROUP BY client_id
+        ) mm ON c.instagram_id = mm.client_id
+        LEFT JOIN (
             SELECT instagram_id,
                    SUM(revenue) as total_spend,
                    COUNT(*) as total_bookings
             FROM bookings
-            WHERE status = 'completed'
+            WHERE COALESCE(status, '') <> 'cancelled'
+              AND deleted_at IS NULL
             GROUP BY instagram_id
         ) b ON c.instagram_id = b.instagram_id
         WHERE c.deleted_at IS NULL
@@ -347,7 +436,11 @@ async def list_clients(
                 "created_at": c[15] if len(c) > 15 else None,
                 "total_spend": c[16] if len(c) > 16 else (c[9] if len(c) > 9 else 0),
                 "total_bookings": c[17] if len(c) > 17 else 0,
-                "temperature": c[18] if len(c) > 18 else "cold",
+                "temperature": _resolve_client_temperature(
+                    c[18] if len(c) > 18 else None,
+                    c[17] if len(c) > 17 else 0,
+                    c[6] if len(c) > 6 else 0
+                ),
                 "email": c[19] if len(c) > 19 else None,
                 "messenger": messenger
             }
@@ -427,9 +520,10 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     # Calculate stats directly from fetched bookings for accuracy
     # Filter only completed bookings for LTV and visit count
     # Note: b[6] is the status field in get_all_bookings() result
-    completed_bookings = [b for b in bookings if b[6] == 'completed']
-    calculated_total_spend = sum(float(b[8] or 0) for b in completed_bookings)
-    calculated_total_visits = len(completed_bookings)
+    relevant_booking_statuses = {'pending', 'confirmed', 'completed'}
+    relevant_bookings = [b for b in bookings if b[6] in relevant_booking_statuses]
+    calculated_total_spend = sum(float(b[8] or 0) for b in relevant_bookings)
+    calculated_total_visits = len(relevant_bookings)
     
     booking_services = [b[2] for b in bookings if b[2]]
     booking_masters = [b[9] for b in bookings if len(b) > 9 and b[9]]
@@ -473,12 +567,13 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     # RBAC: Marketer cannot view client details
     if user["role"] == "marketer":
         return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    conn.close()
 
     # Определяем, нужно ли скрывать конфиденциальные данные
     # Sales и Employee не видят телефон и финансы
     hide_sensitive_data = user["role"] in ["employee", "sales"]
+    calculated_total_messages = _get_client_inbound_messages_count(c, real_id)
+    
+    conn.close()
     
     return {
         "success": True,
@@ -486,11 +581,12 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
             "id": client[0],
             "instagram_id": client[0],
             "username": client[1],
+            "display_name": get_client_display_name(client),
             "phone": None if hide_sensitive_data else client[2],  # ❌ Скрываем для employee
             "name": client[3],
             "first_contact": client[4],
             "last_contact": client[5],
-            "total_messages": client[6],
+            "total_messages": calculated_total_messages,
             "status": client[8],
             "lifetime_value": 0 if hide_sensitive_data else calculated_total_spend,  # ❌ Скрываем для employee
             "profile_pic": client[10] if len(client) > 10 else None,
@@ -499,7 +595,11 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
             "total_visits": calculated_total_visits,
             "discount": 0 if hide_sensitive_data else (client[16] if len(client) > 16 else 0),  # ❌ Скрываем для employee
             "card_number": "" if hide_sensitive_data else (client[15] if len(client) > 15 else ""),
-            "temperature": client[21] if len(client) > 21 else "cold",
+            "temperature": _resolve_client_temperature(
+                client[21] if len(client) > 21 else None,
+                calculated_total_visits,
+                client[6] if len(client) > 6 else 0
+            ),
             "gender": client[14] if len(client) > 14 else None,
             "age": client[22] if len(client) > 22 else None,
             "birth_date": client[23] if len(client) > 23 else None,

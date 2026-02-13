@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
+import { Star } from 'lucide-react';
 import { api } from '../../../../src/services/api';
 import { format } from 'date-fns';
 import { getTodayDate } from '../../../utils/dateUtils';
@@ -334,11 +335,11 @@ export function ProfessionalStep({
                 onClick={() => onProfessionalChange(null)}
             >
                 <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm p-2">
+                    <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0">
                         <img
                             src="/logo.webp"
                             alt={t('common:salon_logo', 'Salon logo')}
-                            className="w-full h-full object-contain"
+                            className="w-12 h-12 object-contain"
                             loading="lazy"
                             onError={(event) => {
                                 const target = event.currentTarget;
@@ -363,6 +364,9 @@ export function ProfessionalStep({
             <div className="grid lg:grid-cols-2 gap-4 lg:gap-5 pb-10">
                 {filteredProfessionals.map((professional) => {
                     const isSelected = selectedProfessionalId === professional.id;
+                    const professionalRating = typeof professional.rating === 'number' && Number.isFinite(professional.rating)
+                        ? professional.rating.toFixed(1)
+                        : '5.0';
                     const professionalTimes = nextSlots[professional.id]
                         ? nextSlots[professional.id].split(', ').filter((slot) => slot.trim().length > 0)
                         : [];
@@ -385,21 +389,10 @@ export function ProfessionalStep({
                                 </Avatar>
                                 <div className="flex-1 min-w-0">
                                     <h3 className="font-bold text-gray-900 text-[clamp(1.15rem,2vw,1.9rem)] leading-tight truncate">{professional.full_name}</h3>
-                                    <p className="text-[11px] sm:text-xs text-gray-500 uppercase tracking-[0.14em] font-medium mt-0.5 truncate">{professional.position}</p>
+                                    <p className="professional-position text-[10px] sm:text-xs text-gray-500 uppercase tracking-[0.1em] font-medium mt-0.5 break-words leading-tight">{professional.position}</p>
                                     <div className="flex items-center gap-1.5 mt-1.5">
-                                        <img
-                                            src="/logo.webp"
-                                            alt={t('common:salon_logo', 'Salon logo')}
-                                            className="w-3.5 h-3.5 object-contain"
-                                            loading="lazy"
-                                            onError={(event) => {
-                                                const target = event.currentTarget;
-                                                if (!target.src.endsWith('/logo.png')) {
-                                                    target.src = '/logo.png';
-                                                }
-                                            }}
-                                        />
-                                        <span className="text-sm font-bold text-gray-700">{professional.rating || '5.0'}</span>
+                                        <Star className="w-3.5 h-3.5 text-amber-500 fill-current" />
+                                        <span className="text-sm font-bold text-gray-700">{professionalRating}</span>
                                     </div>
                                 </div>
                             </div>
@@ -415,7 +408,7 @@ export function ProfessionalStep({
                                     </div>
 
                                     {/* Time Slots */}
-                                    <div className="grid grid-cols-[repeat(auto-fit,minmax(62px,1fr))] gap-1.5">
+                                    <div className="professional-times-grid grid grid-cols-[repeat(auto-fit,minmax(62px,1fr))] gap-1.5">
                                         {professionalTimes.map((time: string, idx: number) => {
                                             const isSlotSelected =
                                                 isSelected &&
@@ -425,7 +418,7 @@ export function ProfessionalStep({
                                             <button
                                                 type="button"
                                                 key={idx}
-                                                className={`px-1 py-1 rounded-md text-[10px] sm:text-[11px] leading-none font-bold text-center border transition-all min-w-0 ${isSlotSelected
+                                                className={`professional-time-chip px-1 py-1 rounded-md text-[10px] sm:text-[11px] leading-none font-bold text-center border transition-all min-w-0 ${isSlotSelected
                                                     ? 'bg-gray-900 text-white border-gray-900'
                                                     : 'bg-gray-50 text-gray-700 border-gray-100 hover:border-gray-300'
                                                     }`}

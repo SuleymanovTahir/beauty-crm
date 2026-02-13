@@ -218,9 +218,23 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         const queryPrefillDate = searchParams.get('date');
         const queryPrefillTime = searchParams.get('time');
         const queryPrefillService = searchParams.get('serviceId');
+        const queryPrefillServiceName = searchParams.get('serviceName');
         const queryBookingId = searchParams.get('id');
+        const requestedStepFromQuery = searchParams.get('booking');
+        const hasRequestedStep = requestedStepFromQuery !== null && allowedSteps.includes(requestedStepFromQuery);
 
-        if (state?.editBookingId || queryBookingId || state?.prefillMaster || state?.prefillService || queryPrefillMaster || queryPrefillDate || queryPrefillTime || queryPrefillService) {
+        if (
+          state?.editBookingId ||
+          queryBookingId ||
+          state?.prefillMaster ||
+          state?.prefillService ||
+          state?.prefillServiceName ||
+          queryPrefillMaster ||
+          queryPrefillDate ||
+          queryPrefillTime ||
+          queryPrefillService ||
+          queryPrefillServiceName
+        ) {
           const newState: Partial<BookingState> = {};
 
           if (state?.editBookingId || queryBookingId) {
@@ -229,8 +243,24 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
 
           // Prefill service
           const serviceId = state?.prefillService || (queryPrefillService ? parseInt(queryPrefillService) : null);
+          const serviceName = state?.prefillServiceName ?? queryPrefillServiceName;
           if (serviceId) {
             const service = servicesData.find((s: any) => s.id === serviceId);
+            if (service) {
+              newState.services = [service];
+            }
+          } else if (typeof serviceName === 'string' && serviceName.trim().length > 0) {
+            const normalizedServiceName = serviceName.trim().toLowerCase();
+            const service = servicesData.find((serviceItem: any) => {
+              const localizedServiceName = String(getLocalizedName(serviceItem, i18n.language)).trim().toLowerCase();
+              const rawServiceName = String(serviceItem?.name ?? '').trim().toLowerCase();
+              const serviceKey = String(serviceItem?.service_key ?? '').trim().toLowerCase();
+              return (
+                localizedServiceName === normalizedServiceName ||
+                rawServiceName === normalizedServiceName ||
+                serviceKey === normalizedServiceName
+              );
+            });
             if (service) {
               newState.services = [service];
             }
@@ -266,14 +296,13 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
           if (Object.keys(newState).length > 0) {
             setBookingState(prev => ({ ...prev, ...newState }));
 
-            // If both service and master are prefilled, skip to datetime
-            if (newState.services?.length && newState.professional) {
+            if (hasRequestedStep && requestedStepFromQuery !== null) {
+              setStep(requestedStepFromQuery);
+            } else if (newState.services?.length && newState.professional) {
               setStep('datetime');
             } else if (newState.services?.length) {
-              // Only services prefilled, go to services step
               setStep('services');
             } else if (newState.professional && newState.date && newState.time) {
-              // If master, date and time prefilled - go to services to select what to book
               setStep('services');
             }
           }
@@ -395,12 +424,18 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const professionalPosition = typeof bookingState.professional?.position === 'string'
     ? bookingState.professional.position.trim()
     : '';
+  const professionalName = typeof bookingState.professional?.full_name === 'string'
+    ? bookingState.professional.full_name.trim()
+    : '';
+  const isPositionDuplicateOfName = professionalPosition.length > 0 && professionalName.length > 0
+    ? professionalPosition.toLowerCase() === professionalName.toLowerCase()
+    : false;
   const bookingMetaParts: string[] = [];
 
   if (bookingState.professional) {
     if (bookingState.services.length > 0) {
-      bookingMetaParts.push(bookingState.professional.full_name);
-    } else if (professionalPosition.length > 0) {
+      bookingMetaParts.push(professionalName);
+    } else if (professionalPosition.length > 0 && !isPositionDuplicateOfName) {
       bookingMetaParts.push(professionalPosition);
     }
   }

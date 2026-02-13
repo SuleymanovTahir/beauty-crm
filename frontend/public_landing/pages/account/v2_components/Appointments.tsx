@@ -12,7 +12,6 @@ import { toast } from 'sonner';
 import { RescheduleDialog } from './RescheduleDialog';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 import { formatGoogleCalendarUrl } from '../../../utils/urlUtils';
-import { TIME_INTERVALS } from '../../../utils/constants';
 import { formatDateForGoogle } from '../../../utils/dateUtils';
 import { useSalonSettings } from '../../../hooks/useSalonSettings';
 
@@ -25,12 +24,46 @@ export function Appointments() {
   const [currency, setCurrency] = useState(globalCurrency);
   const [filter, setFilter] = useState<'upcoming' | 'history' | 'recurring'>('upcoming');
   const { salonName } = useSalonSettings();
+  const ONE_MINUTE_MS = 60 * 1000;
+
+  const parseDurationToMinutes = (rawDuration: unknown): number => {
+    if (typeof rawDuration === 'number' && Number.isFinite(rawDuration) && rawDuration > 0) {
+      return Math.max(1, Math.trunc(rawDuration));
+    }
+
+    if (typeof rawDuration !== 'string') {
+      return 60;
+    }
+
+    const normalized = rawDuration.trim();
+    if (normalized.length === 0) {
+      return 60;
+    }
+
+    if (/^\d+$/.test(normalized)) {
+      const parsed = Number(normalized);
+      return Number.isFinite(parsed) && parsed > 0 ? Math.trunc(parsed) : 60;
+    }
+
+    const hoursMatch = normalized.match(/(\d+)\s*(h|hr|час|ч)/i);
+    const minsMatch = normalized.match(/(\d+)\s*(m|min|мин)/i);
+    const hours = hoursMatch && hoursMatch[1] ? Number(hoursMatch[1]) : 0;
+    const mins = minsMatch && minsMatch[1] ? Number(minsMatch[1]) : 0;
+    const total = hours * 60 + mins;
+    return total > 0 ? Math.trunc(total) : 60;
+  };
+
+  const getAppointmentDurationMinutes = (appointment: any): number => {
+    const directDuration = appointment?.duration_minutes ?? appointment?.duration;
+    return parseDurationToMinutes(directDuration);
+  };
 
   // Add to Google Calendar function
   const addToGoogleCalendar = (appointment: any) => {
     const startDate = new Date(appointment.date.replace(' ', 'T'));
     if (isNaN(startDate.getTime())) return;
-    const endDate = new Date(startDate.getTime() + TIME_INTERVALS.ONE_HOUR_MS);
+    const durationMinutes = getAppointmentDurationMinutes(appointment);
+    const endDate = new Date(startDate.getTime() + durationMinutes * ONE_MINUTE_MS);
 
     window.open(formatGoogleCalendarUrl({
       action: 'TEMPLATE',
@@ -44,12 +77,12 @@ export function Appointments() {
 
   useEffect(() => {
     loadBookings();
-  }, []);
+  }, [i18n.language]);
 
   const loadBookings = async () => {
     try {
       setLoading(true);
-      const data = await apiClient.getClientBookings();
+      const data = await apiClient.getClientBookings(i18n.language);
       if (data.success) {
         setBookings(data.bookings || []);
         if (data.currency) setCurrency(data.currency);
@@ -83,7 +116,14 @@ export function Appointments() {
   const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
 
   const handleEditBooking = (appointment: any) => {
-    setRescheduleData(appointment);
+    const startDate = new Date(appointment.date);
+    const fallbackTime = Number.isNaN(startDate.getTime())
+      ? ''
+      : startDate.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
+    setRescheduleData({
+      ...appointment,
+      time: appointment.time ?? fallbackTime,
+    });
     setIsRescheduleOpen(true);
   };
 
@@ -119,10 +159,17 @@ export function Appointments() {
   const renderAppointment = (appointment: any) => {
     // Extract time from datetime string (format: "2026-01-05T14:00")
     const dateTime = new Date(appointment.date);
-    const timeString = dateTime.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
+    const timeString = appointment.time ?? dateTime.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
+    const durationMinutes = getAppointmentDurationMinutes(appointment);
+    const endDateTime = Number.isNaN(dateTime.getTime())
+      ? null
+      : new Date(dateTime.getTime() + durationMinutes * ONE_MINUTE_MS);
+    const endTimeString = endDateTime === null
+      ? ''
+      : endDateTime.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
 
     return (
-      <Card key={appointment.id} className="border-gray-200">
+      <Card key={appointment.id} className="border-gray-200 rounded-2xl">
         <CardContent className="p-4">
           <div className="flex items-start gap-3 min-w-0">
             <Avatar className="w-12 h-12">
@@ -131,12 +178,12 @@ export function Appointments() {
             </Avatar>
 
             <div className="flex-1 space-y-2 min-w-0">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <div className="font-semibold">{appointment.master_name}</div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 pr-1">
+                  <div className="font-semibold break-words">{appointment.master_name}</div>
                   <div className="text-sm text-muted-foreground">{appointment.master_specialty || t('appointments.master', 'Мастер')}</div>
                 </div>
-                {getStatusBadge(appointment.status)}
+                <div className="self-start sm:self-auto">{getStatusBadge(appointment.status)}</div>
               </div>
 
               <div className="text-sm font-medium break-words">{appointment.service_name}</div>
@@ -152,7 +199,7 @@ export function Appointments() {
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
-                  {timeString}
+                  {endTimeString.length > 0 ? `${timeString} - ${endTimeString}` : timeString}
                 </div>
               </div>
 

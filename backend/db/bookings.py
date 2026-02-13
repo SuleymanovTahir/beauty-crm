@@ -117,6 +117,72 @@ def normalize_master_value(master_identifier: Optional[str]) -> Optional[str]:
         conn.close()
 
 
+def _safe_float(value: Optional[object], fallback: float = 0.0) -> float:
+    try:
+        if value is None:
+            return fallback
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _get_single_service_price(cursor, service_name: Optional[str]) -> float:
+    normalized_name = str(service_name or "").strip()
+    if not normalized_name:
+        return 0.0
+
+    cursor.execute(
+        """
+        SELECT price, min_price, max_price
+        FROM services
+        WHERE LOWER(TRIM(name)) = LOWER(TRIM(%s))
+        LIMIT 1
+        """,
+        (normalized_name,),
+    )
+    row = cursor.fetchone()
+    if not row:
+        return 0.0
+
+    price = _safe_float(row[0], 0.0)
+    if price > 0:
+        return price
+
+    min_price = _safe_float(row[1], 0.0)
+    if min_price > 0:
+        return min_price
+
+    max_price = _safe_float(row[2], 0.0)
+    if max_price > 0:
+        return max_price
+
+    return 0.0
+
+
+def _estimate_booking_revenue(cursor, service_name: Optional[str]) -> float:
+    full_price = _get_single_service_price(cursor, service_name)
+    if full_price > 0:
+        return full_price
+
+    raw_service = str(service_name or "").strip()
+    if "," not in raw_service:
+        return 0.0
+
+    total = 0.0
+    found_any = False
+    for chunk in [part.strip() for part in raw_service.split(",") if part.strip()]:
+        chunk_price = _get_single_service_price(cursor, chunk)
+        if chunk_price <= 0:
+            continue
+        found_any = True
+        total += chunk_price
+
+    if found_any:
+        return total
+
+    return 0.0
+
+
 def get_all_bookings(limit: int = 1000, offset: int = 0):
     """Получить все записи с лимитом для оптимизации"""
     conn = get_db_connection()
@@ -181,26 +247,28 @@ def get_filtered_bookings(
     """Получить отфильтрованные записи с пагинацией и сортировкой"""
     conn = get_db_connection()
     c = conn.cursor()
-    
-    conditions = ["deleted_at IS NULL"]
+
+    has_master_user_id = _column_exists(c, 'bookings', 'master_user_id')
+    has_promo_code = _column_exists(c, 'bookings', 'promo_code')
+    conditions = ["b.deleted_at IS NULL"]
     params = []
-    
+
     # 1. Search
     if search:
         search_term = f"%{search}%"
         conditions.append("""
-            (service_name ILIKE %s OR 
-             name ILIKE %s OR 
-             phone ILIKE %s OR
-             instagram_id ILIKE %s)
+            (b.service_name ILIKE %s OR 
+             b.name ILIKE %s OR 
+             b.phone ILIKE %s OR
+             b.instagram_id ILIKE %s)
         """)
         params.extend([search_term, search_term, search_term, search_term])
-        
+
     # 2. Status
     if status and status != 'all':
-        conditions.append("status = %s")
+        conditions.append("b.status = %s")
         params.append(status)
-        
+
     # 3. Master
     if master and master != 'all':
         canonical_master, master_user_id, aliases = _resolve_master_identity(c, master)
@@ -209,63 +277,77 @@ def get_filtered_bookings(
             aliases_upper = [canonical_master.upper()]
 
         if aliases_upper or master_user_id is not None:
-            has_master_user_id = _column_exists(c, 'bookings', 'master_user_id')
             if has_master_user_id and master_user_id is not None:
-                conditions.append("(master_user_id = %s OR (master_user_id IS NULL AND UPPER(master) = ANY(%s)))")
+                conditions.append("(b.master_user_id = %s OR (b.master_user_id IS NULL AND UPPER(COALESCE(b.master, '')) = ANY(%s)))")
                 params.extend([master_user_id, aliases_upper])
             else:
-                conditions.append("UPPER(master) = ANY(%s)")
+                conditions.append("UPPER(COALESCE(b.master, '')) = ANY(%s)")
                 params.append(aliases_upper)
-        
+
     # 4. Dates
     if date_from:
-        conditions.append("datetime >= %s")
+        conditions.append("b.datetime >= %s")
         params.append(date_from)
     if date_to:
-        conditions.append("datetime <= %s")
+        conditions.append("b.datetime <= %s")
         params.append(date_to)
-        
+
     # 5. User (RBAC)
     if user_id:
-        conditions.append("user_id = %s")
+        conditions.append("b.user_id = %s")
         params.append(user_id)
 
     where_clause = " AND ".join(conditions)
-    
+
     # Sorting
-    sort_column = 'datetime'
+    sort_column = 'b.datetime'
     if sort_by == 'revenue':
-        sort_column = 'revenue'
+        sort_column = "COALESCE(NULLIF(b.revenue, 0), s.price, s.min_price, s.max_price, 0)"
     elif sort_by == 'service_name':
-        sort_column = 'service_name'
+        sort_column = 'b.service_name'
     elif sort_by == 'master':
-        sort_column = 'master'
+        sort_column = 'b.master'
     elif sort_by == 'name':
-        sort_column = 'name'
+        sort_column = 'b.name'
     elif sort_by == 'status':
-        sort_column = 'status'
+        sort_column = 'b.status'
     elif sort_by == 'source':
-        sort_column = 'source'
-        
+        sort_column = 'b.source'
+
     sort_dir = 'DESC' if order.lower() == 'desc' else 'ASC'
-    
+
     # Count Query
-    count_query = f"SELECT COUNT(*) FROM bookings WHERE {where_clause}"
+    count_query = f"SELECT COUNT(*) FROM bookings b WHERE {where_clause}"
     c.execute(count_query, tuple(params))
     total_count = c.fetchone()[0]
-    
+
+    if has_master_user_id:
+        master_user_id_select = "b.master_user_id"
+    else:
+        master_user_id_select = "NULL AS master_user_id"
+    promo_code_select = "b.promo_code" if has_promo_code else "NULL AS promo_code"
+
     # Data Query
     query = f"""
-        SELECT id, instagram_id, service_name, datetime, phone,
-               name, status, created_at, revenue, master, user_id, source
-        FROM bookings
+        SELECT b.id, b.instagram_id, b.service_name, b.datetime, b.phone,
+               b.name, b.status, b.created_at,
+               COALESCE(NULLIF(b.revenue, 0), s.price, s.min_price, s.max_price, 0) AS resolved_revenue,
+               b.master, {master_user_id_select}, b.user_id, b.source, {promo_code_select}
+        FROM bookings b
+        LEFT JOIN LATERAL (
+            SELECT price, min_price, max_price
+            FROM services s
+            WHERE LOWER(TRIM(s.name)) = LOWER(TRIM(b.service_name))
+            ORDER BY s.id ASC
+            LIMIT 1
+        ) s ON TRUE
         WHERE {where_clause}
         ORDER BY {sort_column} {sort_dir}
         LIMIT %s OFFSET %s
     """
     params.append(limit)
     params.append(offset)
-    
+
     try:
         c.execute(query, tuple(params))
         bookings = c.fetchall()
@@ -286,21 +368,22 @@ def get_booking_stats(
     """Получить статистику записей с фильтрацией"""
     conn = get_db_connection()
     c = conn.cursor()
-    
-    conditions = ["deleted_at IS NULL"]
+
+    has_master_user_id = _column_exists(c, 'bookings', 'master_user_id')
+    conditions = ["b.deleted_at IS NULL"]
     params = []
-    
+
     # Reuse filter logic (simplified copy)
     if search:
         search_term = f"%{search}%"
         conditions.append("""
-            (service_name ILIKE %s OR 
-             name ILIKE %s OR 
-             phone ILIKE %s OR
-             instagram_id ILIKE %s)
+            (b.service_name ILIKE %s OR 
+             b.name ILIKE %s OR 
+             b.phone ILIKE %s OR
+             b.instagram_id ILIKE %s)
         """)
         params.extend([search_term, search_term, search_term, search_term])
-        
+
     if master and master != 'all':
         canonical_master, master_user_id, aliases = _resolve_master_identity(c, master)
         aliases_upper = [alias.upper() for alias in aliases if alias]
@@ -308,23 +391,22 @@ def get_booking_stats(
             aliases_upper = [canonical_master.upper()]
 
         if aliases_upper or master_user_id is not None:
-            has_master_user_id = _column_exists(c, 'bookings', 'master_user_id')
             if has_master_user_id and master_user_id is not None:
-                conditions.append("(master_user_id = %s OR (master_user_id IS NULL AND UPPER(master) = ANY(%s)))")
+                conditions.append("(b.master_user_id = %s OR (b.master_user_id IS NULL AND UPPER(COALESCE(b.master, '')) = ANY(%s)))")
                 params.extend([master_user_id, aliases_upper])
             else:
-                conditions.append("UPPER(master) = ANY(%s)")
+                conditions.append("UPPER(COALESCE(b.master, '')) = ANY(%s)")
                 params.append(aliases_upper)
-        
+
     if date_from:
-        conditions.append("datetime >= %s")
+        conditions.append("b.datetime >= %s")
         params.append(date_from)
     if date_to:
-        conditions.append("datetime <= %s")
+        conditions.append("b.datetime <= %s")
         params.append(date_to)
-        
+
     if user_id:
-        conditions.append("user_id = %s")
+        conditions.append("b.user_id = %s")
         params.append(user_id)
 
     where_clause = " AND ".join(conditions)
@@ -332,12 +414,19 @@ def get_booking_stats(
     try:
         query = f"""
             SELECT 
-                status,
+                b.status,
                 COUNT(*),
-                COALESCE(SUM(revenue), 0)
-            FROM bookings
+                COALESCE(SUM(COALESCE(NULLIF(b.revenue, 0), s.price, s.min_price, s.max_price, 0)), 0)
+            FROM bookings b
+            LEFT JOIN LATERAL (
+                SELECT price, min_price, max_price
+                FROM services s
+                WHERE LOWER(TRIM(s.name)) = LOWER(TRIM(b.service_name))
+                ORDER BY s.id ASC
+                LIMIT 1
+            ) s ON TRUE
             WHERE {where_clause}
-            GROUP BY status
+            GROUP BY b.status
         """
         c.execute(query, tuple(params))
         rows = c.fetchall()
@@ -355,7 +444,7 @@ def get_booking_stats(
         for row in rows:
             status = row[0]
             count = row[1]
-            revenue = row[2]
+            revenue = _safe_float(row[2], 0.0)
             
             stats[status] = count
             stats["total"] += count
@@ -513,6 +602,12 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
         user_row = c.fetchone()
         if user_row:
             user_id = user_row[0]
+
+    resolved_revenue = _safe_float(revenue, 0.0)
+    if resolved_revenue <= 0:
+        estimated_revenue = _estimate_booking_revenue(c, service)
+        if estimated_revenue > 0:
+            resolved_revenue = estimated_revenue
     
     canonical_master, master_user_id, _ = _resolve_master_identity(c, master)
     master_to_store = canonical_master
@@ -589,7 +684,7 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
                 master_user_id,
                 source,
                 user_id,
-                revenue,
+                resolved_revenue,
                 promo_code,
             ),
         )
@@ -612,7 +707,7 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
                 master_to_store,
                 source,
                 user_id,
-                revenue,
+                resolved_revenue,
                 promo_code,
             ),
         )
@@ -623,7 +718,7 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
     if promo_code:
         try:
             from db.promo_codes import validate_promo_code, log_promo_usage
-            promo_res = validate_promo_code(promo_code, revenue)
+            promo_res = validate_promo_code(promo_code, resolved_revenue)
             if promo_res.get('valid'):
                 log_promo_usage(promo_res['id'], client_id=instagram_id, user_id=user_id, booking_id=booking_id)
         except Exception as e:
@@ -663,11 +758,22 @@ def update_booking_status(booking_id: int, status: str) -> bool:
     
     try:
         if status == 'completed':
+            c.execute(
+                "SELECT service_name, COALESCE(revenue, 0) FROM bookings WHERE id = %s",
+                (booking_id,),
+            )
+            booking_row = c.fetchone()
+            resolved_revenue = 0.0
+            if booking_row:
+                resolved_revenue = _safe_float(booking_row[1], 0.0)
+                if resolved_revenue <= 0:
+                    resolved_revenue = _estimate_booking_revenue(c, booking_row[0])
+
             completed_at = get_current_time().isoformat()
             c.execute("""UPDATE bookings 
-                        SET status = %s, completed_at = %s 
+                        SET status = %s, completed_at = %s, revenue = COALESCE(NULLIF(%s, 0), revenue)
                         WHERE id = %s""",
-                      (status, completed_at, booking_id))
+                      (status, completed_at, resolved_revenue, booking_id))
         else:
             c.execute("UPDATE bookings SET status = %s WHERE id = %s",
                       (status, booking_id))

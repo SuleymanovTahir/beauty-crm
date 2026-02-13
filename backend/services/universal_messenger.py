@@ -7,13 +7,51 @@ import asyncio
 import json
 import os
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any, List, Literal
+from typing import Optional, Dict, Any, List, Literal, Set
 
 from utils.logger import log_info, log_error, log_warning
 from db.connection import get_db_connection
 from utils.datetime_utils import get_current_time
 
 Platform = Literal['instagram', 'telegram', 'whatsapp', 'email', 'in_app', 'auto']
+_clients_columns_cache: Optional[Set[str]] = None
+
+
+def _load_clients_columns() -> Set[str]:
+    """Кэшированная загрузка колонок таблицы clients для безопасных запросов."""
+    global _clients_columns_cache
+    if _clients_columns_cache is not None:
+        return _clients_columns_cache
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = 'clients'
+            """
+        )
+        _clients_columns_cache = {row[0] for row in c.fetchall()}
+    except Exception as e:
+        log_warning(f"Failed to inspect clients columns: {e}", "messenger")
+        _clients_columns_cache = set()
+    finally:
+        conn.close()
+
+    return _clients_columns_cache
+
+
+def _has_clients_column(column_name: str) -> bool:
+    return column_name in _load_clients_columns()
+
+
+def _is_valid_instagram_recipient_id(recipient_id: str) -> bool:
+    normalized = str(recipient_id or "").strip()
+    if not normalized:
+        return False
+    return normalized.isdigit()
 
 async def send_universal_message(
     recipient_id: str,
@@ -98,10 +136,16 @@ async def send_universal_message(
     
     try:
         if platform == 'instagram':
-            from integrations.instagram import send_message as send_instagram
-            res = await send_instagram(recipient_id, final_text)
-            success = "error" not in res
-            if not success: error_msg = res.get("error")
+            if not _is_valid_instagram_recipient_id(recipient_id):
+                error_msg = "invalid_instagram_recipient_id"
+                success = False
+                log_warning(f"Skip Instagram send: invalid recipient id '{recipient_id}'", "messenger")
+            else:
+                from integrations.instagram import send_message as send_instagram
+                res = await send_instagram(recipient_id, final_text)
+                success = "error" not in res
+                if not success:
+                    error_msg = res.get("error")
             
         elif platform == 'telegram':
             chat_id = await resolve_telegram_id(recipient_id)
@@ -179,15 +223,31 @@ async def resolve_telegram_id(recipient_id: str) -> Optional[str]:
     try:
         c.execute("""
             SELECT telegram_chat_id FROM messenger_messages 
-            WHERE (client_id = %s OR client_id IN (SELECT instagram_id FROM clients WHERE id::text = %s))
+            WHERE (
+                client_id = %s
+                OR client_id IN (
+                    SELECT instagram_id
+                    FROM clients
+                    WHERE instagram_id = %s OR username = %s OR telegram_id = %s
+                )
+            )
             AND messenger_type = 'telegram'
             ORDER BY created_at DESC LIMIT 1
-        """, (recipient_id, recipient_id))
+        """, (recipient_id, recipient_id, recipient_id, recipient_id))
         res = c.fetchone()
         if res: return str(res[0])
         
         # Поиск в clients
-        c.execute("SELECT telegram_id FROM clients WHERE id::text = %s OR telegram_id IS NOT NULL AND instagram_id = %s LIMIT 1", (recipient_id, recipient_id))
+        c.execute(
+            """
+            SELECT telegram_id
+            FROM clients
+            WHERE telegram_id IS NOT NULL
+              AND (instagram_id = %s OR username = %s OR telegram_id = %s)
+            LIMIT 1
+            """,
+            (recipient_id, recipient_id, recipient_id),
+        )
         res = c.fetchone()
         if res and res[0]: return str(res[0])
     except Exception as e:
@@ -206,10 +266,19 @@ def detect_platform(recipient_id: str) -> Platform:
     c = conn.cursor()
     try:
         # 1. Проверяем preferred_messenger в профиле
-        c.execute("SELECT preferred_messenger FROM clients WHERE instagram_id = %s OR telegram_id = %s OR id::text = %s LIMIT 1", 
-                  (recipient_id, recipient_id, recipient_id))
-        res = c.fetchone()
-        if res and res[0]: return res[0]
+        if _has_clients_column("preferred_messenger"):
+            c.execute(
+                """
+                SELECT preferred_messenger
+                FROM clients
+                WHERE instagram_id = %s OR telegram_id = %s OR username = %s
+                LIMIT 1
+                """,
+                (recipient_id, recipient_id, recipient_id),
+            )
+            res = c.fetchone()
+            if res and res[0]:
+                return res[0]
         
         # 2. Проверяем наличие истории в Telegram
         c.execute("SELECT COUNT(*) FROM messenger_messages WHERE client_id = %s AND messenger_type = 'telegram'", (recipient_id,))

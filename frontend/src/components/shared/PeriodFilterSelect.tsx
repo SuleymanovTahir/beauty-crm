@@ -25,21 +25,34 @@ export function PeriodFilterSelect({ value, onChange }: PeriodFilterSelectProps)
     }, []);
 
     const getPeriodLabel = (period: string) => {
+        const applyCountInterpolation = (value: string, count: number) => {
+            return value.replace(/\{\{\s*count\s*\}\}/g, String(count));
+        };
+
+        const getCountPeriodLabel = (key: string, count: number, fallbackTemplate: string) => {
+            const translated = t(key, { count, defaultValue: fallbackTemplate });
+            const periodFallback = t('common:for_period', { defaultValue: '' });
+            if (translated.trim().toLowerCase() === periodFallback.trim().toLowerCase() && periodFallback.trim().length > 0) {
+                return applyCountInterpolation(fallbackTemplate, count);
+            }
+            return applyCountInterpolation(translated, count);
+        };
+
         switch (period) {
             case 'all':
-                return t('admin/clients:period', 'Период');
+                return t('common:all_periods', 'Все периоды');
             case 'today':
-                return t('today', 'Сегодня');
+                return t('common:today', 'Сегодня');
             case '7':
-                return t('last_7_days', 'Последние 7 дней');
+                return getCountPeriodLabel('common:last_7_days', 7, 'Последние {{count}} дней');
             case '14':
-                return t('last_14_days', 'Последние 14 дней');
+                return getCountPeriodLabel('common:last_14_days', 14, 'Последние {{count}} дней');
             case '30':
-                return t('last_month', 'Прошлый месяц');
+                return getCountPeriodLabel('common:last_7_days', 30, 'Последние {{count}} дней');
             case '90':
-                return t('last_3_months', 'Последние 3 месяца');
+                return getCountPeriodLabel('common:last_3_months', 3, 'Последние {{count}} месяца');
             default:
-                return t('all_periods', 'Все периоды');
+                return t('common:all_periods', 'Все периоды');
         }
     };
 

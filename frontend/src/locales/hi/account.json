@@ -39,6 +39,8 @@
     "change_master_desc": "सेवा रखें, लेकिन विशेषज्ञ बदलें",
     "change_service": "सेवा बदलें",
     "change_service_desc": "अन्य प्रक्रिया चुनें",
+    "change_all": "सब कुछ बदलें",
+    "change_all_desc": "सेवा, विशेषज्ञ और समय एक साथ बदलें",
     "change_time": "समय बदलें",
     "change_time_desc": "कोई अन्य तिथि या समय चुनें",
     "confirm_cancel": "क्या आप वाकई नियुक्ति रद्द करना चाहते हैं?",

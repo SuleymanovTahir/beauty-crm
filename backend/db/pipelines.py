@@ -63,12 +63,54 @@ def get_clients_by_stage(stage_id: int, limit: int = 50, offset: int = 0, search
     conn = get_db_connection()
     c = conn.cursor()
     try:
+        c.execute(
+            """
+            SELECT id, name
+            FROM workflow_stages
+            WHERE entity_type = 'pipeline'
+            ORDER BY sort_order ASC, id ASC
+            """
+        )
+        stage_rows = c.fetchall()
+        stage_name_by_id = {int(row[0]): str(row[1] or '') for row in stage_rows}
+        target_stage_name = stage_name_by_id.get(int(stage_id), '')
+        target_stage_key = normalize_pipeline_stage_key(target_stage_name)
+        stage_ids = [
+            int(row[0])
+            for row in stage_rows
+            if normalize_pipeline_stage_key(str(row[1] or '')) == target_stage_key
+        ]
+        if not stage_ids:
+            stage_ids = [int(stage_id)]
+
+        include_booked_without_stage = False
+        lowered_stage_name = target_stage_name.strip().lower()
+        if (
+            'book' in lowered_stage_name
+            or 'запис' in lowered_stage_name
+            or 'appoint' in lowered_stage_name
+        ):
+            include_booked_without_stage = True
+
         query = """
             SELECT instagram_id, name, username, phone, total_spend, last_contact, temperature, profile_pic, assigned_employee_id, reminder_date, pipeline_stage_id
             FROM clients
-            WHERE pipeline_stage_id = %s
+            WHERE (
+                pipeline_stage_id = ANY(%s)
+                OR (
+                    %s = TRUE
+                    AND pipeline_stage_id IS NULL
+                    AND EXISTS (
+                        SELECT 1
+                        FROM bookings b
+                        WHERE b.instagram_id = clients.instagram_id
+                          AND b.deleted_at IS NULL
+                          AND COALESCE(b.status, '') <> 'cancelled'
+                    )
+                )
+            )
         """
-        params = [stage_id]
+        params = [stage_ids, include_booked_without_stage]
         if user_id is not None:
             query += " AND (assigned_employee_id = %s OR assigned_employee_id IS NULL)"
             params.append(user_id)
@@ -112,24 +154,95 @@ def get_funnel_stats(user_id: int = None) -> List[Dict]:
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        sql = """
-            SELECT ws.id, ws.name, COUNT(c.instagram_id), SUM(NULLIF(c.total_spend, 0))
-            FROM workflow_stages ws
-            LEFT JOIN clients c ON c.pipeline_stage_id = ws.id
-                {user_filter}
-            WHERE ws.entity_type = 'pipeline'
-            GROUP BY ws.id, ws.name, ws.sort_order
-            ORDER BY ws.sort_order ASC
-        """
-        user_filter = "AND (c.assigned_employee_id = %s OR c.assigned_employee_id IS NULL)" if user_id else ""
-        c.execute(sql.format(user_filter=user_filter), (user_id,) if user_id else ())
-        rows = c.fetchall()
+        c.execute(
+            """
+            SELECT id, name, sort_order
+            FROM workflow_stages
+            WHERE entity_type = 'pipeline'
+            ORDER BY sort_order ASC, id ASC
+            """
+        )
+        stage_rows = c.fetchall()
+        if not stage_rows:
+            return []
+
+        stage_groups: Dict[str, Dict] = {}
+        for row in stage_rows:
+            stage_id = int(row[0])
+            stage_name = str(row[1] or '')
+            sort_order = int(row[2] or 0)
+            stage_key = normalize_pipeline_stage_key(stage_name)
+
+            if stage_key not in stage_groups:
+                stage_groups[stage_key] = {
+                    "stage_id": stage_id,
+                    "stage_name": stage_name,
+                    "stage_ids": [stage_id],
+                    "sort_order": sort_order,
+                    "key": stage_key,
+                }
+                continue
+
+            stage_groups[stage_key]["stage_ids"].append(stage_id)
+
+        aggregated_stats = []
+        for stage in stage_groups.values():
+            stage_ids = stage["stage_ids"]
+            lowered_stage_name = stage["stage_name"].strip().lower()
+            include_booked_without_stage = (
+                'book' in lowered_stage_name
+                or 'запис' in lowered_stage_name
+                or 'appoint' in lowered_stage_name
+            )
+
+            query = """
+                SELECT COUNT(c.instagram_id), COALESCE(SUM(NULLIF(c.total_spend, 0)), 0)
+                FROM clients c
+                WHERE (
+                    c.pipeline_stage_id = ANY(%s)
+                    OR (
+                        %s = TRUE
+                        AND c.pipeline_stage_id IS NULL
+                        AND EXISTS (
+                            SELECT 1
+                            FROM bookings b
+                            WHERE b.instagram_id = c.instagram_id
+                              AND b.deleted_at IS NULL
+                              AND COALESCE(b.status, '') <> 'cancelled'
+                        )
+                    )
+                )
+            """
+            params: List[object] = [stage_ids, include_booked_without_stage]
+
+            if user_id is not None:
+                query += " AND (c.assigned_employee_id = %s OR c.assigned_employee_id IS NULL)"
+                params.append(user_id)
+
+            c.execute(query, params)
+            count, total_value = c.fetchone() or (0, 0)
+
+            aggregated_stats.append(
+                {
+                    "stage_id": stage["stage_id"],
+                    "stage_name": stage["stage_name"],
+                    "count": int(count or 0),
+                    "total_value": float(total_value or 0),
+                    "key": stage["key"],
+                    "sort_order": stage["sort_order"],
+                }
+            )
+
+        aggregated_stats.sort(key=lambda row: row["sort_order"])
         return [
             {
-                "stage_id": row[0], "stage_name": row[1],
-                "count": row[2], "total_value": row[3] or 0, "key": normalize_pipeline_stage_key(row[1])
+                "stage_id": row["stage_id"],
+                "stage_name": row["stage_name"],
+                "count": row["count"],
+                "total_value": row["total_value"],
+                "key": row["key"],
             }
-            for row in rows
+            for row in aggregated_stats
         ]
     except Exception as e:
         log_error(f"Error funnel stats: {e}", "db.pipelines")

@@ -52,7 +52,7 @@
   color: #475569;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   width: 100%;
   text-align: left !important;
 }
@@ -99,7 +99,7 @@
   border-radius: 10px;
   color: #475569;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 13px;
   transition: all 0.2s ease;
   width: 100%;
   text-align: left !important;

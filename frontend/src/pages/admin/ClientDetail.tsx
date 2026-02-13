@@ -20,6 +20,7 @@ interface Client {
   username: string;
   phone: string;
   name: string;
+  display_name?: string;
   first_contact: string;
   last_contact: string;
   total_messages: number;
@@ -288,6 +289,12 @@ export default function ClientDetail() {
     );
   }
 
+  const resolvedClientName = (client.display_name ?? client.name ?? client.username ?? t('client')).trim();
+  const normalizedClientStatus = String(client.status ?? 'new').trim().toLowerCase();
+  const clientStatusKey = normalizedClientStatus === 'client'
+    ? 'common:status_active'
+    : `common:status_${normalizedClientStatus}`;
+
   return (
     <div className="p-8">
       {/* Header */}
@@ -302,7 +309,7 @@ export default function ClientDetail() {
           {client.profile_pic && client.profile_pic !== 'null' ? (
             <img
               src={client.profile_pic}
-              alt={client.name || t('client')}
+              alt={resolvedClientName}
               className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
@@ -312,7 +319,7 @@ export default function ClientDetail() {
           ) : (
             <img
               src={getDynamicAvatar(client.name || client.username || 'Client', client.temperature, client.gender)}
-              alt={client.name || t('client')}
+              alt={resolvedClientName}
               className="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
             />
           )}
@@ -323,7 +330,7 @@ export default function ClientDetail() {
             className="fallback-avatar hidden w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg"
           />
           <div className="flex-1">
-            <h1 className="text-3xl text-gray-900">{client.name || t('client')}</h1>
+            <h1 className="text-3xl text-gray-900">{resolvedClientName}</h1>
             {client.username && (
               <a
                 href={`https://instagram.com/${client.username}`}
@@ -551,7 +558,7 @@ export default function ClientDetail() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">{t('status')}</p>
                 <Badge className="bg-blue-100 text-blue-800 capitalize">
-                  {t('common:status_' + (client.status || 'new'), { defaultValue: client.status || 'New' })}
+                  {t(clientStatusKey, { defaultValue: client.status ?? t('common:status_new') })}
                 </Badge>
               </div>
 
@@ -681,7 +688,7 @@ export default function ClientDetail() {
               )}
 
               {/* Messenger Buttons */}
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {enabledMessengers.map((messenger) => (
                   <Button
                     key={messenger.type}
@@ -701,7 +708,7 @@ export default function ClientDetail() {
                         toast.info(t('tiktok_in_development'));
                       }
                     }}
-                    className={`gap-2 ${messenger.type === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700' :
+                    className={`w-full min-w-0 justify-start gap-2 ${messenger.type === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700' :
                       messenger.type === 'whatsapp' ? 'bg-green-500 hover:bg-green-600' :
                         messenger.type === 'telegram' ? 'bg-blue-500 hover:bg-blue-600' :
                           'bg-black hover:bg-gray-800'
@@ -713,7 +720,7 @@ export default function ClientDetail() {
                     ) : (
                       <MessageSquare className="w-4 h-4" />
                     )}
-                    <span className="hidden sm:inline">{messenger.name}</span>
+                    <span className="truncate">{messenger.name}</span>
                   </Button>
                 ))}
               </div>
@@ -764,15 +771,23 @@ export default function ClientDetail() {
                       })}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge className={`
-                        ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : ''}
-                        ${booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ''}
-                        ${booking.status === 'cancelled' ? 'bg-red-100 text-red-800' : ''}
-                        ${booking.status === 'completed' ? 'bg-blue-100 text-blue-800' : ''}
-                        capitalize
-                      `}>
-                        {booking.status}
-                      </Badge>
+                      {(() => {
+                        const normalizedBookingStatus = String(booking.status ?? '').trim().toLowerCase();
+                        const bookingStatusKey = normalizedBookingStatus === 'client'
+                          ? 'common:status_active'
+                          : `common:status_${normalizedBookingStatus}`;
+                        return (
+                          <Badge className={`
+                            ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : ''}
+                            ${booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ''}
+                            ${booking.status === 'cancelled' ? 'bg-red-100 text-red-800' : ''}
+                            ${booking.status === 'completed' ? 'bg-blue-100 text-blue-800' : ''}
+                            capitalize
+                          `}>
+                            {t(bookingStatusKey, { defaultValue: booking.status })}
+                          </Badge>
+                        );
+                      })()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
                       {booking.revenue ? formatCurrency(booking.revenue) : '-'}
@@ -818,14 +833,14 @@ export default function ClientDetail() {
       </div>
       {/* Client Gallery */}
       <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <div className="flex justify-between items-center mb-6">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-2xl text-gray-900 flex items-center gap-2">
             <Calendar className="w-6 h-6 text-pink-600" />
             {t('client_gallery')}
           </h2>
           <Button
             onClick={() => setIsGalleryModalOpen(true)}
-            className="bg-pink-600 hover:bg-pink-700"
+            className="w-full sm:w-auto bg-pink-600 hover:bg-pink-700"
             disabled={!photoUploadAllowed}
           >
             <Plus className="w-4 h-4 mr-2" /> {t('add_work')}

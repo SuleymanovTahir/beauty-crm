@@ -1,10 +1,13 @@
 """
 API Endpoints для работы с записями
 """
-from fastapi import APIRouter, Request, Cookie, File, UploadFile, BackgroundTasks
+from fastapi import APIRouter, Request, Cookie, File, UploadFile, BackgroundTasks, Query
 from fastapi.responses import JSONResponse
 from typing import Optional, List
 from pydantic import BaseModel
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+import hashlib
 
 from db import (
     save_booking,
@@ -17,13 +20,15 @@ from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_warning, log_info
 from utils.cache import cache
+from utils.language_utils import get_localized_name, validate_language
 from services.smart_assistant import SmartAssistant
 from notifications.master_notifications import notify_master_about_booking, get_master_info, save_notification_log
+from utils.datetime_utils import get_current_time, get_salon_timezone
 
 router = APIRouter(tags=["Bookings"])
 
 class CreateBookingRequest(BaseModel):
-    instagram_id: str
+    instagram_id: Optional[str] = None
     service: str
     date: str
     time: str
@@ -33,9 +38,102 @@ class CreateBookingRequest(BaseModel):
     revenue: Optional[float] = 0
     source: Optional[str] = 'manual'
     promo_code: Optional[str] = None
+    duration_minutes: Optional[int] = None
 
 class UpdateStatusRequest(BaseModel):
     status: str
+
+
+def _sanitize_phone_digits(phone: Optional[str]) -> str:
+    return ''.join(ch for ch in str(phone or '') if ch.isdigit())
+
+
+def _build_manual_client_id(name: Optional[str], phone: Optional[str]) -> str:
+    phone_digits = _sanitize_phone_digits(phone)
+    if phone_digits:
+        return f"manual_phone_{phone_digits[-15:]}"
+
+    normalized_name = " ".join(str(name or "").strip().lower().split())
+    if normalized_name:
+        digest = hashlib.sha1(normalized_name.encode("utf-8")).hexdigest()[:12]
+        return f"manual_name_{digest}"
+
+    return f"manual_{int(get_current_time().timestamp())}"
+
+
+def _safe_duration(duration_minutes: Optional[int], fallback: int = 60) -> int:
+    try:
+        value = int(duration_minutes) if duration_minutes is not None else int(fallback)
+        return max(1, value)
+    except Exception:
+        return max(1, int(fallback))
+
+
+def _collect_nearest_available_slots(
+    master_identifier: Optional[str],
+    date_str: Optional[str],
+    time_str: Optional[str],
+    duration_minutes: Optional[int],
+    limit: int = 5,
+    days_to_scan: int = 14,
+) -> List[dict]:
+    master_value = str(master_identifier or "").strip()
+    if not master_value:
+        return []
+
+    if not date_str:
+        return []
+
+    try:
+        from services.master_schedule import MasterScheduleService
+
+        timezone = ZoneInfo(get_salon_timezone())
+        schedule_service = MasterScheduleService()
+        duration = _safe_duration(duration_minutes, fallback=60)
+
+        requested_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        raw_time = str(time_str or "").strip()[:5]
+        try:
+            requested_time = datetime.strptime(raw_time, "%H:%M").time()
+        except Exception:
+            requested_time = datetime.strptime("00:00", "%H:%M").time()
+
+        requested_dt = datetime.combine(requested_date, requested_time).replace(tzinfo=timezone)
+        now_dt = get_current_time().astimezone(timezone)
+        threshold_dt = requested_dt if requested_dt > now_dt else now_dt
+
+        nearest_slots: List[dict] = []
+        for day_offset in range(0, max(1, days_to_scan)):
+            current_date = requested_date + timedelta(days=day_offset)
+            current_date_str = current_date.strftime("%Y-%m-%d")
+            slots = schedule_service.get_available_slots(
+                master_name=master_value,
+                date=current_date_str,
+                duration_minutes=duration,
+                return_metadata=False,
+            )
+            for slot in slots:
+                slot_time = str(slot).strip()[:5]
+                try:
+                    slot_dt = datetime.strptime(f"{current_date_str} {slot_time}", "%Y-%m-%d %H:%M").replace(tzinfo=timezone)
+                except Exception:
+                    continue
+
+                if slot_dt < threshold_dt:
+                    continue
+
+                nearest_slots.append({
+                    "date": current_date_str,
+                    "time": slot_time,
+                    "datetime": slot_dt.isoformat(),
+                })
+                if len(nearest_slots) >= limit:
+                    return nearest_slots
+
+        return nearest_slots
+    except Exception as e:
+        log_warning(f"Unable to collect nearest slots: {e}", "api")
+        return []
 
 def get_client_messengers_for_bookings(client_id: str):
     """Получить список мессенджеров клиента для bookings (DEPRECATED - use get_all_client_messengers)"""
@@ -101,6 +199,121 @@ def get_all_client_messengers(client_ids: list):
 
     conn.close()
     return client_messengers
+
+def _resolve_discount_source(source: Optional[str], promo_code: Optional[str]) -> Optional[str]:
+    if str(promo_code or "").strip():
+        return "promo_code"
+
+    normalized_source = str(source or "").strip().lower()
+    if not normalized_source:
+        return None
+
+    if "birthday" in normalized_source or "день_рождения" in normalized_source:
+        return "birthday"
+    if "referral" in normalized_source or "реферал" in normalized_source:
+        return "referral"
+    if "bonus" in normalized_source or "loyalty" in normalized_source or "бонус" in normalized_source:
+        return "bonus"
+    return None
+
+def _build_master_display_maps(c, bookings_rows: list, language: str):
+    normalized_language = validate_language(language)
+    users_by_id = {}
+    alias_to_user = {}
+
+    master_ids = sorted({
+        int(row[10])
+        for row in bookings_rows
+        if len(row) > 10 and row[10] is not None
+    })
+
+    if master_ids:
+        c.execute(
+            """
+            SELECT id, full_name, username, nickname
+            FROM users
+            WHERE id = ANY(%s)
+            """,
+            (master_ids,)
+        )
+        for user_row in c.fetchall():
+            user_id = int(user_row[0])
+            full_name = str(user_row[1] or "").strip()
+            username = str(user_row[2] or "").strip()
+            nickname = str(user_row[3] or "").strip()
+            users_by_id[user_id] = (full_name, username, nickname)
+            for alias in (full_name, username, nickname):
+                normalized_alias = alias.lower().strip()
+                if normalized_alias:
+                    alias_to_user[normalized_alias] = (user_id, full_name)
+
+    unresolved_aliases = sorted({
+        str(row[9] or "").strip().lower()
+        for row in bookings_rows
+        if len(row) > 9 and row[9] and (
+            len(row) <= 10
+            or row[10] is None
+        )
+    })
+    unresolved_aliases = [alias for alias in unresolved_aliases if alias and alias not in alias_to_user]
+
+    if unresolved_aliases:
+        c.execute(
+            """
+            SELECT id, full_name, username, nickname
+            FROM users
+            WHERE is_service_provider = TRUE
+              AND deleted_at IS NULL
+              AND (
+                LOWER(full_name) = ANY(%s)
+                OR LOWER(username) = ANY(%s)
+                OR LOWER(COALESCE(nickname, '')) = ANY(%s)
+              )
+            """,
+            (unresolved_aliases, unresolved_aliases, unresolved_aliases)
+        )
+        for user_row in c.fetchall():
+            user_id = int(user_row[0])
+            full_name = str(user_row[1] or "").strip()
+            username = str(user_row[2] or "").strip()
+            nickname = str(user_row[3] or "").strip()
+            users_by_id[user_id] = (full_name, username, nickname)
+            for alias in (full_name, username, nickname):
+                normalized_alias = alias.lower().strip()
+                if normalized_alias:
+                    alias_to_user[normalized_alias] = (user_id, full_name)
+
+    localized_by_id = {}
+    for user_id, values in users_by_id.items():
+        full_name = values[0] or values[1]
+        localized_by_id[user_id] = get_localized_name(user_id, full_name, normalized_language)
+
+    return localized_by_id, alias_to_user, normalized_language
+
+def _get_localized_master_name(
+    raw_master: Optional[str],
+    master_user_id: Optional[int],
+    localized_by_id: dict,
+    alias_to_user: dict,
+    language: str
+) -> Optional[str]:
+    raw_value = str(raw_master or "").strip()
+    if not raw_value:
+        return None
+
+    if master_user_id is not None:
+        localized = localized_by_id.get(int(master_user_id))
+        if localized:
+            return localized
+
+    alias_key = raw_value.lower()
+    alias_match = alias_to_user.get(alias_key)
+    if alias_match:
+        localized = localized_by_id.get(int(alias_match[0]))
+        if localized:
+            return localized
+
+    return get_localized_name(0, raw_value, language)
 
 @router.get("/client/bookings")
 def get_client_bookings(session_token: Optional[str] = Cookie(None)):
@@ -181,7 +394,8 @@ def list_bookings(
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
     sort: Optional[str] = 'datetime',
-    order: Optional[str] = 'desc'
+    order: Optional[str] = 'desc',
+    language: str = Query('ru')
 ):
     """Получить записи с пагинацией и фильтрацией"""
     user = require_auth(session_token)
@@ -244,6 +458,7 @@ def list_bookings(
 
     # Добавляем информацию о мессенджерах для каждой записи
     bookings_with_messengers = []
+    language_code = validate_language(language)
 
     # Оптимизация: получаем всех мессенджеров одним запросом
     t2 = time.time()
@@ -261,7 +476,13 @@ def list_bookings(
         for row in c.fetchall():
             if row[0] and row[1]:
                 client_phones[row[0]] = row[1]
+
+        localized_by_id, alias_to_user, normalized_language = _build_master_display_maps(c, bookings, language_code)
         conn.close()
+    else:
+        localized_by_id = {}
+        alias_to_user = {}
+        normalized_language = language_code
     log_info(f"⏱️ fetching_client_phones took {time.time() - t3:.4f}s", "perf")
 
     t4 = time.time()
@@ -276,6 +497,18 @@ def list_bookings(
         if not phone and client_id:
             phone = client_phones.get(client_id, '')
 
+        master_user_id = b[10] if len(b) > 10 else None
+        localized_master = _get_localized_master_name(
+            raw_master=b[9] if len(b) > 9 else None,
+            master_user_id=master_user_id,
+            localized_by_id=localized_by_id,
+            alias_to_user=alias_to_user,
+            language=normalized_language
+        )
+        promo_code = b[13] if len(b) > 13 else None
+        source_value = b[12] if len(b) > 12 else 'manual'
+        discount_source = _resolve_discount_source(source_value, promo_code)
+
         bookings_with_messengers.append({
             "id": b[0],
             "client_id": client_id,
@@ -287,9 +520,12 @@ def list_bookings(
             "status": b[6] if len(b) > 6 else 'pending',
             "created_at": b[7] if len(b) > 7 else None,
             "revenue": b[8] if len(b) > 8 else 0,
-            "master": b[9] if len(b) > 9 else None,
-            "user_id": b[10] if len(b) > 10 else None,
-            "source": b[11] if len(b) > 11 else 'manual',
+            "master": localized_master,
+            "master_user_id": master_user_id,
+            "user_id": b[11] if len(b) > 11 else None,
+            "source": source_value,
+            "promo_code": promo_code,
+            "discount_source": discount_source,
             "messengers": messengers
         })
     log_info(f"⏱️ formatting_response took {time.time() - t4:.4f}s", "perf")
@@ -304,10 +540,11 @@ def list_bookings(
         "stats": stats
     }
 
-@router.get("/api/bookings/{booking_id}")
+@router.get("/bookings/{booking_id}")
 def get_booking_detail(
     booking_id: int,
-    session_token: Optional[str] = Cookie(None)
+    session_token: Optional[str] = Cookie(None),
+    language: str = Query('ru')
 ):
     """Получить одну запись по ID"""
     user = require_auth(session_token)
@@ -316,17 +553,72 @@ def get_booking_detail(
     
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("""
+
+    c.execute(
+        """
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'bookings'
+          AND column_name = 'master_user_id'
+        LIMIT 1
+        """
+    )
+    has_master_user_id = bool(c.fetchone())
+
+    c.execute(
+        """
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'bookings'
+          AND column_name = 'promo_code'
+        LIMIT 1
+        """
+    )
+    has_promo_code = bool(c.fetchone())
+
+    c.execute(
+        """
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'bookings'
+          AND column_name = 'source'
+        LIMIT 1
+        """
+    )
+    has_source = bool(c.fetchone())
+
+    promo_code_select = "promo_code" if has_promo_code else "NULL AS promo_code"
+    source_select = "source" if has_source else "'manual' AS source"
+    master_user_id_select = "master_user_id" if has_master_user_id else "NULL AS master_user_id"
+
+    c.execute(f"""
         SELECT id, instagram_id, service_name, datetime, phone,
-               name, status, created_at, revenue, master, user_id, notes
+               name, status, created_at, revenue, master, user_id, notes,
+               {source_select}, {promo_code_select}, {master_user_id_select}
         FROM bookings
         WHERE id = %s
     """, (booking_id,))
     booking = c.fetchone()
-    conn.close()
     
     if not booking:
+        conn.close()
         return JSONResponse({"error": "Booking not found"}, status_code=404)
+
+    language_code = validate_language(language)
+    localized_by_id, alias_to_user, normalized_language = _build_master_display_maps(c, [booking], language_code)
+    raw_master_name = booking[9] if len(booking) > 9 else None
+    master_user_id = booking[14] if len(booking) > 14 else None
+    localized_master = _get_localized_master_name(
+        raw_master=raw_master_name,
+        master_user_id=master_user_id,
+        localized_by_id=localized_by_id,
+        alias_to_user=alias_to_user,
+        language=normalized_language
+    )
+    source_value = booking[12] if len(booking) > 12 else "manual"
+    promo_code = booking[13] if len(booking) > 13 else None
+    discount_source = _resolve_discount_source(source_value, promo_code)
+    conn.close()
         
     # RBAC: Clients can only see their own bookings
     if user["role"] == "client":
@@ -355,9 +647,13 @@ def get_booking_detail(
         "status": booking[6],
         "created_at": booking[7],
         "revenue": booking[8] if booking[8] is not None else 0,
-        "master": booking[9],
+        "master": localized_master,
+        "master_user_id": master_user_id,
         "user_id": booking[10],
-        "notes": booking[11]
+        "notes": booking[11],
+        "source": source_value,
+        "promo_code": promo_code,
+        "discount_source": discount_source
     }
 
 async def process_booking_background_tasks(
@@ -371,10 +667,25 @@ async def process_booking_background_tasks(
     try:
         instagram_id = data.get('instagram_id')
         service = data.get('service')
-        datetime_str = f"{data.get('date')} {data.get('time')}"
+        booking_date_value = str(data.get('date') or '').strip()
+        booking_time_value = str(data.get('time') or '').strip()
+        datetime_str = f"{booking_date_value} {booking_time_value}".strip()
         phone = data.get('phone', '')
         name = data.get('name')
         master = data.get('master', '')
+
+        display_date = booking_date_value
+        display_time = booking_time_value
+        try:
+            if booking_date_value:
+                parsed_date = datetime.strptime(booking_date_value, "%Y-%m-%d")
+                display_date = parsed_date.strftime("%d.%m.%Y")
+            if booking_time_value:
+                parsed_time = datetime.strptime(booking_time_value[:5], "%H:%M")
+                display_time = parsed_time.strftime("%H:%M")
+        except Exception:
+            # Keep raw values if parsing fails
+            pass
 
         # 1. 🧠 Smart Assistant Learning (with timeout)
         try:
@@ -434,24 +745,95 @@ async def process_booking_background_tasks(
         # 4. Notify Client (Confirmation)
         try:
             from services.universal_messenger import send_universal_message
-            await send_universal_message(
+            send_result = await send_universal_message(
                 recipient_id=instagram_id,
                 template_name="booking_confirmation",
                 context={
                     "name": name or "Клиент",
                     "service": service,
+                    "date": display_date,
+                    "time": display_time,
                     "datetime": datetime_str,
                     "master": master or ""
                 },
                 booking_id=booking_id,
                 platform='auto'
             )
-            log_info(f"📩 Client confirmation sent for booking {booking_id}", "bookings")
+            if send_result.get("success"):
+                log_info(f"📩 Client confirmation sent for booking {booking_id}", "bookings")
+            else:
+                log_warning(
+                    f"Client confirmation failed for booking {booking_id}: {send_result.get('error')}",
+                    "bookings"
+                )
         except Exception as e:
             log_error(f"❌ Error sending client confirmation: {e}", "bookings")
         
     except Exception as e:
         log_error(f"❌ Background task error: {e}", "background_tasks")
+
+
+def process_booking_post_create_updates(
+    instagram_id: str,
+    phone: str,
+    name: Optional[str],
+    user_id: int,
+    service: str,
+):
+    """Выполнить пост-обновления после создания записи вне критического пути ответа API."""
+    try:
+        if phone or name:
+            update_client_info(instagram_id, phone=phone, name=name)
+    except Exception as e:
+        log_error(f"Error updating client profile after booking: {e}", "api")
+
+    try:
+        from db.users import update_user_info as db_update_user
+        user_updates = {}
+        if phone:
+            user_updates['phone'] = phone
+        if name:
+            user_updates['full_name'] = name
+        if user_updates and user_id:
+            db_update_user(user_id, user_updates)
+    except Exception as e:
+        log_error(f"Error updating user profile after booking: {e}", "api")
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute(
+            """
+            SELECT id
+            FROM workflow_stages
+            WHERE entity_type = 'pipeline'
+              AND (LOWER(name) LIKE '%book%' OR LOWER(name) LIKE '%запис%')
+            LIMIT 1
+            """
+        )
+        stage_row = c.fetchone()
+        if stage_row:
+            c.execute(
+                "UPDATE clients SET pipeline_stage_id = %s WHERE instagram_id = %s",
+                (stage_row[0], instagram_id)
+            )
+            conn.commit()
+    except Exception as e:
+        log_error(f"Error syncing client stage: {e}", "api")
+    finally:
+        if 'conn' in locals():
+            conn.close()
+
+    try:
+        log_activity(user_id, "create_booking", "booking", instagram_id, f"Service: {service}")
+    except Exception as e:
+        log_error(f"Error writing booking activity log: {e}", "api")
+
+    try:
+        from db.clients import update_client_temperature
+        update_client_temperature(instagram_id)
+    except Exception as e:
+        log_error(f"Error refreshing client temperature after booking: {e}", "api")
 
 @router.post("/bookings")
 def create_booking_api(
@@ -465,7 +847,7 @@ def create_booking_api(
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
     try:
-        instagram_id = data.instagram_id
+        raw_instagram_id = str(data.instagram_id or '').strip()
         service = data.service
         datetime_str = f"{data.date} {data.time}"
         phone = data.phone or ''
@@ -476,76 +858,62 @@ def create_booking_api(
         promo_code = data.promo_code
         user_id = user["id"]
 
-        # Synchronous DB Save
-        get_or_create_client(instagram_id, username=name, phone=phone)
-        save_booking(instagram_id, service, datetime_str, phone, name, master=master, user_id=user_id, revenue=revenue, source=source, promo_code=promo_code)
+        if not raw_instagram_id:
+            if not str(name or '').strip() and not _sanitize_phone_digits(phone):
+                return JSONResponse({"error": "missing_client_identity"}, status_code=400)
+            instagram_id = _build_manual_client_id(name=name, phone=phone)
+        else:
+            instagram_id = raw_instagram_id
 
-        # Update phone and name
-        if phone or name:
-            update_client_info(instagram_id, phone=phone, name=name)
-            from db.users import update_user_info as db_update_user
-            user_updates = {}
-            if phone: user_updates['phone'] = phone
-            if name: user_updates['full_name'] = name
-            if user_updates and user_id:
-                db_update_user(user_id, user_updates)
-
-        # Sync client stage
-        conn = get_db_connection()
-        c = conn.cursor()
-        try:
-            c.execute("SELECT id FROM workflow_stages WHERE entity_type = 'pipeline' AND (LOWER(name) LIKE '%book%' OR LOWER(name) LIKE '%запис%') LIMIT 1")
-            stage_row = c.fetchone()
-            if stage_row:
-                booked_stage_id = stage_row[0]
-                c.execute("UPDATE clients SET pipeline_stage_id = %s WHERE instagram_id = %s", (booked_stage_id, instagram_id))
-                conn.commit()
-        except Exception as e:
-            log_error(f"Error syncing client stage: {e}", "api")
-        finally:
-            conn.close()
-
-        # Get ID
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("SELECT id FROM bookings WHERE instagram_id = %s ORDER BY id DESC LIMIT 1", (instagram_id,))
-        booking_result = c.fetchone()
-        booking_id = booking_result[0] if booking_result else None
-        conn.close()
-
-        log_activity(user_id, "create_booking", "booking", instagram_id, f"Service: {service}")
+        # Critical path: only synchronous booking save + strict slot validation.
+        booking_id = save_booking(
+            instagram_id,
+            service,
+            datetime_str,
+            phone,
+            name,
+            master=master,
+            user_id=user_id,
+            revenue=revenue,
+            source=source,
+            promo_code=promo_code,
+            duration_minutes=data.duration_minutes,
+        )
 
         # Offload slow tasks
+        background_tasks.add_task(
+            process_booking_post_create_updates,
+            instagram_id,
+            phone,
+            name,
+            user_id,
+            service,
+        )
         if booking_id:
-            background_tasks.add_task(process_booking_background_tasks, booking_id, data.dict(), user_id)
+            payload = data.dict()
+            payload["instagram_id"] = instagram_id
+            background_tasks.add_task(process_booking_background_tasks, booking_id, payload, user_id)
 
         # Invalidate cache
         cache.clear_by_pattern("dashboard_*")
         cache.clear_by_pattern("funnel_*")
-
-        # Уведомляем админов/директоров о новой записи
-        try:
-            from notifications.admin_notifications import notify_new_booking
-            notify_new_booking(
-                client_name=name or instagram_id,
-                service_name=service,
-                master_name=master or "Не указан",
-                booking_datetime=datetime_str,
-                booking_id=booking_id,
-                created_by_user_id=user_id
-            )
-        except Exception as e:
-            log_error(f"Failed to send admin booking notification: {e}", "api")
 
         return {"success": True, "message": "Booking created", "booking_id": booking_id}
     except ValueError as e:
         message = str(e)
         if message.startswith("slot_unavailable:"):
             reason = message.split(":", 1)[1] or "unavailable"
+            nearest_slots = _collect_nearest_available_slots(
+                master_identifier=data.master,
+                date_str=data.date,
+                time_str=data.time,
+                duration_minutes=data.duration_minutes,
+            )
             return JSONResponse(
                 {
                     "error": "slot_unavailable",
-                    "reason": reason
+                    "reason": reason,
+                    "nearest_slots": nearest_slots,
                 },
                 status_code=409
             )
@@ -638,6 +1006,16 @@ async def notify_admin_booking_status_change(booking_id: int, old_status: str, n
     except Exception as e:
         print(f"Error notifying admin about status change: {e}")
 
+
+def notify_admin_booking_status_change_background(booking_id: int, old_status: str, new_status: str):
+    """Background runner to avoid blocking the status update response."""
+    import asyncio
+
+    try:
+        asyncio.run(notify_admin_booking_status_change(booking_id, old_status, new_status))
+    except Exception as e:
+        log_error(f"Error in background status notification for booking {booking_id}: {e}", "notifications")
+
 async def notify_admin_about_booking(data: dict):
     """Notify admin about new booking with timeouts"""
     from utils.email import send_email_sync
@@ -716,6 +1094,7 @@ async def notify_admin_about_booking(data: dict):
 def update_booking_status_api(
     booking_id: int,
     data: UpdateStatusRequest,
+    background_tasks: BackgroundTasks,
     session_token: Optional[str] = Cookie(None)
 ):
     """Изменить статус записи"""
@@ -765,12 +1144,12 @@ def update_booking_status_api(
                     str(booking_id), f"Status: {status}")
 
         if old_status and old_status != status:
-            import asyncio
-            try:
-                # Still use async for notification logic as it might non-blocking
-                asyncio.run(notify_admin_booking_status_change(booking_id, old_status, status))
-            except:
-                pass
+            background_tasks.add_task(
+                notify_admin_booking_status_change_background,
+                booking_id,
+                old_status,
+                status
+            )
         
         # loyalty
         if status == 'completed':

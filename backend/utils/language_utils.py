@@ -15,8 +15,20 @@ _CACHE_TTL_SECONDS = 3600  # 1 hour (translations change rarely)
 
 def validate_language(language: str) -> str:
     """Валидировать и нормализовать код языка"""
-    if language in SUPPORTED_LANGUAGES:
-        return language
+    normalized_language = str(language or '').strip().lower()
+    if normalized_language in SUPPORTED_LANGUAGES:
+        return normalized_language
+
+    if '-' in normalized_language:
+        short_language = normalized_language.split('-', 1)[0]
+        if short_language in SUPPORTED_LANGUAGES:
+            return short_language
+
+    if '_' in normalized_language:
+        short_language = normalized_language.split('_', 1)[0]
+        if short_language in SUPPORTED_LANGUAGES:
+            return short_language
+
     return DEFAULT_LANGUAGE
 
 def build_coalesce_query(base_field, language_code, fallback_fields=[]):

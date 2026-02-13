@@ -1,184 +1,189 @@
-2026-02-13 06:47:18 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-02-13 06:47:19 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-02-13 06:47:19 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-13 06:47:19 - crm - INFO - [boot] ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
-2026-02-13 06:47:19 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-02-13 06:47:19 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-02-13 06:47:19 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-02-13 06:47:19 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-02-13 06:47:19 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-02-13 06:47:19 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
-2026-02-13 06:47:19 - crm - INFO - [maintenance]    ✅ Banner sync: no changes
-2026-02-13 06:47:19 - crm - INFO - [maintenance]    ✅ Ensured salon Instagram and timezone defaults in salon_settings
-2026-02-13 06:47:19 - crm - INFO - [maintenance]    ✅ Gallery sync: no changes
-2026-02-13 06:47:19 - crm - INFO - [maintenance] 🧩 Verifying public landing baseline content...
-2026-02-13 06:47:19 - crm - INFO - [maintenance]    ✅ Services already present: 81
-2026-02-13 06:47:19 - crm - INFO - [maintenance]    ✅ Public gallery already present: 23
-2026-02-13 06:47:19 - crm - INFO - [maintenance]    ✅ FAQ already present: 13
-2026-02-13 06:47:19 - crm - INFO - [maintenance]    ✅ Reviews already present: 5
-2026-02-13 06:47:19 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos, bios and status...
-2026-02-13 06:47:19 - crm - INFO - [maintenance]    ✅ Synchronized all employee detailed info
-2026-02-13 06:47:19 - crm - INFO - [maintenance] 👥 Merging duplicate employees (Final Cleanup)...
-2026-02-13 06:47:19 - crm - INFO - [maintenance]    ✅ Finished deep cleanup and deletion of staff duplicates
-2026-02-13 06:47:19 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
-2026-02-13 06:47:19 - crm - INFO - [maintenance] 👤 Synchronizing staff with credentials...
-2026-02-13 06:47:19 - crm - INFO - [maintenance] 🎭 Synchronizing notification templates...
-2026-02-13 06:47:19 - crm - INFO - [maintenance]    ✅ Synchronized 7 system templates
-2026-02-13 06:47:19 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
-2026-02-13 06:47:19 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
-2026-02-13 06:47:19 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
-2026-02-13 06:47:19 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
-2026-02-13 06:47:19 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-02-13 06:47:19 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
-2026-02-13 06:47:19 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-13 06:47:19 - crm - INFO - [modules] ======================================================================
-2026-02-13 06:47:19 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-02-13 06:47:19 - crm - INFO - [modules] ======================================================================
-2026-02-13 06:47:19 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-02-13 06:47:19 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-02-13 06:47:19 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-02-13 06:47:19 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-02-13 06:47:19 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-02-13 06:47:19 - crm - INFO - [modules] ======================================================================
-2026-02-13 06:47:19 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-02-13 06:47:19 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-13 06:47:19 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-13 06:47:19 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-13 06:47:19 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
-2026-02-13 06:47:19 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-13 06:47:19 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-13 06:47:19 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-13 06:47:19 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-13 06:47:23 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-13 06:47:23 - crm - INFO - [notifications] 🔔 Notifications WS: User 7 connected locally. Local users: 1
-2026-02-13 06:47:23 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.55ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-13 06:47:23 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.22ms (DB: 0.55ms)
-2026-02-13 06:48:18 - crm - INFO - [notifications] 🔔 Notifications WS: User 7 disconnected locally. Local users: 0
-2026-02-13 06:48:18 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
-2026-02-13 06:48:19 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-02-13 06:48:19 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-02-13 06:48:20 - crm - INFO - [boot] ============================================================
-2026-02-13 06:48:20 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-02-13 06:48:20 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-02-13 06:48:20 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-02-13 06:48:20 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-13 06:48:20 - crm - INFO - [boot] ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
-2026-02-13 06:48:20 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-02-13 06:48:20 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-02-13 06:48:20 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-02-13 06:48:20 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-02-13 06:48:20 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-02-13 06:48:20 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
-2026-02-13 06:48:20 - crm - INFO - [maintenance]    ✅ Banner sync: no changes
-2026-02-13 06:48:20 - crm - INFO - [maintenance]    ✅ Ensured salon Instagram and timezone defaults in salon_settings
-2026-02-13 06:48:20 - crm - INFO - [maintenance]    ✅ Gallery sync: no changes
-2026-02-13 06:48:20 - crm - INFO - [maintenance] 🧩 Verifying public landing baseline content...
-2026-02-13 06:48:20 - crm - INFO - [maintenance]    ✅ Services already present: 81
-2026-02-13 06:48:20 - crm - INFO - [maintenance]    ✅ Public gallery already present: 23
-2026-02-13 06:48:20 - crm - INFO - [maintenance]    ✅ FAQ already present: 13
-2026-02-13 06:48:20 - crm - INFO - [maintenance]    ✅ Reviews already present: 5
-2026-02-13 06:48:20 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos, bios and status...
-2026-02-13 06:48:20 - crm - INFO - [maintenance]    ✅ Synchronized all employee detailed info
-2026-02-13 06:48:20 - crm - INFO - [maintenance] 👥 Merging duplicate employees (Final Cleanup)...
-2026-02-13 06:48:20 - crm - INFO - [maintenance]    ✅ Finished deep cleanup and deletion of staff duplicates
-2026-02-13 06:48:20 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
-2026-02-13 06:48:20 - crm - INFO - [maintenance] 👤 Synchronizing staff with credentials...
-2026-02-13 06:48:20 - crm - INFO - [maintenance] 🎭 Synchronizing notification templates...
-2026-02-13 06:48:20 - crm - INFO - [maintenance]    ✅ Synchronized 7 system templates
-2026-02-13 06:48:20 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
-2026-02-13 06:48:20 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
-2026-02-13 06:48:20 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
-2026-02-13 06:48:20 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
-2026-02-13 06:48:20 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-02-13 06:48:20 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
-2026-02-13 06:48:20 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-13 06:48:20 - crm - INFO - [modules] ======================================================================
-2026-02-13 06:48:20 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-02-13 06:48:20 - crm - INFO - [modules] ======================================================================
-2026-02-13 06:48:20 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-02-13 06:48:20 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-02-13 06:48:20 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-02-13 06:48:20 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-02-13 06:48:20 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-02-13 06:48:20 - crm - INFO - [modules] ======================================================================
-2026-02-13 06:48:20 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-02-13 06:48:20 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-13 06:48:20 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-13 06:48:20 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-13 06:48:20 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
-2026-02-13 06:48:20 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-13 06:48:20 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-13 06:48:20 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-13 06:48:20 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-13 06:48:24 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-13 06:48:24 - crm - INFO - [notifications] 🔔 Notifications WS: User 7 connected locally. Local users: 1
-2026-02-13 06:48:24 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.38ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-13 06:48:24 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.07ms (DB: 0.38ms)
-2026-02-13 06:50:39 - crm - INFO - [notifications] 🔔 Notifications WS: User 7 disconnected locally. Local users: 0
-2026-02-13 06:50:39 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
-2026-02-13 06:50:40 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-02-13 06:50:40 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
-2026-02-13 06:50:40 - crm - INFO - [boot] ============================================================
-2026-02-13 06:50:40 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-02-13 06:50:40 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
-2026-02-13 06:50:41 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
-2026-02-13 06:50:41 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-02-13 06:50:41 - crm - INFO - [boot] ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
-2026-02-13 06:50:41 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-02-13 06:50:41 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-02-13 06:50:41 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-02-13 06:50:41 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-02-13 06:50:41 - crm - INFO - [migrations] ✅ Chat history table created/verified
-2026-02-13 06:50:41 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
-2026-02-13 06:50:41 - crm - INFO - [maintenance]    ✅ Banner sync: no changes
-2026-02-13 06:50:41 - crm - INFO - [maintenance]    ✅ Ensured salon Instagram and timezone defaults in salon_settings
-2026-02-13 06:50:41 - crm - INFO - [maintenance]    ✅ Gallery sync: no changes
-2026-02-13 06:50:41 - crm - INFO - [maintenance] 🧩 Verifying public landing baseline content...
-2026-02-13 06:50:41 - crm - INFO - [maintenance]    ✅ Services already present: 81
-2026-02-13 06:50:41 - crm - INFO - [maintenance]    ✅ Public gallery already present: 23
-2026-02-13 06:50:41 - crm - INFO - [maintenance]    ✅ FAQ already present: 13
-2026-02-13 06:50:41 - crm - INFO - [maintenance]    ✅ Reviews already present: 5
-2026-02-13 06:50:41 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos, bios and status...
-2026-02-13 06:50:41 - crm - INFO - [maintenance]    ✅ Synchronized all employee detailed info
-2026-02-13 06:50:41 - crm - INFO - [maintenance] 👥 Merging duplicate employees (Final Cleanup)...
-2026-02-13 06:50:41 - crm - INFO - [maintenance]    ✅ Finished deep cleanup and deletion of staff duplicates
-2026-02-13 06:50:41 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
-2026-02-13 06:50:41 - crm - INFO - [maintenance] 👤 Synchronizing staff with credentials...
-2026-02-13 06:50:41 - crm - INFO - [maintenance] 🎭 Synchronizing notification templates...
-2026-02-13 06:50:41 - crm - INFO - [maintenance]    ✅ Synchronized 7 system templates
-2026-02-13 06:50:41 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
-2026-02-13 06:50:41 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
-2026-02-13 06:50:41 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
-2026-02-13 06:50:41 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
-2026-02-13 06:50:41 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
-2026-02-13 06:50:41 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
-2026-02-13 06:50:41 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
-2026-02-13 06:50:41 - crm - INFO - [modules] ======================================================================
-2026-02-13 06:50:41 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-02-13 06:50:41 - crm - INFO - [modules] ======================================================================
-2026-02-13 06:50:41 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
-2026-02-13 06:50:41 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-02-13 06:50:41 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-02-13 06:50:41 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-02-13 06:50:41 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-02-13 06:50:41 - crm - INFO - [modules] ======================================================================
-2026-02-13 06:50:41 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-02-13 06:50:41 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-02-13 06:50:41 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-02-13 06:50:41 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-02-13 06:50:41 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
-2026-02-13 06:50:41 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-02-13 06:50:41 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-02-13 06:50:41 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-02-13 06:50:41 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-02-13 06:50:45 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-02-13 06:50:45 - crm - INFO - [notifications] 🔔 Notifications WS: User 7 connected locally. Local users: 1
-2026-02-13 06:50:45 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.39ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-02-13 06:50:45 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.17ms (DB: 0.39ms)
-2026-02-13 06:55:32 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 7 (admin)
-2026-02-13 06:55:32 - crm - ERROR - [main] Error in dashboard: column "total_saved" does not exist
-LINE 2:             SELECT loyalty_points, referral_code, total_save...
-                                                          ^
-HINT:  Perhaps you meant to reference the column "clients.total_spend".
-
-2026-02-13 06:55:32 - crm - INFO - [client_auth] 🔍 Determining client_id for user: 7 (admin)
+2026-02-13 09:13:08 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
+2026-02-13 09:13:08 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-13 09:13:08 - crm - INFO - [boot] ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
+2026-02-13 09:13:08 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-02-13 09:13:08 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-02-13 09:13:08 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-02-13 09:13:08 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-02-13 09:13:08 - crm - INFO - [migrations] ✅ Chat history table created/verified
+2026-02-13 09:13:08 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
+2026-02-13 09:13:08 - crm - INFO - [maintenance]    ✅ Banner sync: no changes
+2026-02-13 09:13:08 - crm - INFO - [maintenance]    ✅ Ensured salon Instagram and timezone defaults in salon_settings
+2026-02-13 09:13:08 - crm - INFO - [maintenance]    ✅ Gallery sync: no changes
+2026-02-13 09:13:08 - crm - INFO - [maintenance] 🧩 Verifying public landing baseline content...
+2026-02-13 09:13:08 - crm - INFO - [maintenance]    ✅ Services already present: 81
+2026-02-13 09:13:08 - crm - INFO - [maintenance]    ✅ Public gallery already present: 23
+2026-02-13 09:13:08 - crm - INFO - [maintenance]    ✅ FAQ already present: 13
+2026-02-13 09:13:08 - crm - INFO - [maintenance]    ✅ Reviews already present: 5
+2026-02-13 09:13:08 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos, bios and status...
+2026-02-13 09:13:08 - crm - INFO - [maintenance]    ✅ Synchronized all employee detailed info
+2026-02-13 09:13:08 - crm - INFO - [maintenance] 👥 Merging duplicate employees (Final Cleanup)...
+2026-02-13 09:13:08 - crm - INFO - [maintenance]    ✅ Finished deep cleanup and deletion of staff duplicates
+2026-02-13 09:13:08 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
+2026-02-13 09:13:08 - crm - INFO - [maintenance] 👤 Synchronizing staff with credentials...
+2026-02-13 09:13:08 - crm - INFO - [maintenance] 🎭 Synchronizing notification templates...
+2026-02-13 09:13:08 - crm - INFO - [maintenance]    ✅ Synchronized 7 system templates
+2026-02-13 09:13:08 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
+2026-02-13 09:13:08 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
+2026-02-13 09:13:08 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
+2026-02-13 09:13:08 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
+2026-02-13 09:13:08 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
+2026-02-13 09:13:08 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
+2026-02-13 09:13:08 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-13 09:13:08 - crm - INFO - [modules] ======================================================================
+2026-02-13 09:13:08 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-02-13 09:13:08 - crm - INFO - [modules] ======================================================================
+2026-02-13 09:13:08 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
+2026-02-13 09:13:08 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-02-13 09:13:08 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-02-13 09:13:08 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-02-13 09:13:08 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-02-13 09:13:08 - crm - INFO - [modules] ======================================================================
+2026-02-13 09:13:08 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-02-13 09:13:08 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
+2026-02-13 09:13:08 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
+2026-02-13 09:13:08 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-02-13 09:13:08 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
+2026-02-13 09:13:08 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
+2026-02-13 09:13:08 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
+2026-02-13 09:13:08 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-13 09:13:08 - crm - INFO - [messenger] 📨 Auto-detected platform: instagram for admin...
+2026-02-13 09:13:08 - crm - WARNING - [messenger] Error rendering template booking_reminder: 'date'
+2026-02-13 09:13:08 - crm - WARNING - [messenger] Skip Instagram send: invalid recipient id 'admin'
+2026-02-13 09:13:08 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-02-13 09:13:11 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 09:13:11 - crm - INFO - [notifications] 🔔 Notifications WS: User 7 connected locally. Local users: 1
+2026-02-13 09:13:11 - crm - INFO - [chat] 💬 New Chat WS connection accepted
+2026-02-13 09:13:11 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.55ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 09:13:11 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.78ms (DB: 0.55ms)
+2026-02-13 09:13:11 - crm - INFO - [chat] 💬 Chat WS: Admin 7 connected. Active admins: 1
+2026-02-13 09:13:11 - crm - INFO - [chat] 💬 New Chat WS connection accepted
+2026-02-13 09:13:11 - crm - INFO - [chat] 💬 Chat WS: Admin 7 connected. Active admins: 1
+2026-02-13 09:13:12 - crm - INFO - [chat] 💬 Chat WS: Admin 7 disconnected. Active admins: 0
+2026-02-13 09:13:12 - crm - INFO - [notifications] 🔔 Notifications WS: User 7 disconnected locally. Local users: 0
+2026-02-13 09:13:13 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
+2026-02-13 09:13:13 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2026-02-13 09:13:13 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2026-02-13 09:13:14 - crm - INFO - [boot] ============================================================
+2026-02-13 09:13:14 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-02-13 09:13:14 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
+2026-02-13 09:13:14 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
+2026-02-13 09:13:14 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-13 09:13:14 - crm - INFO - [boot] ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
+2026-02-13 09:13:14 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-02-13 09:13:14 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-02-13 09:13:14 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-02-13 09:13:14 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-02-13 09:13:14 - crm - INFO - [migrations] ✅ Chat history table created/verified
+2026-02-13 09:13:14 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
+2026-02-13 09:13:14 - crm - INFO - [maintenance]    ✅ Banner sync: no changes
+2026-02-13 09:13:14 - crm - INFO - [maintenance]    ✅ Ensured salon Instagram and timezone defaults in salon_settings
+2026-02-13 09:13:14 - crm - INFO - [maintenance]    ✅ Gallery sync: no changes
+2026-02-13 09:13:14 - crm - INFO - [maintenance] 🧩 Verifying public landing baseline content...
+2026-02-13 09:13:14 - crm - INFO - [maintenance]    ✅ Services already present: 81
+2026-02-13 09:13:14 - crm - INFO - [maintenance]    ✅ Public gallery already present: 23
+2026-02-13 09:13:14 - crm - INFO - [maintenance]    ✅ FAQ already present: 13
+2026-02-13 09:13:14 - crm - INFO - [maintenance]    ✅ Reviews already present: 5
+2026-02-13 09:13:14 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos, bios and status...
+2026-02-13 09:13:14 - crm - INFO - [maintenance]    ✅ Synchronized all employee detailed info
+2026-02-13 09:13:14 - crm - INFO - [maintenance] 👥 Merging duplicate employees (Final Cleanup)...
+2026-02-13 09:13:14 - crm - INFO - [maintenance]    ✅ Finished deep cleanup and deletion of staff duplicates
+2026-02-13 09:13:14 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
+2026-02-13 09:13:14 - crm - INFO - [maintenance] 👤 Synchronizing staff with credentials...
+2026-02-13 09:13:14 - crm - INFO - [maintenance] 🎭 Synchronizing notification templates...
+2026-02-13 09:13:14 - crm - INFO - [maintenance]    ✅ Synchronized 7 system templates
+2026-02-13 09:13:14 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
+2026-02-13 09:13:14 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
+2026-02-13 09:13:14 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
+2026-02-13 09:13:14 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
+2026-02-13 09:13:14 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
+2026-02-13 09:13:14 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
+2026-02-13 09:13:14 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-13 09:13:14 - crm - INFO - [modules] ======================================================================
+2026-02-13 09:13:14 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-02-13 09:13:14 - crm - INFO - [modules] ======================================================================
+2026-02-13 09:13:14 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
+2026-02-13 09:13:14 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-02-13 09:13:14 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-02-13 09:13:14 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-02-13 09:13:14 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-02-13 09:13:14 - crm - INFO - [modules] ======================================================================
+2026-02-13 09:13:14 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-02-13 09:13:14 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
+2026-02-13 09:13:14 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
+2026-02-13 09:13:14 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-02-13 09:13:14 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
+2026-02-13 09:13:14 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
+2026-02-13 09:13:14 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
+2026-02-13 09:13:14 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-13 09:13:14 - crm - INFO - [messenger] 📨 Auto-detected platform: instagram for admin...
+2026-02-13 09:13:14 - crm - WARNING - [messenger] Error rendering template booking_reminder: 'date'
+2026-02-13 09:13:14 - crm - WARNING - [messenger] Skip Instagram send: invalid recipient id 'admin'
+2026-02-13 09:13:14 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-02-13 09:13:18 - crm - INFO - [chat] 💬 New Chat WS connection accepted
+2026-02-13 09:13:18 - crm - INFO - [chat] 💬 Chat WS: Admin 7 connected. Active admins: 1
+2026-02-13 09:13:18 - crm - INFO - [chat] 💬 New Chat WS connection accepted
+2026-02-13 09:13:18 - crm - INFO - [chat] 💬 Chat WS: Admin 7 connected. Active admins: 1
+2026-02-13 09:13:18 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-02-13 09:13:18 - crm - INFO - [notifications] 🔔 Notifications WS: User 7 connected locally. Local users: 1
+2026-02-13 09:13:18 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.92ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-02-13 09:13:18 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.52ms (DB: 0.92ms)
+2026-02-13 09:13:18 - crm - INFO - [notifications] 🔔 Notifications WS: User 7 disconnected locally. Local users: 0
+2026-02-13 09:13:18 - crm - INFO - [chat] 💬 Chat WS: Admin 7 disconnected. Active admins: 0
+2026-02-13 09:13:18 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
+2026-02-13 09:13:19 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2026-02-13 09:13:19 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/backend/modules_config.json
+2026-02-13 09:13:19 - crm - INFO - [boot] ============================================================
+2026-02-13 09:13:19 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-02-13 09:13:19 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/portfolio, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/faces, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/salon, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/images/services, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/backend/logs
+2026-02-13 09:13:19 - crm - INFO - [db] ✅ Database connection pool initialized (5-100 connections)
+2026-02-13 09:13:19 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable. Falling back to local-only delivery: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-02-13 09:13:19 - crm - INFO - [boot] ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.
+2026-02-13 09:13:19 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-02-13 09:13:19 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-02-13 09:13:20 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-02-13 09:13:20 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-02-13 09:13:20 - crm - INFO - [migrations] ✅ Chat history table created/verified
+2026-02-13 09:13:20 - crm - INFO - [maintenance] 🧹 Running data cleanup and synchronization...
+2026-02-13 09:13:20 - crm - INFO - [maintenance]    ✅ Banner sync: no changes
+2026-02-13 09:13:20 - crm - INFO - [maintenance]    ✅ Ensured salon Instagram and timezone defaults in salon_settings
+2026-02-13 09:13:20 - crm - INFO - [maintenance]    ✅ Gallery sync: no changes
+2026-02-13 09:13:20 - crm - INFO - [maintenance] 🧩 Verifying public landing baseline content...
+2026-02-13 09:13:20 - crm - INFO - [maintenance]    ✅ Services already present: 81
+2026-02-13 09:13:20 - crm - INFO - [maintenance]    ✅ Public gallery already present: 23
+2026-02-13 09:13:20 - crm - INFO - [maintenance]    ✅ FAQ already present: 13
+2026-02-13 09:13:20 - crm - INFO - [maintenance]    ✅ Reviews already present: 5
+2026-02-13 09:13:20 - crm - INFO - [maintenance] 👨‍💼 Updating employee photos, bios and status...
+2026-02-13 09:13:20 - crm - INFO - [maintenance]    ✅ Synchronized all employee detailed info
+2026-02-13 09:13:20 - crm - INFO - [maintenance] 👥 Merging duplicate employees (Final Cleanup)...
+2026-02-13 09:13:20 - crm - INFO - [maintenance]    ✅ Finished deep cleanup and deletion of staff duplicates
+2026-02-13 09:13:20 - crm - INFO - [maintenance] ✏️  Fixing service names capitalization...
+2026-02-13 09:13:20 - crm - INFO - [maintenance] 👤 Synchronizing staff with credentials...
+2026-02-13 09:13:20 - crm - INFO - [maintenance] 🎭 Synchronizing notification templates...
+2026-02-13 09:13:20 - crm - INFO - [maintenance]    ✅ Synchronized 7 system templates
+2026-02-13 09:13:20 - crm - INFO - [maintenance] 🏆 Data maintenance completed successfully!
+2026-02-13 09:13:20 - crm - INFO - [migrations] ✅ Data maintenance tasks completed
+2026-02-13 09:13:20 - crm - INFO - [migrations] ⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)
+2026-02-13 09:13:20 - crm - INFO - [migrations] ⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)
+2026-02-13 09:13:20 - crm - INFO - [boot] ✅ Конфигурация салона: M.Le Diamant
+2026-02-13 09:13:20 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
+2026-02-13 09:13:20 - crm - INFO - [database] ✅ Loaded bot settings from salon_settings.bot_config
+2026-02-13 09:13:20 - crm - INFO - [modules] ======================================================================
+2026-02-13 09:13:20 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-02-13 09:13:20 - crm - INFO - [modules] ======================================================================
+2026-02-13 09:13:20 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | public          | Public entrance and landing page
+2026-02-13 09:13:20 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-02-13 09:13:20 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-02-13 09:13:20 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-02-13 09:13:20 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-02-13 09:13:20 - crm - INFO - [modules] ======================================================================
+2026-02-13 09:13:20 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-02-13 09:13:20 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
+2026-02-13 09:13:20 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
+2026-02-13 09:13:20 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-02-13 09:13:20 - crm - INFO - [pubsub] 📡 Redis Pub/Sub listener started
+2026-02-13 09:13:20 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
+2026-02-13 09:13:20 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
+2026-02-13 09:13:20 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-02-13 09:13:20 - crm - INFO - [messenger] 📨 Auto-detected platform: instagram for admin...
+2026-02-13 09:13:20 - crm - WARNING - [messenger] Error rendering template booking_reminder: 'date'

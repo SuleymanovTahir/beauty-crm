@@ -153,9 +153,9 @@ export default function Chat() {
       botSuggestionBg: 'bg-blue-50',
       botSuggestionText: 'text-blue-700',
       botSuggestionBorder: 'border-blue-100',
-      headerBg: 'bg-gradient-to-r from-blue-600 via-pink-600 to-orange-500',
-      headerText: 'text-white',
-      headerBorder: 'border-blue-400',
+      headerBg: 'bg-white',
+      headerText: 'text-gray-900',
+      headerBorder: 'border-gray-200',
       messagesAreaBg: 'bg-white',
       inputAreaBg: 'bg-white',
       inputAreaBorder: 'border-gray-200'
@@ -907,7 +907,7 @@ export default function Chat() {
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <button
                       onClick={handleBackToList}
-                      className={`md:hidden p-2 -ml-2 rounded-full transition-colors ${(currentMessenger === 'instagram' || currentMessenger === 'tiktok') ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-gray-700'
+                      className={`md:hidden p-2 -ml-2 rounded-full transition-colors ${currentMessenger === 'tiktok' ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-gray-700'
                         }`}
                     >
                       <ArrowLeft className="w-5 h-5" />
@@ -927,9 +927,9 @@ export default function Chat() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className={`font-bold truncate text-sm leading-tight ${(currentMessenger === 'instagram' || currentMessenger === 'tiktok') ? 'text-white' : 'text-gray-900'
+                      <p className={`font-bold truncate text-sm leading-tight ${currentMessenger === 'tiktok' ? 'text-white' : 'text-gray-900'
                         }`}>{selectedClient.display_name}</p>
-                      <p className={`text-[11px] truncate mt-0.5 ${(currentMessenger === 'instagram' || currentMessenger === 'tiktok') ? 'text-white/70' : 'text-gray-500'
+                      <p className={`text-[11px] truncate mt-0.5 ${currentMessenger === 'tiktok' ? 'text-white/70' : 'text-gray-500'
                         }`}>
                         {selectedClient.username ? `@${selectedClient.username}` : 'Online'}
                       </p>
@@ -948,7 +948,7 @@ export default function Chat() {
 
                     <button
                       onClick={() => setShowMobileMenu(!showMobileMenu)}
-                      className={`p-2 rounded-full transition-colors ${(currentMessenger === 'instagram' || currentMessenger === 'tiktok') ? 'text-white/70 hover:bg-white/10' : 'text-gray-500 hover:bg-black/5'
+                      className={`p-2 rounded-full transition-colors ${currentMessenger === 'tiktok' ? 'text-white/70 hover:bg-white/10' : 'text-gray-500 hover:bg-black/5'
                         }`}
                     >
                       <MoreVertical className="w-5 h-5" />

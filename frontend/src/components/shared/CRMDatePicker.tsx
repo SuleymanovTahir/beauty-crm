@@ -80,7 +80,7 @@ export const CRMDatePicker = ({
     // Создаем кастомный инпут для соответствия стилям CRM
     const CustomInput = forwardRef(({ value, onClick, placeholder }: any, ref: any) => (
         <input
-            className={`w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl !text-[12px] !font-normal focus:outline-none focus:ring-2 focus:ring-pink-500/10 transition-all ${className}`}
+            className={`crm-datepicker-input w-full ${className}`}
             onClick={onClick}
             value={value}
             placeholder={placeholder}

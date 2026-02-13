@@ -144,6 +144,9 @@ export class ApiClient {
         const errorData = await response.json().catch(() => ({ error: response.statusText }))
         const error: any = new Error(errorData.error || errorData.message || `API Error: ${response.status}`)
         error.error = errorData.error
+        error.reason = errorData.reason
+        error.nearest_slots = errorData.nearest_slots
+        error.details = errorData
         error.error_type = errorData.error_type
         error.email = errorData.email
         error.status = response.status
@@ -661,8 +664,36 @@ export class ApiClient {
   }
 
   // ===== ЗАПИСИ =====
-  async getBookings() {
-    return this.request<any>('/api/bookings')
+  async getBookings(params?: {
+    page?: number
+    limit?: number
+    search?: string
+    status?: string
+    master?: string
+    date_from?: string
+    date_to?: string
+    sort?: string
+    order?: string
+    language?: string
+  }) {
+    if (!params) {
+      return this.request<any>('/api/bookings')
+    }
+
+    const searchParams = new URLSearchParams()
+    if (params.page) searchParams.append('page', String(params.page))
+    if (params.limit) searchParams.append('limit', String(params.limit))
+    if (params.search) searchParams.append('search', params.search)
+    if (params.status) searchParams.append('status', params.status)
+    if (params.master) searchParams.append('master', params.master)
+    if (params.date_from) searchParams.append('date_from', params.date_from)
+    if (params.date_to) searchParams.append('date_to', params.date_to)
+    if (params.sort) searchParams.append('sort', params.sort)
+    if (params.order) searchParams.append('order', params.order)
+    if (params.language) searchParams.append('language', params.language)
+
+    const query = searchParams.toString()
+    return this.request<any>(`/api/bookings${query ? `?${query}` : ''}`)
   }
 
   async getClientBookings() {
@@ -676,6 +707,13 @@ export class ApiClient {
   async createBooking(data: any) {
     return this.request('/api/bookings', {
       method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateBooking(bookingId: number, data: any) {
+    return this.request(`/api/bookings/${bookingId}`, {
+      method: 'PUT',
       body: JSON.stringify(data),
     })
   }
@@ -698,6 +736,13 @@ export class ApiClient {
     return this.request(`/api/bookings/${bookingId}/status`, {
       method: 'POST',
       body: JSON.stringify({ status: 'cancelled' }),
+    })
+  }
+
+  async updateBookingLifecycleStatus(bookingId: number, status: string) {
+    return this.request(`/api/bookings/${bookingId}/status`, {
+      method: 'POST',
+      body: JSON.stringify({ status }),
     })
   }
 

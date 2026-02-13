@@ -91,4 +91,160 @@
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
+
+  .wizard-scrollable p,
+  .wizard-scrollable span,
+  .wizard-scrollable button,
+  .wizard-scrollable input {
+    line-height: 1.35;
+  }
+}
+
+.professional-times-grid {
+  width: 100%;
+}
+
+.professional-time-chip {
+  min-height: 2rem;
+}
+
+.professional-position {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.booking-confirm-root {
+  width: 100%;
+}
+
+.booking-confirm-shell {
+  width: 100%;
+}
+
+.booking-confirm-title {
+  font-size: clamp(1.6rem, 4.8vw, 2.2rem);
+  line-height: 1.12;
+}
+
+.booking-confirm-card {
+  border: 1px solid #d9dee7;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.booking-confirm-body {
+  gap: 1.4rem;
+}
+
+.booking-confirm-box {
+  border: 1px solid #d9e1ea;
+}
+
+.booking-confirm-service-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.7rem 0.8rem;
+}
+
+.booking-confirm-service-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.booking-confirm-service-bullet {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 9999px;
+  background: #111827;
+  margin-top: 0.42rem;
+  flex-shrink: 0;
+}
+
+.booking-confirm-service-name {
+  font-size: 1.02rem;
+  line-height: 1.2;
+}
+
+.booking-confirm-service-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.booking-confirm-service-duration {
+  font-size: 0.9rem;
+}
+
+.booking-confirm-service-price {
+  font-size: 1.02rem;
+}
+
+.wizard-scrollable .booking-confirm-input {
+  border: 1px solid #c6d0dc !important;
+  background: #ffffff !important;
+}
+
+.wizard-scrollable .booking-confirm-input:focus-visible {
+  border: 1px solid #94a3b8 !important;
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
+}
+
+@media (max-width: 469px) {
+  .professional-times-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .professional-time-chip {
+    font-size: 0.78rem !important;
+    line-height: 1 !important;
+    padding: 0.32rem 0.2rem !important;
+    min-height: 1.72rem !important;
+  }
+
+  .professional-position {
+    font-size: 0.64rem !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .booking-confirm-title {
+    font-size: clamp(1.42rem, 7vw, 1.75rem);
+  }
+
+  .booking-confirm-body {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .booking-confirm-service-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.65rem 0.7rem;
+  }
+
+  .booking-confirm-service-name,
+  .booking-confirm-service-price {
+    font-size: 0.94rem;
+  }
+
+  .booking-confirm-service-meta {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 0.65rem;
+  }
+
+  .booking-confirm-service-duration {
+    font-size: 0.82rem;
+  }
 }
