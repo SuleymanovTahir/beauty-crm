@@ -36,6 +36,7 @@ import { useTranslation } from 'react-i18next';
 import { useSalonSettings } from '../../hooks/useSalonSettings';
 import { getPhotoUrl } from '../../../src/utils/photoUtils';
 import { cn } from '../../../src/lib/utils';
+import { captureReferralAttributionFromCurrentUrl } from '../../utils/urlUtils';
 import '../../../src/components/layouts/MainLayout.css';
 
 type Tab = 'dashboard' | 'appointments' | 'gallery' | 'loyalty' | 'achievements' | 'masters' | 'beauty' | 'notifications' | 'settings' | 'promocodes' | 'specialoffers';
@@ -132,6 +133,10 @@ export function AccountPage() {
       { id: 'settings', label: t('tabs.settings', 'Настройки'), icon: SettingsIcon, path: '/account/settings', hidden: hiddenSet.has('settings') },
     ];
   }, [accountHiddenMenuItems, features.challenges, t, unreadCount]);
+
+  useEffect(() => {
+    captureReferralAttributionFromCurrentUrl(location.pathname, location.search);
+  }, [location.pathname, location.search]);
 
   const visibleMenuIds = useMemo(
     () => menuItems.filter((item) => item.hidden !== true).map((item) => item.id),

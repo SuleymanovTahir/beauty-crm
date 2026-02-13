@@ -20,6 +20,7 @@
         "position": {
           "ru": "Мастер маникюра и депиляции",
           "key": "users.gulcehre.position",
+          "detected_language": "en",
           "en": "Nail & Waxing Master",
           "ar": "محترف العناية بالأظافر والشمع",
           "es": "Maestro de uñas y Depilación con cera",
@@ -27,8 +28,7 @@
           "fr": "Maître des ongles et de l'épilation",
           "hi": "नेल एवं वैक्सिंग मास्टर",
           "kk": "Тырнақ және балауыз бояу шебері",
-          "pt": "Mestre em unhas e Depilação com cera",
-          "detected_language": "ru"
+          "pt": "Mestre em unhas e Depilação com cera"
         },
         "bio": {
           "ru": "Гуля — признанный эксперт в области маникюра, депиляции и профессионального ухода за лицом с 8-летним опытом. Благодаря совершенному владению техниками эстетического преображения и вниманию к деталям, она создает безупречные образы, обеспечивая каждому клиенту высочайший уровень заботы и профессиональный подход.",
@@ -78,6 +78,7 @@
         "position": {
           "ru": "Мастер универсальной красоты",
           "key": "users.jennifer.position",
+          "detected_language": "en",
           "en": "Universal Beauty Master",
           "ar": "عالم تجميل عالمي",
           "es": "Maestro de belleza universal",
@@ -85,8 +86,7 @@
           "fr": "Universal Beauty Master",
           "hi": "यूनिवर्सल ब्यूटी मास्टर",
           "kk": "Әмбебап сұлулық шебері",
-          "pt": "Universal Beauty Master",
-          "detected_language": "ru"
+          "pt": "Universal Beauty Master"
         },
         "bio": {
           "ru": "Дженнифер воплощает в себе талант многопрофильного специалиста. Она виртуозно выполняет как базовые, так и сложные бьюти-процедуры, обеспечивая комплексный и гармоничный подход к вашему преображению.",
@@ -136,6 +136,7 @@
         "position": {
           "ru": "стилист по волосам и Мастер перманентного макияжа",
           "key": "users.mestan.position",
+          "detected_language": "en",
           "en": "Hair Stylist & Permanent Makeup Artist",
           "ar": "مصفف شعر وفنان مكياج دائم",
           "es": "Estilista y maquillador permanente",
@@ -143,8 +144,7 @@
           "fr": "Coiffeur et maquilleur permanent",
           "hi": "हेयर स्टाइलिस्ट और परमानेंट मेकअप आर्टिस्ट",
           "kk": "Шаш стилисті және тұрақты макияж суретшісі",
-          "pt": "Cabeleireiro e maquiador permanente",
-          "detected_language": "ru"
+          "pt": "Cabeleireiro e maquiador permanente"
         },
         "bio": {
           "ru": "Местан — уникальный мастер, сочетающий в себе талант топ-стилиста и эксперта по перманентному макияжу. Ее глубокие знания позволяют создавать законченные и безупречные образы, подчеркивающие вашу индивидуальность.",
@@ -194,6 +194,7 @@
         "position": {
           "ru": "стилист по волосам",
           "key": "users.sabri.position",
+          "detected_language": "en",
           "en": "Hair Stylist",
           "ar": "مصفف شعر",
           "es": "Estilista",
@@ -201,8 +202,7 @@
           "fr": "Coiffeur",
           "hi": "हेयर स्टाइलिस्ट",
           "kk": "Шаш стилисті",
-          "pt": "Cabeleireiro",
-          "detected_language": "ru"
+          "pt": "Cabeleireiro"
         },
         "bio": {
           "ru": "Симо является ведущим экспертом нашего салона в области премиального ухода и сложного колорирования. Его многолетний международный опыт и авторские методики гарантируют результат высочайшего класса.",
@@ -252,6 +252,7 @@
         "position": {
           "ru": "Мастер маникюра",
           "key": "users.lyazat.position",
+          "detected_language": "en",
           "en": "Nail Master",
           "ar": "متخصص في العناية بالأظافر",
           "es": "Maestro de uñas",
@@ -259,8 +260,7 @@
           "fr": "Nail Master",
           "hi": "नेल मास्टर",
           "kk": "Тырнақ шебері",
-          "pt": "Nail Master",
-          "detected_language": "ru"
+          "pt": "Nail Master"
         },
         "bio": {
           "ru": "Лязат — истинный перфекционист в индустрии ногтевого сервиса. Обладая безупречным вкусом и вниманием к деталям, она создает идеальный маникюр и педикюр, заботясь об эстетике и здоровье ваших рук.",
@@ -310,6 +310,7 @@
         "position": {
           "ru": "Владелец/Директор",
           "key": "users.tursunay.position",
+          "detected_language": "en",
           "en": "Owner / Director",
           "ar": "المالك / المدير",
           "es": "Propietario / Director",
@@ -317,8 +318,7 @@
           "fr": "Propriétaire/Directeur",
           "hi": "मालिक/निदेशक",
           "kk": "Иесі/директор",
-          "pt": "Proprietário / Diretor",
-          "detected_language": "ru"
+          "pt": "Proprietário / Diretor"
         }
       }
     },
@@ -329,6 +329,7 @@
         "full_name": {
           "ru": "Админ",
           "key": "users.admin.full_name",
+          "detected_language": "en",
           "en": "Admin",
           "ar": "مسؤل",
           "es": "Administración",
@@ -336,12 +337,12 @@
           "fr": "Administrateur",
           "hi": "व्यवस्थापक",
           "kk": "Админ",
-          "pt": "Administrador",
-          "detected_language": "mn"
+          "pt": "Administrador"
         },
         "position": {
           "ru": "Системный администратор",
           "key": "users.admin.position",
+          "detected_language": "en",
           "en": "System Admin",
           "ar": "مسؤول النظام",
           "es": "Administrador del sistema",
@@ -349,8 +350,7 @@
           "fr": "Administrateur système",
           "hi": "सिस्टम एडमिन",
           "kk": "Жүйе әкімшісі",
-          "pt": "Administrador do sistema",
-          "detected_language": "ru"
+          "pt": "Administrador do sistema"
         }
       }
     }
@@ -2539,38 +2539,6 @@
           "detected_language": "ru"
         }
       }
-    },
-    {
-      "id": 84,
-      "stable_key": "key_test_manicure",
-      "fields": {
-        "name": {
-          "ru": "Тестовый маникюр",
-          "key": "services.key_test_manicure.name",
-          "en": "Test Manicure",
-          "ar": "اختبار مانيكير",
-          "es": "Manicura de prueba",
-          "de": "Test-Maniküre",
-          "fr": "Test de manucure",
-          "hi": "टेस्ट मैनीक्योर",
-          "kk": "Маникюрді сынау",
-          "pt": "Teste de manicure",
-          "detected_language": "ru"
-        },
-        "description": {
-          "ru": "Импортировано из CSV",
-          "key": "services.key_test_manicure.description",
-          "en": "Imported from CSV",
-          "ar": "مستورد من CSV",
-          "es": "Importado de CSV",
-          "de": "Aus CSV importiert",
-          "fr": "Importé depuis CSV",
-          "hi": "CSV से आयातित",
-          "kk": "CSV файлынан импортталған",
-          "pt": "Importado de CSV",
-          "detected_language": "ru"
-        }
-      }
     }
   ],
   "salon_settings": [
@@ -2581,19 +2549,20 @@
         "address": {
           "ru": "Магазин 13, Amwaj 2, Plaza Level, JBR, Дубай",
           "key": "salon_settings.1.address",
+          "detected_language": "hi",
+          "hi": "Shop 13, Amwaj 2, Plaza Level, JBR, Dubai",
           "en": "Shop 13, Amwaj 2, Plaza Level, JBR, Dubai",
           "ar": "متجر 13، أمواج 2، طابق البلازا، جميرا بيتش ريزيدنس، دبي",
           "es": "Tienda 13, Amwaj 2, nivel Plaza, JBR, Dubái",
           "de": "Shop 13, Amwaj 2, Plaza Level, JBR, Dubai",
           "fr": "Boutique 13, Amwaj 2, Plaza Level, JBR, Dubaï",
-          "hi": "Shop 13, Amwaj 2, Plaza Level, JBR, Dubai",
           "kk": "13 дүкен, Amwaj 2, Plaza Level, JBR, Дубай",
-          "pt": "Loja 13, Amwaj 2, Plaza Level, JBR, Dubai",
-          "detected_language": "ru"
+          "pt": "Loja 13, Amwaj 2, Plaza Level, JBR, Dubai"
         },
         "hours_weekdays": {
           "ru": "10:30 – 21:00",
           "key": "salon_settings.1.hours_weekdays",
+          "detected_language": "en",
           "en": "10:30 - 21:00",
           "ar": "10:30 - 21:00",
           "es": "10:30 - 21:00",
@@ -2601,12 +2570,12 @@
           "fr": "10h30 - 21h00",
           "hi": "10:30 - 21:00",
           "kk": "10:30 - 21:00",
-          "pt": "10h30 - 21h00",
-          "detected_language": "en"
+          "pt": "10h30 - 21h00"
         },
         "hours_weekends": {
           "ru": "10:30 – 21:00",
           "key": "salon_settings.1.hours_weekends",
+          "detected_language": "en",
           "en": "10:30 - 21:00",
           "ar": "10:30 - 21:00",
           "es": "10:30 - 21:00",
@@ -2614,20 +2583,20 @@
           "fr": "10h30 - 21h00",
           "hi": "10:30 - 21:00",
           "kk": "10:30 - 21:00",
-          "pt": "10h30 - 21h00",
-          "detected_language": "en"
+          "pt": "10h30 - 21h00"
         }
       }
     }
   ],
   "public_banners": [
     {
-      "id": 1,
-      "stable_key": "1",
+      "id": 2,
+      "stable_key": "2",
       "fields": {
         "title": {
           "ru": "Салон красоты в Дубае",
-          "key": "public_banners.1.title",
+          "key": "public_banners.2.title",
+          "detected_language": "ru",
           "en": "Beauty salon in Dubai",
           "ar": "صالون تجميل في دبي",
           "es": "Salón de belleza en Dubai",
@@ -2635,12 +2604,12 @@
           "fr": "Salon de beauté à Dubaï",
           "hi": "दुबई में ब्यूटी सैलून",
           "kk": "Дубайдағы сұлулық салоны",
-          "pt": "Salão de beleza em Dubai",
-          "detected_language": "ru"
+          "pt": "Salão de beleza em Dubai"
         },
         "subtitle": {
           "ru": "Искусство преображения",
-          "key": "public_banners.1.subtitle",
+          "key": "public_banners.2.subtitle",
+          "detected_language": "ru",
           "en": "The art of transformation",
           "ar": "فن التحول",
           "es": "El arte de la transformación",
@@ -2648,8 +2617,7 @@
           "fr": "L'art de la transformation",
           "hi": "परिवर्तन की कला",
           "kk": "Трансформация өнері",
-          "pt": "A arte da transformação",
-          "detected_language": "ru"
+          "pt": "A arte da transformação"
         }
       }
     }
@@ -2662,6 +2630,7 @@
         "title": {
           "ru": "Маникюр",
           "key": "public_gallery.1.title",
+          "detected_language": "en",
           "en": "Manicure",
           "ar": "مانيكير",
           "es": "Manicura",
@@ -2669,8 +2638,7 @@
           "fr": "Manucure",
           "hi": "मैनीक्योर",
           "kk": "Маникюр",
-          "pt": "Manicure",
-          "detected_language": "bg"
+          "pt": "Manicure"
         },
         "description": {
           "ru": "Работы салона",
@@ -2694,6 +2662,7 @@
         "title": {
           "ru": "Волосы",
           "key": "public_gallery.2.title",
+          "detected_language": "en",
           "en": "Hair",
           "ar": "الشعر",
           "es": "Cabello",
@@ -2701,8 +2670,7 @@
           "fr": "Cheveux",
           "hi": "बाल",
           "kk": "Шаш",
-          "pt": "Cabelo",
-          "detected_language": "ru"
+          "pt": "Cabelo"
         },
         "description": {
           "ru": "Работы салона",
@@ -2724,17 +2692,17 @@
       "stable_key": "3",
       "fields": {
         "title": {
-          "ru": "Спа3",
+          "ru": "SPA3",
           "key": "public_gallery.3.title",
-          "en": "Spa3",
-          "ar": "سبا3",
-          "es": "Spa3",
-          "de": "Spa3",
-          "fr": "Spa3",
-          "hi": "Spa3",
-          "kk": "Spa3",
-          "pt": "Spa3",
-          "detected_language": "be"
+          "detected_language": "ar",
+          "ar": "SPA3",
+          "en": "SPA3",
+          "es": "SPA3",
+          "de": "SPA3",
+          "fr": "SPA3",
+          "hi": "SPA3",
+          "kk": "SPA3",
+          "pt": "SPA3"
         },
         "description": {
           "ru": "Работы салона",
@@ -2758,15 +2726,15 @@
         "title": {
           "ru": "Перманент губ",
           "key": "public_gallery.4.title",
+          "detected_language": "en",
           "en": "Permanent lips",
           "ar": "شفاه دائمة",
-          "es": "Labios permanentes",
+          "es": "Labios permanente",
           "de": "Permanente Lippen",
           "fr": "Lèvres permanentes",
           "hi": "स्थायी होंठ",
           "kk": "Тұрақты еріндер",
-          "pt": "Lábios permanentes",
-          "detected_language": "uk"
+          "pt": "Lábios permanentes"
         },
         "description": {
           "ru": "Работы салона",
@@ -2912,69 +2880,6 @@
       }
     },
     {
-      "id": 10,
-      "stable_key": "10",
-      "fields": {
-        "title": {
-          "ru": "Массаж лица",
-          "key": "public_gallery.10.title",
-          "en": "Facial massage",
-          "ar": "تدليك الوجه",
-          "es": "Facial masaje",
-          "de": "Gesichtsmassage",
-          "fr": "Massage du visage",
-          "hi": "चेहरे की मालिश",
-          "kk": "Бет массажы",
-          "pt": "Facial massagem",
-          "detected_language": "ru"
-        },
-        "description": {
-          "ru": "Уход и тонус кожи",
-          "key": "public_gallery.10.description",
-          "en": "Skin care and tone",
-          "ar": "العناية بالبشرة وتوحيد لونها",
-          "es": "Cuidado y tonificación de la piel",
-          "de": "Hautpflege und Tonisierung",
-          "fr": "Soins et tonicité de la peau",
-          "hi": "त्वचा की देखभाल और टोन",
-          "kk": "Тері күтімі және реңк",
-          "pt": "Cuidados e tom da pele",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 11,
-      "stable_key": "11",
-      "fields": {
-        "title": {
-          "ru": "SPA",
-          "key": "public_gallery.11.title",
-          "en": "SPA",
-          "ar": "SPA",
-          "es": "SPA",
-          "de": "SPA",
-          "fr": "SPA",
-          "hi": "SPA",
-          "kk": "SPA",
-          "pt": "SPA"
-        },
-        "description": {
-          "ru": "Расслабляющие процедуры",
-          "key": "public_gallery.11.description",
-          "en": "Relaxing treatments",
-          "ar": "علاجات الاسترخاء",
-          "es": "Tratamientos relajantes",
-          "de": "Entspannende Behandlungen",
-          "fr": "Soins relaxants",
-          "hi": "आरामदायक उपचार",
-          "kk": "Тыныштандыратын процедуралар",
-          "pt": "Tratamentos relaxantes",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
       "id": 14,
       "stable_key": "14",
       "fields": {
@@ -3026,70 +2931,6 @@
         "description": {
           "ru": "Интерьер салона",
           "key": "public_gallery.15.description",
-          "en": "Salon interior",
-          "ar": "الصالون الداخلي",
-          "es": "Interior del salón",
-          "de": "Salon-Interieur",
-          "fr": "Intérieur du salon",
-          "hi": "सैलून इंटीरियर",
-          "kk": "Салон интерьері",
-          "pt": "Interior do salão",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 16,
-      "stable_key": "16",
-      "fields": {
-        "title": {
-          "ru": "Парикмахерская",
-          "key": "public_gallery.16.title",
-          "detected_language": "en",
-          "en": "Hair area",
-          "ar": "منطقة الشعر",
-          "es": "Zona de peluquería",
-          "de": "Haarbereich",
-          "fr": "Espace cheveux",
-          "hi": "हेयर क्षेत्र",
-          "kk": "Шаш аймағы",
-          "pt": "Área de cabelo"
-        },
-        "description": {
-          "ru": "Интерьер салона",
-          "key": "public_gallery.16.description",
-          "en": "Salon interior",
-          "ar": "الصالون الداخلي",
-          "es": "Interior del salón",
-          "de": "Salon-Interieur",
-          "fr": "Intérieur du salon",
-          "hi": "सैलून इंटीरियर",
-          "kk": "Салон интерьері",
-          "pt": "Interior do salão",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 17,
-      "stable_key": "17",
-      "fields": {
-        "title": {
-          "ru": "Интерьер1",
-          "key": "public_gallery.17.title",
-          "detected_language": "en",
-          "en": "Interior1",
-          "ar": "الجزء الداخلي1",
-          "es": "Interior1",
-          "de": "Interieur1",
-          "fr": "Intérieur1",
-          "hi": "आंतरिक1",
-          "kk": "Интерьер1",
-          "pt": "Interior1"
-        },
-        "description": {
-          "ru": "Интерьер салона",
-          "key": "public_gallery.17.description",
           "en": "Salon interior",
           "ar": "الصالون الداخلي",
           "es": "Interior del salón",
@@ -3231,341 +3072,21 @@
       }
     },
     {
-      "id": 22,
-      "stable_key": "22",
-      "fields": {
-        "title": {
-          "ru": "Область ногтей",
-          "key": "public_gallery.22.title",
-          "detected_language": "en",
-          "en": "Nail area",
-          "ar": "منطقة الأظافر",
-          "es": "Área de uñas",
-          "de": "Nagelbereich",
-          "fr": "Zone des ongles",
-          "hi": "नेल क्षेत्र",
-          "kk": "Тырнақ аймағы",
-          "pt": "Área das unhas"
-        },
-        "description": {
-          "ru": "Интерьер салона",
-          "key": "public_gallery.22.description",
-          "en": "Salon interior",
-          "ar": "الصالون الداخلي",
-          "es": "Interior del salón",
-          "de": "Salon-Interieur",
-          "fr": "Intérieur du salon",
-          "hi": "सैलून इंटीरियर",
-          "kk": "Салон интерьері",
-          "pt": "Interior do salão",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 23,
-      "stable_key": "23",
-      "fields": {
-        "title": {
-          "ru": "Баннер для лица",
-          "key": "public_gallery.23.title",
-          "detected_language": "en",
-          "en": "Face banner",
-          "ar": "لافتة الوجه",
-          "es": "Banner de cara",
-          "de": "Gesichtsbanner",
-          "fr": "Bannière du visage",
-          "hi": "फेस बैनर",
-          "kk": "Бет баннері",
-          "pt": "Banner facial"
-        },
-        "description": {
-          "ru": "Работы салона",
-          "key": "public_gallery.23.description",
-          "en": "Salon Works",
-          "ar": "أعمال الصالون",
-          "es": "Salon Works",
-          "de": "Salon Works",
-          "fr": "Salon Works",
-          "hi": "सैलून वर्क्स",
-          "kk": "Салон жұмыстары",
-          "pt": "Salon Works",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 24,
-      "stable_key": "24",
-      "fields": {
-        "title": {
-          "ru": "Баннер для лица1",
-          "key": "public_gallery.24.title",
-          "detected_language": "en",
-          "en": "Face banner1",
-          "ar": "لافتة الوجه1",
-          "es": "Banner de cara1",
-          "de": "Gesichtsbanner1",
-          "fr": "Bannière du visage1",
-          "hi": "फेस बैनर1",
-          "kk": "Бет баннер1",
-          "pt": "Banner facial1"
-        },
-        "description": {
-          "ru": "Работы салона",
-          "key": "public_gallery.24.description",
-          "en": "Salon Works",
-          "ar": "أعمال الصالون",
-          "es": "Salon Works",
-          "de": "Salon Works",
-          "fr": "Salon Works",
-          "hi": "सैलून वर्क्स",
-          "kk": "Салон жұмыстары",
-          "pt": "Salon Works",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 25,
-      "stable_key": "25",
-      "fields": {
-        "title": {
-          "ru": "Баннер для лица",
-          "key": "public_gallery.25.title",
-          "detected_language": "en",
-          "en": "Face main",
-          "ar": "الوجه الرئيسي",
-          "es": "Cara principal",
-          "de": "Gesichtshaupt",
-          "fr": "Visage principal",
-          "hi": "फेस मेन",
-          "kk": "Бет негізгі",
-          "pt": "Face principal"
-        },
-        "description": {
-          "ru": "Работы салона",
-          "key": "public_gallery.25.description",
-          "en": "Salon Works",
-          "ar": "أعمال الصالون",
-          "es": "Salon Works",
-          "de": "Salon Works",
-          "fr": "Salon Works",
-          "hi": "सैलून वर्क्स",
-          "kk": "Салон жұмыстары",
-          "pt": "Salon Works",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 26,
-      "stable_key": "26",
-      "fields": {
-        "title": {
-          "ru": "Face девушка с карэ",
-          "key": "public_gallery.26.title",
-          "en": "Face girl with bob",
-          "ar": "وجه فتاة مع بوب",
-          "es": "Cara de niña con bob",
-          "de": "Face Girl mit Bob",
-          "fr": "Face girl avec bob",
-          "hi": "बॉब वाली चेहरे वाली लड़की",
-          "kk": "Бобпен жүзді қыз",
-          "pt": "Face girl with bob",
-          "detected_language": "ru"
-        },
-        "description": {
-          "ru": "Работы салона",
-          "key": "public_gallery.26.description",
-          "en": "Salon works",
-          "ar": "أعمال الصالون",
-          "es": "Salon works",
-          "de": "Salon funktioniert",
-          "fr": "Salon works",
-          "hi": "सैलून वर्क्स",
-          "kk": "Салон жұмыс істейді",
-          "pt": "Salão funciona",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 27,
-      "stable_key": "27",
-      "fields": {
-        "title": {
-          "ru": "Face красивая девушка",
-          "key": "public_gallery.27.title",
-          "en": "Face beautiful girl",
-          "ar": "أعمال وجه الفتاة الجميلة",
-          "es": "Cara de niña hermosa",
-          "de": "Gesicht schönes Mädchen",
-          "fr": "Visage belle fille",
-          "hi": "चेहरा खूबसूरत लड़की",
-          "kk": "Бет әдемі қыз",
-          "pt": "Cara linda menina",
-          "detected_language": "ru"
-        },
-        "description": {
-          "ru": "Работы салона",
-          "key": "public_gallery.27.description",
-          "en": "Salon works",
-          "ar": "أعمال الصالون",
-          "es": "Salón de trabajos",
-          "de": "Salon funktioniert",
-          "fr": "Salon works",
-          "hi": "सैलून काम करता है",
-          "kk": "Салон жұмыс істейді",
-          "pt": "Salão funciona",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 28,
-      "stable_key": "28",
-      "fields": {
-        "title": {
-          "ru": "Face красивая девушка 3",
-          "key": "public_gallery.28.title",
-          "en": "Face beautiful girl 3",
-          "ar": "أعمال وجه الفتاة الجميلة 3",
-          "es": "Cara de niña hermosa 3",
-          "de": "Gesicht schönes Mädchen 3",
-          "fr": "Visage belle fille 3",
-          "hi": "चेहरा खूबसूरत लड़की 3",
-          "kk": "Бет сұлу қыз 3",
-          "pt": "Cara linda menina 3",
-          "detected_language": "ru"
-        },
-        "description": {
-          "ru": "Работы салона",
-          "key": "public_gallery.28.description",
-          "en": "Salon works",
-          "ar": "أعمال الصالون",
-          "es": "Salón de trabajos",
-          "de": "Salon funktioniert",
-          "fr": "Salon works",
-          "hi": "सैलून काम करता है",
-          "kk": "Салон жұмыс істейді",
-          "pt": "Salão funciona",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 29,
-      "stable_key": "29",
-      "fields": {
-        "title": {
-          "ru": "Face мароканская баня",
-          "key": "public_gallery.29.title",
-          "en": "Face Moroccan bathhouse",
-          "ar": "وجه الحمام المغربي",
-          "es": "Cara de baño marroquí",
-          "de": "Gesicht marokkanisches Bad",
-          "fr": "Visage bain marocain",
-          "hi": "चेहरा मोरक्कन स्नान",
-          "kk": "Бет Марокко моншасы",
-          "pt": "Cara banho marroquino",
-          "detected_language": "ru"
-        },
-        "description": {
-          "ru": "Работы салона",
-          "key": "public_gallery.29.description",
-          "en": "Salon works",
-          "ar": "أعمال الصالون",
-          "es": "Salón de trabajos",
-          "de": "Salon funktioniert",
-          "fr": "Salon works",
-          "hi": "सैलून काम करता है",
-          "kk": "Салон жұмыс істейді",
-          "pt": "Salão funciona",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 30,
-      "stable_key": "30",
-      "fields": {
-        "title": {
-          "ru": "Face мессаж и брюнетка",
-          "key": "public_gallery.30.title",
-          "en": "Face message and brunette",
-          "ar": "رسالة الوجه والسمراء",
-          "es": "Cara mensaje y morena",
-          "de": "Gesichtsnachricht und Brünette",
-          "fr": "Message visage et brune",
-          "hi": "चेहरा संदेश और श्यामला",
-          "kk": "Бет хабарламасы және брюнетка",
-          "pt": "Mensagem facial e morena",
-          "detected_language": "ru"
-        },
-        "description": {
-          "ru": "Работы салона",
-          "key": "public_gallery.30.description",
-          "en": "Salon work",
-          "ar": "الصالون أعمال",
-          "es": "Salón de trabajos",
-          "de": "Salon Works",
-          "fr": "Salon Works",
-          "hi": "सैलून काम करता है",
-          "kk": "Салон жұмыстары",
-          "pt": "Salão Works",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
-      "id": 31,
-      "stable_key": "31",
-      "fields": {
-        "title": {
-          "ru": "Лицо местного и блондинка",
-          "key": "public_gallery.31.title",
-          "detected_language": "bg",
-          "en": "Face local and blonde",
-          "ar": "الوجه محلي وأشقر",
-          "es": "Cara local y rubia",
-          "de": "Gesicht lokal und blond",
-          "fr": "Visage local et blond",
-          "hi": "चेहरा स्थानीय और गोरा",
-          "kk": "Жергілікті және аққұба бет",
-          "pt": "Rosto local e loiro"
-        },
-        "description": {
-          "ru": "Работы салона",
-          "key": "public_gallery.31.description",
-          "en": "Salon work",
-          "ar": "أعمال الصالون",
-          "es": "Salón Works",
-          "de": "Salon Works",
-          "fr": "Salon Works",
-          "hi": "सैलून वर्क्स",
-          "kk": "Салон жұмыстары",
-          "pt": "Salon Works",
-          "detected_language": "ru"
-        }
-      }
-    },
-    {
       "id": 32,
       "stable_key": "32",
       "fields": {
         "title": {
-          "ru": "Воксинг",
+          "ru": "Ваксинг",
           "key": "public_gallery.32.title",
+          "detected_language": "en",
           "en": "Waxing",
-          "ar": "Voxing",
-          "es": "Voxing",
-          "de": "Voxing",
-          "fr": "Voxing",
-          "hi": "वोक्सिंग",
-          "kk": "Voxing",
-          "pt": "Voxing",
-          "detected_language": "ru"
+          "ar": "إزالة الشعر بالشمع",
+          "es": "Depilación con cera",
+          "de": "Waxing",
+          "fr": "Épilation à la cire",
+          "hi": "वैक्सिंग",
+          "kk": "Ваксинг",
+          "pt": "Depilação com cera"
         },
         "description": {
           "ru": "Работы салона",
@@ -3587,17 +3108,17 @@
       "stable_key": "33",
       "fields": {
         "title": {
-          "ru": "Волосы блондинка",
+          "ru": "Волосы светлые",
           "key": "public_gallery.33.title",
-          "en": "Blonde hair",
-          "ar": "الشعر الأشقر",
-          "es": "Cabello Rubio",
-          "de": "Blonde Haare",
+          "detected_language": "en",
+          "en": "Hair blonde",
+          "ar": "شعر أشقر",
+          "es": "Cabello rubio",
+          "de": "Haare blond",
           "fr": "Cheveux blonds",
           "hi": "गोरे बाल",
-          "kk": "Сары шаш",
-          "pt": "Cabelo Loiro",
-          "detected_language": "ru"
+          "kk": "Аққұба шаш",
+          "pt": "Cabelo loiro"
         },
         "description": {
           "ru": "Работы салона",
@@ -3621,15 +3142,15 @@
         "title": {
           "ru": "Волосы2",
           "key": "public_gallery.34.title",
+          "detected_language": "en",
           "en": "Hair2",
-          "ar": "Hair2",
+          "ar": "شعر2",
           "es": "Cabello2",
           "de": "Haare2",
-          "fr": "Hair2",
-          "hi": "हेयर2",
-          "kk": "Шаш 2",
-          "pt": "Hair2",
-          "detected_language": "ru"
+          "fr": "Cheveux2",
+          "hi": "बाल2",
+          "kk": "Шаш2",
+          "pt": "Cabelo2"
         },
         "description": {
           "ru": "Работы салона",
@@ -3651,17 +3172,17 @@
       "stable_key": "36",
       "fields": {
         "title": {
-          "ru": "Кератин блондинка",
+          "ru": "Кератиновый блондин",
           "key": "public_gallery.36.title",
+          "detected_language": "en",
           "en": "Keratin blonde",
           "ar": "أشقر كيراتين",
-          "es": "Rubio queratina",
-          "de": "Keratinblond",
+          "es": "Rubio keratina",
+          "de": "Keratin-Blond",
           "fr": "Blond kératine",
           "hi": "केराटिन गोरा",
-          "kk": "Кератинді аққұба",
-          "pt": "Loiro queratina",
-          "detected_language": "ru"
+          "kk": "Кератин аққұба",
+          "pt": "Loiro queratina"
         },
         "description": {
           "ru": "Работы салона",
@@ -3683,17 +3204,17 @@
       "stable_key": "37",
       "fields": {
         "title": {
-          "ru": "Кератин блондинка 2",
+          "ru": "Кератиновый блондин 2",
           "key": "public_gallery.37.title",
+          "detected_language": "en",
           "en": "Keratin blonde 2",
           "ar": "أشقر كيراتين 2",
-          "es": "Rubio queratina 2",
-          "de": "Keratinblond 2",
+          "es": "Rubio keratina 2",
+          "de": "Keratin-Blond 2",
           "fr": "Blond kératine 2",
           "hi": "केराटिन गोरा 2",
           "kk": "Кератин аққұба 2",
-          "pt": "Loiro queratina 2",
-          "detected_language": "ru"
+          "pt": "Loiro queratina 2"
         },
         "description": {
           "ru": "Работы салона",
@@ -3717,15 +3238,15 @@
         "title": {
           "ru": "Маникюр3",
           "key": "public_gallery.38.title",
+          "detected_language": "mt",
           "en": "Manicure3",
-          "ar": "المناكير 3",
-          "es": "Manicura 3",
-          "de": "Maniküre 3",
-          "fr": "Manucure 3",
-          "hi": "मैनीक्योर 3",
-          "kk": "Маникюр 3",
-          "pt": "Manicure 3",
-          "detected_language": "ru"
+          "ar": "مانيكير3",
+          "es": "Manicura3",
+          "de": "Maniküre3",
+          "fr": "Manucure3",
+          "hi": "मैनीक्योर3",
+          "kk": "Маникюр3",
+          "pt": "Manicure3"
         },
         "description": {
           "ru": "Работы салона",
@@ -3747,17 +3268,17 @@
       "stable_key": "39",
       "fields": {
         "title": {
-          "ru": "Ногти до после",
+          "ru": "Nogti do posle",
           "key": "public_gallery.39.title",
-          "en": "Nails before after",
-          "ar": "الأظافر قبل بعد",
-          "es": "Uñas antes y después",
-          "de": "Nägel vorher Nachher",
-          "fr": "Ongles avant après",
-          "hi": "पहले नाखून बाद में",
-          "kk": "Тырнақтар алдында кейін",
-          "pt": "Unhas antes depois",
-          "detected_language": "ru"
+          "detected_language": "ru",
+          "en": "Nogti do posle",
+          "ar": "نوغتي دو بوسلي",
+          "es": "Nogti do posle",
+          "de": "Nogti do posle",
+          "fr": "Nogti do posle",
+          "hi": "कुछ भी नहीं",
+          "kk": "Nogti do posle",
+          "pt": "Nogti do posle"
         },
         "description": {
           "ru": "Работы салона",
@@ -3781,15 +3302,15 @@
         "title": {
           "ru": "Ногти2",
           "key": "public_gallery.40.title",
+          "detected_language": "en",
           "en": "Nogti2",
-          "ar": "نوجتي2",
+          "ar": "Nogti2",
           "es": "Nogti2",
           "de": "Nogti2",
           "fr": "Nogti2",
           "hi": "Nogti2",
           "kk": "Nogti2",
-          "pt": "Nogti2",
-          "detected_language": "mn"
+          "pt": "Nogti2"
         },
         "description": {
           "ru": "Работы салона",
@@ -3813,6 +3334,7 @@
         "title": {
           "ru": "Спа2",
           "key": "public_gallery.41.title",
+          "detected_language": "en",
           "en": "Spa2",
           "ar": "Spa2",
           "es": "Spa2",
@@ -3820,8 +3342,7 @@
           "fr": "Spa2",
           "hi": "Spa2",
           "kk": "Spa2",
-          "pt": "Spa2",
-          "detected_language": "sr"
+          "pt": "Spa2"
         },
         "description": {
           "ru": "Работы салона",
@@ -3841,12 +3362,13 @@
   ],
   "workflow_stages": [
     {
-      "id": 628,
-      "stable_key": "628",
+      "id": 650,
+      "stable_key": "650",
       "fields": {
         "name": {
           "ru": "новое",
-          "key": "workflow_stages.628.name",
+          "key": "workflow_stages.650.name",
+          "detected_language": "en",
           "en": "new",
           "ar": "جديد",
           "es": "nueva",
@@ -3854,18 +3376,18 @@
           "fr": "nouvelle",
           "hi": "नया",
           "kk": "жаңа",
-          "pt": "nova",
-          "detected_language": "ru"
+          "pt": "nova"
         }
       }
     },
     {
-      "id": 629,
-      "stable_key": "629",
+      "id": 651,
+      "stable_key": "651",
       "fields": {
         "name": {
           "ru": "переговоры",
-          "key": "workflow_stages.629.name",
+          "key": "workflow_stages.651.name",
+          "detected_language": "en",
           "en": "negotiation",
           "ar": "التفاوض",
           "es": "negociación",
@@ -3873,18 +3395,18 @@
           "fr": "négociation",
           "hi": "बातचीत",
           "kk": "келіссөздер",
-          "pt": "negociação",
-          "detected_language": "ru"
+          "pt": "negociação"
         }
       }
     },
     {
-      "id": 630,
-      "stable_key": "630",
+      "id": 652,
+      "stable_key": "652",
       "fields": {
         "name": {
           "ru": "отправленное_предложение",
-          "key": "workflow_stages.630.name",
+          "key": "workflow_stages.652.name",
+          "detected_language": "en",
           "en": "sent_offer",
           "ar": "sent_offer",
           "es": "oferta_enviada",
@@ -3892,18 +3414,18 @@
           "fr": "offre_envoyée",
           "hi": "भेजा_प्रस्ताव",
           "kk": "жіберілген_ұсыныс",
-          "pt": "oferta_enviada",
-          "detected_language": "ru"
+          "pt": "oferta_enviada"
         }
       }
     },
     {
-      "id": 631,
-      "stable_key": "631",
+      "id": 653,
+      "stable_key": "653",
       "fields": {
         "name": {
           "ru": "закрыто_выиграно",
-          "key": "workflow_stages.631.name",
+          "key": "workflow_stages.653.name",
+          "detected_language": "en",
           "en": "closed_won",
           "ar": "Closed_won",
           "es": "cerrada_ganada",
@@ -3911,18 +3433,18 @@
           "fr": "fermé_gagné",
           "hi": "बंद_जीता",
           "kk": "жабық_жеңген",
-          "pt": "fechada_ganha",
-          "detected_language": "ru"
+          "pt": "fechada_ganha"
         }
       }
     },
     {
-      "id": 632,
-      "stable_key": "632",
+      "id": 654,
+      "stable_key": "654",
       "fields": {
         "name": {
           "ru": "закрыто_проиграно",
-          "key": "workflow_stages.632.name",
+          "key": "workflow_stages.654.name",
+          "detected_language": "en",
           "en": "closed_lost",
           "ar": "Closed_lost",
           "es": "cerrada_perdida",
@@ -3930,18 +3452,18 @@
           "fr": "fermé_perdu",
           "hi": "बंद_खोया",
           "kk": "жабық_жоғалған",
-          "pt": "fechada_perdida",
-          "detected_language": "ru"
+          "pt": "fechada_perdida"
         }
       }
     },
     {
-      "id": 633,
-      "stable_key": "633",
+      "id": 655,
+      "stable_key": "655",
       "fields": {
         "name": {
           "ru": "черновик",
-          "key": "workflow_stages.633.name",
+          "key": "workflow_stages.655.name",
+          "detected_language": "en",
           "en": "draft",
           "ar": "مسودة",
           "es": "borrador",
@@ -3949,18 +3471,18 @@
           "fr": "projet",
           "hi": "ड्राफ्ट",
           "kk": "жоба",
-          "pt": "rascunho",
-          "detected_language": "ru"
+          "pt": "rascunho"
         }
       }
     },
     {
-      "id": 634,
-      "stable_key": "634",
+      "id": 656,
+      "stable_key": "656",
       "fields": {
         "name": {
           "ru": "отправлено",
-          "key": "workflow_stages.634.name",
+          "key": "workflow_stages.656.name",
+          "detected_language": "en",
           "en": "sent",
           "ar": "تم الإرسال",
           "es": "enviado",
@@ -3968,18 +3490,18 @@
           "fr": "envoyé",
           "hi": "भेजा गया",
           "kk": "жіберілді",
-          "pt": "enviado",
-          "detected_language": "ru"
+          "pt": "enviado"
         }
       }
     },
     {
-      "id": 635,
-      "stable_key": "635",
+      "id": 657,
+      "stable_key": "657",
       "fields": {
         "name": {
           "ru": "оплачено",
-          "key": "workflow_stages.635.name",
+          "key": "workflow_stages.657.name",
+          "detected_language": "en",
           "en": "paid",
           "ar": "تم الدفع",
           "es": "pagado",
@@ -3987,37 +3509,37 @@
           "fr": "payé",
           "hi": "भुगतान किया गया",
           "kk": "төленді",
-          "pt": "pago",
-          "detected_language": "ru"
+          "pt": "pago"
         }
       }
     },
     {
-      "id": 636,
-      "stable_key": "636",
+      "id": 658,
+      "stable_key": "658",
       "fields": {
         "name": {
           "ru": "все",
-          "key": "workflow_stages.636.name",
+          "key": "workflow_stages.658.name",
+          "detected_language": "pt",
+          "pt": "todo",
           "en": "all",
           "ar": "الكل",
           "es": "todos",
           "de": "alle",
           "fr": "tous",
           "hi": "सभी",
-          "kk": "барлығы",
-          "pt": "todo",
-          "detected_language": "ru"
+          "kk": "барлығы"
         }
       }
     },
     {
-      "id": 637,
-      "stable_key": "637",
+      "id": 659,
+      "stable_key": "659",
       "fields": {
         "name": {
           "ru": "в_прогрессе",
-          "key": "workflow_stages.637.name",
+          "key": "workflow_stages.659.name",
+          "detected_language": "en",
           "en": "in_progress",
           "ar": "in_progress",
           "es": "en_progreso",
@@ -4025,18 +3547,18 @@
           "fr": "en_progress",
           "hi": "प्रगति में",
           "kk": "орындалуда",
-          "pt": "em_progresso",
-          "detected_language": "ru"
+          "pt": "em_progresso"
         }
       }
     },
     {
-      "id": 638,
-      "stable_key": "638",
+      "id": 660,
+      "stable_key": "660",
       "fields": {
         "name": {
           "ru": "готово",
-          "key": "workflow_stages.638.name",
+          "key": "workflow_stages.660.name",
+          "detected_language": "en",
           "en": "done",
           "ar": "تم",
           "es": "hecho",
@@ -4044,8 +3566,7 @@
           "fr": "effectué",
           "hi": "हो गया",
           "kk": "орындалды",
-          "pt": "concluído",
-          "detected_language": "sr"
+          "pt": "concluído"
         }
       }
     }

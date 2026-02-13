@@ -782,7 +782,11 @@ export default function UniversalBookings() {
 
     const handleAddBooking = async () => {
         const manualClientName = clientSearch.trim();
-        if ((!selectedClient && !manualClientName) || !selectedService || !addForm.date || !addForm.time) {
+        const selectedClientPhone = selectedClient?.phone ?? '';
+        const enteredPhone = String(addForm.phone ?? '').trim();
+        const resolvedPhone = enteredPhone.length > 0 ? enteredPhone : selectedClientPhone;
+
+        if (!selectedService || !addForm.date || !addForm.time || resolvedPhone.length === 0) {
             toast.error(t('bookings:fill_all_required_fields'));
             return;
         }
@@ -790,15 +794,14 @@ export default function UniversalBookings() {
         try {
             setAddingBooking(true);
             const selectedClientName = selectedClient?.display_name ?? selectedClient?.name ?? '';
-            const bookingName = selectedClientName || manualClientName;
+            const bookingName = selectedClientName || manualClientName || t('bookings:client');
             const selectedClientInstagram = selectedClient?.instagram_id;
-            const selectedClientPhone = selectedClient?.phone ?? '';
             const serviceDuration = Number(selectedService?.duration);
 
             const bookingData = {
                 instagram_id: selectedClientInstagram,
                 name: bookingName,
-                phone: addForm.phone || selectedClientPhone,
+                phone: resolvedPhone,
                 service: selectedService.name,
                 date: addForm.date,
                 time: addForm.time,
@@ -1312,7 +1315,7 @@ export default function UniversalBookings() {
                         <div className="modal-body space-y-4">
                             {/* Client Search */}
                             <div className="relative">
-                                <label className="input-label">{t('bookings:client')} *</label>
+                                <label className="input-label">{t('bookings:client')}</label>
                                 <input
                                     type="text"
                                     placeholder={t('bookings:search_client')}

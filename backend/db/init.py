@@ -613,9 +613,11 @@ def init_database():
             user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
             start_date TIMESTAMP NOT NULL,
             end_date TIMESTAMP NOT NULL,
+            type TEXT DEFAULT 'vacation',
             reason TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('user_time_off', 'type', "TEXT DEFAULT 'vacation'")
 
         # Clients and CRM Profiles
         c.execute('''CREATE TABLE IF NOT EXISTS clients (
@@ -1738,6 +1740,7 @@ def init_database():
             bonus_points INTEGER DEFAULT 0,
             referrer_bonus INTEGER DEFAULT 0,
             is_active BOOLEAN DEFAULT TRUE,
+            share_token TEXT,
             target_type TEXT DEFAULT 'all', -- all, specific_users, by_master, by_service, by_inactivity
             target_criteria JSONB,          -- {user_ids: [], master_id: int, service_ids: [], days_inactive: int}
             start_date TIMESTAMP,
@@ -1745,14 +1748,27 @@ def init_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('referral_campaigns', 'share_token', 'TEXT')
+        c.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_referral_campaigns_share_token_unique
+            ON referral_campaigns(share_token)
+            WHERE share_token IS NOT NULL
+        """)
 
         c.execute('''CREATE TABLE IF NOT EXISTS referral_campaign_users (
             id SERIAL PRIMARY KEY,
             campaign_id INTEGER REFERENCES referral_campaigns(id),
             client_id TEXT REFERENCES clients(instagram_id),
+            share_token TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             UNIQUE(campaign_id, client_id)
         )''')
+        add_column_if_not_exists('referral_campaign_users', 'share_token', 'TEXT')
+        c.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_referral_campaign_users_share_token_unique
+            ON referral_campaign_users(share_token)
+            WHERE share_token IS NOT NULL
+        """)
 
         c.execute('''CREATE TABLE IF NOT EXISTS client_referrals (
             id SERIAL PRIMARY KEY,

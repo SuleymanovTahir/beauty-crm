@@ -221,10 +221,32 @@ def _build_master_display_maps(c, bookings_rows: list, language: str):
     users_by_id = {}
     alias_to_user = {}
 
+    def _extract_master_user_id(row: tuple) -> Optional[int]:
+        # Booking detail rows place master_user_id at index 14,
+        # while list rows place it at index 10.
+        candidate_indexes = (14, 10)
+        for index in candidate_indexes:
+            if len(row) <= index:
+                continue
+            candidate = row[index]
+            if candidate is None or str(candidate).strip() == "":
+                continue
+            try:
+                return int(candidate)
+            except Exception:
+                continue
+        return None
+
+    def _register_alias(alias_value: Optional[str], user_id: int, full_name: str):
+        normalized_alias = str(alias_value or "").strip().lower()
+        if normalized_alias:
+            alias_to_user[normalized_alias] = (user_id, full_name)
+
     master_ids = sorted({
-        int(row[10])
+        master_id
         for row in bookings_rows
-        if len(row) > 10 and row[10] is not None
+        for master_id in [_extract_master_user_id(row)]
+        if master_id is not None
     })
 
     if master_ids:
@@ -243,17 +265,18 @@ def _build_master_display_maps(c, bookings_rows: list, language: str):
             nickname = str(user_row[3] or "").strip()
             users_by_id[user_id] = (full_name, username, nickname)
             for alias in (full_name, username, nickname):
-                normalized_alias = alias.lower().strip()
-                if normalized_alias:
-                    alias_to_user[normalized_alias] = (user_id, full_name)
+                _register_alias(alias, user_id, full_name)
+            try:
+                from utils.transliteration import transliterate_to_latin
+                _register_alias(transliterate_to_latin(full_name), user_id, full_name)
+            except Exception:
+                pass
 
     unresolved_aliases = sorted({
         str(row[9] or "").strip().lower()
         for row in bookings_rows
-        if len(row) > 9 and row[9] and (
-            len(row) <= 10
-            or row[10] is None
-        )
+        for master_id in [_extract_master_user_id(row)]
+        if len(row) > 9 and row[9] and master_id is None
     })
     unresolved_aliases = [alias for alias in unresolved_aliases if alias and alias not in alias_to_user]
 
@@ -279,9 +302,12 @@ def _build_master_display_maps(c, bookings_rows: list, language: str):
             nickname = str(user_row[3] or "").strip()
             users_by_id[user_id] = (full_name, username, nickname)
             for alias in (full_name, username, nickname):
-                normalized_alias = alias.lower().strip()
-                if normalized_alias:
-                    alias_to_user[normalized_alias] = (user_id, full_name)
+                _register_alias(alias, user_id, full_name)
+            try:
+                from utils.transliteration import transliterate_to_latin
+                _register_alias(transliterate_to_latin(full_name), user_id, full_name)
+            except Exception:
+                pass
 
     localized_by_id = {}
     for user_id, values in users_by_id.items():
@@ -297,14 +323,14 @@ def _get_localized_master_name(
     alias_to_user: dict,
     language: str
 ) -> Optional[str]:
-    raw_value = str(raw_master or "").strip()
-    if not raw_value:
-        return None
-
     if master_user_id is not None:
         localized = localized_by_id.get(int(master_user_id))
         if localized:
             return localized
+
+    raw_value = str(raw_master or "").strip()
+    if not raw_value:
+        return None
 
     alias_key = raw_value.lower()
     alias_match = alias_to_user.get(alias_key)

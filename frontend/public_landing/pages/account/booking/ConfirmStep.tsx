@@ -13,6 +13,12 @@ import { useAuth } from '../../../../src/contexts/AuthContext';
 import { getLocalizedName, getDateLocale as getDateLocaleCentral } from '../../../../src/utils/i18nUtils';
 import { useCurrency } from '../../../../src/hooks/useSalonSettings';
 import { AuthPrompt } from './AuthPrompt';
+import {
+    buildReferralBookingSource,
+    captureReferralAttributionFromCurrentUrl,
+    getStoredReferralAttribution,
+    persistReferralAttribution
+} from '../../../utils/urlUtils';
 
 interface ConfirmStepProps {
     bookingState: any;
@@ -81,6 +87,10 @@ export function ConfirmStep({
 
     // Автоматическая загрузка номера телефона из профиля
     useEffect(() => {
+        captureReferralAttributionFromCurrentUrl(window.location.pathname, window.location.search);
+    }, []);
+
+    useEffect(() => {
         const loadUserProfile = async () => {
             if (user && !profileLoaded) {
                 try {
@@ -117,6 +127,45 @@ export function ConfirmStep({
 
         loadUserProfile();
     }, [user, bookingState.phone, profileLoaded, onPhoneChange]);
+
+    const resolveReferralAttributionForBooking = async (): Promise<{ campaignId: number; shareToken: string } | null> => {
+        const captured = captureReferralAttributionFromCurrentUrl(window.location.pathname, window.location.search);
+        const stored = getStoredReferralAttribution() ?? captured;
+        if (!stored) {
+            return null;
+        }
+
+        const shareToken = String(stored.shareToken ?? '').trim().toLowerCase();
+        const campaignId = Number.parseInt(String(stored.campaignId ?? ''), 10);
+        if (shareToken.length === 0) {
+            return Number.isFinite(campaignId) && campaignId > 0
+                ? { campaignId, shareToken: '' }
+                : null;
+        }
+
+        if (Number.isFinite(campaignId) && campaignId > 0) {
+            return { campaignId, shareToken };
+        }
+
+        try {
+            const response = await api.getPublicReferralLinkProfile(shareToken);
+            const resolvedCampaignId = Number.parseInt(String(response?.profile?.campaign_id ?? ''), 10);
+            if (Number.isFinite(resolvedCampaignId) && resolvedCampaignId > 0) {
+                persistReferralAttribution({
+                    campaignId: resolvedCampaignId,
+                    shareToken
+                }, window.location.pathname);
+                return {
+                    campaignId: resolvedCampaignId,
+                    shareToken
+                };
+            }
+        } catch (error) {
+            console.error('Error resolving referral attribution in booking confirmation:', error);
+        }
+
+        return { campaignId: 0, shareToken };
+    };
 
     const handlePhoneSubmit = () => {
         if (!phone || !hasValidPhone(phone)) {
@@ -198,6 +247,8 @@ export function ConfirmStep({
             const dateStr = bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : '';
             const serviceNames = bookingState.services.map((s: any) => getLocalizedName(s, i18n.language)).join(', ');
             const finalAmount = appliedPromo ? (appliedPromo.final_price ?? totalPrice) : totalPrice;
+            const referralAttribution = await resolveReferralAttributionForBooking();
+            const bookingSource = buildReferralBookingSource('client_cabinet', referralAttribution);
             const selectedServiceIds = Array.isArray(bookingState.services)
                 ? bookingState.services
                     .map((service: any) => Number(service?.id))
@@ -220,7 +271,7 @@ export function ConfirmStep({
                     time: bookingState.time || '',
                     phone,
                     name: user?.full_name || user?.username || bookingState.name || 'Guest',
-                    source: 'client_cabinet',
+                    source: bookingSource,
                     promo_code: appliedPromo?.code,
                     revenue: finalAmount,
                     duration_minutes: durationMinutes
@@ -233,7 +284,7 @@ export function ConfirmStep({
                     time: bookingState.time ?? '',
                     phone,
                     name: bookingState.name ?? 'Guest',
-                    source: 'client_cabinet',
+                    source: bookingSource,
                     promo_code: appliedPromo?.code,
                     duration_minutes: durationMinutes
                 });
@@ -246,7 +297,7 @@ export function ConfirmStep({
                     time: bookingState.time || '',
                     phone,
                     name: user?.full_name || user?.username || bookingState.name || 'Guest',
-                    source: 'client_cabinet',
+                    source: bookingSource,
                     promo_code: appliedPromo?.code,
                     revenue: finalAmount,
                     duration_minutes: durationMinutes

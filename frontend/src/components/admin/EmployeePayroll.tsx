@@ -32,9 +32,19 @@ interface EmployeePayrollProps {
 interface PayrollSummary {
     total_bookings: number;
     total_revenue: number;
+    unique_clients?: number;
+    worked_days?: number;
+    worked_hours?: number;
     calculated_salary: number;
     base_salary: number;
     commission_amount: number;
+    hourly_amount?: number;
+    daily_amount?: number;
+    per_booking_amount?: number;
+    per_client_amount?: number;
+    bonus_fixed?: number;
+    penalty_fixed?: number;
+    salary_type?: string;
     currency: string;
     period_start: string;
     period_end: string;
@@ -54,6 +64,21 @@ interface PayrollHistoryItem {
 
 export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayrollProps) {
     const { t } = useTranslation(['admin/users', 'common']);
+    const toNumber = (value: string) => {
+        const parsed = Number.parseFloat(value);
+        return Number.isFinite(parsed) ? parsed : 0;
+    };
+    const normalizeSalaryType = (value: string): string => {
+        const normalized = String(value).trim().toLowerCase();
+        const availableTypes = ['fixed', 'commission', 'hourly', 'daily', 'per_client', 'mixed'];
+        if (normalized === 'per_booking') {
+            return 'per_client';
+        }
+        if (availableTypes.includes(normalized)) {
+            return normalized;
+        }
+        return 'commission';
+    };
 
     // Default to current month
     const today = new Date();
@@ -69,28 +94,54 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
     const [history, setHistory] = useState<PayrollHistoryItem[]>([]);
 
     const [salarySettings, setSalarySettings] = useState({
-        base_salary: employee?.base_salary || 0,
-        commission_rate: employee?.commission_rate || 0,
-        hourly_rate: (employee as any)?.hourly_rate || 0,
-        daily_rate: (employee as any)?.daily_rate || 0,
-        per_booking_rate: (employee as any)?.per_booking_rate || 0,
-        salary_type: 'commission' // fixed, commission, hourly, daily, per_booking
+        base_salary: employee?.base_salary ?? 0,
+        commission_rate: employee?.commission_rate ?? 0,
+        hourly_rate: 0,
+        daily_rate: 0,
+        per_booking_rate: 0,
+        per_client_rate: 0,
+        bonus_fixed: 0,
+        penalty_fixed: 0,
+        salary_type: 'commission'
     });
 
     useEffect(() => {
-        setSalarySettings({
-            base_salary: employee?.base_salary || 0,
-            commission_rate: employee?.commission_rate || 0,
-            hourly_rate: (employee as any)?.hourly_rate || 0,
-            daily_rate: (employee as any)?.daily_rate || 0,
-            per_booking_rate: (employee as any)?.per_booking_rate || 0,
-            salary_type: 'commission'
-        });
-    }, [employee]);
+        loadPayrollSettings();
+    }, [employee, employeeId]);
 
     useEffect(() => {
         loadHistory();
     }, [employeeId]);
+
+    const loadPayrollSettings = async () => {
+        try {
+            const settingsData = await api.get(`/api/payroll/settings/${employeeId}`);
+            setSalarySettings({
+                base_salary: Number(settingsData?.base_salary ?? employee?.base_salary ?? 0),
+                commission_rate: Number(settingsData?.commission_rate ?? employee?.commission_rate ?? 0),
+                hourly_rate: Number(settingsData?.hourly_rate ?? 0),
+                daily_rate: Number(settingsData?.daily_rate ?? 0),
+                per_booking_rate: Number(settingsData?.per_booking_rate ?? 0),
+                per_client_rate: Number(settingsData?.per_client_rate ?? 0),
+                bonus_fixed: Number(settingsData?.bonus_fixed ?? 0),
+                penalty_fixed: Number(settingsData?.penalty_fixed ?? 0),
+                salary_type: normalizeSalaryType(String(settingsData?.salary_type ?? 'commission')),
+            });
+        } catch (error) {
+            console.error('Error loading payroll settings:', error);
+            setSalarySettings({
+                base_salary: Number(employee?.base_salary ?? 0),
+                commission_rate: Number(employee?.commission_rate ?? 0),
+                hourly_rate: 0,
+                daily_rate: 0,
+                per_booking_rate: 0,
+                per_client_rate: 0,
+                bonus_fixed: 0,
+                penalty_fixed: 0,
+                salary_type: normalizeSalaryType('commission'),
+            });
+        }
+    };
 
     const loadHistory = async () => {
         try {
@@ -145,14 +196,20 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
     const handleSaveSettings = async () => {
         try {
             setSavingSettings(true);
-            await api.post(`/api/users/${employeeId}/update-profile`, {
+            const normalizedSalaryType = normalizeSalaryType(salarySettings.salary_type);
+            await api.post(`/api/payroll/settings/${employeeId}`, {
+                salary_type: normalizedSalaryType,
                 base_salary: salarySettings.base_salary,
                 commission_rate: salarySettings.commission_rate,
                 hourly_rate: salarySettings.hourly_rate,
                 daily_rate: salarySettings.daily_rate,
-                per_booking_rate: salarySettings.per_booking_rate
+                per_booking_rate: 0,
+                per_client_rate: salarySettings.per_client_rate,
+                bonus_fixed: salarySettings.bonus_fixed,
+                penalty_fixed: salarySettings.penalty_fixed
             });
             toast.success(t('settings_saved', 'Settings saved'));
+            await loadPayrollSettings();
             onUpdate();
         } catch (error) {
             console.error('Error saving settings:', error);
@@ -176,6 +233,14 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
         }
     };
 
+    const salaryType = normalizeSalaryType(salarySettings.salary_type);
+    const showBaseSalary = ['fixed', 'commission', 'mixed'].includes(salaryType);
+    const showCommission = ['commission', 'mixed'].includes(salaryType);
+    const showHourlyRate = ['hourly', 'mixed'].includes(salaryType);
+    const showDailyRate = ['daily', 'mixed'].includes(salaryType);
+    const showPerClientRate = ['per_client', 'mixed'].includes(salaryType);
+    const showMixedExplanation = salaryType === 'mixed';
+
     return (
         <div className="space-y-6">
             {/* Salary Settings Card */}
@@ -186,33 +251,39 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
                         {t('payroll_settings', 'Payroll Settings')}
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-5">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">{t('salary_type', 'Тип расчета зарплаты')}</label>
+                        <label className="text-sm font-medium block">{t('salary_type', 'Тип расчета зарплаты')}</label>
                         <select
-                            value={salarySettings.salary_type}
-                            onChange={(e) => setSalarySettings(prev => ({ ...prev, salary_type: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                            value={salaryType}
+                            onChange={(event) => setSalarySettings(prev => ({ ...prev, salary_type: normalizeSalaryType(event.target.value) }))}
+                            className="w-full px-4 py-2.5 border border-gray-300 rounded-md"
                         >
                             <option value="fixed">{t('salary_type_fixed', 'Фиксированный оклад')}</option>
                             <option value="commission">{t('salary_type_commission', 'Оклад + % от выручки')}</option>
                             <option value="hourly">{t('salary_type_hourly', 'Почасовая оплата')}</option>
                             <option value="daily">{t('salary_type_daily', 'Оплата за день')}</option>
-                            <option value="per_booking">{t('salary_type_per_booking', 'Оплата за запись')}</option>
+                            <option value="per_client">{t('salary_type_per_client', 'Процент от клиента')}</option>
+                            <option value="mixed">{t('salary_type_mixed', 'Смешанная модель')}</option>
                         </select>
+                        {showMixedExplanation && (
+                            <p className="text-xs text-gray-500">
+                                {`${t('salary_type_mixed', 'Смешанная модель')}: ${t('base_salary', 'Базовая ставка')} + ${t('commission_rate', 'Процент комиссии')} + ${t('hourly_rate', 'Ставка за час')} + ${t('daily_rate', 'Ставка за день')} + ${t('per_client_rate', 'Процент от клиента')}`}
+                            </p>
+                        )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {(salarySettings.salary_type === 'fixed' || salarySettings.salary_type === 'commission') && (
+                        {showBaseSalary && (
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">{t('base_salary', 'Base Salary')}</label>
+                                <label className="text-sm font-medium block">{t('base_salary', 'Base Salary')}</label>
                                 <div className="relative">
-                                    <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                    <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                                     <Input
                                         type="number"
                                         value={salarySettings.base_salary}
-                                        onChange={(e) => setSalarySettings(prev => ({ ...prev, base_salary: parseFloat(e.target.value) || 0 }))}
-                                        className="pl-8"
+                                        onChange={(event) => setSalarySettings(prev => ({ ...prev, base_salary: toNumber(event.target.value) }))}
+                                        className="pl-14"
                                         placeholder="0"
                                     />
                                 </div>
@@ -220,16 +291,16 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
                             </div>
                         )}
 
-                        {salarySettings.salary_type === 'commission' && (
+                        {showCommission && (
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">{t('commission_rate', 'Commission Rate (%)')}</label>
+                                <label className="text-sm font-medium block">{t('commission_rate', 'Commission Rate (%)')}</label>
                                 <div className="relative">
-                                    <Percent className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                    <Percent className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                                     <Input
                                         type="number"
                                         value={salarySettings.commission_rate}
-                                        onChange={(e) => setSalarySettings(prev => ({ ...prev, commission_rate: parseFloat(e.target.value) || 0 }))}
-                                        className="pl-8"
+                                        onChange={(event) => setSalarySettings(prev => ({ ...prev, commission_rate: toNumber(event.target.value) }))}
+                                        className="pl-14"
                                         placeholder="0"
                                         min="0"
                                         max="100"
@@ -239,16 +310,16 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
                             </div>
                         )}
 
-                        {salarySettings.salary_type === 'hourly' && (
+                        {showHourlyRate && (
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">{t('hourly_rate', 'Ставка за час')}</label>
+                                <label className="text-sm font-medium block">{t('hourly_rate', 'Ставка за час')}</label>
                                 <div className="relative">
-                                    <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                    <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                                     <Input
                                         type="number"
                                         value={salarySettings.hourly_rate}
-                                        onChange={(e) => setSalarySettings(prev => ({ ...prev, hourly_rate: parseFloat(e.target.value) || 0 }))}
-                                        className="pl-8"
+                                        onChange={(event) => setSalarySettings(prev => ({ ...prev, hourly_rate: toNumber(event.target.value) }))}
+                                        className="pl-14"
                                         placeholder="0"
                                     />
                                 </div>
@@ -256,16 +327,16 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
                             </div>
                         )}
 
-                        {salarySettings.salary_type === 'daily' && (
+                        {showDailyRate && (
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">{t('daily_rate', 'Ставка за день')}</label>
+                                <label className="text-sm font-medium block">{t('daily_rate', 'Ставка за день')}</label>
                                 <div className="relative">
-                                    <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                    <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                                     <Input
                                         type="number"
                                         value={salarySettings.daily_rate}
-                                        onChange={(e) => setSalarySettings(prev => ({ ...prev, daily_rate: parseFloat(e.target.value) || 0 }))}
-                                        className="pl-8"
+                                        onChange={(event) => setSalarySettings(prev => ({ ...prev, daily_rate: toNumber(event.target.value) }))}
+                                        className="pl-14"
                                         placeholder="0"
                                     />
                                 </div>
@@ -273,22 +344,78 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
                             </div>
                         )}
 
-                        {salarySettings.salary_type === 'per_booking' && (
+                        {showHourlyRate && (
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">{t('per_booking_rate', 'Оплата за запись')}</label>
-                                <div className="relative">
-                                    <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                                    <Input
-                                        type="number"
-                                        value={salarySettings.per_booking_rate}
-                                        onChange={(e) => setSalarySettings(prev => ({ ...prev, per_booking_rate: parseFloat(e.target.value) || 0 }))}
-                                        className="pl-8"
-                                        placeholder="0"
-                                    />
-                                </div>
-                                <p className="text-xs text-gray-500">{t('per_booking_rate_hint', 'Оплата за каждую завершенную запись')}</p>
+                                <label className="text-sm font-medium block">{t('worked_hours', 'Отработанные часы')}</label>
+                                <Input
+                                    type="text"
+                                    value={summary ? String(summary.worked_hours ?? 0) : t('in_selected_period', 'За выбранный период')}
+                                    readOnly
+                                    className="bg-gray-50"
+                                />
                             </div>
                         )}
+
+                        {showDailyRate && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium block">{t('worked_days', 'Отработанные дни')}</label>
+                                <Input
+                                    type="text"
+                                    value={summary ? String(summary.worked_days ?? 0) : t('in_selected_period', 'За выбранный период')}
+                                    readOnly
+                                    className="bg-gray-50"
+                                />
+                            </div>
+                        )}
+
+                        {showPerClientRate && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium block">{t('per_client_rate', 'Процент от клиента')}</label>
+                                <div className="relative">
+                                    <Percent className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        type="number"
+                                        value={salarySettings.per_client_rate}
+                                        onChange={(event) => setSalarySettings(prev => ({ ...prev, per_client_rate: toNumber(event.target.value) }))}
+                                        className="pl-14"
+                                        placeholder="0"
+                                        min="0"
+                                        max="100"
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-500">{t('per_client_rate_hint', 'Процент от выручки завершенных записей по клиентам')}</p>
+                            </div>
+                        )}
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium block">{t('bonus_fixed', 'Фиксированный бонус')}</label>
+                            <div className="relative">
+                                <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                                <Input
+                                    type="number"
+                                    value={salarySettings.bonus_fixed}
+                                    onChange={(event) => setSalarySettings(prev => ({ ...prev, bonus_fixed: toNumber(event.target.value) }))}
+                                    className="pl-14"
+                                    placeholder="0"
+                                />
+                            </div>
+                            <p className="text-xs text-gray-500">{t('bonus_fixed_hint', 'Премия за период')}</p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium block">{t('penalty_fixed', 'Фиксированный штраф')}</label>
+                            <div className="relative">
+                                <DollarSign className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                                <Input
+                                    type="number"
+                                    value={salarySettings.penalty_fixed}
+                                    onChange={(event) => setSalarySettings(prev => ({ ...prev, penalty_fixed: toNumber(event.target.value) }))}
+                                    className="pl-14"
+                                    placeholder="0"
+                                />
+                            </div>
+                            <p className="text-xs text-gray-500">{t('penalty_fixed_hint', 'Удержание за период')}</p>
+                        </div>
                     </div>
                     <Button onClick={handleSaveSettings} disabled={savingSettings}>
                         {savingSettings ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
@@ -298,32 +425,32 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
             </Card>
 
             {/* Date Range Controls */}
-            <div className="flex flex-wrap items-end gap-4 bg-white p-4 rounded-lg border">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[auto_auto_auto] items-end gap-4 bg-white p-4 rounded-lg border">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">{t('start_date', 'Start Date')}</label>
-                    <div className="relative">
-                        <Calendar className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                    <label className="text-sm font-medium text-gray-700 block">{t('start_date', 'Start Date')}</label>
+                    <div className="relative w-full sm:w-44">
+                        <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
                         <Input
                             type="date"
                             value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                            className="pl-8 w-40"
+                            onChange={(event) => setStartDate(event.target.value)}
+                            className="pl-11 pr-10 w-full min-w-0"
                         />
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">{t('end_date', 'End Date')}</label>
-                    <div className="relative">
-                        <Calendar className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                    <label className="text-sm font-medium text-gray-700 block">{t('end_date', 'End Date')}</label>
+                    <div className="relative w-full sm:w-44">
+                        <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
                         <Input
                             type="date"
                             value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                            className="pl-8 w-40"
+                            onChange={(event) => setEndDate(event.target.value)}
+                            className="pl-11 pr-10 w-full min-w-0"
                         />
                     </div>
                 </div>
-                <Button onClick={handleCalculate} disabled={loading} className="mb-[2px]">
+                <Button onClick={handleCalculate} disabled={loading} className="mb-[2px] w-full sm:w-auto">
                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Calculator className="mr-2 h-4 w-4" />}
                     {t('calculate', 'Calculate')}
                 </Button>
@@ -331,7 +458,7 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
 
             {/* Summary Cards */}
             {summary && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
@@ -341,6 +468,48 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{summary.total_bookings}</div>
+                            <p className="text-xs text-muted-foreground">
+                                {t('in_selected_period', 'In selected period')}
+                            </p>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                {t('unique_clients', 'Unique Clients')}
+                            </CardTitle>
+                            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{summary.unique_clients ?? 0}</div>
+                            <p className="text-xs text-muted-foreground">
+                                {t('completed_bookings_only', 'Completed bookings only')}
+                            </p>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                {t('worked_hours', 'Worked Hours')}
+                            </CardTitle>
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{summary.worked_hours ?? 0}</div>
+                            <p className="text-xs text-muted-foreground">
+                                {t('in_selected_period', 'In selected period')}
+                            </p>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                {t('worked_days', 'Worked Days')}
+                            </CardTitle>
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{summary.worked_days ?? 0}</div>
                             <p className="text-xs text-muted-foreground">
                                 {t('in_selected_period', 'In selected period')}
                             </p>
@@ -376,12 +545,44 @@ export function EmployeePayroll({ employeeId, employee, onUpdate }: EmployeePayr
                             <div className="mt-2 space-y-1">
                                 <p className="text-xs text-muted-foreground flex justify-between">
                                     <span>{t('base_salary', 'Base')}:</span>
-                                    <span className="font-medium">{summary.base_salary || 0} {summary.currency}</span>
+                                    <span className="font-medium">{summary.base_salary ?? 0} {summary.currency}</span>
                                 </p>
-                                <p className="text-xs text-muted-foreground flex justify-between">
-                                    <span>{t('commission', 'Commission')}:</span>
-                                    <span className="font-medium text-blue-600">+{summary.commission_amount || 0} {summary.currency}</span>
-                                </p>
+                                {(summary.commission_amount ?? 0) > 0 && (
+                                    <p className="text-xs text-muted-foreground flex justify-between">
+                                        <span>{t('commission', 'Commission')}:</span>
+                                        <span className="font-medium text-blue-600">+{summary.commission_amount} {summary.currency}</span>
+                                    </p>
+                                )}
+                                {(summary.hourly_amount ?? 0) > 0 && (
+                                    <p className="text-xs text-muted-foreground flex justify-between">
+                                        <span>{t('hourly_rate', 'Hourly')}:</span>
+                                        <span className="font-medium text-blue-600">+{summary.hourly_amount} {summary.currency}</span>
+                                    </p>
+                                )}
+                                {(summary.daily_amount ?? 0) > 0 && (
+                                    <p className="text-xs text-muted-foreground flex justify-between">
+                                        <span>{t('daily_rate', 'Daily')}:</span>
+                                        <span className="font-medium text-blue-600">+{summary.daily_amount} {summary.currency}</span>
+                                    </p>
+                                )}
+                                {(summary.per_client_amount ?? 0) > 0 && (
+                                    <p className="text-xs text-muted-foreground flex justify-between">
+                                        <span>{t('per_client_rate', 'Per client')}:</span>
+                                        <span className="font-medium text-blue-600">+{summary.per_client_amount} {summary.currency}</span>
+                                    </p>
+                                )}
+                                {(summary.bonus_fixed ?? 0) > 0 && (
+                                    <p className="text-xs text-muted-foreground flex justify-between">
+                                        <span>{t('bonus_fixed', 'Bonus')}:</span>
+                                        <span className="font-medium text-green-600">+{summary.bonus_fixed} {summary.currency}</span>
+                                    </p>
+                                )}
+                                {(summary.penalty_fixed ?? 0) > 0 && (
+                                    <p className="text-xs text-muted-foreground flex justify-between">
+                                        <span>{t('penalty_fixed', 'Penalty')}:</span>
+                                        <span className="font-medium text-red-600">-{summary.penalty_fixed} {summary.currency}</span>
+                                    </p>
+                                )}
                             </div>
                             <p className="text-xs text-gray-400 mt-2 italic">
                                 {t('based_on_settings', 'Based on current settings')}

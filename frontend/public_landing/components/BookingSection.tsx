@@ -25,6 +25,12 @@ import {
 import { PhoneInputWithSearch } from './ui/PhoneInputWithSearch';
 import { DEFAULT_VALUES, EXTERNAL_SERVICES } from '../utils/constants';
 import { safeFetch, safeExternalApiCall } from '../utils/errorHandler';
+import {
+  buildReferralBookingSource,
+  captureReferralAttributionFromCurrentUrl,
+  getStoredReferralAttribution,
+  persistReferralAttribution
+} from '../utils/urlUtils';
 
 // Import react-datepicker
 import DatePicker from 'react-datepicker';
@@ -47,6 +53,10 @@ export const BookingSection = () => {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [defaultCountry, setDefaultCountry] = useState<string>('ae');
+  const [referralAttribution, setReferralAttribution] = useState<{ campaignId: number; shareToken: string }>({
+    campaignId: 0,
+    shareToken: ''
+  });
 
   const [formData, setFormData] = useState({
     name: '',
@@ -165,6 +175,76 @@ export const BookingSection = () => {
     fetchServices();
   }, [i18n.language]);
 
+  useEffect(() => {
+    const resolveReferralAttribution = async () => {
+      const storedAttribution = captureReferralAttributionFromCurrentUrl();
+      const searchParams = new URLSearchParams(window.location.search);
+      const campaignQueryValue = searchParams.get('ref_campaign');
+      const shareQueryValue = searchParams.get('ref_share');
+      const pathMatch = window.location.pathname.match(/^\/ref\/([a-z0-9]+)/i);
+      const sharePathValue = pathMatch && pathMatch[1] ? pathMatch[1] : '';
+      const normalizedShareToken = String(shareQueryValue ?? sharePathValue).trim().toLowerCase();
+      const normalizedStoredShareToken = String(storedAttribution?.shareToken ?? '').trim().toLowerCase();
+      const fallbackShareToken = normalizedShareToken.length > 0 ? normalizedShareToken : normalizedStoredShareToken;
+
+      const parsedCampaignId = Number.parseInt(String(campaignQueryValue ?? ''), 10);
+      if (Number.isFinite(parsedCampaignId) && parsedCampaignId > 0) {
+        const nextAttribution = {
+          campaignId: parsedCampaignId,
+          shareToken: fallbackShareToken
+        };
+        setReferralAttribution(nextAttribution);
+        persistReferralAttribution(nextAttribution, window.location.pathname);
+        return;
+      }
+
+      if (fallbackShareToken.length === 0) {
+        const storedFallback = getStoredReferralAttribution();
+        setReferralAttribution({
+          campaignId: Number(storedFallback?.campaignId ?? 0),
+          shareToken: String(storedFallback?.shareToken ?? '')
+        });
+        return;
+      }
+
+      const storedCampaignId = Number.parseInt(String(storedAttribution?.campaignId ?? ''), 10);
+      if (Number.isFinite(storedCampaignId) && storedCampaignId > 0) {
+        const nextAttribution = {
+          campaignId: storedCampaignId,
+          shareToken: fallbackShareToken
+        };
+        setReferralAttribution(nextAttribution);
+        persistReferralAttribution(nextAttribution, window.location.pathname);
+        return;
+      }
+
+      try {
+        const response = await api.getPublicReferralLinkProfile(fallbackShareToken);
+        const resolvedCampaignId = Number.parseInt(String(response?.profile?.campaign_id ?? ''), 10);
+        if (Number.isFinite(resolvedCampaignId) && resolvedCampaignId > 0) {
+          const nextAttribution = {
+            campaignId: resolvedCampaignId,
+            shareToken: fallbackShareToken
+          };
+          setReferralAttribution(nextAttribution);
+          persistReferralAttribution(nextAttribution, window.location.pathname);
+          return;
+        }
+      } catch (error) {
+        console.error('Error resolving referral link:', error);
+      }
+
+      const fallbackAttribution = {
+        campaignId: 0,
+        shareToken: fallbackShareToken
+      };
+      setReferralAttribution(fallbackAttribution);
+      persistReferralAttribution(fallbackAttribution, window.location.pathname);
+    };
+
+    resolveReferralAttribution();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -203,13 +283,15 @@ export const BookingSection = () => {
         return;
       }
 
+      const bookingSource = buildReferralBookingSource('public_landing', referralAttribution);
+
       const payload = {
         name: formData.name,
         phone: formData.phone,
         service_ids: formData.selectedServices,
         date: formData.date,
         time: formData.time,
-        source: 'public_landing'
+        source: bookingSource
       };
 
       await api.createPublicBooking(payload);

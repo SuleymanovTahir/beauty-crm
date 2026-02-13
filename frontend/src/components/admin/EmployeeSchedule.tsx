@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Copy, Trash2, Plus, X, Edit } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
@@ -49,7 +48,6 @@ const getWeekStart = (date: Date) => {
 
 export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps) {
     const { t, i18n } = useTranslation(['admin/users', 'common']);
-    const navigate = useNavigate();
 
     // ✅ ДОБАВИТЬ: Состояние для дефолтных часов салона
     const [defaultHours, setDefaultHours] = useState({ start: '10:30', end: '21:30' }); // ✅ Это fallback, будет заменено из API
@@ -66,6 +64,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
     const [weeksAhead, setWeeksAhead] = useState('2');
     const [schedulePattern, setSchedulePattern] = useState('5/2');
     const [startingDate, setStartingDate] = useState(new Date().toISOString().split('T')[0]);
+    const [scheduleEditMode, setScheduleEditMode] = useState<'bookings' | 'vacation' | 'sick_leave'>('bookings');
 
     // Time-off dialog state
     const [showTimeOffDialog, setShowTimeOffDialog] = useState(false);
@@ -254,21 +253,6 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         }
     };
 
-    const handleBookSlot = (dayIndex: number, hour: number) => {
-        const today = new Date();
-        const weekStart = getWeekStart(today);
-        const slotDate = new Date(weekStart);
-        slotDate.setDate(slotDate.getDate() + dayIndex);
-
-        const h = Math.floor(hour);
-        const m = (hour % 1 === 0) ? '00' : '30';
-        const timeStr = `${h.toString().padStart(2, '0')}:${m}`;
-        const dateStr = slotDate.toISOString().split('T')[0];
-
-        // Redirect to new-booking with masterId and datetime
-        navigate(`/new-booking?booking=services&masterId=${employeeId}&date=${dateStr}&time=${timeStr}`);
-    };
-
     const buildScheduleFromPattern = (
         patternValue: string,
         startDateValue: string,
@@ -327,6 +311,48 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         return exceptions.includes(employeeId) ? null : holiday;
     };
 
+    const getDateKeyForDay = (dayIndex: number) => {
+        const today = new Date();
+        const weekStart = getWeekStart(today);
+        const slotDate = new Date(weekStart);
+        slotDate.setDate(slotDate.getDate() + dayIndex);
+        return slotDate.toISOString().split('T')[0];
+    };
+
+    const getTimeOffTypeForDay = (dayIndex: number): 'vacation' | 'sick_leave' | null => {
+        if (!Array.isArray(timeOffs) || timeOffs.length === 0) {
+            return null;
+        }
+
+        const today = new Date();
+        const weekStart = getWeekStart(today);
+        const slotDate = new Date(weekStart);
+        slotDate.setDate(slotDate.getDate() + dayIndex);
+        slotDate.setHours(0, 0, 0, 0);
+
+        for (const timeOff of timeOffs) {
+            const start = new Date(timeOff.start_datetime);
+            const end = new Date(timeOff.end_datetime);
+            if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+                continue;
+            }
+
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
+
+            if (slotDate >= start && slotDate <= end) {
+                if (timeOff.type === 'vacation') {
+                    return 'vacation';
+                }
+                if (timeOff.type === 'sick_leave') {
+                    return 'sick_leave';
+                }
+            }
+        }
+
+        return null;
+    };
+
     const isSlotBooked = (dayIndex: number, hour: number) => {
         const today = new Date();
         const weekStart = getWeekStart(today);
@@ -364,6 +390,55 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         return hour >= startHour && hour < endHour;
     };
 
+    const findTimeOffByDay = (dayIndex: number) => {
+        const dayDateKey = getDateKeyForDay(dayIndex);
+        const dayDate = new Date(`${dayDateKey}T00:00:00`);
+
+        return timeOffs.find((timeOff) => {
+            const startDate = new Date(timeOff.start_datetime);
+            const endDate = new Date(timeOff.end_datetime);
+            if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+                return false;
+            }
+            startDate.setHours(0, 0, 0, 0);
+            endDate.setHours(23, 59, 59, 999);
+            return dayDate >= startDate && dayDate <= endDate;
+        }) ?? null;
+    };
+
+    const handleCalendarTimeOffClick = async (dayIndex: number, selectedType: 'vacation' | 'sick_leave') => {
+        const existingTimeOff = findTimeOffByDay(dayIndex);
+        const dayDateKey = getDateKeyForDay(dayIndex);
+
+        if (existingTimeOff && String(existingTimeOff.type ?? '') === selectedType) {
+            await api.delete(`/api/schedule/time-off/${existingTimeOff.id}`);
+            toast.success(t('time_off_deleted', 'Time-off deleted'));
+            await loadScheduleData();
+            return;
+        }
+
+        if (existingTimeOff) {
+            await api.put(`/api/schedule/time-off/${existingTimeOff.id}`, {
+                start_datetime: existingTimeOff.start_datetime,
+                end_datetime: existingTimeOff.end_datetime,
+                type: selectedType,
+                reason: existingTimeOff.reason
+            });
+            toast.success(t('time_off_updated', 'Time-off updated successfully'));
+            await loadScheduleData();
+            return;
+        }
+
+        await api.post(`/api/schedule/user/${employeeId}/time-off`, {
+            start_datetime: `${dayDateKey}T00:00:00`,
+            end_datetime: `${dayDateKey}T23:59:59`,
+            type: selectedType,
+            reason: ''
+        });
+        toast.success(t('time_off_added', 'Time-off added successfully'));
+        await loadScheduleData();
+    };
+
     const patternParts = schedulePattern.split(/[/:]/);
     const patternDaysOn = patternParts[0] !== undefined ? patternParts[0] : '5';
     const patternDaysOff = patternParts[1] !== undefined ? patternParts[1] : '2';
@@ -379,13 +454,13 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
     return (
         <div className="space-y-6">
             {/* Schedule Autofill Template */}
-            <div className="bg-white rounded-lg border p-6">
+            <div className="bg-white rounded-lg border p-4 sm:p-6">
                 <h3 className="font-semibold mb-4">{t('schedule_autofill_template', 'Schedule autofill template')}</h3>
 
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                     <div>
                         <Label>{t('schedule_pattern', 'Schedule')}</Label>
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex flex-wrap items-center gap-2 mt-2">
                             <Input
                                 type="number"
                                 value={patternDaysOn}
@@ -409,7 +484,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                 className="w-20"
                                 placeholder="2"
                             />
-                            <span className="text-sm text-gray-500">{t('days_on_off', '(days on/off)')}</span>
+                            <span className="text-sm text-gray-500 break-words">{t('days_on_off', '(days on/off)')}</span>
                         </div>
                     </div>
 
@@ -424,10 +499,10 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                     <div>
                         <Label>{t('working_hours', 'Working hours')}</Label>
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex flex-wrap items-center gap-2 mt-2">
                             <Select value={autofillHours.start} onValueChange={(v) => setAutofillHours({ ...autofillHours, start: v })}>
                                 <SelectTrigger className="w-20">
                                     <SelectValue />
@@ -480,40 +555,69 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
 
                     <div>
                         <Label>{t('set_for', 'Set for')}</Label>
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex flex-wrap items-center gap-2 mt-2">
                             <Input
                                 type="number"
                                 value={weeksAhead}
                                 onChange={(e) => setWeeksAhead(e.target.value)}
-                                className="w-24"
+                                className="w-24 min-w-0"
                             />
                             <span>{t('weeks_ahead', 'weeks ahead')}</span>
                         </div>
                     </div>
                 </div>
 
-                <Button onClick={handleAutofillSchedule} className="bg-blue-500 hover:bg-blue-600 text-white">
+                <Button onClick={handleAutofillSchedule} className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-auto">
                     {t('save_and_fill_schedule', 'Save and fill schedule')}
                 </Button>
             </div>
 
             {/* Weekly Schedule Grid */}
-            <div className="bg-white rounded-lg border p-6">
-                <div className="flex items-center justify-between mb-4">
+            <div className="bg-white rounded-lg border p-4 sm:p-6">
+                <div className="flex flex-col gap-3 mb-4 lg:flex-row lg:items-center lg:justify-between">
                     <h3 className="font-semibold">{t('schedule', 'Schedule')}</h3>
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                            <span className="text-sm">{t('bookings', 'Bookings')}</span>
+                    <div className="flex flex-col gap-3 w-full lg:w-auto lg:flex-row lg:items-center">
+                        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant={scheduleEditMode === 'bookings' ? 'default' : 'outline'}
+                                onClick={() => setScheduleEditMode('bookings')}
+                                className={`${scheduleEditMode === 'bookings' ? 'bg-red-500 hover:bg-red-600 text-white ring-2 ring-red-200' : ''} w-full sm:w-auto`}
+                            >
+                                <span className={`w-2 h-2 rounded-full ${scheduleEditMode === 'bookings' ? 'bg-white' : 'bg-red-500'}`}></span>
+                                {t('bookings', 'Записи')}
+                            </Button>
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant={scheduleEditMode === 'vacation' ? 'default' : 'outline'}
+                                onClick={() => setScheduleEditMode('vacation')}
+                                className={`${scheduleEditMode === 'vacation' ? 'bg-amber-500 hover:bg-amber-600 text-white ring-2 ring-amber-200' : ''} w-full sm:w-auto`}
+                            >
+                                <span className={`w-2 h-2 rounded-full ${scheduleEditMode === 'vacation' ? 'bg-white' : 'bg-amber-500'}`}></span>
+                                {t('vacation', 'Отпуск')}
+                            </Button>
+                            <Button
+                                type="button"
+                                size="sm"
+                                variant={scheduleEditMode === 'sick_leave' ? 'default' : 'outline'}
+                                onClick={() => setScheduleEditMode('sick_leave')}
+                                className={`${scheduleEditMode === 'sick_leave' ? 'bg-purple-500 hover:bg-purple-600 text-white ring-2 ring-purple-200' : ''} w-full sm:w-auto`}
+                            >
+                                <span className={`w-2 h-2 rounded-full ${scheduleEditMode === 'sick_leave' ? 'bg-white' : 'bg-purple-500'}`}></span>
+                                {t('sick_leave', 'Больничный')}
+                            </Button>
                         </div>
-                        <Button variant="outline" size="sm" onClick={handleClearWeek}>
+                        <p className="text-xs text-gray-500 w-full lg:w-auto">{t('schedule_mode_hint', 'Выберите режим и нажмите по ячейке в календаре')}</p>
+                        <Button variant="outline" size="sm" onClick={handleClearWeek} className="w-full sm:w-auto">
                             {t('clear_schedule_for_week', 'Clear schedule for the week')}
                         </Button>
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
+                <div className="overflow-x-auto pb-1">
+                    <table className="min-w-[760px] w-full border-collapse">
                         <thead>
                             <tr>
                                 <th className="border p-2 text-xs font-medium text-gray-500"></th>
@@ -548,6 +652,9 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                         {DAY_KEYS.map((_, dayIndex) => {
                                             const isBooked = isSlotBooked(dayIndex, hour);
                                             const isAvailable = isSlotAvailable(dayIndex, hour);
+                                            const timeOffType = getTimeOffTypeForDay(dayIndex);
+                                            const isVacationSlot = timeOffType === 'vacation';
+                                            const isSickLeaveSlot = timeOffType === 'sick_leave';
 
                                             const handleCellClick = async () => {
                                                 const holidayForDay = getHolidayForDay(dayIndex);
@@ -556,93 +663,116 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                                     return;
                                                 }
 
+                                                if (scheduleEditMode !== 'bookings') {
+                                                    if (isBooked) {
+                                                        toast.info(t('slot_has_booking', 'Этот слот занят записью'));
+                                                        return;
+                                                    }
+                                                    try {
+                                                        await handleCalendarTimeOffClick(dayIndex, scheduleEditMode);
+                                                    } catch (error) {
+                                                        console.error('Error updating calendar time-off:', error);
+                                                        toast.error(t('error_saving_settings', 'Error saving settings'));
+                                                    }
+                                                    return;
+                                                }
+
+                                                if (isVacationSlot || isSickLeaveSlot) {
+                                                    toast.info(isVacationSlot ? t('vacation', 'Отпуск') : t('sick_leave', 'Больничный'));
+                                                    return;
+                                                }
+
+                                                if (isBooked) {
+                                                    toast.info(t('slot_has_booking', 'Этот слот занят записью'));
+                                                    return;
+                                                }
+
                                                 const daySchedule = schedule.find(s => s.day_of_week === dayIndex);
                                                 const parseTimeToFloat = (timeStr: string) => {
                                                     const [h_part, m_part] = timeStr.split(':').map(Number);
                                                     return h_part + (m_part / 60);
                                                 };
-                                                const startHour = daySchedule ? parseTimeToFloat(daySchedule.start_time) : 0;
-                                                const endHour = daySchedule ? parseTimeToFloat(daySchedule.end_time) : 0;
+                                                const toSlotStart = (slotHour: number) => {
+                                                    const localH = Math.floor(slotHour);
+                                                    const localM = slotHour % 1 === 0 ? '00' : '30';
+                                                    return `${localH.toString().padStart(2, '0')}:${localM}`;
+                                                };
+                                                const toSlotEnd = (slotHour: number) => {
+                                                    const endSlotHour = slotHour % 1 === 0 ? Math.floor(slotHour) : Math.floor(slotHour) + 1;
+                                                    const endSlotMin = slotHour % 1 === 0 ? '30' : '00';
+                                                    return `${endSlotHour.toString().padStart(2, '0')}:${endSlotMin}`;
+                                                };
+                                                const slotStart = toSlotStart(hour);
+                                                const slotEnd = toSlotEnd(hour);
 
-                                                if (isBooked) {
-                                                    // Handle booked slot action if needed
-                                                } else {
-                                                    if (!daySchedule || !daySchedule.is_working) {
-                                                        const newSchedule = [...schedule];
-                                                        const existingIndex = newSchedule.findIndex(s => s.day_of_week === dayIndex);
-                                                        if (existingIndex >= 0) {
-                                                            newSchedule[existingIndex] = {
-                                                                day_of_week: dayIndex,
-                                                                start_time: `${h.toString().padStart(2, '0')}:${m}`,
-                                                                end_time: `${(hour % 1 === 0 ? h : h + 1).toString().padStart(2, '0')}:${hour % 1 === 0 ? '30' : '00'}`,
-                                                                is_working: true
-                                                            };
-                                                        } else {
-                                                            newSchedule.push({
-                                                                day_of_week: dayIndex,
-                                                                start_time: `${h.toString().padStart(2, '0')}:${m}`,
-                                                                end_time: `${(hour % 1 === 0 ? h : h + 1).toString().padStart(2, '0')}:${hour % 1 === 0 ? '30' : '00'}`,
-                                                                is_working: true
-                                                            });
-                                                        }
-                                                        await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
-                                                        setSchedule(newSchedule);
-                                                        toast.success(t('schedule_updated', 'Schedule updated'));
-                                                    } else if (hour < startHour) {
-                                                        const newSchedule = schedule.map(s =>
-                                                            s.day_of_week === dayIndex
-                                                                ? { ...s, start_time: `${h.toString().padStart(2, '0')}:${m}` }
-                                                                : s
-                                                        );
-                                                        await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
-                                                        setSchedule(newSchedule);
-                                                        toast.success(t('schedule_updated', 'Schedule updated'));
-                                                    } else if (hour >= endHour) {
-                                                        const nextH = hour % 1 === 0 ? h : h + 1;
-                                                        const nextM = hour % 1 === 0 ? '30' : '00';
-                                                        const newSchedule = schedule.map(s =>
-                                                            s.day_of_week === dayIndex
-                                                                ? { ...s, end_time: `${nextH.toString().padStart(2, '0')}:${nextM}` }
-                                                                : s
-                                                        );
-                                                        await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
-                                                        setSchedule(newSchedule);
-                                                        toast.success(t('schedule_updated', 'Schedule updated'));
+                                                const startHour = daySchedule ? parseTimeToFloat(daySchedule.start_time) : -1;
+                                                const endHour = daySchedule ? parseTimeToFloat(daySchedule.end_time) : -1;
+
+                                                let nextSchedule: ScheduleEntry[];
+
+                                                if (!daySchedule || !daySchedule.is_working) {
+                                                    const newEntry: ScheduleEntry = {
+                                                        day_of_week: dayIndex,
+                                                        start_time: slotStart,
+                                                        end_time: slotEnd,
+                                                        is_working: true
+                                                    };
+
+                                                    const existingIndex = schedule.findIndex((entry) => entry.day_of_week === dayIndex);
+                                                    if (existingIndex >= 0) {
+                                                        nextSchedule = schedule.map((entry, idx) => idx === existingIndex ? newEntry : entry);
                                                     } else {
-                                                        if (hour === startHour && hour + 0.5 === endHour) {
-                                                            const newSchedule = schedule.map(s =>
-                                                                s.day_of_week === dayIndex
-                                                                    ? { ...s, is_working: false }
-                                                                    : s
+                                                        nextSchedule = [...schedule, newEntry];
+                                                    }
+                                                } else {
+                                                    const epsilon = 0.001;
+                                                    const isAdjacentBeforeStart = Math.abs((hour + 0.5) - startHour) < epsilon;
+                                                    const isAdjacentAfterEnd = Math.abs(hour - endHour) < epsilon;
+                                                    const isRangeStart = Math.abs(hour - startHour) < epsilon;
+                                                    const isRangeEndSlot = Math.abs((hour + 0.5) - endHour) < epsilon;
+                                                    const isInsideRange = hour >= startHour && hour < endHour;
+
+                                                    if (!isInsideRange) {
+                                                        // Prevent accidental long merge: only expand when user clicks adjacent slot.
+                                                        // Otherwise start a new shift from the clicked slot.
+                                                        if (isAdjacentBeforeStart) {
+                                                            nextSchedule = schedule.map((entry) =>
+                                                                entry.day_of_week === dayIndex ? { ...entry, start_time: slotStart } : entry
                                                             );
-                                                            await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
-                                                            setSchedule(newSchedule);
-                                                            toast.success(t('schedule_updated', 'Schedule updated'));
-                                                        } else if (hour === startHour) {
-                                                            const nextH = hour % 1 === 0 ? h : h + 1;
-                                                            const nextM = hour % 1 === 0 ? '30' : '00';
-                                                            const newSchedule = schedule.map(s =>
-                                                                s.day_of_week === dayIndex
-                                                                    ? { ...s, start_time: `${nextH.toString().padStart(2, '0')}:${nextM}` }
-                                                                    : s
+                                                        } else if (isAdjacentAfterEnd) {
+                                                            nextSchedule = schedule.map((entry) =>
+                                                                entry.day_of_week === dayIndex ? { ...entry, end_time: slotEnd } : entry
                                                             );
-                                                            await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
-                                                            setSchedule(newSchedule);
-                                                            toast.success(t('schedule_updated', 'Schedule updated'));
-                                                        } else if (hour + 0.5 === endHour) {
-                                                            const newSchedule = schedule.map(s =>
-                                                                s.day_of_week === dayIndex
-                                                                    ? { ...s, end_time: `${h.toString().padStart(2, '0')}:${m}` }
-                                                                    : s
+                                                        } else {
+                                                            nextSchedule = schedule.map((entry) =>
+                                                                entry.day_of_week === dayIndex
+                                                                    ? { ...entry, start_time: slotStart, end_time: slotEnd, is_working: true }
+                                                                    : entry
                                                             );
-                                                            await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
-                                                            setSchedule(newSchedule);
-                                                            toast.success(t('schedule_updated', 'Schedule updated'));
+                                                        }
+                                                    } else {
+                                                        if (isRangeStart && isRangeEndSlot) {
+                                                            nextSchedule = schedule.map((entry) =>
+                                                                entry.day_of_week === dayIndex ? { ...entry, is_working: false } : entry
+                                                            );
+                                                        } else if (isRangeStart) {
+                                                            nextSchedule = schedule.map((entry) =>
+                                                                entry.day_of_week === dayIndex ? { ...entry, start_time: slotEnd } : entry
+                                                            );
+                                                        } else if (isRangeEndSlot) {
+                                                            nextSchedule = schedule.map((entry) =>
+                                                                entry.day_of_week === dayIndex ? { ...entry, end_time: slotStart } : entry
+                                                            );
                                                         } else {
                                                             toast.info(t('cannot_remove_middle_hour', 'Cannot remove hour from middle of shift. Remove from start or end first.'));
+                                                            return;
                                                         }
                                                     }
                                                 }
+
+                                                await api.put(`/api/schedule/user/${employeeId}`, { schedule: nextSchedule });
+                                                setSchedule(nextSchedule);
+                                                toast.success(t('schedule_updated', 'Schedule updated'));
                                             };
 
                                             return (
@@ -651,22 +781,18 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                                     className="border p-2 text-center cursor-pointer hover:bg-gray-50 transition-colors"
                                                     onClick={handleCellClick}
                                                 >
-                                                    {isAvailable && (
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleBookSlot(dayIndex, hour);
-                                                            }}
-                                                            className="group relative flex flex-col items-center justify-center w-full h-full"
-                                                            title={isBooked ? t('view_booking', 'View Booking') : t('new_booking', 'New Booking')}
-                                                        >
-                                                            <div className={`w-3 h-3 rounded-full transition-all group-hover:scale-150 ${isBooked ? 'bg-red-500 shadow-sm shadow-red-200' : 'bg-green-400 hover:bg-green-500 shadow-sm shadow-green-100'
+                                                    {(isAvailable || isVacationSlot || isSickLeaveSlot) ? (
+                                                        <div className="flex items-center justify-center w-full h-full">
+                                                            <div className={`w-3 h-3 rounded-full transition-all ${isBooked
+                                                                ? 'bg-red-500 shadow-sm shadow-red-200'
+                                                                : isVacationSlot
+                                                                    ? 'bg-amber-500 shadow-sm shadow-amber-200'
+                                                                    : isSickLeaveSlot
+                                                                        ? 'bg-purple-500 shadow-sm shadow-purple-200'
+                                                                        : 'bg-green-400 shadow-sm shadow-green-100'
                                                                 }`} />
-                                                            <span className="absolute -top-1 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                <Plus className="w-2 h-2 text-blue-600" />
-                                                            </span>
-                                                        </button>
-                                                    )}
+                                                        </div>
+                                                    ) : null}
                                                 </td>
                                             );
                                         })}
@@ -677,11 +803,11 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                     </table>
                 </div>
 
-                <div className="mt-4 flex items-center gap-2">
+                <div className="mt-4 flex flex-wrap items-center gap-2">
                     <Label>{t('copy_schedule_for', 'Copy schedule for')}</Label>
                     <Input type="number" defaultValue="1" className="w-20" />
-                    <span>{t('weeks_ahead', 'weeks ahead')}</span>
-                    <Button variant="outline" size="sm">
+                    <span className="text-sm text-gray-600">{t('weeks_ahead', 'weeks ahead')}</span>
+                    <Button variant="outline" size="sm" className="w-full sm:w-auto">
                         <Copy className="w-4 h-4 mr-2" />
                         {t('copy', 'Copy')}
                     </Button>
@@ -689,7 +815,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
             </div>
 
             {/* Time-Off Management */}
-            <div className="bg-white rounded-lg border p-6">
+            <div className="bg-white rounded-lg border p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold">{t('time_off', 'Time-off / Absences')}</h3>
                     <Button onClick={() => setShowTimeOffDialog(true)} size="sm">

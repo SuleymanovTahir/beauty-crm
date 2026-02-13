@@ -112,7 +112,7 @@ function SortableUserRow({
     <tr
       ref={setNodeRef}
       style={style}
-      className={`hover: bg - gray - 50 transition - colors ${isDragging ? 'bg-gray-50 shadow-md' : ''} `}
+      className={`hover:bg-gray-50 transition-colors ${isDragging ? 'bg-gray-50 shadow-md' : ''}`}
     >
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
@@ -292,6 +292,7 @@ export default function UniversalTeam() {
     director: 'bg-red-100 text-red-800',
     owner: 'bg-red-100 text-red-800',
     admin: 'bg-blue-100 text-blue-800',
+    accountant: 'bg-emerald-100 text-emerald-800',
     manager: 'bg-blue-100 text-blue-800',
     sales: 'bg-green-100 text-green-800',
     marketer: 'bg-orange-100 text-orange-800',
@@ -352,6 +353,7 @@ export default function UniversalTeam() {
     director: { label: t('role_director'), color: roleColors.director },
     owner: { label: t('common:role_director'), color: roleColors.owner },
     admin: { label: t('role_admin'), color: roleColors.admin },
+    accountant: { label: t('common:role_accountant', 'Бухгалтер'), color: roleColors.accountant },
     manager: { label: t('role_manager'), color: roleColors.manager },
     sales: { label: t('common:role_saler'), color: roleColors.sales },
     marketer: { label: t('role_marketer'), color: roleColors.marketer },
@@ -454,13 +456,13 @@ export default function UniversalTeam() {
         <div className="flex bg-gray-100 p-1 rounded-xl w-fit self-start md:self-center">
           <button
             onClick={() => handleViewChange('table')}
-            className={`px - 4 py - 2 rounded - lg text - sm font - medium transition - all ${viewMode === 'table' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'} `}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'table' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
           >
             {t('view_table', 'Таблица')}
           </button>
           <button
             onClick={() => handleViewChange('cards')}
-            className={`px - 4 py - 2 rounded - lg text - sm font - medium transition - all ${viewMode === 'cards' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'} `}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'cards' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
           >
             {t('view_cards', 'Карточки')}
           </button>
@@ -601,7 +603,7 @@ export default function UniversalTeam() {
                   <button
                     key={emp.id}
                     onClick={() => navigate(`${routePrefix}/team?view=cards&id=${emp.id}`)}
-                    className={`w - full p - 3 flex items - center gap - 3 hover: bg - white hover: shadow - sm rounded - xl transition - all mb - 1 group ${id === String(emp.id) ? 'bg-white shadow-sm ring-1 ring-gray-100' : ''} `}
+                    className={`w-full p-3 flex items-center gap-3 hover:bg-white hover:shadow-sm rounded-xl transition-all mb-1 group ${id === String(emp.id) ? 'bg-white shadow-sm ring-1 ring-gray-100' : ''}`}
                   >
                     <img
                       src={getPhotoUrl(emp.photo) || getDynamicAvatar(emp.full_name || emp.username, 'cold')}

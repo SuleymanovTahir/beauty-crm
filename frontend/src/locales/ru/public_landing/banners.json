@@ -1,10 +1,10 @@
 {
   "items": [
     {
-      "title": "Салон красоты в Дубае",
-      "subtitle": "Искусство преображения",
       "image": "/landing-images/banners/banner.webp",
-      "link": ""
+      "link": "",
+      "subtitle": "Искусство преображения",
+      "title": "Салон красоты в Дубае"
     }
   ]
 }

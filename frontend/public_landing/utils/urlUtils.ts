@@ -232,3 +232,172 @@ export const syncHtmlLanguageMeta = (language: string): void => {
       document.head.appendChild(el);
     });
 };
+
+export interface ReferralAttributionState {
+  campaignId: number;
+  shareToken: string;
+  capturedAt: string;
+  expiresAt: string;
+  sourcePath: string;
+}
+
+const REFERRAL_ATTRIBUTION_STORAGE_KEY = 'beauty_referral_attribution_v1';
+const REFERRAL_ATTRIBUTION_TTL_MS = 1000 * 60 * 60 * 24 * 30;
+
+const normalizeReferralToken = (value: unknown): string => {
+  const normalized = String(value ?? '').trim().toLowerCase();
+  return normalized.replace(/[^a-z0-9]/g, '');
+};
+
+const normalizeReferralCampaignId = (value: unknown): number => {
+  const parsed = Number.parseInt(String(value ?? ''), 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return 0;
+  }
+  return parsed;
+};
+
+const readStoredReferralAttributionRaw = (): ReferralAttributionState | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(REFERRAL_ATTRIBUTION_STORAGE_KEY);
+    if (!raw) {
+      return null;
+    }
+
+    const parsed = JSON.parse(raw);
+    const shareToken = normalizeReferralToken(parsed?.shareToken);
+    const campaignId = normalizeReferralCampaignId(parsed?.campaignId);
+    const capturedAt = String(parsed?.capturedAt ?? '');
+    const expiresAt = String(parsed?.expiresAt ?? '');
+    const sourcePath = String(parsed?.sourcePath ?? '/');
+
+    if (!shareToken && campaignId <= 0) {
+      return null;
+    }
+
+    return {
+      campaignId,
+      shareToken,
+      capturedAt,
+      expiresAt,
+      sourcePath,
+    };
+  } catch (error) {
+    return null;
+  }
+};
+
+const parseReferralAttributionFromLocation = (
+  pathname: string,
+  search: string
+): { campaignId: number; shareToken: string } => {
+  const normalizedPath = String(pathname ?? '').trim();
+  const params = new URLSearchParams(search ?? '');
+  const shareFromQuery = normalizeReferralToken(params.get('ref_share'));
+  const campaignId = normalizeReferralCampaignId(params.get('ref_campaign'));
+
+  const pathMatch = normalizedPath.match(/^\/ref\/([a-z0-9]+)/i);
+  const shareFromPath = pathMatch && pathMatch[1] ? normalizeReferralToken(pathMatch[1]) : '';
+  const shareToken = shareFromPath.length > 0 ? shareFromPath : shareFromQuery;
+  const inferredCampaignMatch = shareToken.match(/^cmp(\d+)$/);
+  const inferredCampaignId = inferredCampaignMatch && inferredCampaignMatch[1]
+    ? normalizeReferralCampaignId(inferredCampaignMatch[1])
+    : 0;
+  const resolvedCampaignId = campaignId > 0 ? campaignId : inferredCampaignId;
+
+  return { campaignId: resolvedCampaignId, shareToken };
+};
+
+export const getStoredReferralAttribution = (): ReferralAttributionState | null => {
+  const stored = readStoredReferralAttributionRaw();
+  if (!stored) {
+    return null;
+  }
+
+  const expiresAtDate = new Date(stored.expiresAt);
+  const expiresAtTime = expiresAtDate.getTime();
+  if (!Number.isFinite(expiresAtTime) || expiresAtTime < Date.now()) {
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(REFERRAL_ATTRIBUTION_STORAGE_KEY);
+    }
+    return null;
+  }
+
+  return stored;
+};
+
+export const persistReferralAttribution = (
+  value: Partial<ReferralAttributionState> & { campaignId?: number; shareToken?: string },
+  sourcePath?: string
+): ReferralAttributionState | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const existing = getStoredReferralAttribution();
+  const shareToken = normalizeReferralToken(value.shareToken ?? existing?.shareToken ?? '');
+  const campaignId = normalizeReferralCampaignId(value.campaignId ?? existing?.campaignId ?? 0);
+
+  if (!shareToken && campaignId <= 0) {
+    return null;
+  }
+
+  const capturedAt = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + REFERRAL_ATTRIBUTION_TTL_MS).toISOString();
+  const payload: ReferralAttributionState = {
+    campaignId,
+    shareToken,
+    capturedAt,
+    expiresAt,
+    sourcePath: String(sourcePath ?? window.location.pathname ?? '/'),
+  };
+
+  window.localStorage.setItem(REFERRAL_ATTRIBUTION_STORAGE_KEY, JSON.stringify(payload));
+  return payload;
+};
+
+export const captureReferralAttributionFromCurrentUrl = (
+  pathname = window.location.pathname,
+  search = window.location.search
+): ReferralAttributionState | null => {
+  const parsed = parseReferralAttributionFromLocation(pathname, search);
+  if (parsed.shareToken.length === 0 && parsed.campaignId <= 0) {
+    return getStoredReferralAttribution();
+  }
+  return persistReferralAttribution(parsed, pathname);
+};
+
+export const clearStoredReferralAttribution = (): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  window.localStorage.removeItem(REFERRAL_ATTRIBUTION_STORAGE_KEY);
+};
+
+export const buildReferralBookingSource = (
+  baseSource: string,
+  attribution?: { campaignId?: number; shareToken?: string } | null
+): string => {
+  const normalizedBase = String(baseSource ?? '').trim();
+  if (normalizedBase.length === 0) {
+    return '';
+  }
+
+  const normalizedCampaignId = normalizeReferralCampaignId(attribution?.campaignId ?? 0);
+  const normalizedShareToken = normalizeReferralToken(attribution?.shareToken ?? '');
+
+  if (normalizedCampaignId > 0 && normalizedShareToken.length > 0) {
+    return `${normalizedBase}_ref_campaign_${normalizedCampaignId}_ref_share_${normalizedShareToken}`;
+  }
+  if (normalizedCampaignId > 0) {
+    return `${normalizedBase}_ref_campaign_${normalizedCampaignId}`;
+  }
+  if (normalizedShareToken.length > 0) {
+    return `${normalizedBase}_ref_share_${normalizedShareToken}`;
+  }
+  return normalizedBase;
+};

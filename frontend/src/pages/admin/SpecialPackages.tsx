@@ -3,7 +3,7 @@
 // Управление специальными пакетами и акциями
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, AlertCircle, Loader, Users, Target, Settings, ChevronRight, TrendingUp, ArrowUpDown, Ticket, Scissors, Trophy, type LucideIcon } from 'lucide-react';
+import { Gift, Search, Plus, Edit, Trash2, Tag, Calendar, AlertCircle, Loader, Users, Target, Settings, ChevronRight, TrendingUp, ArrowUpDown, Ticket, Scissors, Trophy, Link, Copy, Download, type LucideIcon } from 'lucide-react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +29,7 @@ import { usePermissions } from '../../utils/permissions';
 import UniversalChallenges from '../shared/Challenges';
 import PromoCodes from './PromoCodes';
 import LoyaltyManagement from '../adminPanel/LoyaltyManagement';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface SpecialPackage {
   id: number;
@@ -55,6 +56,7 @@ interface ReferralCampaign {
   bonus_points: number;
   referrer_bonus: number;
   is_active: boolean;
+  share_token?: string;
   target_type: 'all' | 'specific_users' | 'by_master' | 'by_service' | 'by_inactivity';
   target_criteria?: {
     user_ids?: string[];
@@ -84,10 +86,58 @@ interface ReferralStats {
   points_distributed: number;
 }
 
+interface ReferralCampaignLead {
+  id: string;
+  event_type: 'visit' | 'booking';
+  name: string;
+  phone: string;
+  location: string;
+  registered: boolean;
+  booked: boolean;
+  status: string;
+  timestamp: string | null;
+}
+
+interface ReferralCampaignShareLink {
+  client_id: string;
+  client_name: string;
+  client_phone: string;
+  share_token: string;
+  referral_link: string;
+  total_clicks: number;
+  unique_clicks: number;
+  total_bookings: number;
+  registered_clients: number;
+  conversion_rate: number;
+  last_activity: string | null;
+}
+
+interface ReferralCampaignAnalytics {
+  campaign_id: number;
+  campaign_name: string;
+  period: string;
+  date_from: string;
+  date_to: string;
+  campaign_share_token?: string;
+  referral_link: string;
+  total_clicks: number;
+  unique_clicks: number;
+  total_bookings: number;
+  registered_clients: number;
+  conversion_rate: number;
+  share_links?: ReferralCampaignShareLink[];
+  leads: ReferralCampaignLead[];
+}
+
 interface ReferralSettings {
   referrer_bonus: number;
   referred_bonus: number;
   min_purchase_amount: number;
+}
+
+interface ReferralAudienceClientOption {
+  id: string;
+  label: string;
 }
 
 type ReferralSortKey = 'referrer' | 'referred' | 'date' | 'status' | 'points';
@@ -123,10 +173,10 @@ const normalizeSectionParam = (value: string | null): SectionType => {
 };
 
 const normalizeReferralViewParam = (value: string | null): ReferralViewType => {
-  if (value === 'campaigns') {
-    return 'campaigns';
+  if (value === 'history') {
+    return 'history';
   }
-  return 'history';
+  return 'campaigns';
 };
 
 export default function SpecialPackages({ entryMode = 'default' }: SpecialPackagesProps) {
@@ -173,13 +223,16 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
   const [embeddedPrimaryActionHandler, setEmbeddedPrimaryActionHandler] = useState<(() => void) | null>(null);
   const [referralView, setReferralView] = useState<ReferralViewType>(() => {
     if (initialSection !== 'referrals') {
-      return 'history';
+      return 'campaigns';
     }
     return initialReferralView;
   });
 
   // Referral campaigns state
   const [campaigns, setCampaigns] = useState<ReferralCampaign[]>([]);
+  const [campaignAnalytics, setCampaignAnalytics] = useState<Record<number, ReferralCampaignAnalytics>>({});
+  const [campaignAnalyticsLoading, setCampaignAnalyticsLoading] = useState(false);
+  const [expandedCampaignAnalyticsId, setExpandedCampaignAnalyticsId] = useState<number | null>(null);
   const [referralHistory, setReferralHistory] = useState<ReferralHistoryItem[]>([]);
   const [referralSearchTerm, setReferralSearchTerm] = useState('');
   const [referralStatusFilter, setReferralStatusFilter] = useState<'all' | 'pending' | 'completed' | 'cancelled'>('all');
@@ -201,6 +254,9 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
   const [isReferralSettingsOpen, setIsReferralSettingsOpen] = useState(false);
   const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<ReferralCampaign | null>(null);
+  const [referralAudienceClients, setReferralAudienceClients] = useState<ReferralAudienceClientOption[]>([]);
+  const [referralAudienceLoading, setReferralAudienceLoading] = useState(false);
+  const [selectedReferralUserIds, setSelectedReferralUserIds] = useState<string[]>([]);
   const [referralFormData, setReferralFormData] = useState({
     name: '',
     description: '',
@@ -338,6 +394,55 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
   }, [activeSection, referralStatusFilter, referralView]);
 
   useEffect(() => {
+    let isMounted = true;
+
+    if (activeSection !== 'referrals' || referralView !== 'campaigns' || campaigns.length === 0) {
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    const loadCampaignAnalytics = async () => {
+      try {
+        setCampaignAnalyticsLoading(true);
+        const analyticsEntries = await Promise.all(
+          campaigns.map(async (campaign) => {
+            try {
+              const analyticsResponse = await api.getReferralCampaignAnalytics(campaign.id, { period: '30d' });
+              return [campaign.id, analyticsResponse?.analytics ?? null] as const;
+            } catch (error) {
+              console.error('Error loading campaign analytics:', error);
+              return [campaign.id, null] as const;
+            }
+          })
+        );
+
+        if (!isMounted) {
+          return;
+        }
+
+        const analyticsByCampaign: Record<number, ReferralCampaignAnalytics> = {};
+        analyticsEntries.forEach(([campaignId, analyticsItem]) => {
+          if (analyticsItem) {
+            analyticsByCampaign[campaignId] = analyticsItem as ReferralCampaignAnalytics;
+          }
+        });
+        setCampaignAnalytics(analyticsByCampaign);
+      } finally {
+        if (isMounted) {
+          setCampaignAnalyticsLoading(false);
+        }
+      }
+    };
+
+    loadCampaignAnalytics();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeSection, referralView, campaigns]);
+
+  useEffect(() => {
     const filtered = packages.filter(pkg => {
       const matchesSearch = pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         pkg.promo_code?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -408,6 +513,49 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
     }
   };
 
+  const loadReferralAudienceClients = useCallback(async () => {
+    try {
+      setReferralAudienceLoading(true);
+      const response = await api.getClients();
+      const rawClients = Array.isArray(response?.clients)
+        ? response.clients
+        : Array.isArray(response)
+          ? response
+          : [];
+      const mappedClients: ReferralAudienceClientOption[] = rawClients
+        .map((client: any) => {
+          const clientIdRaw = client.instagram_id ?? client.id ?? '';
+          const clientId = String(clientIdRaw).trim();
+          if (clientId.length === 0) {
+            return null;
+          }
+          const clientNameRaw = client.display_name ?? client.name ?? client.username ?? client.instagram_id ?? client.id ?? '';
+          const clientName = String(clientNameRaw).trim();
+          const clientPhone = String(client.phone ?? '').trim();
+          const clientLabel = clientPhone.length > 0 ? `${clientName} (${clientPhone})` : clientName;
+          return {
+            id: clientId,
+            label: clientLabel
+          };
+        })
+        .filter((item: ReferralAudienceClientOption | null): item is ReferralAudienceClientOption => item !== null);
+
+      setReferralAudienceClients(mappedClients);
+    } catch (error) {
+      console.error('Error loading referral audience clients:', error);
+      toast.error(t('adminpanel/referralprogram:toasts.failed_load'));
+    } finally {
+      setReferralAudienceLoading(false);
+    }
+  }, [t]);
+
+  useEffect(() => {
+    if (!isReferralModalOpen) {
+      return;
+    }
+    loadReferralAudienceClients();
+  }, [isReferralModalOpen, loadReferralAudienceClients]);
+
   const updateRouteParams = (nextSection: SectionType, nextView: ReferralViewType) => {
     const nextParams = new URLSearchParams(searchParams);
 
@@ -451,8 +599,8 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
 
     if (nextSection === 'referrals') {
       setActiveSection('referrals');
-      setReferralView('history');
-      updateRouteParams('referrals', 'history');
+      setReferralView('campaigns');
+      updateRouteParams('referrals', 'campaigns');
       return;
     }
 
@@ -505,6 +653,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
 
   const handleCreateReferralCampaign = () => {
     setEditingCampaign(null);
+    setSelectedReferralUserIds([]);
     setReferralFormData({
       name: '',
       description: '',
@@ -521,6 +670,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
 
   const handleEditReferralCampaign = (campaign: ReferralCampaign) => {
     setEditingCampaign(campaign);
+    setSelectedReferralUserIds(campaign.target_criteria?.user_ids ?? []);
     setReferralFormData({
       name: campaign.name,
       description: campaign.description ?? '',
@@ -560,6 +710,17 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
         return;
       }
 
+      if (referralFormData.target_type === 'specific_users' && selectedReferralUserIds.length === 0) {
+        toast.error(t('target_clients_required', 'Выберите минимум одного клиента'));
+        return;
+      }
+
+      const targetCriteria = referralFormData.target_type === 'by_inactivity'
+        ? { days_inactive: referralFormData.days_inactive }
+        : referralFormData.target_type === 'specific_users'
+          ? { user_ids: selectedReferralUserIds }
+          : null;
+
       const payload = {
         name: referralFormData.name,
         description: referralFormData.description,
@@ -567,9 +728,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
         referrer_bonus: referralFormData.referrer_bonus,
         is_active: referralFormData.is_active,
         target_type: referralFormData.target_type,
-        target_criteria: referralFormData.target_type === 'by_inactivity'
-          ? { days_inactive: referralFormData.days_inactive }
-          : null,
+        target_criteria: targetCriteria,
         start_date: referralFormData.start_date.length > 0 ? referralFormData.start_date : null,
         end_date: referralFormData.end_date.length > 0 ? referralFormData.end_date : null
       };
@@ -802,6 +961,74 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
     } catch (err) {
       toast.error(t('error_changing_status'));
     }
+  };
+
+  const toAbsoluteReferralLink = (linkValue: string) => {
+    const normalizedValue = String(linkValue ?? '').trim();
+    if (normalizedValue.startsWith('http://') || normalizedValue.startsWith('https://')) {
+      return normalizedValue;
+    }
+
+    const normalizedOrigin = String(window.location.origin ?? '').replace(/\/$/, '');
+    if (!normalizedValue.startsWith('/')) {
+      return `${normalizedOrigin}/${normalizedValue}`;
+    }
+    return `${normalizedOrigin}${normalizedValue}`;
+  };
+
+  const getCampaignReferralLink = (campaign: ReferralCampaign, analyticsItem?: ReferralCampaignAnalytics) => {
+    const analyticsLink = String(analyticsItem?.referral_link ?? '').trim();
+    if (analyticsLink.length > 0) {
+      return toAbsoluteReferralLink(analyticsLink);
+    }
+
+    const campaignShareToken = String(campaign.share_token ?? '').trim().toLowerCase();
+    if (campaignShareToken.length > 0) {
+      return toAbsoluteReferralLink(`/ref/${campaignShareToken}`);
+    }
+
+    return toAbsoluteReferralLink(`/ref/cmp${campaign.id}`);
+  };
+
+  const handleCopyReferralLink = async (linkValue: string) => {
+    try {
+      await navigator.clipboard.writeText(linkValue);
+      toast.success(t('copy_link_success'));
+    } catch (error) {
+      toast.error(t('copy_link_error'));
+      console.error(error);
+    }
+  };
+
+  const handleDownloadReferralQr = (containerId: string, fileName: string) => {
+    const containerElement = document.getElementById(containerId);
+    if (!containerElement) {
+      toast.error(t('copy_link_error'));
+      return;
+    }
+
+    const qrSvgElement = containerElement.querySelector('svg');
+    if (!qrSvgElement) {
+      toast.error(t('copy_link_error'));
+      return;
+    }
+
+    const svgString = new XMLSerializer().serializeToString(qrSvgElement);
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const objectUrl = URL.createObjectURL(svgBlob);
+    const downloadAnchor = document.createElement('a');
+    const safeFileName = String(fileName ?? 'referral-qr')
+      .toLowerCase()
+      .replace(/[^a-z0-9-_]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+
+    downloadAnchor.href = objectUrl;
+    downloadAnchor.download = `${safeFileName.length > 0 ? safeFileName : 'referral-qr'}.svg`;
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+    URL.revokeObjectURL(objectUrl);
   };
 
   const handleEmbeddedPrimaryActionReady = useCallback((handler: (() => void) | null) => {
@@ -1390,17 +1617,6 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
                 <div className="inline-flex w-full xl:w-auto rounded-lg bg-gray-100 p-1">
                   <Button
                     type="button"
-                    variant={referralView === 'history' ? 'default' : 'ghost'}
-                    onClick={() => handleReferralViewChange('history')}
-                    className={`flex-1 xl:flex-none ${referralView === 'history'
-                      ? 'bg-white text-blue-700 hover:bg-white'
-                      : 'text-gray-700 hover:bg-white hover:text-gray-900'
-                    }`}
-                  >
-                    {t('referrals_history_tab', 'История приглашений')}
-                  </Button>
-                  <Button
-                    type="button"
                     variant={referralView === 'campaigns' ? 'default' : 'ghost'}
                     onClick={() => handleReferralViewChange('campaigns')}
                     className={`flex-1 xl:flex-none ${referralView === 'campaigns'
@@ -1409,6 +1625,17 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
                     }`}
                   >
                     {t('referrals_campaigns_tab', 'Кампании и бонусы')}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={referralView === 'history' ? 'default' : 'ghost'}
+                    onClick={() => handleReferralViewChange('history')}
+                    className={`flex-1 xl:flex-none ${referralView === 'history'
+                      ? 'bg-white text-blue-700 hover:bg-white'
+                      : 'text-gray-700 hover:bg-white hover:text-gray-900'
+                    }`}
+                  >
+                    {t('referrals_history_tab', 'История приглашений')}
                   </Button>
                 </div>
 
@@ -1614,16 +1841,25 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
           {referralView === 'campaigns' && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-base font-semibold text-gray-900">{t('referrals_campaigns_tab', 'Кампании и бонусы')}</h3>
+                <h3 className="text-base font-semibold text-gray-900">{t('referrals_campaigns_tab')}</h3>
                 <span className="text-sm text-gray-500">{campaigns.length}</span>
               </div>
               {campaigns.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {campaigns.map((campaign) => (
-                    <div
-                      key={campaign.id}
-                      className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
-                    >
+                  {campaigns.map((campaign) => {
+                    const campaignAnalyticsItem = campaignAnalytics[campaign.id];
+                    const referralLink = getCampaignReferralLink(campaign, campaignAnalyticsItem);
+                    const isExpanded = expandedCampaignAnalyticsId === campaign.id;
+                    const hasLeads = Array.isArray(campaignAnalyticsItem?.leads) && campaignAnalyticsItem.leads.length > 0;
+                    const shareLinks = Array.isArray(campaignAnalyticsItem?.share_links) ? campaignAnalyticsItem?.share_links : [];
+                    const hasShareLinks = shareLinks.length > 0;
+                    const campaignQrContainerId = `campaign-qr-${campaign.id}`;
+
+                    return (
+                      <div
+                        key={campaign.id}
+                        className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                      >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-900 mb-1">{campaign.name}</h3>
@@ -1654,6 +1890,148 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
                           {campaign.target_type === 'by_service' && t('target_by_service')}
                           {campaign.target_type === 'by_inactivity' && t('target_inactive_days', { count: campaign.target_criteria?.days_inactive ?? 30 })}
                         </Badge>
+                      </div>
+
+                      <div className="mb-4 p-3 rounded-lg border border-gray-200 bg-gray-50">
+                        <p className="text-xs text-gray-500 mb-2 flex items-center gap-1">
+                          <Link className="w-3 h-3" />
+                          {t('campaign_referral_link')}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Input value={referralLink} readOnly className="h-9 text-xs bg-white" />
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleCopyReferralLink(referralLink)}
+                            className="shrink-0"
+                          >
+                            <Copy className="w-4 h-4 mr-1" />
+                            {t('copy_link')}
+                          </Button>
+                        </div>
+                        <div id={campaignQrContainerId} className="mt-3 flex items-center justify-center bg-white border border-gray-200 rounded-lg p-3">
+                          <QRCodeSVG value={referralLink} size={112} />
+                        </div>
+                        <div className="mt-2 flex justify-end">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDownloadReferralQr(campaignQrContainerId, `campaign-${campaign.id}-qr`)}
+                          >
+                            <Download className="w-4 h-4 mr-1" />
+                            {t('download_qr', 'Скачать QR')}
+                          </Button>
+                        </div>
+                      </div>
+
+                      {hasShareLinks && (
+                        <div className="mb-4 p-3 rounded-lg border border-gray-200 bg-gray-50">
+                          <p className="text-xs text-gray-500 mb-2">{t('individual_links', 'Индивидуальные ссылки')}</p>
+                          <div className="space-y-2 max-h-52 overflow-y-auto">
+                            {shareLinks.map((shareLinkItem) => {
+                              const shareLinkValue = toAbsoluteReferralLink(shareLinkItem.referral_link);
+                              const shareQrId = `share-qr-${campaign.id}-${shareLinkItem.share_token}`;
+                              const shareClientLabel = String(shareLinkItem.client_name ?? shareLinkItem.client_id ?? '-');
+                              return (
+                                <div key={shareLinkItem.share_token} className="rounded border border-gray-200 bg-white p-2">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <p className="text-xs font-medium text-gray-800 truncate">
+                                      {t('assigned_to', 'Закреплено за')}: {shareClientLabel}
+                                    </p>
+                                    <p className="text-[11px] text-gray-500">
+                                      {shareLinkItem.unique_clicks} / {shareLinkItem.total_bookings}
+                                    </p>
+                                  </div>
+                                  <div className="mt-2 flex items-center gap-2">
+                                    <Input value={shareLinkValue} readOnly className="h-8 text-[11px] bg-white" />
+                                    <Button size="sm" variant="outline" onClick={() => handleCopyReferralLink(shareLinkValue)} className="h-8 px-2">
+                                      <Copy className="w-3.5 h-3.5" />
+                                    </Button>
+                                    <Button size="sm" variant="outline" onClick={() => handleDownloadReferralQr(shareQrId, `share-${shareLinkItem.share_token}`)} className="h-8 px-2">
+                                      <Download className="w-3.5 h-3.5" />
+                                    </Button>
+                                  </div>
+                                  <div id={shareQrId} className="mt-2 hidden">
+                                    <QRCodeSVG value={shareLinkValue} size={128} />
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="mb-4 p-3 rounded-lg border border-gray-200">
+                        <p className="text-xs text-gray-500 mb-2">{t('campaign_analytics')}</p>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="rounded bg-blue-50 p-2">
+                            <p className="text-gray-500">{t('analytics_clicks')}</p>
+                            <p className="font-semibold text-blue-700">{campaignAnalyticsItem?.total_clicks ?? 0}</p>
+                          </div>
+                          <div className="rounded bg-indigo-50 p-2">
+                            <p className="text-gray-500">{t('analytics_unique_clicks')}</p>
+                            <p className="font-semibold text-indigo-700">{campaignAnalyticsItem?.unique_clicks ?? 0}</p>
+                          </div>
+                          <div className="rounded bg-green-50 p-2">
+                            <p className="text-gray-500">{t('analytics_bookings')}</p>
+                            <p className="font-semibold text-green-700">{campaignAnalyticsItem?.total_bookings ?? 0}</p>
+                          </div>
+                          <div className="rounded bg-emerald-50 p-2">
+                            <p className="text-gray-500">{t('analytics_registered')}</p>
+                            <p className="font-semibold text-emerald-700">{campaignAnalyticsItem?.registered_clients ?? 0}</p>
+                          </div>
+                        </div>
+                        <p className="mt-2 text-xs text-gray-600">
+                          {t('analytics_conversion')}: {campaignAnalyticsItem?.conversion_rate ?? 0}%
+                        </p>
+                        <p className="mt-2 text-[11px] text-gray-500">
+                          {t('analytics_clicks_hint', 'Переходы — все открытия ссылки. Уникальные переходы — разные посетители без повторов.')}
+                        </p>
+
+                        {campaignAnalyticsLoading ? (
+                          <p className="mt-2 text-xs text-gray-500">{t('common:loading')}</p>
+                        ) : (
+                          <div className="mt-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setExpandedCampaignAnalyticsId(isExpanded ? null : campaign.id)}
+                            >
+                              {isExpanded ? t('analytics_hide') : t('analytics_show')}
+                            </Button>
+                            {isExpanded && (
+                              <div className="mt-2 space-y-2 max-h-48 overflow-y-auto">
+                                {hasLeads ? (
+                                  campaignAnalyticsItem.leads.slice(0, 12).map((lead) => (
+                                    <div key={lead.id} className="rounded border border-gray-200 bg-gray-50 p-2 text-xs">
+                                      <div className="flex items-center justify-between gap-2">
+                                        <span className="font-medium text-gray-800">
+                                          {lead.event_type === 'booking' ? t('event_booking') : t('event_visit')}
+                                        </span>
+                                        <span className="text-gray-500">
+                                          {lead.timestamp ? new Date(lead.timestamp).toLocaleString() : '-'}
+                                        </span>
+                                      </div>
+                                      <p className="text-gray-700 mt-1">
+                                        {lead.name} {lead.phone !== '-' ? `• ${lead.phone}` : ''}
+                                      </p>
+                                      <p className="text-gray-500 mt-1">
+                                        {t('location_label')}: {lead.location}
+                                      </p>
+                                      <p className="text-gray-500 mt-1">
+                                        {lead.registered ? t('event_registered') : t('event_not_registered')}
+                                        {' • '}
+                                        {lead.booked ? t('event_booked') : t('event_not_booked')}
+                                      </p>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <p className="text-xs text-gray-500">{t('no_analytics_data')}</p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       {permissions.canEditLoyalty && (
@@ -1697,8 +2075,9 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
                           </Button>
                         </div>
                       )}
-                    </div>
-                  ))}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
 
@@ -1841,18 +2220,45 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
                     <SelectContent>
                       <SelectItem value="all">{t('target_all_clients')}</SelectItem>
                       <SelectItem value="by_inactivity">{t('target_by_inactivity')}</SelectItem>
+                      <SelectItem value="specific_users">{t('target_specific_users')}</SelectItem>
                       {editingCampaign?.target_type === 'by_master' && (
                         <SelectItem value="by_master">{t('target_by_master')}</SelectItem>
                       )}
                       {editingCampaign?.target_type === 'by_service' && (
                         <SelectItem value="by_service">{t('target_by_service')}</SelectItem>
                       )}
-                      {editingCampaign?.target_type === 'specific_users' && (
-                        <SelectItem value="specific_users">{t('target_specific_users')}</SelectItem>
-                      )}
                     </SelectContent>
                   </Select>
                 </div>
+
+                {referralFormData.target_type === 'specific_users' && (
+                  <div className="space-y-2">
+                    <Label className="mb-1 block">{t('scope_clients', 'Определенные клиенты')}</Label>
+                    <select
+                      multiple
+                      className="w-full min-h-[140px] rounded-xl border border-gray-200 px-3 py-2 focus:outline-none"
+                      value={selectedReferralUserIds}
+                      onChange={(event) => {
+                        const selected = Array.from(event.target.selectedOptions).map((option) => option.value);
+                        setSelectedReferralUserIds(selected);
+                      }}
+                    >
+                      {referralAudienceLoading && (
+                        <option value="" disabled>{t('loading', 'Загрузка...')}</option>
+                      )}
+                      {!referralAudienceLoading && referralAudienceClients.map((client) => (
+                        <option key={client.id} value={client.id}>
+                          {client.label}
+                        </option>
+                      ))}
+                    </select>
+                    {selectedReferralUserIds.length > 0 && (
+                      <p className="text-xs text-gray-500">
+                        {t('target_specific_users')}: {selectedReferralUserIds.length}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {referralFormData.target_type === 'by_inactivity' && (
                   <div>

@@ -202,7 +202,7 @@ ROLES = {
     'director': {
         'name': 'Директор',
         'permissions': '*',  # Все права
-        'can_manage_roles': ['admin', 'manager', 'sales', 'marketer', 'employee'],
+        'can_manage_roles': ['admin', 'accountant', 'manager', 'sales', 'marketer', 'employee'],
         'hierarchy_level': 100
     },
     'admin': {
@@ -226,8 +226,21 @@ ROLES = {
             'roles_view',
             'roles_edit'
         ],
-        'can_manage_roles': ['manager', 'sales', 'marketer', 'employee'],
+        'can_manage_roles': ['accountant', 'manager', 'sales', 'marketer', 'employee'],
         'hierarchy_level': 80
+    },
+    'accountant': {
+        'name': 'Бухгалтер',
+        'permissions': [
+            'users_view',
+            'bookings_view',
+            'calendar_view_all_readonly',
+            'clients_view_stats_only',
+            'staff_chat_own',
+            'payroll_manage'
+        ],
+        'can_manage_roles': [],
+        'hierarchy_level': 70
     },
     'manager': {
         'name': 'Менеджер',
@@ -412,6 +425,7 @@ PERMISSION_DESCRIPTIONS = {
     # Роли
     'roles_view': 'Просмотр ролей и прав доступа',
     'roles_edit': 'Управление ролями и правами',
+    'payroll_manage': 'Доступ к расчету и учету зарплаты',
     
     # Аналитика
     'analytics_view': 'Полный доступ к аналитике',

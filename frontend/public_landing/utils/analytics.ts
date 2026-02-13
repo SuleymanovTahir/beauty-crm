@@ -4,7 +4,7 @@
 
 export const trackSection = async (sectionId: string) => {
     try {
-        const fullUrl = `${window.location.origin}${window.location.pathname}#${sectionId}`;
+        const fullUrl = `${window.location.origin}${window.location.pathname}${window.location.search}#${sectionId}`;
 
         await fetch('/api/analytics/visitors/track', {
             method: 'POST',

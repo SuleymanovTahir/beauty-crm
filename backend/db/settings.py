@@ -556,6 +556,12 @@ def get_all_roles() -> list:
             'is_builtin': True
         },
         {
+            'role_key': 'accountant',
+            'role_name': 'Бухгалтер',
+            'role_description': 'Доступ к расчету и учету зарплаты',
+            'is_builtin': True
+        },
+        {
             'role_key': 'manager',
             'role_name': 'Менеджер',
             'role_description': 'Управление клиентами, записями и аналитикой',
@@ -607,7 +613,7 @@ def create_custom_role(role_key: str, role_name: str, role_description: str = No
     conn = get_db_connection()
     c = conn.cursor()
 
-    if role_key in ['admin', 'manager', 'employee']:
+    if role_key in ['director', 'admin', 'accountant', 'manager', 'sales', 'marketer', 'employee']:
         log_error(
             f"❌ Нельзя создать роль с ключом '{role_key}' - это встроенная роль", "database")
         return False
@@ -636,7 +642,7 @@ def delete_custom_role(role_key: str) -> bool:
     conn = get_db_connection()
     c = conn.cursor()
 
-    if role_key in ['admin', 'manager', 'employee']:
+    if role_key in ['director', 'admin', 'accountant', 'manager', 'sales', 'marketer', 'employee']:
         log_error(f"❌ Нельзя удалить встроенную роль '{role_key}'", "database")
         return False
 

@@ -1,39 +1,39 @@
 {
   "items": [
     {
-      "text": "Salão incrível! Os mestres são verdadeiros profissionais. Fiz maquiagem definitiva nas sobrancelhas, o resultado superou todas as expectativas. Muito natural e bonito.",
       "author_name": "Ana Petrova",
       "employee_name": "",
       "employee_position": "Maquiagem permanente",
-      "rating": 5
+      "rating": 5,
+      "text": "Salão incrível! Os mestres são verdadeiros profissionais. Fiz maquiagem definitiva nas sobrancelhas, o resultado superou todas as expectativas. Muito natural e bonito."
     },
     {
-      "text": "O melhor salão de beleza de Dubai!",
       "author_name": "Sarah Jenkins",
       "employee_name": "",
-      "employee_position": "Pestanas",
-      "rating": 5
+      "employee_position": "Cílios",
+      "rating": 5,
+      "text": "O melhor salão de beleza de Dubai!"
     },
     {
-      "text": "Há um ano que venho aqui fazer manicure e pedicure. Sempre perfeitamente limpo, estéril e de alta qualidade. Recomendo a todos os meus amigos!",
       "author_name": "Elena Smirnova",
       "employee_name": "",
       "employee_position": "Manicure e Pedicure",
-      "rating": 5
+      "rating": 5,
+      "text": "Há um ano que venho aqui fazer manicure e pedicure. Sempre perfeitamente limpo, estéril e de alta qualidade. Recomendo a todos os meus amigos!"
     },
     {
-      "text": "Serviço incrível. Fiz um tratamento facial e minha pele está brilhando. Eu definitivamente voltarei!",
       "author_name": "Mariya Gonsales",
       "employee_name": "",
       "employee_position": "Cuidados faciais",
-      "rating": 5
+      "rating": 5,
+      "text": "Serviço incrível. Fiz um tratamento facial e minha pele está brilhando. Eu definitivamente voltarei!"
     },
     {
-      "text": "Excelente serviço e equipe profissional.",
       "author_name": "Fátima Al-Sayed",
       "employee_name": "",
       "employee_position": "Microblading",
-      "rating": 5
+      "rating": 5,
+      "text": "Excelente serviço e equipe profissional."
     }
   ]
 }
