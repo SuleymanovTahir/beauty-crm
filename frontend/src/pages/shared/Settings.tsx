@@ -25,6 +25,7 @@ import {
   Shield,
   User,
   Download,
+  ArrowRight,
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -83,8 +84,169 @@ function normalizeTimezoneOffsetValue(rawTimezoneOffset: unknown): string {
   return '';
 }
 
+type BusinessModulesState = {
+  crm: Record<string, boolean>;
+  site: Record<string, boolean>;
+};
+
+type BusinessProfilePreset = {
+  schema_version?: number;
+  business_type?: string;
+  modules?: BusinessModulesState;
+  role_permissions?: Record<string, string[] | '*'>;
+  shared_domains?: Record<string, string>;
+};
+
+const BUSINESS_TYPE_TRANSLATION_KEYS: Record<string, string> = {
+  beauty: 'auth/register:business_type_beauty',
+  restaurant: 'auth/register:business_type_restaurant',
+  construction: 'auth/register:business_type_construction',
+  factory: 'auth/register:business_type_factory',
+  taxi: 'auth/register:business_type_taxi',
+  delivery: 'auth/register:business_type_delivery',
+  other: 'auth/register:business_type_other',
+};
+
+const PRODUCT_MODE_TRANSLATION_KEYS: Record<string, string> = {
+  crm: 'auth/register:product_mode_crm',
+  site: 'auth/register:product_mode_site',
+  both: 'auth/register:product_mode_both',
+};
+
+const MODULE_TRANSLATION_KEYS: Record<string, string> = {
+  dashboard: 'layouts/mainlayout:menu.dashboard',
+  bookings: 'layouts/mainlayout:menu.bookings',
+  calendar: 'layouts/mainlayout:menu.calendar',
+  clients: 'layouts/mainlayout:menu.clients',
+  team: 'layouts/mainlayout:menu.team',
+  services: 'layouts/mainlayout:menu.services',
+  tasks: 'layouts/mainlayout:menu.tasks',
+  analytics: 'layouts/mainlayout:menu.analytics',
+  visitor_analytics: 'layouts/mainlayout:menu.visitors',
+  funnel: 'layouts/mainlayout:menu.funnel',
+  products: 'layouts/mainlayout:menu.products',
+  invoices: 'layouts/mainlayout:menu.invoices',
+  contracts: 'layouts/mainlayout:menu.contracts',
+  telephony: 'layouts/mainlayout:menu.telephony',
+  messengers: 'layouts/mainlayout:menu.messengers',
+  internal_chat: 'layouts/mainlayout:menu.internal_chat',
+  broadcasts: 'layouts/mainlayout:menu.broadcasts',
+  referrals: 'layouts/mainlayout:menu.referrals',
+  loyalty: 'adminpanel/loyaltymanagement:title',
+  challenges: 'layouts/mainlayout:menu.challenges',
+  promo_codes: 'layouts/mainlayout:menu.promo_codes',
+  service_change_requests: 'layouts/mainlayout:menu.service_requests',
+  settings: 'layouts/mainlayout:menu.settings',
+  public_content: 'layouts/mainlayout:menu.public_content',
+  bot_settings: 'layouts/mainlayout:menu.bot_settings',
+  notifications: 'layouts/mainlayout:menu.notifications',
+  payment_integrations: 'layouts/mainlayout:menu.payments',
+  marketplace_integrations: 'layouts/mainlayout:menu.marketplaces',
+  trash: 'layouts/mainlayout:menu.trash',
+  audit_log: 'layouts/mainlayout:menu.audit_log',
+};
+
+function cloneBusinessModules(modules: BusinessModulesState): BusinessModulesState {
+  return {
+    crm: { ...modules.crm },
+    site: { ...modules.site },
+  };
+}
+
+function normalizeBusinessModulesState(
+  rawModules: unknown,
+  crmCatalog: string[],
+  siteCatalog: string[],
+): BusinessModulesState {
+  const normalized: BusinessModulesState = {
+    crm: {},
+    site: {},
+  };
+
+  for (const moduleKey of crmCatalog) {
+    normalized.crm[moduleKey] = true;
+  }
+  for (const moduleKey of siteCatalog) {
+    normalized.site[moduleKey] = true;
+  }
+
+  if (typeof rawModules !== 'object') {
+    return normalized;
+  }
+  if (rawModules === null) {
+    return normalized;
+  }
+
+  const modules = rawModules as { crm?: Record<string, unknown>; site?: Record<string, unknown> };
+  if (typeof modules.crm === 'object' && modules.crm !== null) {
+    for (const moduleKey of crmCatalog) {
+      const rawValue = modules.crm[moduleKey];
+      if (typeof rawValue === 'boolean') {
+        normalized.crm[moduleKey] = rawValue;
+      }
+    }
+  }
+  if (typeof modules.site === 'object' && modules.site !== null) {
+    for (const moduleKey of siteCatalog) {
+      const rawValue = modules.site[moduleKey];
+      if (typeof rawValue === 'boolean') {
+        normalized.site[moduleKey] = rawValue;
+      }
+    }
+  }
+
+  return normalized;
+}
+
+function countModuleDifferences(
+  catalog: string[],
+  currentSuiteState: Record<string, boolean>,
+  defaultSuiteState: Record<string, boolean>,
+): number {
+  let differenceCount = 0;
+  for (const moduleKey of catalog) {
+    const currentEnabled = currentSuiteState[moduleKey] === true;
+    const defaultEnabled = defaultSuiteState[moduleKey] === true;
+    if (currentEnabled !== defaultEnabled) {
+      differenceCount += 1;
+    }
+  }
+  return differenceCount;
+}
+
+function resolveBusinessTypeLabel(t: (key: string, options?: any) => string, businessType: string): string {
+  const translationKey = BUSINESS_TYPE_TRANSLATION_KEYS[businessType];
+  if (typeof translationKey === 'string') {
+    return t(translationKey);
+  }
+  return businessType;
+}
+
+function resolveProductModeLabel(t: (key: string, options?: any) => string, productMode: string): string {
+  const translationKey = PRODUCT_MODE_TRANSLATION_KEYS[productMode];
+  if (typeof translationKey === 'string') {
+    return t(translationKey);
+  }
+  return productMode;
+}
+
+function resolveModuleLabel(t: (key: string, options?: any) => string, moduleKey: string): string {
+  const translationKey = MODULE_TRANSLATION_KEYS[moduleKey];
+  if (typeof translationKey === 'string') {
+    return t(translationKey);
+  }
+
+  const translatedFromSettings = t(`settings:${moduleKey}`);
+  const expectedKey = `settings:${moduleKey}`;
+  if (translatedFromSettings !== expectedKey) {
+    return translatedFromSettings;
+  }
+
+  return moduleKey.split('_').join(' ');
+}
+
 export default function AdminSettings() {
-  const { t, i18n } = useTranslation(['admin/settings', 'common']);
+  const { t, i18n } = useTranslation(['admin/settings', 'common', 'auth/register', 'layouts/mainlayout', 'adminpanel/loyaltymanagement']);
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
@@ -111,6 +273,17 @@ export default function AdminSettings() {
     }
   });
   const [loading, setLoading] = useState(true);
+  const [businessProfileLoading, setBusinessProfileLoading] = useState(false);
+  const [businessProfileSaving, setBusinessProfileSaving] = useState(false);
+  const [businessSchemaVersion, setBusinessSchemaVersion] = useState(1);
+  const [businessType, setBusinessType] = useState('beauty');
+  const [productMode, setProductMode] = useState('both');
+  const [businessProfiles, setBusinessProfiles] = useState<Record<string, BusinessProfilePreset>>({});
+  const [crmModuleCatalog, setCrmModuleCatalog] = useState<string[]>([]);
+  const [siteModuleCatalog, setSiteModuleCatalog] = useState<string[]>([]);
+  const [businessModules, setBusinessModules] = useState<BusinessModulesState>({ crm: {}, site: {} });
+  const [businessRolePermissions, setBusinessRolePermissions] = useState<Record<string, string[] | '*'>>({});
+  const [businessSharedDomains, setBusinessSharedDomains] = useState<Record<string, string>>({});
 
   // ✅ ДОБАВЬ СОСТОЯНИЕ:
   const [botGloballyEnabled, setBotGloballyEnabled] = useState(false);
@@ -229,6 +402,7 @@ export default function AdminSettings() {
   useEffect(() => {
     loadRoles();
     loadSalonSettings();
+    loadBusinessProfileConfiguration();
     loadProfile();
     loadNotificationSettings();
     loadSubscriptions();
@@ -273,6 +447,83 @@ export default function AdminSettings() {
       toast.error(t('settings:error_loading_settings'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadBusinessProfileConfiguration = async () => {
+    try {
+      setBusinessProfileLoading(true);
+      const response = await api.getBusinessProfileMatrix();
+
+      const schemaVersion = typeof response?.schema_version === 'number' ? response.schema_version : 1;
+      setBusinessSchemaVersion(schemaVersion);
+
+      const moduleCatalog = typeof response?.module_catalog === 'object' && response.module_catalog !== null
+        ? response.module_catalog
+        : {};
+      const crmCatalog = Array.isArray((moduleCatalog as { crm?: unknown[] }).crm)
+        ? (moduleCatalog as { crm: unknown[] }).crm.filter((item): item is string => typeof item === 'string')
+        : [];
+      const siteCatalog = Array.isArray((moduleCatalog as { site?: unknown[] }).site)
+        ? (moduleCatalog as { site: unknown[] }).site.filter((item): item is string => typeof item === 'string')
+        : [];
+      setCrmModuleCatalog(crmCatalog);
+      setSiteModuleCatalog(siteCatalog);
+
+      const rawProfiles = typeof response?.profiles === 'object' && response.profiles !== null ? response.profiles : {};
+      const normalizedProfiles: Record<string, BusinessProfilePreset> = {};
+      for (const [profileKey, profileValue] of Object.entries(rawProfiles)) {
+        if (typeof profileValue === 'object' && profileValue !== null) {
+          normalizedProfiles[profileKey] = profileValue as BusinessProfilePreset;
+        }
+      }
+      setBusinessProfiles(normalizedProfiles);
+
+      const currentConfig = typeof response?.current === 'object' && response.current !== null ? response.current : {};
+      const currentBusinessType = typeof (currentConfig as { business_type?: unknown }).business_type === 'string'
+        ? (currentConfig as { business_type: string }).business_type
+        : 'beauty';
+      const currentProductMode = typeof (currentConfig as { product_mode?: unknown }).product_mode === 'string'
+        ? (currentConfig as { product_mode: string }).product_mode
+        : 'both';
+      setBusinessType(currentBusinessType);
+      setProductMode(currentProductMode);
+
+      const currentProfile = typeof (currentConfig as { business_profile_config?: unknown }).business_profile_config === 'object'
+        && (currentConfig as { business_profile_config?: unknown }).business_profile_config !== null
+        ? (currentConfig as { business_profile_config: BusinessProfilePreset }).business_profile_config
+        : {};
+      const defaultProfile = typeof normalizedProfiles[currentBusinessType] === 'object'
+        ? normalizedProfiles[currentBusinessType]
+        : {};
+
+      const rawModules = typeof currentProfile.modules === 'object' && currentProfile.modules !== null
+        ? currentProfile.modules
+        : defaultProfile.modules;
+      setBusinessModules(normalizeBusinessModulesState(rawModules, crmCatalog, siteCatalog));
+
+      const rawRolePermissions = typeof currentProfile.role_permissions === 'object' && currentProfile.role_permissions !== null
+        ? currentProfile.role_permissions
+        : defaultProfile.role_permissions;
+      if (typeof rawRolePermissions === 'object' && rawRolePermissions !== null) {
+        setBusinessRolePermissions(rawRolePermissions);
+      } else {
+        setBusinessRolePermissions({});
+      }
+
+      const rawSharedDomains = typeof currentProfile.shared_domains === 'object' && currentProfile.shared_domains !== null
+        ? currentProfile.shared_domains
+        : defaultProfile.shared_domains;
+      if (typeof rawSharedDomains === 'object' && rawSharedDomains !== null) {
+        setBusinessSharedDomains(rawSharedDomains as Record<string, string>);
+      } else {
+        setBusinessSharedDomains({});
+      }
+    } catch (err) {
+      console.error('Failed to load business profile matrix:', err);
+      toast.error(t('settings:server_error'));
+    } finally {
+      setBusinessProfileLoading(false);
     }
   };
 
@@ -850,6 +1101,134 @@ export default function AdminSettings() {
     } catch (err) {
       console.error('Error deleting holiday:', err);
       toast.error(t('settings:error_deleting_holiday'));
+    }
+  };
+
+  const canEditBusinessProfile = userPermissions.canEditBranding ? true : userPermissions.canEditSettings;
+  const businessTypeOptions = useMemo(() => {
+    const profileKeys = Object.keys(businessProfiles);
+    if (profileKeys.length > 0) {
+      return profileKeys;
+    }
+    return Object.keys(BUSINESS_TYPE_TRANSLATION_KEYS);
+  }, [businessProfiles]);
+  const selectedBusinessProfilePreset = useMemo(() => {
+    const preset = businessProfiles[businessType];
+    if (typeof preset !== 'object') {
+      return null;
+    }
+    if (preset === null) {
+      return null;
+    }
+    return preset;
+  }, [businessProfiles, businessType]);
+  const defaultBusinessModules = useMemo(() => {
+    if (selectedBusinessProfilePreset === null) {
+      return normalizeBusinessModulesState({}, crmModuleCatalog, siteModuleCatalog);
+    }
+    return normalizeBusinessModulesState(
+      selectedBusinessProfilePreset.modules,
+      crmModuleCatalog,
+      siteModuleCatalog,
+    );
+  }, [selectedBusinessProfilePreset, crmModuleCatalog, siteModuleCatalog]);
+  const crmModuleDifferenceCount = useMemo(
+    () => countModuleDifferences(crmModuleCatalog, businessModules.crm, defaultBusinessModules.crm),
+    [crmModuleCatalog, businessModules.crm, defaultBusinessModules.crm],
+  );
+  const siteModuleDifferenceCount = useMemo(
+    () => countModuleDifferences(siteModuleCatalog, businessModules.site, defaultBusinessModules.site),
+    [siteModuleCatalog, businessModules.site, defaultBusinessModules.site],
+  );
+
+  const handleBusinessTypeChange = (nextBusinessType: string) => {
+    setBusinessType(nextBusinessType);
+
+    const preset = businessProfiles[nextBusinessType];
+    if (typeof preset !== 'object') {
+      return;
+    }
+    if (preset === null) {
+      return;
+    }
+
+    setBusinessModules(normalizeBusinessModulesState(preset.modules, crmModuleCatalog, siteModuleCatalog));
+
+    if (typeof preset.role_permissions === 'object' && preset.role_permissions !== null) {
+      setBusinessRolePermissions(preset.role_permissions);
+    } else {
+      setBusinessRolePermissions({});
+    }
+    if (typeof preset.shared_domains === 'object' && preset.shared_domains !== null) {
+      setBusinessSharedDomains(preset.shared_domains);
+    } else {
+      setBusinessSharedDomains({});
+    }
+  };
+
+  const handleBusinessModuleToggle = (suite: 'crm' | 'site', moduleKey: string, enabled: boolean) => {
+    setBusinessModules((previousState) => {
+      const nextState = cloneBusinessModules(previousState);
+      nextState[suite][moduleKey] = enabled;
+      return nextState;
+    });
+  };
+  const handleResetBusinessProfileToPreset = () => {
+    if (selectedBusinessProfilePreset === null) {
+      setBusinessModules(normalizeBusinessModulesState({}, crmModuleCatalog, siteModuleCatalog));
+      setBusinessRolePermissions({});
+      setBusinessSharedDomains({});
+      return;
+    }
+
+    setBusinessModules(
+      normalizeBusinessModulesState(
+        selectedBusinessProfilePreset.modules,
+        crmModuleCatalog,
+        siteModuleCatalog,
+      ),
+    );
+    if (typeof selectedBusinessProfilePreset.role_permissions === 'object' && selectedBusinessProfilePreset.role_permissions !== null) {
+      setBusinessRolePermissions(selectedBusinessProfilePreset.role_permissions);
+    } else {
+      setBusinessRolePermissions({});
+    }
+    if (typeof selectedBusinessProfilePreset.shared_domains === 'object' && selectedBusinessProfilePreset.shared_domains !== null) {
+      setBusinessSharedDomains(selectedBusinessProfilePreset.shared_domains);
+    } else {
+      setBusinessSharedDomains({});
+    }
+  };
+
+  const handleSaveBusinessProfile = async () => {
+    if (!canEditBusinessProfile) {
+      return;
+    }
+
+    try {
+      setBusinessProfileSaving(true);
+      await api.updateSalonSettings({
+        business_type: businessType,
+        product_mode: productMode,
+      });
+      await api.updateBusinessProfileConfig({
+        business_type: businessType,
+        business_profile_config: {
+          schema_version: businessSchemaVersion,
+          business_type: businessType,
+          modules: businessModules,
+          role_permissions: businessRolePermissions,
+          shared_domains: businessSharedDomains,
+        },
+      });
+      toast.success(t('settings:general_settings_saved'));
+      await loadSalonSettings();
+      await loadBusinessProfileConfiguration();
+    } catch (err) {
+      console.error('Failed to save business profile configuration:', err);
+      toast.error(t('settings:server_error'));
+    } finally {
+      setBusinessProfileSaving(false);
     }
   };
 
@@ -1491,6 +1870,161 @@ export default function AdminSettings() {
                         {t('settings:birthday_discount_hint', { currency: generalSettings.currency })}
                       </p>
                     </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4 border-t pt-6 mt-6">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {t('settings:change_settings')}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {t('auth/register:business_type_hint')}
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label className="settings-label-spacing">{t('auth/register:business_type_label')}</Label>
+                      <Select
+                        value={businessType}
+                        onValueChange={handleBusinessTypeChange}
+                        disabled={!canEditBusinessProfile}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={t('auth/register:business_type_label')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {businessTypeOptions.map((profileKey) => (
+                            <SelectItem key={profileKey} value={profileKey}>
+                              {resolveBusinessTypeLabel(t, profileKey)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="settings-label-spacing">{t('auth/register:product_mode_label')}</Label>
+                      <Select
+                        value={productMode}
+                        onValueChange={setProductMode}
+                        disabled={!canEditBusinessProfile}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={t('auth/register:product_mode_label')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="crm">{resolveProductModeLabel(t, 'crm')}</SelectItem>
+                          <SelectItem value="site">{resolveProductModeLabel(t, 'site')}</SelectItem>
+                          <SelectItem value="both">{resolveProductModeLabel(t, 'both')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {businessProfileLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader className="w-6 h-6 settings-loader animate-spin" />
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="settings-modules-legend">
+                        <div className="settings-modules-legend-item">
+                          <BookOpen className="w-4 h-4" />
+                          <span>{resolveBusinessTypeLabel(t, businessType)}</span>
+                        </div>
+                        <ArrowRight className="w-4 h-4 settings-modules-legend-arrow" />
+                        <div className="settings-modules-legend-item">
+                          <User className="w-4 h-4" />
+                          <span>{t('settings:change_settings')}</span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <div className="rounded-lg border border-gray-200 p-4">
+                          <div className="settings-module-header-row">
+                            <h4 className="font-medium text-gray-900">{resolveProductModeLabel(t, 'crm')}</h4>
+                            <span className="settings-module-difference-counter">
+                              {crmModuleDifferenceCount}/{crmModuleCatalog.length}
+                            </span>
+                          </div>
+                        <div className="space-y-3">
+                          {crmModuleCatalog.map((moduleKey) => (
+                            <div
+                              key={`crm-${moduleKey}`}
+                              className={`settings-module-row ${businessModules.crm[moduleKey] === defaultBusinessModules.crm[moduleKey] ? 'settings-module-row-default' : 'settings-module-row-changed'}`}
+                            >
+                              <span className="text-sm text-gray-700">{resolveModuleLabel(t, moduleKey)}</span>
+                              <div className="settings-module-controls">
+                                <span className="settings-module-default-chip">
+                                  {defaultBusinessModules.crm[moduleKey] === true ? t('common:on') : t('common:off')}
+                                </span>
+                                <Switch
+                                  checked={businessModules.crm[moduleKey] === true}
+                                  onCheckedChange={(enabled) => handleBusinessModuleToggle('crm', moduleKey, enabled)}
+                                  disabled={!canEditBusinessProfile}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        </div>
+
+                        <div className="rounded-lg border border-gray-200 p-4">
+                          <div className="settings-module-header-row">
+                            <h4 className="font-medium text-gray-900">{resolveProductModeLabel(t, 'site')}</h4>
+                            <span className="settings-module-difference-counter">
+                              {siteModuleDifferenceCount}/{siteModuleCatalog.length}
+                            </span>
+                          </div>
+                        <div className="space-y-3">
+                          {siteModuleCatalog.map((moduleKey) => (
+                            <div
+                              key={`site-${moduleKey}`}
+                              className={`settings-module-row ${businessModules.site[moduleKey] === defaultBusinessModules.site[moduleKey] ? 'settings-module-row-default' : 'settings-module-row-changed'}`}
+                            >
+                              <span className="text-sm text-gray-700">{resolveModuleLabel(t, moduleKey)}</span>
+                              <div className="settings-module-controls">
+                                <span className="settings-module-default-chip">
+                                  {defaultBusinessModules.site[moduleKey] === true ? t('common:on') : t('common:off')}
+                                </span>
+                                <Switch
+                                  checked={businessModules.site[moduleKey] === true}
+                                  onCheckedChange={(enabled) => handleBusinessModuleToggle('site', moduleKey, enabled)}
+                                  disabled={!canEditBusinessProfile}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleResetBusinessProfileToPreset}
+                      disabled={canEditBusinessProfile ? businessProfileSaving : true}
+                    >
+                      {t('common:reset')}
+                    </Button>
+                    <Button
+                      type="button"
+                      className="settings-button-gradient"
+                      onClick={handleSaveBusinessProfile}
+                      disabled={businessProfileSaving ? true : !canEditBusinessProfile}
+                    >
+                      {businessProfileSaving ? (
+                        <>
+                          <Loader className="w-4 h-4 mr-2 animate-spin" />
+                          {t('common:saving')}
+                        </>
+                      ) : (
+                        t('settings:save_changes')
+                      )}
+                    </Button>
                   </div>
                 </div>
 

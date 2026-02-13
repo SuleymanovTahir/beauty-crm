@@ -1,3 +1,15 @@
+## [2026-02-13] Business Profile Compare Mode in Settings
+- `frontend/src/pages/shared/Settings.tsx`:
+  - Added compare mode for business modules directly in settings:
+    - baseline is selected business-type preset,
+    - current editable state is shown side-by-side per module.
+  - Added module delta counters for CRM and Site cards (`changed/total`).
+  - Added visual highlighting for changed modules against preset defaults.
+  - Added `Reset` action to restore current profile config from selected business-type preset before save.
+  - Improved safety for preset switching: when preset has no `role_permissions`/`shared_domains`, state now resets to empty objects instead of keeping stale values.
+- `frontend/src/pages/shared/Settings.css`:
+  - Added styles for compare legend, module rows, delta counters, and default-state chips.
+
 ## [2026-02-13] Registration Industry Profile + CRM/Site Product Mode Foundation
 - Registration flow updated to collect company profile on signup:
   - Added required fields in `frontend/src/pages/auth/Register.tsx`:
@@ -54,6 +66,14 @@
   - Admin panel menu item added in `frontend/src/components/layouts/UniversalLayout.tsx`.
 - Added strict admin URL guard by business module matrix:
   - `frontend/src/components/layouts/UniversalLayout.tsx` now builds admin route-access entries from unified admin menu catalog and enforces redirect when a disabled module URL is opened directly (not only hidden from menu).
+- Added server-side CRM module guard for direct API access:
+  - `backend/main.py` feature-gate middleware now resolves `API path -> crm module` via centralized matcher and returns `404` (`crm_module_disabled`) for disabled modules from `business_profile_config.modules.crm`, protecting against manual direct API calls even if UI route/menu is hidden.
+- Added settings UI for `business_profile_config` management:
+  - `frontend/src/pages/shared/Settings.tsx` now loads matrix/profile data via `GET /api/business-profile/matrix` and allows editing:
+    - `business_type`,
+    - `product_mode`,
+    - crm/site module toggles.
+  - Save flow persists product mode via `/api/salon-settings` and profile config via `/api/business-profile/config`.
 - Added business-type modules/permissions matrix and migration-compatible config schema:
   - SSOT matrix implemented in `backend/db/settings.py` for `beauty`, `restaurant`, `construction`, `factory`, `taxi`, `delivery`, `other`:
     - module matrix (`crm` + `site`),
