@@ -301,7 +301,7 @@ def seed_data():
                         ) VALUES (%s, %s, %s, %s, %s, %s, %s)
                     """, (
                         mid, service_db_ids[skey], s_data.get('price'), 
-                        s_data.get('min_price'), s_data.get('max_price'), s_data.get('duration'), online_enabled
+                        s_data.get('min_price'), s_data.get('max_price'), None, online_enabled
                     ))
             print(f"✅ {name}: mapped {len(keys)} services")
 

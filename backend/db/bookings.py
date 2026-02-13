@@ -5,8 +5,117 @@ from datetime import datetime, timedelta
 from typing import List, Optional, Dict, Tuple
 
 from db.connection import get_db_connection
-from utils.datetime_utils import get_current_time
+from utils.datetime_utils import get_current_time, get_salon_timezone
 import psycopg2
+
+ANY_MASTER_ALIASES = {"any", "any_master", "global", "любой", "не указан", "не указано"}
+
+
+def _is_any_master(master_value: Optional[str]) -> bool:
+    if master_value is None:
+        return True
+
+    normalized = str(master_value).strip().lower()
+    if not normalized:
+        return True
+
+    return normalized in ANY_MASTER_ALIASES
+
+
+def _column_exists(cursor, table_name: str, column_name: str) -> bool:
+    cursor.execute(
+        """
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = %s AND column_name = %s
+        LIMIT 1
+        """,
+        (table_name, column_name),
+    )
+    return bool(cursor.fetchone())
+
+
+def _resolve_master_identity(cursor, master_identifier: Optional[str]) -> Tuple[Optional[str], Optional[int], List[str]]:
+    if _is_any_master(master_identifier):
+        return None, None, []
+
+    raw_identifier = str(master_identifier).strip()
+    if not raw_identifier:
+        return None, None, []
+
+    row = None
+    if raw_identifier.isdigit():
+        cursor.execute(
+            """
+            SELECT id, full_name, username, nickname
+            FROM users
+            WHERE id = %s
+              AND is_service_provider = TRUE
+              AND deleted_at IS NULL
+            LIMIT 1
+            """,
+            (int(raw_identifier),),
+        )
+        row = cursor.fetchone()
+
+    if not row:
+        cursor.execute(
+            """
+            SELECT id, full_name, username, nickname
+            FROM users
+            WHERE is_service_provider = TRUE
+              AND deleted_at IS NULL
+              AND (
+                LOWER(username) = LOWER(%s)
+                OR LOWER(full_name) = LOWER(%s)
+                OR LOWER(COALESCE(nickname, '')) = LOWER(%s)
+              )
+            ORDER BY
+                CASE
+                    WHEN LOWER(username) = LOWER(%s) THEN 0
+                    WHEN LOWER(full_name) = LOWER(%s) THEN 1
+                    ELSE 2
+                END,
+                id ASC
+            LIMIT 1
+            """,
+            (raw_identifier, raw_identifier, raw_identifier, raw_identifier, raw_identifier),
+        )
+        row = cursor.fetchone()
+
+    if not row:
+        return raw_identifier, None, [raw_identifier]
+
+    user_id, full_name, username, nickname = row
+    aliases: List[str] = []
+    for value in (full_name, username, nickname, raw_identifier):
+        normalized = str(value or "").strip()
+        if not normalized:
+            continue
+        if normalized in aliases:
+            continue
+        aliases.append(normalized)
+
+    canonical_name = str(full_name or username or raw_identifier).strip()
+    if canonical_name and canonical_name not in aliases:
+        aliases.insert(0, canonical_name)
+
+    return canonical_name, int(user_id), aliases
+
+
+def normalize_master_value(master_identifier: Optional[str]) -> Optional[str]:
+    """Возвращает каноническое имя мастера по id/username/full_name/nickname."""
+    if _is_any_master(master_identifier):
+        return None
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        canonical_name, _, _ = _resolve_master_identity(c, master_identifier)
+        return canonical_name
+    finally:
+        conn.close()
+
 
 def get_all_bookings(limit: int = 1000, offset: int = 0):
     """Получить все записи с лимитом для оптимизации"""
@@ -94,8 +203,19 @@ def get_filtered_bookings(
         
     # 3. Master
     if master and master != 'all':
-        conditions.append("master = %s")
-        params.append(master)
+        canonical_master, master_user_id, aliases = _resolve_master_identity(c, master)
+        aliases_upper = [alias.upper() for alias in aliases if alias]
+        if not aliases_upper and canonical_master:
+            aliases_upper = [canonical_master.upper()]
+
+        if aliases_upper or master_user_id is not None:
+            has_master_user_id = _column_exists(c, 'bookings', 'master_user_id')
+            if has_master_user_id and master_user_id is not None:
+                conditions.append("(master_user_id = %s OR (master_user_id IS NULL AND UPPER(master) = ANY(%s)))")
+                params.extend([master_user_id, aliases_upper])
+            else:
+                conditions.append("UPPER(master) = ANY(%s)")
+                params.append(aliases_upper)
         
     # 4. Dates
     if date_from:
@@ -182,8 +302,19 @@ def get_booking_stats(
         params.extend([search_term, search_term, search_term, search_term])
         
     if master and master != 'all':
-        conditions.append("master = %s")
-        params.append(master)
+        canonical_master, master_user_id, aliases = _resolve_master_identity(c, master)
+        aliases_upper = [alias.upper() for alias in aliases if alias]
+        if not aliases_upper and canonical_master:
+            aliases_upper = [canonical_master.upper()]
+
+        if aliases_upper or master_user_id is not None:
+            has_master_user_id = _column_exists(c, 'bookings', 'master_user_id')
+            if has_master_user_id and master_user_id is not None:
+                conditions.append("(master_user_id = %s OR (master_user_id IS NULL AND UPPER(master) = ANY(%s)))")
+                params.extend([master_user_id, aliases_upper])
+            else:
+                conditions.append("UPPER(master) = ANY(%s)")
+                params.append(aliases_upper)
         
     if date_from:
         conditions.append("datetime >= %s")
@@ -245,13 +376,38 @@ def get_bookings_by_master(master_name: str):
     c = conn.cursor()
 
     try:
-        c.execute("""
-            SELECT id, instagram_id, service_name, datetime, phone,
-                   name, status, created_at, revenue, master
-            FROM bookings
-            WHERE master = %s AND deleted_at IS NULL
-            ORDER BY datetime DESC
-        """, (master_name,))
+        canonical_master, master_user_id, aliases = _resolve_master_identity(c, master_name)
+        aliases_upper = [alias.upper() for alias in aliases if alias]
+        if not aliases_upper and canonical_master:
+            aliases_upper = [canonical_master.upper()]
+
+        if _column_exists(c, 'bookings', 'master_user_id') and master_user_id is not None:
+            c.execute(
+                """
+                SELECT id, instagram_id, service_name, datetime, phone,
+                       name, status, created_at, revenue, master
+                FROM bookings
+                WHERE (
+                    master_user_id = %s
+                    OR (master_user_id IS NULL AND UPPER(master) = ANY(%s))
+                )
+                  AND deleted_at IS NULL
+                ORDER BY datetime DESC
+                """,
+                (master_user_id, aliases_upper),
+            )
+        else:
+            c.execute(
+                """
+                SELECT id, instagram_id, service_name, datetime, phone,
+                       name, status, created_at, revenue, master
+                FROM bookings
+                WHERE UPPER(master) = ANY(%s)
+                  AND deleted_at IS NULL
+                ORDER BY datetime DESC
+                """,
+                (aliases_upper,),
+            )
     except psycopg2.OperationalError:
         # Fallback для старой схемы без master
         c.execute("""
@@ -336,32 +492,12 @@ def get_bookings_by_client(instagram_id: str = None, phone: str = None, user_id:
 
 def get_bookings_by_phone(phone: str):
     """Получить записи клиента по номеру телефона"""
-    return get_bookings_by_client(instagram_id=None, phone=phone)  # wrapper due to signature mismatch logic adjustment below or just keep separate if needed.
-    # Actually, keep original implementation logic or reuse.
-    # Reusing for simplicity if instagram_id isn't provided.
-    
-    # Original implementation for backward compatibility if needed strictly
-    conn = get_db_connection()
-    c = conn.cursor()
-    try:
-         c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
-                     name, status, created_at, revenue, master
-                     FROM bookings 
-                     WHERE phone = %s 
-                     ORDER BY created_at DESC""", (phone,))
-    except:
-         # Simplified fallback
-         c.execute("""SELECT id, instagram_id, service_name, datetime, phone,
-                     name, status, created_at, 0 as revenue, NULL as master
-                     FROM bookings WHERE phone = %s ORDER BY created_at DESC""", (phone,))
-    bookings = c.fetchall()
-    conn.close()
-    return bookings
+    return get_bookings_by_client(instagram_id=None, phone=phone)
 
 def save_booking(instagram_id: str, service: str, datetime_str: str, 
                 phone: str, name: str, special_package_id: int = None, master: str = None,
                 status: str = 'confirmed', source: str = 'manual', user_id: int = None,
-                revenue: float = 0, promo_code: str = None):
+                revenue: float = 0, promo_code: str = None, duration_minutes: Optional[int] = None):
     """Сохранить завершённую запись"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -378,18 +514,108 @@ def save_booking(instagram_id: str, service: str, datetime_str: str,
         if user_row:
             user_id = user_row[0]
     
+    canonical_master, master_user_id, _ = _resolve_master_identity(c, master)
+    master_to_store = canonical_master
+    if not master_to_store and not _is_any_master(master):
+        master_to_store = str(master).strip()
+    if _is_any_master(master):
+        master_to_store = None
+        master_user_id = None
+
+    # Единая проверка доступности слота для будущих записей
+    if master_to_store:
+        try:
+            from services.master_schedule import MasterScheduleService
+            from zoneinfo import ZoneInfo
+
+            schedule_service = MasterScheduleService()
+            timezone = ZoneInfo(get_salon_timezone())
+
+            raw_dt = str(datetime_str).strip().replace('T', ' ')
+            if len(raw_dt) == 16:
+                raw_dt = f"{raw_dt}:00"
+
+            booking_start = datetime.fromisoformat(raw_dt)
+            if booking_start.tzinfo is None:
+                booking_start = booking_start.replace(tzinfo=timezone)
+            else:
+                booking_start = booking_start.astimezone(timezone)
+
+            now_dt = get_current_time().astimezone(timezone)
+            # Прошлые записи оставляем без жёсткой проверки (история, ручной импорт)
+            if booking_start >= (now_dt - timedelta(minutes=1)):
+                resolved_duration_minutes = (
+                    int(duration_minutes)
+                    if isinstance(duration_minutes, (int, float)) and int(duration_minutes) > 0
+                    else schedule_service.estimate_duration_minutes(service, fallback=60)
+                )
+                slot_check = schedule_service.validate_slot(
+                    master_name=master_to_store,
+                    date=booking_start.strftime("%Y-%m-%d"),
+                    time_str=booking_start.strftime("%H:%M"),
+                    duration_minutes=resolved_duration_minutes,
+                )
+                if not slot_check.get("is_available"):
+                    reason = slot_check.get("reason", "unavailable")
+                    raise ValueError(f"slot_unavailable:{reason}")
+        except ValueError:
+            raise
+        except Exception as e:
+            print(f"Booking availability validation warning: {e}")
+
     now = get_current_time().isoformat()
     # Ensure datetime_str is in ISO format (T separator)
     if ' ' in datetime_str and 'T' not in datetime_str:
         datetime_str = datetime_str.replace(' ', 'T')
 
-    c.execute("""INSERT INTO bookings 
-             (instagram_id, service_name, datetime, phone, name, status, 
-              created_at, special_package_id, master, source, user_id, revenue, promo_code)
-             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-             RETURNING id""",
-          (instagram_id, service, datetime_str, phone, name, status, 
-           now, special_package_id, master, source, user_id, revenue, promo_code))
+    has_master_user_id = _column_exists(c, "bookings", "master_user_id")
+    if has_master_user_id:
+        c.execute(
+            """INSERT INTO bookings
+                 (instagram_id, service_name, datetime, phone, name, status,
+                  created_at, special_package_id, master, master_user_id, source, user_id, revenue, promo_code)
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                 RETURNING id""",
+            (
+                instagram_id,
+                service,
+                datetime_str,
+                phone,
+                name,
+                status,
+                now,
+                special_package_id,
+                master_to_store,
+                master_user_id,
+                source,
+                user_id,
+                revenue,
+                promo_code,
+            ),
+        )
+    else:
+        c.execute(
+            """INSERT INTO bookings
+                 (instagram_id, service_name, datetime, phone, name, status,
+                  created_at, special_package_id, master, source, user_id, revenue, promo_code)
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                 RETURNING id""",
+            (
+                instagram_id,
+                service,
+                datetime_str,
+                phone,
+                name,
+                status,
+                now,
+                special_package_id,
+                master_to_store,
+                source,
+                user_id,
+                revenue,
+                promo_code,
+            ),
+        )
     
     booking_id = c.fetchone()[0]  # ✅ ПОЛУЧАЕМ ID СОЗДАННОЙ ЗАПИСИ
     
@@ -457,50 +683,6 @@ def update_booking_status(booking_id: int, status: str) -> bool:
 
 # ===== ВРЕМЕННЫЕ ДАННЫЕ ЗАПИСИ =====
 
-def get_booking_progress(instagram_id: str) -> Optional[Dict]:
-    """Получить прогресс записи"""
-    conn = get_db_connection()
-    c = conn.cursor()
-    
-    c.execute("SELECT * FROM booking_temp WHERE instagram_id = %s", (instagram_id,))
-    row = c.fetchone()
-    conn.close()
-    
-    if row:
-        return {
-            "instagram_id": row[0],
-            "service_name": row[1],
-            "date": row[2],
-            "time": row[3],
-            "phone": row[4],
-            "name": row[5],
-            "step": row[6]
-        }
-    return None
-
-def update_booking_progress(instagram_id: str, data: Dict):
-    """Обновить прогресс записи"""
-    conn = get_db_connection()
-    c = conn.cursor()
-    
-    c.execute("""INSERT INTO booking_temp 
-                 (instagram_id, service_name, date, time, phone, name, step)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s)""",
-              (instagram_id, data.get('service_name'), data.get('date'),
-               data.get('time'), data.get('phone'), data.get('name'), 
-               data.get('step')))
-    
-    conn.commit()
-    conn.close()
-
-def clear_booking_progress(instagram_id: str):
-    """Очистить прогресс записи"""
-    conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("DELETE FROM booking_temp WHERE instagram_id = %s", (instagram_id,))
-    conn.commit()
-    conn.close()
-
 def search_bookings(query: str, limit: int = 50):
     """Поиск записей по тексту"""
     conn = get_db_connection()
@@ -554,11 +736,32 @@ def get_booking_progress(instagram_id: str) -> Optional[Dict]:
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("SELECT data FROM booking_drafts WHERE instagram_id = %s", (instagram_id,))
-        row = c.fetchone()
-        if row:
-            import json
-            return json.loads(row[0])
+        key_column = "instagram_id" if _column_exists(c, "booking_drafts", "instagram_id") else "client_id"
+        has_data_column = _column_exists(c, "booking_drafts", "data")
+
+        if has_data_column:
+            c.execute(f"SELECT data FROM booking_drafts WHERE {key_column} = %s", (instagram_id,))
+            row = c.fetchone()
+            if row and row[0]:
+                import json
+                return json.loads(row[0])
+        else:
+            c.execute(
+                f"""
+                SELECT service_id, datetime, master
+                FROM booking_drafts
+                WHERE {key_column} = %s
+                LIMIT 1
+                """,
+                (instagram_id,),
+            )
+            row = c.fetchone()
+            if row:
+                return {
+                    "service_id": row[0],
+                    "datetime": row[1],
+                    "master": row[2],
+                }
         return None
     except Exception as e:
         print(f"Error getting booking progress: {e}")
@@ -585,19 +788,56 @@ def update_booking_progress(instagram_id: str, data: Dict):
         dt_str = None
         if current.get('date') and current.get('time'):
             dt_str = f"{current['date']} {current['time']}"
-        
-        master = current.get('master')
-        
-        c.execute("""
-            INSERT INTO booking_drafts (instagram_id, data, datetime, master, expires_at, updated_at)
-            VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
-            ON CONFLICT (instagram_id) DO UPDATE SET
-                data = EXCLUDED.data,
-                datetime = EXCLUDED.datetime,
-                master = EXCLUDED.master,
-                expires_at = EXCLUDED.expires_at,
-                updated_at = EXCLUDED.updated_at
-        """, (instagram_id, json.dumps(current), dt_str, master, expires_at))
+
+        key_column = "instagram_id" if _column_exists(c, "booking_drafts", "instagram_id") else "client_id"
+        has_master_user_id = _column_exists(c, "booking_drafts", "master_user_id")
+        has_updated_at = _column_exists(c, "booking_drafts", "updated_at")
+        has_data_column = _column_exists(c, "booking_drafts", "data")
+        has_service_id = _column_exists(c, "booking_drafts", "service_id")
+
+        canonical_master, master_user_id, _ = _resolve_master_identity(c, current.get("master"))
+        master_to_store = canonical_master
+        if not master_to_store and not _is_any_master(current.get("master")):
+            master_to_store = str(current.get("master")).strip()
+        if _is_any_master(current.get("master")):
+            master_to_store = None
+            master_user_id = None
+        current["master"] = master_to_store
+
+        service_id_value = current.get("service_id")
+        if service_id_value is not None:
+            try:
+                service_id_value = int(service_id_value)
+            except Exception:
+                service_id_value = None
+
+        insert_columns = [key_column, "datetime", "master", "expires_at"]
+        insert_values = [instagram_id, dt_str, master_to_store, expires_at]
+
+        if has_data_column:
+            insert_columns.append("data")
+            insert_values.append(json.dumps(current))
+
+        if has_service_id:
+            insert_columns.append("service_id")
+            insert_values.append(service_id_value)
+
+        if has_master_user_id:
+            insert_columns.append("master_user_id")
+            insert_values.append(master_user_id)
+
+        if has_updated_at:
+            insert_columns.append("updated_at")
+            insert_values.append(get_current_time())
+
+        c.execute(f"DELETE FROM booking_drafts WHERE {key_column} = %s", (instagram_id,))
+        c.execute(
+            f"""
+            INSERT INTO booking_drafts ({', '.join(insert_columns)})
+            VALUES ({', '.join(['%s'] * len(insert_columns))})
+            """,
+            tuple(insert_values),
+        )
         conn.commit()
     except Exception as e:
         print(f"Error updating booking progress: {e}")
@@ -609,7 +849,8 @@ def clear_booking_progress(instagram_id: str):
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("DELETE FROM booking_drafts WHERE instagram_id = %s", (instagram_id,))
+        key_column = "instagram_id" if _column_exists(c, "booking_drafts", "instagram_id") else "client_id"
+        c.execute(f"DELETE FROM booking_drafts WHERE {key_column} = %s", (instagram_id,))
         conn.commit()
     except Exception as e:
         print(f"Error clearing booking progress: {e}")
@@ -953,6 +1194,7 @@ def update_booking_details(booking_id: int, data: Dict) -> bool:
     
     fields = []
     params = []
+    has_master_user_id = _column_exists(c, "bookings", "master_user_id")
     
     if 'date' in data and 'time' in data:
         datetime_str = f"{data['date']} {data['time']}"
@@ -967,8 +1209,19 @@ def update_booking_details(booking_id: int, data: Dict) -> bool:
         params.append(data['service'])
         
     if 'master' in data:
+        canonical_master, master_user_id, _ = _resolve_master_identity(c, data.get('master'))
+        master_to_store = canonical_master
+        if not master_to_store and not _is_any_master(data.get('master')):
+            master_to_store = str(data.get('master')).strip()
+        if _is_any_master(data.get('master')):
+            master_to_store = None
+            master_user_id = None
+
         fields.append("master = %s")
-        params.append(data['master'])
+        params.append(master_to_store)
+        if has_master_user_id:
+            fields.append("master_user_id = %s")
+            params.append(master_user_id)
         
     if 'revenue' in data:
         fields.append("revenue = %s")

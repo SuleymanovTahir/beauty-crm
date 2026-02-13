@@ -233,21 +233,21 @@ export function Settings() {
         }}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="profile">
-            <User className="w-4 h-4 mr-2" />
+        <TabsList className="grid w-full h-auto grid-cols-2 sm:grid-cols-4 gap-1 p-1">
+          <TabsTrigger value="profile" className="h-auto min-h-10 px-2 py-2 gap-1 sm:gap-2 whitespace-normal text-xs sm:text-sm leading-tight justify-start sm:justify-center text-left sm:text-center">
+            <User className="w-4 h-4 shrink-0" />
             {t('settings.profile', 'Профиль')}
           </TabsTrigger>
-          <TabsTrigger value="security">
-            <Lock className="w-4 h-4 mr-2" />
+          <TabsTrigger value="security" className="h-auto min-h-10 px-2 py-2 gap-1 sm:gap-2 whitespace-normal text-xs sm:text-sm leading-tight justify-start sm:justify-center text-left sm:text-center">
+            <Lock className="w-4 h-4 shrink-0" />
             {t('settings.security', 'Безопасность')}
           </TabsTrigger>
-          <TabsTrigger value="notifications">
-            <Bell className="w-4 h-4 mr-2" />
+          <TabsTrigger value="notifications" className="h-auto min-h-10 px-2 py-2 gap-1 sm:gap-2 whitespace-normal text-xs sm:text-sm leading-tight justify-start sm:justify-center text-left sm:text-center">
+            <Bell className="w-4 h-4 shrink-0" />
             {t('settings.notifications', 'Уведомления')}
           </TabsTrigger>
-          <TabsTrigger value="privacy">
-            <Eye className="w-4 h-4 mr-2" />
+          <TabsTrigger value="privacy" className="h-auto min-h-10 px-2 py-2 gap-1 sm:gap-2 whitespace-normal text-xs sm:text-sm leading-tight justify-start sm:justify-center text-left sm:text-center">
+            <Eye className="w-4 h-4 shrink-0" />
             {t('settings.privacy', 'Приватность')}
           </TabsTrigger>
         </TabsList>
@@ -260,7 +260,7 @@ export function Settings() {
               <CardDescription>{t('settings.update_data', 'Обновите ваши данные')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
                 <Avatar className="w-24 h-24">
                   <AvatarImage src={profile.avatar} alt={profile.name} />
                   <AvatarFallback>{profile.name?.[0] || 'U'}</AvatarFallback>

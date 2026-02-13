@@ -113,7 +113,7 @@ export function BeautyProfile() {
           <h1>{t('beauty.title', 'Рекомендации по уходу')}</h1>
           <p className="text-muted-foreground">{t('beauty.subtitle', 'Анализ состояния и рекомендации')}</p>
         </div>
-        <Button onClick={requestConsultation} className="gap-2">
+        <Button onClick={requestConsultation} className="gap-2 w-full sm:w-auto">
           <MessageCircle className="w-4 h-4" />
           {t('beauty.get_consultation', 'Получить консультацию')}
         </Button>
@@ -129,9 +129,9 @@ export function BeautyProfile() {
           <CardDescription>{t('beauty.overall_assessment', 'Общая оценка вашего состояния')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-8">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 lg:gap-8">
             <div className="relative">
-              <div className="w-32 h-32 rounded-full border-8 border-purple-200 flex items-center justify-center">
+              <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-8 border-purple-200 flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-4xl font-bold text-purple-600">{overallScore}</div>
                   <div className="text-sm text-muted-foreground">{t('beauty.out_of_100', 'из 100')}</div>
@@ -146,12 +146,12 @@ export function BeautyProfile() {
               />
             </div>
 
-            <div className="flex-1 space-y-2">
+            <div className="w-full flex-1 space-y-2 min-w-0">
               <div className="text-xl font-semibold">{statusInfo.title}</div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground break-words">
                 {statusInfo.message}
               </p>
-              <div className="flex gap-2 mt-4">
+              <div className="flex flex-wrap gap-2 mt-4">
                 {statusInfo.badges.map((badge, index) => (
                   <Badge key={index} className={badge.color}>{badge.text}</Badge>
                 ))}
@@ -211,7 +211,7 @@ export function BeautyProfile() {
             {nextProcedures.map((procedure: any, index: number) => (
               <div
                 key={index}
-                className={`flex items-center justify-between p-4 rounded-lg border ${procedure.recommended
+                className={`flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 rounded-lg border ${procedure.recommended
                   ? 'bg-orange-50 border-orange-200'
                   : 'bg-gray-50 border-gray-200'
                   }`}
@@ -233,7 +233,7 @@ export function BeautyProfile() {
                 </div>
 
                 {procedure.recommended && (
-                  <Button size="sm" onClick={() => navigate('/new-booking', { state: { service: procedure.service } })}>
+                  <Button size="sm" className="w-full sm:w-auto" onClick={() => navigate('/new-booking', { state: { service: procedure.service } })}>
                     {t('beauty.book', 'Записаться')}
                   </Button>
                 )}
@@ -307,10 +307,10 @@ export function BeautyProfile() {
             {beautyMetrics.map((metric: any) => {
               const change = metric.change || 0;
               return (
-                <div key={metric.category} className="flex items-center justify-between">
-                  <span className="text-sm">{metric.category}</span>
-                  <div className="flex items-center gap-2">
-                    <Progress value={metric.score} className="w-32 h-2" />
+                <div key={metric.category} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <span className="text-sm break-words">{metric.category}</span>
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <Progress value={metric.score} className="h-2 w-full sm:w-32" />
                     <Badge
                       variant={change > 0 ? 'default' : change < 0 ? 'destructive' : 'secondary'}
                       className="w-16 justify-center"

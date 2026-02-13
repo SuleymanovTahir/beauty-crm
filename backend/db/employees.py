@@ -96,6 +96,43 @@ def create_employee(full_name: str, position: str = None, experience: str = None
     
     now = datetime.now().isoformat()
     
+    # Не создаем дубликат сотрудника с тем же ФИО (SSOT по users.id)
+    c.execute(
+        """
+        SELECT id
+        FROM users
+        WHERE LOWER(COALESCE(full_name, '')) = LOWER(%s)
+          AND is_service_provider = TRUE
+          AND deleted_at IS NULL
+        ORDER BY id ASC
+        LIMIT 1
+        """,
+        (full_name,),
+    )
+    existing = c.fetchone()
+    if existing:
+        employee_id = int(existing[0])
+        c.execute(
+            """
+            UPDATE users
+            SET
+                position = COALESCE(%s, position),
+                experience = COALESCE(%s, experience),
+                photo = COALESCE(%s, photo),
+                bio = COALESCE(%s, bio),
+                phone = COALESCE(%s, phone),
+                email = COALESCE(%s, email),
+                instagram_employee = COALESCE(%s, instagram_employee),
+                is_active = TRUE,
+                role = 'employee'
+            WHERE id = %s
+            """,
+            (position, experience, photo, bio, phone, email, instagram, employee_id),
+        )
+        conn.commit()
+        conn.close()
+        return employee_id
+
     # Generate username from full_name
     username = full_name.lower().replace(" ", "_")
     
@@ -104,14 +141,28 @@ def create_employee(full_name: str, position: str = None, experience: str = None
     if c.fetchone():
         username = f"{username}_{int(datetime.now().timestamp())}"
     
-    c.execute("""INSERT INTO users 
-                 (username, password_hash, full_name, position, experience, photo, bio, 
-                  phone, email, instagram_employee, is_service_provider, role, created_at)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, TRUE, 'employee', %s)""",
-              (username, "placeholder_hash", full_name, position, experience, photo, bio, 
-               phone, email, instagram, now))
+    c.execute(
+        """INSERT INTO users
+             (username, password_hash, full_name, position, experience, photo, bio,
+              phone, email, instagram_employee, is_service_provider, role, created_at)
+             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, TRUE, 'employee', %s)
+             RETURNING id""",
+        (
+            username,
+            "placeholder_hash",
+            full_name,
+            position,
+            experience,
+            photo,
+            bio,
+            phone,
+            email,
+            instagram,
+            now,
+        ),
+    )
     
-    employee_id = c.lastrowid
+    employee_id = int(c.fetchone()[0])
     conn.commit()
     conn.close()
     

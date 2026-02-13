@@ -7,19 +7,12 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 from db import (
-    get_all_bookings, save_booking,
+    save_booking,
     update_booking_status,
     get_or_create_client, update_client_info, log_activity,
-    get_bookings_by_phone,
-    get_bookings_by_client,
-    get_bookings_by_master,
-    get_bookings_by_master,
-    get_booking_progress,
-    update_booking_progress,
     get_filtered_bookings,
     get_booking_stats
 )
-from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_warning, log_info
@@ -43,19 +36,6 @@ class CreateBookingRequest(BaseModel):
 
 class UpdateStatusRequest(BaseModel):
     status: str
-
-class UpdateBookingRequest(BaseModel):
-    instagram_id: Optional[str] = None
-    service: Optional[str] = None
-    date: Optional[str] = None
-    time: Optional[str] = None
-    phone: Optional[str] = None
-    name: Optional[str] = None
-    master: Optional[str] = None
-    revenue: Optional[float] = None
-    source: Optional[str] = None
-    status: Optional[str] = None
-    notes: Optional[str] = None
 
 def get_client_messengers_for_bookings(client_id: str):
     """Получить список мессенджеров клиента для bookings (DEPRECATED - use get_all_client_messengers)"""
@@ -380,8 +360,6 @@ def get_booking_detail(
         "notes": booking[11]
     }
 
-from fastapi import BackgroundTasks
-
 async def process_booking_background_tasks(
     booking_id: int,
     data: dict,
@@ -560,6 +538,19 @@ def create_booking_api(
             log_error(f"Failed to send admin booking notification: {e}", "api")
 
         return {"success": True, "message": "Booking created", "booking_id": booking_id}
+    except ValueError as e:
+        message = str(e)
+        if message.startswith("slot_unavailable:"):
+            reason = message.split(":", 1)[1] or "unavailable"
+            return JSONResponse(
+                {
+                    "error": "slot_unavailable",
+                    "reason": reason
+                },
+                status_code=409
+            )
+        log_error(f"Booking validation error: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=400)
     except Exception as e:
         log_error(f"Booking creation error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
@@ -811,31 +802,6 @@ def update_booking_status_api(
         cache.clear_by_pattern("funnel_*")
 
         return {"success": True, "message": "Booking status updated"}
-    
-    return JSONResponse({"error": "Update failed"}, status_code=400)
-
-@router.put("/bookings/{booking_id}")
-def update_booking_api(
-    booking_id: int,
-    data: UpdateBookingRequest,
-    session_token: Optional[str] = Cookie(None)
-):
-    """Обновить детали записи"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    if user["role"] not in ["admin", "manager", "director"]:
-        return JSONResponse({"error": "Forbidden"}, status_code=403)
-        
-    from db.bookings import update_booking_details
-    
-    success = update_booking_details(booking_id, data.dict(exclude_unset=True))
-    
-    if success:
-        log_activity(user["id"], "update_booking_details", "booking", str(booking_id), f"Updated details")
-        cache.clear_by_pattern("dashboard_*")
-        return {"success": True, "message": "Booking updated"}
     
     return JSONResponse({"error": "Update failed"}, status_code=400)
 
@@ -1148,22 +1114,78 @@ async def update_booking_api(
         # Обновляем запись
         new_service = data.get('service', old_service)
         new_datetime = f"{data.get('date')} {data.get('time')}" if data.get('date') and data.get('time') else old_datetime
-        new_master = data.get('master', old_master)
+        raw_master = data.get('master', old_master)
+        from db.bookings import normalize_master_value
+        normalized_master = normalize_master_value(raw_master)
+        if normalized_master is None and raw_master and str(raw_master).strip().lower() not in {"any", "any_master", "global", "любой", "не указан", "не указано"}:
+            normalized_master = str(raw_master).strip()
+        new_master = normalized_master
         new_name = data.get('name', old_name)
         new_phone = data.get('phone', old_phone)
         new_revenue = data.get('revenue', old_revenue)
         new_source = data.get('source', old_source)
+
+        has_master_user_id = False
+        master_user_id = None
+        c.execute(
+            """
+            SELECT 1
+            FROM information_schema.columns
+            WHERE table_name = 'bookings' AND column_name = 'master_user_id'
+            LIMIT 1
+            """
+        )
+        has_master_user_id = bool(c.fetchone())
+        if has_master_user_id and new_master:
+            c.execute(
+                """
+                SELECT id
+                FROM users
+                WHERE is_service_provider = TRUE
+                  AND deleted_at IS NULL
+                  AND (
+                    LOWER(full_name) = LOWER(%s)
+                    OR LOWER(username) = LOWER(%s)
+                    OR LOWER(COALESCE(nickname, '')) = LOWER(%s)
+                  )
+                ORDER BY
+                    CASE
+                        WHEN LOWER(username) = LOWER(%s) THEN 0
+                        WHEN LOWER(full_name) = LOWER(%s) THEN 1
+                        ELSE 2
+                    END,
+                    id ASC
+                LIMIT 1
+                """,
+                (new_master, new_master, new_master, new_master, new_master),
+            )
+            master_row = c.fetchone()
+            if master_row:
+                master_user_id = int(master_row[0])
 
         # Sync client info if phone/name changed
         if new_phone != old_phone or new_name != old_name:
             from db.clients import update_client_info
             update_client_info(current_instagram_id, phone=new_phone, name=new_name)
 
-        c.execute("""
-            UPDATE bookings
-            SET service_name = %s, datetime = %s, master = %s, name = %s, phone = %s, revenue = %s, source = %s
-            WHERE id = %s
-        """, (new_service, new_datetime, new_master, new_name, new_phone, new_revenue, new_source, booking_id))
+        if has_master_user_id:
+            c.execute(
+                """
+                UPDATE bookings
+                SET service_name = %s, datetime = %s, master = %s, master_user_id = %s, name = %s, phone = %s, revenue = %s, source = %s
+                WHERE id = %s
+                """,
+                (new_service, new_datetime, new_master, master_user_id, new_name, new_phone, new_revenue, new_source, booking_id),
+            )
+        else:
+            c.execute(
+                """
+                UPDATE bookings
+                SET service_name = %s, datetime = %s, master = %s, name = %s, phone = %s, revenue = %s, source = %s
+                WHERE id = %s
+                """,
+                (new_service, new_datetime, new_master, new_name, new_phone, new_revenue, new_source, booking_id),
+            )
 
         conn.commit()
         conn.close()

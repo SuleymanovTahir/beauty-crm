@@ -91,71 +91,35 @@ class SmartScheduler:
     def _get_filtered_slots(self, master_name: str, date_obj, duration_minutes: int) -> Tuple[List[str], str]:
         """Fetch slots and apply Smart Constraints (Travel Buffer). Returns (slots, status)"""
         date_str = date_obj.strftime("%Y-%m-%d")
-        
-        # ✅ ВАЛИДАЦИЯ: Проверяем, что мастер существует в БД
-        from db.connection import get_db_connection
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        try:
-            cursor.execute("SELECT id, full_name, is_active, is_service_provider FROM users WHERE full_name = %s", (master_name,))
-            master_info = cursor.fetchone()
-            
-            if not master_info:
-                logger.error(f"❌ ERROR: Master '{master_name}' NOT FOUND in users table!")
-                return [], "not_found"
-            
-            if not master_info[2]:  # is_active
-                logger.warning(f"⚠️ WARNING: Master '{master_name}' (id={master_info[0]}) is NOT ACTIVE!")
-                return [], "inactive"
-            
-            if not master_info[3]:  # is_service_provider
-                logger.warning(f"⚠️ WARNING: Master '{master_name}' (id={master_info[0]}) is NOT a service provider!")
-                return [], "not_provider"
-            # Check specifically for Time Off (Vacation)
-            day_str = date_obj.strftime("%Y-%m-%d")
-            day_start = f"{day_str} 00:00:00"
-            day_end = f"{day_str} 23:59:59"
-            
-            cursor.execute("""
-                SELECT reason FROM user_time_off 
-                WHERE user_id = %s 
-                AND (
-                    (start_date <= %s AND end_date >= %s)
-                )
-            """, (master_info[0], day_start, day_end))
-            
-            time_off = cursor.fetchone()
-            if time_off:
-                logger.info(f"🌴 Master '{master_name}' on time off: {time_off[0]}")
-                return [], "vacation"
 
-        finally:
-            conn.close()
-        
-        # 1. Get Raw Slots
-        # We assume 1h duration for now, ideally this comes from service
+        # SSOT: существование/график/выходные/праздники/брони валидируются в MasterScheduleService
+        user_record = self.schedule_service._get_user_record(master_name)
+        if not user_record:
+            logger.error(f"Master '{master_name}' not found")
+            return [], "not_found"
+
+        master_identifier = str(user_record.get("id") or master_name)
+
+        # 1. Get Raw Slots from SSOT schedule service
         try:
             raw_slots = self.schedule_service.get_available_slots(
-                master_name=master_name,
+                master_name=master_identifier,
                 date=date_str,
                 duration_minutes=duration_minutes 
             )
         except Exception as e:
-            logger.error(f"❌ ERROR in get_available_slots for {master_name}: {e}", exc_info=True)
+            logger.error(f"Error in get_available_slots for {master_name}: {e}", exc_info=True)
             return [], "error"
         
         # ✅ ВАЛИДАЦИЯ: Проверяем тип и формат слотов
         if not isinstance(raw_slots, list):
-            logger.error(f"❌ ERROR: get_available_slots returned invalid type: {type(raw_slots)}")
+            logger.error(f"get_available_slots returned invalid type: {type(raw_slots)}")
             return [], "error"
         
         if not raw_slots:
-            logger.debug(f"⚠️ No raw slots found for master='{master_name}', date={date_str}, duration={duration_minutes}min")
-            print(f"⚠️ WARNING: No raw slots found for master='{master_name}', date={date_str}, duration={duration_minutes}min")
+            logger.debug(f"No raw slots found for master='{master_name}', date={date_str}, duration={duration_minutes}min")
         else:
-            logger.debug(f"✅ Found {len(raw_slots)} raw slots for {master_name} on {date_str}")
-            print(f"✅ Found {len(raw_slots)} raw slots for {master_name} on {date_str}")
+            logger.debug(f"Found {len(raw_slots)} raw slots for {master_name} on {date_str}")
         
         # 2. Apply Travel Buffer Constraint
         now = get_current_time()
@@ -165,20 +129,20 @@ class SmartScheduler:
         for slot in raw_slots:
             # ✅ ВАЛИДАЦИЯ: Проверяем формат слота
             if not isinstance(slot, str):
-                logger.warning(f"⚠️ Invalid slot type: {type(slot)}, value: {slot}")
+                logger.warning(f"Invalid slot type: {type(slot)}, value: {slot}")
                 continue
             
             if ':' not in slot:
-                logger.warning(f"⚠️ Invalid slot format (no ':'): {slot}")
+                logger.warning(f"Invalid slot format (no ':'): {slot}")
                 continue
             
             try:
                 slot_hour, slot_min = map(int, slot.split(':'))
                 if not (0 <= slot_hour < 24 and 0 <= slot_min < 60):
-                    logger.warning(f"⚠️ Invalid time values: {slot}")
+                    logger.warning(f"Invalid time values: {slot}")
                     continue
             except (ValueError, AttributeError) as e:
-                logger.warning(f"⚠️ Error parsing slot '{slot}': {e}")
+                logger.warning(f"Error parsing slot '{slot}': {e}")
                 continue
             
             if is_today:

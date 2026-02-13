@@ -44,6 +44,8 @@
 
   /* Removed legacy purple variables */
   --radius: 0.625rem;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* @theme removed to prevent global pollution */
@@ -61,44 +63,32 @@
   }
 
   .wizard-scrollable h1 {
-    font-size: 1.5rem;
+    font-size: clamp(1.25rem, 4.8vw, 1.5rem);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   .wizard-scrollable h2 {
-    font-size: 1.25rem;
+    font-size: clamp(1.125rem, 4vw, 1.25rem);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   .wizard-scrollable h3 {
-    font-size: 1.125rem;
+    font-size: clamp(1rem, 3.5vw, 1.125rem);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   .wizard-scrollable h4 {
-    font-size: 1rem;
+    font-size: clamp(0.9rem, 3.2vw, 1rem);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   .wizard-scrollable label {
-    font-size: 1rem;
+    font-size: clamp(0.875rem, 3vw, 1rem);
     font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
-
-  .wizard-scrollable button {
-    font-size: 1rem;
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
-
-  .wizard-scrollable input {
-    font-size: 1rem;
-    font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }
 }

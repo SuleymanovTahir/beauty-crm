@@ -184,6 +184,24 @@ export const BookingSection = () => {
 
     try {
       setLoading(true);
+      const availability = await api.getPublicAvailableSlots(
+        formData.date,
+        undefined,
+        undefined,
+        { serviceIds: formData.selectedServices }
+      );
+      const requestedTime = String(formData.time).slice(0, 5);
+      const hasRequestedSlot = Array.isArray(availability?.slots)
+        && availability.slots.some((slot: any) => {
+          const slotTime = String(slot?.time ?? '').slice(0, 5);
+          const slotAvailable = slot?.available !== false;
+          return slotTime === requestedTime && slotAvailable;
+        });
+
+      if (!hasRequestedSlot) {
+        toast.error(t('datetime.noSlots'));
+        return;
+      }
 
       const payload = {
         name: formData.name,
@@ -213,6 +231,9 @@ export const BookingSection = () => {
       // Если сервер вернул ключ ошибки, переводим его
       if (errorMsg === 'phone_too_short') {
         errorMsg = t('phone_too_short');
+      }
+      if (err?.error === 'slot_unavailable') {
+        errorMsg = t('datetime.noSlots');
       }
 
       toast.error(errorMsg);

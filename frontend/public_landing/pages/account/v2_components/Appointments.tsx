@@ -124,24 +124,24 @@ export function Appointments() {
     return (
       <Card key={appointment.id} className="border-gray-200">
         <CardContent className="p-4">
-          <div className="flex items-start gap-3">
+          <div className="flex items-start gap-3 min-w-0">
             <Avatar className="w-12 h-12">
               <AvatarImage src={appointment.master_photo} alt={appointment.master_name} />
               <AvatarFallback>{appointment.master_name?.[0]}</AvatarFallback>
             </Avatar>
 
-            <div className="flex-1 space-y-2">
-              <div className="flex items-start justify-between">
-                <div>
+            <div className="flex-1 space-y-2 min-w-0">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
                   <div className="font-semibold">{appointment.master_name}</div>
                   <div className="text-sm text-muted-foreground">{appointment.master_specialty || t('appointments.master', 'Мастер')}</div>
                 </div>
                 {getStatusBadge(appointment.status)}
               </div>
 
-              <div className="text-sm font-medium">{appointment.service_name}</div>
+              <div className="text-sm font-medium break-words">{appointment.service_name}</div>
 
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
                   {dateTime.toLocaleDateString(i18n.language, {
@@ -156,13 +156,14 @@ export function Appointments() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-2">
                 <div className="font-bold">{formatCurrency(appointment.price, currency)}</div>
 
                 {appointment.status === 'completed' && (
                   <Button
                     size="sm"
                     variant="outline"
+                    className="w-full sm:w-auto"
                     onClick={() => navigate('/new-booking', {
                       state: {
                         prefillMaster: appointment.master_id,
@@ -177,17 +178,22 @@ export function Appointments() {
                 )}
 
                 {(appointment.status === 'upcoming' || appointment.status === 'confirmed' || appointment.status === 'pending') && (
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button
                       size="sm"
                       variant="outline"
+                      className="w-full sm:w-auto"
                       onClick={() => addToGoogleCalendar(appointment)}
                     >
                       <CalendarPlus className="w-4 h-4 mr-2" />
                       {t('appointments.add_to_calendar', 'В календарь')}
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => handleEditBooking(appointment)}>{t('appointments.edit', 'Изменить')}</Button>
-                    <Button size="sm" variant="destructive" onClick={() => handleCancelBooking(appointment.id)}>{t('appointments.cancel', 'Отменить')}</Button>
+                    <Button size="sm" variant="outline" className="w-full sm:w-auto" onClick={() => handleEditBooking(appointment)}>
+                      {t('appointments.edit', 'Изменить')}
+                    </Button>
+                    <Button size="sm" variant="destructive" className="w-full sm:w-auto" onClick={() => handleCancelBooking(appointment.id)}>
+                      {t('appointments.cancel', 'Отменить')}
+                    </Button>
                   </div>
                 )}
               </div>
@@ -200,28 +206,28 @@ export function Appointments() {
 
   return (
     <div className="max-w-3xl space-y-6 pb-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">{t('appointments.title', 'Мои записи')}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">{t('appointments.title', 'Мои записи')}</h1>
           <p className="text-muted-foreground">{t('appointments.subtitle', 'Управляйте вашими визитами')}</p>
         </div>
-        <Button onClick={() => navigate('/new-booking')}>
+        <Button className="w-full sm:w-auto" onClick={() => navigate('/new-booking')}>
           <CalendarPlus className="w-4 h-4 mr-2" />
           {t('appointments.new_booking', 'Добавить запись')}
         </Button>
       </div>
 
       <Tabs value={filter} onValueChange={(v) => setFilter(v as any)} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="upcoming" className="flex items-center gap-2">
+        <TabsList className="grid w-full h-auto grid-cols-1 sm:grid-cols-3 gap-1 p-1">
+          <TabsTrigger value="upcoming" className="flex items-center justify-start sm:justify-center gap-2 h-auto min-h-10 px-3 py-2 whitespace-normal text-left sm:text-center">
             <Calendar className="w-4 h-4" />
             {t('appointments.upcoming', 'Предстоящие')}
           </TabsTrigger>
-          <TabsTrigger value="history" className="flex items-center gap-2">
+          <TabsTrigger value="history" className="flex items-center justify-start sm:justify-center gap-2 h-auto min-h-10 px-3 py-2 whitespace-normal text-left sm:text-center">
             <CheckCircle className="w-4 h-4" />
             {t('appointments.history', 'История')}
           </TabsTrigger>
-          <TabsTrigger value="recurring" className="flex items-center gap-2">
+          <TabsTrigger value="recurring" className="flex items-center justify-start sm:justify-center gap-2 h-auto min-h-10 px-3 py-2 whitespace-normal text-left sm:text-center">
             <Repeat className="w-4 h-4" />
             {t('appointments.recurring', 'Повторяющиеся')}
           </TabsTrigger>

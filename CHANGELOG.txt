@@ -1,3 +1,143 @@
+## [2026-02-13] Public Booking Consistency (Service IDs + Duration + Guest Flow)
+- Unified slot checks for public booking creation in `backend/api/public.py`:
+  - public booking now resolves selected services first (`service_ids`),
+  - calculates total duration from `services.duration` (SSOT),
+  - auto-selects an available master for requested date/time when `employee_id` is not provided,
+  - validates slot with `MasterScheduleService.validate_slot(...)` before saving booking.
+- Extended public availability APIs in `backend/api/schedule.py`:
+  - `GET /api/public/available-slots` and `GET /api/public/available-slots/batch` now support:
+    - `service_ids` (comma-separated),
+    - `duration_minutes` override,
+    - full-service match filtering for masters (not partial match).
+  - fixed PostgreSQL 500 in batch endpoint by replacing `DISTINCT ... ORDER BY` with grouped query (`GROUP BY u.id, u.sort_order, u.full_name`).
+- Added service-aware availability for public dates endpoint:
+  - `GET /api/public/schedule/{master}/available-dates` now accepts `service_ids`,
+  - for `any/global` merges dates only across masters that provide all requested services.
+- Frontend now sends consistent availability context from booking wizard:
+  - `frontend/public_landing/pages/account/booking/DateTimeStep.tsx`,
+  - `frontend/public_landing/pages/account/booking/ProfessionalStep.tsx`,
+  - both pass `service_ids` + total duration to public slot APIs.
+- Fixed guest confirmation path in new-booking:
+  - `frontend/public_landing/pages/account/booking/ConfirmStep.tsx` now uses `/api/public/bookings` for unauthenticated users (no 401 on `/api/bookings`).
+- Hardened landing booking form pre-validation:
+  - `frontend/public_landing/components/BookingSection.tsx` now checks selected date/time against public availability API before submit.
+
+## [2026-02-13] Booking/Schedule SSOT Dedup (Master Identity + Draft Storage)
+- Убрано дублирование временного хранилища прогресса записи:
+  - `backend/db/bookings.py` теперь использует только `booking_drafts` для `get/update/clear_booking_progress`,
+  - удалены legacy-дубликаты функций на `booking_temp` и мертвый код в `get_bookings_by_phone`.
+- Нормализована идентификация мастера как единый источник:
+  - добавлена канонизация мастера по `id/username/full_name/nickname` в `backend/db/bookings.py`,
+  - сохранение/обновление записей теперь использует каноническое имя мастера (без расщепления по разным строкам),
+  - фильтрация/чтение бронирований по мастеру переведены на alias-aware matching.
+- Добавлен стабильный ключ мастера в схему данных:
+  - `backend/db/init.py`: `bookings.master_user_id`,
+  - `backend/db/init.py`: расширен `booking_drafts` (`instagram_id`, `data`, `master_user_id`, `updated_at`) + индексы/дедуп.
+- Унифицирован расчет публичных свободных слотов по `user_id`:
+  - `backend/api/schedule.py`: `/public/available-slots` и `/public/available-slots/batch` больше не завязаны на `full_name`,
+  - устранен конфликт при одинаковых именах мастеров.
+- Убрана дублирующая проверка доступности в `backend/services/smart_scheduler.py`:
+  - `SmartScheduler` теперь берет слоты только из `MasterScheduleService` (SSOT), без отдельной ручной проверки `users/user_time_off`.
+- Синхронизирована SSOT очистка/аналитика черновиков:
+  - `backend/db/analytics.py`: funnel `started_booking` считает из `booking_drafts`,
+  - `backend/db/clients.py`: удаление клиента чистит `booking_drafts` (и legacy `booking_temp` для совместимости).
+- Защита от повторного создания сотрудников с одинаковым ФИО:
+  - `backend/db/employees.py:create_employee` теперь переиспользует существующую запись сотрудника (SSOT по `users.id`) и обновляет профиль вместо создания дубля.
+
+## [2026-02-13] Availability SSOT (Holidays + Lunch + Time-Off + Bookings) for CRM/Public/Bot
+- Unified availability engine in `backend/services/master_schedule.py`:
+  - added single day-context calculation used by slot generation, date availability, and direct slot validation,
+  - holidays (`salon_holidays` + `master_exceptions`), lunch break, `user_time_off`, confirmed bookings, and active draft holds are now evaluated in one place,
+  - booking overlap check now uses service duration from `services.duration` (SSOT) instead of start-time-only collisions.
+- Added reusable APIs in schedule service:
+  - `validate_slot(master, date, time, duration)` for authoritative slot checks,
+  - `estimate_duration_minutes(service_label)` to derive duration from `services` table.
+- Enforced slot validation on booking save path in `backend/db/bookings.py`:
+  - future bookings with selected master now fail fast with `slot_unavailable:*` reason when slot is blocked.
+- Updated booking endpoints to return explicit conflict on unavailable slots:
+  - `backend/api/bookings.py` returns `409` with `error=slot_unavailable`,
+  - `backend/api/public.py` returns `409` with structured detail for slot conflict.
+- Fixed holidays persistence/retrieval as SSOT in DB layer:
+  - `backend/db/holidays.py` now stores and returns `master_exceptions` (JSONB),
+  - `backend/api/holidays.py` response model now includes `master_exceptions`.
+- CRM Team schedule UI now reflects holiday day-off automatically:
+  - `frontend/src/components/admin/EmployeeSchedule.tsx` loads weekly holidays and marks day as off if holiday is closed and employee is not in holiday exceptions,
+  - prevents accidental schedule edits on such holiday cells.
+
+## [2026-02-13] Staff Service Matrix Alignment (Simo/Lyazat/Gulya) + Duration SSOT
+- Reworked `backend/scripts/maintenance/sync_master_services.py` into explicit SSOT matrix sync by `service_key`:
+  - set deterministic assignments and online-booking flags for:
+    - `sabri` (Simo),
+    - `lyazat`,
+    - `gulcehre` (Gulya),
+  - removed category-based drift for these users and now keeps only matrix-defined services.
+- Enforced single source of truth for service duration:
+  - `services.duration` is now authoritative,
+  - `user_services.duration` is cleared to `NULL` during sync (`legacy overrides` cleanup).
+- Added canonical duration normalization in matrix sync for known disputed services:
+  - `kids_cut = 50`,
+  - `remove_classic = 60`,
+  - `remove_gel = 60`.
+- Updated backend APIs to follow duration SSOT:
+  - `backend/api/employee_services.py`:
+    - reads duration from `services.duration`,
+    - adding/updating employee-service link no longer persists duration override,
+    - duration edits now update `services.duration` globally for the service.
+  - `backend/api/services.py` (`update_service_employees`):
+    - creates links with `user_services.duration = NULL`.
+  - `backend/api/service_change_requests.py`:
+    - displays current duration from `services.duration`,
+    - approved duration changes now update `services.duration` and clear `user_services.duration`.
+  - `backend/db/services.py`:
+    - service duration updates no longer fan out to `user_services.duration`; overrides are cleared.
+- Updated seed behavior for consistency:
+  - `backend/scripts/testing/data/seed_test_data.py` now inserts `user_services.duration = NULL`.
+- Verification after sync run:
+  - `user_services.duration NOT NULL`: `0` (global),
+  - `sabri`: `21` services (`online_on=9`, `online_off=12`),
+  - `lyazat`: `19` services (`online_on=13`, `online_off=6`),
+  - `gulcehre`: `31` services (`online_on=23`, `online_off=8`),
+  - active services without masters: `0`.
+
+## [2026-02-13] Booking UX Backflow + Clickable Master Slots + Service Matrix Cleanup
+- Improved public booking wizard navigation in `frontend/public_landing/pages/account/UserBookingWizard.tsx`:
+  - back button now returns to the previous wizard step (step history stack), not hard-reset to menu/professional.
+  - normalized invalid `booking` query values to safe step fallback.
+- Added clickable availability chips in `frontend/public_landing/pages/account/booking/ProfessionalStep.tsx`:
+  - each displayed time under a specialist is now clickable,
+  - click selects specialist + today date + clicked time into booking state,
+  - selected chip is visually highlighted for current specialist/date.
+- Rebuilt staff-service sync logic (SSOT, no ID hardcode) in `backend/scripts/maintenance/sync_master_services.py`:
+  - removed all test services and test links by `service_key/name` markers (`test/тест`),
+  - replaced brittle ID-based removals with deterministic username/category/key matrix,
+  - enabled online/calendar flags and normalized missing pricing/duration values from service catalog,
+  - added final orphan-services check (active non-test services without masters).
+- Verified live DB after sync:
+  - test services left: `0`,
+  - `lyazat`: `22` services (`Manicure`, `Pedicure`, `Combo`) instead of single test item,
+  - `sabri`: `21` hair services restored,
+  - orphan active non-test services: `0`.
+
+## [2026-02-13] Public Booking Slots Restore + Flexible Schedule Pattern
+- Restored missing public slot APIs used by booking wizard:
+  - added `GET /api/public/available-slots` in `backend/api/schedule.py`,
+  - added `GET /api/public/available-slots/batch` in `backend/api/schedule.py`,
+  - both endpoints now return data in frontend-compatible shape and support optional `service_id`.
+- Fixed root cause of empty slots in `new-booking` flow:
+  - frontend expected `/api/public/available-slots*`, but backend only exposed protected `/api/schedule/*` variants.
+- Hardened master identity resolution in schedule engine (`backend/services/master_schedule.py`):
+  - matching now works by `id`, `username`, `full_name`, or `nickname`,
+  - availability checks now use canonical `full_name` for bookings overlap queries to avoid mismatch when requests use username.
+- Fixed available-dates calls for selected professional in wizard:
+  - switched to stable identifier priority `username -> full_name` in:
+    - `frontend/public_landing/pages/account/booking/DateTimeStep.tsx`,
+    - `frontend/public_landing/pages/account/booking/ProfessionalStep.tsx`.
+- Relaxed hard schedule template limits in CRM employee calendar:
+  - removed strict `min/max` numeric constraints in `EmployeeSchedule` template inputs,
+  - pattern parser now accepts flexible `x/y` values (including `0`) without forcing clamp to fixed presets.
+- Extended slot typing on frontend API client:
+  - `getPublicAvailableSlots` now supports `isOptimal/is_optimal` metadata in `frontend/src/services/api.ts`.
+
 ## [2026-02-13] Team Calendar UX + Auto Schedule Defaults + Nickname Sync
 - Restored expected team schedule workflow in CRM employee management:
   - schedule modal now closes on backdrop click (`ScheduleDialog`),

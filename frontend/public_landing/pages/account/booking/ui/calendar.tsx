@@ -31,21 +31,23 @@ function Calendar({
         <div style={{
             background: 'white',
             borderRadius: '16px',
-            padding: '16px',
+            padding: 'clamp(10px, 2.2vw, 18px)',
             boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-            width: 'fit-content',
+            width: '100%',
+            maxWidth: '100%',
             margin: '0 auto',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center'
+            alignItems: 'stretch',
+            overflowX: 'hidden'
         }}>
             {/* External Custom Header */}
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
-                marginBottom: '10px', // Reduced from 10px to bring closer to calendar
+                gap: '6px',
+                marginBottom: '12px',
                 width: '100%'
             }}>
                 <button
@@ -54,8 +56,8 @@ function Calendar({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: '32px',
-                        height: '32px',
+                        width: 'clamp(30px, 6vw, 40px)',
+                        height: 'clamp(30px, 6vw, 40px)',
                         border: 'none',
                         background: 'transparent',
                         cursor: 'pointer',
@@ -68,14 +70,14 @@ function Calendar({
                 </button>
 
                 <span style={{
-                    fontSize: '18px',
+                    fontSize: 'clamp(17px, 3.4vw, 24px)',
                     fontWeight: 700,
                     textTransform: 'capitalize',
                     color: '#0f172a',
-                    padding: '0 8px',
+                    padding: '0 6px',
                     textAlign: 'center',
                     whiteSpace: 'nowrap',
-                    minWidth: '160px' // Ensure enough space so year doesn't jump
+                    minWidth: 'clamp(150px, 32vw, 220px)'
                 }}>
                     {format(currentMonth, 'LLLL yyyy', { locale })}
                 </span>
@@ -86,8 +88,8 @@ function Calendar({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: '32px',
-                        height: '32px',
+                        width: 'clamp(30px, 6vw, 40px)',
+                        height: 'clamp(30px, 6vw, 40px)',
                         border: 'none',
                         background: 'transparent',
                         cursor: 'pointer',
@@ -104,16 +106,19 @@ function Calendar({
                 month={currentMonth}
                 onMonthChange={handleMonthChange}
                 showOutsideDays={showOutsideDays}
-                className={className}
+                className={['w-full max-w-full', className].filter(Boolean).join(' ')}
                 locale={locale}
                 modifiersClassNames={{
                     today: 'today-day'
                 }}
                 styles={{
-                    table: { margin: '0 auto', borderCollapse: 'separate', borderSpacing: '4px' }, // Separate to show rounded shapes
-                    head_cell: { width: '40px', height: '40px', fontWeight: 500, color: '#64748b' },
-                    cell: { width: '40px', height: '40px', padding: 0 },
-                    day: { width: '40px', height: '40px', borderRadius: '50%', fontSize: '15px' },
+                    root: { width: '100%', maxWidth: '100%' },
+                    months: { width: '100%', maxWidth: '100%' },
+                    month: { width: '100%', maxWidth: '100%' },
+                    table: { margin: '0 auto', borderCollapse: 'separate', borderSpacing: '2px', width: 'min(100%, 720px)', maxWidth: '100%', tableLayout: 'fixed' },
+                    head_cell: { width: '14.285%', height: 'clamp(34px, 6vw, 46px)', fontWeight: 600, color: '#4b5563', fontSize: 'clamp(14px, 1.8vw, 16px)', textAlign: 'center' },
+                    cell: { width: '14.285%', height: 'clamp(40px, 6.2vw, 58px)', padding: 0, textAlign: 'center' },
+                    day: { width: 'clamp(36px, 5.2vw, 52px)', height: 'clamp(36px, 5.2vw, 52px)', borderRadius: '50%', fontSize: 'clamp(15px, 2.1vw, 18px)', margin: '0 auto' },
                     caption: { display: 'none' },
                     caption_label: { display: 'none' }, // Disable caption label specifically
                     nav: { display: 'none' }
@@ -123,6 +128,20 @@ function Calendar({
             <style>{`
         .rdp-caption, .rdp-caption_label, .rdp-nav, .rdp-month_caption { display: none !important; }
         .DayPicker-Caption, .DayPicker-NavBar { display: none !important; }
+        .rdp, .rdp-root, .rdp-months, .rdp-month, .rdp-table {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .rdp-table {
+            table-layout: fixed !important;
+            width: min(100%, 720px) !important;
+            margin: 0 auto !important;
+        }
+        .rdp-day_button {
+            width: clamp(36px, 5.2vw, 52px) !important;
+            height: clamp(36px, 5.2vw, 52px) !important;
+            margin: 0 auto !important;
+        }
 
         /* Available Days (Base) - Highlighting slightly as requested */
         .rdp-day:not(.rdp-day_disabled):not(.rdp-day_selected):not(.today-day) {

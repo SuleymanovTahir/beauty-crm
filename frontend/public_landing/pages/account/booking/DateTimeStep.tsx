@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Calendar } from './ui/calendar';
-import { Sparkles, Clock } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { motion } from 'motion/react';
 import { format } from 'date-fns';
 import { api } from '../../../../src/services/api';
@@ -27,6 +27,7 @@ export function DateTimeStep({
     selectedDate,
     selectedTime,
     selectedMaster,
+    selectedServices,
     totalDuration,
     onDateTimeChange,
 }: DateTimeStepProps) {
@@ -38,20 +39,29 @@ export function DateTimeStep({
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const dateLocale = getDateLocaleCentral(i18n.language);
+    const selectedServiceIds = useMemo(
+        () => selectedServices
+            .map((service: any) => Number(service?.id))
+            .filter((serviceId: number) => Number.isFinite(serviceId) && serviceId > 0),
+        [selectedServices]
+    );
+    const resolvedDurationMinutes = totalDuration > 0 ? totalDuration : 60;
 
     // Fetch available dates pattern optimized
     useEffect(() => {
         const fetchDates = async () => {
             setLoadingDates(true);
-            let masterName = selectedMaster ? (selectedMaster.full_name || selectedMaster.username) : 'any';
+            const masterName = selectedMaster
+                ? (selectedMaster.username ?? selectedMaster.full_name ?? 'any')
+                : 'any';
             try {
                 // Fetch for Current Month AND Next Month to ensure outside days are clickable
                 const nextMonth = new Date(currentMonth);
                 nextMonth.setMonth(nextMonth.getMonth() + 1);
 
                 const [currentRes, nextRes] = await Promise.all([
-                    api.getAvailableDates(masterName, currentMonth.getFullYear(), currentMonth.getMonth() + 1, totalDuration || 60),
-                    api.getAvailableDates(masterName, nextMonth.getFullYear(), nextMonth.getMonth() + 1, totalDuration || 60)
+                    api.getAvailableDates(masterName, currentMonth.getFullYear(), currentMonth.getMonth() + 1, resolvedDurationMinutes),
+                    api.getAvailableDates(masterName, nextMonth.getFullYear(), nextMonth.getMonth() + 1, resolvedDurationMinutes)
                 ]);
 
                 const combinedDates = new Set([
@@ -67,7 +77,7 @@ export function DateTimeStep({
             }
         };
         fetchDates();
-    }, [currentMonth, selectedMaster, totalDuration]);
+    }, [currentMonth, selectedMaster, resolvedDurationMinutes]);
 
     // Fetch time slots when date is selected
     useEffect(() => {
@@ -79,11 +89,27 @@ export function DateTimeStep({
             try {
                 let rawSlots: any[] = [];
                 if (selectedMaster) {
-                    const res = await api.getPublicAvailableSlots(dateStr, selectedMaster.id);
+                    const res = await api.getPublicAvailableSlots(
+                        dateStr,
+                        selectedMaster.id,
+                        undefined,
+                        {
+                            serviceIds: selectedServiceIds,
+                            durationMinutes: resolvedDurationMinutes,
+                        }
+                    );
                     rawSlots = (res.slots || []).filter((s: any) => s.available);
                 } else {
                     // Optimization: Single request for "Any Master" instead of N requests
-                    const res = await api.getPublicAvailableSlots(dateStr);
+                    const res = await api.getPublicAvailableSlots(
+                        dateStr,
+                        undefined,
+                        undefined,
+                        {
+                            serviceIds: selectedServiceIds,
+                            durationMinutes: resolvedDurationMinutes,
+                        }
+                    );
                     rawSlots = (res.slots || []).filter((s: any) => s.available);
                 }
 
@@ -92,13 +118,17 @@ export function DateTimeStep({
                     let period: 'morning' | 'afternoon' | 'evening' = 'afternoon';
                     if (hour < 12) period = 'morning';
                     else if (hour >= 17) period = 'evening';
-                    return { ...s, period, isOptimal: s.isOptimal || false };
+                    return {
+                        ...s,
+                        period,
+                        isOptimal: (s.isOptimal ?? s.is_optimal ?? false) === true
+                    };
                 });
                 setTimeSlots(processed);
             } catch (e) { } finally { setLoading(false); }
         };
         fetchSlots();
-    }, [selectedDate, selectedMaster]);
+    }, [selectedDate, selectedMaster, selectedServiceIds, resolvedDurationMinutes]);
 
     const handleDateSelect = (date: Date | undefined) => {
         if (date) {
@@ -130,7 +160,7 @@ export function DateTimeStep({
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm"
+                className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm"
             >
                 <div className="flex items-center justify-between">
                     <div>
@@ -145,7 +175,7 @@ export function DateTimeStep({
                 </div>
             </motion.div>
 
-            <div className="grid lg:grid-cols-2 gap-6">
+            <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Calendar */}
                 <motion.div
                     initial={{ opacity: 0, x: -10 }}
@@ -158,7 +188,7 @@ export function DateTimeStep({
                                 {t('datetime.date', '1. Select Date')}
                             </h3>
                         </div>
-                        <div className="p-4">
+                        <div className="p-3 sm:p-4 overflow-x-hidden flex justify-center">
                             <Calendar
                                 mode="single"
                                 selected={selectedDate || undefined}
@@ -174,7 +204,7 @@ export function DateTimeStep({
                                     if (loadingDates) return date < today;
                                     return date < today || !availableDates.has(dateStr);
                                 }}
-                                className="rounded-xl border-none w-full"
+                                className="rounded-xl border-none w-full mx-auto"
                             />
                         </div>
                     </div>
@@ -190,7 +220,7 @@ export function DateTimeStep({
                         <div className="p-4 border-b border-gray-50 bg-gray-50/50">
                             <h3 className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{t('datetime.time', '2. Pick Time')}</h3>
                         </div>
-                        <div className="p-6 flex-1">
+                        <div className="p-4 sm:p-6 flex-1">
                             {!selectedDate ? (
                                 <div className="text-center py-12 text-gray-400">
                                     <Clock className="w-10 h-10 mx-auto mb-3 opacity-20" />
@@ -208,7 +238,7 @@ export function DateTimeStep({
                                     <p className="font-bold uppercase tracking-widest text-[10px]">{t('datetime.noSlots', 'No slots available')}</p>
                                 </div>
                             ) : (
-                                <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                                <div className="space-y-6 max-h-[360px] sm:max-h-[400px] overflow-y-auto overflow-x-hidden pr-1 sm:pr-2 custom-scrollbar">
                                     {(['morning', 'afternoon', 'evening'] as const).map((period) => {
                                         const periodSlots = groupedSlots[period];
                                         if (periodSlots.length === 0) return null;
@@ -218,19 +248,30 @@ export function DateTimeStep({
                                                 <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.15em] mb-3">
                                                     {t(`datetime.${period}`, period.charAt(0).toUpperCase() + period.slice(1))}
                                                 </h4>
-                                                <div className="grid grid-cols-3 gap-2">
+                                                <div className="grid grid-cols-2 min-[430px]:grid-cols-3 gap-2">
                                                     {periodSlots.map((slot) => (
                                                         <button
                                                             key={slot.time}
                                                             onClick={() => handleTimeSelect(slot.time)}
-                                                            className={`relative h-11 rounded-lg text-sm font-bold transition-all border ${selectedTime === slot.time
+                                                            className={`relative min-h-11 rounded-lg text-[clamp(0.8rem,3.1vw,0.95rem)] font-bold transition-all border ${selectedTime === slot.time
                                                                     ? 'bg-gray-900 text-white border-gray-900 shadow-md'
                                                                     : 'bg-white text-gray-900 border-gray-100 hover:border-gray-300'
                                                                 }`}
                                                         >
                                                             {slot.isOptimal && (
                                                                 <div className="absolute -top-1 -right-1">
-                                                                    <Sparkles className="w-3 h-3 text-amber-400 fill-amber-400" />
+                                                                    <img
+                                                                        src="/logo.webp"
+                                                                        alt={t('common:salon_logo', 'Salon logo')}
+                                                                        className="w-3 h-3 object-contain"
+                                                                        loading="lazy"
+                                                                        onError={(event) => {
+                                                                            const target = event.currentTarget;
+                                                                            if (!target.src.endsWith('/logo.png')) {
+                                                                                target.src = '/logo.png';
+                                                                            }
+                                                                        }}
+                                                                    />
                                                                 </div>
                                                             )}
                                                             {slot.time}

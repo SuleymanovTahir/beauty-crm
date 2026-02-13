@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks, Query
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, validator
 from typing import Optional, List, Dict
 import time
@@ -6,7 +7,7 @@ import urllib.parse
 from datetime import datetime, timedelta, date
 
 from db.settings import get_salon_settings
-from db.services import get_all_services, get_service
+from db.services import get_all_services
 from db.connection import get_db_connection
 from utils.utils import sanitize_url, map_image_path, _add_v
 from utils.cache import cache
@@ -759,36 +760,157 @@ def send_contact_message(form: ContactForm, background_tasks: BackgroundTasks):
 @router.post("/bookings")
 def create_public_booking(data: BookingCreate, background_tasks: BackgroundTasks):
     from db.bookings import save_booking
-    
-    datetime_str = f"{data.date} {data.time}"
-    master_name = None
-    if data.employee_id:
-        from db.employees import get_employee_by_id
-        emp = get_employee_by_id(data.employee_id)
-        if emp: master_name = emp['full_name']
+    from services.master_schedule import MasterScheduleService
+    from utils.duration_utils import parse_duration_to_minutes
 
-    service_names = []
-    for service_id in data.service_ids:
-        service = get_service(service_id)
-        if service: service_names.append(service.get('name', f'Service {service_id}'))
-    
-    services_str = ', '.join(service_names)
-    
+    datetime_str = f"{data.date} {data.time}"
+    requested_service_ids = list(dict.fromkeys([int(sid) for sid in data.service_ids if isinstance(sid, int) and sid > 0]))
+    if len(requested_service_ids) == 0:
+        raise HTTPException(status_code=400, detail="No valid service IDs provided")
+
+    services_str = ""
+    total_duration_minutes = 60
+    selected_master_id: Optional[int] = None
     try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute(
+                """
+                SELECT id, name, duration
+                FROM services
+                WHERE id = ANY(%s)
+                  AND is_active = TRUE
+                """,
+                (requested_service_ids,),
+            )
+            service_rows = c.fetchall() or []
+            service_by_id = {int(row[0]): row for row in service_rows if row and row[0] is not None}
+
+            service_names: List[str] = []
+            total_duration_minutes = 0
+            for service_id in requested_service_ids:
+                service_row = service_by_id.get(service_id)
+                if service_row is None:
+                    continue
+                service_names.append(str(service_row[1]))
+                parsed_duration = parse_duration_to_minutes(service_row[2])
+                total_duration_minutes += parsed_duration if parsed_duration and parsed_duration > 0 else 60
+
+            if len(service_names) == 0:
+                raise HTTPException(status_code=400, detail="No active services found for booking")
+
+            services_str = ", ".join(service_names)
+            total_duration_minutes = max(1, total_duration_minutes)
+
+            candidate_master_ids: List[int] = []
+            if data.employee_id is not None:
+                c.execute(
+                    """
+                    SELECT id
+                    FROM users
+                    WHERE id = %s
+                      AND is_active = TRUE
+                      AND is_service_provider = TRUE
+                      AND deleted_at IS NULL
+                    LIMIT 1
+                    """,
+                    (data.employee_id,),
+                )
+                employee_row = c.fetchone()
+                if not employee_row:
+                    raise ValueError("slot_unavailable:master_not_found")
+
+                c.execute(
+                    """
+                    SELECT user_id
+                    FROM user_services
+                    WHERE user_id = %s
+                      AND service_id = ANY(%s)
+                    GROUP BY user_id
+                    HAVING COUNT(DISTINCT service_id) = %s
+                    """,
+                    (int(employee_row[0]), requested_service_ids, len(requested_service_ids)),
+                )
+                if not c.fetchone():
+                    raise ValueError("slot_unavailable:master_services_mismatch")
+
+                candidate_master_ids = [int(employee_row[0])]
+            else:
+                c.execute(
+                    """
+                    SELECT u.id
+                    FROM users u
+                    INNER JOIN user_services us ON us.user_id = u.id
+                    WHERE u.is_active = TRUE
+                      AND u.is_service_provider = TRUE
+                      AND u.is_public_visible = TRUE
+                      AND u.deleted_at IS NULL
+                      AND u.role != 'director'
+                      AND us.service_id = ANY(%s)
+                    GROUP BY u.id, u.sort_order, u.full_name
+                    HAVING COUNT(DISTINCT us.service_id) = %s
+                    ORDER BY u.sort_order ASC NULLS LAST, u.full_name ASC NULLS LAST
+                    """,
+                    (requested_service_ids, len(requested_service_ids)),
+                )
+                candidate_master_ids = [int(row[0]) for row in (c.fetchall() or []) if row and row[0] is not None]
+                if len(candidate_master_ids) == 0:
+                    raise ValueError("slot_unavailable:no_master_for_services")
+
+            schedule_service = MasterScheduleService()
+            last_reason = "unavailable"
+
+            for master_id in candidate_master_ids:
+                availability = schedule_service.validate_slot(
+                    master_name=str(master_id),
+                    date=data.date,
+                    time_str=data.time,
+                    duration_minutes=total_duration_minutes,
+                )
+                if availability.get("is_available"):
+                    selected_master_id = master_id
+                    break
+                reason = availability.get("reason")
+                if isinstance(reason, str) and reason.strip():
+                    last_reason = reason.strip()
+
+            if selected_master_id is None:
+                if data.employee_id is not None:
+                    raise ValueError(f"slot_unavailable:{last_reason}")
+                raise ValueError("slot_unavailable:no_master_available")
+        finally:
+            conn.close()
+
         booking_id = save_booking(
             instagram_id=data.phone,
             service=services_str,
             datetime_str=datetime_str,
             phone=data.phone,
             name=data.name,
-            master=master_name,
+            master=str(selected_master_id),
             status='pending_confirmation',
-            source=data.source or 'website'
+            source=data.source or 'website',
+            duration_minutes=total_duration_minutes,
         )
         
         log_info(f"📅 New public booking: {data.name} ({data.phone}) - Services: {services_str}", "public_api")
         background_tasks.add_task(notify_admin_new_booking, data, booking_id, services_str)
         return {"success": True, "booking_id": booking_id, "message": "Booking request received"}
+    except ValueError as e:
+        message = str(e)
+        if message.startswith("slot_unavailable:"):
+            reason = message.split(":", 1)[1] or "unavailable"
+            return JSONResponse(
+                {
+                    "error": "slot_unavailable",
+                    "reason": reason
+                },
+                status_code=409,
+            )
+        raise HTTPException(status_code=400, detail=str(e))
+    except HTTPException:
+        raise
     except Exception as e:
         log_error(f"Error creating booking: {e}", "public_api")
         raise HTTPException(status_code=500, detail=str(e))

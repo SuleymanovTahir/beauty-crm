@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Dialog, DialogContent } from './ui/dialog';
@@ -34,6 +35,7 @@ export function ConfirmStep({
     onOpenRescheduleDialog
 }: ConfirmStepProps) {
     const { t, i18n } = useTranslation(['booking', 'common']);
+    const navigate = useNavigate();
     const { formatCurrency } = useCurrency();
     const { user } = useAuth();
     const [phone, setPhone] = useState(bookingState.phone || user?.phone || '');
@@ -45,6 +47,9 @@ export function ConfirmStep({
     const [appliedPromo, setAppliedPromo] = useState<any>(null);
     const [promoError, setPromoError] = useState('');
     const [validatingPromo, setValidatingPromo] = useState(false);
+    const minPhoneDigits = 11;
+
+    const hasValidPhone = (value: string): boolean => value.replace(/\D/g, '').length >= minPhoneDigits;
 
 
     // Автоматическая загрузка номера телефона из профиля
@@ -87,8 +92,8 @@ export function ConfirmStep({
     }, [user, bookingState.phone, profileLoaded, onPhoneChange]);
 
     const handlePhoneSubmit = () => {
-        if (!phone || phone.length < 5) { // Minimum phone length
-            toast.error(t('invalid_phone', 'Please enter a valid phone number'));
+        if (!phone || !hasValidPhone(phone)) {
+            toast.error(t('phone_too_short', { count: minPhoneDigits, defaultValue: 'Phone number is too short' }));
             return;
         }
         onPhoneChange(phone);
@@ -154,7 +159,8 @@ export function ConfirmStep({
     };
 
     const handleConfirm = async () => {
-        if (!phone) {
+        if (!phone || !hasValidPhone(phone)) {
+            toast.error(t('phone_too_short', { count: minPhoneDigits, defaultValue: 'Phone number is too short' }));
             setShowPhoneModal(true);
             return;
         }
@@ -164,7 +170,13 @@ export function ConfirmStep({
         try {
             const dateStr = bookingState.date ? format(bookingState.date, 'yyyy-MM-dd') : '';
             const serviceNames = bookingState.services.map((s: any) => getLocalizedName(s, i18n.language)).join(', ');
-            if (bookingState.id) {
+            const selectedServiceIds = Array.isArray(bookingState.services)
+                ? bookingState.services
+                    .map((service: any) => Number(service?.id))
+                    .filter((serviceId: number) => Number.isFinite(serviceId) && serviceId > 0)
+                : [];
+
+            if (bookingState.id && user) {
                 await api.put(`/api/bookings/${bookingState.id}`, {
                     service: serviceNames,
                     master: bookingState.professional?.username || 'any',
@@ -172,6 +184,17 @@ export function ConfirmStep({
                     time: bookingState.time || '',
                     phone,
                     name: user?.full_name || user?.username || bookingState.name || 'Guest',
+                    source: 'client_cabinet',
+                    promo_code: appliedPromo?.code
+                });
+            } else if (!user) {
+                await api.createPublicBooking({
+                    service_ids: selectedServiceIds,
+                    employee_id: bookingState.professional?.id ?? undefined,
+                    date: dateStr,
+                    time: bookingState.time ?? '',
+                    phone,
+                    name: bookingState.name ?? 'Guest',
                     source: 'client_cabinet',
                     promo_code: appliedPromo?.code
                 });
@@ -191,29 +214,24 @@ export function ConfirmStep({
 
             toast.success(t('confirm.success', 'Booking confirmed!'));
 
-            // Save phone to user profile if logged in
+            // Save phone in background so it does not block booking confirmation flow.
             if (user && phone && phone !== user.phone) {
-                try {
-                    await api.post('/api/client/profile/update', { phone });
-                } catch (err) {
+                api.post('/api/client/profile/update', { phone }).catch((err) => {
                     console.warn('Failed to update phone:', err);
-                }
+                });
             }
 
-            // Redirect to appointments page after success (if user logged in)
-            setTimeout(() => {
-                onSuccess();
-                if (user) {
-                    window.location.href = '/account/appointments';
-                    return;
-                }
+            onSuccess();
+            if (user) {
+                navigate('/account/appointments', { replace: true });
+                return;
+            }
 
-                toast.info(t('auth.login_to_see_more', 'Login to manage your bookings'));
-                if (setStep) {
-                    setStep('menu');
-                }
-                setLoading(false);
-            }, 1000);
+            toast.info(t('auth.login_to_see_more', 'Login to manage your bookings'));
+            if (setStep) {
+                setStep('menu');
+            }
+            setLoading(false);
         } catch (error) {
             console.error('Booking error:', error);
             toast.error(t('confirm.error', 'Error creating booking. Please try again.'));
@@ -240,7 +258,7 @@ export function ConfirmStep({
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
-            <div className="max-w-2xl mx-auto px-4 py-8 pb-32 w-full space-y-6">
+            <div className="max-w-3xl mx-auto px-4 py-8 pb-32 w-full min-w-0 space-y-6">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -275,16 +293,18 @@ export function ConfirmStep({
                                 </div>
                                 <div className="space-y-3">
                                     {bookingState.services.map((service: any) => (
-                                        <div key={service.id} className="flex justify-between items-center group">
-                                            <div className="flex items-center gap-3">
+                                        <div key={service.id} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between group">
+                                            <div className="flex items-start gap-3 min-w-0">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-gray-900" />
-                                                <span className="text-gray-900 font-semibold">{getLocalizedName(service, i18n.language)}</span>
+                                                <span className="text-gray-900 font-semibold break-words">
+                                                    {getLocalizedName(service, i18n.language)}
+                                                </span>
                                             </div>
-                                            <div className="flex items-center gap-4 text-sm">
+                                            <div className="flex items-center gap-3 sm:gap-4 text-sm w-full sm:w-auto sm:justify-end">
                                                 <span className="text-gray-400 font-medium whitespace-nowrap">
                                                     {service.duration} {t('min', 'min')}
                                                 </span>
-                                                <span className="font-bold text-gray-900">{formatCurrency(service.price)}</span>
+                                                <span className="font-bold text-gray-900 whitespace-nowrap">{formatCurrency(service.price)}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -328,7 +348,7 @@ export function ConfirmStep({
                                         </button>
                                     )}
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div className="bg-gray-50 rounded-lg p-3">
                                         <div className="flex items-center gap-2 mb-1.5">
                                             <Calendar size={14} className="text-gray-400" />
@@ -452,7 +472,7 @@ export function ConfirmStep({
                         <Button
                             onClick={handleConfirm}
                             disabled={loading}
-                            className="w-full h-14 bg-gray-900 text-white hover:bg-gray-800 shadow-lg text-lg font-bold rounded-xl transition-all active:scale-[0.98]"
+                            className="w-full min-h-12 sm:h-14 bg-gray-900 text-white hover:bg-gray-800 shadow-lg text-base sm:text-lg font-bold rounded-xl transition-all active:scale-[0.98] leading-tight whitespace-normal break-words px-4"
                             size="lg"
                         >
                             {loading ? (

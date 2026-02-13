@@ -461,8 +461,37 @@ def get_funnel_data():
     c.execute("SELECT COUNT(*) FROM clients WHERE total_messages > 0")
     engaged = c.fetchone()[0]
     
-    c.execute("SELECT COUNT(DISTINCT instagram_id) FROM booking_temp")
-    started_booking = c.fetchone()[0]
+    c.execute(
+        """
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = 'booking_drafts'
+          AND column_name IN ('instagram_id', 'client_id')
+        """
+    )
+    draft_columns = {row[0] for row in c.fetchall()}
+    started_booking = 0
+    if "instagram_id" in draft_columns and "client_id" in draft_columns:
+        c.execute("""
+            SELECT COUNT(DISTINCT COALESCE(instagram_id, client_id))
+            FROM booking_drafts
+            WHERE COALESCE(instagram_id, client_id) IS NOT NULL
+        """)
+        started_booking = c.fetchone()[0]
+    elif "instagram_id" in draft_columns:
+        c.execute("""
+            SELECT COUNT(DISTINCT instagram_id)
+            FROM booking_drafts
+            WHERE instagram_id IS NOT NULL
+        """)
+        started_booking = c.fetchone()[0]
+    elif "client_id" in draft_columns:
+        c.execute("""
+            SELECT COUNT(DISTINCT client_id)
+            FROM booking_drafts
+            WHERE client_id IS NOT NULL
+        """)
+        started_booking = c.fetchone()[0]
     
     c.execute("SELECT COUNT(*) FROM bookings WHERE status='pending'")
     booked = c.fetchone()[0]

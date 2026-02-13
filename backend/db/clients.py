@@ -334,6 +334,21 @@ def delete_client(instagram_id: str) -> bool:
         c.execute("DELETE FROM chat_history WHERE instagram_id = %s", (instagram_id,))
         c.execute("DELETE FROM booking_reminders_sent WHERE booking_id IN (SELECT id FROM bookings WHERE instagram_id = %s)", (instagram_id,))
         c.execute("DELETE FROM bookings WHERE instagram_id = %s", (instagram_id,))
+        c.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = 'booking_drafts'
+              AND column_name IN ('instagram_id', 'client_id')
+            """
+        )
+        draft_columns = {row[0] for row in c.fetchall()}
+        if 'instagram_id' in draft_columns and 'client_id' in draft_columns:
+            c.execute("DELETE FROM booking_drafts WHERE instagram_id = %s OR client_id = %s", (instagram_id, instagram_id))
+        elif 'instagram_id' in draft_columns:
+            c.execute("DELETE FROM booking_drafts WHERE instagram_id = %s", (instagram_id,))
+        elif 'client_id' in draft_columns:
+            c.execute("DELETE FROM booking_drafts WHERE client_id = %s", (instagram_id,))
         c.execute("DELETE FROM booking_temp WHERE instagram_id = %s", (instagram_id,))
         c.execute("DELETE FROM client_notifications WHERE client_instagram_id = %s", (instagram_id,))
         

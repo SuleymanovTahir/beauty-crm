@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { format, parseISO } from 'date-fns';
@@ -73,7 +73,11 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const step = searchParams.get('booking') || 'menu';
+  const rawStep = searchParams.get('booking');
+  const normalizedStep = rawStep !== null && rawStep.trim().length > 0 ? rawStep.trim() : 'menu';
+  const allowedSteps = ['menu', 'services', 'professional', 'datetime', 'confirm'];
+  const step = allowedSteps.includes(normalizedStep) ? normalizedStep : 'menu';
+  const stepHistoryRef = useRef<string[]>([]);
   const { t, i18n } = useTranslation(['booking', 'common']);
   const { formatCurrency } = useCurrency();
   const { user } = useAuth();
@@ -152,9 +156,18 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         // Use current origin instead of hardcoded localhost
         window.location.href = window.location.origin;
       }
-    } else {
-      setStep('menu');
+      return;
     }
+
+    const history = stepHistoryRef.current;
+    if (history.length > 1) {
+      history.pop();
+      const previousStep = history[history.length - 1] ?? 'menu';
+      setStep(previousStep);
+      return;
+    }
+
+    setStep('menu');
   };
 
   const handleClose = () => {
@@ -316,6 +329,19 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     }));
   }, [bookingState]);
 
+  useEffect(() => {
+    const history = stepHistoryRef.current;
+    if (history.length === 0) {
+      history.push(step);
+      return;
+    }
+
+    const lastStep = history[history.length - 1];
+    if (lastStep !== step) {
+      history.push(step);
+    }
+  }, [step]);
+
   // Cascading selection logic: ensure selections are compatible
   useEffect(() => {
     let needsUpdate = false;
@@ -366,6 +392,28 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
     // If service has no duration, assume 60 minutes as default
     return sum + (duration > 0 ? duration : 60);
   }, 0);
+  const professionalPosition = typeof bookingState.professional?.position === 'string'
+    ? bookingState.professional.position.trim()
+    : '';
+  const bookingMetaParts: string[] = [];
+
+  if (bookingState.professional) {
+    if (bookingState.services.length > 0) {
+      bookingMetaParts.push(bookingState.professional.full_name);
+    } else if (professionalPosition.length > 0) {
+      bookingMetaParts.push(professionalPosition);
+    }
+  }
+  if (bookingState.services.length > 0) {
+    bookingMetaParts.push(`${totalDuration} ${t('min', 'min')}`);
+    bookingMetaParts.push(String(formatCurrency(totalPrice)));
+  }
+  if (hasSelectedDate || bookingState.time) {
+    const dateTimeLabel = `${selectedDateValue ? format(selectedDateValue, 'dd MMM') : ''}${bookingState.time ? ` ${bookingState.time}` : ''}`.trim();
+    if (dateTimeLabel.length > 0) {
+      bookingMetaParts.push(dateTimeLabel);
+    }
+  }
 
   if (loading) return (
     <div className="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center gap-6">
@@ -375,23 +423,23 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   );
 
   return (
-    <div className="wizard-scrollable min-h-screen bg-gray-50 flex flex-col">
+    <div className="wizard-scrollable min-h-screen bg-gray-50 flex flex-col overflow-x-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-3xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+      <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-[70]">
+        <div className="max-w-5xl mx-auto w-full min-w-0 px-4 py-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 pr-2">
               {(user || step !== 'menu') && (
                 <button onClick={handleGlobalBack} className="p-2 hover:bg-gray-100 rounded-lg text-gray-900 transition-colors">
                   <ArrowLeft size={20} />
                 </button>
               )}
-              <h1 className="text-xl font-bold text-gray-900">
+              <h1 className="text-xl font-bold text-gray-900 truncate">
                 {t('newBooking', 'Reservation')}
               </h1>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <PublicLanguageSwitcher />
               {user && (
                 <button
@@ -407,7 +455,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         </div>
       </div>
 
-      <main className="max-w-3xl mx-auto px-4 py-8 w-full">
+      <main className="max-w-5xl mx-auto px-4 pt-[92px] sm:pt-[100px] pb-40 sm:pb-36 w-full">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -439,12 +487,21 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               <ProfessionalStep
                 selectedProfessionalId={bookingState.professional?.id || null}
                 professionalSelected={bookingState.professionalSelected}
+                selectedTime={bookingState.time}
                 onProfessionalChange={(prof: any) => {
                   if (bookingState.professional?.id === prof?.id && (prof !== null || bookingState.professionalSelected)) {
                     updateState({ professional: null, professionalSelected: false });
                   } else {
                     updateState({ professional: prof, professionalSelected: true });
                   }
+                }}
+                onSlotSelect={(prof: any, date: Date, time: string) => {
+                  updateState({
+                    professional: prof,
+                    professionalSelected: true,
+                    date,
+                    time
+                  });
                 }}
                 salonSettings={salonSettings}
                 preloadedProfessionals={initialMasters}
@@ -488,16 +545,16 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
         <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
-          className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-[55] shadow-lg pb-safe"
+          className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 sm:p-4 z-[55] shadow-lg pb-safe overflow-x-hidden"
         >
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-5xl mx-auto w-full min-w-0">
             {/* Single row with info and buttons */}
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               {/* Left: Booking info */}
               <div className="flex flex-col min-w-0 flex-1">
                 {(bookingState.services.length > 0 || bookingState.professionalSelected || hasSelectedDate || bookingState.time) ? (
                   <>
-                    <p className="text-sm font-bold text-gray-900 truncate">
+                    <p className="text-sm sm:text-base font-bold text-gray-900 truncate">
                       {bookingState.services.length > 0 ? (
                         bookingState.services.length === 1
                           ? getLocalizedName(bookingState.services[0], i18n.language)
@@ -508,25 +565,12 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                         t('booking:booking_info', 'Booking info')
                       )}
                     </p>
-                    <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
-                      {bookingState.professional && <span>{bookingState.professional.full_name}</span>}
-                      {bookingState.services.length > 0 && (
-                        <>
-                          {bookingState.professional && <span>•</span>}
-                          <span>{totalDuration} {t('min', 'min')}</span>
-                          <span>•</span>
-                          <span className="font-bold text-gray-900">{formatCurrency(totalPrice)}</span>
-                        </>
-                      )}
-                      {(hasSelectedDate || bookingState.time) && (
-                        <>
-                          <span>•</span>
-                          <span className="text-gray-900 font-semibold">
-                            {selectedDateValue ? format(selectedDateValue, 'dd MMM') : null}
-                            {bookingState.time && ` ${bookingState.time}`}
-                          </span>
-                        </>
-                      )}
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-gray-500 font-medium">
+                      {bookingMetaParts.map((part, idx) => (
+                        <span key={`${part}-${idx}`} className={idx === bookingMetaParts.length - 1 ? 'text-gray-900 font-semibold' : ''}>
+                          {idx > 0 ? `• ${part}` : part}
+                        </span>
+                      ))}
                     </div>
                   </>
                 ) : (
@@ -537,12 +581,12 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
               </div>
 
               {/* Right: Action Buttons */}
-              <div className="flex items-center gap-3 flex-shrink-0">
+              <div className="flex w-full sm:w-auto flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-end gap-2 sm:gap-3 flex-shrink-0 max-w-full">
                 {/* Services button - show if services not selected AND not on services step */}
                 {bookingState.services.length === 0 && step !== 'services' && (
                   <button
                     onClick={() => setStep('services')}
-                    className="h-11 px-5 rounded-lg bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 transition-colors whitespace-nowrap"
+                    className="w-full sm:w-auto min-h-10 px-3 sm:px-5 py-2 rounded-lg bg-gray-900 text-white font-bold text-[clamp(0.7rem,2.7vw,0.875rem)] hover:bg-gray-800 transition-colors text-center leading-tight whitespace-normal break-words"
                   >
                     {t('booking:continue_services', 'Continue with Services')}
                   </button>
@@ -552,7 +596,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 {!bookingState.professionalSelected && step !== 'professional' && (
                   <button
                     onClick={() => setStep('professional')}
-                    className="h-11 px-5 rounded-lg bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 transition-colors whitespace-nowrap"
+                    className="w-full sm:w-auto min-h-10 px-3 sm:px-5 py-2 rounded-lg bg-gray-900 text-white font-bold text-[clamp(0.7rem,2.7vw,0.875rem)] hover:bg-gray-800 transition-colors text-center leading-tight whitespace-normal break-words"
                   >
                     {t('booking:continue_professional', 'Select Professional')}
                   </button>
@@ -562,7 +606,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 {(!hasSelectedDate || !bookingState.time) && step !== 'datetime' && (
                   <button
                     onClick={() => setStep('datetime')}
-                    className="h-11 px-5 rounded-lg bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 transition-colors whitespace-nowrap"
+                    className="w-full sm:w-auto min-h-10 px-3 sm:px-5 py-2 rounded-lg bg-gray-900 text-white font-bold text-[clamp(0.7rem,2.7vw,0.875rem)] hover:bg-gray-800 transition-colors text-center leading-tight whitespace-normal break-words"
                   >
                     {t('booking:continue_datetime', 'Choose Date & Time')}
                   </button>
@@ -572,7 +616,7 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
                 {bookingState.services.length > 0 && bookingState.professionalSelected && hasSelectedDate && bookingState.time && (
                   <button
                     onClick={() => setStep('confirm')}
-                    className="h-11 px-6 rounded-lg bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 transition-colors whitespace-nowrap"
+                    className="w-full sm:w-auto min-h-10 px-4 sm:px-6 py-2 rounded-lg bg-gray-900 text-white font-bold text-[clamp(0.7rem,2.7vw,0.875rem)] hover:bg-gray-800 transition-colors text-center leading-tight whitespace-normal break-words"
                   >
                     {t('confirm.title', 'Confirm')}
                   </button>

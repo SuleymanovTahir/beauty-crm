@@ -164,7 +164,8 @@ def update_service(service_id, **kwargs):
     c.execute(query, params)
     
     # --- SYNC UPDATES TO EMPLOYEES ---
-    # If price or duration changed, update all assigned employees
+    # If price changed, sync to employee overrides.
+    # Duration is SSOT in services.duration, so we clear user_services.duration.
     sync_updates = []
     sync_params = []
     
@@ -172,14 +173,16 @@ def update_service(service_id, **kwargs):
         sync_updates.append("price = %s")
         sync_params.append(kwargs['price'])
         
-    if 'duration' in kwargs:
-        sync_updates.append("duration = %s")
-        sync_params.append(kwargs['duration'])
-        
     if sync_updates:
         sync_query = f"UPDATE user_services SET {', '.join(sync_updates)} WHERE service_id = %s"
         sync_params.append(service_id)
         c.execute(sync_query, sync_params)
+        from utils.logger import log_info
+
+    if 'duration' in kwargs:
+        c.execute("UPDATE user_services SET duration = NULL WHERE service_id = %s", (service_id,))
+
+    if sync_updates or 'duration' in kwargs:
         from utils.logger import log_info
         log_info(f"🔄 DB: Synced service {service_id} updates to employees: {kwargs}", "database")
     # ---------------------------------

@@ -2259,8 +2259,18 @@ export default function AdminSettings() {
       {/* Create Role Dialog */}
       {
         showCreateRoleDialog && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl max-w-md w-full shadow-2xl">
+          <div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) {
+                setShowCreateRoleDialog(false);
+              }
+            }}
+          >
+            <div
+              className="bg-white rounded-xl max-w-md w-full shadow-2xl"
+              onClick={(event) => event.stopPropagation()}
+            >
               <div className="p-6 border-b border-gray-200">
                 <h3 className="text-xl font-bold text-gray-900">{t('settings:create_role')}</h3>
               </div>
@@ -2314,8 +2324,18 @@ export default function AdminSettings() {
       {/* Permissions Dialog */}
       {
         showPermissionsDialog && selectedRole && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-auto">
-            <div className="bg-white rounded-xl max-w-4xl w-full shadow-2xl max-h-[90vh] overflow-auto">
+          <div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-auto"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) {
+                setShowPermissionsDialog(false);
+              }
+            }}
+          >
+            <div
+              className="bg-white rounded-xl max-w-4xl w-full shadow-2xl max-h-[90vh] overflow-auto"
+              onClick={(event) => event.stopPropagation()}
+            >
               <div className="p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
                 <h3 className="text-xl font-bold text-gray-900">
                   {t('settings:role_permissions')}:&nbsp;
