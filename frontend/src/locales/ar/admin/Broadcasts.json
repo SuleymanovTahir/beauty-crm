@@ -49,6 +49,7 @@
   "confirm_and_send": "تأكيد وإرسال",
   "confirm_broadcast_title": "إرسال التأكيد",
   "confirm_clear_history": "هل أنت متأكد من أنك تريد محو السجل للفترة المحددة؟",
+  "confirm_delete_history_selected": "حذف إدخالات السجل المحددة؟",
   "confirm_delete_subscriber": "هل تريد حذف المشترك؟",
   "contact_added": "تمت إضافة جهة الاتصال",
   "contact_updated": "تم تحديث جهة الاتصال",
@@ -57,13 +58,20 @@
   "contacts_imported_one": "جهات الاتصال المستوردة: {{count}}",
   "contacts_imported_other": "جهات الاتصال المستوردة: {{count}}",
   "create_broadcast": "إنشاء رسالة إخبارية",
+  "create_template": "إنشاء قالب",
   "deactivate": "قطع الاتصال",
   "delete_confirm": "هل أنت متأكد من أنك تريد حذف نوع الاشتراك هذا؟",
+  "delete_history_item": "حذف الإدخال",
+  "delete_selected_history_few": "حذف المحدد ({{count}})",
+  "delete_selected_history_many": "حذف المحدد ({{count}})",
+  "delete_selected_history_one": "حذف المحدد ({{count}})",
+  "delete_selected_history_other": "حذف المحدد ({{count}})",
   "delete_type": "حذف",
   "desc_ru": "الوصف",
   "edit_contact": "تحرير جهة الاتصال",
   "edit_contact_details": "تحرير تفاصيل جهة الاتصال",
   "edit_subscriber": "تحرير المشترك",
+  "edit_template": "تحرير القالب",
   "edit_type": "تحرير",
   "error_adding_subscriber": "",
   "error_clearing_history": "حدث خطأ أثناء مسح السجل",
@@ -91,6 +99,11 @@
   "force_send_description": "أرسل حتى إلى أولئك غير المشتركين (فقط للإشعارات المهمة)",
   "history": "السجل",
   "history_cleared": "تم مسح السجل",
+  "history_select_all": "تحديد الكل",
+  "history_selected_deleted_few": "الإدخالات المحذوفة: {{count}}",
+  "history_selected_deleted_many": "الإدخالات المحذوفة: {{count}}",
+  "history_selected_deleted_one": "السجلات المحذوفة: {{count}}",
+  "history_selected_deleted_other": "الإدخالات المحذوفة: {{count}}",
   "history_title": "حجز البريد الإلكتروني",
   "import": "استيراد",
   "import_contacts_file": "استيراد جهات اتصال من ملف",
@@ -109,6 +122,7 @@
   "key_label": "المعرف/المفتاح (لاتيني)",
   "loyalty": "برنامج الولاء",
   "mailing_type": "نوع البريد",
+  "manage_templates": "إدارة النماذج",
   "manage_types_title": "إدارة أنواع الاشتراكات",
   "manual_contact": "الاتصال اليدوي",
   "manual_contact_hint": "املأ الحقول اعتمادًا على القنوات البريدية المحددة",
@@ -133,6 +147,7 @@
   "no_name": "لم يتم العثور على اسم",
   "no_recipients_found": "لم يتم العثور على مستلمين",
   "no_subscribers": "لا يوجد مشتركون بعد",
+  "no_templates": "لم يتم إنشاء قوالب بعد",
   "no_unsubscribed": "لا يوجد مستخدمون غير مشتركين حتى الآن. جميع عملائك سعداء! 😊",
   "no_users": "لا يوجد مستخدمون مشتركون للمعلمات المحددة",
   "no_valid_contacts": "لم يتم العثور على جهات اتصال صالحة",
@@ -175,6 +190,7 @@
   "role_label": "الدور",
   "sample_recipients": "أمثلة للمستلمين:",
   "save": "حفظ",
+  "save_template": "حفظ القالب",
   "select_all_few": "حدد الكل ({{count}})",
   "select_all_many": "حدد الكل ({{count}})",
   "select_all_one": "حدد الكل ({{count}})",
@@ -216,6 +232,23 @@
   "telegram_limit_hint_one": "يوصى به حتى {{count}} حرف",
   "telegram_limit_hint_other": "يوصى به حتى {{count}} من الأحرف الأحرف",
   "telegram_username": "اسم مستخدم Telegram",
+  "template_applied": "تم إدراج القالب",
+  "template_body_required": "أدخل نص القالب",
+  "template_category": "الفئة",
+  "template_delete_confirm": "هل تريد حذف هذا القالب؟",
+  "template_deleted": "تم حذف القالب",
+  "template_insert_button": "أدخل",
+  "template_name": "اسم القالب",
+  "template_name_placeholder": "welcome_campaign",
+  "template_name_required": "أدخل اسم القالب",
+  "template_saved": "تم حفظ القالب",
+  "template_selector_label": "قالب جاهز",
+  "template_selector_placeholder": "حدد قالبًا",
+  "template_system": "النظام",
+  "template_system_cannot_delete": "لا يمكن حذف قالب النظام",
+  "templates_subtitle": "إنشاء وتحرير وحذف القوالب للمراسلات السريعة",
+  "templates_tab": "القوالب",
+  "templates_title": "نماذج المراسلات",
   "title": "الرسائل البريدية الجماعية",
   "total_recipients": "إجمالي المستلمين",
   "type_created": "نوع الاشتراك الذي تم إنشاؤه",

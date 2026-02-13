@@ -238,6 +238,7 @@
   "happyClients": "довольных клиентов",
   "import": "Импорт",
   "importing": "Импортирование...",
+  "inactive": "",
   "individual_permissions": "Индивидуальные права",
   "individual_permissions_description": "Вы можете переопределить права для конкретного пользователя, независимо от его роли.",
   "invalid_credentials": "Неверный логин или пароль",

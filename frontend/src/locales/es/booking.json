@@ -138,6 +138,9 @@
     "service_one": "service",
     "total": "Total"
   },
+  "settings": {
+    "promotions": "Promociones y ofertas"
+  },
   "submitBooking": "Enviar solicitud",
   "subtotal": "Subtotal",
   "totalDuration": "Total duration"

@@ -107,7 +107,7 @@
     "start_caring": "Comece a se cuidar!",
     "start_caring_message": "Inscreva-se nos tratamentos e comece sua jornada para beleza.",
     "subtitle": "Análise de condição e recomendações",
-    "title": "Perfil de beleza",
+    "title": "Recomendações de cuidados",
     "view_all_recommendations": "Ver todas as recomendações"
   },
   "dashboard": {
@@ -199,6 +199,7 @@
     "points_for_you": "points for you",
     "points_total": "total accumulated",
     "points_value": "1 point = 1 {{currency}} discount",
+    "referral_code_hint": "O código é criado automaticamente e usado para convidar amigos.",
     "referral_how_it_works": "How does this work:",
     "referral_program": "Referral program",
     "referral_step1": "Share a promo code with a friend",
@@ -224,7 +225,7 @@
     "total_spent": "Total spent",
     "your_cashback": "Your Cashback",
     "your_discount": "your discount will be",
-    "your_promo": "Your promo code"
+    "your_promo": "Seu código de indicação"
   },
   "masters": {
     "add_favorites_hint": "Adicione mestres aos seus favoritos clicando no ícone de coração",
@@ -338,7 +339,7 @@
   "tabs": {
     "achievements": "Conquistas",
     "appointments": "Reservas",
-    "beauty": "Beleza perfil",
+    "beauty": "Cuidados e recomendações",
     "dashboard": "Página inicial",
     "gallery": "Galeria",
     "loyalty": "Fidelidade",

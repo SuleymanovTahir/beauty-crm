@@ -22,11 +22,11 @@ def get_avatar_url(profile_pic: Optional[str], gender: Optional[str] = 'female')
     if profile_pic:
         return profile_pic
 
-    # Gender-based fallback - use landing-images folder
+    # Gender-based fallback
     if gender == 'male':
-        return '/landing-images/Сотрудники/default_male.webp'
+        return '/static/avatars/default_male.webp'
     else:  # female or other or None
-        return '/landing-images/Сотрудники/default_female.webp'
+        return '/static/avatars/default_female.webp'
 
 def get_all_employees(active_only=True, service_providers_only=False):
     """

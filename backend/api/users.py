@@ -15,9 +15,24 @@ from utils.logger import log_error
 from core.auth import get_current_user_or_redirect as get_current_user
 import psycopg2
 from utils.cache import cache
-from utils.language_utils import get_localized_name
+from utils.language_utils import get_localized_name, translate_position, get_dynamic_translation
 
 router = APIRouter(tags=["Users"])
+
+
+def _get_localized_position(user_id: int, username: Optional[str], raw_position: Optional[str], language: str) -> str:
+    localized_position = ""
+    if username:
+        localized_position = get_dynamic_translation("users", username, "position", language, "")
+    if not localized_position:
+        localized_position = get_dynamic_translation("users", user_id, "position", language, "")
+    if not localized_position:
+        localized_position = translate_position(raw_position or "", language)
+    if not localized_position:
+        localized_position = raw_position or ""
+    if localized_position:
+        localized_position = localized_position[0].upper() + localized_position[1:]
+    return localized_position
 
 @router.get("/me")
 async def get_current_user_api(
@@ -196,7 +211,7 @@ async def get_user_by_id(
             "full_name": get_localized_name(row[0], row[2], language),
             "email": row[3],
             "role": row[4],
-            "position": row[5],
+            "position": _get_localized_position(row[0], row[1], row[5], language),
             "phone": row[6],
             "bio": row[7],
             "photo": map_image_path(sanitize_url(row[8])),
@@ -239,6 +254,7 @@ async def get_users(
                 u.full_name,
                 u.email, u.role,
                 u.position,
+                u.phone,
                 u.created_at, u.is_active,
                 u.employee_id,
                 COALESCE(u.photo, u.photo_url) as photo,
@@ -254,7 +270,8 @@ async def get_users(
         users = []
         for row in c.fetchall():
             # Add cache buster to photo
-            photo_url = map_image_path(sanitize_url(row[9]))
+            photo_url = map_image_path(sanitize_url(row[10]))
+            localized_position = _get_localized_position(row[0], row[1], row[5], language)
 
             user_data = {
                 "id": row[0],
@@ -262,15 +279,16 @@ async def get_users(
                 "full_name": get_localized_name(row[0], row[2], language),
                 "email": row[3],
                 "role": row[4],
-                "position": row[5],
-                "created_at": row[6],
-                "is_active": bool(row[7]),
-                "employee_id": row[8],
+                "position": localized_position,
+                "phone": row[6],
+                "created_at": row[7],
+                "is_active": bool(row[8]),
+                "employee_id": row[9],
                 "photo": photo_url,
-                "position_id": row[10],
-                "is_public_visible": bool(row[11]),
-                "sort_order": row[12],
-                "is_service_provider": bool(row[13])
+                "position_id": row[11],
+                "is_public_visible": bool(row[12]),
+                "sort_order": row[13],
+                "is_service_provider": bool(row[14])
             }
 
             users.append(user_data)
@@ -562,6 +580,7 @@ async def update_user_role(
 @router.get("/users/{user_id}/profile")
 async def get_user_profile(
     user_id: int,
+    language: str = Query('ru', description="Language code"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить профиль пользователя"""
@@ -601,7 +620,7 @@ async def get_user_profile(
         "specialization": result[10],
         "phone": result[11],
         "birthday": result[12],
-        "position": result[13],
+        "position": _get_localized_position(result[0], result[1], result[13], language),
         "base_salary": result[14],
         "commission_rate": result[15],
         "secondary_role": result[16],
@@ -611,6 +630,7 @@ async def get_user_profile(
 @router.get("/users/by-username/{username}/profile")
 async def get_user_profile_by_username(
     username: str,
+    language: str = Query('ru', description="Language code"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить профиль пользователя по username"""
@@ -650,7 +670,7 @@ async def get_user_profile_by_username(
         "specialization": result[10],
         "phone": result[11],
         "birthday": result[12],
-        "position": result[13],
+        "position": _get_localized_position(result[0], result[1], result[13], language),
         "base_salary": result[14],
         "commission_rate": result[15],
         "secondary_role": result[16],

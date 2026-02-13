@@ -238,6 +238,7 @@
   "happyClients": "संतुष्ट ग्राहक",
   "import": "आयात",
   "importing": "आयात...",
+  "inactive": "",
   "individual_permissions": "व्यक्तिगत अधिकार",
   "individual_permissions_description": "आप किसी विशिष्ट उपयोगकर्ता के अधिकारों को ओवरराइड कर सकते हैं, चाहे उनकी भूमिका कुछ भी हो।",
   "invalid_credentials": "गलत लॉगिन या पासवर्ड",

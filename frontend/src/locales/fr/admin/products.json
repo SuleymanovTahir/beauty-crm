@@ -4,9 +4,9 @@
   "analytics": {
     "avgPrice": "Moy. prix",
     "last30Days": "Pour {{count}} jours",
+    "last30Days_one": "",
     "last30Days_few": "",
     "last30Days_many": "",
-    "last30Days_one": "",
     "last30Days_other": "",
     "revenue": "Revenu",
     "totalSold": "Total vendu"
@@ -14,10 +14,10 @@
   "createFirst": "Ajouter le premier produit au système",
   "delete": "Supprimer",
   "detail": {
-    "costPriceLabel": "Coût : {{price}} {{currency}}",
+    "costPriceLabel": "Coût\u00a0: {{price}} {{currency}}",
+    "inStock_one": "En stock {{count}} pcs.",
     "inStock_few": "B en stock {{count}} pcs.",
     "inStock_many": "En stock {{count}} pcs.",
-    "inStock_one": "En stock {{count}} pcs.",
     "inStock_other": "En stock {{count}} pcs.",
     "loadingData": "Chargement des données...",
     "movementAdjustment": "Ajustement",
@@ -45,7 +45,7 @@
     "uploadError": "Erreur de chargement de la photo"
   },
   "messages": {
-    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce produit ?",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce produit\u00a0?",
     "noResults": "Rien trouvé pour votre demande"
   },
   "movement": {

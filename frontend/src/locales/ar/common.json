@@ -238,6 +238,7 @@
   "happyClients": "عملاء راضون",
   "import": "استيراد",
   "importing": "استيراد...",
+  "inactive": "",
   "individual_permissions": "الحقوق الفردية",
   "individual_permissions_description": "يمكنك تجاوز الحقوق لمستخدم معين، بغض النظر عن دوره.",
   "invalid_credentials": "تسجيل الدخول أو كلمة المرور غير صحيحة",

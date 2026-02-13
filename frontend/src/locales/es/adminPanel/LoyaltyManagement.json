@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "activate": "Activar",
+    "deactivate": "Desactivar"
+  },
   "adjust_points": "Cambiar saldo de puntos",
   "buttons": {
     "add_rule": "Agregar regla",
@@ -10,10 +14,10 @@
   "categories": {
     "category": "Categoría",
     "category_placeholder": "P. Manicura",
-    "description": "Define el factor de acumulación de puntos para cada categoría de servicio",
-    "multiplier": "Factor de acumulación",
-    "title": "Reglas de acumulación por categoría",
-    "hint": "El factor se aplica solo a la categoría seleccionada. Si la regla está desactivada, se usa la tasa base x1."
+    "description": "Configurar el coeficiente de acumulación de puntos para cada categoría de servicio",
+    "hint": "El factor se aplica solo a la categoría seleccionada. Si la regla está desactivada, se usa la tasa base x1.",
+    "multiplier": "Coeficiente de acumulación",
+    "title": "Reglas de acumulación por categoría"
   },
   "config": {
     "cashback_hint": "Ejemplo: {{percent}}% cashback ({{points}} puntos por cada {{unit}} gastado)",
@@ -40,22 +44,25 @@
       "description": "Configuración de condiciones para obtener un nivel de privilegio",
       "discount_percent": "Porcentaje de descuento",
       "min_points": "Umbral mínimo de puntos",
-      "tier_name": "Nombre del nivel",
-      "title": "Nivel de edición",
+      "status_hint": "Un nivel inactivo no participa en el cálculo automático de privilegios.",
       "status_label": "Estado del nivel",
-      "status_hint": "Un nivel inactivo no participa en el cálculo automático de privilegios."
+      "tier_name": "Nombre del nivel",
+      "title": "Nivel de edición"
     },
     "rule": {
       "description": "Coeficiente de acumulación personal para la categoría",
-      "title": "Regla de categoría",
+      "status_hint": "Si la regla está desactivada, la categoría usa la tasa base x1.",
       "status_label": "Estado de la regla",
-      "status_hint": "Si la regla está desactivada, la categoría usa la tasa base x1."
+      "title": "Regla de categoría"
     }
   },
   "stats": {
     "active_members": "Participantes del programa",
     "points_redeemed": "puntos debitados",
     "total_points_issued": "Total acumulado"
+  },
+  "statuses": {
+    "inactive": "Inactivo"
   },
   "subtitle": "Administrar descuentos, niveles de privilegios y reglas de acumulación de puntos",
   "tiers": {
@@ -65,7 +72,7 @@
     "starting_level": "Nivel inicial",
     "title": "Niveles de privilegios"
   },
-  "title": "Programa de bonificaciones",
+  "title": "Programa de bonificación",
   "toasts": {
     "config_updated": "Configuración guardada",
     "failed_adjust": "Error al cambiar el saldo",
@@ -74,7 +81,15 @@
     "failed_save": "Error al guardar",
     "failed_update": "Error al actualizar",
     "points_adjusted_add": "{{count}} puntos acumulados",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_other": "",
     "points_adjusted_deduct": "{{count}} puntos cancelados",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_other": "",
     "rule_deleted": "Regla exitosa eliminado",
     "rule_saved": "Regla guardada",
     "tier_updated": "Datos de nivel actualizados"
@@ -90,12 +105,5 @@
       "type": "Tipo"
     },
     "title": "Transacciones recientes"
-  },
-  "actions": {
-    "activate": "Activar",
-    "deactivate": "Desactivar"
-  },
-  "statuses": {
-    "inactive": "Inactivo"
   }
 }

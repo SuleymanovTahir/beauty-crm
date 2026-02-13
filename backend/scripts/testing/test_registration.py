@@ -15,8 +15,7 @@ from db.connection import get_db_connection
 from utils.email_service import generate_verification_code, get_code_expiry
 from db.pending_registrations import (
     get_pending_registrations,
-    approve_registration,
-    reject_registration
+    approve_registration
 )
 
 
@@ -33,30 +32,30 @@ async def test_email_uniqueness_check():
     
     conn = get_db_connection()
     c = conn.cursor()
-    
-    # Получаем существующий email
-    c.execute("SELECT email FROM users LIMIT 1")
-    result = c.fetchone()
-    
-    if result and result[0]:
-        existing_email = result[0]
-        print(f"✅ Found existing email: {existing_email}")
+    try:
+        # Получаем существующий email
+        c.execute("SELECT email FROM users LIMIT 1")
+        result = c.fetchone()
         
-        # Проверяем что дубликат не может быть создан
-        c.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(%s)", (existing_email,))
-        duplicate = c.fetchone()
-        
-        if duplicate:
-            print(f"✅ PASS: Duplicate email correctly detected")
-            return True
+        if result and result[0]:
+            existing_email = result[0]
+            print(f"✅ Found existing email: {existing_email}")
+            
+            # Проверяем что дубликат не может быть создан
+            c.execute("SELECT id FROM users WHERE LOWER(email) = LOWER(%s)", (existing_email,))
+            duplicate = c.fetchone()
+            
+            if duplicate:
+                print(f"✅ PASS: Duplicate email correctly detected")
+                return True
+            else:
+                print(f"❌ FAIL: Duplicate detection failed")
+                return False
         else:
-            print(f"❌ FAIL: Duplicate detection failed")
-            return False
-    else:
-        print("⚠️  SKIP: No users in database")
-        return True
-    
-    conn.close()
+            print("⚠️  SKIP: No users in database")
+            return True
+    finally:
+        conn.close()
 
 
 async def test_username_uniqueness_check():
@@ -65,30 +64,30 @@ async def test_username_uniqueness_check():
     
     conn = get_db_connection()
     c = conn.cursor()
-    
-    # Получаем существующий username
-    c.execute("SELECT username FROM users LIMIT 1")
-    result = c.fetchone()
-    
-    if result:
-        existing_username = result[0]
-        print(f"✅ Found existing username: {existing_username}")
+    try:
+        # Получаем существующий username
+        c.execute("SELECT username FROM users LIMIT 1")
+        result = c.fetchone()
         
-        # Проверяем что дубликат не может быть создан (case-insensitive)
-        c.execute("SELECT id FROM users WHERE LOWER(username) = LOWER(%s)", (existing_username.upper(),))
-        duplicate = c.fetchone()
-        
-        if duplicate:
-            print(f"✅ PASS: Case-insensitive duplicate username correctly detected")
-            return True
+        if result:
+            existing_username = result[0]
+            print(f"✅ Found existing username: {existing_username}")
+            
+            # Проверяем что дубликат не может быть создан (case-insensitive)
+            c.execute("SELECT id FROM users WHERE LOWER(username) = LOWER(%s)", (existing_username.upper(),))
+            duplicate = c.fetchone()
+            
+            if duplicate:
+                print(f"✅ PASS: Case-insensitive duplicate username correctly detected")
+                return True
+            else:
+                print(f"❌ FAIL: Duplicate detection failed")
+                return False
         else:
-            print(f"❌ FAIL: Duplicate detection failed")
-            return False
-    else:
-        print("⚠️  SKIP: No users in database")
-        return True
-    
-    conn.close()
+            print("⚠️  SKIP: No users in database")
+            return True
+    finally:
+        conn.close()
 
 
 async def test_verification_code_generation():
@@ -115,7 +114,6 @@ async def test_verification_code_generation():
     print(f"Code expiry: {expiry}")
     
     # Проверяем что expiry в будущем
-    from datetime import datetime
     expiry_dt = datetime.fromisoformat(expiry)
     now = datetime.now()
     
@@ -308,32 +306,32 @@ async def test_first_admin_exception():
     
     conn = get_db_connection()
     c = conn.cursor()
-    
-    # Проверяем что admin пользователь или director существует
-    c.execute("SELECT id, username, is_active, email_verified FROM users WHERE LOWER(username) = 'admin' OR role = 'director' LIMIT 1")
-    result = c.fetchone()
-    
-    if not result:
-        print("⚠️  SKIP: Admin/Director user not found in database")
-        return True
-    
-    user_id, username, is_active, email_verified = result
-    
-    print(f"Found admin/director user: {username} (ID: {user_id})")
-    print(f"   is_active: {is_active}")
-    print(f"   email_verified: {email_verified}")
-    
-    # Admin должен быть как минимум активен. 
-    # Верификация email для директора может быть не установлена в старой базе,
-    # но он должен иметь возможность входа.
-    if is_active:
-        print(f"✅ PASS: Admin/Director user is active")
-        return True
-    else:
-        print(f"❌ FAIL: Admin/Director user should be active")
-        return False
-    
-    conn.close()
+    try:
+        # Проверяем что admin пользователь или director существует
+        c.execute("SELECT id, username, is_active, email_verified FROM users WHERE LOWER(username) = 'admin' OR role = 'director' LIMIT 1")
+        result = c.fetchone()
+        
+        if not result:
+            print("⚠️  SKIP: Admin/Director user not found in database")
+            return True
+        
+        user_id, username, is_active, email_verified = result
+        
+        print(f"Found admin/director user: {username} (ID: {user_id})")
+        print(f"   is_active: {is_active}")
+        print(f"   email_verified: {email_verified}")
+        
+        # Admin должен быть как минимум активен. 
+        # Верификация email для директора может быть не установлена в старой базе,
+        # но он должен иметь возможность входа.
+        if is_active:
+            print(f"✅ PASS: Admin/Director user is active")
+            return True
+        else:
+            print(f"❌ FAIL: Admin/Director user should be active")
+            return False
+    finally:
+        conn.close()
 
 
 async def run_all_tests():

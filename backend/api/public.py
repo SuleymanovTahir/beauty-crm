@@ -54,6 +54,65 @@ CACHE_TTL_LONG = 3600    # 1 hour
 CACHE_TTL_MEDIUM = 300   # 5 minutes
 CACHE_TTL_SHORT = 60     # 1 minute
 
+CATEGORY_ALIASES = {
+    "брови": "brows",
+    "brows": "brows",
+    "eyebrows": "brows",
+    "комбо": "combo",
+    "combo": "combo",
+    "косметология": "cosmetology",
+    "cosmetology": "cosmetology",
+    "уход за волосами": "hair_care",
+    "hair care": "hair_care",
+    "hair_care": "hair_care",
+    "окрашивание волос": "hair_color",
+    "hair color": "hair_color",
+    "hair_color": "hair_color",
+    "стрижка": "hair_cut",
+    "hair cut": "hair_cut",
+    "haircut": "hair_cut",
+    "hair cutting": "hair_cut",
+    "hair_cut": "hair_cut",
+    "укладка": "hair_styling",
+    "hair styling": "hair_styling",
+    "hair_styling": "hair_styling",
+    "styling": "hair_styling",
+    "ресницы": "lashes",
+    "lashes": "lashes",
+    "eyelashes": "lashes",
+    "маникюр": "manicure",
+    "manicure": "manicure",
+    "массаж": "massage",
+    "massage": "massage",
+    "ногти": "nails",
+    "nails": "nails",
+    "педикюр": "pedicure",
+    "pedicure": "pedicure",
+    "перманентный макияж": "permanent_makeup",
+    "permanent makeup": "permanent_makeup",
+    "permanent_makeup": "permanent_makeup",
+    "спа": "spa",
+    "spa": "spa",
+    "ваксинг": "waxing",
+    "депиляция": "waxing",
+    "депиляция воском": "waxing",
+    "waxing": "waxing",
+}
+
+
+def _canonical_category_key(raw_category: str) -> str:
+    """Map noisy DB category values to stable i18n keys."""
+    if not raw_category:
+        return ""
+
+    normalized = re.sub(r"\s+", " ", str(raw_category).strip().lower())
+    alias = CATEGORY_ALIASES.get(normalized)
+    if alias:
+        return alias
+
+    normalized_ascii = re.sub(r"[^a-z0-9]+", "_", normalized).strip("_")
+    return CATEGORY_ALIASES.get(normalized_ascii, normalized_ascii)
+
 def calculate_age(birthday_str):
     if not birthday_str:
         return None
@@ -417,8 +476,17 @@ def get_public_services(language: str = "ru"):
         s_id = s.get("id")
         # Dynamic translation
         name = get_dynamic_translation('services', s_id, 'name', lang_key, s.get("name"))
-        cat = s.get("category")
-        localized_cat = get_dynamic_translation('categories', cat, '', lang_key, cat)
+        cat = s.get("category") or ""
+        localized_cat = ""
+        canonical_cat_key = _canonical_category_key(cat)
+        if canonical_cat_key:
+            localized_cat = get_dynamic_translation('categories', canonical_cat_key, '', lang_key, "")
+            if (not localized_cat or localized_cat == canonical_cat_key) and "_" in canonical_cat_key:
+                localized_cat = get_dynamic_translation('categories', canonical_cat_key.replace('_', '-'), '', lang_key, "")
+        if not localized_cat:
+            localized_cat = get_dynamic_translation('categories', cat, '', lang_key, "")
+        if not localized_cat:
+            localized_cat = cat
         
         item = {
             "id": s_id,
@@ -516,9 +584,15 @@ def get_public_gallery(category: Optional[str] = None, language: str = "ru"):
     
     # Map for frontend compatibility
     results = []
+    seen_image_paths = set()
     for img in images:
         raw_url = sanitize_url(img.get("image_url"))
         mapped_url = map_image_path(raw_url)
+        dedupe_key = (mapped_url or "").strip().lower()
+        if dedupe_key and dedupe_key in seen_image_paths:
+            continue
+        if dedupe_key:
+            seen_image_paths.add(dedupe_key)
         results.append({
             "id": img.get("id"),
             "category": img.get("category"),

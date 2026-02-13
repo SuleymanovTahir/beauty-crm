@@ -5,6 +5,8 @@
 import os
 import re
 import urllib.parse
+from functools import lru_cache
+from pathlib import Path
 from typing import Optional
 from fastapi import Cookie, HTTPException
 
@@ -19,6 +21,26 @@ from utils.logger import log_info, log_error, log_debug, log_warning
 
 from core.config import UPLOAD_DIR, BASE_DIR
 import time
+
+
+@lru_cache(maxsize=4096)
+def _landing_asset_exists(url: str) -> bool:
+    """Check whether mapped landing asset exists in current frontend image dirs."""
+    if not url or not url.startswith('/landing-images/'):
+        return False
+    relative_path = url[len('/landing-images/'):]
+    candidates = [
+        Path(BASE_DIR).parent / "frontend" / "public_landing" / "styles" / "img" / relative_path,
+        Path(BASE_DIR).parent / "frontend" / "dist" / "landing-images" / relative_path,
+    ]
+    return any(path.exists() for path in candidates)
+
+
+@lru_cache(maxsize=4096)
+def _static_asset_exists(url: str) -> bool:
+    if not url or not url.startswith('/static/'):
+        return False
+    return (Path(BASE_DIR) / url.lstrip("/")).exists()
 
 def _add_v(url: str) -> str:
     """Добавить параметр версии для обхода кеша браузера (всегда свежее)"""
@@ -105,6 +127,8 @@ def map_image_path(url: str) -> str:
     if not url:
         return url
 
+    original_url = url
+
     # Маппинг старых путей на новые (frontend/public_landing/styles/img/)
     path_mappings = {
         '/static/images/salon/': '/landing-images/salon/',
@@ -163,10 +187,15 @@ def map_image_path(url: str) -> str:
         '/landing-images/portfolio/маникюр3.webp': '/landing-images/portfolio/Manikjur3.webp',
         '/landing-images/portfolio/ногти2.webp': '/landing-images/portfolio/Nogti2.webp',
         '/landing-images/portfolio/кератин_блондинка_2.webp': '/landing-images/portfolio/Keratin_blonde_2.webp',
+        '/landing-images/portfolio/Кератин блондинка 2.webp': '/landing-images/portfolio/Keratin_blonde_2.webp',
     }
 
     if url in file_mappings:
-        return file_mappings[url]
+        url = file_mappings[url]
+
+    # Keep /static path if mapped landing asset is absent in known frontend image directories.
+    if original_url != url and url.startswith('/landing-images/') and not _landing_asset_exists(url):
+        url = original_url
 
     # Для landing-images НЕ транслитерируем - файлы имеют русские имена
     if '/landing-images/' in url:
@@ -174,6 +203,10 @@ def map_image_path(url: str) -> str:
 
     # Автоматическая транслитерация для кириллических имен, если маппинг не найден
     if any(ord(c) > 127 for c in url):
+        # Не меняем существующий static-путь: иначе можно получить несуществующее имя файла.
+        if _static_asset_exists(url):
+            return url
+
         from utils.language_utils import get_transliterated_name
         # Транслитерируем только имя файла, сохраняя путь
         dir_name = os.path.dirname(url)
@@ -186,7 +219,11 @@ def map_image_path(url: str) -> str:
         if trans_name:
             # Убираем возможные префиксы "master_" если они добавились (get_transliterated_name может это делать)
             trans_name = trans_name.replace('master_', '')
-            return f"{dir_name}/{trans_name.capitalize()}{ext}"
+            transliterated_url = f"{dir_name}/{trans_name.capitalize()}{ext}"
+            if _static_asset_exists(transliterated_url):
+                return transliterated_url
+
+        return original_url
 
     return url
 

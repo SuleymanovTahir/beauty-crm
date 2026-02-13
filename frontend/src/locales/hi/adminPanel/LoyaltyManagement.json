@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "activate": "सक्रिय करें",
+    "deactivate": "निष्क्रिय करें"
+  },
   "adjust_points": "बिंदु संतुलन बदलें",
   "buttons": {
     "add_rule": "नियम जोड़ें",
@@ -10,10 +14,10 @@
   "categories": {
     "category": "श्रेणी",
     "category_placeholder": "जैसे। मैनीक्योर",
-    "description": "हर सेवा श्रेणी के लिए अंक अर्जन गुणांक सेट करें",
-    "multiplier": "अर्जन गुणांक",
-    "title": "श्रेणी अनुसार अंक नियम",
-    "hint": "गुणांक केवल चुनी गई श्रेणी पर लागू होता है। नियम बंद होने पर आधार दर x1 लागू होती है।"
+    "description": "प्रत्येक सेवा श्रेणी के लिए अंक उपार्जन गुणांक सेट करें",
+    "hint": "गुणांक केवल चुनी गई श्रेणी पर लागू होता है। नियम बंद होने पर आधार दर x1 लागू होती है।",
+    "multiplier": "उपार्जन गुणांक",
+    "title": "श्रेणी के अनुसार उपार्जन नियम"
   },
   "config": {
     "cashback_hint": "उदाहरण: {{percent}}% कैशबैक ({{points}} प्रत्येक {{unit}} खर्च के लिए अंक)",
@@ -40,22 +44,25 @@
       "description": "विशेषाधिकार स्तर प्राप्त करने के लिए शर्तें स्थापित करना",
       "discount_percent": "छूट प्रतिशत",
       "min_points": "न्यूनतम बिंदु सीमा",
-      "tier_name": "नाम स्तर",
-      "title": "संपादन स्तर",
+      "status_hint": "निष्क्रिय स्तर स्वचालित विशेषाधिकार गणना में शामिल नहीं होता।",
       "status_label": "स्तर की स्थिति",
-      "status_hint": "निष्क्रिय स्तर स्वचालित विशेषाधिकार गणना में शामिल नहीं होता।"
+      "tier_name": "नाम स्तर",
+      "title": "संपादन स्तर"
     },
     "rule": {
       "description": "श्रेणी के लिए व्यक्तिगत संचय गुणांक",
-      "title": "श्रेणी नियम",
+      "status_hint": "नियम बंद होने पर श्रेणी के लिए आधार अर्जन दर x1 लागू होती है।",
       "status_label": "नियम की स्थिति",
-      "status_hint": "नियम बंद होने पर श्रेणी के लिए आधार अर्जन दर x1 लागू होती है।"
+      "title": "श्रेणी नियम"
     }
   },
   "stats": {
     "active_members": "कार्यक्रम प्रतिभागी",
     "points_redeemed": "बट्टे खाते में डाले गए अंक",
     "total_points_issued": "कुल अर्जित"
+  },
+  "statuses": {
+    "inactive": "निष्क्रिय"
   },
   "subtitle": "अंक अर्जित करने के लिए छूट, विशेषाधिकार स्तर और नियम प्रबंधित करें",
   "tiers": {
@@ -74,7 +81,15 @@
     "failed_save": "सहेजते समय त्रुटि",
     "failed_update": "अपडेट करते समय त्रुटि",
     "points_adjusted_add": "{{count}} अंक दिए गए",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_other": "",
     "points_adjusted_deduct": "{{count}} अंक काट दिए गए",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_other": "",
     "rule_deleted": "नियम सफलतापूर्वक हटा दिया गया",
     "rule_saved": "नियम सहेजा गया",
     "tier_updated": "स्तर डेटा अपडेट किया गया"
@@ -90,12 +105,5 @@
       "type": "प्रकार"
     },
     "title": "हाल के लेनदेन"
-  },
-  "actions": {
-    "activate": "सक्रिय करें",
-    "deactivate": "निष्क्रिय करें"
-  },
-  "statuses": {
-    "inactive": "निष्क्रिय"
   }
 }

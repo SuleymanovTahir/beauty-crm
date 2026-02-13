@@ -229,35 +229,26 @@ def test_add_user_schedule(data, conn):
     return True
 
 def test_real_employees_exist(conn):
-    """Test that real employees exist (using actual database names)"""
+    """Test that canonical staff accounts exist"""
     print("   Testing real employees exist...", end=" ")
     cursor = conn.cursor()
     
-    # Actual names in DB
-    real_names = [
-        'Mohamed Sabri', 
-        'Kozhabay Lyazat', 
-        'Amandurdyyeva Mestan', 
-        'Kasymova Gulcehre', 
-        'Peradilla Jennifer', 
-    ]
-    
-    # Construct placeholders
-    placeholders = ', '.join(['%s'] * len(real_names))
-    
+    real_usernames = ['sabri', 'lyazat', 'mestan', 'gulcehre', 'jennifer']
+    placeholders = ', '.join(['%s'] * len(real_usernames))
+
     cursor.execute(f"""
         SELECT COUNT(*) FROM users 
-        WHERE full_name IN ({placeholders})
-    """, tuple(real_names))
+        WHERE username IN ({placeholders})
+    """, tuple(real_usernames))
     count = cursor.fetchone()[0]
     
-    # We expect at least some of them to exist
+    # We expect most canonical employee accounts to exist
     if count < 3:
-        print(f"FAILED (Only {count}/{len(real_names)} real employees found)")
-        print(f"   ℹ️  Expected: {real_names}")
+        print(f"FAILED (Only {count}/{len(real_usernames)} real employees found)")
+        print(f"   ℹ️  Expected usernames: {real_usernames}")
         return False
     
-    print(f"PASSED ({count}/{len(real_names)} employees found)")
+    print(f"PASSED ({count}/{len(real_usernames)} employees found)")
     return True
 
 def test_real_employees_have_services(conn):

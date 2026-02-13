@@ -138,6 +138,9 @@
     "service_one": "service",
     "total": "Total"
   },
+  "settings": {
+    "promotions": "Акциялар мен ұсыныстар"
+  },
   "submitBooking": "Сұраныс жіберу",
   "subtotal": "Subtotal",
   "totalDuration": "Total duration"

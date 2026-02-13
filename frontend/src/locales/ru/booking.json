@@ -138,6 +138,9 @@
     "service_many": "услуг",
     "total": "Итого"
   },
+  "settings": {
+    "promotions": "Акции и предложения"
+  },
   "submitBooking": "Отправить заявку",
   "subtotal": "Подытог",
   "totalDuration": "Длительность"

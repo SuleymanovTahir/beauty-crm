@@ -77,7 +77,6 @@ const UserBookingWizard = React.lazy(() => import('../public_landing/pages/accou
 const DataDeletionNew = React.lazy(() => import('../public_landing/pages/DataDeletion'));
 const Unsubscribe = React.lazy(() => import('./pages/public/Unsubscribe'));
 const NotFound = React.lazy(() => import('../public_landing/pages/NotFound').then(module => ({ default: module.NotFound })));
-const EditUser = React.lazy(() => import('./pages/admin/EditUser'));
 
 const Login = React.lazy(() => import('../public_landing/pages/LoginPage').then(module => ({ default: module.LoginPage })));
 const AdminLogin = React.lazy(() => import('./pages/auth/Login'));
@@ -289,6 +288,10 @@ export default function App() {
                 <Route path="clients/:id" element={<ClientDetail />} />
                 <Route path="public-content/:tab?" element={<PublicContent />} />
                 <Route path="team" element={<Team />} />
+                <Route path="team/create" element={<CreateUser />} />
+                <Route path="team/pending" element={<PendingRegistrations />} />
+                <Route path="team/permissions" element={<PermissionManagement />} />
+                <Route path="team/:id/:tab?" element={<EmployeeDetail />} />
                 <Route path="settings/:tab?" element={<Settings />} />
                 <Route path="menu-customization" element={<MenuCustomization />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
@@ -325,7 +328,6 @@ export default function App() {
                 <Route path="team/create" element={<CreateUser />} />
                 <Route path="team/pending" element={<PendingRegistrations />} />
                 <Route path="team/permissions" element={<PermissionManagement />} />
-                <Route path="team/:identifier/edit" element={<EditUser />} />
                 <Route path="team/:id/:tab?" element={<EmployeeDetail />} />
                 <Route path="profile" element={<UniversalProfile />} />
 

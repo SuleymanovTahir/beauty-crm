@@ -138,6 +138,9 @@
     "service_one": "सेवा",
     "total": "कुल"
   },
+  "settings": {
+    "promotions": "प्रचार और ऑफर"
+  },
   "submitBooking": "अनुरोध भेजें",
   "subtotal": "सारांश",
   "totalDuration": "अवधि"

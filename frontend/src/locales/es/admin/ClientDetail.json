@@ -45,6 +45,7 @@
   "password": "Contraseña",
   "phone": "Teléfono",
   "phone_not_specified": "Número de teléfono no especificado",
+  "photo_access_disabled": "El cliente ha prohibido agregar fotos a la galería.",
   "photo_after": "Foto DESPUÉS",
   "photo_before": "Fotos ANTES",
   "photo_uploaded": "Foto subida",
