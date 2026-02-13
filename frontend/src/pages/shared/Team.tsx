@@ -290,6 +290,7 @@ export default function UniversalTeam() {
   // Цвета для ролей (статичные)
   const roleColors: Record<string, string> = {
     director: 'bg-red-100 text-red-800',
+    owner: 'bg-red-100 text-red-800',
     admin: 'bg-blue-100 text-blue-800',
     manager: 'bg-blue-100 text-blue-800',
     sales: 'bg-green-100 text-green-800',
@@ -349,6 +350,7 @@ export default function UniversalTeam() {
 
   const roleConfig: Record<string, { label: string; color: string }> = {
     director: { label: t('role_director'), color: roleColors.director },
+    owner: { label: t('common:role_director'), color: roleColors.owner },
     admin: { label: t('role_admin'), color: roleColors.admin },
     manager: { label: t('role_manager'), color: roleColors.manager },
     sales: { label: t('common:role_saler'), color: roleColors.sales },

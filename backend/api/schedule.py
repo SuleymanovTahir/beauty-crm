@@ -23,6 +23,41 @@ from services.master_schedule import MasterScheduleService
 
 router = APIRouter(tags=["Schedule"])
 
+
+def _parse_hours_range(hours_value: str, fallback_start: str, fallback_end: str) -> tuple[str, str]:
+    if not isinstance(hours_value, str):
+        return fallback_start, fallback_end
+    parts = [part.strip() for part in hours_value.split('-')]
+    if len(parts) != 2:
+        return fallback_start, fallback_end
+    start_time, end_time = parts[0], parts[1]
+    if not start_time or not end_time:
+        return fallback_start, fallback_end
+    return start_time, end_time
+
+
+def _build_default_week_schedule() -> list[dict]:
+    from db import get_salon_settings
+
+    salon = get_salon_settings() or {}
+    weekdays_raw = salon.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)
+    weekends_raw = salon.get('hours_weekends', DEFAULT_HOURS_WEEKENDS)
+    weekday_start, weekday_end = _parse_hours_range(weekdays_raw, DEFAULT_HOURS_START, DEFAULT_HOURS_END)
+    weekend_start, weekend_end = _parse_hours_range(weekends_raw, DEFAULT_HOURS_START, DEFAULT_HOURS_END)
+
+    default_schedule = []
+    for day in range(7):
+        is_working = day < 5  # default 5/2
+        start_time = weekday_start if day < 5 else weekend_start
+        end_time = weekday_end if day < 5 else weekend_end
+        default_schedule.append({
+            "day_of_week": day,
+            "start_time": start_time,
+            "end_time": end_time,
+            "is_working": is_working
+        })
+    return default_schedule
+
 # --- Pydantic Models for Admin UI ---
 class WorkScheduleItem(BaseModel):
     day_of_week: int
@@ -53,12 +88,34 @@ async def get_user_schedule(user_id: int):
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         cursor.execute("SELECT full_name FROM users WHERE id = %s", (user_id,))
         user = cursor.fetchone()
-        conn.close()
         
         if not user:
+            conn.close()
             return JSONResponse({"error": "User not found"}, status_code=404)
+
+        cursor.execute("""
+            SELECT COUNT(*) AS total_rows
+            FROM user_schedule
+            WHERE user_id = %s
+        """, (user_id,))
+        schedule_stats = cursor.fetchone() or {"total_rows": 0}
+        if int(schedule_stats.get("total_rows", 0)) == 0:
+            default_schedule = _build_default_week_schedule()
+            for item in default_schedule:
+                cursor.execute("""
+                    INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
+                    VALUES (%s, %s, %s, %s, %s)
+                    ON CONFLICT (user_id, day_of_week) DO UPDATE
+                    SET start_time = EXCLUDED.start_time,
+                        end_time = EXCLUDED.end_time,
+                        is_active = EXCLUDED.is_active,
+                        updated_at = CURRENT_TIMESTAMP
+                """, (user_id, item["day_of_week"], item["start_time"], item["end_time"], bool(item["is_working"])))
+            conn.commit()
+            log_info(f"Auto-filled default 5/2 schedule for user_id={user_id}", "schedule")
         
         master_name = user['full_name']
+        conn.close()
         
         # ✅ Используем MasterScheduleService
         schedule_service = MasterScheduleService()
