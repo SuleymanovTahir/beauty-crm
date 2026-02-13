@@ -7,6 +7,7 @@ import sys
 import threading
 import types
 import time
+from typing import Optional
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -104,6 +105,7 @@ _feature_gate_cache = {
     "expires_at": 0.0,
     "crm_enabled": True,
     "site_enabled": True,
+    "crm_modules": {},
 }
 
 _SITE_ONLY_PREFIXES = (
@@ -115,6 +117,39 @@ _SITE_ONLY_PREFIXES = (
 _SITE_ONLY_EXACT_PATHS = {
     "/api/register/client",
 }
+
+_CRM_MODULE_ROUTE_MATCHERS = [
+    ("visitor_analytics", ("/api/analytics/visitors", "/api/cookies")),
+    ("dashboard", ("/api/dashboard", "/api/admin/stats")),
+    ("bookings", ("/api/bookings",)),
+    ("calendar", ("/api/schedule",)),
+    ("clients", ("/api/clients", "/api/search")),
+    ("team", ("/api/users", "/api/employees", "/api/roles", "/api/permissions", "/api/positions", "/api/admin/registrations")),
+    ("services", ("/api/services",)),
+    ("tasks", ("/api/tasks",)),
+    ("analytics", ("/api/analytics", "/api/stats", "/api/advanced-analytics", "/api/client-insights", "/api/performance-metrics", "/api/reports")),
+    ("funnel", ("/api/funnel",)),
+    ("products", ("/api/products",)),
+    ("invoices", ("/api/invoices",)),
+    ("contracts", ("/api/contracts",)),
+    ("telephony", ("/api/telephony", "/api/recordings", "/api/ringtones")),
+    ("messengers", ("/api/messengers", "/api/chat")),
+    ("internal_chat", ("/api/internal-chat",)),
+    ("broadcasts", ("/api/broadcasts",)),
+    ("referrals", ("/api/referral-campaigns", "/api/admin/referrals")),
+    ("loyalty", ("/api/loyalty", "/api/admin/loyalty")),
+    ("challenges", ("/api/challenges", "/api/admin/challenges")),
+    ("promo_codes", ("/api/promo-codes",)),
+    ("service_change_requests", ("/api/my/services", "/api/my/change-requests", "/api/admin/service-change-requests")),
+    ("public_content", ("/api/public-admin", "/api/admin/gallery")),
+    ("bot_settings", ("/api/bot-settings", "/api/settings/bot")),
+    ("notifications", ("/api/notifications", "/api/unread-count", "/api/admin/notifications")),
+    ("plans", ("/api/plans",)),
+    ("payment_integrations", ("/api/payment-providers", "/api/create-payment", "/api/transactions")),
+    ("marketplace_integrations", ("/api/marketplace-providers", "/api/marketplace", "/api/sync")),
+    ("trash", ("/api/admin/trash",)),
+    ("audit_log", ("/api/admin/audit-log",)),
+]
 
 
 def _normalize_feature_flag(raw_value, default_value: bool) -> bool:
@@ -130,30 +165,64 @@ def _normalize_feature_flag(raw_value, default_value: bool) -> bool:
     return bool(raw_value)
 
 
+def _path_matches(path: str, prefix: str) -> bool:
+    if path == prefix:
+        return True
+    return path.startswith(f"{prefix}/")
+
+
+def _normalize_crm_modules(raw_modules) -> dict:
+    if not isinstance(raw_modules, dict):
+        return {}
+
+    normalized_modules = {}
+    for module_key, module_enabled in raw_modules.items():
+        normalized_modules[module_key] = _normalize_feature_flag(module_enabled, True)
+    return normalized_modules
+
+
+def _resolve_crm_module_by_path(path: str) -> Optional[str]:
+    for module_key, prefixes in _CRM_MODULE_ROUTE_MATCHERS:
+        for prefix in prefixes:
+            if _path_matches(path, prefix):
+                return module_key
+    return None
+
+
 def _get_feature_gates_cached() -> dict:
     now = time.time()
     if _feature_gate_cache["expires_at"] > now:
         return {
             "crm_enabled": _feature_gate_cache["crm_enabled"],
             "site_enabled": _feature_gate_cache["site_enabled"],
+            "crm_modules": _feature_gate_cache["crm_modules"],
         }
 
     try:
         settings = get_salon_settings()
         crm_enabled = _normalize_feature_flag(settings.get("crm_enabled"), True)
         site_enabled = _normalize_feature_flag(settings.get("site_enabled"), True)
+        business_profile_config = settings.get("business_profile_config")
+        crm_modules = {}
+        if isinstance(business_profile_config, dict):
+            module_matrix = business_profile_config.get("modules")
+            if isinstance(module_matrix, dict):
+                crm_modules = _normalize_crm_modules(module_matrix.get("crm"))
     except Exception as error:
         log_error(f"Feature-gate load failed: {error}", "feature-gates")
         crm_enabled = True
         site_enabled = True
+        crm_modules = {}
 
     _feature_gate_cache["crm_enabled"] = crm_enabled
     _feature_gate_cache["site_enabled"] = site_enabled
+    _feature_gate_cache["crm_modules"] = crm_modules
     _feature_gate_cache["expires_at"] = now + 10
 
     return {
         "crm_enabled": crm_enabled,
         "site_enabled": site_enabled,
+        "crm_modules": crm_modules,
     }
 
 class ModernStaticFiles(StaticFiles):
@@ -379,6 +448,21 @@ async def feature_gate_middleware(request: Request, call_next):
                         "message": "Site and account module is disabled for this workspace",
                     },
                 )
+
+        matched_module_key = _resolve_crm_module_by_path(path)
+        if matched_module_key is not None:
+            crm_modules = gates.get("crm_modules")
+            if isinstance(crm_modules, dict):
+                module_enabled = _normalize_feature_flag(crm_modules.get(matched_module_key), True)
+                if not module_enabled:
+                    return JSONResponse(
+                        status_code=404,
+                        content={
+                            "error": "crm_module_disabled",
+                            "module": matched_module_key,
+                            "message": "CRM module is disabled for this workspace",
+                        },
+                    )
 
     return await call_next(request)
 
