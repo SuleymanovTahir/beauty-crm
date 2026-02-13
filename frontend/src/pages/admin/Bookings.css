@@ -227,6 +227,38 @@
   }
 }
 
+.bookings-stat-trend {
+  margin-top: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.bookings-stat-trend-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.bookings-stat-trend-up {
+  color: #16a34a;
+}
+
+.bookings-stat-trend-down {
+  color: #dc2626;
+}
+
+.bookings-stat-trend-neutral {
+  color: #6b7280;
+}
+
+@media (min-width: 768px) {
+  .bookings-stat-trend {
+    font-size: 0.8125rem;
+  }
+}
+
 .bookings-stat-icon-wrapper {
   width: 2.5rem;
   height: 2.5rem;
@@ -550,9 +582,17 @@
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.25rem;
   box-sizing: border-box;
   transition: all 0.2s;
   background-color: #fff;
+}
+
+input.input-field[type="date"],
+input.input-field[type="time"] {
+  min-height: 46px;
 }
 
 select.input-field {
@@ -591,8 +631,40 @@ select.input-field {
   background-color: #f9fafb;
 }
 
+.action-button-view {
+  background-color: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.action-button-view:hover {
+  background-color: #dbeafe;
+}
+
+.action-button-edit {
+  background-color: #ecfeff;
+  border-color: #a5f3fc;
+  color: #0e7490;
+}
+
+.action-button-edit:hover {
+  background-color: #cffafe;
+}
+
+.action-button-chat {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.action-button-chat:hover {
+  background-color: #dcfce7;
+}
+
 .action-button-red {
+  background-color: #fef2f2;
   border-color: #ef4444;
+  color: #b91c1c;
 }
 
 .action-button-red:hover {

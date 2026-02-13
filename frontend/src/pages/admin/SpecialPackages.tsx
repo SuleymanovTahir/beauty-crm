@@ -1782,7 +1782,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
 
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="campaignName">{t('campaign_name')} *</Label>
+                  <Label htmlFor="campaignName" className="mb-2 block">{t('campaign_name')} *</Label>
                   <Input
                     id="campaignName"
                     value={referralFormData.name}
@@ -1792,7 +1792,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
                 </div>
 
                 <div>
-                  <Label htmlFor="campaignDesc">{t('description')}</Label>
+                  <Label htmlFor="campaignDesc" className="mb-2 block">{t('description')}</Label>
                   <Textarea
                     id="campaignDesc"
                     value={referralFormData.description}
@@ -1804,7 +1804,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="bonusPoints">{t('bonus_to_referee')}</Label>
+                    <Label htmlFor="bonusPoints" className="mb-2 block">{t('bonus_to_referee')}</Label>
                     <Input
                       id="bonusPoints"
                       type="number"
@@ -1816,7 +1816,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
                     />
                   </div>
                   <div>
-                    <Label htmlFor="referrerBonus">{t('bonus_to_referrer')}</Label>
+                    <Label htmlFor="referrerBonus" className="mb-2 block">{t('bonus_to_referrer')}</Label>
                     <Input
                       id="referrerBonus"
                       type="number"
@@ -1830,7 +1830,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
                 </div>
 
                 <div>
-                  <Label htmlFor="targetType">{t('target_audience')}</Label>
+                  <Label htmlFor="targetType" className="mb-2 block">{t('target_audience')}</Label>
                   <Select
                     value={referralFormData.target_type}
                     onValueChange={(value: any) => setReferralFormData({ ...referralFormData, target_type: value })}
@@ -1856,7 +1856,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
 
                 {referralFormData.target_type === 'by_inactivity' && (
                   <div>
-                    <Label htmlFor="daysInactive">{t('days_without_visiting')}</Label>
+                    <Label htmlFor="daysInactive" className="mb-2 block">{t('days_without_visiting')}</Label>
                     <Input
                       id="daysInactive"
                       type="number"
@@ -1872,7 +1872,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="startDate">{t('start_date')} ({t('optional')})</Label>
+                    <Label htmlFor="startDate" className="mb-2 block">{t('start_date')} ({t('optional')})</Label>
                     <Input
                       id="startDate"
                       type="date"
@@ -1881,7 +1881,7 @@ export default function SpecialPackages({ entryMode = 'default' }: SpecialPackag
                     />
                   </div>
                   <div>
-                    <Label htmlFor="endDate">{t('end_date')} ({t('optional')})</Label>
+                    <Label htmlFor="endDate" className="mb-2 block">{t('end_date')} ({t('optional')})</Label>
                     <Input
                       id="endDate"
                       type="date"

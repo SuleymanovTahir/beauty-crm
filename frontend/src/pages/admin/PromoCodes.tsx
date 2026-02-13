@@ -733,8 +733,14 @@ export default function PromoCodes({
                             <Input
                                 type="number"
                                 className="h-12 rounded-2xl bg-gray-50 border-transparent focus:bg-white focus:ring-2 focus:ring-pink-500 transition-all"
-                                value={newPromo.min_booking_amount}
-                                onChange={(event) => setNewPromo((prev) => ({ ...prev, min_booking_amount: parseNonNegativeInteger(event.target.value, 0) }))}
+                                value={newPromo.min_booking_amount > 0 ? newPromo.min_booking_amount : ''}
+                                onChange={(event) => {
+                                    const rawValue = event.target.value.trim();
+                                    setNewPromo((prev) => ({
+                                        ...prev,
+                                        min_booking_amount: rawValue.length === 0 ? 0 : parseNonNegativeInteger(rawValue, 0)
+                                    }));
+                                }}
                             />
                         </div>
 

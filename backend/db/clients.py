@@ -647,6 +647,34 @@ def calculate_client_temperature(instagram_id: str) -> str:
     c = conn.cursor()
     
     try:
+        # Booking-based intent has priority over chat heuristics.
+        try:
+            c.execute("""
+                SELECT
+                    COUNT(*) FILTER (WHERE COALESCE(status, '') <> 'cancelled') AS total_bookings,
+                    COUNT(*) FILTER (WHERE status = 'completed') AS completed_bookings
+                FROM bookings
+                WHERE instagram_id = %s
+                  AND deleted_at IS NULL
+            """, (instagram_id,))
+        except Exception:
+            c.execute("""
+                SELECT
+                    COUNT(*) FILTER (WHERE COALESCE(status, '') <> 'cancelled') AS total_bookings,
+                    COUNT(*) FILTER (WHERE status = 'completed') AS completed_bookings
+                FROM bookings
+                WHERE instagram_id = %s
+            """, (instagram_id,))
+
+        bookings_row = c.fetchone() or (0, 0)
+        total_bookings = int(bookings_row[0] or 0)
+        completed_bookings = int(bookings_row[1] or 0)
+
+        if total_bookings >= 4 or completed_bookings >= 3:
+            return 'hot'
+        if total_bookings >= 1:
+            return 'warm'
+
         # Критерии:
         # HOT: спрашивал конкретное время записи
         # WARM: спросил цену

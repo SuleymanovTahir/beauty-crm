@@ -70,7 +70,7 @@ export const CRM_MENU_DEFAULT_ORDER = [
 ];
 
 export const CRM_MENU_GROUPS: Record<string, string[]> = {
-    'chat-group': ['internal-chat'],
+    'chat-group': ['chat', 'internal-chat'],
     'catalog-group': ['services', 'service-change-requests', 'products'],
     'analytics-group': ['analytics', 'visitor-analytics'],
     'finance-group': ['invoices', 'contracts'],
@@ -98,6 +98,7 @@ export const buildCrmMenuCatalog = ({
         'calendar': { icon: Calendar, label: t('menu.calendar'), path: `${rolePrefix}/calendar`, req: () => true },
         'clients': { icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, req: () => true },
         'chat-group': { icon: MessageSquare, label: t('menu.chat'), req: () => true },
+        'chat': { icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, req: () => true },
         'internal-chat': { icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, req: () => true },
         'funnel': { icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, req: () => true },
         'catalog-group': { icon: LayoutGrid, label: t('menu.catalog'), req: () => true },
@@ -379,7 +380,8 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
             const subItems = item.items?.map((sub: any) => {
                 let subBadge = 0;
-                if (sub.id === 'messengers') subBadge = chatUnreadCount;
+                if (sub.id === 'chat') subBadge = chatUnreadCount;
+                else if (sub.id === 'messengers') subBadge = chatUnreadCount;
                 else if (sub.id === 'internal-chat') subBadge = internalChatUnreadCount;
                 return { ...sub, badge: subBadge };
             });

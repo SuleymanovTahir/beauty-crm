@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import {
     Calendar, Search, MessageSquare, Eye, Loader, RefreshCw, AlertCircle, Plus,
     Upload, Edit, Trash2, Clock, CheckCircle2,
-    CalendarDays, DollarSign, ChevronDown, Users, X
+    CalendarDays, DollarSign, ChevronDown, Users, X, TrendingUp, TrendingDown, Minus
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ExportDropdown } from '../../components/shared/ExportDropdown';
@@ -35,6 +35,7 @@ const api = {
         if (params.dateTo) searchParams.append('date_to', params.dateTo);
         if (params.sort) searchParams.append('sort', params.sort);
         if (params.order) searchParams.append('order', params.order);
+        if (params.language) searchParams.append('language', params.language);
 
         const res = await fetch(`${this.baseURL}/api/bookings?${searchParams.toString()}`, { credentials: 'include' });
         return res.json();
@@ -45,8 +46,11 @@ const api = {
         return res.json();
     },
 
-    async getServices(lang: string = 'ru') {
-        const res = await fetch(`${this.baseURL}/api/services?language=${lang}`, { credentials: 'include' });
+    async getServices(lang: string = 'ru', activeOnly: boolean = false) {
+        const searchParams = new URLSearchParams();
+        searchParams.append('language', lang);
+        searchParams.append('active_only', activeOnly ? 'true' : 'false');
+        const res = await fetch(`${this.baseURL}/api/services?${searchParams.toString()}`, { credentials: 'include' });
         return res.json();
     },
 
@@ -114,7 +118,16 @@ const api = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-        return res.json();
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const error: any = new Error(body.error || body.message || 'create_booking_failed');
+            error.error = body.error;
+            error.reason = body.reason;
+            error.nearest_slots = body.nearest_slots;
+            error.status = res.status;
+            throw error;
+        }
+        return body;
     },
 
     async updateBookingStatus(id: number, status: string) {
@@ -124,7 +137,11 @@ const api = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status })
         });
-        return res.json();
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok || body?.success === false) {
+            throw new Error(body?.error || body?.message || 'status_update_failed');
+        }
+        return body;
     },
 
     async getEmployeesForService(serviceId: number, lang: string = 'ru') {
@@ -140,6 +157,208 @@ const api = {
         });
         return res.json();
     }
+};
+
+type BookingStats = {
+    pending: number;
+    completed: number;
+    total: number;
+    revenue: number;
+};
+
+type TrendDirection = 'up' | 'down' | 'neutral';
+
+type StatTrend = {
+    value: number;
+    direction: TrendDirection;
+};
+
+type StatTrendMap = {
+    pending: StatTrend;
+    completed: StatTrend;
+    total: StatTrend;
+    revenue: StatTrend;
+};
+
+type DateRange = {
+    from: Date;
+    to: Date;
+};
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+const PERIOD_OPTIONS = ['all', 'today', '7', '14', '30', '90'] as const;
+
+const EMPTY_BOOKING_STATS: BookingStats = {
+    pending: 0,
+    completed: 0,
+    total: 0,
+    revenue: 0
+};
+
+const EMPTY_STAT_TRENDS: StatTrendMap = {
+    pending: { value: 0, direction: 'neutral' },
+    completed: { value: 0, direction: 'neutral' },
+    total: { value: 0, direction: 'neutral' },
+    revenue: { value: 0, direction: 'neutral' }
+};
+
+const toStartOfDay = (date: Date): Date => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+};
+
+const toEndOfDay = (date: Date): Date => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 0);
+};
+
+const formatDateTimeForApi = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
+const parseStoredDate = (value: string): Date | null => {
+    const parts = value.split('-').map(Number);
+    if (parts.length !== 3) {
+        return null;
+    }
+    const [year, month, day] = parts;
+    if (!Number.isFinite(year)) {
+        return null;
+    }
+    if (!Number.isFinite(month)) {
+        return null;
+    }
+    if (!Number.isFinite(day)) {
+        return null;
+    }
+    return new Date(year, month - 1, day);
+};
+
+const parseDurationToMinutes = (rawDuration: unknown): number => {
+    if (typeof rawDuration === 'number' && Number.isFinite(rawDuration) && rawDuration > 0) {
+        return Math.max(1, Math.trunc(rawDuration));
+    }
+
+    if (typeof rawDuration !== 'string') {
+        return 60;
+    }
+
+    const normalized = rawDuration.trim();
+    if (normalized.length === 0) {
+        return 60;
+    }
+
+    if (/^\d+$/.test(normalized)) {
+        const parsed = Number(normalized);
+        return Number.isFinite(parsed) && parsed > 0 ? Math.trunc(parsed) : 60;
+    }
+
+    const hoursMatch = normalized.match(/(\d+)\s*(h|hr|час|ч)/i);
+    const minsMatch = normalized.match(/(\d+)\s*(m|min|мин)/i);
+    const hours = hoursMatch && hoursMatch[1] ? Number(hoursMatch[1]) : 0;
+    const mins = minsMatch && minsMatch[1] ? Number(minsMatch[1]) : 0;
+    const total = hours * 60 + mins;
+    return total > 0 ? Math.trunc(total) : 60;
+};
+
+const buildDateRangeFromPeriod = (
+    period: string,
+    customDateFrom: string,
+    customDateTo: string
+): DateRange | null => {
+    const today = new Date();
+    const todayStart = toStartOfDay(today);
+    const todayEnd = toEndOfDay(today);
+
+    if (period === 'today') {
+        return { from: todayStart, to: todayEnd };
+    }
+
+    if (['7', '14', '30', '90'].includes(period)) {
+        const days = Number.parseInt(period, 10);
+        if (!Number.isFinite(days)) {
+            return null;
+        }
+        if (days <= 0) {
+            return null;
+        }
+        const from = new Date(todayStart);
+        from.setDate(from.getDate() - (days - 1));
+        return { from, to: todayEnd };
+    }
+
+    if (period === 'custom' && customDateFrom && customDateTo) {
+        const parsedFrom = parseStoredDate(customDateFrom);
+        const parsedTo = parseStoredDate(customDateTo);
+        if (!parsedFrom) {
+            return null;
+        }
+        if (!parsedTo) {
+            return null;
+        }
+        return {
+            from: toStartOfDay(parsedFrom),
+            to: toEndOfDay(parsedTo)
+        };
+    }
+
+    return null;
+};
+
+const buildPreviousDateRange = (range: DateRange): DateRange => {
+    const currentDays = Math.max(1, Math.round((range.to.getTime() - range.from.getTime()) / DAY_MS) + 1);
+    const previousTo = new Date(range.from.getTime() - 1);
+    const previousToDay = toEndOfDay(previousTo);
+    const previousFromDay = toStartOfDay(previousToDay);
+    previousFromDay.setDate(previousFromDay.getDate() - (currentDays - 1));
+    return {
+        from: previousFromDay,
+        to: previousToDay
+    };
+};
+
+const toNumeric = (value: unknown): number => {
+    const numericValue = Number(value);
+    return Number.isFinite(numericValue) ? numericValue : 0;
+};
+
+const calculateTrend = (currentValue: number, previousValue: number): StatTrend => {
+    if (previousValue <= 0) {
+        if (currentValue <= 0) {
+            return { value: 0, direction: 'neutral' };
+        }
+        return { value: 100, direction: 'up' };
+    }
+
+    const rawDiff = ((currentValue - previousValue) / previousValue) * 100;
+    const roundedDiff = Math.round(rawDiff * 10) / 10;
+    if (roundedDiff > 0) {
+        return { value: roundedDiff, direction: 'up' };
+    }
+    if (roundedDiff < 0) {
+        return { value: roundedDiff, direction: 'down' };
+    }
+    return { value: 0, direction: 'neutral' };
+};
+
+const calculateStatTrends = (
+    currentStats: BookingStats,
+    previousStats: Partial<BookingStats> | null
+): StatTrendMap => {
+    if (!previousStats) {
+        return EMPTY_STAT_TRENDS;
+    }
+
+    return {
+        pending: calculateTrend(currentStats.pending, toNumeric(previousStats.pending)),
+        completed: calculateTrend(currentStats.completed, toNumeric(previousStats.completed)),
+        total: calculateTrend(currentStats.total, toNumeric(previousStats.total)),
+        revenue: calculateTrend(currentStats.revenue, toNumeric(previousStats.revenue))
+    };
 };
 
 export default function UniversalBookings() {
@@ -173,12 +392,8 @@ export default function UniversalBookings() {
 
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
-    const [stats, setStats] = useState({
-        pending: 0,
-        completed: 0,
-        total: 0,
-        revenue: 0
-    });
+    const [stats, setStats] = useState<BookingStats>(EMPTY_BOOKING_STATS);
+    const [statTrends, setStatTrends] = useState<StatTrendMap>(EMPTY_STAT_TRENDS);
 
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -229,6 +444,75 @@ export default function UniversalBookings() {
     const [sortField, setSortField] = useState<'name' | 'service_name' | 'datetime' | 'revenue' | 'source' | 'created_at'>('datetime');
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
+    const getPeriodLabel = (periodValue: string) => {
+        const applyCountInterpolation = (value: string, count: number) => {
+            return value.replace(/\{\{\s*count\s*\}\}/g, String(count));
+        };
+
+        const getCountPeriodLabel = (key: string, count: number, fallbackTemplate: string) => {
+            const translated = t(key, { count, defaultValue: fallbackTemplate });
+            const periodFallback = t('common:for_period', { defaultValue: '' });
+            if (translated.trim().toLowerCase() === periodFallback.trim().toLowerCase() && periodFallback.trim().length > 0) {
+                return applyCountInterpolation(fallbackTemplate, count);
+            }
+            return applyCountInterpolation(translated, count);
+        };
+
+        if (periodValue === 'all') {
+            return t('common:all_time');
+        }
+        if (periodValue === 'today') {
+            return t('common:today');
+        }
+        if (periodValue === '7') {
+            return getCountPeriodLabel('common:last_7_days', 7, 'Последние {{count}} дней');
+        }
+        if (periodValue === '14') {
+            return getCountPeriodLabel('common:last_14_days', 14, 'Последние {{count}} дней');
+        }
+        if (periodValue === '30') {
+            return getCountPeriodLabel('common:last_7_days', 30, 'Последние {{count}} дней');
+        }
+        if (periodValue === '90') {
+            return getCountPeriodLabel('common:last_3_months', 3, 'Последние {{count}} месяца');
+        }
+        if (periodValue === 'custom' && dateFrom && dateTo) {
+            return `${dateFrom} - ${dateTo}`;
+        }
+        return t('common:all_periods');
+    };
+
+    const periodLabel = useMemo(() => getPeriodLabel(period), [dateFrom, dateTo, period, t]);
+
+    const renderTrendBadge = (trend: StatTrend) => {
+        const absoluteValue = Math.abs(trend.value);
+
+        if (trend.direction === 'up') {
+            return (
+                <div className="bookings-stat-trend bookings-stat-trend-up">
+                    <TrendingUp className="bookings-stat-trend-icon" />
+                    <span>{absoluteValue}%</span>
+                </div>
+            );
+        }
+
+        if (trend.direction === 'down') {
+            return (
+                <div className="bookings-stat-trend bookings-stat-trend-down">
+                    <TrendingDown className="bookings-stat-trend-icon" />
+                    <span>{absoluteValue}%</span>
+                </div>
+            );
+        }
+
+        return (
+            <div className="bookings-stat-trend bookings-stat-trend-neutral">
+                <Minus className="bookings-stat-trend-icon" />
+                <span>0%</span>
+            </div>
+        );
+    };
+
     useEffect(() => {
         loadData();
     }, [itemsPerPage, currentPage, searchTerm, statusFilter, masterFilter, period, dateFrom, dateTo, sortField, sortDirection]);
@@ -236,6 +520,10 @@ export default function UniversalBookings() {
     useEffect(() => {
         setFilteredBookings(bookings);
     }, [bookings]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, statusFilter, masterFilter, period, sortField, sortDirection, itemsPerPage]);
 
     useEffect(() => {
         localStorage.setItem('bookings_status_filter', statusFilter);
@@ -246,6 +534,31 @@ export default function UniversalBookings() {
             localStorage.setItem('bookings_master_filter', masterFilter);
         }
     }, [masterFilter, isEmployee]);
+
+    useEffect(() => {
+        if (isEmployee || masterFilter === 'all' || masters.length === 0) {
+            return;
+        }
+
+        const hasCurrentValue = masters.some((master: any) => String(master.id) === masterFilter);
+        if (hasCurrentValue) {
+            return;
+        }
+
+        const normalizedFilter = masterFilter.trim().toLowerCase();
+        const matchedByName = masters.find((master: any) => {
+            const fullName = String(master?.full_name ?? '').trim().toLowerCase();
+            const username = String(master?.username ?? '').trim().toLowerCase();
+            return normalizedFilter === fullName || normalizedFilter === username;
+        });
+
+        if (matchedByName?.id) {
+            setMasterFilter(String(matchedByName.id));
+            return;
+        }
+
+        setMasterFilter('all');
+    }, [isEmployee, masterFilter, masters]);
 
     useEffect(() => {
         localStorage.setItem('bookings_period_filter', period);
@@ -265,59 +578,86 @@ export default function UniversalBookings() {
             setLoading(true);
             setError(null);
 
-            let queryDateFrom = dateFrom;
-            let queryDateTo = dateTo;
+            const selectedRange = buildDateRangeFromPeriod(period, dateFrom, dateTo);
+            const previousRange = selectedRange ? buildPreviousDateRange(selectedRange) : null;
 
-            const now = new Date();
-            if (period === 'today') {
-                queryDateFrom = now.toISOString().split('T')[0];
-                const tomorrow = new Date(now);
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                queryDateTo = tomorrow.toISOString().split('T')[0];
-            } else if (period === '7') {
-                const d = new Date(); d.setDate(d.getDate() - 7);
-                queryDateFrom = d.toISOString().split('T')[0];
-            } else if (period === '30') {
-                const d = new Date(); d.setDate(d.getDate() - 30);
-                queryDateFrom = d.toISOString().split('T')[0];
-            }
+            const selectedMaster = isEmployee
+                ? (currentUser?.full_name ?? currentUser?.username ?? '')
+                : masterFilter;
 
-            const params = {
-                page: currentPage,
-                limit: itemsPerPage,
+            const baseParams = {
                 search: searchTerm,
                 status: statusFilter,
-                master: isEmployee ? (currentUser?.full_name || currentUser?.username) : masterFilter,
-                dateFrom: queryDateFrom,
-                dateTo: queryDateTo,
+                master: selectedMaster,
                 sort: sortField,
-                order: sortDirection
+                order: sortDirection,
+                language: i18n.language
             };
 
-            const [bookingsData, clientsData, servicesData, usersData] = await Promise.all([
-                api.getBookings(params),
+            const currentParams = {
+                ...baseParams,
+                page: currentPage,
+                limit: itemsPerPage,
+                dateFrom: selectedRange ? formatDateTimeForApi(selectedRange.from) : '',
+                dateTo: selectedRange ? formatDateTimeForApi(selectedRange.to) : ''
+            };
+
+            const previousParams = previousRange
+                ? {
+                    ...baseParams,
+                    page: 1,
+                    limit: 1,
+                    dateFrom: formatDateTimeForApi(previousRange.from),
+                    dateTo: formatDateTimeForApi(previousRange.to)
+                }
+                : null;
+
+            const [bookingsData, clientsData, servicesData, usersData, previousPeriodData] = await Promise.all([
+                api.getBookings(currentParams),
                 api.getClients(),
-                api.getServices(i18n.language),
-                api.getUsers(i18n.language)
+                api.getServices(i18n.language, false),
+                api.getUsers(i18n.language),
+                previousParams ? api.getBookings(previousParams) : Promise.resolve(null)
             ]);
 
-            setBookings(bookingsData.bookings || []);
-            setTotalItems(bookingsData.total || 0);
-            setTotalPages(Math.ceil((bookingsData.total || 0) / itemsPerPage));
-            if (bookingsData.stats) {
-                setStats(bookingsData.stats);
-            }
+            const bookingRows = Array.isArray(bookingsData?.bookings) ? bookingsData.bookings : [];
+            const totalResults = toNumeric(bookingsData?.total);
 
-            setClients(clientsData.clients || []);
-            setServices(servicesData.services || []);
-            const allUsers = Array.isArray(usersData) ? usersData : (usersData.users || []);
-            setMasters(allUsers.filter((u: any) =>
-                ['employee', 'manager', 'admin', 'director'].includes(u.role)
-            ) || []);
+            setBookings(bookingRows);
+            setTotalItems(totalResults);
+            setTotalPages(Math.ceil(totalResults / itemsPerPage));
+
+            const currentStats: BookingStats = {
+                pending: toNumeric(bookingsData?.stats?.pending),
+                completed: toNumeric(bookingsData?.stats?.completed),
+                total: toNumeric(bookingsData?.stats?.total),
+                revenue: toNumeric(bookingsData?.stats?.revenue)
+            };
+            setStats(currentStats);
+
+            const previousStats = previousPeriodData?.stats ? previousPeriodData.stats : null;
+            setStatTrends(calculateStatTrends(currentStats, previousStats));
+
+            const clientsList = Array.isArray(clientsData?.clients)
+                ? clientsData.clients
+                : (Array.isArray(clientsData) ? clientsData : []);
+            const servicesList = Array.isArray(servicesData?.services)
+                ? servicesData.services
+                : (Array.isArray(servicesData) ? servicesData : []);
+            const allUsers = Array.isArray(usersData)
+                ? usersData
+                : (Array.isArray(usersData?.users) ? usersData.users : []);
+
+            setClients(clientsList);
+            setServices(servicesList);
+            setMasters(
+                allUsers.filter((u: any) => Boolean(u.is_service_provider) && !['admin', 'director'].includes(String(u.role ?? '').toLowerCase()))
+            );
 
         } catch (err: any) {
-            setError(err.message);
-            toast.error(`${t('common:error_loading_data')}: ${err.message}`);
+            const message = err instanceof Error ? err.message : String(err);
+            setError(message);
+            toast.error(`${t('common:error_loading_data')}: ${message}`);
         } finally {
             setLoading(false);
         }
@@ -335,31 +675,137 @@ export default function UniversalBookings() {
             setBookings((prevBookings: any[]) =>
                 prevBookings.map((b: any) => b.id === id ? { ...b, status: newStatus } : b)
             );
+            await loadData();
             toast.success(t('bookings:status_updated'));
         } catch (err) {
             toast.error(t('bookings:error_updating_status'));
         }
     };
 
+    const formatNearestSlots = (slots: any[]): string => {
+        if (!Array.isArray(slots) || slots.length === 0) {
+            return '';
+        }
+
+        const formatted = slots.slice(0, 4).map((slot: any) => {
+            const slotDate = String(slot?.date || '');
+            const slotTime = String(slot?.time || '');
+            if (!slotDate || !slotTime) {
+                return '';
+            }
+            const parsedDate = new Date(`${slotDate}T${slotTime}:00`);
+            const dateLabel = Number.isNaN(parsedDate.getTime())
+                ? slotDate
+                : parsedDate.toLocaleDateString(i18n.language);
+            return `${dateLabel} ${slotTime}`;
+        }).filter((item: string) => item.length > 0);
+
+        return formatted.join(', ');
+    };
+
+    const getMasterSelectValue = (booking: any) => {
+        const masterUserId = booking?.master_user_id;
+        if (masterUserId !== null && masterUserId !== undefined) {
+            return String(masterUserId);
+        }
+
+        const normalizedMaster = String(booking?.master ?? '').trim();
+        if (normalizedMaster.length === 0) {
+            return '';
+        }
+
+        const matchedMaster = masters.find((master: any) => {
+            const fullName = String(master?.full_name ?? '').trim().toLowerCase();
+            const username = String(master?.username ?? '').trim().toLowerCase();
+            const target = normalizedMaster.toLowerCase();
+            return target === fullName || target === username;
+        });
+
+        if (!matchedMaster) {
+            return '';
+        }
+
+        return String(matchedMaster.id);
+    };
+
+    const getMasterDisplayName = (booking: any): string => {
+        const rawMaster = String(booking?.master ?? '').trim();
+        if (rawMaster.length > 0) {
+            return rawMaster;
+        }
+
+        const masterUserId = booking?.master_user_id !== null && booking?.master_user_id !== undefined
+            ? String(booking.master_user_id)
+            : '';
+
+        let matchedMaster = masterUserId
+            ? masters.find((master: any) => String(master?.id) === masterUserId)
+            : null;
+
+        if (!matchedMaster && rawMaster.length > 0) {
+            const normalizedMaster = rawMaster.toLowerCase();
+            matchedMaster = masters.find((master: any) => {
+                const fullName = String(master?.full_name ?? '').trim().toLowerCase();
+                const username = String(master?.username ?? '').trim().toLowerCase();
+                return normalizedMaster === fullName || normalizedMaster === username;
+            });
+        }
+
+        if (matchedMaster) {
+            return String(matchedMaster.full_name || matchedMaster.username || '-');
+        }
+
+        return '-';
+    };
+
+    const getSourceLabel = (sourceValue: unknown): string => {
+        const normalized = String(sourceValue ?? '').trim().toLowerCase();
+        if (!normalized) {
+            return t('bookings:source.manual');
+        }
+        return t(`bookings:source.${normalized}`, { defaultValue: normalized });
+    };
+
+    const getDiscountLabel = (booking: any): string => {
+        const promoCode = String(booking?.promo_code ?? '').trim();
+        if (promoCode.length > 0) {
+            return `${t('admin/services:promo_code')}: ${promoCode}`;
+        }
+
+        const discountSource = String(booking?.discount_source ?? '').trim().toLowerCase();
+        if (discountSource.length > 0) {
+            return `${t('common:discount')}: ${getSourceLabel(discountSource)}`;
+        }
+
+        return '';
+    };
+
     const handleAddBooking = async () => {
-        if (!selectedClient || !selectedService || !addForm.date || !addForm.time) {
+        const manualClientName = clientSearch.trim();
+        if ((!selectedClient && !manualClientName) || !selectedService || !addForm.date || !addForm.time) {
             toast.error(t('bookings:fill_all_required_fields'));
             return;
         }
 
         try {
             setAddingBooking(true);
+            const selectedClientName = selectedClient?.display_name ?? selectedClient?.name ?? '';
+            const bookingName = selectedClientName || manualClientName;
+            const selectedClientInstagram = selectedClient?.instagram_id;
+            const selectedClientPhone = selectedClient?.phone ?? '';
+            const serviceDuration = Number(selectedService?.duration);
 
             const bookingData = {
-                instagram_id: selectedClient.instagram_id,
-                name: selectedClient.display_name,
-                phone: addForm.phone || selectedClient.phone || '',
+                instagram_id: selectedClientInstagram,
+                name: bookingName,
+                phone: addForm.phone || selectedClientPhone,
                 service: selectedService.name,
                 date: addForm.date,
                 time: addForm.time,
                 revenue: addForm.revenue || selectedService.price,
                 master: addForm.master,
                 source: addForm.source,
+                duration_minutes: Number.isFinite(serviceDuration) && serviceDuration > 0 ? serviceDuration : undefined,
             };
 
             if (editingBooking) {
@@ -374,7 +820,16 @@ export default function UniversalBookings() {
             resetForm();
             await loadData();
         } catch (err: any) {
-            toast.error(`❌ ${t('bookings:error')}: ${err.message}`);
+            if (err?.error === 'slot_unavailable') {
+                const reason = String(err?.reason ?? 'slot_unavailable').replace(/_/g, ' ');
+                toast.error(`${t('bookings:error')}: ${reason}`);
+                const nearestSlots = formatNearestSlots(err?.nearest_slots ?? []);
+                if (nearestSlots) {
+                    toast.info(nearestSlots);
+                }
+                return;
+            }
+            toast.error(`${t('bookings:error')}: ${err.message}`);
         } finally {
             setAddingBooking(false);
         }
@@ -411,10 +866,14 @@ export default function UniversalBookings() {
             date: date,
             time: time,
             revenue: booking.revenue || 0,
-            master: booking.master || '',
+            master: getMasterSelectValue(booking),
             status: booking.status || 'confirmed',
             source: booking.source || 'manual'
         });
+
+        if (!client && booking.name) {
+            setClientSearch(String(booking.name));
+        }
 
         setShowAddDialog(true);
     };
@@ -433,9 +892,66 @@ export default function UniversalBookings() {
         (c.phone || '').includes(clientSearch)
     );
 
-    const filteredServices = services.filter((s: any) =>
-        (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase())
-    );
+    const filteredServices = services.filter((serviceItem: any) => {
+        const serviceQuery = serviceSearch.trim().toLowerCase();
+        if (serviceQuery.length === 0) {
+            return true;
+        }
+
+        const serviceName = String(serviceItem?.name ?? '').toLowerCase();
+        if (serviceName.includes(serviceQuery)) {
+            return true;
+        }
+
+        const serviceKey = String(serviceItem?.key ?? serviceItem?.service_key ?? '').toLowerCase();
+        if (serviceKey.includes(serviceQuery)) {
+            return true;
+        }
+
+        const serviceCategory = String(serviceItem?.category ?? '').toLowerCase();
+        if (serviceCategory.includes(serviceQuery)) {
+            return true;
+        }
+
+        return false;
+    });
+
+    const getBookingDurationMinutes = (booking: any): number => {
+        const directDuration = booking?.duration_minutes ?? booking?.duration;
+        if (directDuration !== undefined && directDuration !== null) {
+            return parseDurationToMinutes(directDuration);
+        }
+
+        const serviceLabel = String(booking?.service_name ?? booking?.service ?? '').trim().toLowerCase();
+        if (serviceLabel.length === 0) {
+            return 60;
+        }
+
+        const matchedService = services.find((serviceItem: any) => {
+            const serviceName = String(serviceItem?.name ?? '').trim().toLowerCase();
+            const serviceKey = String(serviceItem?.service_key ?? serviceItem?.key ?? '').trim().toLowerCase();
+            return serviceLabel === serviceName || serviceLabel === serviceKey;
+        });
+
+        if (!matchedService) {
+            return 60;
+        }
+
+        return parseDurationToMinutes(matchedService?.duration);
+    };
+
+    const formatBookingTimeRange = (booking: any): string => {
+        const startDate = new Date(booking?.datetime);
+        if (Number.isNaN(startDate.getTime())) {
+            return '';
+        }
+
+        const durationMinutes = getBookingDurationMinutes(booking);
+        const endDate = new Date(startDate.getTime() + durationMinutes * 60 * 1000);
+        const startLabel = startDate.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
+        const endLabel = endDate.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
+        return `${startLabel} - ${endLabel}`;
+    };
 
     const handleExport = async (format: 'csv' | 'pdf' | 'excel') => {
         try {
@@ -552,7 +1068,8 @@ export default function UniversalBookings() {
                         <div className="bookings-stat-info">
                             <p className="bookings-stat-label">{t('bookings:pending')}</p>
                             <h3 className="bookings-stat-value">{stats.pending}</h3>
-                            <p className="bookings-stat-period">{t('common:all_time')}</p>
+                            <p className="bookings-stat-period">{periodLabel}</p>
+                            {renderTrendBadge(statTrends.pending)}
                         </div>
                         <div className="bookings-stat-icon-wrapper stat-yellow"><Clock className="bookings-stat-icon" /></div>
                     </div>
@@ -562,7 +1079,8 @@ export default function UniversalBookings() {
                         <div className="bookings-stat-info">
                             <p className="bookings-stat-label">{t('bookings:completed')}</p>
                             <h3 className="bookings-stat-value">{stats.completed}</h3>
-                            <p className="bookings-stat-period">{t('common:all_time')}</p>
+                            <p className="bookings-stat-period">{periodLabel}</p>
+                            {renderTrendBadge(statTrends.completed)}
                         </div>
                         <div className="bookings-stat-icon-wrapper stat-green"><CheckCircle2 className="bookings-stat-icon" /></div>
                     </div>
@@ -572,7 +1090,8 @@ export default function UniversalBookings() {
                         <div className="bookings-stat-info">
                             <p className="bookings-stat-label">{t('bookings:total')}</p>
                             <h3 className="bookings-stat-value">{stats.total}</h3>
-                            <p className="bookings-stat-period">{t('common:all_time')}</p>
+                            <p className="bookings-stat-period">{periodLabel}</p>
+                            {renderTrendBadge(statTrends.total)}
                         </div>
                         <div className="bookings-stat-icon-wrapper stat-blue"><CalendarDays className="bookings-stat-icon" /></div>
                     </div>
@@ -582,7 +1101,8 @@ export default function UniversalBookings() {
                         <div className="bookings-stat-info">
                             <p className="bookings-stat-label">{t('bookings:revenue')}</p>
                             <h3 className="bookings-stat-value">{stats.revenue} {currency}</h3>
-                            <p className="bookings-stat-period">{t('common:all_time')}</p>
+                            <p className="bookings-stat-period">{periodLabel}</p>
+                            {renderTrendBadge(statTrends.revenue)}
                         </div>
                         <div className="bookings-stat-icon-wrapper stat-emerald"><DollarSign className="bookings-stat-icon" /></div>
                     </div>
@@ -660,7 +1180,7 @@ export default function UniversalBookings() {
                                     >
                                         <option value="all">{t('bookings:all_masters')}</option>
                                         {masters.map((m: any) => (
-                                            <option key={m.id} value={m.full_name || m.username}>{m.full_name || m.username}</option>
+                                            <option key={m.id} value={String(m.id)}>{m.full_name || m.username}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -672,19 +1192,19 @@ export default function UniversalBookings() {
                                     <PopoverTrigger asChild>
                                         <Button variant="outline" className="h-[42px] justify-between border-gray-200 rounded-xl font-bold bg-white">
                                             <CalendarDays className="w-4 h-4 text-pink-500 shrink-0 mr-2" />
-                                            <span className="truncate">{period === 'all' ? t('common:all_time') : period === 'today' ? t('common:today') : t('common:for_period', { days: period })}</span>
+                                            <span className="truncate">{periodLabel}</span>
                                             <ChevronDown className="w-4 h-4 text-gray-400 shrink-0 ml-2" />
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-72 p-3 rounded-2xl shadow-xl border-gray-100" align="start">
                                         <div className="grid grid-cols-1 gap-1.5">
-                                            {['all', 'today', '7', '14', '30', '90'].map(id => (
+                                            {PERIOD_OPTIONS.map(id => (
                                                 <button
                                                     key={id}
                                                     onClick={() => setPeriod(id)}
                                                     className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold transition-all ${period === id ? 'bg-pink-500 text-white' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
                                                 >
-                                                    <span>{id === 'all' ? t('common:all_time') : id === 'today' ? t('common:today') : t('common:for_period', { days: id })}</span>
+                                                    <span>{getPeriodLabel(id)}</span>
                                                 </button>
                                             ))}
                                         </div>
@@ -724,11 +1244,20 @@ export default function UniversalBookings() {
                                         <td className="bookings-td">
                                             <div className="flex flex-col">
                                                 <span className="font-medium">{new Date(booking.datetime).toLocaleDateString()}</span>
-                                                <span className="text-xs text-gray-500">{new Date(booking.datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                <span className="text-xs text-gray-500">{formatBookingTimeRange(booking)}</span>
                                             </div>
                                         </td>
-                                        <td className="bookings-td">{booking.master || '-'}</td>
-                                        <td className="bookings-td font-semibold">{booking.revenue || 0} {currency}</td>
+                                        <td className="bookings-td">{getMasterDisplayName(booking)}</td>
+                                        <td className="bookings-td">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <span className="font-semibold">{booking.revenue || 0} {currency}</span>
+                                                {getDiscountLabel(booking).length > 0 && (
+                                                    <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">
+                                                        {getDiscountLabel(booking)}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
                                         <td className="bookings-td">
                                             {canEdit ? (
                                                 <StatusSelect value={booking.status} onChange={(newStatus) => handleStatusChange(booking.id, newStatus)} options={statusConfig} />
@@ -743,9 +1272,9 @@ export default function UniversalBookings() {
                                         </td>
                                         <td className="bookings-td">
                                             <div className="action-button-group">
-                                                <button onClick={() => navigate(`/crm/bookings/${booking.id}`)} className="action-button"><Eye className="icon-16" /></button>
-                                                {canEdit && <button onClick={() => handleEditBooking(booking)} className="action-button"><Edit className="icon-16" /></button>}
-                                                <button onClick={() => navigate(`/crm/chat?client_id=${booking.client_id}`)} className="action-button"><MessageSquare className="icon-16" /></button>
+                                                <button onClick={() => navigate(`/crm/bookings/${booking.id}`)} className="action-button action-button-view"><Eye className="icon-16" /></button>
+                                                {canEdit && <button onClick={() => handleEditBooking(booking)} className="action-button action-button-edit"><Edit className="icon-16" /></button>}
+                                                <button onClick={() => navigate(`/crm/chat?client_id=${booking.client_id}`)} className="action-button action-button-chat"><MessageSquare className="icon-16" /></button>
                                                 {canDelete && <button onClick={() => handleDeleteBooking(booking.id, booking.name)} className="action-button action-button-red"><Trash2 className="icon-16" /></button>}
                                             </div>
                                         </td>
@@ -766,7 +1295,15 @@ export default function UniversalBookings() {
             </div>
 
             {showAddDialog && (
-                <div className="modal-overlay">
+                <div
+                    className="modal-overlay"
+                    onClick={(event) => {
+                        if (event.target === event.currentTarget) {
+                            setShowAddDialog(false);
+                            resetForm();
+                        }
+                    }}
+                >
                     <div className="modal-content">
                         <div className="modal-header">
                             <h3 className="modal-title">{editingBooking ? t('bookings:edit_booking') : t('bookings:add_booking')}</h3>
@@ -793,7 +1330,12 @@ export default function UniversalBookings() {
                                 {showClientDropdown && clientSearch && !selectedClient && (
                                     <div className="absolute z-50 w-full mt-1 bg-white border rounded-xl shadow-xl max-h-60 overflow-y-auto">
                                         {filteredClients.map(c => (
-                                            <div key={c.id} onClick={() => { setSelectedClient(c); setShowClientDropdown(false); setClientSearch(''); }} className="p-3 hover:bg-gray-50 cursor-pointer">
+                                            <div key={c.id} onClick={() => {
+                                                setSelectedClient(c);
+                                                setShowClientDropdown(false);
+                                                setClientSearch('');
+                                                setAddForm((prev) => ({ ...prev, phone: c.phone ?? prev.phone }));
+                                            }} className="p-3 hover:bg-gray-50 cursor-pointer">
                                                 {c.display_name} ({c.phone})
                                             </div>
                                         ))}
@@ -818,9 +1360,9 @@ export default function UniversalBookings() {
                                         <button onClick={() => { setSelectedService(null); setServiceSearch(''); }}><X size={14} /></button>
                                     </div>
                                 )}
-                                {showServiceDropdown && serviceSearch && !selectedService && (
+                                {showServiceDropdown && !selectedService && (
                                     <div className="absolute z-50 w-full mt-1 bg-white border rounded-xl shadow-xl max-h-60 overflow-y-auto">
-                                        {filteredServices.map(s => (
+                                        {filteredServices.slice(0, 100).map(s => (
                                             <div key={s.id} onClick={() => { setSelectedService(s); setShowServiceDropdown(false); setServiceSearch(''); setAddForm(f => ({ ...f, revenue: s.price })); }} className="p-3 hover:bg-gray-50 cursor-pointer">
                                                 {s.name} - {s.price} {currency}
                                             </div>
@@ -844,7 +1386,7 @@ export default function UniversalBookings() {
                                 <label className="input-label">{t('bookings:master')}</label>
                                 <select value={addForm.master} onChange={(e) => setAddForm(f => ({ ...f, master: e.target.value }))} className="input-field">
                                     <option value="">{t('bookings:select_master')}</option>
-                                    {masters.map(m => <option key={m.id} value={m.full_name || m.username}>{m.full_name || m.username}</option>)}
+                                    {masters.map(m => <option key={m.id} value={String(m.id)}>{m.full_name || m.username}</option>)}
                                 </select>
                             </div>
 
@@ -867,7 +1409,14 @@ export default function UniversalBookings() {
             )}
 
             {showImportDialog && (
-                <div className="modal-overlay">
+                <div
+                    className="modal-overlay"
+                    onClick={(event) => {
+                        if (event.target === event.currentTarget) {
+                            setShowImportDialog(false);
+                        }
+                    }}
+                >
                     <div className="modal-content">
                         <div className="modal-header">
                             <h3 className="modal-title">{t('bookings:import_title')}</h3>

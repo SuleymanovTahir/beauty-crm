@@ -1,3 +1,117 @@
+## [2026-02-13] Booking Time Ranges + Client Reschedule Flow + Messenger Stabilization
+- CRM bookings time-range UX:
+  - `frontend/src/pages/shared/Bookings.tsx` now shows booking time as `start - end` in list rows (end computed from service duration SSOT with safe fallback).
+  - `frontend/src/pages/admin/BookingDetail.tsx` now shows `start - end` in date/time block and formats monetary values via `formatCurrency(...)` (no raw `{{currency}}` placeholder leak).
+- Promo-codes amount input normalization:
+  - `frontend/src/pages/admin/PromoCodes.tsx` min booking amount input now renders empty when value is zero and normalizes numeric input cleanly (prevents visible leading-zero entry like `040`).
+- Client account reschedule improvements:
+  - `frontend/public_landing/pages/account/v2_components/RescheduleDialog.tsx`:
+    - fixed step routing payloads for `datetime/professional/services`,
+    - added `change_all` option to edit service + master + time together.
+  - `frontend/public_landing/pages/account/UserBookingWizard.tsx`:
+    - respects explicit `booking` step from URL (no forced fallback to services),
+    - supports service prefill by name when id is absent.
+  - `frontend/public_landing/pages/account/booking/ConfirmStep.tsx` now updates existing client booking through `/api/client/bookings/{id}/update`.
+  - `frontend/public_landing/pages/account/v2_components/Appointments.tsx` now requests bookings with current language and displays `start - end` time ranges.
+  - Added i18n keys `appointments.change_all` / `appointments.change_all_desc` in all account locale files.
+- Client booking API alignment:
+  - `backend/api/client_auth.py` `/my-bookings` now returns `service_id`, `time`, `duration_minutes`, stable `master_id`, and localized `master_name` by request language.
+  - `backend/api/client_auth.py` `/bookings/{booking_id}/update` rewritten to real `bookings` schema fields (legacy non-existent columns removed).
+- Messenger/notification reliability:
+  - `backend/services/universal_messenger.py`:
+    - removed fragile `clients.id::text` SQL usage,
+    - made `preferred_messenger` lookup column-safe,
+    - blocks invalid Instagram recipient IDs before external API call.
+  - `backend/api/bookings.py` booking confirmation context now includes `date` + `time` keys and logs send result based on actual `success`.
+- Chat theme consistency:
+  - `frontend/src/pages/shared/Chat.tsx` and `frontend/src/styles/messenger-themes.css` adjusted Instagram styling path to avoid inconsistent “red” first-load appearance and keep stable light variant.
+
+## [2026-02-13] CRM UX/API Alignment (Periods, Client/Booking Details, Sidebar Chat)
+- Fixed period labels/count interpolation stability in CRM filters:
+  - `frontend/src/pages/shared/Bookings.tsx`,
+  - `frontend/src/components/shared/PeriodFilterSelect.tsx`,
+  - `frontend/src/pages/admin/Clients.tsx`.
+  - Added defensive interpolation for `{{count}}` and fallback when translation returns generic `for_period`.
+- Improved bookings creation UX in `frontend/src/pages/shared/Bookings.tsx`:
+  - service list now requests full set via `active_only=false` and shows dropdown immediately on focus (without mandatory typing),
+  - reset page index on filter/sort changes to avoid stale pagination when period changes.
+- Unified date input sizing with other form controls:
+  - `frontend/src/components/shared/CRMDatePicker.tsx` now respects passed class styles (`input-field`) instead of hardcoded compact input sizing.
+- Fixed client profile messenger buttons overflow in `frontend/src/pages/admin/ClientDetail.tsx`:
+  - responsive grid (`1->2` columns),
+  - full-width buttons with text truncation,
+  - localized status rendering for client and booking history badges.
+- Fixed booking detail data/edit behavior in `frontend/src/pages/admin/BookingDetail.tsx`:
+  - loads single booking via detail endpoint (includes `notes`),
+  - master picker excludes admin/director and prefers service providers,
+  - added local notes edit trigger and pending status option handling.
+- Fixed sidebar chat discoverability:
+  - `frontend/src/components/layouts/UniversalLayout.tsx` adds direct `/chat` item inside `chat-group`,
+  - `frontend/src/components/layouts/MainLayout.css` slightly increases sidebar menu font size for readability.
+- Backend client metrics alignment in `backend/api/clients.py`:
+  - spend/bookings aggregates now include `pending/confirmed/completed` statuses,
+  - client list `total_messages` now counts client-originated messages from `chat_history` + `messenger_messages` (instead of raw accumulated field),
+  - fallback client temperature in API responses switched to `warm`,
+  - client detail payload now returns `display_name`.
+- Fixed booking detail route path in `backend/api/bookings.py`:
+  - corrected `GET` endpoint to `/bookings/{booking_id}` (under `/api` router prefix).
+
+## [2026-02-13] CRM Period Filters/Stats Fix + Non-Blocking Booking Confirmation
+- Fixed CRM bookings period filtering and card behavior:
+  - `frontend/src/pages/shared/Bookings.tsx` now builds local-time date ranges (`today/7/14/30/90`) as full day windows (`00:00:00` → `23:59:59`) instead of UTC date slices,
+  - bookings stats cards now use the selected period label instead of hardcoded all-time text,
+  - restored trend indicators in stats cards (up/down/neutral with percentage) by comparing current period stats vs previous equal-length period.
+- Added stats trend styles in `frontend/src/pages/admin/Bookings.css` for color-safe visual growth/fall states.
+- Fixed clients period dropdown interpolation and labels:
+  - `frontend/src/components/shared/PeriodFilterSelect.tsx` now passes `count` for `last_*` i18n keys (no literal `{{count}}` in UI),
+  - corrected option labels for all/30/90 period values.
+- Fixed clients stats to match selected period:
+  - `frontend/src/pages/admin/Clients.tsx` stats cards now calculate from period-filtered dataset (`filteredByPeriod`) and show correct period label text.
+- Reduced status-confirmation latency in CRM bookings:
+  - `backend/api/bookings.py` status change endpoint now sends admin email/telegram notifications in `BackgroundTasks` (non-blocking API response path).
+
+## [2026-02-13] CRM Bookings SSOT Fixes (Amount/Revenue, Master Filter, Slot Conflicts)
+- Backend booking revenue normalization in `backend/db/bookings.py`:
+  - `save_booking(...)` now auto-resolves `revenue` from `services` when incoming value is empty/zero,
+  - `update_booking_status(...)` now auto-fills revenue on transition to `completed` if booking still has zero amount,
+  - filtered booking list and booking stats now use resolved revenue fallback (`bookings.revenue` -> `services.price/min_price/max_price`) via SQL SSOT.
+- Booking list API alignment in `backend/api/bookings.py`:
+  - `GET /api/bookings` now returns `master_user_id` for stable frontend filtering,
+  - `POST /api/bookings` now supports manual clients without pre-existing DB record (`instagram_id` optional),
+  - slot conflict response (`slot_unavailable`) now includes `nearest_slots` suggestions for the selected master.
+- CRM Bookings UI (`frontend/src/pages/shared/Bookings.tsx`):
+  - add-booking flow now accepts manual client name (without forced client selection from DB),
+  - conflict errors now display human-readable slot reason + nearest available windows,
+  - master filters and master selection use service-provider users only (exclude admin/director),
+  - master values are passed as stable user ids.
+- Calendar booking UI (`frontend/src/pages/admin/Calendar.tsx`):
+  - fixed master filter logic to rely on `master_user_id` (with name fallback for legacy rows),
+  - fixed create/edit status actions to use booking lifecycle endpoint (`/api/bookings/{id}/status`),
+  - add-booking flow supports manual client input + slot conflict nearest-slot hints,
+  - master selectors now exclude non-service-provider admin/director accounts.
+- Shared API client update in `frontend/src/services/api.ts`:
+  - enriched API errors with `reason` + `nearest_slots`,
+  - `getBookings(...)` now supports query params (used by calendar to load full booking set),
+  - added `updateBookingLifecycleStatus(...)` for booking status changes.
+- Booking modal visual consistency in `frontend/src/pages/admin/Bookings.css`:
+  - normalized input typography for date/time fields to match other form controls.
+
+## [2026-02-13] Booking Wizard Mobile Fit + Confirm Flow Latency Cut
+- Fixed specialist step visuals in `frontend/public_landing/pages/account/booking/ProfessionalStep.tsx`:
+  - restored rating icon to star near `5.0` (logo removed from rating row),
+  - added dedicated slot classes for responsive sizing.
+- Added wizard-level responsive SSOT styles in `frontend/public_landing/pages/account/UserBookingWizard.css`:
+  - enforce `2` time-slot chips per row on screens `<470px`,
+  - improved chip sizing and tap targets for narrow mobile screens,
+  - normalized confirm-step typography/border hierarchy and input border visibility.
+- Refined confirm-step layout in `frontend/public_landing/pages/account/booking/ConfirmStep.tsx`:
+  - unified card/box/input classes for more stable alignment on small screens,
+  - added `duration_minutes` payload for booking create requests.
+- Reduced synchronous work in `backend/api/bookings.py` `POST /api/bookings`:
+  - removed redundant DB read for newly created booking id (now uses `save_booking(...)` return value),
+  - moved profile/stage/activity post-updates to background task (`process_booking_post_create_updates`),
+  - removed duplicate synchronous admin-notification path from the request critical path.
+
 ## [2026-02-13] Public Booking Consistency (Service IDs + Duration + Guest Flow)
 - Unified slot checks for public booking creation in `backend/api/public.py`:
   - public booking now resolves selected services first (`service_ids`),

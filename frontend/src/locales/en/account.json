@@ -39,6 +39,8 @@
     "change_master_desc": "Leave the service, but change the specialist",
     "change_service": "Change service",
     "change_service_desc": "Choose another procedure",
+    "change_all": "Change everything",
+    "change_all_desc": "Change service, master, and time in one step",
     "change_time": "Change time",
     "change_time_desc": "Choose a different date or time",
     "confirm_cancel": "Are you sure you want to cancel the appointment?",

@@ -12,6 +12,7 @@ from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
 from utils.currency import get_salon_currency
+from utils.language_utils import get_localized_name, validate_language
 from services.features import FeatureService
 from core.config import BASE_URL
 
@@ -754,7 +755,10 @@ async def mark_all_notifications_read(session_token: Optional[str] = Cookie(None
             conn.close()
 
 @router.get("/my-bookings")
-async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
+async def get_client_bookings(
+    session_token: Optional[str] = Cookie(None),
+    language: str = "ru"
+):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
     
@@ -766,34 +770,58 @@ async def get_client_bookings(session_token: Optional[str] = Cookie(None)):
         client_id = _get_client_id(user, c)
         user_phone = user.get("phone")
         user_id = user.get("id")
+        language_code = validate_language(str(language).split("-")[0])
 
         c.execute("""
-            SELECT b.id, b.service_name, b.datetime, b.status, 
+            SELECT b.id, b.service_id, b.service_name, b.datetime, b.status, 
                    CASE WHEN b.revenue > 0 THEN b.revenue ELSE s.price END as final_price, 
                    b.master,
                    COALESCE(u.photo, u.photo_url) as master_photo,
-                   u.id as master_id, u.full_name
+                   COALESCE(b.master_user_id, u.id) as master_id,
+                   u.full_name,
+                   s.duration
             FROM bookings b
-            LEFT JOIN users u ON (LOWER(b.master) = LOWER(u.full_name) OR LOWER(b.master) = LOWER(u.username))
-            LEFT JOIN services s ON LOWER(b.service_name) = LOWER(s.name)
+            LEFT JOIN users u ON (
+                (b.master_user_id IS NOT NULL AND b.master_user_id = u.id)
+                OR (
+                    b.master_user_id IS NULL
+                    AND (LOWER(b.master) = LOWER(u.full_name) OR LOWER(b.master) = LOWER(u.username))
+                )
+            )
+            LEFT JOIN services s ON (
+                (b.service_id IS NOT NULL AND b.service_id = s.id)
+                OR LOWER(b.service_name) = LOWER(s.name)
+            )
             WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
             ORDER BY b.datetime DESC
         """, (client_id, user_phone, user_id))
         
         items = []
         for r in c.fetchall():
-            photo = r[6]
+            photo = r[7]
             if photo and photo.startswith('/static'):
                 photo = f"{photo}"
+            master_name_source = r[9] if r[9] else r[6]
+            localized_master_name = get_localized_name(r[8], master_name_source, language_code) if master_name_source else ""
+            booking_datetime = r[3]
+            booking_time = ""
+            if booking_datetime is not None:
+                try:
+                    booking_time = booking_datetime.strftime("%H:%M")
+                except Exception:
+                    booking_time = str(booking_datetime)[11:16]
             items.append({
                 "id": r[0],
-                "service_name": r[1],
-                "date": r[2],
-                "status": r[3],
-                "price": float(r[4]) if r[4] else 0,
-                "master_name": r[8] or r[5],
+                "service_id": r[1],
+                "service_name": r[2],
+                "date": r[3],
+                "time": booking_time,
+                "status": r[4],
+                "price": float(r[5]) if r[5] else 0,
+                "master_name": localized_master_name,
                 "master_photo": photo,
-                "master_id": r[7]
+                "master_id": r[8],
+                "duration_minutes": r[10],
             })
 
         # Fetch currency
@@ -1362,44 +1390,203 @@ async def update_booking(
         conn = get_db_connection()
         c = conn.cursor()
 
-        client_id = user.get("instagram_id") or user.get("telegram_id") or user.get("id")
-
-        # Verify booking belongs to user
-        c.execute("""
-            SELECT id FROM bookings
-            WHERE id = %s AND client_id = %s
-        """, (booking_id, client_id))
-
-        if not c.fetchone():
+        client_id = _get_client_id(user, c)
+        c.execute(
+            """
+            SELECT id, instagram_id, service_id, service_name, datetime, master, name, phone, revenue, source
+            FROM bookings
+            WHERE id = %s AND (
+                instagram_id = %s
+                OR user_id = %s
+                OR (phone = %s AND phone IS NOT NULL AND phone != '')
+            )
+            """,
+            (booking_id, client_id, user.get("id"), user.get("phone"))
+        )
+        booking_row = c.fetchone()
+        if booking_row is None:
             conn.close()
             return {"success": False, "error": "Booking not found"}
 
-        # Update booking
-        updates = []
-        params = []
+        (
+            _,
+            booking_client_id,
+            old_service_id,
+            old_service,
+            old_datetime,
+            old_master,
+            old_name,
+            old_phone,
+            old_revenue,
+            old_source,
+        ) = booking_row
 
-        if "date" in data:
-            updates.append("date = %s")
-            params.append(data["date"])
-        if "time" in data:
-            updates.append("time = %s")
-            params.append(data["time"])
-        if "service_id" in data:
-            updates.append("service_id = %s")
-            params.append(data["service_id"])
-        if "employee_id" in data:
-            updates.append("employee_id = %s")
-            params.append(data["employee_id"])
+        c.execute(
+            """
+            SELECT 1
+            FROM information_schema.columns
+            WHERE table_name = 'bookings' AND column_name = 'master_user_id'
+            LIMIT 1
+            """
+        )
+        has_master_user_id = bool(c.fetchone())
 
-        if updates:
-            updates.append("updated_at = %s")
-            params.append(datetime.now().isoformat())
-            params.append(booking_id)
+        new_service = old_service
+        new_service_id = old_service_id
+        requested_service_name = data.get("service")
+        requested_service_id = data.get("service_id")
+        if isinstance(requested_service_name, str) and len(requested_service_name.strip()) > 0:
+            new_service = requested_service_name.strip()
+            c.execute("SELECT id FROM services WHERE LOWER(name) = LOWER(%s) LIMIT 1", (new_service,))
+            matched_service_row = c.fetchone()
+            if matched_service_row is not None:
+                new_service_id = matched_service_row[0]
+        elif requested_service_id is not None:
+            try:
+                normalized_service_id = int(requested_service_id)
+            except Exception:
+                normalized_service_id = None
+            c.execute("SELECT name FROM services WHERE id = %s LIMIT 1", (normalized_service_id,))
+            service_row = c.fetchone()
+            if service_row is not None and service_row[0]:
+                new_service_id = normalized_service_id
+                new_service = service_row[0]
 
-            query = f"UPDATE bookings SET {', '.join(updates)} WHERE id = %s"
-            c.execute(query, params)
-            conn.commit()
+        new_datetime = old_datetime
+        requested_date = data.get("date")
+        requested_time = data.get("time")
+        if requested_date is not None or requested_time is not None:
+            old_date_str = old_datetime.strftime("%Y-%m-%d") if hasattr(old_datetime, "strftime") else str(old_datetime)[:10]
+            old_time_str = old_datetime.strftime("%H:%M") if hasattr(old_datetime, "strftime") else str(old_datetime)[11:16]
+            date_str = str(requested_date).strip() if requested_date is not None else old_date_str
+            time_str = str(requested_time).strip() if requested_time is not None else old_time_str
+            try:
+                new_datetime = datetime.strptime(f"{date_str} {time_str[:5]}", "%Y-%m-%d %H:%M")
+            except Exception:
+                new_datetime = old_datetime
 
+        new_master = old_master
+        new_master_user_id = None
+        if has_master_user_id:
+            c.execute("SELECT master_user_id FROM bookings WHERE id = %s", (booking_id,))
+            row = c.fetchone()
+            new_master_user_id = row[0] if row is not None else None
+
+        requested_master_id = data.get("master_id")
+        requested_employee_id = data.get("employee_id")
+        requested_master_name = data.get("master")
+        resolved_master_id = requested_master_id if requested_master_id is not None else requested_employee_id
+
+        if resolved_master_id is not None:
+            c.execute(
+                """
+                SELECT id, full_name, username
+                FROM users
+                WHERE id = %s AND deleted_at IS NULL
+                LIMIT 1
+                """,
+                (resolved_master_id,)
+            )
+            master_row = c.fetchone()
+            if master_row is not None:
+                new_master_user_id = master_row[0]
+                new_master = master_row[1] if master_row[1] else master_row[2]
+        elif isinstance(requested_master_name, str) and len(requested_master_name.strip()) > 0:
+            normalized_master = requested_master_name.strip()
+            new_master = normalized_master
+            if has_master_user_id:
+                c.execute(
+                    """
+                    SELECT id, full_name, username
+                    FROM users
+                    WHERE deleted_at IS NULL
+                      AND (LOWER(full_name) = LOWER(%s) OR LOWER(username) = LOWER(%s))
+                    ORDER BY id ASC
+                    LIMIT 1
+                    """,
+                    (normalized_master, normalized_master)
+                )
+                master_row = c.fetchone()
+                if master_row is not None:
+                    new_master_user_id = master_row[0]
+                    new_master = master_row[1] if master_row[1] else master_row[2]
+
+        new_name = data.get("name", old_name)
+        new_phone = data.get("phone", old_phone)
+        new_revenue = data.get("revenue", old_revenue)
+        new_source = data.get("source", old_source)
+        updated_at_value = datetime.now().isoformat()
+
+        if has_master_user_id:
+            c.execute(
+                """
+                UPDATE bookings
+                SET service_id = %s,
+                    service_name = %s,
+                    datetime = %s,
+                    master = %s,
+                    master_user_id = %s,
+                    name = %s,
+                    phone = %s,
+                    revenue = %s,
+                    source = %s,
+                    updated_at = %s
+                WHERE id = %s
+                """,
+                (
+                    new_service_id,
+                    new_service,
+                    new_datetime,
+                    new_master,
+                    new_master_user_id,
+                    new_name,
+                    new_phone,
+                    new_revenue,
+                    new_source,
+                    updated_at_value,
+                    booking_id
+                )
+            )
+        else:
+            c.execute(
+                """
+                UPDATE bookings
+                SET service_id = %s,
+                    service_name = %s,
+                    datetime = %s,
+                    master = %s,
+                    name = %s,
+                    phone = %s,
+                    revenue = %s,
+                    source = %s,
+                    updated_at = %s
+                WHERE id = %s
+                """,
+                (
+                    new_service_id,
+                    new_service,
+                    new_datetime,
+                    new_master,
+                    new_name,
+                    new_phone,
+                    new_revenue,
+                    new_source,
+                    updated_at_value,
+                    booking_id
+                )
+            )
+
+        if (new_name != old_name or new_phone != old_phone) and booking_client_id:
+            c.execute(
+                """
+                UPDATE clients
+                SET name = %s, phone = %s, updated_at = %s
+                WHERE instagram_id = %s
+                """,
+                (new_name, new_phone, updated_at_value, booking_client_id)
+            )
+
+        conn.commit()
         conn.close()
         return {"success": True}
     except Exception as e:

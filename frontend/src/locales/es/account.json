@@ -39,6 +39,8 @@
     "change_master_desc": "Conserve el servicio, pero cambia de especialista",
     "change_service": "Cambiar servicio",
     "change_service_desc": "Selecciona otro procedimiento",
+    "change_all": "Cambiar todo",
+    "change_all_desc": "Cambia servicio, especialista y horario de una vez",
     "change_time": "Cambiar hora",
     "change_time_desc": "Selecciona otra fecha u hora",
     "confirm_cancel": "¿Estás seguro de que deseas cancelar la cita?",

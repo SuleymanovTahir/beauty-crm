@@ -49,6 +49,8 @@ interface Booking {
   created_at: string;
   revenue: number;
   master?: string;
+  master_user_id?: number | null;
+  source?: string;
 }
 
 interface Service {
@@ -56,6 +58,7 @@ interface Service {
   key: string;
   name: string;
   price: number;
+  duration?: number | string;
   currency: string;
   category: string;
 }
@@ -73,6 +76,7 @@ interface UserMaster {
   username: string;
   full_name: string;
   role: string;
+  is_service_provider?: boolean;
 }
 
 
@@ -131,7 +135,15 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const [showServiceDropdown, setShowServiceDropdown] = useState(false);
   const [selectedServiceItem, setSelectedServiceItem] = useState<Service | null>(null);
   const currentUser = useMemo(() => JSON.parse(localStorage.getItem('user') || '{}'), []);
-  const employeeId = useMemo(() => employeeFilter ? (currentUser.full_name || currentUser.username) : null, [employeeFilter, currentUser]);
+  const employeeId = useMemo(() => {
+    if (!employeeFilter) {
+      return null;
+    }
+    if (!currentUser?.id) {
+      return null;
+    }
+    return String(currentUser.id);
+  }, [employeeFilter, currentUser]);
   const canEdit = currentUser?.role === 'director' || currentUser?.role === 'admin' || currentUser?.role === 'sales';
 
   const [addForm, setAddForm] = useState({
@@ -171,7 +183,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
     try {
       setLoading(true);
       const [bookingsData, servicesData, clientsData, usersData] = await Promise.all([
-        api.getBookings(),
+        api.getBookings({ page: 1, limit: 5000, sort: 'datetime', order: 'desc', language: i18n.language }),
         api.getServices(true, i18n.language),
         api.getClients(),
         api.getUsers(i18n.language)
@@ -181,7 +193,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
       setServices(servicesData.services || []);
       setClients(clientsData.clients || []);
       setMasters(usersData.users?.filter((u: UserMaster) =>
-        u.role === 'employee' || u.role === 'manager' || u.role === 'admin'
+        Boolean(u.is_service_provider) && !['admin', 'director'].includes(String(u.role ?? '').toLowerCase())
       ) || []);
     } catch (err) {
       toast.error(t('calendar:error_loading_data'));
@@ -218,8 +230,37 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
       if (b.status === 'cancelled') return;
 
       // Фильтры
-      if (employeeId && b.master && b.master.toUpperCase() !== employeeId.toUpperCase()) return;
-      if (selectedEmployee !== 'all' && selectedEmployee && b.master && b.master.toUpperCase() !== selectedEmployee.toUpperCase()) return;
+      const bookingMasterId = b.master_user_id !== null && b.master_user_id !== undefined ? String(b.master_user_id) : '';
+      const bookingMasterName = String(b.master || '').trim().toLowerCase();
+      const currentUserFullName = String(currentUser?.full_name || '').trim().toLowerCase();
+      const currentUserUsername = String(currentUser?.username || '').trim().toLowerCase();
+
+      if (employeeId && bookingMasterId !== employeeId) {
+        if (!bookingMasterId) {
+          const isCurrentUserBooking = bookingMasterName.length > 0 && (
+            bookingMasterName === currentUserFullName ||
+            bookingMasterName === currentUserUsername
+          );
+          if (!isCurrentUserBooking) return;
+        } else {
+          return;
+        }
+      }
+
+      if (selectedEmployee !== 'all' && selectedEmployee) {
+        if (bookingMasterId !== selectedEmployee) {
+          if (bookingMasterId) return;
+
+          const selectedMaster = masters.find((master) => String(master.id) === selectedEmployee);
+          const selectedMasterName = String(selectedMaster?.full_name || '').trim().toLowerCase();
+          const selectedMasterUsername = String(selectedMaster?.username || '').trim().toLowerCase();
+          const matchesByName = bookingMasterName.length > 0 && (
+            bookingMasterName === selectedMasterName ||
+            bookingMasterName === selectedMasterUsername
+          );
+          if (!matchesByName) return;
+        }
+      }
       if (selectedService !== 'all' && selectedService && b.service !== selectedService) return;
 
       const d = new Date(b.datetime);
@@ -231,7 +272,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
     });
 
     return map;
-  }, [bookings, employeeId, selectedEmployee, selectedService]);
+  }, [bookings, employeeId, selectedEmployee, selectedService, currentUser, masters]);
 
   const getBookingsForSlot = (date: Date, hour: number) => {
     const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}-${hour}`;
@@ -321,6 +362,17 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
     const bookingDate = new Date(booking.datetime);
     const client = clients.find(c => c.instagram_id === booking.client_id) || null;
     const service = services.find(s => s.name === booking.service) || null;
+    const bookingMasterId = booking.master_user_id !== null && booking.master_user_id !== undefined
+      ? String(booking.master_user_id)
+      : '';
+    const matchedMaster = masters.find((master) => {
+      const normalizedMaster = String(booking.master || '').trim().toLowerCase();
+      if (!normalizedMaster) return false;
+      const fullName = String(master.full_name || '').trim().toLowerCase();
+      const username = String(master.username || '').trim().toLowerCase();
+      return normalizedMaster === fullName || normalizedMaster === username;
+    });
+    const selectedMasterValue = bookingMasterId || (matchedMaster?.id ? String(matchedMaster.id) : '');
 
     setSelectedClient(client);
     setSelectedServiceItem(service);
@@ -329,11 +381,31 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
       date: bookingDate.toISOString().split('T')[0],
       time: bookingDate.toTimeString().slice(0, 5),
       revenue: booking.revenue,
-      master: booking.master || masters[0]?.full_name || ''
+      master: selectedMasterValue
     });
+    if (!client && booking.name) {
+      setClientSearch(String(booking.name));
+    }
     setIsEditing(true);
     setSelectedBooking(booking);
     setShowCreateModal(true);
+  };
+
+  const formatNearestSlots = (slots: any[]): string => {
+    if (!Array.isArray(slots) || slots.length === 0) {
+      return '';
+    }
+
+    return slots.slice(0, 4).map((slot: any) => {
+      const date = String(slot?.date ?? '');
+      const time = String(slot?.time ?? '');
+      if (!date || !time) {
+        return '';
+      }
+      const dt = new Date(`${date}T${time}:00`);
+      const dateLabel = Number.isNaN(dt.getTime()) ? date : dt.toLocaleDateString(i18n.language);
+      return `${dateLabel} ${time}`;
+    }).filter((item: string) => item.length > 0).join(', ');
   };
 
   const resetForm = () => {
@@ -346,42 +418,42 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
       date: currentDate.toISOString().split('T')[0],
       time: TIME_SLOTS[0].display,
       revenue: 0,
-      master: masters[0]?.full_name || ''
+      master: masters[0]?.id ? String(masters[0].id) : ''
     });
   };
 
   const handleSaveBooking = async () => {
-    if (!selectedClient || !selectedServiceItem || !addForm.date || !addForm.time) {
+    const manualClientName = clientSearch.trim();
+    if ((!selectedClient && !manualClientName) || !selectedServiceItem || !addForm.date || !addForm.time) {
       toast.error(t('calendar:fill_required_fields'));
       return;
     }
 
     try {
       setAddingBooking(true);
+      const selectedClientName = selectedClient?.display_name ?? '';
+      const bookingName = selectedClientName || manualClientName;
+      const bookingInstagramId = selectedClient?.instagram_id;
+      const selectedClientPhone = selectedClient?.phone ?? '';
+      const serviceDuration = Number(selectedServiceItem?.duration);
+      const bookingPayload = {
+        instagram_id: bookingInstagramId,
+        name: bookingName,
+        phone: addForm.phone || selectedClientPhone,
+        service: selectedServiceItem.name,
+        date: addForm.date,
+        time: addForm.time,
+        revenue: addForm.revenue || selectedServiceItem.price,
+        master: addForm.master,
+        source: selectedBooking?.source || 'manual',
+        duration_minutes: Number.isFinite(serviceDuration) && serviceDuration > 0 ? serviceDuration : undefined,
+      };
+
       if (isEditing && selectedBooking) {
-        await api.updateBookingStatus(String(selectedBooking.id), 'cancelled');
-        await api.createBooking({
-          instagram_id: selectedClient.instagram_id,
-          name: selectedClient.display_name,
-          phone: addForm.phone || selectedClient.phone || '',
-          service: selectedServiceItem.name,
-          date: addForm.date,
-          time: addForm.time,
-          revenue: addForm.revenue || selectedServiceItem.price,
-          master: addForm.master,
-        });
+        await api.updateBooking(selectedBooking.id, bookingPayload);
         toast.success(t('calendar:booking_updated'));
       } else {
-        await api.createBooking({
-          instagram_id: selectedClient.instagram_id,
-          name: selectedClient.display_name,
-          phone: addForm.phone || selectedClient.phone || '',
-          service: selectedServiceItem.name,
-          date: addForm.date,
-          time: addForm.time,
-          revenue: addForm.revenue || selectedServiceItem.price,
-          master: addForm.master,
-        });
+        await api.createBooking(bookingPayload);
         toast.success(t('calendar:booking_created'));
       }
 
@@ -389,6 +461,15 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
       resetForm();
       await loadData();
     } catch (err: any) {
+      if (err?.error === 'slot_unavailable') {
+        const reason = String(err?.reason ?? 'slot_unavailable').replace(/_/g, ' ');
+        toast.error(t('calendar:error', { message: reason }));
+        const nearestSlots = formatNearestSlots(err?.nearest_slots ?? []);
+        if (nearestSlots) {
+          toast.info(nearestSlots);
+        }
+        return;
+      }
       toast.error(t('calendar:error', { message: err.message }));
     } finally {
       setAddingBooking(false);
@@ -399,7 +480,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
     if (!confirm(t('calendar:delete_booking', { name: booking.name }))) return;
 
     try {
-      await api.updateBookingStatus(String(booking.id), 'cancelled');
+      await api.updateBookingLifecycleStatus(booking.id, 'cancelled');
       toast.success(t('calendar:booking_deleted'));
       setSelectedBooking(null);
       await loadData();
@@ -412,11 +493,8 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
   const handleChangeStatus = async (newStatus: string) => {
     if (!selectedBooking) return;
     try {
-      await api.updateBookingStatus(String(selectedBooking.id), newStatus);
-      const updated = bookings.map(b =>
-        b.id === selectedBooking.id ? { ...b, status: newStatus } : b
-      );
-      setBookings(updated);
+      await api.updateBookingLifecycleStatus(selectedBooking.id, newStatus);
+      await loadData();
       setSelectedBooking({ ...selectedBooking, status: newStatus });
       setShowStatusDropdown(false);
       toast.success(t('calendar:status_changed'));
@@ -430,10 +508,37 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
     (c.phone || '').includes(clientSearch)
   );
 
-  const filteredServices = services.filter((s: Service) =>
-    (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase()) ||
-    (s.name || '').toLowerCase().includes(serviceSearch.toLowerCase())
-  );
+  const filteredServices = services.filter((serviceItem: Service) => {
+    const serviceQuery = serviceSearch.trim().toLowerCase();
+    if (serviceQuery.length === 0) {
+      return true;
+    }
+
+    const serviceName = String(serviceItem?.name ?? '').toLowerCase();
+    if (serviceName.includes(serviceQuery)) {
+      return true;
+    }
+
+    const serviceKey = String(serviceItem?.key ?? '').toLowerCase();
+    if (serviceKey.includes(serviceQuery)) {
+      return true;
+    }
+
+    const serviceCategory = String(serviceItem?.category ?? '').toLowerCase();
+    if (serviceCategory.includes(serviceQuery)) {
+      return true;
+    }
+
+    return false;
+  });
+
+  const selectedEmployeeLabel = useMemo(() => {
+    if (selectedEmployee === 'all') {
+      return t('calendar:all_masters');
+    }
+    const selectedMaster = masters.find((master) => String(master.id) === selectedEmployee);
+    return selectedMaster?.full_name || selectedMaster?.username || selectedEmployee;
+  }, [selectedEmployee, masters, t]);
 
   const hours = Array.from({ length: 13 }, (_, i) => i + 9);
   const days = getDaysInView();
@@ -543,7 +648,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                     <SelectContent>
                       <SelectItem value="all">{t('calendar:all_masters')}</SelectItem>
                       {masters.map(emp => (
-                        <SelectItem key={emp.id} value={emp.full_name}>
+                        <SelectItem key={emp.id} value={String(emp.id)}>
                           {emp.full_name}
                         </SelectItem>
                       ))}
@@ -727,7 +832,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 border-blue-300"
               >
                 <User className="w-3 h-3 mr-1" />
-                {selectedEmployee}
+                {selectedEmployeeLabel}
                 <button
                   onClick={() => setSelectedEmployee('all')}
                   className="ml-1 hover:bg-blue-200 rounded-full p-0.5"
@@ -757,7 +862,15 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
       {/* Create/Edit Modal */}
       {showCreateModal && (
-        <div className="calendar-modal-overlay">
+        <div
+          className="calendar-modal-overlay"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setShowCreateModal(false);
+              resetForm();
+            }
+          }}
+        >
           <div className="calendar-modal-content">
             <div className="calendar-modal-header">
               <h3 className="text-xl font-bold text-gray-900">
@@ -881,10 +994,10 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                       </button>
                     </div>
                   )}
-                  {showServiceDropdown && !selectedServiceItem && serviceSearch && (
+                  {showServiceDropdown && !selectedServiceItem && (
                     <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-80 overflow-y-auto z-10">
                       {filteredServices.length > 0 ? (
-                        filteredServices.map((service) => (
+                        filteredServices.slice(0, 100).map((service) => (
                           <button
                             key={service.id}
                             onClick={() => {
@@ -928,12 +1041,12 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                 <select
                   value={addForm.master}
                   onChange={(e) => setAddForm({ ...addForm, master: e.target.value })}
-                  className="input-field"
+                  className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white transition-all"
                 >
                   <option value="">{t('calendar:select_master')}</option>
                   {masters.map((m) => (
-                    <option key={m.id} value={m.full_name}>
-                      {m.full_name} ({m.role})
+                    <option key={m.id} value={String(m.id)}>
+                      {m.full_name}
                     </option>
                   ))}
                 </select>
@@ -949,7 +1062,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   placeholder={t('calendar:phone_placeholder')}
                   value={addForm.phone}
                   onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
-                  className="input-field"
+                  className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white transition-all"
                 />
               </div>
 
@@ -962,7 +1075,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   <CRMDatePicker
                     value={addForm.date}
                     onChange={(value) => setAddForm({ ...addForm, date: value })}
-                    className="input-field"
+                    className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white transition-all"
                     required
                   />
                 </div>
@@ -973,7 +1086,7 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
                   <select
                     value={addForm.time}
                     onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
-                    className="input-field"
+                    className="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white transition-all"
                   >
                     {TIME_SLOTS.map((slot, idx) => (
                       <option key={idx} value={slot.display}>
@@ -1022,7 +1135,15 @@ export default function Calendar({ employeeFilter = false }: CalendarProps) {
 
       {/* Event Detail Modal */}
       {selectedBooking && !showCreateModal && (
-        <div className="calendar-modal-overlay">
+        <div
+          className="calendar-modal-overlay"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setSelectedBooking(null);
+              setShowStatusDropdown(false);
+            }
+          }}
+        >
           <div className="calendar-modal-content">
             <div className="calendar-modal-header">
               <h3 className="text-lg font-bold text-gray-900">

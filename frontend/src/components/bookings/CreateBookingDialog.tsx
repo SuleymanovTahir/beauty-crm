@@ -53,6 +53,23 @@ export function CreateBookingDialog({
     const [busySlots, setBusySlots] = useState<any[]>([]);
     const [submitting, setSubmitting] = useState(false);
 
+    const formatNearestSlots = (slots: any[]): string => {
+        if (!Array.isArray(slots) || slots.length === 0) {
+            return '';
+        }
+
+        return slots.slice(0, 4).map((slot: any) => {
+            const date = String(slot?.date ?? '');
+            const time = String(slot?.time ?? '');
+            if (!date || !time) {
+                return '';
+            }
+            const dt = new Date(`${date}T${time}:00`);
+            const dateLabel = Number.isNaN(dt.getTime()) ? date : dt.toLocaleDateString(i18n.language);
+            return `${dateLabel} ${time}`;
+        }).filter((item: string) => item.length > 0).join(', ');
+    };
+
     // Initial Load
     useEffect(() => {
         if (open) {
@@ -73,7 +90,7 @@ export function CreateBookingDialog({
             setServices(servicesData.services || []);
             const allUsers = Array.isArray(usersData) ? usersData : (usersData.users || []);
             const validMasters = allUsers.filter((u: any) =>
-                ['employee', 'manager', 'admin', 'director'].includes(u.role)
+                Boolean(u.is_service_provider) && !['admin', 'director'].includes(String(u.role ?? '').toLowerCase())
             );
             setMasters(validMasters);
             setFilteredMasters(validMasters);
@@ -133,7 +150,8 @@ export function CreateBookingDialog({
         const loadBusySlots = async () => {
             if (addForm.master && addForm.date) {
                 try {
-                    const master = masters.find((m: any) => (m.full_name || m.username) === addForm.master);
+                    const selectedMasterId = Number(addForm.master);
+                    const master = masters.find((m: any) => Number(m.id) === selectedMasterId);
                     if (master) {
                         const data = await api.getEmployeeBusySlots(master.id, addForm.date);
                         setBusySlots(data.busy_slots || []);
@@ -150,23 +168,29 @@ export function CreateBookingDialog({
     }, [addForm.master, addForm.date, masters]);
 
     const handleSubmit = async () => {
-        if (!selectedClient || !selectedService || !addForm.date || !addForm.time) {
+        const manualClientName = clientSearch.trim();
+        if ((!selectedClient && !manualClientName) || !selectedService || !addForm.date || !addForm.time) {
             toast.error(t('bookings:fill_all_required_fields'));
             return;
         }
 
         try {
             setSubmitting(true);
+            const selectedClientName = selectedClient?.display_name ?? selectedClient?.name ?? selectedClient?.username ?? '';
+            const bookingName = selectedClientName || manualClientName;
+            const selectedClientPhone = selectedClient?.phone ?? '';
+            const serviceDuration = Number(selectedService?.duration);
             const bookingData = {
-                instagram_id: selectedClient.instagram_id,
-                name: selectedClient.display_name || selectedClient.name || selectedClient.username,
-                phone: addForm.phone || selectedClient.phone || '',
+                instagram_id: selectedClient?.instagram_id,
+                name: bookingName,
+                phone: addForm.phone || selectedClientPhone,
                 service: selectedService.name,
                 date: addForm.date,
                 time: addForm.time,
                 revenue: addForm.revenue || selectedService.price,
                 master: addForm.master,
                 source: addForm.source,
+                duration_minutes: Number.isFinite(serviceDuration) && serviceDuration > 0 ? serviceDuration : undefined,
             };
 
             await api.createBooking(bookingData);
@@ -188,6 +212,15 @@ export function CreateBookingDialog({
             setSelectedService(null);
 
         } catch (err: any) {
+            if (err?.error === 'slot_unavailable') {
+                const reason = String(err?.reason ?? 'slot_unavailable').replace(/_/g, ' ');
+                toast.error(`${t('bookings:error')}: ${reason}`);
+                const nearestSlots = formatNearestSlots(err?.nearest_slots ?? []);
+                if (nearestSlots) {
+                    toast.info(nearestSlots);
+                }
+                return;
+            }
             toast.error(`${t('bookings:error')}: ${err.message}`);
         } finally {
             setSubmitting(false);
@@ -358,7 +391,7 @@ export function CreateBookingDialog({
                         >
                             <option value="">{t('common:any_master')}</option>
                             {filteredMasters.map(m => (
-                                <option key={m.id} value={m.full_name || m.username}>
+                                <option key={m.id} value={String(m.id)}>
                                     {m.full_name || m.username}
                                 </option>
                             ))}

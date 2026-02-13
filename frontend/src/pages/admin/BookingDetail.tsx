@@ -1,7 +1,7 @@
 // /frontend/src/pages/admin/BookingDetail.tsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, Phone, User, Briefcase, Clock, Edit2, CalendarDays, ChevronDown, Save, X, Pencil } from 'lucide-react';
+import { ArrowLeft, Calendar, Phone, User, Briefcase, Clock, Edit2, CalendarDays, ChevronDown, Save, X, Pencil, Tag } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
@@ -33,8 +33,12 @@ interface Booking {
   created_at: string;
   revenue: number;
   master?: string;
+  master_user_id?: number | null;
   user_id?: number | string;
   notes?: string;
+  source?: string;
+  promo_code?: string | null;
+  discount_source?: 'promo_code' | 'birthday' | 'referral' | 'bonus' | null;
 }
 
 interface User {
@@ -43,6 +47,7 @@ interface User {
   full_name?: string;
   role: string;
   position?: string;
+  is_service_provider?: boolean;
 }
 
 interface Service {
@@ -50,6 +55,7 @@ interface Service {
   name: string;
   service_key: string;
   price?: number;
+  duration?: string | number;
 }
 
 export default function BookingDetail() {
@@ -93,26 +99,50 @@ export default function BookingDetail() {
   const loadBooking = async () => {
     try {
       setLoading(true);
-      // Загружаем букинги, пользователей и услуги
-      const [bookingsResponse, usersResponse, servicesResponse] = await Promise.all([
-        apiClient.getBookings(),
+      const bookingId = Number.parseInt(String(id ?? ''), 10);
+      if (!Number.isFinite(bookingId)) {
+        toast.error(t('bookingdetail:not_found'));
+        navigate('/crm/bookings');
+        return;
+      }
+
+      // Загружаем запись, букинги, пользователей и услуги
+      const [bookingResponse, bookingsResponse, usersResponse, servicesResponse] = await Promise.all([
+        apiClient.getBooking(bookingId, i18n.language),
+        apiClient.getBookings({ page: 1, limit: 5000, language: i18n.language }),
         apiClient.getUsers(i18n.language),
         apiClient.getServices(true, i18n.language)
       ]);
 
-      const found = bookingsResponse.bookings.find((b: Booking) => b.id === parseInt(id!));
-      setAllBookings(bookingsResponse.bookings || []);
+      const allBookingsData = Array.isArray(bookingsResponse?.bookings) ? bookingsResponse.bookings : [];
+      setAllBookings(allBookingsData);
       const usersData = Array.isArray(usersResponse) ? usersResponse : (usersResponse.users || []);
-      setMasters(usersData);
+      const filteredMasters = usersData.filter((user: User) => {
+        const roleKey = String(user?.role ?? '').trim().toLowerCase();
+        if (roleKey === 'admin' || roleKey === 'director') {
+          return false;
+        }
+        if (typeof user.is_service_provider === 'boolean') {
+          return user.is_service_provider;
+        }
+        return true;
+      });
+      setMasters(filteredMasters);
       const servicesData = Array.isArray(servicesResponse) ? servicesResponse : (servicesResponse.services || []);
       setServices(servicesData);
 
-      if (found) {
-        setBooking(found);
-        setNewStatus(found.status);
+      if (bookingResponse?.id) {
+        setBooking(bookingResponse);
+        setNewStatus(bookingResponse.status);
       } else {
-        toast.error(t('bookingdetail:not_found'));
-        navigate('/crm/bookings');
+        const found = allBookingsData.find((bookingItem: Booking) => bookingItem.id === bookingId);
+        if (found) {
+          setBooking(found);
+          setNewStatus(found.status);
+        } else {
+          toast.error(t('bookingdetail:not_found'));
+          navigate('/crm/bookings');
+        }
       }
     } catch (err) {
       console.error('Error loading booking:', err);
@@ -179,7 +209,7 @@ export default function BookingDetail() {
       startDate.setHours(0, 0, 0, 0);
     }
 
-    const filtered = allBookings.filter(b => {
+    let filtered = allBookings.filter(b => {
       const bDate = new Date(b.datetime || b.created_at);
       const matchesPeriod = bDate >= startDate && bDate <= endDate;
 
@@ -204,6 +234,14 @@ export default function BookingDetail() {
           (bMasterInfo && targetMasterInfo && bMasterInfo.full_name === targetMasterInfo.full_name && bMasterInfo.full_name);
       }
     });
+
+    if (filtered.length === 0) {
+      const currentBookingDate = new Date(booking.datetime || booking.created_at);
+      const isInRange = currentBookingDate >= startDate && currentBookingDate <= endDate;
+      if (isInRange) {
+        filtered = [booking];
+      }
+    }
 
     // Group by day
     const entries: Record<string, number> = {};
@@ -243,10 +281,14 @@ export default function BookingDetail() {
       }
     });
 
-    return Object.entries(entries).map(([date, count]) => ({
-      date: date.split('-').slice(1).join('.'),
-      count
-    })).sort((a, b) => a.date.localeCompare(b.date));
+    return Object.entries(entries)
+      .map(([date, count]) => ({
+        isoDate: date,
+        date: date.split('-').slice(1).join('.'),
+        count
+      }))
+      .sort((a, b) => a.isoDate.localeCompare(b.isoDate))
+      .map(({ date, count }) => ({ date, count }));
   };
 
   const handleStatusUpdate = async () => {
@@ -289,13 +331,98 @@ export default function BookingDetail() {
     );
   }
 
-  const formatDate = (dateStr: string) => {
+  const parseDurationToMinutes = (rawDuration: unknown): number => {
+    if (typeof rawDuration === 'number' && Number.isFinite(rawDuration) && rawDuration > 0) {
+      return Math.max(1, Math.trunc(rawDuration));
+    }
+
+    if (typeof rawDuration !== 'string') {
+      return 60;
+    }
+
+    const normalized = rawDuration.trim();
+    if (normalized.length === 0) {
+      return 60;
+    }
+
+    if (/^\d+$/.test(normalized)) {
+      const parsed = Number(normalized);
+      return Number.isFinite(parsed) && parsed > 0 ? Math.trunc(parsed) : 60;
+    }
+
+    const hoursMatch = normalized.match(/(\d+)\s*(h|hr|час|ч)/i);
+    const minsMatch = normalized.match(/(\d+)\s*(m|min|мин)/i);
+    const hours = hoursMatch && hoursMatch[1] ? Number(hoursMatch[1]) : 0;
+    const mins = minsMatch && minsMatch[1] ? Number(minsMatch[1]) : 0;
+    const total = hours * 60 + mins;
+    return total > 0 ? Math.trunc(total) : 60;
+  };
+
+  const resolveBookingDurationMinutes = (): number => {
+    const normalizedService = String(booking.service || '').trim().toLowerCase();
+    if (normalizedService.length === 0) {
+      return 60;
+    }
+
+    const matchedService = services.find((serviceItem) => {
+      const serviceName = String(serviceItem?.name ?? '').trim().toLowerCase();
+      const serviceKey = String(serviceItem?.service_key ?? '').trim().toLowerCase();
+      return serviceName === normalizedService || serviceKey === normalizedService;
+    });
+
+    if (!matchedService) {
+      return 60;
+    }
+
+    return parseDurationToMinutes(matchedService.duration);
+  };
+
+  const formatDateTimePoint = (dateStr: string) => {
     try {
       const date = new Date(dateStr);
-      return date.toLocaleDateString('ru-RU') + ' ' + date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleDateString(i18n.language) + ' ' + date.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
     } catch {
       return dateStr;
     }
+  };
+
+  const formatDateTimeRange = (dateStr: string) => {
+    try {
+      const startDate = new Date(dateStr);
+      if (Number.isNaN(startDate.getTime())) {
+        return dateStr;
+      }
+
+      const durationMinutes = resolveBookingDurationMinutes();
+      const endDate = new Date(startDate.getTime() + durationMinutes * 60 * 1000);
+      const dateLabel = startDate.toLocaleDateString(i18n.language);
+      const startLabel = startDate.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
+      const endLabel = endDate.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
+      return `${dateLabel} ${startLabel} - ${endLabel}`;
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const getBookingSourceLabel = (sourceValue?: string) => {
+    const normalizedSource = String(sourceValue ?? booking.source ?? '').trim().toLowerCase();
+    if (!normalizedSource) {
+      return t('bookings:source.manual');
+    }
+    return t(`bookings:source.${normalizedSource}`, { defaultValue: normalizedSource });
+  };
+
+  const getDiscountBadgeLabel = () => {
+    if (booking.promo_code && booking.promo_code.trim().length > 0) {
+      return `${t('admin/services:promo_code')}: ${booking.promo_code.trim()}`;
+    }
+
+    const normalizedDiscountSource = String(booking.discount_source || '').trim().toLowerCase();
+    if (normalizedDiscountSource.length > 0) {
+      return `${t('common:discount')}: ${getBookingSourceLabel(normalizedDiscountSource)}`;
+    }
+
+    return '';
   };
 
   return (
@@ -383,7 +510,7 @@ export default function BookingDetail() {
                         {totalVisits} {t('visits', 'посещений')}
                       </div>
                       <div className="bg-green-50 text-green-700 px-2 py-1 rounded-md font-medium">
-                        {t('total_spent', 'Всего потрачено')}: {totalSpent} {t('currency')}
+                        {t('total_spent', 'Всего потрачено')}: {formatCurrency(totalSpent)}
                       </div>
                     </div>
                   );
@@ -472,7 +599,7 @@ export default function BookingDetail() {
                       onClick={() => navigate('/crm/calendar')}
                       title={t('common:view_calendar', 'Перейти в календарь')}
                     >
-                      {formatDate(booking.datetime)}
+                      {formatDateTimeRange(booking.datetime)}
                     </p>
                   </div>
                 )}
@@ -504,7 +631,22 @@ export default function BookingDetail() {
                         onChange={(e) => setEditForm({ ...editForm, revenue: parseFloat(e.target.value) })}
                       />
                     ) : (
-                      <p className="text-lg text-gray-900 font-medium">{booking.revenue} {t('currency')}</p>
+                      <p className="text-lg text-gray-900 font-medium">{formatCurrency(booking.revenue ?? 0)}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {(booking.promo_code || booking.discount_source || booking.source) && (
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Tag className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm text-gray-600">{t('bookings:source.title')}</p>
+                    <p className="text-lg text-gray-900 font-medium">{getBookingSourceLabel()}</p>
+                    {getDiscountBadgeLabel().length > 0 && (
+                      <p className="text-sm text-blue-700 font-semibold">{getDiscountBadgeLabel()}</p>
                     )}
                   </div>
                 </div>
@@ -517,7 +659,7 @@ export default function BookingDetail() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">{t('created_at')}</p>
-                  <p className="text-lg text-gray-900 font-medium">{formatDate(booking.created_at)}</p>
+                  <p className="text-lg text-gray-900 font-medium">{formatDateTimePoint(booking.created_at)}</p>
                 </div>
               </div>
 
@@ -564,7 +706,19 @@ export default function BookingDetail() {
 
               {/* Internal Notes (New) */}
               <div className="pt-6 border-t border-gray-100">
-                <h3 className="text-sm font-medium text-gray-900 mb-2">{t('internal_notes', 'Заметки')}</h3>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-medium text-gray-900">{t('internal_notes', 'Заметки')}</h3>
+                  {!isEditing && (
+                    <button
+                      type="button"
+                      onClick={() => setIsEditing(true)}
+                      className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-700"
+                    >
+                      <Pencil className="w-3 h-3" />
+                      {t('common:edit')}
+                    </button>
+                  )}
+                </div>
 
                 {isEditing ? (
                   <Textarea
@@ -710,6 +864,7 @@ export default function BookingDetail() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="new">{t('status_new')}</SelectItem>
+                  <SelectItem value="pending">{t('common:status_pending')}</SelectItem>
                   <SelectItem value="confirmed">{t('status_confirmed')}</SelectItem>
                   <SelectItem value="completed">{t('status_completed')}</SelectItem>
                   <SelectItem value="cancelled">{t('status_cancelled')}</SelectItem>
@@ -741,6 +896,8 @@ export default function BookingDetail() {
                   <span className="text-sm text-gray-900 font-medium capitalize">
                     {booking.status === 'new'
                       ? t('status_new')
+                      : booking.status === 'pending'
+                        ? t('common:status_pending')
                       : booking.status === 'confirmed'
                         ? t('status_confirmed')
                         : booking.status === 'completed'

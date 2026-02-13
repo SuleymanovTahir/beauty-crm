@@ -568,12 +568,53 @@ export default function Clients() {
     setImportFile(null); // Открепление файла без закрытия диалога
   };
 
-  const stats = {
-    total: clients.length,
-    vip: clients.filter((c) => c.status === "vip").length,
-    new: clients.filter((c) => c.status === "new").length,
-    active: clients.filter((c) => c.total_messages > 0).length,
-  };
+  const periodLabel = useMemo(() => {
+    const applyCountInterpolation = (value: string, count: number) => {
+      return value.replace(/\{\{\s*count\s*\}\}/g, String(count));
+    };
+
+    const getCountPeriodLabel = (key: string, count: number, fallbackTemplate: string) => {
+      const translated = t(key, { count, defaultValue: fallbackTemplate });
+      const periodFallback = t('common:for_period', { defaultValue: '' });
+      if (translated.trim().toLowerCase() === periodFallback.trim().toLowerCase() && periodFallback.trim().length > 0) {
+        return applyCountInterpolation(fallbackTemplate, count);
+      }
+      return applyCountInterpolation(translated, count);
+    };
+
+    if (period === 'all') {
+      return t('common:all_time');
+    }
+    if (period === 'today') {
+      return t('common:for_today');
+    }
+    if (period === '7') {
+      return getCountPeriodLabel('common:last_7_days', 7, 'Последние {{count}} дней');
+    }
+    if (period === '14') {
+      return getCountPeriodLabel('common:last_14_days', 14, 'Последние {{count}} дней');
+    }
+    if (period === '30') {
+      return getCountPeriodLabel('common:last_7_days', 30, 'Последние {{count}} дней');
+    }
+    if (period === '90') {
+      return getCountPeriodLabel('common:last_3_months', 3, 'Последние {{count}} месяца');
+    }
+    if (period === 'custom' && dateFrom && dateTo) {
+      return `${dateFrom} - ${dateTo}`;
+    }
+    return t('common:all_periods');
+  }, [dateFrom, dateTo, period, t]);
+
+  const stats = useMemo(() => {
+    const source = filteredByPeriod;
+    return {
+      total: source.length,
+      vip: source.filter((c) => c.status === 'vip').length,
+      new: source.filter((c) => c.status === 'new').length,
+      active: source.filter((c) => Number(c.total_messages ?? 0) > 0).length,
+    };
+  }, [filteredByPeriod]);
 
   if (loading) {
     return (
@@ -628,10 +669,7 @@ export default function Clients() {
               <p className="clients-stat-label text-xs text-gray-600 mb-1 md:mb-2">{t('total_clients')}</p>
               <h3 className="clients-stat-value text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.total}</h3>
               <p className="clients-stat-period text-[10px] md:text-xs text-gray-500">
-                {period === 'all' ? t('common:all_time') :
-                  period === 'today' ? t('common:for_today') :
-                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
-                      t('common:for_period', { days: period })}
+                {periodLabel}
               </p>
             </div>
             <div className="clients-stat-icon-wrapper bg-stat-blue w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
@@ -645,10 +683,7 @@ export default function Clients() {
               <p className="clients-stat-label text-xs text-gray-600 mb-1 md:mb-2">{t('vip_clients')}</p>
               <h3 className="clients-stat-value text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.vip}</h3>
               <p className="clients-stat-period text-[10px] md:text-xs text-gray-500">
-                {period === 'all' ? t('common:all_time') :
-                  period === 'today' ? t('common:for_today') :
-                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
-                      t('common:for_period', { days: period })}
+                {periodLabel}
               </p>
             </div>
             <div className="clients-stat-icon-wrapper bg-stat-yellow w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
@@ -662,10 +697,7 @@ export default function Clients() {
               <p className="clients-stat-label text-xs text-gray-600 mb-1 md:mb-2">{t('new_clients')}</p>
               <h3 className="clients-stat-value text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.new}</h3>
               <p className="clients-stat-period text-[10px] md:text-xs text-gray-500">
-                {period === 'all' ? t('common:all_time') :
-                  period === 'today' ? t('common:for_today') :
-                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
-                      t('common:for_period', { days: period })}
+                {periodLabel}
               </p>
             </div>
             <div className="clients-stat-icon-wrapper bg-stat-green w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
@@ -679,10 +711,7 @@ export default function Clients() {
               <p className="clients-stat-label text-xs text-gray-600 mb-1 md:mb-2">{t('active_clients')}</p>
               <h3 className="clients-stat-value text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-0.5 md:mb-1">{stats.active}</h3>
               <p className="clients-stat-period text-[10px] md:text-xs text-gray-500">
-                {period === 'all' ? t('common:all_time') :
-                  period === 'today' ? t('common:for_today') :
-                    period === 'custom' ? `${dateFrom} - ${dateTo}` :
-                      t('common:for_period', { days: period })}
+                {periodLabel}
               </p>
             </div>
             <div className="clients-stat-icon-wrapper bg-stat-blue w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
@@ -1001,7 +1030,7 @@ export default function Clients() {
                     </td>
                     <td className="px-6 py-4 text-center" onClick={(e) => e.stopPropagation()}>
                       <TemperatureSelect
-                        value={client.temperature || 'cold'}
+                        value={client.temperature || 'warm'}
                         onChange={(value) => handleTemperatureChange(client.id, value)}
                       />
                     </td>
