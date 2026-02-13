@@ -130,7 +130,7 @@ export default function EmployeeDetail() {
         try {
             await api.post(`/api/users/${id}/delete`);
             toast.success(t('employee_deleted'));
-            navigate('/crm/users');
+            navigate(`${rolePrefix}/${usersPath}`);
         } catch (error) {
             console.error('Error deleting employee:', error);
             toast.error(t('error_deleting_employee'));
@@ -149,7 +149,7 @@ export default function EmployeeDetail() {
         return (
             <div className="text-center py-12">
                 <p className="text-gray-500">{t('employee_not_found')}</p>
-                <Button onClick={() => navigate('/crm/users')} className="mt-4">
+                <Button onClick={() => navigate(`${rolePrefix}/${usersPath}`)} className="mt-4">
                     {t('back_to_list')}
                 </Button>
             </div>
