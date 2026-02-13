@@ -238,6 +238,7 @@
   "happyClients": "zufriedene Kunden",
   "import": "Importieren",
   "importing": "Importieren...",
+  "inactive": "",
   "individual_permissions": "Individuelle Rechte",
   "individual_permissions_description": "Sie können Rechte für einen bestimmten Benutzer überschreiben, unabhängig von seiner Rolle.",
   "invalid_credentials": "Falscher Login oder Passwort",

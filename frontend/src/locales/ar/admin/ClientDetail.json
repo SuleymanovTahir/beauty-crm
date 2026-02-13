@@ -45,6 +45,7 @@
   "password": "كلمة المرور",
   "phone": "الهاتف",
   "phone_not_specified": "رقم الهاتف غير محدد",
+  "photo_access_disabled": "منع العميل إضافة صور إلى المعرض.",
   "photo_after": "الصورة بعد",
   "photo_before": "الصورة قبل",
   "photo_uploaded": "تم تحميل الصورة",

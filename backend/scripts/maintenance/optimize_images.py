@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import hashlib
 from PIL import Image
 from pathlib import Path
 
@@ -34,13 +35,25 @@ def should_skip_file(file_path: str, file: str):
     # PNG files with transparency will be preserved as PNG
     return False
 
+
+def file_sha256(file_path: str) -> str:
+    sha = hashlib.sha256()
+    with open(file_path, 'rb') as f:
+        while True:
+            chunk = f.read(1024 * 1024)
+            if not chunk:
+                break
+            sha.update(chunk)
+    return sha.hexdigest()
+
+
 def optimize_images(directory: str, max_size_kb: int = 500, max_width: int = 1920):
     """
     Optimize images in the given directory recursively.
-    - Convert ALL images to WebP format (except logo.png)
+    - Convert JPG/JPEG/PNG to WebP format (except transparent PNGs)
     - Resize if width > max_width
     - Compress to reduce size below max_size_kb (target)
-    - Track optimized files to prevent re-optimization
+    - Track optimized content hash to prevent re-optimization
     """
     print(f"🚀 Starting image optimization in {directory}...")
     print(f"Target: Convert to WebP, Max size: < {max_size_kb}KB, Max width: {max_width}px")
@@ -54,7 +67,7 @@ def optimize_images(directory: str, max_size_kb: int = 500, max_width: int = 192
     
     for root, _, files in os.walk(directory):
         for file in files:
-            if file.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
+            if file.lower().endswith(('.jpg', '.jpeg', '.png')):
                 file_path = os.path.join(root, file)
                 
                 # Skip logo files
@@ -64,8 +77,9 @@ def optimize_images(directory: str, max_size_kb: int = 500, max_width: int = 192
                     continue
                 
                 # Check if already optimized
-                file_mtime = os.path.getmtime(file_path)
-                if file_path in history and history[file_path] >= file_mtime:
+                file_hash_before = file_sha256(file_path)
+                history_item = history.get(file_path, {})
+                if isinstance(history_item, dict) and history_item.get("hash") == file_hash_before:
                     skipped += 1
                     continue
                 
@@ -93,7 +107,10 @@ def optimize_images(directory: str, max_size_kb: int = 500, max_width: int = 192
                             saved = original_size_kb - new_size_kb
                             saved_space += saved
                             count += 1
-                            history[file_path] = os.path.getmtime(file_path)
+                            history[file_path] = {
+                                "hash": file_sha256(file_path),
+                                "output": file_path,
+                            }
                             print(f"✅ Optimized PNG {file}: {original_size_kb:.1f}KB -> {new_size_kb:.1f}KB (Saved {saved:.1f}KB)")
                         else:
                             # Convert to RGB if needed (for PNG without transparency)
@@ -124,7 +141,10 @@ def optimize_images(directory: str, max_size_kb: int = 500, max_width: int = 192
                             count += 1
                             
                             # Track optimization
-                            history[webp_path] = os.path.getmtime(webp_path)
+                            history[file_path] = {
+                                "hash": file_hash_before,
+                                "output": webp_path,
+                            }
                             
                             # Delete original if it's not already webp
                             if not file.lower().endswith('.webp'):
@@ -168,4 +188,3 @@ if __name__ == "__main__":
             optimize_images(target_dir, max_size_kb=args.max_size, max_width=args.max_width)
         else:
             print(f"❌ Directory not found: {target_dir}")
-

@@ -30,6 +30,12 @@ def cleanup_test_data():
     Очистка тестовых данных после выполнения тестов.
     Удаляет пользователей, созданных во время тестирования.
     """
+    try:
+        from tests.test_utils import cleanup_all_test_users
+        deleted = cleanup_all_test_users()
+        print(f"🧹 Cleanup completed: удалено тестовых пользователей {deleted}")
+    except Exception as e:
+        print(f"⚠️  Cleanup skipped: {e}")
 
 def run_suite(suite_name, func=None, subprocess_path=None, description=""):
     """

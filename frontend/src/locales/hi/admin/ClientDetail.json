@@ -45,6 +45,7 @@
   "password": "पासवर्ड",
   "phone": "फोन",
   "phone_not_specified": "फ़ोन नंबर निर्दिष्ट नहीं है",
+  "photo_access_disabled": "क्लाइंट ने गैलरी में फ़ोटो जोड़ने पर रोक लगा दी।",
   "photo_after": "बाद का फोटो",
   "photo_before": "पहले का फोटो",
   "photo_uploaded": "फोटो अपलोड किया गया",

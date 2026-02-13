@@ -26,11 +26,15 @@ LANGUAGES = ["ru", "en", "ar", "es", "de", "fr", "hi", "kk", "pt"]
 SOURCE_LANG = 'ru'
 
 BAD_TRANSLATION_MARKERS = {
-    'en': ['interior settings', 'mail mailings'],
-    'es': ['hasta fecha'],
-    'fr': ['à la date'],
-    'de': ['datum bis'],
-    'pt': ['até data', 'de data']
+    'ru': ['ремонт 1 наращивания', 'ремонт 1 гелевого ногтя', 'ремонт 1 гелевого ногтей', 'пилингт', 'наращивание ногтей (гель)'],
+    'en': ['interior settings', 'mail mailings', 'repair 1 extension', 'repair 1 gel nail'],
+    'es': ['hasta fecha', 'reparación de 1 uña de gel', 'pelar'],
+    'fr': ['à la date', "réparation d'un ongle en gel", 'peluchage'],
+    'de': ['datum bis', 'reparatur von 1 gel-nagel'],
+    'pt': ['até data', 'de data', 'reparo de 1 unha em gel', 'descamação'],
+    'ar': ['إصلاح ظفر جل واحد'],
+    'hi': ['1 जेल नाखून की मरम्मत', 'छीलना'],
+    'kk': ['1 гель тырнағын жөндеу', 'пиллинг']
 }
 
 def is_bad_translation(value: str, target_lang: str) -> bool:

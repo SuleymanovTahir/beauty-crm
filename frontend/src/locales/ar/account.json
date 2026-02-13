@@ -107,7 +107,7 @@
     "start_caring": "ابدأ في الاعتناء بنفسك!",
     "start_caring_message": "اشترك للحصول على العلاجات وابدأ رحلتك إلى الجمال.",
     "subtitle": "تحليل الحالة والتوصيات",
-    "title": "ملف تعريف الجمال",
+    "title": "توصيات العناية",
     "view_all_recommendations": "عرض جميع التوصيات"
   },
   "dashboard": {
@@ -199,6 +199,7 @@
     "points_for_you": "النقاط لك",
     "points_total": "الإجمالي المتراكم",
     "points_value": "1 نقطة = 1 {{currency}} خصم",
+    "referral_code_hint": "يتم إنشاء الرمز تلقائيًا واستخدامه لدعوة الأصدقاء.",
     "referral_how_it_works": "كيفية العمل:",
     "referral_program": "برنامج الإحالة",
     "referral_step1": "مشاركة رمز ترويجي من تاريخ صديق",
@@ -224,7 +225,7 @@
     "total_spent": "إجمالي الإنفاق",
     "your_cashback": "استرداد النقود الخاص بك",
     "your_discount": "الخصم الخاص بك سيتم",
-    "your_promo": "الشفرة الترويجية الخاصة بك"
+    "your_promo": "رمز الإحالة الخاص بك"
   },
   "masters": {
     "add_favorites_hint": "أضف العناصر الرئيسية إلى مفضلاتك من خلال النقر على أيقونة القلب",
@@ -338,7 +339,7 @@
   "tabs": {
     "achievements": "الإنجازات",
     "appointments": "السجلات",
-    "beauty": "ملف تعريف الجمال",
+    "beauty": "العناية والتوصيات",
     "dashboard": "الصفحة الرئيسية",
     "gallery": "المعرض",
     "loyalty": "الولاء",

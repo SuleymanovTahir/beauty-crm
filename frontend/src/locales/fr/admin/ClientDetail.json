@@ -45,6 +45,7 @@
   "password": "Mot de passe",
   "phone": "Téléphone",
   "phone_not_specified": "Numéro de téléphone non spécifié",
+  "photo_access_disabled": "Le client a interdit l'ajout de photos à la galerie.",
   "photo_after": "Photo APRÈS",
   "photo_before": "Photos AVANT",
   "photo_uploaded": "Photo téléchargée",

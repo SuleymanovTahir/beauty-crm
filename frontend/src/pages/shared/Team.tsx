@@ -88,7 +88,8 @@ function SortableUserRow({
   setShowScheduleDialog,
   setShowPermissionsDialog,
   getPhotoUrl,
-  getDynamicAvatar
+  getDynamicAvatar,
+  routePrefix
 }: any) {
   const {
     attributes,
@@ -164,7 +165,7 @@ function SortableUserRow({
                 variant="ghost"
                 size="icon"
                 onClick={() => {
-                  const path = `/ crm / users / ${user.id} `;
+                  const path = `${routePrefix}/team/${user.id}/information`;
                   navigate(path);
                 }}
                 className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
@@ -224,6 +225,11 @@ export default function UniversalTeam() {
   const { t, i18n } = useTranslation(['admin/users', 'common']);
   const { user: currentUser } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  const routePrefix = window.location.pathname.startsWith('/admin')
+    ? '/admin'
+    : window.location.pathname.startsWith('/manager')
+      ? '/manager'
+      : '/crm';
 
   // View mode state
   const [viewMode, setViewMode] = useState<ViewMode>((searchParams.get('view') as ViewMode) || 'table');
@@ -493,7 +499,7 @@ export default function UniversalTeam() {
               <Button
                 variant="outline"
                 className="w-full sm:w-auto text-gray-700 hover:text-gray-900 border-gray-300"
-                onClick={() => navigate('/crm/users/pending')}
+                onClick={() => navigate(`${routePrefix}/team/pending`)}
               >
                 <UsersIcon className="w-4 h-4 mr-2" />
                 {t('pending_registrations')}
@@ -501,7 +507,7 @@ export default function UniversalTeam() {
 
               <Button
                 className="w-full sm:w-auto bg-pink-600 hover:bg-pink-700"
-                onClick={() => navigate('/crm/users/create')}
+                onClick={() => navigate(`${routePrefix}/team/create`)}
               >
                 <UserPlus className="w-4 h-4 mr-2" />
                 {t('add_user')}
@@ -557,6 +563,7 @@ export default function UniversalTeam() {
                           setShowPermissionsDialog={setShowPermissionsDialog}
                           getPhotoUrl={getPhotoUrl}
                           getDynamicAvatar={getDynamicAvatar}
+                          routePrefix={routePrefix}
                         />
                       ))}
                     </tbody>
@@ -591,7 +598,7 @@ export default function UniversalTeam() {
                 {filteredUsers.map((emp) => (
                   <button
                     key={emp.id}
-                    onClick={() => navigate(`/ crm / team ? view = cards & id=${emp.id} `)}
+                    onClick={() => navigate(`${routePrefix}/team?view=cards&id=${emp.id}`)}
                     className={`w - full p - 3 flex items - center gap - 3 hover: bg - white hover: shadow - sm rounded - xl transition - all mb - 1 group ${id === String(emp.id) ? 'bg-white shadow-sm ring-1 ring-gray-100' : ''} `}
                   >
                     <img

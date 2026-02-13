@@ -13,9 +13,9 @@
   "date_filter": "Période",
   "datetime": "Date/Heure",
   "filter_custom": "Vos règles",
+  "filter_last_month": "Le mois dernier",
   "filter_last30days": "30 derniers jours",
   "filter_last7days": "7 derniers jours",
-  "filter_last_month": "Le mois dernier",
   "filter_this_month": "Ce mois-ci",
   "filter_today": "Aujourd'hui",
   "filter_yesterday": "Hier",
@@ -53,24 +53,24 @@
     }
   },
   "recent_activity": {
+    "challenge_completed_one": "Cible \"{{name}}\" complétée par {{count}} par l'utilisateur",
     "challenge_completed_few": "Cible \"{{name}}\" complétée par les utilisateurs {{count}}",
     "challenge_completed_many": "Cible \"{{name}}\" complétée par les utilisateurs {{count}}",
-    "challenge_completed_one": "Cible \"{{name}}\" complétée par {{count}} par l'utilisateur",
     "challenge_completed_other": "Cible \"{{name}}\" complétée par les utilisateurs {{count}}",
+    "day_ago_one": "{{count}} il y a un jour",
     "day_ago_few": "{{count}} jours il y a",
     "day_ago_many": "il y a {{count}} jours",
-    "day_ago_one": "{{count}} il y a un jour",
     "day_ago_other": "{{count}} il y a jours",
+    "hours_ago_one": "{{count}} il y a heures",
     "hours_ago_few": "{{count}} il y a heures",
     "hours_ago_many": "{{count}} il y a heures",
-    "hours_ago_one": "{{count}} il y a heures",
     "hours_ago_other": "{{count}} heures il y a",
     "new_tier_activated": "Nouveau niveau de fidélité activé",
     "subtitle": "Actions récentes dans le panneau d'administration",
     "title": "Activité récente",
+    "users_registered_one": "{{count}} nouvel utilisateur enregistré",
     "users_registered_few": "{{count}} nouveaux utilisateurs enregistrés",
     "users_registered_many": "{{count}} nouveaux utilisateurs enregistrés",
-    "users_registered_one": "{{count}} nouvel utilisateur enregistré",
     "users_registered_other": "{{count}} nouveaux utilisateurs enregistrés"
   },
   "recent_leads": "Dernières applications",
@@ -93,5 +93,5 @@
   "total_clients": "Nombre total de clients",
   "vip_clients": "Clients VIP",
   "visits": "Visites",
-  "welcome": "Bienvenue ! Voici ce qui se passe dans votre salon aujourd'hui."
+  "welcome": "Bienvenue\u00a0! Voici ce qui se passe dans votre salon aujourd'hui."
 }

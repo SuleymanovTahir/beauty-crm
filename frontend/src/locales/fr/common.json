@@ -238,6 +238,7 @@
   "happyClients": "Clients satisfaits",
   "import": "Importer",
   "importing": "Importer...",
+  "inactive": "",
   "individual_permissions": "Droits individuels",
   "individual_permissions_description": "Vous pouvez remplacer les droits d'un utilisateur spécifique, quel que soit son rôle.",
   "invalid_credentials": "Identifiant ou mot de passe incorrect",

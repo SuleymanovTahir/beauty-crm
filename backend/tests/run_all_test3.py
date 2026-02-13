@@ -6,7 +6,6 @@
 import sys
 import os
 import subprocess
-import asyncio
 from datetime import datetime
 
 # Добавляем путь к backend для импортов
@@ -96,7 +95,7 @@ def run_all_tests3():
     results.append(("tests/manual/test_settings_save.py", *run_suite_subprocess("tests/manual/test_settings_save.py", description="Тест сохранения настроек уведомлений")))
 
     # 5. Startup Extras
-    results.append(("scripts/testing/startup_tests.py", *run_suite_subprocess("scripts/testing/startup_tests.py", description="Дополнительные проверки при старте")))
+    results.append(("tests/startup/startup_tests.py", *run_suite_subprocess("tests/startup/startup_tests.py", description="Дополнительные проверки при старте")))
 
     # ИТОГИ
     print_header("ИТОГИ ТРЕТЬЕЙ ОЧЕРЕДИ ТЕСТИРОВАНИЯ")

@@ -138,6 +138,9 @@
     "service_one": "الخدمة",
     "total": "الإجمالي"
   },
+  "settings": {
+    "promotions": "العروض الترويجية والعروض"
+  },
   "submitBooking": "إرسال طلب",
   "subtotal": "الملخص",
   "totalDuration": "المدة"

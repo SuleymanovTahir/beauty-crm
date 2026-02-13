@@ -9,6 +9,14 @@ if BASE_DIR not in sys.path:
     
 from utils.logger import log_info, log_error
 
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
 async def main():
     """
     Запускает все скрипты исправлений и обслуживания.
@@ -27,19 +35,22 @@ async def main():
         except Exception as e:
             log_error(f"❌ Ошибка в fix_data.py: {e}", "run_all_fixes")
 
-        # 2. SEO Optimizer (Optional but good)
-        log_info("2️⃣  Запуск seo_optimizer.py...", "run_all_fixes")
-        try:
-            from scripts.maintenance.seo_optimizer import optimize_seo
-            # Check if optimize_seo is async
-            if asyncio.iscoroutinefunction(optimize_seo):
-                await optimize_seo()
-            else:
-                optimize_seo()
-            log_info("✅ seo_optimizer.py выполнен успешно", "run_all_fixes")
-        except Exception as e:
-             # It might not be critical
-             log_error(f"⚠️ Ошибка в seo_optimizer.py: {e}", "run_all_fixes")
+        # 2. SEO Optimizer (disabled by default to preserve source image quality)
+        if _env_flag("RUN_SEO_OPTIMIZER", default=False):
+            log_info("2️⃣  Запуск seo_optimizer.py...", "run_all_fixes")
+            try:
+                from scripts.maintenance.seo_optimizer import optimize_seo
+                # Check if optimize_seo is async
+                if asyncio.iscoroutinefunction(optimize_seo):
+                    await optimize_seo()
+                else:
+                    optimize_seo()
+                log_info("✅ seo_optimizer.py выполнен успешно", "run_all_fixes")
+            except Exception as e:
+                 # It might not be critical
+                 log_error(f"⚠️ Ошибка в seo_optimizer.py: {e}", "run_all_fixes")
+        else:
+            log_info("2️⃣  seo_optimizer.py пропущен (RUN_SEO_OPTIMIZER=false)", "run_all_fixes")
 
         # 3. Sync Master Services (Unified: Remove incorrect + Auto-assign)
         log_info("3️⃣  Запуск sync_master_services.py...", "run_all_fixes")

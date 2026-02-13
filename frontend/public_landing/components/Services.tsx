@@ -31,6 +31,10 @@ export function Services({ initialServices }: ServicesProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const processServicesData = (data: any) => {
+    if (data && Array.isArray(data.services)) {
+      data = data.services;
+    }
+
     if (Array.isArray(data)) {
       setServices(data);
 

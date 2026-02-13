@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "activate": "Activer",
+    "deactivate": "Désactiver"
+  },
   "adjust_points": "Modifier le solde de points",
   "buttons": {
     "add_rule": "Ajouter règle",
@@ -10,10 +14,10 @@
   "categories": {
     "category": "Catégorie",
     "category_placeholder": "Par exemple. Manucure",
-    "description": "Définissez le facteur d'accumulation de points pour chaque catégorie de service",
-    "multiplier": "Facteur d'accumulation",
-    "title": "Règles de points par catégorie",
-    "hint": "Le facteur s'applique uniquement à la catégorie sélectionnée. Si la règle est désactivée, le taux de base x1 est utilisé."
+    "description": "Paramétrer le coefficient d'accumulation de points pour chaque catégorie de service",
+    "hint": "Le facteur s'applique uniquement à la catégorie sélectionnée. Si la règle est désactivée, le taux de base x1 est utilisé.",
+    "multiplier": "Coefficient d'accumulation",
+    "title": "Règles d'accumulation par catégorie"
   },
   "config": {
     "cashback_hint": "Exemple : {{percent}}% de cashback ({{points}} points pour chaque {{unit}} dépensé)",
@@ -40,22 +44,25 @@
       "description": "Paramétrage des conditions d'obtention d'un niveau de privilège",
       "discount_percent": "Pourcentage de remise",
       "min_points": "Seuil minimum de points",
-      "tier_name": "Nom du niveau",
-      "title": "Niveau d'édition",
+      "status_hint": "Un niveau inactif ne participe pas au calcul automatique des privilèges.",
       "status_label": "Statut du niveau",
-      "status_hint": "Un niveau inactif ne participe pas au calcul automatique des privilèges."
+      "tier_name": "Nom du niveau",
+      "title": "Niveau d'édition"
     },
     "rule": {
       "description": "Coefficient d'accumulation personnel pour la catégorie",
-      "title": "Règle de catégorie",
+      "status_hint": "Si la règle est désactivée, la catégorie utilise le taux de base x1.",
       "status_label": "Statut de la règle",
-      "status_hint": "Si la règle est désactivée, la catégorie utilise le taux de base x1."
+      "title": "Règle de catégorie"
     }
   },
   "stats": {
     "active_members": "Participants au programme",
     "points_redeemed": "points débités",
     "total_points_issued": "Total accumulé"
+  },
+  "statuses": {
+    "inactive": "Inactif"
   },
   "subtitle": "Gérer les remises, les niveaux de privilèges et les règles d'accumulation de points",
   "tiers": {
@@ -74,7 +81,15 @@
     "failed_save": "Erreur lors de la sauvegarde",
     "failed_update": "Erreur lors de la mise à jour",
     "points_adjusted_add": "{{count}} points accumulés",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_other": "",
     "points_adjusted_deduct": "Annulation de {{count}} points",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_other": "",
     "rule_deleted": "Règle réussie supprimé",
     "rule_saved": "Règle enregistrée",
     "tier_updated": "Données de niveau mises à jour"
@@ -90,12 +105,5 @@
       "type": "Type"
     },
     "title": "Dernières transactions"
-  },
-  "actions": {
-    "activate": "Activer",
-    "deactivate": "Désactiver"
-  },
-  "statuses": {
-    "inactive": "Inactif"
   }
 }

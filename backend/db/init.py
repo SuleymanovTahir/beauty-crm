@@ -531,6 +531,8 @@ def init_database():
         c.execute(f'''CREATE TABLE IF NOT EXISTS services (
             id SERIAL PRIMARY KEY,
             parent_id INTEGER REFERENCES services(id), -- For sub-services
+            category TEXT DEFAULT 'general',
+            service_key TEXT UNIQUE,
             name TEXT NOT NULL,
             price REAL NOT NULL,
             min_price REAL,
@@ -547,7 +549,29 @@ def init_database():
 
         add_column_if_not_exists('services', 'name', 'TEXT')
         add_column_if_not_exists('services', 'description', 'TEXT')
+        add_column_if_not_exists('services', 'category', "TEXT DEFAULT 'general'")
+        add_column_if_not_exists('services', 'service_key', 'TEXT')
         add_column_if_not_exists('services', 'recommended_interval_days', 'INTEGER DEFAULT 30')
+
+        # Ensure service_key is always present and unique for ON CONFLICT(service_key)
+        c.execute("""
+            UPDATE services
+            SET service_key = 'service_' || id::TEXT
+            WHERE service_key IS NULL OR TRIM(service_key) = ''
+        """)
+        c.execute("""
+            WITH duplicated AS (
+                SELECT id, service_key,
+                       ROW_NUMBER() OVER (PARTITION BY service_key ORDER BY id) AS rn
+                FROM services
+                WHERE service_key IS NOT NULL AND TRIM(service_key) <> ''
+            )
+            UPDATE services s
+            SET service_key = s.service_key || '_' || s.id::TEXT
+            FROM duplicated d
+            WHERE s.id = d.id AND d.rn > 1
+        """)
+        c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_services_service_key_unique ON services(service_key)")
 
         # Master-Service Mapping
         c.execute('''CREATE TABLE IF NOT EXISTS user_services (
@@ -687,18 +711,29 @@ def init_database():
         # Invoices
         c.execute(f'''CREATE TABLE IF NOT EXISTS invoices (
             id SERIAL PRIMARY KEY,
-            client_id INTEGER REFERENCES clients(id),
-            booking_id INTEGER,
+            invoice_number TEXT UNIQUE,
+            client_id TEXT REFERENCES clients(instagram_id),
+            booking_id INTEGER REFERENCES bookings(id),
+            status TEXT DEFAULT 'draft',
             stage_id INTEGER REFERENCES workflow_stages(id),
             total_amount REAL DEFAULT 0,
             paid_amount REAL DEFAULT 0,
             currency TEXT DEFAULT '{SALON_CURRENCY_DEFAULT}',
             items JSONB DEFAULT '[]',
-            notes TEXT, pdf_path TEXT,
+            notes TEXT,
+            due_date TIMESTAMP,
+            pdf_path TEXT,
+            sent_at TIMESTAMP,
+            paid_at TIMESTAMP,
             created_by INTEGER REFERENCES users(id),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('invoices', 'invoice_number', 'TEXT')
+        add_column_if_not_exists('invoices', 'status', "TEXT DEFAULT 'draft'")
+        add_column_if_not_exists('invoices', 'due_date', 'TIMESTAMP')
+        add_column_if_not_exists('invoices', 'sent_at', 'TIMESTAMP')
+        add_column_if_not_exists('invoices', 'paid_at', 'TIMESTAMP')
 
         # Contracts
         c.execute('''CREATE TABLE IF NOT EXISTS contracts (
@@ -2019,15 +2054,15 @@ def init_database():
 
         # Продуктовые сотрудники
         default_employees = [
-            ('Kasymova Gulcehre', 'gulcehre', 'employee', 'Nail & Waxing Master', 'female'),
-            ('Peradilla Jennifer', 'jennifer', 'employee', 'Universal Beauty Master', 'female'),
-            ('Amandurdyyeva Mestan', 'mestan', 'employee', 'Hair Stylist & Permanent Makeup Artist', 'female'),
-            ('Mohamed Sabri', 'sabri', 'employee', 'Hair Stylist', 'male'),
-            ('Kozhabay Lyazat', 'lyazat', 'employee', 'Nail Master', 'female'),
-            ('Турсунай', 'tursunay', 'director', 'Owner / Director', 'female'),
-            ('Admin', 'admin', 'director', 'System Admin', 'female')
+            ('Kasymova Gulcehre', 'gulcehre', 'employee', 'Nail & Waxing Master', 'female', 'gulcehraautova@gmail.com', '+971525814262'),
+            ('Peradilla Jennifer', 'jennifer', 'employee', 'Universal Beauty Master', 'female', 'peradillajennifer47@gmail.com', '+971564208308'),
+            ('Amandurdyyeva Mestan', 'mestan', 'employee', 'Hair Stylist & Permanent Makeup Artist', 'female', 'amandurdyyeva80@gmail.com', '+971501800346'),
+            ('Mohamed Sabri', 'sabri', 'employee', 'Hair Stylist', 'male', 'sabrisimo363@gmail.com', '+971503477993'),
+            ('Kozhabay Lyazat', 'lyazat', 'employee', 'Nail Master', 'female', 'lazzat.kozhabaeva@mail.ru', '+971505303871'),
+            ('Турсунай', 'tursunay', 'director', 'Owner / Director', 'female', None, None),
+            ('Admin', 'admin', 'director', 'System Admin', 'female', None, None)
         ]
-        for name, uname, role, pos, gender in default_employees:
+        for name, uname, role, pos, gender, email, phone in default_employees:
             # Сначала проверяем существование пользователя
             c.execute("SELECT id FROM users WHERE username = %s", (uname,))
             user_exists = c.fetchone()
@@ -2035,19 +2070,21 @@ def init_database():
             if not user_exists:
                 # Создаем только если нет (пароль по умолчанию временный, будет обновлен в seed_test_data)
                 c.execute("""
-                    INSERT INTO users (full_name, username, password_hash, role, position, gender, is_active, is_service_provider)
-                    VALUES (%s, %s, %s, %s, %s, %s, TRUE, TRUE)
-                """, (name, uname, 'pbkdf2:sha256:260000$initial_setup_only', role, pos, gender))
+                    INSERT INTO users (full_name, username, password_hash, email, phone, role, position, gender, is_active, is_service_provider)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, TRUE, TRUE)
+                """, (name, uname, 'pbkdf2:sha256:260000$initial_setup_only', email, phone, role, pos, gender))
             else:
-                # Обновляем только роль и позицию, НЕ трогая пароль
+                # Обновляем профиль и контакты, НЕ трогая пароль
                 c.execute("""
                     UPDATE users SET 
                         full_name = %s,
+                        email = COALESCE(%s, email),
+                        phone = COALESCE(%s, phone),
                         role = %s,
                         position = %s,
                         gender = %s
                     WHERE username = %s
-                """, (name, role, pos, gender, uname))
+                """, (name, email, phone, role, pos, gender, uname))
 
         # Fix gender for Mohamed and Tahir specifically
         c.execute("UPDATE users SET gender = 'male' WHERE full_name ILIKE '%Mohamed%' OR full_name ILIKE '%Tahir%' OR username ILIKE '%tahir%'")

@@ -1,3 +1,138 @@
+## [2026-02-13] Strict Media Source Rules + Staff Contacts in DB Init
+- Enforced strict media sources for public landing:
+  - `backend/scripts/maintenance/fix_data.py` now syncs gallery only from:
+    - `frontend/public_landing/styles/img/salon`
+    - `frontend/public_landing/styles/img/portfolio`
+  - removed loading from `uploads`, `faces`, `services`, `dist`, and mixed legacy folders during maintenance sync.
+- Reworked banner sync to SSOT folder only:
+  - added folder-driven banner sync from `frontend/public_landing/styles/img/banners`,
+  - removed hardcoded fallbacks to `banner1.webp`, `banner2.webp`, and any `faces` banner paths,
+  - DB now keeps active banner path as `/landing-images/banners/banner.webp`.
+- Cleaned public gallery to landing-only categories:
+  - maintenance now deletes non-target categories and keeps only `salon` + `portfolio` in `public_gallery`.
+- Physical uploads cleanup executed:
+  - removed all files under `backend/static/uploads/images` (no image optimization/compression applied).
+- Added missing employee contact data in DB creation/migration path:
+  - updated `backend/db/init.py` default employee bootstrap to include email and phone,
+  - update branch for existing staff now also applies contact fields by username.
+  - Added contacts for:
+    - Peradilla Jennifer
+    - Amandurdyyeva Mestan
+    - Kozhabay Lyazat
+    - Kasymova Gulcehre
+    - Mohamed Sabri
+- Added image-quality protection for repeated fix runs:
+  - `backend/scripts/run_all_fixes.py`: `seo_optimizer` is now disabled by default and runs only when `RUN_SEO_OPTIMIZER=true`,
+  - `backend/scripts/maintenance/seo_optimizer.py`: image optimization runs only when `RUN_IMAGE_OPTIMIZATION=true` and uses content-hash tracking to skip already optimized files,
+  - `backend/scripts/maintenance/optimize_images.py`: re-optimization guard switched to content-hash tracking and no longer re-processes `.webp` files.
+- Migration behavior updated for automatic media refresh:
+  - `backend/db/migrations/run_all_migrations.py` now runs maintenance by default (`RUN_MIGRATION_MAINTENANCE=true` by default), so newly added files in `salon/portfolio/banners` are reflected on site after migrations as well.
+
+## [2026-02-13] Gallery Source Coverage + Safe Image Mapping + Service Term Validation
+- Fixed missing portfolio/salon images caused by unsafe URL remapping:
+  - updated `backend/utils/utils.py`:
+    - `map_image_path()` now keeps existing `/static/...` paths for Cyrillic filenames instead of generating non-existent transliterated names,
+    - added landing existence checks against both real runtime source and build output:
+      - `frontend/public_landing/styles/img`,
+      - `frontend/dist/landing-images`,
+    - added explicit mapping for legacy variant `Кератин блондинка 2.webp`.
+- Extended gallery sync source coverage in `backend/scripts/maintenance/fix_data.py`:
+  - `_collect_gallery_candidates()` now reads from:
+    - `frontend/public_landing/styles/img/salon`,
+    - `frontend/public_landing/styles/img/portfolio`,
+    - optional localized folder variants (`Фото салона`, `Портфолио`),
+  - preserves dedupe logic by canonical key to avoid repeated gallery rows.
+- Revalidated translation quality for service naming in all 9 languages:
+  - no active `Ремонт ...`/`Repair 1 ...` values in frontend locales,
+  - `services.peeling.name` normalized to `Пилинг` in RU and aligned equivalents in other locales,
+  - executed full automation pipeline (`npm run db:i18n:auto`) after final fixes.
+
+## [2026-02-13] Beauty Services Translation Quality Pass (9 languages)
+- Fixed salon-service terminology drift in centralized auto-translation dictionary:
+  - extended `backend/scripts/translations/translator.py` with explicit beauty-context mappings for problematic service names across RU/EN/AR/ES/DE/FR/HI/KK/PT,
+  - corrected unstable terms such as `change_classic_pedicure`, `repair_gel`, `brow_coloring`, `hair_cut_wash`, and `lashliner` families.
+- Added protection from batch-translation artifacts:
+  - implemented cleanup for leaked `<zN>` markers and similar fragments in `backend/scripts/translations/translator.py`.
+- Restored localized category rendering for public services with mixed DB category formats:
+  - updated `backend/api/public.py` with canonical category aliases (RU/EN mixed source values like `Брови`, `Стрижка`, `Permanent makeup`, `Waxing`) before slug fallback,
+  - added missing RU SSOT category keys in `frontend/src/locales/ru/dynamic.json`:
+    - `categories.manicure`,
+    - `categories.pedicure`,
+    - `categories.permanent_makeup`,
+    - `categories.waxing`.
+- Verification:
+  - executed full localization pipeline multiple times: `npm run db:i18n:auto`,
+  - validated target service names and category labels in both `dynamic.json` and `public_landing/services.json` for all 9 languages,
+  - checked `/api/public/services` output for all 9 languages: no occurrences of old broken values (`Брови Окрашивание`, `Польское изменение`, `Стрижка + Смывка`, `Ремонт 1 гелевого ногтей`, `Подводка для ресниц`, `fartage`, `wachsen`, `балауызбен бояу`).
+
+## [2026-02-13] FAQ/Reviews Dedup + Hardcoded Brand Cleanup
+- Eliminated duplicate public content generation at maintenance layer in `backend/scripts/maintenance/fix_data.py`:
+  - added normalization-based cleanup for existing `public_reviews`:
+    - remove repeated review texts,
+    - keep one active review per author (removes repeated author spam blocks).
+  - added normalization/group-based cleanup for existing `public_faq`:
+    - remove duplicate questions (including punctuation variants),
+    - collapse repeated intent groups (booking/reschedule/materials/location),
+    - remove brand-hardcoded entries containing `Luxio` / `Fedua`.
+- Hardened empty-DB seeding to prevent duplicates from source locale payloads:
+  - FAQ seed now skips duplicate intents and brand-hardcoded records,
+  - Reviews seed now skips repeated authors and repeated texts.
+- Verification after `run_all_fixes()`:
+  - `public_reviews`: reduced from 9 to 5 unique entries,
+  - `public_faq`: reduced from 20 to 13 unique entries,
+  - brand-hardcoded FAQ entries removed from DB,
+  - full `run_all_tests()` remains green (9/9).
+
+## [2026-02-13] Public Landing Auto-Restore After Empty DB Bootstrap
+- Fixed empty public landing sections after clean DB bootstrap (`services`, `portfolio/salon gallery`, `faq`, `reviews`):
+  - extended `backend/scripts/maintenance/fix_data.py` with idempotent baseline seeding for public content when tables are empty,
+  - added auto-seed for:
+    - `services` (from canonical catalog source),
+    - `public_gallery` (portfolio/salon/services/faces starter images),
+    - `public_faq` (from RU public landing locale seed),
+    - `public_reviews` (from RU public landing locale seed),
+  - preserved non-destructive behavior: if data already exists, maintenance does not overwrite it.
+- Improved frontend resilience in `frontend/public_landing/components/Services.tsx`:
+  - fixed fallback parser to accept API response shape `{ success, services }` in addition to raw arrays.
+- Validation:
+  - on clean DB flow `drop/recreate -> run_all_migrations -> run_all_fixes`, public API now returns non-empty data:
+    - services: 81,
+    - gallery: 13 (portfolio + salon),
+    - faq: 20,
+    - reviews: 9.
+
+## [2026-02-13] Backend Bootstrap Reliability: DB Reset + Full Pipeline Green
+- Stabilized clean bootstrap flow from empty PostgreSQL database:
+  - fixed `invoices` schema and foreign keys in `backend/db/init.py`:
+    - `client_id` now references `clients(instagram_id)` (instead of missing `clients(id)`),
+    - added missing fields used by business logic/tests: `invoice_number`, `status`, `due_date`, `sent_at`, `paid_at`,
+    - aligned `booking_id` relation to `bookings(id)`,
+    - added idempotent column backfill for old databases.
+  - synchronized `services` schema for idempotent conflict-safe writes:
+    - added missing `category` and `service_key`,
+    - added deterministic `service_key` generation for empty/duplicate rows,
+    - enforced uniqueness via `idx_services_service_key_unique` for `ON CONFLICT(service_key)` compatibility.
+- Consolidated testing/migration SSOT and removed legacy duplicates:
+  - deleted outdated scripts in `backend/scripts/testing/api/`, `backend/scripts/testing/startup_tests.py`, `backend/db/migrations/run_migration.py`, and legacy migration maintenance duplicates.
+  - switched orchestrators to canonical test paths and removed dead imports/unused code in:
+    - `backend/tests/run_all_tests.py`,
+    - `backend/tests/run_all_test3.py`,
+    - `backend/tests/check_migrations.py`,
+    - `backend/scripts/testing/test_registration.py`,
+    - `backend/tests/startup/startup_tests.py`.
+- Fixed failing test expectations and helper compatibility:
+  - standardized avatar fallback behavior in `backend/db/employees.py`,
+  - updated employee presence checks in `backend/tests/test_employee_management.py`,
+  - made email reminder test self-contained in `backend/tests/api/test_booking_email_notification.py`.
+- Verification result:
+  - completed multiple full cycles with explicit DB drop/recreate + step-by-step run:
+    1. `run_all_migrations()`
+    2. `run_all_fixes()`
+    3. `run_all_tests()`
+    4. `run_all_tests2()`
+    5. `run_all_tests3()`
+  - final state: all three test suites pass without blocking errors after clean DB bootstrap.
+
 ## [2026-02-13] Promo Card Mobile Space Distribution Fix
 - Improved promo card layout on small screens in embedded special-packages promo section:
   - removed mobile column structure that left large unused space on the right side,

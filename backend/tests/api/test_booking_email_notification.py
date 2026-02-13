@@ -16,7 +16,52 @@ TEST_CONFIG = get_test_config()
 from utils.email import send_email_async
 from db.settings import get_salon_settings
 from modules.notifications.email import format_new_booking_email
-from scheduler.booking_reminder_checker import format_booking_reminder_email
+
+
+def format_booking_reminder_email(booking_data: dict, salon_data: dict) -> tuple[str, str]:
+    """
+    Локальный форматтер напоминания для теста.
+    В прод-коде напоминания отправляются через UniversalMessenger.
+    """
+    client_name = booking_data.get('full_name') or booking_data.get('name') or 'Клиент'
+    service_name = booking_data.get('service_name') or 'Услуга'
+    master_name = booking_data.get('master') or ''
+    booking_dt = booking_data.get('datetime') or ''
+    phone = booking_data.get('phone') or ''
+
+    plain = f"""
+Напоминание о записи
+
+Клиент: {client_name}
+Телефон: {phone}
+Услуга: {service_name}
+Мастер: {master_name}
+Дата и время: {booking_dt}
+
+---
+{salon_data.get('name', 'Салон красоты')}
+"""
+
+    html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>Напоминание о записи</h2>
+    <p><b>Клиент:</b> {client_name}</p>
+    <p><b>Телефон:</b> {phone}</p>
+    <p><b>Услуга:</b> {service_name}</p>
+    <p><b>Мастер:</b> {master_name}</p>
+    <p><b>Дата и время:</b> {booking_dt}</p>
+    <hr/>
+    <p>{salon_data.get('name', 'Салон красоты')}</p>
+</body>
+</html>
+"""
+
+    return plain, html
 
 async def test_new_booking_notification():
     """Тест уведомления о новой записи"""

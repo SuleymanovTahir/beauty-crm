@@ -4,9 +4,9 @@
   "analytics": {
     "avgPrice": "Promedio. precio",
     "last30Days": "Durante {{count}} días",
+    "last30Days_one": "",
     "last30Days_few": "",
     "last30Days_many": "",
-    "last30Days_one": "",
     "last30Days_other": "",
     "revenue": "Ingresos",
     "totalSold": "Total vendido"
@@ -15,9 +15,9 @@
   "delete": "Eliminar",
   "detail": {
     "costPriceLabel": "Costo: {{price}} {{currency}}",
+    "inStock_one": "En stock {{count}} uds.",
     "inStock_few": "En stock {{count}} uds.",
     "inStock_many": "En stock {{count}} uds.",
-    "inStock_one": "En stock {{count}} uds.",
     "inStock_other": "En stock {{count}} uds.",
     "loadingData": "Cargando datos...",
     "movementAdjustment": "Ajuste",

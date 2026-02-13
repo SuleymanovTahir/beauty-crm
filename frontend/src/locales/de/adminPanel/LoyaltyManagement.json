@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "activate": "Aktivieren",
+    "deactivate": "Deaktivieren"
+  },
   "adjust_points": "Punktestand ändern",
   "buttons": {
     "add_rule": "Regel hinzufügen",
@@ -10,10 +14,10 @@
   "categories": {
     "category": "Kategorie",
     "category_placeholder": "z.B. Maniküre",
-    "description": "Legen Sie den Punktefaktor für jede Servicekategorie fest",
-    "multiplier": "Punktefaktor",
-    "title": "Regeln für Punkte nach Kategorie",
-    "hint": "Der Faktor gilt nur für die ausgewählte Kategorie. Ist die Regel deaktiviert, gilt der Basiswert x1."
+    "description": "Punktesammelkoeffizient für jede Servicekategorie einrichten",
+    "hint": "Der Faktor gilt nur für die ausgewählte Kategorie. Ist die Regel deaktiviert, gilt der Basiswert x1.",
+    "multiplier": "Sammelkoeffizient",
+    "title": "Sammelregeln nach Kategorie"
   },
   "config": {
     "cashback_hint": "Beispiel: {{percent}} % Cashback ({{points}} Punkte für jeden ausgegebenen {{unit}})",
@@ -40,22 +44,25 @@
       "description": "Bedingungen für den Erhalt einer Privilegienstufe einrichten",
       "discount_percent": "Rabattprozentsatz",
       "min_points": "Mindestpunktschwelle",
-      "tier_name": "Name Ebene",
-      "title": "Bearbeitungsebene",
+      "status_hint": "Eine inaktive Stufe wird bei der automatischen Privilegienberechnung nicht berücksichtigt.",
       "status_label": "Status der Stufe",
-      "status_hint": "Eine inaktive Stufe wird bei der automatischen Privilegienberechnung nicht berücksichtigt."
+      "tier_name": "Name Ebene",
+      "title": "Bearbeitungsebene"
     },
     "rule": {
       "description": "Persönliche Sammelrate für Kategorie",
-      "title": "Kategorieregel",
+      "status_hint": "Ist die Regel deaktiviert, nutzt die Kategorie den Basiswert x1.",
       "status_label": "Regelstatus",
-      "status_hint": "Ist die Regel deaktiviert, nutzt die Kategorie den Basiswert x1."
+      "title": "Kategorieregel"
     }
   },
   "stats": {
     "active_members": "Programmteilnehmer",
     "points_redeemed": "Eingelöste Punkte",
     "total_points_issued": "Gesammelte Gesamtsumme"
+  },
+  "statuses": {
+    "inactive": "Inaktiv"
   },
   "subtitle": "Rabatte, Berechtigungsstufen und Punkteregeln verwalten",
   "tiers": {
@@ -74,7 +81,15 @@
     "failed_save": "Fehler beim Speichern",
     "failed_update": "Fehler beim Aktualisieren",
     "points_adjusted_add": "Aufgelaufene {{count}} Punkte",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_other": "",
     "points_adjusted_deduct": "{{count}} Punkte abschreiben",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_other": "",
     "rule_deleted": "Regel erfolgreich gelöscht",
     "rule_saved": "Regel gespeichert",
     "tier_updated": "Stufendaten aktualisiert"
@@ -90,12 +105,5 @@
       "type": "Typ"
     },
     "title": "Letzte Transaktionen"
-  },
-  "actions": {
-    "activate": "Aktivieren",
-    "deactivate": "Deaktivieren"
-  },
-  "statuses": {
-    "inactive": "Inaktiv"
   }
 }

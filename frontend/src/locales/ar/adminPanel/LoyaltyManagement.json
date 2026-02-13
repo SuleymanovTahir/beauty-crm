@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "activate": "تفعيل",
+    "deactivate": "إيقاف"
+  },
   "adjust_points": "تغيير رصيد النقاط",
   "buttons": {
     "add_rule": "إضافة قاعدة",
@@ -10,10 +14,10 @@
   "categories": {
     "category": "الفئة",
     "category_placeholder": "على سبيل المثال. مانيكير",
-    "description": "حدد معامل احتساب النقاط لكل فئة خدمة",
-    "multiplier": "معامل الاحتساب",
-    "title": "قواعد احتساب النقاط حسب الفئة",
-    "hint": "يتم تطبيق المعامل على الفئة المحددة فقط. عند إيقاف القاعدة يتم استخدام المعدل الأساسي x1."
+    "description": "إعداد معامل تراكم النقاط لكل فئة خدمة",
+    "hint": "يتم تطبيق المعامل على الفئة المحددة فقط. عند إيقاف القاعدة يتم استخدام المعدل الأساسي x1.",
+    "multiplier": "معامل الاستحقاق",
+    "title": "قواعد الاستحقاق حسب الفئة"
   },
   "config": {
     "cashback_hint": "مثال: {{percent}}% استرداد نقدي ({{points}} نقطة لكل {{unit}} تم إنفاقها)",
@@ -40,22 +44,25 @@
       "description": "إعداد شروط الحصول على مستوى الامتياز",
       "discount_percent": "نسبة الخصم",
       "min_points": "الحد الأدنى للنقاط",
-      "tier_name": "الاسم المستوى",
-      "title": "تحرير المستوى",
+      "status_hint": "المستوى غير النشط لا يشارك في الحساب التلقائي للامتيازات.",
       "status_label": "حالة المستوى",
-      "status_hint": "المستوى غير النشط لا يشارك في الحساب التلقائي للامتيازات."
+      "tier_name": "الاسم المستوى",
+      "title": "تحرير المستوى"
     },
     "rule": {
       "description": "معامل الاستحقاق الشخصي للفئة",
-      "title": "قاعدة الفئة",
+      "status_hint": "عند إيقاف القاعدة، يتم استخدام معدل الاحتساب الأساسي x1 للفئة.",
       "status_label": "حالة القاعدة",
-      "status_hint": "عند إيقاف القاعدة، يتم استخدام معدل الاحتساب الأساسي x1 للفئة."
+      "title": "قاعدة الفئة"
     }
   },
   "stats": {
     "active_members": "المشاركين في البرنامج",
     "points_redeemed": "النقاط المشطوبة",
     "total_points_issued": "الإجمالي المتراكم"
+  },
+  "statuses": {
+    "inactive": "غير نشط"
   },
   "subtitle": "إدارة الخصومات ومستويات الامتياز وقواعد الاستحقاق النقاط",
   "tiers": {
@@ -74,7 +81,19 @@
     "failed_save": "خطأ عند الحفظ",
     "failed_update": "خطأ عند التحديث",
     "points_adjusted_add": "{{count}} من النقاط الممنوحة",
+    "points_adjusted_add_zero": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_two": "",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_other": "",
     "points_adjusted_deduct": "{{count}} تم شطب النقاط",
+    "points_adjusted_deduct_zero": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_two": "",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_other": "",
     "rule_deleted": "تم حذف القاعدة بنجاح",
     "rule_saved": "تم حفظ القاعدة",
     "tier_updated": "تم تحديث بيانات المستوى"
@@ -90,12 +109,5 @@
       "type": "النوع"
     },
     "title": "آخر المعاملات"
-  },
-  "actions": {
-    "activate": "تفعيل",
-    "deactivate": "إيقاف"
-  },
-  "statuses": {
-    "inactive": "غير نشط"
   }
 }

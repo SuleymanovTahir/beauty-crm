@@ -26,6 +26,15 @@ export function TeamSection() {
     return name.toLowerCase().replace(/(^|\s)\S/g, (l) => l.toUpperCase());
   };
 
+  const normalizeRoleCase = (role: string) => {
+    const trimmedRole = role.trim();
+    if (!trimmedRole) {
+      return "";
+    }
+    const first = trimmedRole.charAt(0);
+    return `${first.toLocaleUpperCase(language)}${trimmedRole.slice(1)}`;
+  };
+
   const getAgeLabel = (age: number) => {
     if (language === 'ru') {
       const n = Math.abs(age) % 100;
@@ -48,9 +57,10 @@ export function TeamSection() {
         if (Array.isArray(data)) {
           const teamMembers = data.map((emp: any) => {
             const name = capitalizeName(emp.name);
-            const stableKey = emp.username || emp.id;
-            const role = t(`dynamic:users.${stableKey}.position`, { defaultValue: emp.role || "" });
-            const specialty = t(`dynamic:users.${stableKey}.bio`, { defaultValue: emp.specialty || "" });
+            const stableKey = emp.username ?? emp.id;
+            const translatedRole = t(`dynamic:users.${stableKey}.position`, { defaultValue: emp.role ?? "" });
+            const role = normalizeRoleCase(translatedRole);
+            const specialty = t(`dynamic:users.${stableKey}.bio`, { defaultValue: emp.specialty ?? "" });
 
             return {
               id: emp.id,

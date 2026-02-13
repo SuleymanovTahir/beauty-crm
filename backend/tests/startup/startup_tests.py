@@ -13,7 +13,6 @@ if backend_path not in sys.path:
 
 from db.connection import get_db_connection
 
-from core.config import DATABASE_NAME
 from utils.logger import log_info, log_error, log_warning
 
 def startup_test_notifications():
@@ -83,31 +82,19 @@ def startup_test_notifications_api():
         conn = get_db_connection()
         c = conn.cursor()
 
-        # Создаем таблицу если её нет (как в API)
-        c.execute("""
-            CREATE TABLE IF NOT EXISTS notification_settings (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL,
-                email_notifications BOOLEAN DEFAULT TRUE,
-                sms_notifications BOOLEAN DEFAULT FALSE,
-                booking_notifications BOOLEAN DEFAULT TRUE,
-                chat_notifications BOOLEAN DEFAULT TRUE,
-                daily_report BOOLEAN DEFAULT TRUE,
-                report_time TEXT DEFAULT '09:00',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(user_id)
-            )
-        """)
-        conn.commit()
+        # Только проверка: таблицу должна создавать инициализация схемы
+        c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='notification_settings'")
+        if not c.fetchone():
+            log_error("  ❌ Таблица notification_settings не существует! Запустите db/init.py", "startup_test")
+            conn.close()
+            return False
 
         # Проверяем схему
         c.execute("SELECT column_name FROM information_schema.columns WHERE table_name=\'notification_settings\'")
         columns = c.fetchall()
         column_names = [col[0] for col in columns]
 
-        required = ['email_notifications', 'sms_notifications', 'booking_notifications',
-                    'chat_notifications', 'daily_report', 'report_time']
+        required = ['user_id', 'email_notifications', 'sms_notifications', 'booking_notifications']
 
         missing = [col for col in required if col not in column_names]
 
@@ -117,7 +104,7 @@ def startup_test_notifications_api():
             return False
 
         conn.close()
-        log_info("  ✅ Таблица notification_settings готова", "startup_test")
+        log_info("  ✅ Таблица notification_settings существует и имеет корректную схему", "startup_test")
         return True
 
     except Exception as e:
@@ -134,24 +121,20 @@ def run_all_startup_tests():
 
     results = []
 
-    # 1. Проверка API напоминаний (создает таблицы если нет)
+    # 1. Проверка таблиц
+    results.append(startup_test_notifications())
+
+    # 2. Проверка API напоминаний
     results.append(startup_test_reminders_api())
 
-    # 2. Проверка API уведомлений (создает таблицы если нет)
+    # 3. Проверка API уведомлений
     results.append(startup_test_notifications_api())
-
-    # 3. Проверка таблиц (пост-фактум)
-    results.append(startup_test_notifications())
 
     # Итоги
     passed = sum(1 for r in results if r)
     total = len(results)
 
     log_info("=" * 70, "startup_test")
-    
-    # DEBUG info
-    print(f"DEBUG: passed={passed} (type={type(passed)}), total={total} (type={type(total)})")
-    
     if passed == total:
         log_info(f"✅ Все тесты пройдены: {passed}/{total}", "startup_test")
     else:

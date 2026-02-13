@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "activate": "Ativar",
+    "deactivate": "Desativar"
+  },
   "adjust_points": "Alterar saldo de pontos",
   "buttons": {
     "add_rule": "Adicionar regra",
@@ -10,10 +14,10 @@
   "categories": {
     "category": "Categoria",
     "category_placeholder": "Ex.: Manicure",
-    "description": "Defina o fator de acúmulo de pontos para cada categoria de serviço",
-    "multiplier": "Fator de acúmulo",
-    "title": "Regras de pontuação por categoria",
-    "hint": "O fator se aplica apenas à categoria selecionada. Se a regra estiver desativada, é usada a taxa base x1."
+    "description": "Configurar o coeficiente de acúmulo de pontos para cada categoria de serviço",
+    "hint": "O fator se aplica apenas à categoria selecionada. Se a regra estiver desativada, é usada a taxa base x1.",
+    "multiplier": "Coeficiente de acúmulo",
+    "title": "Regras de acúmulo por categoria"
   },
   "config": {
     "cashback_hint": "Exemplo: {{percent}}% de reembolso ({{points}} pontos para cada {{unit}} gasto)",
@@ -40,22 +44,25 @@
       "description": "Configuração de condições para obtenção de um nível de privilégio",
       "discount_percent": "Porcentagem de desconto",
       "min_points": "Limite mínimo de pontos",
-      "tier_name": "Nome do nível",
-      "title": "Nível de edição",
+      "status_hint": "Um nível inativo não participa do cálculo automático de privilégios.",
       "status_label": "Status do nível",
-      "status_hint": "Um nível inativo não participa do cálculo automático de privilégios."
+      "tier_name": "Nome do nível",
+      "title": "Nível de edição"
     },
     "rule": {
       "description": "Coeficiente de acúmulo pessoal para a categoria",
-      "title": "Regra da categoria",
+      "status_hint": "Se a regra estiver desativada, a categoria usa a taxa base x1.",
       "status_label": "Status da regra",
-      "status_hint": "Se a regra estiver desativada, a categoria usa a taxa base x1."
+      "title": "Regra da categoria"
     }
   },
   "stats": {
     "active_members": "Participantes do programa",
     "points_redeemed": "pontos deduzidos",
     "total_points_issued": "Total acumulado"
+  },
+  "statuses": {
+    "inactive": "Inativo"
   },
   "subtitle": "Gerenciar descontos, níveis de privilégio e regras de acúmulo de pontos",
   "tiers": {
@@ -74,7 +81,15 @@
     "failed_save": "Erro ao salvar",
     "failed_update": "Erro ao atualizar",
     "points_adjusted_add": "{{count}} pontos acumulados",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_other": "",
     "points_adjusted_deduct": "{{count}} pontos amortizados",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_other": "",
     "rule_deleted": "Regra com sucesso excluída",
     "rule_saved": "Regra salva",
     "tier_updated": "Dados de nível atualizados"
@@ -90,12 +105,5 @@
       "type": "Tipo"
     },
     "title": "Últimas transações"
-  },
-  "actions": {
-    "activate": "Ativar",
-    "deactivate": "Desativar"
-  },
-  "statuses": {
-    "inactive": "Inativo"
   }
 }

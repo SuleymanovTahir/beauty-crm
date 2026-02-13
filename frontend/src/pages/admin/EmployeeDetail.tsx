@@ -43,8 +43,17 @@ export default function EmployeeDetail() {
 
     const activeTab = tab || 'information';
 
-    const rolePrefix = window.location.pathname.startsWith('/manager') ? '/manager' : '/crm';
-    const usersPath = rolePrefix === '/manager' ? 'employees' : 'users';
+    const rolePrefix = window.location.pathname.startsWith('/admin')
+        ? '/admin'
+        : window.location.pathname.startsWith('/manager')
+            ? '/manager'
+            : '/crm';
+    const usersPath = 'team';
+
+    const getLocalizedRole = (role?: string) => {
+        if (!role) return '';
+        return t(`common:role_${role}`, role);
+    };
 
     const handleTabChange = (value: string) => {
         navigate(`${rolePrefix}/${usersPath}/${id}/${value}`);
@@ -196,7 +205,7 @@ export default function EmployeeDetail() {
                                     {(i18n.language === 'ru' && emp.full_name) ? emp.full_name : emp.full_name}
                                 </p>
                                 <p className="text-xs text-gray-500 uppercase">
-                                    {emp.position || emp.role}
+                                    {emp.position || getLocalizedRole(emp.role)}
                                 </p>
                             </div>
                         </button>
@@ -208,7 +217,7 @@ export default function EmployeeDetail() {
                     <div className="p-4 border-t border-gray-200">
                         <Button
                             variant="outline"
-                            onClick={() => navigate(`${rolePrefix}/users/create`)}
+                            onClick={() => navigate(`${rolePrefix}/team/create`)}
                             className="w-full text-sm"
                         >
                             + {t('add_team_member', 'Add team member')}

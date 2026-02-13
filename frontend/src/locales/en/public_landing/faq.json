@@ -9,10 +9,6 @@
       "answer": "We accept payment in cash and cards (Visa, MasterCard, American Express). Payment is made after the service is provided."
     },
     {
-      "question": "Can I cancel or reschedule an appointment?",
-      "answer": "Yes, you can cancel or reschedule your appointment up to 24 hours before your scheduled time. If canceled less than 24 hours in advance, a penalty of 50% of the cost of the service may be charged."
-    },
-    {
       "question": "What materials do you use",
       "answer": "We use only certified premium materials from the world's leading brands. All pigments are hypoallergenic and safe for health."
     },
@@ -49,36 +45,12 @@
       "answer": "We are located in the center of Dubai. Detailed information on how to get there can be found on the Contacts page."
     },
     {
-      "question": "How to sign up for the procedure?",
-      "answer": "You can sign up online through the form on our website, by calling or writing to us on WhatsApp, Instagram."
-    },
-    {
-      "question": "Can I cancel or reschedule an appointment?",
-      "answer": "Yes, you can cancel or reschedule your appointment by giving us at least 24 hours notice. Please notify us of changes in advance."
-    },
-    {
-      "question": "What materials do you use?",
-      "answer": "We use only professional premium materials. All instruments undergo medical sterilization."
-    },
-    {
       "question": "Do you do procedures with 4 hands?",
       "answer": "Yes, we value your time and can arrange for multiple procedures to be performed simultaneously."
     },
     {
-      "question": "Where are you located?",
-      "answer": "Our salon is located in a convenient location with a beautiful view and a cozy atmosphere. You will find the exact address in the contacts section."
-    },
-    {
-      "question": "How to sign up?",
-      "answer": "You can sign up via the website or WhatsApp."
-    },
-    {
       "question": "Is there parking?",
       "answer": "Yes, we have free parking for customers."
-    },
-    {
-      "question": "What brands do you use?",
-      "answer": "We use Luxio, Fedua and other premium brands."
     }
   ]
 }

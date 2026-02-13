@@ -15,7 +15,7 @@
   "filter_custom": "Теңшелетін кезең",
   "filter_last30days": "Соңғы 30 күн",
   "filter_last7days": "Соңғы 7 күн",
-  "filter_last_month": "Өткен ай</z44> <z45>Соңғы ай",
+  "filter_last_month": "Өткен ай Соңғы ай",
   "filter_this_month": "Осы ай",
   "filter_today": "Бүгін",
   "filter_yesterday": "Кеше",
@@ -90,7 +90,7 @@
   "subtitle": "Пайдаланушыларды, адалдықты және қатысуды басқару",
   "title": "Басқару тақтасы",
   "to": "Бұған дейін",
-  "total_clients": "Барлығы</z28>",
+  "total_clients": "Барлығы",
   "vip_clients": "VIP клиенттер",
   "visits": "Кіру",
   "welcome": "Қайта қош келдіңіз! Бүгін сіздің салоныңызда не болып жатыр."

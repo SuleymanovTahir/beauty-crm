@@ -1,4 +1,8 @@
 {
+  "actions": {
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
   "adjust_points": "Change points balance",
   "buttons": {
     "add_rule": "Add a rule",
@@ -10,10 +14,10 @@
   "categories": {
     "category": "Category",
     "category_placeholder": "Eg. ",
-    "description": "Set the points earning factor for each service category",
-    "multiplier": "Earning factor",
-    "title": "Category earning rules",
-    "hint": "The factor is applied only to the selected category. If a rule is disabled, the base x1 rate is used."
+    "description": "Set up the points accrual coefficient for each service category",
+    "hint": "The factor is applied only to the selected category. If a rule is disabled, the base x1 rate is used.",
+    "multiplier": "Accrual coefficient",
+    "title": "Accrual rules by category"
   },
   "config": {
     "cashback_hint": "Example: {{percent}}% cashback ({{points}} points for every {{unit}} spent)",
@@ -40,22 +44,25 @@
       "description": "Setting the conditions for obtaining a privilege level",
       "discount_percent": "Discount percentage",
       "min_points": "Minimum score threshold",
-      "tier_name": "Level name",
-      "title": "Editing a Level",
+      "status_hint": "An inactive tier is excluded from automatic privilege calculation.",
       "status_label": "Tier status",
-      "status_hint": "An inactive tier is excluded from automatic privilege calculation."
+      "tier_name": "Level name",
+      "title": "Editing a Level"
     },
     "rule": {
       "description": "Personal accrual coefficient for the category",
-      "title": "Category Rule",
+      "status_hint": "If a rule is disabled, the category uses the base x1 earning rate.",
       "status_label": "Rule status",
-      "status_hint": "If a rule is disabled, the category uses the base x1 earning rate."
+      "title": "Category Rule"
     }
   },
   "stats": {
     "active_members": "Program participants",
     "points_redeemed": "Points debited",
     "total_points_issued": "Total accrued"
+  },
+  "statuses": {
+    "inactive": "Inactive"
   },
   "subtitle": "Manage discounts, benefit levels, and points rules",
   "tiers": {
@@ -74,7 +81,15 @@
     "failed_save": "Error while saving",
     "failed_update": "Error during update",
     "points_adjusted_add": "{{count}} points awarded",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_other": "",
     "points_adjusted_deduct": "{{count}} points written off",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_other": "",
     "rule_deleted": "Rule deleted successfully",
     "rule_saved": "Rule saved",
     "tier_updated": "Level data updated"
@@ -90,12 +105,5 @@
       "type": "Type"
     },
     "title": "Latest transactions"
-  },
-  "actions": {
-    "activate": "Activate",
-    "deactivate": "Deactivate"
-  },
-  "statuses": {
-    "inactive": "Inactive"
   }
 }

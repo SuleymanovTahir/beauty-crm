@@ -95,7 +95,7 @@ def run_all_migrations():
         create_chat_history_table()
         
         # 2. Optional Data Maintenance
-        if _env_flag("RUN_MIGRATION_MAINTENANCE", default=False):
+        if _env_flag("RUN_MIGRATION_MAINTENANCE", default=True):
             print_header("DATA MAINTENANCE")
             try:
                 from scripts.maintenance.fix_data import run_all_fixes

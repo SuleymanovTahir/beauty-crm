@@ -5,9 +5,8 @@
 """
 
 from db.connection import get_db_connection
-import os
+import json
 import sys
-from datetime import datetime
 
 
 def check_database():

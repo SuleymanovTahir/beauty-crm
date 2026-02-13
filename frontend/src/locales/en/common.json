@@ -238,6 +238,7 @@
   "happyClients": "satisfied clients",
   "import": "Import",
   "importing": "Importing...",
+  "inactive": "",
   "individual_permissions": "Individual rights",
   "individual_permissions_description": "You can override rights for a specific user, regardless of their role.",
   "invalid_credentials": "Incorrect login or password",

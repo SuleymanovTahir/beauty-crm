@@ -4,6 +4,8 @@ Handles image optimization, alt attribute checking, and performance improvements
 """
 import os
 import sys
+import json
+import hashlib
 from pathlib import Path
 from PIL import Image
 import re
@@ -14,8 +16,52 @@ sys.path.insert(0, str(backend_dir))
 
 from utils.logger import log_info, log_error
 
+TRACKING_FILE = backend_dir / "scripts" / "maintenance" / ".seo_optimized_images.json"
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _load_optimization_state() -> dict:
+    if not TRACKING_FILE.exists():
+        return {}
+    try:
+        with open(TRACKING_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _save_optimization_state(state: dict) -> None:
+    try:
+        with open(TRACKING_FILE, "w", encoding="utf-8") as f:
+            json.dump(state, f, ensure_ascii=False, indent=2)
+    except Exception as exc:
+        log_error(f"Failed to save optimization state: {exc}", "seo")
+
+
+def _file_sha256(file_path: Path) -> str:
+    sha = hashlib.sha256()
+    with open(file_path, "rb") as f:
+        while True:
+            chunk = f.read(1024 * 1024)
+            if not chunk:
+                break
+            sha.update(chunk)
+    return sha.hexdigest()
+
+
 def optimize_all_images():
-    """Convert all images to WebP and optimize"""
+    """Convert raster images once and skip re-optimizing identical content."""
+    if not _env_flag("RUN_IMAGE_OPTIMIZATION", default=False):
+        log_info("⏭️  Image optimization skipped (RUN_IMAGE_OPTIMIZATION=false)", "seo")
+        return
+
     log_info("🖼️ Starting image optimization...", "seo")
     
     frontend_dir = backend_dir.parent / "frontend"
@@ -26,8 +72,11 @@ def optimize_all_images():
         backend_dir / "static" / "uploads",
     ]
     
+    state = _load_optimization_state()
+    state_changed = False
     total_saved = 0
     images_optimized = 0
+    images_skipped = 0
     
     for directory in dirs_to_optimize:
         if not directory.exists():
@@ -37,6 +86,16 @@ def optimize_all_images():
         for img_path in directory.rglob("*"):
             if img_path.suffix.lower() in ['.jpg', '.jpeg', '.png']:
                 try:
+                    source_key = str(img_path.resolve())
+                    source_hash = _file_sha256(img_path)
+                    state_item = state.get(source_key, {})
+                    if (
+                        isinstance(state_item, dict)
+                        and state_item.get("source_hash") == source_hash
+                    ):
+                        images_skipped += 1
+                        continue
+
                     # Open image
                     img = Image.open(img_path)
                     
@@ -51,6 +110,12 @@ def optimize_all_images():
                         webp_size = webp_path.stat().st_size
                         if webp_size < original_size:
                             log_info(f"⏭️  Skipping {img_path.name} (WebP already exists)", "seo")
+                            state[source_key] = {
+                                "source_hash": source_hash,
+                                "output_path": str(webp_path.resolve()),
+                            }
+                            state_changed = True
+                            images_skipped += 1
                             continue
                     
                     # Optimize and save
@@ -67,14 +132,25 @@ def optimize_all_images():
                     if new_size < original_size:
                         img_path.unlink()
                         log_info(f"🗑️  Removed original {img_path.name}", "seo")
+
+                    state[source_key] = {
+                        "source_hash": source_hash,
+                        "output_path": str(webp_path.resolve()),
+                    }
+                    state_changed = True
                         
                 except Exception as e:
                     log_error(f"Failed to optimize {img_path}: {e}", "seo")
+
+    if state_changed:
+        _save_optimization_state(state)
     
     if images_optimized > 0:
         log_info(f"✓ Optimized {images_optimized} images, saved {total_saved/1024/1024:.2f}MB total", "seo")
     else:
         log_info("ℹ️  No images needed optimization", "seo")
+    if images_skipped > 0:
+        log_info(f"ℹ️  Skipped already-optimized images: {images_skipped}", "seo")
 
 def check_alt_attributes():
     """Scan HTML and TSX files for images missing alt attributes"""
