@@ -127,6 +127,11 @@ export interface SalonSettings {
   };
   timezone?: string;
   currency: string;
+  business_type?: 'beauty' | 'restaurant' | 'construction' | 'factory' | 'taxi' | 'delivery' | 'other';
+  product_mode?: 'crm' | 'site' | 'both';
+  crm_enabled?: boolean;
+  site_enabled?: boolean;
+  business_profile_config?: BusinessProfileConfig;
   language: string;
   booking_settings?: {
     min_advance_hours?: number;
@@ -140,6 +145,34 @@ export interface SalonSettings {
     sms_enabled?: boolean;
     push_enabled?: boolean;
     reminder_hours?: number;
+  };
+}
+
+export interface BusinessProfileConfig {
+  schema_version: number;
+  business_type: 'beauty' | 'restaurant' | 'construction' | 'factory' | 'taxi' | 'delivery' | 'other';
+  modules: {
+    crm: Record<string, boolean>;
+    site: Record<string, boolean>;
+  };
+  role_permissions: Record<string, string[] | '*'>;
+  shared_domains: Record<string, string>;
+}
+
+export interface BusinessProfileMatrixResponse {
+  schema_version: number;
+  module_catalog: {
+    crm: string[];
+    site: string[];
+  };
+  role_catalog: string[];
+  profiles: Record<string, BusinessProfileConfig>;
+  current: {
+    business_type: string;
+    product_mode: string;
+    crm_enabled: boolean;
+    site_enabled: boolean;
+    business_profile_config: BusinessProfileConfig;
   };
 }
 

@@ -6,6 +6,7 @@ import os
 import sys
 import threading
 import types
+import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -16,7 +17,7 @@ if sys.version_info >= (3, 13) and "cgi" not in sys.modules:
     sys.modules["cgi"] = cgi_patch
 
 from fastapi import FastAPI, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -99,6 +100,61 @@ from scheduler import (
 
 # Глобальное состояние приложения
 salon_config = None
+_feature_gate_cache = {
+    "expires_at": 0.0,
+    "crm_enabled": True,
+    "site_enabled": True,
+}
+
+_SITE_ONLY_PREFIXES = (
+    "/api/public",
+    "/api/client",
+    "/api/public-admin",
+)
+
+_SITE_ONLY_EXACT_PATHS = {
+    "/api/register/client",
+}
+
+
+def _normalize_feature_flag(raw_value, default_value: bool) -> bool:
+    if raw_value is None:
+        return default_value
+    if isinstance(raw_value, str):
+        normalized = raw_value.strip().lower()
+        if normalized in {"1", "true", "yes", "on"}:
+            return True
+        if normalized in {"0", "false", "no", "off"}:
+            return False
+        return default_value
+    return bool(raw_value)
+
+
+def _get_feature_gates_cached() -> dict:
+    now = time.time()
+    if _feature_gate_cache["expires_at"] > now:
+        return {
+            "crm_enabled": _feature_gate_cache["crm_enabled"],
+            "site_enabled": _feature_gate_cache["site_enabled"],
+        }
+
+    try:
+        settings = get_salon_settings()
+        crm_enabled = _normalize_feature_flag(settings.get("crm_enabled"), True)
+        site_enabled = _normalize_feature_flag(settings.get("site_enabled"), True)
+    except Exception as error:
+        log_error(f"Feature-gate load failed: {error}", "feature-gates")
+        crm_enabled = True
+        site_enabled = True
+
+    _feature_gate_cache["crm_enabled"] = crm_enabled
+    _feature_gate_cache["site_enabled"] = site_enabled
+    _feature_gate_cache["expires_at"] = now + 10
+
+    return {
+        "crm_enabled": crm_enabled,
+        "site_enabled": site_enabled,
+    }
 
 class ModernStaticFiles(StaticFiles):
     """Статические файлы с агрессивным кешированием"""
@@ -302,6 +358,29 @@ app.add_middleware(
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(TimingMiddleware)
 app.add_middleware(UserActivityMiddleware)
+
+@app.middleware("http")
+async def feature_gate_middleware(request: Request, call_next):
+    path = request.url.path
+
+    # Site+Account module isolation: when site is disabled, public/account APIs are hidden.
+    if path.startswith("/api/"):
+        gates = _get_feature_gates_cached()
+
+        if not gates["site_enabled"]:
+            is_site_only_prefix = any(path.startswith(prefix) for prefix in _SITE_ONLY_PREFIXES)
+            is_site_only_path = path in _SITE_ONLY_EXACT_PATHS
+
+            if is_site_only_prefix or is_site_only_path:
+                return JSONResponse(
+                    status_code=404,
+                    content={
+                        "error": "site_module_disabled",
+                        "message": "Site and account module is disabled for this workspace",
+                    },
+                )
+
+    return await call_next(request)
 
 # Подключение ресурсов
 BASE_DIR = Path(__file__).resolve().parent

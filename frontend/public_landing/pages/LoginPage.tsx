@@ -14,6 +14,11 @@ import logo from '../styles/img/logo.png';
 import PublicLanguageSwitcher from '../../src/components/PublicLanguageSwitcher';
 import { validatePhone } from '../utils/validation';
 import HCaptcha from "@hcaptcha/react-hcaptcha";
+import {
+  DEFAULT_PLATFORM_GATES,
+  getRoleHomePathByGates,
+  normalizePlatformGates,
+} from '../../src/utils/platformRouting';
 import '../styles/css/index.css';
 
 // hCaptcha Site Key: задайте VITE_HCAPTCHA_SITE_KEY в .env. Без ключа — тестовый. Инструкция: docs/HCAPTCHA_KEYS.md
@@ -238,13 +243,20 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
       if (response.success && response.user) {
         login(response.user);
         toast.success(`${t('auth/login:welcome', 'Добро пожаловать')} ${response.user.full_name || response.user.username} !`);
-
-        // Redirect based on role
-        if (response.user.role === 'client') {
-          navigate("/account/dashboard");
-        } else {
-          navigate("/crm/dashboard");
+        let gates = DEFAULT_PLATFORM_GATES;
+        try {
+          const gateResponse = await api.getPlatformGates();
+          gates = normalizePlatformGates(gateResponse);
+        } catch (gateError) {
+          console.error("Platform gate loading error:", gateError);
         }
+
+        const targetPath = getRoleHomePathByGates(
+          response.user.role,
+          gates.site_enabled,
+          gates.crm_enabled,
+        );
+        navigate(targetPath);
       } else {
         if (response.error_type === "email_not_verified" && response.email) {
           toast.error(t('auth/verify:email_not_verified', 'Email not verified'));

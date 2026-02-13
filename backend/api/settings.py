@@ -27,7 +27,13 @@ from core.config import (
 )
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
-from db.settings import get_bot_settings, update_bot_settings, get_salon_settings, update_salon_settings
+from db.settings import (
+    get_bot_settings,
+    update_bot_settings,
+    get_salon_settings,
+    update_salon_settings,
+    get_business_profile_matrix,
+)
 from services.features import FeatureService
 from utils.permissions import require_role, require_permission, RoleHierarchy
 import psycopg2
@@ -367,6 +373,90 @@ _salon_settings_cache = None
 _salon_settings_cache_time = None
 _salon_settings_cache_ttl = 0  # Disabled for CRM - always fetch fresh data
 
+@router.get("/platform-gates")
+async def get_platform_gates():
+    """
+    Легкий публичный endpoint для feature-gates маршрутизации (site/crm).
+    """
+    settings = get_salon_settings()
+
+    return {
+        "business_type": settings.get("business_type") or "beauty",
+        "product_mode": settings.get("product_mode") or "both",
+        "crm_enabled": bool(settings.get("crm_enabled", True)),
+        "site_enabled": bool(settings.get("site_enabled", True)),
+    }
+
+@router.get("/business-profile/matrix")
+@require_permission(["settings_view", "settings_edit_branding"])
+async def get_business_profile_matrix_api(session_token: Optional[str] = Cookie(None)):
+    """
+    Матрица модулей/прав по business_type + текущий эффективный профиль workspace.
+    """
+    settings = get_salon_settings()
+    matrix = get_business_profile_matrix()
+
+    return {
+        "schema_version": matrix.get("schema_version", 1),
+        "module_catalog": matrix.get("module_catalog", {}),
+        "role_catalog": matrix.get("role_catalog", []),
+        "profiles": matrix.get("profiles", {}),
+        "current": {
+            "business_type": settings.get("business_type", "beauty"),
+            "product_mode": settings.get("product_mode", "both"),
+            "crm_enabled": bool(settings.get("crm_enabled", True)),
+            "site_enabled": bool(settings.get("site_enabled", True)),
+            "business_profile_config": settings.get("business_profile_config", {}),
+        },
+    }
+
+@router.post("/business-profile/config")
+@require_permission(["settings_edit", "settings_edit_branding"])
+async def update_business_profile_config_api(request: Request, session_token: Optional[str] = Cookie(None)):
+    """
+    Обновить versioned бизнес-конфиг (custom_settings.business_profile_config) без смены схемы таблиц.
+    """
+    try:
+        payload = await request.json()
+        if not isinstance(payload, dict):
+            raise HTTPException(status_code=400, detail="Invalid request body")
+
+        update_payload: Dict[str, Any] = {}
+        if "business_type" in payload:
+            update_payload["business_type"] = payload.get("business_type")
+
+        if "business_profile_config" in payload:
+            update_payload["business_profile_config"] = payload.get("business_profile_config")
+        else:
+            config_payload = {}
+            if "modules" in payload:
+                config_payload["modules"] = payload.get("modules")
+            if "role_permissions" in payload:
+                config_payload["role_permissions"] = payload.get("role_permissions")
+            if "shared_domains" in payload:
+                config_payload["shared_domains"] = payload.get("shared_domains")
+            if len(config_payload) > 0:
+                update_payload["business_profile_config"] = config_payload
+
+        if len(update_payload) == 0:
+            raise HTTPException(status_code=400, detail="No supported fields to update")
+
+        updated = update_salon_settings(update_payload)
+        if not updated:
+            raise HTTPException(status_code=500, detail="Failed to update business profile config")
+
+        settings = get_salon_settings()
+        return {
+            "success": True,
+            "business_type": settings.get("business_type", "beauty"),
+            "business_profile_config": settings.get("business_profile_config", {}),
+        }
+    except HTTPException:
+        raise
+    except Exception as error:
+        log_error(f"Error updating business profile config: {error}", "settings")
+        raise HTTPException(status_code=500, detail=str(error))
+
 @router.get("/salon-settings")
 async def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
     """
@@ -411,7 +501,8 @@ async def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
     public_fields = [
         'name', 'logo_url', 'city', 'address', 'phone', 'email', 
         'instagram', 'website', 'currency', 'timezone_offset',
-        'hours_weekdays', 'hours_weekends', 'lunch_start', 'lunch_end'
+        'hours_weekdays', 'hours_weekends', 'lunch_start', 'lunch_end',
+        'business_type', 'product_mode', 'crm_enabled', 'site_enabled'
     ]
     
     public_settings = {k: v for k, v in settings.items() if k in public_fields}
@@ -450,6 +541,11 @@ async def update_salon_settings_api(request: Request, session_token: Optional[st
                 
                 'currency': 'settings_edit_finance',
                 'timezone_offset': 'settings_edit_finance',
+                'business_type': 'settings_edit_branding',
+                'product_mode': 'settings_edit_branding',
+                'crm_enabled': 'settings_edit_branding',
+                'site_enabled': 'settings_edit_branding',
+                'business_profile_config': 'settings_edit_branding',
                 
                 'birthday_discount': 'settings_edit_loyalty',
                 

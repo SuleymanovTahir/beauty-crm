@@ -10,6 +10,12 @@ import { api } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
+import {
+  DEFAULT_PLATFORM_GATES,
+  getRoleHomePathByGates,
+  getUnauthenticatedSitePathByGates,
+  normalizePlatformGates,
+} from "../../utils/platformRouting";
 
 export default function VerifyEmail() {
   const { login } = useAuth();
@@ -26,6 +32,20 @@ export default function VerifyEmail() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [verified, setVerified] = useState(false);
+  const [platformGates, setPlatformGates] = useState(DEFAULT_PLATFORM_GATES);
+
+  useEffect(() => {
+    const loadPlatformGates = async () => {
+      try {
+        const gateResponse = await api.getPlatformGates();
+        setPlatformGates(normalizePlatformGates(gateResponse));
+      } catch (gateError) {
+        console.error("Platform gate loading error:", gateError);
+        setPlatformGates(DEFAULT_PLATFORM_GATES);
+      }
+    };
+    loadPlatformGates();
+  }, []);
 
   // Автоматическая верификация по токену из URL
   useEffect(() => {
@@ -46,18 +66,14 @@ export default function VerifyEmail() {
           // Используем login из контекста
           login(data.user);
 
-          // Перенаправляем в зависимости от роли
+          // Перенаправляем в зависимости от роли + enabled suites
           setTimeout(() => {
-            const role = data.user.role;
-            if (role === 'director' || role === 'admin') {
-              navigate("/crm/dashboard");
-            } else if (role === 'manager') {
-              navigate("/manager/dashboard");
-            } else if (role === 'employee') {
-              navigate("/employee/dashboard");
-            } else {
-              navigate("/");
-            }
+            const targetPath = getRoleHomePathByGates(
+              data.user.role,
+              platformGates.site_enabled,
+              platformGates.crm_enabled,
+            );
+            navigate(targetPath);
           }, 2000);
         } else {
           setError(data.error || t('verification_error', "Ошибка при подтверждении email"));
@@ -73,7 +89,7 @@ export default function VerifyEmail() {
     };
 
     verifyByToken();
-  }, [tokenFromUrl, navigate, login, t]);
+  }, [tokenFromUrl, navigate, login, t, platformGates.site_enabled, platformGates.crm_enabled]);
 
   // Проверка email из state (для старой системы с кодами)
   useEffect(() => {
@@ -84,10 +100,10 @@ export default function VerifyEmail() {
       console.log("No email found, redirecting to login");
       toast.error(t('email_not_found', "Email не найден. Пожалуйста, войдите снова."));
       setTimeout(() => {
-        navigate("/login");
+        navigate(getUnauthenticatedSitePathByGates(platformGates.site_enabled, platformGates.crm_enabled));
       }, 2000);
     }
-  }, [email, tokenFromUrl, navigate, t]);
+  }, [email, tokenFromUrl, navigate, t, platformGates.site_enabled, platformGates.crm_enabled]);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +125,10 @@ export default function VerifyEmail() {
 
         // Перенаправляем на логин через 2 секунды
         setTimeout(() => {
-          navigate("/login", { state: { message: t('email_verified_login_message', "Email подтвержден. Войдите в систему.") } });
+          navigate(
+            getUnauthenticatedSitePathByGates(platformGates.site_enabled, platformGates.crm_enabled),
+            { state: { message: t('email_verified_login_message', "Email подтвержден. Войдите в систему.") } },
+          );
         }, 2000);
       } else {
         setError(response.error || t('verification_error_short', "Ошибка верификации"));
@@ -229,7 +248,7 @@ export default function VerifyEmail() {
           <div className="mt-6 flex items-center justify-between">
             <Button
               variant="outline"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate(getUnauthenticatedSitePathByGates(platformGates.site_enabled, platformGates.crm_enabled))}
               disabled={loading}
               className="text-sm"
             >

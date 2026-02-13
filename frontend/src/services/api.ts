@@ -223,7 +223,19 @@ export class ApiClient {
     return response
   }
 
-  async register(username: string, password: string, full_name: string, email: string, phone: string, role: string = 'employee', position: string = '', privacy_accepted: boolean = false, newsletter_subscribed: boolean = true) {
+  async register(
+    username: string,
+    password: string,
+    full_name: string,
+    email: string,
+    phone: string,
+    role: string = 'employee',
+    position: string = '',
+    privacy_accepted: boolean = false,
+    newsletter_subscribed: boolean = true,
+    business_type: string = '',
+    product_mode: string = ''
+  ) {
     const formData = new URLSearchParams()
     formData.append('username', username)
     formData.append('password', password)
@@ -234,6 +246,8 @@ export class ApiClient {
     formData.append('position', position)
     formData.append('privacy_accepted', privacy_accepted.toString())
     formData.append('newsletter_subscribed', newsletter_subscribed.toString())
+    formData.append('business_type', business_type)
+    formData.append('product_mode', product_mode)
 
     return this.request<any>('/api/register', {
       method: 'POST',
@@ -265,7 +279,19 @@ export class ApiClient {
     })
   }
 
-  async registerEmployee(username: string, password: string, full_name: string, email: string, phone: string, role: string, privacy_accepted: boolean, newsletter_subscribed: boolean = true, captcha_token?: string) {
+  async registerEmployee(
+    username: string,
+    password: string,
+    full_name: string,
+    email: string,
+    phone: string,
+    role: string,
+    privacy_accepted: boolean,
+    newsletter_subscribed: boolean = true,
+    captcha_token?: string,
+    business_type: string = '',
+    product_mode: string = ''
+  ) {
     const formData = new URLSearchParams()
     formData.append('username', username)
     formData.append('password', password)
@@ -275,6 +301,8 @@ export class ApiClient {
     formData.append('role', role)
     formData.append('privacy_accepted', privacy_accepted.toString())
     formData.append('newsletter_subscribed', newsletter_subscribed.toString())
+    formData.append('business_type', business_type)
+    formData.append('product_mode', product_mode)
     if (captcha_token) {
       formData.append('captcha_token', captcha_token)
     }
@@ -539,6 +567,27 @@ export class ApiClient {
     })
   }
   // ===== НАСТРОЙКИ САЛОНА =====
+  async getPlatformGates() {
+    const settings = await this.request<any>('/api/platform-gates')
+    return {
+      business_type: settings?.business_type,
+      product_mode: settings?.product_mode,
+      crm_enabled: settings?.crm_enabled,
+      site_enabled: settings?.site_enabled,
+    }
+  }
+
+  async getBusinessProfileMatrix() {
+    return this.request<any>('/api/business-profile/matrix')
+  }
+
+  async updateBusinessProfileConfig(data: any) {
+    return this.request<any>('/api/business-profile/config', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   async getSalonSettings() {
     return this.request<any>('/api/salon-settings')
   }

@@ -39,6 +39,8 @@ export interface RegisterRequest {
   phone?: string;
   role?: UserRole;
   position?: string;
+  business_type?: 'beauty' | 'restaurant' | 'construction' | 'factory' | 'taxi' | 'delivery' | 'other';
+  product_mode?: 'crm' | 'site' | 'both';
   privacy_accepted?: boolean;
   newsletter_subscribed?: boolean;
 }

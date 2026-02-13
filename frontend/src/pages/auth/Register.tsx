@@ -13,9 +13,13 @@ import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
 import GoogleLoginButton from "../../components/GoogleLoginButton";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
+import {
+  getUnauthenticatedCrmPathByGates,
+  normalizePlatformGates,
+} from "../../utils/platformRouting";
 
 // hCaptcha Site Key: задайте VITE_HCAPTCHA_SITE_KEY в .env. Без ключа — тестовый. Инструкция: docs/HCAPTCHA_KEYS.md
-const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY || "10000000-ffff-ffff-ffff-000000000001";
+const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY ?? "10000000-ffff-ffff-ffff-000000000001";
 
 // Типы ошибок для каждого поля
 interface FieldErrors {
@@ -23,6 +27,8 @@ interface FieldErrors {
   username?: string[];
   email?: string[];
   phone?: string[];
+  business_type?: string[];
+  product_mode?: string[];
   password?: string[];
   confirmPassword?: string[];
   terms?: string[];
@@ -31,7 +37,7 @@ interface FieldErrors {
 
 // Компонент для отображения ошибок под полем
 function FieldError({ errors }: { errors?: string[] }) {
-  if (!errors || errors.length === 0) return null;
+  if (!(errors && errors.length > 0)) return null;
   return (
     <div className="mt-1 space-y-0.5">
       {errors.map((error, index) => (
@@ -44,6 +50,8 @@ function FieldError({ errors }: { errors?: string[] }) {
 export default function Register() {
   const navigate = useNavigate();
   const { t } = useTranslation(['auth/register', 'common']);
+  const allowedBusinessTypes = ['beauty', 'restaurant', 'construction', 'factory', 'taxi', 'delivery', 'other'] as const;
+  const allowedProductModes = ['crm', 'site', 'both'] as const;
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -52,6 +60,8 @@ export default function Register() {
     email: "",
     phone: "",
     role: "employee",
+    business_type: "",
+    product_mode: "",
   });
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(true);
@@ -65,6 +75,11 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const captchaRef = useRef<HCaptcha>(null);
+  const normalizedPlatformGates = React.useMemo(() => normalizePlatformGates(salonSettings), [salonSettings]);
+  const crmLoginPath = React.useMemo(
+    () => getUnauthenticatedCrmPathByGates(normalizedPlatformGates.site_enabled, normalizedPlatformGates.crm_enabled),
+    [normalizedPlatformGates.site_enabled, normalizedPlatformGates.crm_enabled],
+  );
 
   // Load salon settings
   React.useEffect(() => {
@@ -72,6 +87,18 @@ export default function Register() {
       try {
         const salonRes = await api.getSalonSettings();
         setSalonSettings(salonRes);
+        const businessTypeFromSettings = typeof salonRes?.business_type === "string" ? salonRes.business_type : "";
+        const productModeFromSettings = typeof salonRes?.product_mode === "string" ? salonRes.product_mode : "";
+
+        setFormData((prev) => ({
+          ...prev,
+          business_type: allowedBusinessTypes.includes(businessTypeFromSettings as typeof allowedBusinessTypes[number])
+            ? businessTypeFromSettings
+            : prev.business_type,
+          product_mode: allowedProductModes.includes(productModeFromSettings as typeof allowedProductModes[number])
+            ? productModeFromSettings
+            : prev.product_mode,
+        }));
       } catch (err) {
         console.error("Error loading register data:", err);
       }
@@ -147,7 +174,8 @@ export default function Register() {
     } else if (Object.keys(errors).length > 0) {
       // Показываем первую ошибку в toast
       const firstError = Object.values(errors).flat()[0];
-      toast.error(firstError || t('error_registration'));
+      const firstErrorMessage = firstError ?? t('error_registration');
+      toast.error(firstErrorMessage);
     }
   };
 
@@ -157,14 +185,14 @@ export default function Register() {
     const requiredFieldError = t('common:field_required', 'Обязательное поле');
 
     // Имя
-    if (!formData.full_name || !formData.full_name.trim()) {
+    if (!(formData.full_name && formData.full_name.trim())) {
       errors.full_name = [requiredFieldError];
     } else if (formData.full_name.trim().length < 2) {
       errors.full_name = [t('common:auth_errors.error_name_too_short', 'Имя слишком короткое (минимум 2 символа)')];
     }
 
     // Логин - только латинские буквы, цифры, точки, подчеркивания
-    if (!formData.username || !formData.username.trim()) {
+    if (!(formData.username && formData.username.trim())) {
       errors.username = [requiredFieldError];
     } else if (!/^[a-zA-Z0-9._]+$/.test(formData.username)) {
       errors.username = [t('common:auth_errors.error_login_invalid_chars', 'Логин может содержать только латинские буквы (a-z), цифры, точки и подчёркивания')];
@@ -173,17 +201,27 @@ export default function Register() {
     }
 
     // Email
-    if (!formData.email || !formData.email.trim()) {
+    if (!(formData.email && formData.email.trim())) {
       errors.email = [requiredFieldError];
     } else if (!formData.email.includes('@')) {
       errors.email = [t('common:auth_errors.error_invalid_email', 'Неверный формат email')];
     }
 
     // Телефон
-    if (!formData.phone || !formData.phone.trim()) {
+    if (!(formData.phone && formData.phone.trim())) {
       errors.phone = [requiredFieldError];
     } else if (!validatePhone(formData.phone)) {
       errors.phone = [t('common:auth_errors.error_invalid_phone', 'Неверный формат телефона')];
+    }
+
+    // Сфера бизнеса
+    if (!(formData.business_type && formData.business_type.trim())) {
+      errors.business_type = [requiredFieldError];
+    }
+
+    // Режим продукта
+    if (!(formData.product_mode && formData.product_mode.trim())) {
+      errors.product_mode = [requiredFieldError];
     }
 
     // Пароль
@@ -210,7 +248,8 @@ export default function Register() {
 
     // Проверка капчи
     if (!captchaToken) {
-      errors.general = [...(errors.general || []), t('error_captcha_required', 'Пожалуйста, пройдите проверку безопасности')];
+      const currentGeneralErrors = errors.general ?? [];
+      errors.general = [...currentGeneralErrors, t('error_captcha_required', 'Пожалуйста, пройдите проверку безопасности')];
     }
 
     return errors;
@@ -241,7 +280,9 @@ export default function Register() {
         formData.role,
         privacyAccepted,
         newsletterSubscribed,
-        captchaToken || undefined
+        captchaToken ?? undefined,
+        formData.business_type,
+        formData.product_mode
       );
 
 
@@ -250,7 +291,7 @@ export default function Register() {
         if (response.auto_verified && response.is_first_director) {
           toast.success(response.message, { duration: 5000 });
           setTimeout(() => {
-            navigate("/login");
+            navigate(crmLoginPath);
           }, 2000);
           return;
         }
@@ -258,7 +299,8 @@ export default function Register() {
         setStep("verify");
         // Если SMTP не настроен, код придет в ответе
         if (response.verification_code) {
-          toast.success(response.message || `${t('your_code')} ${response.verification_code}`, { duration: 10000 });
+          const successMessage = response.message ?? `${t('your_code')} ${response.verification_code}`;
+          toast.success(successMessage, { duration: 10000 });
           console.log("Verification code:", response.verification_code);
         } else {
           toast.success(t('code_sent_to_email'));
@@ -272,7 +314,7 @@ export default function Register() {
       }
     } catch (err: any) {
       console.error("Registration error:", err);
-      const errorMessage = err.error || (err instanceof Error ? err.message : 'error_registration');
+      const errorMessage = err?.error ?? (err instanceof Error ? err.message : 'error_registration');
       handleServerErrors(errorMessage);
       // Сбрасываем капчу при ошибке
       captchaRef.current?.resetCaptcha();
@@ -285,7 +327,7 @@ export default function Register() {
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!verificationCode || verificationCode.length !== 6) {
+    if (!(verificationCode && verificationCode.length === 6)) {
       setError(t('error_invalid_code'));
       return;
     }
@@ -311,7 +353,7 @@ export default function Register() {
       }
     } catch (err: any) {
       console.error("Verification error:", err);
-      const messageKey = err.error || (err instanceof Error ? err.message : 'error_verification');
+      const messageKey = err?.error ?? (err instanceof Error ? err.message : 'error_verification');
 
       const translatedError = t(`common:auth_errors.${messageKey}`);
       const finalMessage = translatedError && translatedError !== `common:auth_errors.${messageKey}`
@@ -335,7 +377,7 @@ export default function Register() {
       if (response.success) {
         toast.success(t('new_code_sent'));
       } else {
-        toast.error(response.error || t('error_resend'));
+        toast.error(response.error ?? t('error_resend'));
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : t('error_resend');
@@ -455,7 +497,7 @@ export default function Register() {
 
             <Button
               className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate(crmLoginPath)}
             >
               {t('back_to_login')}
             </Button>
@@ -616,6 +658,54 @@ export default function Register() {
             </div>
 
             <div>
+              <Label htmlFor="business_type" className="mb-2 block">{t('business_type_label')} *</Label>
+              <Select
+                value={formData.business_type}
+                onValueChange={(value) => setFormData({ ...formData, business_type: value })}
+                disabled={loading}
+              >
+                <SelectTrigger id="business_type" className={`w-full ${fieldErrors.business_type ? 'border-red-500' : ''}`}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="beauty">{t('business_type_beauty')}</SelectItem>
+                  <SelectItem value="restaurant">{t('business_type_restaurant')}</SelectItem>
+                  <SelectItem value="construction">{t('business_type_construction')}</SelectItem>
+                  <SelectItem value="factory">{t('business_type_factory')}</SelectItem>
+                  <SelectItem value="taxi">{t('business_type_taxi')}</SelectItem>
+                  <SelectItem value="delivery">{t('business_type_delivery')}</SelectItem>
+                  <SelectItem value="other">{t('business_type_other')}</SelectItem>
+                </SelectContent>
+              </Select>
+              <FieldError errors={fieldErrors.business_type} />
+              <p className="text-sm text-gray-500 mt-3">
+                {t('business_type_hint')}
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="product_mode" className="mb-2 block">{t('product_mode_label')} *</Label>
+              <Select
+                value={formData.product_mode}
+                onValueChange={(value) => setFormData({ ...formData, product_mode: value })}
+                disabled={loading}
+              >
+                <SelectTrigger id="product_mode" className={`w-full ${fieldErrors.product_mode ? 'border-red-500' : ''}`}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="crm">{t('product_mode_crm')}</SelectItem>
+                  <SelectItem value="site">{t('product_mode_site')}</SelectItem>
+                  <SelectItem value="both">{t('product_mode_both')}</SelectItem>
+                </SelectContent>
+              </Select>
+              <FieldError errors={fieldErrors.product_mode} />
+              <p className="text-sm text-gray-500 mt-3">
+                {t('product_mode_hint')}
+              </p>
+            </div>
+
+            <div>
               <Label htmlFor="password" className="mb-2 block">{t('password')} *</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -749,7 +839,7 @@ export default function Register() {
         </div>
 
         <div className="mt-6 text-center space-y-3">
-          <Button variant="outline" onClick={() => navigate("/login")}>
+          <Button variant="outline" onClick={() => navigate(crmLoginPath)}>
             {t('already_have_account')}
           </Button>
         </div>

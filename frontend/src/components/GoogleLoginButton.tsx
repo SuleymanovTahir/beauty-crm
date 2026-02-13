@@ -3,6 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import {
+    DEFAULT_PLATFORM_GATES,
+    getRoleHomePathByGates,
+    normalizePlatformGates,
+} from '../utils/platformRouting';
 
 declare global {
     interface Window {
@@ -85,7 +90,14 @@ export default function GoogleLoginButton({ text = "signin_with", className }: G
             if (res.success && res.user) {
                 login(res.user);
                 toast.success(`Welcome back, ${res.user.full_name || res.user.username}!`);
-                navigate("/crm/dashboard");
+                let gates = DEFAULT_PLATFORM_GATES;
+                try {
+                    const gateResponse = await api.getPlatformGates();
+                    gates = normalizePlatformGates(gateResponse);
+                } catch (gateError) {
+                    console.error("Platform gate loading error:", gateError);
+                }
+                navigate(getRoleHomePathByGates(res.user.role, gates.site_enabled, gates.crm_enabled));
             } else {
                 if (res.error_type === "not_approved") {
                     toast.error(res.message);

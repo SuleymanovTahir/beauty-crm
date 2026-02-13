@@ -6,6 +6,16 @@ import { Toaster } from './components/ui/sonner';
 import './i18n';
 import { useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { api } from './services/api';
+import {
+  type PlatformGates,
+  DEFAULT_PLATFORM_GATES,
+  normalizePlatformGates,
+  normalizeRole,
+  getRoleHomePathByGates,
+  getUnauthenticatedSitePathByGates,
+  getUnauthenticatedCrmPathByGates,
+} from './utils/platformRouting';
 import PromoCodes from './pages/admin/PromoCodes';
 import SpecialPackages from './pages/admin/SpecialPackages';
 
@@ -92,17 +102,10 @@ interface ProtectedRouteProps {
   currentRole?: string;
   currentUsername?: string;
   secondaryRole?: string;
+  siteSuiteEnabled?: boolean;
+  crmSuiteEnabled?: boolean;
+  unauthenticatedPath?: string;
 }
-
-const normalizeRole = (inputRole?: string): string => {
-  if (!inputRole) {
-    return '';
-  }
-  if (inputRole === 'saler') {
-    return 'sales';
-  }
-  return inputRole;
-};
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   element,
@@ -110,10 +113,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredRole,
   currentRole,
   currentUsername,
-  secondaryRole
+  secondaryRole,
+  siteSuiteEnabled = true,
+  crmSuiteEnabled = true,
+  unauthenticatedPath = '/login',
 }) => {
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={unauthenticatedPath} replace />;
   }
 
   // ИСКЛЮЧЕНИЕ: Пользователь Tahir имеет доступ ко всему
@@ -123,7 +129,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // Клиенты имеют доступ только к личному кабинету /account
   // ИСКЛЮЧЕНИЕ: Tahir имеет полный доступ даже с ролью client
   if (currentRole === 'client' && !isTahir) {
-    return <Navigate to="/account" replace />;
+    return <Navigate to={getRoleHomePathByGates(currentRole, siteSuiteEnabled, crmSuiteEnabled)} replace />;
   }
 
   const hasRequiredRole = (role?: string, secondaryRole?: string) => {
@@ -137,15 +143,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   };
 
   if (requiredRole && !hasRequiredRole(currentRole, secondaryRole)) {
-    // Редирект на панель в зависимости от роли (приоритет основной роли)
-    if (currentRole === 'director') return <Navigate to="/crm/dashboard" replace />;
-    if (currentRole === 'admin') return <Navigate to="/crm/dashboard" replace />;
-    if (currentRole === 'accountant') return <Navigate to="/crm/dashboard" replace />;
-    if (currentRole === 'manager') return <Navigate to="/manager/dashboard" replace />;
-    if (normalizeRole(currentRole) === 'sales') return <Navigate to="/sales/clients" replace />;
-    if (currentRole === 'marketer') return <Navigate to="/marketer/analytics" replace />;
-    if (currentRole === 'employee') return <Navigate to="/employee/dashboard" replace />;
-    return <Navigate to="/" replace />;
+    return <Navigate to={getRoleHomePathByGates(currentRole, siteSuiteEnabled, crmSuiteEnabled)} replace />;
   }
 
   return <>{element}</>;
@@ -154,12 +152,61 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 export default function App() {
   const { t } = useTranslation('common');
   const { user: currentUser, isLoading, logout } = useAuth();
+  const [platformGates, setPlatformGates] = React.useState<PlatformGates>(DEFAULT_PLATFORM_GATES);
+  const [platformGatesLoading, setPlatformGatesLoading] = React.useState(true);
 
   const handleLogout = () => {
     logout();
   };
 
-  if (isLoading) {
+  React.useEffect(() => {
+    let isMounted = true;
+
+    const loadPlatformGates = async () => {
+      try {
+        const response = await api.getPlatformGates();
+        if (!isMounted) {
+          return;
+        }
+
+        setPlatformGates(normalizePlatformGates(response));
+      } catch (error) {
+        if (isMounted) {
+          console.error('Platform gate loading error:', error);
+          setPlatformGates(DEFAULT_PLATFORM_GATES);
+        }
+      } finally {
+        if (isMounted) {
+          setPlatformGatesLoading(false);
+        }
+      }
+    };
+
+    loadPlatformGates();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const siteSuiteEnabled = platformGates.site_enabled;
+  const crmSuiteEnabled = platformGates.crm_enabled;
+
+  const unauthenticatedSitePath = getUnauthenticatedSitePathByGates(siteSuiteEnabled, crmSuiteEnabled);
+  const unauthenticatedCrmPath = getUnauthenticatedCrmPathByGates(siteSuiteEnabled, crmSuiteEnabled);
+  const authenticatedHomePath = getRoleHomePathByGates(currentUser?.role, siteSuiteEnabled, crmSuiteEnabled);
+  const siteDisabledRedirectPath = currentUser ? authenticatedHomePath : unauthenticatedCrmPath;
+  const crmDisabledRedirectPath = currentUser ? authenticatedHomePath : unauthenticatedSitePath;
+
+  React.useEffect(() => {
+    if (!siteSuiteEnabled && currentUser?.role === 'client') {
+      logout();
+    }
+  }, [siteSuiteEnabled, currentUser?.role, logout]);
+
+  const isPlatformLoading = isLoading ? true : platformGatesLoading;
+
+  if (isPlatformLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -192,18 +239,17 @@ export default function App() {
                 path="/login"
                 element={
                   currentUser ? (
-                    // ✅ Редирект в зависимости от роли
-                    currentUser.role === 'director' ? <Navigate to="/crm/dashboard" replace /> :
-                      currentUser.role === 'admin' ? <Navigate to="/crm/dashboard" replace /> :
-                        currentUser.role === 'accountant' ? <Navigate to="/crm/dashboard" replace /> :
-                        currentUser.role === 'manager' ? <Navigate to="/manager/dashboard" replace /> :
-                          normalizeRole(currentUser.role) === 'sales' ? <Navigate to="/sales/clients" replace /> :
-                            currentUser.role === 'marketer' ? <Navigate to="/marketer/analytics" replace /> :
-                              currentUser.role === 'employee' ? <Navigate to="/employee/dashboard" replace /> :
-                                currentUser.role === 'client' ? <Navigate to="/account" replace /> :
-                                  <Navigate to="/" replace />
+                    <Navigate to={authenticatedHomePath} replace />
                   ) : (
-                    <Login />
+                    siteSuiteEnabled ? (
+                      <Login />
+                    ) : (
+                      crmSuiteEnabled ? (
+                        <Navigate to="/crm/login" replace />
+                      ) : (
+                        <NotFound />
+                      )
+                    )
                   )
                 }
               />
@@ -212,9 +258,17 @@ export default function App() {
                 path="/register"
                 element={
                   currentUser ? (
-                    <Navigate to="/crm/dashboard" replace />
+                    <Navigate to={authenticatedHomePath} replace />
                   ) : (
-                    <Login initialView="register" />
+                    siteSuiteEnabled ? (
+                      <Login initialView="register" />
+                    ) : (
+                      crmSuiteEnabled ? (
+                        <Navigate to="/crm/register" replace />
+                      ) : (
+                        <NotFound />
+                      )
+                    )
                   )
                 }
               />
@@ -223,9 +277,17 @@ export default function App() {
                 path="/crm/login"
                 element={
                   currentUser ? (
-                    <Navigate to="/crm/dashboard" replace />
+                    <Navigate to={authenticatedHomePath} replace />
                   ) : (
-                    <AdminLogin />
+                    crmSuiteEnabled ? (
+                      <AdminLogin />
+                    ) : (
+                      siteSuiteEnabled ? (
+                        <Navigate to="/login" replace />
+                      ) : (
+                        <NotFound />
+                      )
+                    )
                   )
                 }
               />
@@ -234,9 +296,17 @@ export default function App() {
                 path="/crm/register"
                 element={
                   currentUser ? (
-                    <Navigate to="/crm/dashboard" replace />
+                    <Navigate to={authenticatedHomePath} replace />
                   ) : (
-                    <AdminRegister />
+                    crmSuiteEnabled ? (
+                      <AdminRegister />
+                    ) : (
+                      siteSuiteEnabled ? (
+                        <Navigate to="/register" replace />
+                      ) : (
+                        <NotFound />
+                      )
+                    )
                   )
                 }
               />
@@ -257,277 +327,355 @@ export default function App() {
               />
 
               {/* Admin Panel Routes - For managing users/loyalty */}
-              <Route
-                path="/admin/*"
-                element={
-                  <ProtectedRoute
-                    isAuthenticated={!!currentUser}
-                    requiredRole="admin"
-                    currentRole={currentUser?.role}
-                    currentUsername={currentUser?.username}
-                    secondaryRole={currentUser?.secondary_role}
-                    element={
-                      <UniversalLayout
-                        user={currentUser}
-                        onLogout={handleLogout}
-                      />
-                    }
-                  />
-                }
-              >
-                <Route path="dashboard" element={<AdminPanelDashboard />} />
-                <Route path="loyalty" element={<SpecialPackages entryMode="loyalty-only" />} />
-                <Route path="referrals" element={<SpecialPackages entryMode="referrals-only" />} />
-                <Route path="challenges" element={<SpecialPackages entryMode="challenges-only" />} />
-                <Route path="promo-codes" element={<SpecialPackages entryMode="promo-codes-only" />} />
-                <Route path="special-packages" element={<SpecialPackages />} />
-                <Route path="notifications" element={<NotificationsPage />} />
-                <Route path="broadcasts" element={<Broadcasts />} />
-                <Route path="features" element={<FeatureManagement />} />
-                <Route path="gallery" element={<PhotoGallery />} />
-                <Route path="services" element={<Services />} />
-                <Route path="clients" element={<Clients />} />
-                <Route path="clients/:id" element={<ClientDetail />} />
-                <Route path="public-content/:tab?" element={<PublicContent />} />
-                <Route path="team" element={<Team />} />
-                <Route path="team/create" element={<CreateUser />} />
-                <Route path="team/pending" element={<PendingRegistrations />} />
-                <Route path="team/permissions" element={<PermissionManagement />} />
-                <Route path="team/:id/:tab?" element={<EmployeeDetail />} />
-                <Route path="settings/:tab?" element={<Settings />} />
-                <Route path="menu-customization" element={<MenuCustomization />} />
-                <Route path="" element={<Navigate to="dashboard" replace />} />
-              </Route>
+              {siteSuiteEnabled ? (
+                <Route
+                  path="/admin/*"
+                  element={
+                    <ProtectedRoute
+                      isAuthenticated={!!currentUser}
+                      requiredRole="admin"
+                      currentRole={currentUser?.role}
+                      currentUsername={currentUser?.username}
+                      secondaryRole={currentUser?.secondary_role}
+                      siteSuiteEnabled={siteSuiteEnabled}
+                      crmSuiteEnabled={crmSuiteEnabled}
+                      unauthenticatedPath={unauthenticatedSitePath}
+                      element={
+                        <UniversalLayout
+                          user={currentUser}
+                          onLogout={handleLogout}
+                        />
+                      }
+                    />
+                  }
+                >
+                  <Route path="dashboard" element={<AdminPanelDashboard />} />
+                  <Route path="loyalty" element={<SpecialPackages entryMode="loyalty-only" />} />
+                  <Route path="referrals" element={<SpecialPackages entryMode="referrals-only" />} />
+                  <Route path="challenges" element={<SpecialPackages entryMode="challenges-only" />} />
+                  <Route path="promo-codes" element={<SpecialPackages entryMode="promo-codes-only" />} />
+                  <Route path="special-packages" element={<SpecialPackages />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="broadcasts" element={<Broadcasts />} />
+                  <Route path="features" element={<FeatureManagement />} />
+                  <Route path="gallery" element={<PhotoGallery />} />
+                  <Route path="bookings" element={<Bookings />} />
+                  <Route path="bookings/:id" element={<BookingDetail />} />
+                  <Route path="services" element={<Services />} />
+                  <Route path="clients" element={<Clients />} />
+                  <Route path="clients/:id" element={<ClientDetail />} />
+                  <Route path="public-content/:tab?" element={<PublicContent />} />
+                  <Route path="team" element={<Team />} />
+                  <Route path="team/create" element={<CreateUser />} />
+                  <Route path="team/pending" element={<PendingRegistrations />} />
+                  <Route path="team/permissions" element={<PermissionManagement />} />
+                  <Route path="team/:id/:tab?" element={<EmployeeDetail />} />
+                  <Route path="settings/:tab?" element={<Settings />} />
+                  <Route path="menu-customization" element={<MenuCustomization />} />
+                  <Route path="" element={<Navigate to="dashboard" replace />} />
+                </Route>
+              ) : (
+                <Route path="/admin/*" element={<Navigate to={siteDisabledRedirectPath} replace />} />
+              )}
 
               {/* CRM Routes - Protected */}
-              <Route
-                path="/crm/*"
-                element={
-                  <ProtectedRoute
-                    isAuthenticated={!!currentUser}
-                    requiredRole="admin"
-                    currentRole={currentUser?.role}
-                    currentUsername={currentUser?.username}
-                    secondaryRole={currentUser?.secondary_role}
+              {crmSuiteEnabled ? (
+                <Route
+                  path="/crm/*"
+                  element={
+                    <ProtectedRoute
+                      isAuthenticated={!!currentUser}
+                      requiredRole="admin"
+                      currentRole={currentUser?.role}
+                      currentUsername={currentUser?.username}
+                      secondaryRole={currentUser?.secondary_role}
+                      siteSuiteEnabled={siteSuiteEnabled}
+                      crmSuiteEnabled={crmSuiteEnabled}
+                      unauthenticatedPath={unauthenticatedCrmPath}
+                      element={
+                        <UniversalLayout
+                          user={currentUser}
+                          onLogout={handleLogout}
+                        />
+                      }
+                    />
+                  }
+                >
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="bookings" element={<Bookings />} />
+                  <Route path="bookings/:id" element={<BookingDetail />} />
+                  <Route path="analytics" element={<Analytics />} />
+                  <Route path="services" element={<Services />} />
+                  <Route path="clients" element={<Clients />} />
+                  <Route path="clients/:id" element={<ClientDetail />} />
+                  <Route path="chat" element={<Chat />} />
+                  <Route path="team" element={<Team />} />
+                  <Route path="team/create" element={<CreateUser />} />
+                  <Route path="team/pending" element={<PendingRegistrations />} />
+                  <Route path="team/permissions" element={<PermissionManagement />} />
+                  <Route path="team/:id/:tab?" element={<EmployeeDetail />} />
+                  <Route path="profile" element={<UniversalProfile />} />
+
+                  <Route path="plans" element={<PlansManagement />} />
+                  <Route path="calendar" element={<Calendar />} />
+                  <Route path="settings/:tab?" element={<Settings />} />
+                  <Route path="bot-settings/:tab?" element={<BotSettings />} />
+                  <Route path="public-content/:tab?" element={<PublicContent />} />
+                  <Route path="visitor-analytics" element={<VisitorAnalytics />} />
+                  <Route path="funnel" element={<Funnel />} />
+                  <Route path="tasks" element={<UniversalTasks />} />
+                  <Route path="telephony" element={<Telephony />} />
+                  <Route path="menu-customization" element={<MenuCustomization />} />
+                  <Route path="trash" element={<TrashBin />} />
+                  <Route
+                    path="audit-log"
                     element={
-                      <UniversalLayout
-                        user={currentUser}
-                        onLogout={handleLogout}
+                      <ProtectedRoute
+                        element={<AuditLog />}
+                        isAuthenticated={!!currentUser}
+                        requiredRole="director"
+                        currentRole={currentUser?.role}
+                        siteSuiteEnabled={siteSuiteEnabled}
+                        crmSuiteEnabled={crmSuiteEnabled}
+                        unauthenticatedPath={unauthenticatedCrmPath}
                       />
                     }
                   />
-                }
-              >
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="bookings" element={<Bookings />} />
-                <Route path="bookings/:id" element={<BookingDetail />} />
-                <Route path="analytics" element={<Analytics />} />
-                <Route path="services" element={<Services />} />
-                <Route path="clients" element={<Clients />} />
-                <Route path="clients/:id" element={<ClientDetail />} />
-                <Route path="chat" element={<Chat />} />
-                <Route path="team" element={<Team />} />
-                <Route path="team/create" element={<CreateUser />} />
-                <Route path="team/pending" element={<PendingRegistrations />} />
-                <Route path="team/permissions" element={<PermissionManagement />} />
-                <Route path="team/:id/:tab?" element={<EmployeeDetail />} />
-                <Route path="profile" element={<UniversalProfile />} />
-
-                <Route path="plans" element={<PlansManagement />} />
-                <Route path="calendar" element={<Calendar />} />
-                <Route path="settings/:tab?" element={<Settings />} />
-                <Route path="bot-settings/:tab?" element={<BotSettings />} />
-                <Route path="public-content/:tab?" element={<PublicContent />} />
-                <Route path="visitor-analytics" element={<VisitorAnalytics />} />
-                <Route path="funnel" element={<Funnel />} />
-                <Route path="tasks" element={<UniversalTasks />} />
-                <Route path="telephony" element={<Telephony />} />
-                <Route path="menu-customization" element={<MenuCustomization />} />
-                <Route path="trash" element={<TrashBin />} />
-                <Route path="audit-log" element={<ProtectedRoute element={<AuditLog />} isAuthenticated={!!currentUser} requiredRole="director" currentRole={currentUser?.role} />} />
-                <Route path="internal-chat" element={<InternalChat />} />
-                <Route path="broadcasts" element={<Broadcasts />} />
-                <Route path="promo-codes" element={<SpecialPackages entryMode="promo-codes-only" />} />
-                <Route path="loyalty" element={<SpecialPackages entryMode="loyalty-only" />} />
-                <Route path="special-packages" element={<SpecialPackages />} />
-                <Route path="contracts" element={<Contracts />} />
-                <Route path="products" element={<Products />} />
-                <Route path="invoices" element={<Invoices />} />
-                <Route path="messengers" element={<Messengers />} />
-                <Route path="payment-integrations" element={<PaymentIntegrations />} />
-                <Route path="marketplace-integrations" element={<MarketplaceIntegrations />} />
-                <Route path="referrals" element={<SpecialPackages entryMode="referrals-only" />} />
-                <Route path="challenges" element={<SpecialPackages entryMode="challenges-only" />} />
-                <Route path="notifications" element={<NotificationsPage />} />
-                <Route path="service-change-requests" element={<ServiceChangeRequests />} />
-                <Route path="" element={<Navigate to="dashboard" replace />} />
-              </Route>
+                  <Route path="internal-chat" element={<InternalChat />} />
+                  <Route path="broadcasts" element={<Broadcasts />} />
+                  <Route path="promo-codes" element={<SpecialPackages entryMode="promo-codes-only" />} />
+                  <Route path="loyalty" element={<SpecialPackages entryMode="loyalty-only" />} />
+                  <Route path="special-packages" element={<SpecialPackages />} />
+                  <Route path="contracts" element={<Contracts />} />
+                  <Route path="products" element={<Products />} />
+                  <Route path="invoices" element={<Invoices />} />
+                  <Route path="messengers" element={<Messengers />} />
+                  <Route path="payment-integrations" element={<PaymentIntegrations />} />
+                  <Route path="marketplace-integrations" element={<MarketplaceIntegrations />} />
+                  <Route path="referrals" element={<SpecialPackages entryMode="referrals-only" />} />
+                  <Route path="challenges" element={<SpecialPackages entryMode="challenges-only" />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="service-change-requests" element={<ServiceChangeRequests />} />
+                  <Route path="" element={<Navigate to="dashboard" replace />} />
+                </Route>
+              ) : (
+                <Route path="/crm/*" element={<Navigate to={crmDisabledRedirectPath} replace />} />
+              )}
 
               {/* Manager Routes - Protected */}
-              <Route
-                path="/manager/*"
-                element={
-                  <ProtectedRoute
-                    isAuthenticated={!!currentUser}
-                    requiredRole="manager"
-                    currentRole={currentUser?.role}
-                    currentUsername={currentUser?.username}
-                    secondaryRole={currentUser?.secondary_role}
-                    element={
-                      <UniversalLayout
-                        user={currentUser}
-                        onLogout={handleLogout}
-                      />
-                    }
-                  />
-                }
-              >
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="chat" element={<Chat />} />
-                <Route path="analytics" element={<Analytics />} />
-                <Route path="team" element={<Team />} />
-                <Route path="team/:id" element={<Team />} />
-                <Route path="messengers" element={<Messengers />} />
-                <Route path="settings/:tab?" element={<Settings />} />
-                <Route path="bot-settings" element={<BotSettings />} />
-                <Route path="notifications" element={<NotificationsPage />} />
-                <Route path="tasks" element={<CRMTasks />} />
-                <Route path="services" element={<CRMServices />} />
-                <Route path="bookings" element={<CRMBookings />} />
-                <Route path="calendar" element={<CRMCalendar />} />
-                <Route path="clients" element={<CRMClients />} />
-                <Route path="internal-chat" element={<InternalChat />} />
-                <Route path="promo-codes" element={<PromoCodes />} />
-                <Route path="special-packages" element={<SpecialPackages />} />
-                <Route path="visitor-analytics" element={<VisitorAnalytics />} />
-                <Route path="" element={<Navigate to="dashboard" replace />} />
-              </Route>
+              {crmSuiteEnabled ? (
+                <Route
+                  path="/manager/*"
+                  element={
+                    <ProtectedRoute
+                      isAuthenticated={!!currentUser}
+                      requiredRole="manager"
+                      currentRole={currentUser?.role}
+                      currentUsername={currentUser?.username}
+                      secondaryRole={currentUser?.secondary_role}
+                      siteSuiteEnabled={siteSuiteEnabled}
+                      crmSuiteEnabled={crmSuiteEnabled}
+                      unauthenticatedPath={unauthenticatedCrmPath}
+                      element={
+                        <UniversalLayout
+                          user={currentUser}
+                          onLogout={handleLogout}
+                        />
+                      }
+                    />
+                  }
+                >
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="chat" element={<Chat />} />
+                  <Route path="analytics" element={<Analytics />} />
+                  <Route path="team" element={<Team />} />
+                  <Route path="team/:id" element={<Team />} />
+                  <Route path="messengers" element={<Messengers />} />
+                  <Route path="settings/:tab?" element={<Settings />} />
+                  <Route path="bot-settings" element={<BotSettings />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="tasks" element={<CRMTasks />} />
+                  <Route path="services" element={<CRMServices />} />
+                  <Route path="bookings" element={<CRMBookings />} />
+                  <Route path="calendar" element={<CRMCalendar />} />
+                  <Route path="clients" element={<CRMClients />} />
+                  <Route path="internal-chat" element={<InternalChat />} />
+                  <Route path="promo-codes" element={<PromoCodes />} />
+                  <Route path="special-packages" element={<SpecialPackages />} />
+                  <Route path="visitor-analytics" element={<VisitorAnalytics />} />
+                  <Route path="" element={<Navigate to="dashboard" replace />} />
+                </Route>
+              ) : (
+                <Route path="/manager/*" element={<Navigate to={crmDisabledRedirectPath} replace />} />
+              )}
 
               {/* Sales Routes - Protected */}
-              <Route
-                path="/sales/*"
-                element={
-                  <ProtectedRoute
-                    isAuthenticated={!!currentUser}
-                    requiredRole="sales"
-                    currentRole={currentUser?.role}
-                    currentUsername={currentUser?.username}
-                    secondaryRole={currentUser?.secondary_role}
-                    element={
-                      <UniversalLayout
-                        user={currentUser}
-                        onLogout={handleLogout}
-                      />
-                    }
-                  />
-                }
-              >
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="clients" element={<Clients />} />
-                <Route path="bookings" element={<CRMBookings />} />
-                <Route path="calendar" element={<CRMCalendar />} />
-                <Route path="chat" element={<Chat />} />
-                <Route path="analytics" element={<Analytics />} />
-                <Route path="funnel" element={<Funnel />} />
-                <Route path="tasks" element={<CRMTasks />} />
-                <Route path="services" element={<CRMServices />} />
-                <Route path="internal-chat" element={<InternalChat />} />
-                <Route path="promo-codes" element={<PromoCodes />} />
-                <Route path="special-packages" element={<SpecialPackages />} />
-                <Route path="messengers" element={<Messengers />} />
-                <Route path="bot-settings" element={<BotSettings />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="notifications" element={<NotificationsPage />} />
-                <Route path="" element={<Navigate to="clients" replace />} />
-              </Route>
+              {crmSuiteEnabled ? (
+                <Route
+                  path="/sales/*"
+                  element={
+                    <ProtectedRoute
+                      isAuthenticated={!!currentUser}
+                      requiredRole="sales"
+                      currentRole={currentUser?.role}
+                      currentUsername={currentUser?.username}
+                      secondaryRole={currentUser?.secondary_role}
+                      siteSuiteEnabled={siteSuiteEnabled}
+                      crmSuiteEnabled={crmSuiteEnabled}
+                      unauthenticatedPath={unauthenticatedCrmPath}
+                      element={
+                        <UniversalLayout
+                          user={currentUser}
+                          onLogout={handleLogout}
+                        />
+                      }
+                    />
+                  }
+                >
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="clients" element={<Clients />} />
+                  <Route path="bookings" element={<CRMBookings />} />
+                  <Route path="calendar" element={<CRMCalendar />} />
+                  <Route path="chat" element={<Chat />} />
+                  <Route path="analytics" element={<Analytics />} />
+                  <Route path="funnel" element={<Funnel />} />
+                  <Route path="tasks" element={<CRMTasks />} />
+                  <Route path="services" element={<CRMServices />} />
+                  <Route path="internal-chat" element={<InternalChat />} />
+                  <Route path="promo-codes" element={<PromoCodes />} />
+                  <Route path="special-packages" element={<SpecialPackages />} />
+                  <Route path="messengers" element={<Messengers />} />
+                  <Route path="bot-settings" element={<BotSettings />} />
+                  <Route path="settings" element={<Settings />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="" element={<Navigate to="clients" replace />} />
+                </Route>
+              ) : (
+                <Route path="/sales/*" element={<Navigate to={crmDisabledRedirectPath} replace />} />
+              )}
 
               {/* Legacy saler path redirect */}
               <Route
                 path="/saler/*"
-                element={<Navigate to="/sales/clients" replace />}
+                element={
+                  crmSuiteEnabled ? (
+                    <Navigate to="/sales/clients" replace />
+                  ) : (
+                    <Navigate to={crmDisabledRedirectPath} replace />
+                  )
+                }
               />
 
               {/* Marketer Routes - Protected */}
-              <Route
-                path="/marketer/*"
-                element={
-                  <ProtectedRoute
-                    isAuthenticated={!!currentUser}
-                    requiredRole="marketer"
-                    currentRole={currentUser?.role}
-                    currentUsername={currentUser?.username}
-                    secondaryRole={currentUser?.secondary_role}
-                    element={
-                      <UniversalLayout
-                        user={currentUser}
-                        onLogout={handleLogout}
-                      />
-                    }
-                  />
-                }
-              >
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="analytics" element={<Analytics />} />
-                <Route path="visitor-analytics" element={<VisitorAnalytics />} />
-                <Route path="funnel" element={<Funnel />} />
-                <Route path="clients" element={<Clients />} />
-                <Route path="tasks" element={<CRMTasks />} />
-                <Route path="services" element={<CRMServices />} />
-                <Route path="internal-chat" element={<InternalChat />} />
-                <Route path="promo-codes" element={<PromoCodes />} />
-                <Route path="special-packages" element={<SpecialPackages />} />
-                <Route path="notifications" element={<NotificationsPage />} />
-                <Route path="settings/:tab?" element={<Settings />} />
-                <Route path="" element={<Navigate to="dashboard" replace />} />
-              </Route>
+              {crmSuiteEnabled ? (
+                <Route
+                  path="/marketer/*"
+                  element={
+                    <ProtectedRoute
+                      isAuthenticated={!!currentUser}
+                      requiredRole="marketer"
+                      currentRole={currentUser?.role}
+                      currentUsername={currentUser?.username}
+                      secondaryRole={currentUser?.secondary_role}
+                      siteSuiteEnabled={siteSuiteEnabled}
+                      crmSuiteEnabled={crmSuiteEnabled}
+                      unauthenticatedPath={unauthenticatedCrmPath}
+                      element={
+                        <UniversalLayout
+                          user={currentUser}
+                          onLogout={handleLogout}
+                        />
+                      }
+                    />
+                  }
+                >
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="analytics" element={<Analytics />} />
+                  <Route path="visitor-analytics" element={<VisitorAnalytics />} />
+                  <Route path="funnel" element={<Funnel />} />
+                  <Route path="clients" element={<Clients />} />
+                  <Route path="tasks" element={<CRMTasks />} />
+                  <Route path="services" element={<CRMServices />} />
+                  <Route path="internal-chat" element={<InternalChat />} />
+                  <Route path="promo-codes" element={<PromoCodes />} />
+                  <Route path="special-packages" element={<SpecialPackages />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="settings/:tab?" element={<Settings />} />
+                  <Route path="" element={<Navigate to="dashboard" replace />} />
+                </Route>
+              ) : (
+                <Route path="/marketer/*" element={<Navigate to={crmDisabledRedirectPath} replace />} />
+              )}
 
               {/* Employee Routes - Protected */}
-              <Route
-                path="/employee/*"
-                element={
-                  <ProtectedRoute
-                    isAuthenticated={!!currentUser}
-                    requiredRole="employee"
-                    currentRole={currentUser?.role}
-                    currentUsername={currentUser?.username}
-                    secondaryRole={currentUser?.secondary_role}
-                    element={
-                      <UniversalLayout
-                        user={currentUser}
-                        onLogout={handleLogout}
-                      />
-                    }
-                  />
-                }
-              >
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="profile" element={<UniversalProfile />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="calendar" element={<Calendar employeeFilter={true} />} />
-                <Route path="bookings" element={<Bookings />} />
-                <Route path="tasks" element={<UniversalTasks />} />
-                <Route path="services" element={<Services />} />
-                <Route path="notifications" element={<NotificationsPage />} />
-                <Route path="internal-chat" element={<InternalChat />} />
-                <Route path="" element={<Navigate to="dashboard" replace />} />
-              </Route>
+              {crmSuiteEnabled ? (
+                <Route
+                  path="/employee/*"
+                  element={
+                    <ProtectedRoute
+                      isAuthenticated={!!currentUser}
+                      requiredRole="employee"
+                      currentRole={currentUser?.role}
+                      currentUsername={currentUser?.username}
+                      secondaryRole={currentUser?.secondary_role}
+                      siteSuiteEnabled={siteSuiteEnabled}
+                      crmSuiteEnabled={crmSuiteEnabled}
+                      unauthenticatedPath={unauthenticatedCrmPath}
+                      element={
+                        <UniversalLayout
+                          user={currentUser}
+                          onLogout={handleLogout}
+                        />
+                      }
+                    />
+                  }
+                >
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="profile" element={<UniversalProfile />} />
+                  <Route path="settings" element={<Settings />} />
+                  <Route path="calendar" element={<Calendar employeeFilter={true} />} />
+                  <Route path="bookings" element={<Bookings />} />
+                  <Route path="tasks" element={<UniversalTasks />} />
+                  <Route path="services" element={<Services />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="internal-chat" element={<InternalChat />} />
+                  <Route path="" element={<Navigate to="dashboard" replace />} />
+                </Route>
+              ) : (
+                <Route path="/employee/*" element={<Navigate to={crmDisabledRedirectPath} replace />} />
+              )}
 
               {/* New Public Routes (Standalone) */}
-              <Route element={<Outlet />}>
-              <Route path="/" element={<LandingPage />} />
-                <Route path="/ref/:shareToken" element={<LandingPage />} />
-                <Route path="/service/:category" element={<ServiceDetail />} />
-                <Route path="/service/:category/:service" element={<ProcedureDetail />} />
-                <Route path="/terms" element={<TermsOfUseNew />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
-                <Route path="/data-deletion" element={<DataDeletionNew />} />
-                <Route path="/unsubscribe" element={<Unsubscribe />} />
-                <Route
-                  path="/account/*"
-                  element={currentUser ? <AccountPage /> : <Navigate to="/login" replace />}
-                />
-                <Route path="/new-booking" element={<UserBookingWizard />} />
-              </Route>
+              {siteSuiteEnabled ? (
+                <Route element={<Outlet />}>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/ref/:shareToken" element={<LandingPage />} />
+                  <Route path="/service/:category" element={<ServiceDetail />} />
+                  <Route path="/service/:category/:service" element={<ProcedureDetail />} />
+                  <Route path="/terms" element={<TermsOfUseNew />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicyNew />} />
+                  <Route path="/data-deletion" element={<DataDeletionNew />} />
+                  <Route path="/unsubscribe" element={<Unsubscribe />} />
+                  <Route
+                    path="/account/*"
+                    element={currentUser ? <AccountPage /> : <Navigate to={unauthenticatedSitePath} replace />}
+                  />
+                  <Route path="/new-booking" element={<UserBookingWizard />} />
+                </Route>
+              ) : (
+                <>
+                  <Route path="/" element={<Navigate to={siteDisabledRedirectPath} replace />} />
+                  <Route path="/ref/:shareToken" element={<Navigate to={siteDisabledRedirectPath} replace />} />
+                  <Route path="/service/:category" element={<Navigate to={siteDisabledRedirectPath} replace />} />
+                  <Route path="/service/:category/:service" element={<Navigate to={siteDisabledRedirectPath} replace />} />
+                  <Route path="/terms" element={<Navigate to={siteDisabledRedirectPath} replace />} />
+                  <Route path="/privacy-policy" element={<Navigate to={siteDisabledRedirectPath} replace />} />
+                  <Route path="/data-deletion" element={<Navigate to={siteDisabledRedirectPath} replace />} />
+                  <Route path="/unsubscribe" element={<Navigate to={siteDisabledRedirectPath} replace />} />
+                  <Route path="/account/*" element={<Navigate to={siteDisabledRedirectPath} replace />} />
+                  <Route path="/new-booking" element={<Navigate to={siteDisabledRedirectPath} replace />} />
+                </>
+              )}
 
               {/* 404 Page - Returns 404 status for SEO */}
               <Route path="*" element={<NotFound />} />

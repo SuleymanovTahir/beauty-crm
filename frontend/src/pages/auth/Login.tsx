@@ -14,6 +14,12 @@ import { api } from "../../services/api";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
 import { useAuth } from "../../contexts/AuthContext";
 import GoogleLoginButton from "../../components/GoogleLoginButton";
+import {
+  DEFAULT_PLATFORM_GATES,
+  getUnauthenticatedCrmPathByGates,
+  getRoleHomePathByGates,
+  normalizePlatformGates,
+} from "../../utils/platformRouting";
 
 export default function Login() {
   const { login } = useAuth();
@@ -26,6 +32,13 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [salonSettings, setSalonSettings] = useState<any>(null);
+  const normalizedPlatformGates = React.useMemo(() => normalizePlatformGates(salonSettings), [salonSettings]);
+  const crmRegisterPath = React.useMemo(
+    () => normalizedPlatformGates.crm_enabled
+      ? "/crm/register"
+      : getUnauthenticatedCrmPathByGates(normalizedPlatformGates.site_enabled, normalizedPlatformGates.crm_enabled),
+    [normalizedPlatformGates.crm_enabled, normalizedPlatformGates.site_enabled],
+  );
 
   React.useEffect(() => {
     const fetchSalonSettings = async () => {
@@ -63,7 +76,19 @@ export default function Login() {
           `${t('welcome')} ${response.user.full_name || response.user.username
           }!`
         );
-        navigate("/crm/dashboard");
+        let gates = DEFAULT_PLATFORM_GATES;
+        try {
+          const gateResponse = await api.getPlatformGates();
+          gates = normalizePlatformGates(gateResponse);
+        } catch (gateError) {
+          console.error("Platform gate loading error:", gateError);
+        }
+        const targetPath = getRoleHomePathByGates(
+          response.user.role,
+          gates.site_enabled,
+          gates.crm_enabled,
+        );
+        navigate(targetPath);
       } else {
         // Проверяем, не подтвержден ли email
         if (response.error_type === "email_not_verified" && response.email) {
@@ -252,7 +277,7 @@ export default function Login() {
               type="button"
               variant="outline"
               className="w-full h-11 font-medium"
-              onClick={() => navigate("/register")}
+              onClick={() => navigate(crmRegisterPath)}
             >
               {t('no_account_register')}
             </Button>
