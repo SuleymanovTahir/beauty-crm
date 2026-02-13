@@ -580,7 +580,6 @@ async def update_user_role(
 @router.get("/users/{user_id}/profile")
 async def get_user_profile(
     user_id: int,
-    language: str = Query('ru', description="Language code"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить профиль пользователя"""
@@ -620,7 +619,7 @@ async def get_user_profile(
         "specialization": result[10],
         "phone": result[11],
         "birthday": result[12],
-        "position": _get_localized_position(result[0], result[1], result[13], language),
+        "position": result[13],
         "base_salary": result[14],
         "commission_rate": result[15],
         "secondary_role": result[16],
@@ -630,7 +629,6 @@ async def get_user_profile(
 @router.get("/users/by-username/{username}/profile")
 async def get_user_profile_by_username(
     username: str,
-    language: str = Query('ru', description="Language code"),
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить профиль пользователя по username"""
@@ -670,7 +668,7 @@ async def get_user_profile_by_username(
         "specialization": result[10],
         "phone": result[11],
         "birthday": result[12],
-        "position": _get_localized_position(result[0], result[1], result[13], language),
+        "position": result[13],
         "base_salary": result[14],
         "commission_rate": result[15],
         "secondary_role": result[16],
