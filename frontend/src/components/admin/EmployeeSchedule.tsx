@@ -73,6 +73,11 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         loadScheduleData();
     }, [employeeId]);
 
+    const closeTimeOffDialog = () => {
+        setShowTimeOffDialog(false);
+        setTimeOffForm({ id: null, start_date: '', end_date: '', type: 'vacation', reason: '' });
+    };
+
     // ✅ ДОБАВИТЬ: Загрузка дефолтных часов из API
     useEffect(() => {
         const loadDefaultHours = async () => {
@@ -105,7 +110,16 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
 
             // Load schedule
             const scheduleData = await api.get(`/api/schedule/user/${employeeId}`);
-            setSchedule(scheduleData || []);
+            const normalizedSchedule = Array.isArray(scheduleData) ? scheduleData : [];
+            if (normalizedSchedule.length === 0) {
+                const fallbackStartTime = `${autofillHours.start}:${autofillHours.startMin}`;
+                const fallbackEndTime = `${autofillHours.end}:${autofillHours.endMin}`;
+                const seededSchedule = buildScheduleFromPattern(schedulePattern, startingDate, fallbackStartTime, fallbackEndTime);
+                await api.put(`/api/schedule/user/${employeeId}`, { schedule: seededSchedule });
+                setSchedule(seededSchedule);
+            } else {
+                setSchedule(normalizedSchedule);
+            }
 
             // Load time-offs
             const timeOffData = await api.get(`/api/schedule/user/${employeeId}/time-off`);
@@ -129,26 +143,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
         try {
             const startTime = `${autofillHours.start}:${autofillHours.startMin}`;
             const endTime = `${autofillHours.end}:${autofillHours.endMin}`;
-
-            // Create schedule for all working days (Mon-Fri by default)
-            const newSchedule: ScheduleEntry[] = [];
-            for (let day = 0; day < 5; day++) { // Mon-Fri
-                newSchedule.push({
-                    day_of_week: day,
-                    start_time: startTime,
-                    end_time: endTime,
-                    is_working: true
-                });
-            }
-            // Weekend as non-working
-            for (let day = 5; day < 7; day++) {
-                newSchedule.push({
-                    day_of_week: day,
-                    start_time: defaultHours.start,
-                    end_time: defaultHours.end,
-                    is_working: false
-                });
-            }
+            const newSchedule = buildScheduleFromPattern(schedulePattern, startingDate, startTime, endTime);
 
             await api.put(`/api/schedule/user/${employeeId}`, { schedule: newSchedule });
             setSchedule(newSchedule);
@@ -255,6 +250,41 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
 
         // Redirect to new-booking with masterId and datetime
         navigate(`/new-booking?booking=services&masterId=${employeeId}&date=${dateStr}&time=${timeStr}`);
+    };
+
+    const buildScheduleFromPattern = (
+        patternValue: string,
+        startDateValue: string,
+        workStartTime: string,
+        workEndTime: string
+    ): ScheduleEntry[] => {
+        const [workRaw, offRaw] = patternValue.split('/');
+        const parsedWorkDays = Number.parseInt(workRaw, 10);
+        const parsedOffDays = Number.parseInt(offRaw, 10);
+        const safeWorkDays = Number.isFinite(parsedWorkDays) && parsedWorkDays > 0 ? parsedWorkDays : 5;
+        const safeOffDays = Number.isFinite(parsedOffDays) && parsedOffDays > 0 ? parsedOffDays : 2;
+        const workDays = Math.max(1, safeWorkDays);
+        const offDays = Math.max(1, safeOffDays);
+        const cycleLength = workDays + offDays;
+
+        const startDate = new Date(`${startDateValue}T00:00:00`);
+        const templateWeekStart = getWeekStart(startDate);
+        const dayInMs = 24 * 60 * 60 * 1000;
+
+        return Array.from({ length: 7 }, (_, dayOfWeek) => {
+            const dateForDay = new Date(templateWeekStart);
+            dateForDay.setDate(templateWeekStart.getDate() + dayOfWeek);
+            const diffDays = Math.floor((dateForDay.getTime() - startDate.getTime()) / dayInMs);
+            const normalizedCycleDay = ((diffDays % cycleLength) + cycleLength) % cycleLength;
+            const isWorking = normalizedCycleDay < workDays;
+
+            return {
+                day_of_week: dayOfWeek,
+                start_time: isWorking ? workStartTime : defaultHours.start,
+                end_time: isWorking ? workEndTime : defaultHours.end,
+                is_working: isWorking
+            };
+        });
     };
 
     // Helper functions
@@ -658,14 +688,17 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
 
             {/* Time-Off Dialog */}
             {showTimeOffDialog && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                <div
+                    className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                    onClick={closeTimeOffDialog}
+                >
+                    <div
+                        className="bg-white rounded-lg p-6 w-full max-w-md"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold">{timeOffForm.id ? t('edit_time_off', 'Edit Time-off') : t('add_time_off', 'Add Time-off')}</h3>
-                            <Button variant="ghost" size="sm" onClick={() => {
-                                setShowTimeOffDialog(false);
-                                setTimeOffForm({ id: null, start_date: '', end_date: '', type: 'vacation', reason: '' });
-                            }}>
+                            <Button variant="ghost" size="sm" onClick={closeTimeOffDialog}>
                                 <X className="w-4 h-4" />
                             </Button>
                         </div>
@@ -721,8 +754,7 @@ export function EmployeeSchedule({ employeeId, employee }: EmployeeScheduleProps
                                 {timeOffForm.id ? t('edit_save', 'Save') : t('add', 'Add')}
                             </Button>
                             <Button variant="outline" onClick={() => {
-                                setShowTimeOffDialog(false);
-                                setTimeOffForm({ id: null, start_date: '', end_date: '', type: 'vacation', reason: '' });
+                                closeTimeOffDialog();
                             }} className="flex-1">
                                 {t('cancel', 'Cancel')}
                             </Button>

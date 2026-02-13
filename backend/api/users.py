@@ -194,6 +194,7 @@ async def get_user_by_id(
                 photo, is_active, is_service_provider,
                 created_at,
                 years_of_experience, specialization, telegram_username,
+                nickname,
                 base_salary, commission_rate
             FROM users
             WHERE id = %s
@@ -221,8 +222,9 @@ async def get_user_by_id(
             "years_of_experience": row[12],
             "specialization": row[13],
             "telegram": row[14],
-            "base_salary": row[15],
-            "commission_rate": row[16]
+            "nickname": row[15],
+            "base_salary": row[16],
+            "commission_rate": row[17]
         }
 
         return user_data
@@ -785,7 +787,7 @@ async def update_user_profile(
         c.execute("""
             SELECT username, full_name, email, position, photo, bio, specialization,
                    years_of_experience, phone, birthday, base_salary, commission_rate,
-                   telegram_id, instagram_username, is_public_visible, sort_order, secondary_role
+                   telegram_id, instagram_username, is_public_visible, sort_order, secondary_role, nickname
             FROM users WHERE id = %s
         """, (user_id,))
         curr = c.fetchone()
@@ -815,6 +817,7 @@ async def update_user_profile(
         is_public_visible = data.get('is_public_visible', curr[14])
         sort_order = data.get('sort_order', curr[15])
         secondary_role = data.get('secondary_role', curr[16])
+        nickname = data.get('nickname', curr[17])
         
         # Handle years_of_experience specially due to conversion
         if 'years_of_experience' in data:
@@ -862,10 +865,10 @@ async def update_user_profile(
                SET username = %s, full_name = %s, email = %s, position = %s, photo = %s,
                    bio = %s, specialization = %s, years_of_experience = %s, phone = %s, birthday = %s,
                    base_salary = %s, commission_rate = %s, telegram_id = %s, instagram_username = %s,
-                   is_public_visible = %s, sort_order = %s, secondary_role = %s
+                   is_public_visible = %s, sort_order = %s, secondary_role = %s, nickname = %s
                WHERE id = %s""",
             (username, full_name, email, position, photo, bio, specialization, years_of_experience, phone, birthday,
-             base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, secondary_role, user_id))
+             base_salary, commission_rate, telegram_id, instagram_username, is_public_visible, sort_order, secondary_role, nickname, user_id))
         
         conn.commit()
 

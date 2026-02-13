@@ -1,3 +1,20 @@
+## [2026-02-13] Team Calendar UX + Auto Schedule Defaults + Nickname Sync
+- Restored expected team schedule workflow in CRM employee management:
+  - schedule modal now closes on backdrop click (`ScheduleDialog`),
+  - added employee avatar in schedule modal header (photo with dynamic fallback).
+- Improved schedule autofill behavior in employee calendar:
+  - `EmployeeSchedule` now applies selected pattern (`5/2`, `2/2`, etc.) using the chosen start date and working hours,
+  - added automatic initial schedule seeding in backend when `user_schedule` has no rows:
+    - default pattern: `5/2`,
+    - hours source: `salon_settings.hours_weekdays/hours_weekends` with safe fallbacks.
+- Added modal backdrop-close consistency for nested calendar time-off editor:
+  - time-off form overlay now closes on outside click.
+- Fixed missing nickname data in employee information tab:
+  - `/api/users/{id}` now returns `nickname`,
+  - `/api/users/{id}/update-profile` now persists `nickname`.
+- Reduced English role fallbacks in team views:
+  - added explicit `owner` role mapping to localized director label in team lists/details.
+
 ## [2026-02-13] Strict Media Source Rules + Staff Contacts in DB Init
 - Enforced strict media sources for public landing:
   - `backend/scripts/maintenance/fix_data.py` now syncs gallery only from:

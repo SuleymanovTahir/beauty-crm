@@ -52,6 +52,9 @@ export default function EmployeeDetail() {
 
     const getLocalizedRole = (role?: string) => {
         if (!role) return '';
+        if (role === 'owner') {
+            return t('common:role_director');
+        }
         return t(`common:role_${role}`, role);
     };
 
