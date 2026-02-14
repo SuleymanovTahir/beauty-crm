@@ -1,11 +1,3 @@
-  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/diagnostics/verify_backend.py`
-  - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/diagnostics/verify_backend.py`
-- Валидация:
-  - `npm --prefix crm/frontend run type-check` passed.
-  - `npm --prefix site/frontend run type-check` passed.
-  - `python3 crm/backend/scripts/diagnostics/verify_backend.py --boundaries` passed.
-  - `python3 site/backend/scripts/diagnostics/verify_backend.py --boundaries` passed.
-
 ## [2026-02-14] Hotfix: WS Routing + Public Slots + Landing Console Noise
 - WebSocket routing fixed for split deploy in frontend API client:
   - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/crm/api/client.ts`
@@ -498,3 +490,11 @@
   - CRM backend keeps `crm_api` namespace only (no `site_api` imports).
 - Validation:
   - `npm run build` passes for both `crm/frontend` and `site/frontend` after isolation changes.
+
+## [2026-02-14] Boundary Cleanup Wave 2
+- Site frontend: replaced `@crm/*` imports with `@site/*`, removed unused CRM-only component trees and dead auth files.
+- Site frontend layout: rewritten to site-only admin navigation; removed WebRTC/messenger/unread polling dependencies that caused 404 in site runtime.
+- API routing: both frontends now use plain `/api/*` (optional `VITE_API_PATH_PREFIX`), no internal `/api/crm` or `/api/site` split logic.
+- Site backend: mounted site-admin routers (admin features + notifications + WS) and removed CRM links/channels (`/crm/*`, `crm:*`) from runtime paths.
+- Backend asset paths updated to flattened source structure (no `src/site` or `src/crm` assumptions).
+- Validation: `npm run build` for both frontends and `python3 -m py_compile` for modified backend files passed.

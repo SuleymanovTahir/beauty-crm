@@ -27,7 +27,6 @@ import {
     Phone,
     Trash2,
     ShieldCheck,
-    Globe,
     Bot,
     CreditCard,
     Store,
@@ -202,8 +201,6 @@ export const buildAdminMenuCatalog = ({
         'challenges': { icon: Target, label: t('layouts/adminpanellayout:menu.challenges'), path: '/admin/challenges', req: () => true },
         'promo-codes': { icon: Ticket, label: t('layouts/mainlayout:menu.promo_codes'), path: '/admin/promo-codes', req: () => true },
         'gallery': { icon: ImageIcon, label: t('layouts/adminpanellayout:menu.photo_gallery'), path: '/admin/gallery', req: () => true },
-        'public-content': { icon: Globe, label: t('menu.public_content'), path: '/admin/public-content', req: () => true },
-        'visitor-analytics': { icon: Users, label: t('menu.visitors'), path: '/admin/visitor-analytics', req: () => true },
         'broadcasts': { icon: Send, label: t('menu.broadcasts'), path: '/admin/broadcasts', req: () => true },
         'notifications': { icon: Bell, label: t('layouts/adminpanellayout:menu.notifications'), path: '/admin/notifications', req: () => true },
         'settings': { icon: Settings, label: t('menu.settings'), path: '/admin/settings', req: () => true },
@@ -627,7 +624,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         const pathSegments = location.pathname.split('/').filter((segment) => segment.length > 0);
 
         const getPathTabValue = (): string | null => {
-            const tabParentRoutes = ['settings', 'bot-settings', 'public-content'];
+            const tabParentRoutes = ['settings', 'bot-settings'];
 
             for (const parentRoute of tabParentRoutes) {
                 const routeIndex = pathSegments.indexOf(parentRoute);
