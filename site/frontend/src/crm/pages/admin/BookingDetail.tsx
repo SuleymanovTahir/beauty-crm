@@ -66,7 +66,7 @@ export default function BookingDetail() {
   const [masters, setMasters] = useState<User[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t, i18n } = useTranslation(['admin/bookingdetail', 'common', 'bookings', 'admin/services']);
+  const { t, i18n } = useTranslation(['admin/bookingdetail', 'common', 'bookings', 'admin/services', 'dynamic']);
   const { formatCurrency } = useCurrency();
   const [updating, setUpdating] = useState(false);
   const [newStatus, setNewStatus] = useState('');
@@ -450,6 +450,78 @@ export default function BookingDetail() {
     return '';
   };
 
+  const isValidTranslationValue = (value: string, key: string): boolean => {
+    const normalizedValue = value.trim();
+    if (normalizedValue.length === 0) {
+      return false;
+    }
+    return normalizedValue !== key;
+  };
+
+  const findServiceByAnyKey = (rawService: string): Service | undefined => {
+    const normalizedRawService = rawService.trim().toLowerCase();
+    if (normalizedRawService.length === 0) {
+      return undefined;
+    }
+
+    return services.find((serviceItem) => {
+      const serviceName = String(serviceItem?.name ?? '').trim().toLowerCase();
+      const serviceKey = String(serviceItem?.service_key ?? '').trim().toLowerCase();
+      const serviceId = String(serviceItem?.id ?? '').trim().toLowerCase();
+      return serviceName === normalizedRawService || serviceKey === normalizedRawService || serviceId === normalizedRawService;
+    });
+  };
+
+  const getServiceLabel = (serviceItem: Service | undefined, fallbackRawService: string): string => {
+    const normalizedFallbackService = fallbackRawService.trim();
+
+    if (typeof serviceItem !== 'undefined') {
+      const serviceKey = String(serviceItem.service_key ?? '').trim();
+      if (serviceKey.length > 0) {
+        const keyTranslationPath = `dynamic:services.${serviceKey}.name`;
+        const translatedByKey = t(keyTranslationPath, { defaultValue: '' });
+        if (isValidTranslationValue(translatedByKey, keyTranslationPath)) {
+          return translatedByKey;
+        }
+      }
+
+      const serviceId = String(serviceItem.id ?? '').trim();
+      if (serviceId.length > 0) {
+        const idTranslationPath = `dynamic:services.${serviceId}.name`;
+        const translatedById = t(idTranslationPath, { defaultValue: '' });
+        if (isValidTranslationValue(translatedById, idTranslationPath)) {
+          return translatedById;
+        }
+      }
+
+      const canonicalName = String(serviceItem.name ?? '').trim();
+      if (canonicalName.length > 0) {
+        return canonicalName;
+      }
+    }
+
+    const normalizedServiceKey = normalizedFallbackService.toLowerCase().replace(/\s+/g, '_');
+    if (normalizedServiceKey.length > 0) {
+      const adminTranslationPath = `admin/services:${normalizedServiceKey}`;
+      const translatedByAdminKey = t(adminTranslationPath, { defaultValue: '' });
+      if (isValidTranslationValue(translatedByAdminKey, adminTranslationPath)) {
+        return translatedByAdminKey;
+      }
+    }
+
+    return normalizedFallbackService;
+  };
+
+  const resolveBookingServiceLabel = (): string => {
+    const rawService = String(booking.service ?? '').trim();
+    if (rawService.length === 0) {
+      return t('common:not_specified');
+    }
+
+    const matchedService = findServiceByAnyKey(rawService);
+    return getServiceLabel(matchedService, rawService);
+  };
+
   return (
     <div className="p-8">
       {/* Header */}
@@ -561,9 +633,9 @@ export default function BookingDetail() {
                         <SelectValue placeholder={t('bookings:select_service')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {services.map(s => (
-                          <SelectItem key={s.id} value={s.name}>
-                            {i18n.language.startsWith('ru') && s.name ? s.name : s.name} ({formatCurrency(s.price ?? 0)})
+                        {services.map((serviceItem) => (
+                          <SelectItem key={serviceItem.id} value={serviceItem.name}>
+                            {getServiceLabel(serviceItem, serviceItem.name)} ({formatCurrency(serviceItem.price ?? 0)})
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -575,23 +647,7 @@ export default function BookingDetail() {
                       onClick={() => navigate('/crm/bookings')}
                       title={t('common:view_bookings', 'Посмотреть записи')}
                     >
-                      {(() => {
-                        const serviceName = (booking.service || '').trim();
-                        const s = services.find(serv => serv.name === serviceName || serv.service_key === serviceName || serv.name === serviceName);
-                        if (i18n.language.startsWith('ru') && s?.name) {
-                          return s.name;
-                        }
-
-                        // Try translating with explicit namespace alias 'services'
-                        let translated = t(`services:${serviceName}`, { defaultValue: '' });
-                        if (!translated) {
-                          translated = t(`admin/services:${serviceName}`, { defaultValue: '' });
-                        }
-
-                        if (translated) return translated;
-
-                        return serviceName;
-                      })()}
+                      {resolveBookingServiceLabel()}
                     </p>
                   )}
 

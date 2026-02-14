@@ -10,7 +10,6 @@ import { useAuth } from '@crm/contexts/AuthContext';
 import { api } from '@crm/services/api';
 import { useSalonSettings } from '../hooks/useSalonSettings';
 import { DEFAULT_VALUES } from '../utils/constants';
-import logo from '../styles/img/logo.png';
 import PublicLanguageSwitcher from '@crm/components/PublicLanguageSwitcher';
 import { validatePhone } from '../utils/validation';
 import HCaptcha from "@hcaptcha/react-hcaptcha";
@@ -23,6 +22,7 @@ import '../styles/css/index.css';
 
 // hCaptcha Site Key: задайте VITE_HCAPTCHA_SITE_KEY в .env. Без ключа — тестовый. Инструкция: docs/HCAPTCHA_KEYS.md
 const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY || "10000000-ffff-ffff-ffff-000000000001";
+const FALLBACK_LOGO_URL = '/landing-images/logo.png';
 
 interface LoginPageProps {
   initialView?: 'login' | 'register';
@@ -347,7 +347,7 @@ export function LoginPage({ initialView = 'login' }: LoginPageProps) {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <img
-            src={salonSettings?.logo_url || logo}
+            src={salonSettings?.logo_url && salonSettings.logo_url.trim().length > 0 ? salonSettings.logo_url : FALLBACK_LOGO_URL}
             alt={salonSettings?.name || DEFAULT_VALUES.DEFAULT_SALON_NAME_ALT}
             className="h-16 w-auto mx-auto mb-4 object-contain"
           />

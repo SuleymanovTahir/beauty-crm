@@ -27,9 +27,41 @@ interface StatusSelectProps {
 export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, showAllOption, variant = 'default' }: StatusSelectProps) {
   const { t } = useTranslation(['components', 'common', 'clients', 'admin/Clients']);
 
-  const currentStatus = value === 'all'
-    ? { label: t('all_statuses'), color: 'gray' }
-    : (options[value] || { label: value, color: 'gray' });
+  const normalizeStatusKey = (rawValue: string): string => {
+    return String(rawValue).trim().toLowerCase().replace(/[\s-]+/g, '_');
+  };
+
+  const resolveCurrentStatus = (): StatusConfig => {
+    if (value === 'all') {
+      return { label: t('all_statuses'), color: 'gray' };
+    }
+
+    const directMatch = options[value];
+    if (typeof directMatch !== 'undefined') {
+      return directMatch;
+    }
+
+    const normalizedValue = normalizeStatusKey(value);
+    const normalizedMatch = Object.entries(options).find(([optionKey]) => {
+      return normalizeStatusKey(optionKey) === normalizedValue;
+    });
+    if (typeof normalizedMatch !== 'undefined') {
+      return normalizedMatch[1];
+    }
+
+    const statusTranslationKey = `common:status_${normalizedValue}`;
+    const translatedStatus = normalizedValue.length > 0
+      ? t(statusTranslationKey, { defaultValue: '' })
+      : '';
+    const hasTranslatedStatus = translatedStatus.trim().length > 0 && translatedStatus !== statusTranslationKey;
+
+    return {
+      label: hasTranslatedStatus ? translatedStatus : value,
+      color: 'gray',
+    };
+  };
+
+  const currentStatus = resolveCurrentStatus();
 
   // Helper to get color classes because the backend might return simplified color names
   const getColorClasses = (color: string) => {
@@ -45,7 +77,11 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
       pink: 'bg-pink-100 text-pink-800',
       gray: 'bg-gray-100 text-gray-800',
     };
-    return colors[color] || colors.gray;
+    const mappedColor = colors[color];
+    if (typeof mappedColor === 'string') {
+      return mappedColor;
+    }
+    return colors.gray;
   };
 
   const getCircleColor = (color: string) => {

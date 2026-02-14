@@ -322,7 +322,9 @@ def _register_middlewares(app: FastAPI):
 def _register_static_assets(app: FastAPI):
     app.mount("/static", ModernStaticFiles(directory=str(BASE_DIR / "static")), name="static")
 
+    workspace_root = BASE_DIR.parent.parent
     frontend_img_candidates = [
+        workspace_root / "site" / "frontend" / "src" / "site" / "public_landing" / "styles" / "img",
         FRONTEND_DIR / "src" / "site" / "public_landing" / "styles" / "img",
         FRONTEND_DIR / "public_landing" / "styles" / "img",
     ]

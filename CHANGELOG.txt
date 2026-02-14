@@ -1,3 +1,24 @@
+## [2026-02-14] Hotfix: Status Translation + BookingDetail Service i18n + Unsubscribed Date Filter + CRM Landing Assets Dedup
+- Исправлен показ выбранного статуса в селекте без сырого `pending_confirmation` fallback:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/crm/components/shared/StatusSelect.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/crm/components/shared/StatusSelect.tsx`
+  - добавлена нормализация ключей статуса и безопасный `common:status_*` перевод.
+- Исправлен перевод услуги в деталке записи `/crm/bookings/:id`:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/crm/pages/admin/BookingDetail.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/crm/pages/admin/BookingDetail.tsx`
+  - резолвер: `dynamic:services.<service_key|id>.name` -> `admin/services:<normalized_name>` -> canonical DB name.
+- Добавлена фильтрация отписавшихся по диапазону дат и унифицирован формат даты отписки:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/crm/pages/admin/Broadcasts.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/crm/pages/admin/Broadcasts.tsx`
+- Убрано дублирование landing-изображений в CRM:
+  - удалено содержимое `crm/frontend/src/site/public_landing/styles/img/*`;
+  - `crm/frontend/public/landing-images` теперь symlink на `site/frontend/src/site/public_landing/styles/img`;
+  - обновлены fallback-пути в `crm/backend/main.py` и `crm/backend/utils/utils.py`.
+- Валидация:
+  - `npm --prefix crm/frontend run build` passed.
+  - `npm --prefix site/frontend run build` passed.
+  - `python3 -m py_compile crm/backend/main.py crm/backend/utils/utils.py` passed.
+
 ## [2026-02-14] Hotfix: CRM Admin Redirect Removal + Booking Services Translation + Changelog Guard
 - Убран межконтурный редирект из CRM в Site Admin:
   - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/App.tsx`
@@ -477,24 +498,3 @@
     - `frontend/src/pages/adminPanel/NotificationsDashboard.tsx`,
     - `frontend/src/pages/shared/Referrals.tsx`,
     - `frontend/src/pages/shared/Services.tsx`,
-    - `frontend/src/pages/shared/Challenges.tsx`,
-    - `frontend/src/pages/admin/ServiceChangeRequests.tsx`,
-    - `frontend/src/pages/admin/PendingRegistrations.tsx`,
-    - `frontend/src/components/shared/InternalChatWithWebRTC.tsx`,
-    - `frontend/src/pages/shared/Chat.tsx`,
-    - `frontend/src/pages/admin/BotSettings.tsx`.
-  - Updated local API wrapper in `frontend/src/pages/shared/Bookings.tsx` to build all URLs through `buildApiUrl(..., this.baseURL)`.
-  - Updated public-landing API calls in:
-    - `frontend/public_landing/pages/ProcedureDetail.tsx`,
-    - `frontend/public_landing/pages/ServiceDetail.tsx`,
-    - `frontend/public_landing/components/Services.tsx`,
-    - `frontend/public_landing/utils/analytics.ts`.
-  - Updated additional public-landing `safeFetch` calls to namespace-aware URLs in:
-    - `frontend/public_landing/pages/account/booking/ServicesStep.tsx`,
-    - `frontend/public_landing/hooks/useSalonInfo.ts`,
-    - `frontend/public_landing/pages/TermsOfUse.tsx`,
-    - `frontend/public_landing/components/FAQ.tsx`,
-    - `frontend/public_landing/components/Portfolio.tsx`,
-    - `frontend/public_landing/components/CookieConsent.tsx`,
-    - `frontend/public_landing/components/TeamSection.tsx`,
-    - `frontend/public_landing/components/Footer.tsx`,
