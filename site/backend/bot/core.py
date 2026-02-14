@@ -466,7 +466,7 @@ class SalonBot:
                 
                 # Уведомляем менеджеров
                 try:
-                    from crm_api.notifications import create_notification
+                    from api.notifications import create_notification
                     from db.users import get_all_users
                     
                     users = get_all_users()
@@ -1218,7 +1218,7 @@ class SalonBot:
             print(f"🔔 Bot promised escalation! Checking if notification needed...")
             
             try:
-                from crm_api.notifications import create_notification
+                from api.notifications import create_notification
                 from db.users import get_all_users
                 from db.clients import get_client_by_id
                 

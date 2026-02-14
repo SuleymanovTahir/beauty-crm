@@ -27,7 +27,7 @@ from db.bookings import (
 from bot import get_bot
 from integrations import send_message, send_typing_indicator
 from utils.logger import logger, log_info, log_warning, log_error
-from crm_api.chat_ws import notify_new_message
+from api.chat_ws import notify_new_message
 
 router = APIRouter(tags=["Webhooks"])
 
@@ -167,7 +167,7 @@ async def process_message_background(messaging_event: dict):
         if sender_action:
             is_typing = sender_action == "typing_on"
             logger.info(f"⌨️ Client {sender_id} is typing: {is_typing}")
-            from crm_api.chat_ws import notify_typing
+            from api.chat_ws import notify_typing
             await notify_typing(sender_id, is_typing)
             return
 
@@ -507,7 +507,7 @@ async def process_message_background(messaging_event: dict):
             
             if is_corporate:
                 # Уведомляем менеджера
-                from crm_api.notifications import create_notification
+                from api.notifications import create_notification
                 from db.users import get_all_users
                 
                 users = get_all_users()

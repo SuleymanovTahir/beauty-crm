@@ -12,7 +12,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from db.connection import get_db_connection
 from services.universal_messenger import send_universal_message
-from crm_api.broadcasts import BroadcastRequest, process_broadcast_sending
+from api.broadcasts import BroadcastRequest, process_broadcast_sending
 from utils.logger import log_info, log_error
 
 async def run_notifications_test():

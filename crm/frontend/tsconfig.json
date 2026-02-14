@@ -28,10 +28,10 @@
         "./src/*"
       ],
       "@crm/*": [
-        "./src/crm/*"
+        "./src/*"
       ],
       "@site/*": [
-        "../../site/frontend/src/site/*"
+        "../../site/frontend/src/*"
       ],
       "@beauty-crm/shared": [
         "./shared/src/index.ts"
@@ -47,8 +47,7 @@
     "create-locale-structure.js"
   ],
   "exclude": [
-    "src/tests",
-    "src/crm/tests"
+    "src/tests"
   ],
   "references": [
     {

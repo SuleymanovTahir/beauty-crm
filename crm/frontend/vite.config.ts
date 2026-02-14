@@ -7,7 +7,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const EXTERNAL_SITE_SRC = path.resolve(__dirname, "../../site/frontend/src/site");
+const EXTERNAL_SITE_SRC = path.resolve(__dirname, "../../site/frontend/src");
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -119,7 +119,7 @@ export default defineConfig(({ mode }) => {
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@crm": path.resolve(__dirname, "./src/crm"),
+      "@crm": path.resolve(__dirname, "./src"),
       "@site": EXTERNAL_SITE_SRC,
       "@beauty-crm/shared": path.resolve(__dirname, "./shared/src"),
     },
@@ -212,7 +212,7 @@ export default defineConfig(({ mode }) => {
         // Разделить vendor код на отдельные чанки (оптимизация для производительности)
         manualChunks: (id, { getModuleInfo }) => {
           // Переводы в отдельный чанк
-          if (id.includes("/src/crm/locales/")) {
+          if (id.includes("/src/locales/")) {
             return "locales-data";
           }
 

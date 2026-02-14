@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime, timedelta
 from db.connection import get_db_connection
-from crm_api.notifications import create_notification
+from api.notifications import create_notification
 from utils.logger import log_info, log_error
 
 async def check_tasks_due():

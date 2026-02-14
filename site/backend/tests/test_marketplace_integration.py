@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from tests.test_date_utils import get_test_date, get_test_datetime
 
 from db.connection import get_db_connection
-from crm_api.marketplace_integrations import (
+from api.marketplace_integrations import (
     normalize_booking_data,
     resolve_service_name,
     create_booking_from_marketplace,

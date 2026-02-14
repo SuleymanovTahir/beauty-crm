@@ -1,1 +1,1 @@
-import '../../../site/frontend/src/site/public_landing/main';
+import '../../../site/frontend/src/public_landing/main';
