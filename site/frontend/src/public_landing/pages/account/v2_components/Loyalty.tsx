@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Star, TrendingUp, Gift, Copy, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { apiClient } from '@crm/api/client';
+import { apiClient } from '@site/api/client';
 import { toast } from 'sonner';
-import { useCurrency } from '@crm/hooks/useSalonSettings';
+import { useCurrency } from '@site/hooks/useSalonSettings';
 import { formatInstagramUrl, formatWhatsAppUrlWithText } from '../../../utils/urlUtils';
 import { useSalonSettings } from '../../../hooks/useSalonSettings';
 

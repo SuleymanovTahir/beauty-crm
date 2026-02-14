@@ -37,7 +37,7 @@ class NotificationsConnectionManager:
 
     async def send_to_user(self, user_id: int, message: dict):
         """Публикуем уведомление в Redis для доставки на все воркеры"""
-        published = await redis_pubsub.publish(f"crm:notifications:user:{user_id}", message)
+        published = await redis_pubsub.publish(f"site:notifications:user:{user_id}", message)
         if not published:
             await self.send_to_user_local(user_id, message)
 
@@ -57,7 +57,7 @@ class NotificationsConnectionManager:
 
     async def broadcast_to_all(self, message: dict):
         """Публикуем шировещательное уведомление в Redis"""
-        published = await redis_pubsub.publish("crm:notifications:broadcast", message)
+        published = await redis_pubsub.publish("site:notifications:broadcast", message)
         if not published:
             await self.broadcast_to_all_local(message)
 
@@ -71,9 +71,9 @@ notifications_manager = NotificationsConnectionManager()
 
 # Регистрация обработчика сообщений из Redis
 async def notifications_pubsub_handler(channel: str, data: dict):
-    if channel == "crm:notifications:broadcast":
+    if channel == "site:notifications:broadcast":
         await notifications_manager.broadcast_to_all_local(data)
-    elif channel.startswith("crm:notifications:user:"):
+    elif channel.startswith("site:notifications:user:"):
         try:
             user_id = int(channel.split(":")[-1])
             await notifications_manager.send_to_user_local(user_id, data)
@@ -81,7 +81,7 @@ async def notifications_pubsub_handler(channel: str, data: dict):
             log_error(f"Invalid notifications user channel: {channel}", "notifications")
 
 # Регистрируем префикс для этого модуля
-redis_pubsub.register_handler("crm:notifications:", notifications_pubsub_handler)
+redis_pubsub.register_handler("site:notifications:", notifications_pubsub_handler)
 
 
 @router.websocket("/notifications")

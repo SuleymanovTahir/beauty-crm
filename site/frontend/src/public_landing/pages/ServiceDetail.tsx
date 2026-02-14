@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "../components/ui/button";
-import { useCurrency } from "@crm/hooks/useSalonSettings";
+import { useCurrency } from "@site/hooks/useSalonSettings";
 import { getApiUrl } from "../utils/apiUtils";
 import { BookingSection } from "../components/BookingSection";
 import { safeFetch } from "../utils/errorHandler";
@@ -29,7 +29,7 @@ import {
     syncHtmlLanguageMeta,
     syncLanguageQueryParam,
 } from "../utils/urlUtils";
-import { buildApiUrl } from "@crm/api/client";
+import { buildApiUrl } from "@site/api/client";
 
 type SeoMetadata = {
     salon_name?: string;

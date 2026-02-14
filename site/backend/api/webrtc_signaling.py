@@ -85,7 +85,7 @@ class ConnectionManager:
 
     async def send_to_user(self, user_id: int, message: dict):
         """Публикуем сообщение в Redis для доставки пользователю на любой воркер"""
-        published = await redis_pubsub.publish(f"crm:webrtc:user:{user_id}", message)
+        published = await redis_pubsub.publish(f"site:webrtc:user:{user_id}", message)
         if not published:
             return await self.send_to_user_local(user_id, message)
         return True
@@ -113,7 +113,7 @@ class ConnectionManager:
 
     async def broadcast(self, message: dict):
         """Публикуем сообщение в Redis для рассылки всем воркерам"""
-        published = await redis_pubsub.publish("crm:webrtc:broadcast", message)
+        published = await redis_pubsub.publish("site:webrtc:broadcast", message)
         if not published:
             await self.broadcast_local(message)
 
@@ -148,9 +148,9 @@ async def webrtc_pubsub_handler(channel: str, data: dict):
     Обработчик сообщений WebRTC из Redis.
     Маршрутизирует сообщения на локальные WebSocket соединения.
     """
-    if channel == "crm:webrtc:broadcast":
+    if channel == "site:webrtc:broadcast":
         await manager.broadcast_local(data)
-    elif channel.startswith("crm:webrtc:user:"):
+    elif channel.startswith("site:webrtc:user:"):
         try:
             user_id = int(channel.split(":")[-1])
             await manager.send_to_user_local(user_id, data)
@@ -158,7 +158,7 @@ async def webrtc_pubsub_handler(channel: str, data: dict):
             log_error(f"Invalid WebRTC user channel: {channel}", "webrtc")
 
 # Регистрируем префикс для этого модуля
-redis_pubsub.register_handler("crm:webrtc:", webrtc_pubsub_handler)
+redis_pubsub.register_handler("site:webrtc:", webrtc_pubsub_handler)
 
 
 @router.websocket("/signal")

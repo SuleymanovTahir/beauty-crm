@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Ticket, Percent, Coins, Search, Loader, Gift, Tag } from 'lucide-react';
-import { api } from '@crm/services/api';
-import { apiClient } from '@crm/api/client';
+import { api } from '@site/services/api';
+import { apiClient } from '@site/api/client';
 import { Button } from '@site/public_landing/components/ui/button';
 import { Input } from '@site/public_landing/components/ui/input';
 import { toast } from 'sonner';
-import { useCurrency } from '@crm/hooks/useSalonSettings';
+import { useCurrency } from '@site/hooks/useSalonSettings';
 
 interface PromoCode {
     id: number;

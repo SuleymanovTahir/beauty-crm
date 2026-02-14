@@ -4,7 +4,7 @@
 
 import { config } from './config';
 import { safeFetch } from './errorHandler';
-import { buildApiUrl } from '@crm/api/client';
+import { buildApiUrl } from '@site/api/client';
 
 /**
  * Получает базовый URL API

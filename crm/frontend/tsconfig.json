@@ -30,9 +30,6 @@
       "@crm/*": [
         "./src/*"
       ],
-      "@site/*": [
-        "../../site/frontend/src/*"
-      ],
       "@beauty-crm/shared": [
         "./shared/src/index.ts"
       ],

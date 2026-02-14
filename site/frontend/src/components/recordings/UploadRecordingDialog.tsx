@@ -7,17 +7,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@crm/components/ui/dialog';
-import { Button } from '@crm/components/ui/button';
-import { Input } from '@crm/components/ui/input';
-import { Label } from '@crm/components/ui/label';
+} from '@site/components/ui/dialog';
+import { Button } from '@site/components/ui/button';
+import { Input } from '@site/components/ui/input';
+import { Label } from '@site/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@crm/components/ui/select';
+} from '@site/components/ui/select';
 import { Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { buildApiUrl } from '../../api/client';

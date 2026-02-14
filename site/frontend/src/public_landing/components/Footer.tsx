@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useSalonInfo } from "../hooks/useSalonInfo";
 import { getApiUrl } from "../utils/apiUtils";
 import { safeFetch } from "../utils/errorHandler";
-import { buildApiUrl } from "@crm/api/client";
+import { buildApiUrl } from "@site/api/client";
 
 interface FooterProps {
   salonInfo?: any;

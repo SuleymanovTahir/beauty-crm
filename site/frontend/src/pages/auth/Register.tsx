@@ -1,22 +1,22 @@
 // /frontend/src/pages/auth/Register.tsx
 import React, { useState, useRef } from "react";
 import { Lock, User, Mail, UserPlus, Loader, CheckCircle, ShieldCheck, Eye, EyeOff } from "lucide-react";
-import { Button } from "@crm/components/ui/button";
-import { Input } from "@crm/components/ui/input";
-import { Label } from "@crm/components/ui/label";
-import { Checkbox } from "@crm/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@crm/components/ui/select";
+import { Button } from "@site/components/ui/button";
+import { Input } from "@site/components/ui/input";
+import { Label } from "@site/components/ui/label";
+import { Checkbox } from "@site/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@site/components/ui/select";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
-import { api } from "@crm/services/api";
+import { api } from "@site/services/api";
 import { useTranslation } from "react-i18next";
-import LanguageSwitcher from "@crm/components/LanguageSwitcher";
-import GoogleLoginButton from "@crm/components/GoogleLoginButton";
+import LanguageSwitcher from "@site/components/LanguageSwitcher";
+import GoogleLoginButton from "@site/components/GoogleLoginButton";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import {
   getUnauthenticatedCrmPathByGates,
   normalizePlatformGates,
-} from "@crm/utils/platformRouting";
+} from "@site/utils/platformRouting";
 
 // hCaptcha Site Key: задайте VITE_HCAPTCHA_SITE_KEY в .env. Без ключа — тестовый. Инструкция: docs/HCAPTCHA_KEYS.md
 const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY ?? "10000000-ffff-ffff-ffff-000000000001";

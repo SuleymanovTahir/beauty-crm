@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { api } from '@crm/services/api';
-import { Button } from '@crm/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@crm/components/ui/card';
+import { api } from '@site/services/api';
+import { Button } from '@site/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@site/components/ui/card';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
 export default function Unsubscribe() {

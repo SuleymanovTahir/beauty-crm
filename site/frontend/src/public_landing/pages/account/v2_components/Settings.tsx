@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Separator } from './ui/separator';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { apiClient } from '@crm/api/client';
+import { apiClient } from '@site/api/client';
 
 const SETTINGS_TABS = ['profile', 'security', 'notifications', 'privacy'] as const;
 type SettingsTab = typeof SETTINGS_TABS[number];

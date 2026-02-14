@@ -4,7 +4,7 @@
 
 import { EXTERNAL_SERVICES } from './constants';
 import { validatePhone, validateUrl, validateInstagramUsername } from './validation';
-import { supportedLanguages } from '@crm/utils/i18nUtils';
+import { supportedLanguages } from '@site/utils/i18nUtils';
 
 /**
  * Форматирует номер телефона для WhatsApp URL

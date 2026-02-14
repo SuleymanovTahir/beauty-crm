@@ -2,10 +2,10 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Plus, Search, Edit, Trash2, TrendingUp, Gift, DollarSign, Power } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@crm/components/ui/card';
-import { Button } from '@crm/components/ui/button';
-import { Input } from '@crm/components/ui/input';
-import { Badge } from '@crm/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@site/components/ui/card';
+import { Button } from '@site/components/ui/button';
+import { Input } from '@site/components/ui/input';
+import { Badge } from '@site/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -13,7 +13,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@crm/components/ui/table';
+} from '@site/components/ui/table';
 import {
   Dialog,
   DialogContent,
@@ -21,11 +21,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@crm/components/ui/dialog';
-import { Label } from '@crm/components/ui/label';
+} from '@site/components/ui/dialog';
+import { Label } from '@site/components/ui/label';
 import { toast } from 'sonner';
-import { useAuth } from '@crm/contexts/AuthContext';
-import { buildApiUrl } from '@crm/api/client';
+import { useAuth } from '@site/contexts/AuthContext';
+import { buildApiUrl } from '@site/api/client';
 
 interface LoyaltyTier {
   id: string;

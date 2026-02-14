@@ -3,8 +3,8 @@ import { Menu, X, Globe, Instagram, User, ChevronDown, LogOut, Calendar, LayoutD
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from '@crm/contexts/AuthContext';
-import { supportedLanguages } from "@crm/utils/i18nUtils";
+import { useAuth } from '@site/contexts/AuthContext';
+import { supportedLanguages } from "@site/utils/i18nUtils";
 import { formatInstagramUrl, formatWhatsAppUrl } from "../utils/urlUtils";
 import { useSalonInfo } from "../hooks/useSalonInfo";
 import { DEFAULT_VALUES } from "../utils/constants";

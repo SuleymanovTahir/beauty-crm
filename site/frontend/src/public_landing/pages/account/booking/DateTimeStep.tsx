@@ -4,8 +4,8 @@ import { Calendar } from './ui/calendar';
 import { Clock } from 'lucide-react';
 import { motion } from 'motion/react';
 import { format } from 'date-fns';
-import { api } from '@crm/services/api';
-import { getDateLocale as getDateLocaleCentral } from '@crm/utils/i18nUtils';
+import { api } from '@site/services/api';
+import { getDateLocale as getDateLocaleCentral } from '@site/utils/i18nUtils';
 
 interface DateTimeStepProps {
     selectedDate: Date | null;

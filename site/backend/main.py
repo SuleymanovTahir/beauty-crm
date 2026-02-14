@@ -287,8 +287,9 @@ def _register_static_assets(app: FastAPI):
     app.mount("/static", ModernStaticFiles(directory=str(BASE_DIR / "static")), name="static")
 
     frontend_img_candidates = [
-        FRONTEND_DIR / "src" / "site" / "public_landing" / "styles" / "img",
+        FRONTEND_DIR / "src" / "public_landing" / "styles" / "img",
         FRONTEND_DIR / "public_landing" / "styles" / "img",
+        FRONTEND_DIR / "dist" / "landing-images",
     ]
     for frontend_img_dir in frontend_img_candidates:
         if frontend_img_dir.exists():

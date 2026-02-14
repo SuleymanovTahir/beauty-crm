@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Star } from 'lucide-react';
-import { api } from '@crm/services/api';
+import { api } from '@site/services/api';
 import { format } from 'date-fns';
 import { getTodayDate } from '../../../utils/dateUtils';
 

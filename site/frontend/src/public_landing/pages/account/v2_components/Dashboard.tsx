@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCurrency } from '@crm/hooks/useSalonSettings';
+import { useCurrency } from '@site/hooks/useSalonSettings';
 import { Calendar, Clock, Star, TrendingUp, Repeat, Users, MessageCircle, Sparkles, Loader2, X, Edit } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -8,7 +8,7 @@ import { Badge } from './ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { useTranslation } from 'react-i18next';
-import { apiClient } from '@crm/api/client';
+import { apiClient } from '@site/api/client';
 import { toast } from 'sonner';
 import { formatGoogleCalendarUrl, formatWhatsAppUrl } from '../../../utils/urlUtils';
 import { TIME_INTERVALS, EXTERNAL_SERVICES } from '../../../utils/constants';

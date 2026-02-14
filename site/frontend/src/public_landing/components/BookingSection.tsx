@@ -4,8 +4,8 @@ import { Input } from './ui/input';
 import { Calendar as CalendarIcon, Clock, Loader2, Check, ChevronsUpDown, User, Sparkles } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 
-import { useAuth } from '@crm/contexts/AuthContext';
-import { api } from '@crm/services/api';
+import { useAuth } from '@site/contexts/AuthContext';
+import { api } from '@site/services/api';
 import { toast } from 'sonner';
 import { cn } from './ui/utils';
 import {

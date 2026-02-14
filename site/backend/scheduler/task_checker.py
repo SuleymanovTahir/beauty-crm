@@ -67,7 +67,7 @@ async def check_tasks_due():
                     continue
 
             # Check if notification already sent recently (e.g. today)
-            action_url = f"/crm/tasks?task_id={task_id}"
+            action_url = f"/admin/dashboard?task_id={task_id}"
 
             # Simple check: have we sent a notification for this task ID today?
             already_notified = False
@@ -135,7 +135,7 @@ async def check_client_reminders():
                 try: reminder_date = datetime.fromisoformat(reminder_date)
                 except: continue
 
-            action_url = f"/crm/funnel?client_id={client_id}"
+            action_url = f"/admin/dashboard?client_id={client_id}"
 
             # Check if any manager was notified today for this client
             already_notified = False

@@ -28,16 +28,16 @@ import { BeautyProfile } from './v2_components/BeautyProfile';
 import { Notifications } from './v2_components/Notifications';
 import { Settings } from './v2_components/Settings';
 import { PromoCodesView } from './PromoCodesView';
-import { apiClient } from '@crm/api/client';
-import { api } from '@crm/services/api';
-import LanguageSwitcher from '@crm/components/LanguageSwitcher';
+import { apiClient } from '@site/api/client';
+import { api } from '@site/services/api';
+import LanguageSwitcher from '@site/components/LanguageSwitcher';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useSalonSettings } from '../../hooks/useSalonSettings';
-import { getPhotoUrl } from '@crm/utils/photoUtils';
-import { cn } from '@crm/lib/utils';
+import { getPhotoUrl } from '@site/utils/photoUtils';
+import { cn } from '@site/lib/utils';
 import { captureReferralAttributionFromCurrentUrl } from '../../utils/urlUtils';
-import '@crm/components/layouts/MainLayout.css';
+import '@site/components/layouts/MainLayout.css';
 
 type Tab = 'dashboard' | 'appointments' | 'gallery' | 'loyalty' | 'achievements' | 'masters' | 'beauty' | 'notifications' | 'settings' | 'promocodes' | 'specialoffers';
 type MobileTab = {

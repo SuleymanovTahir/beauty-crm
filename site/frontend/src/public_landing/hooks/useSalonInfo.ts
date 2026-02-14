@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { config } from '../utils/config';
 import { safeFetch } from '../utils/errorHandler';
-import { buildApiUrl } from '@crm/api/client';
+import { buildApiUrl } from '@site/api/client';
 
 export interface SalonInfo {
   name?: string;

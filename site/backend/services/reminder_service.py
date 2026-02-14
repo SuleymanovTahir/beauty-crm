@@ -7,7 +7,7 @@ from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 import logging
 
-logger = logging.getLogger('crm')
+logger = logging.getLogger('site')
 
 
 async def check_and_send_reminders():

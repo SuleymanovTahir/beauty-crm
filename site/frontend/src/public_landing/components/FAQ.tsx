@@ -11,8 +11,8 @@ import { useTranslation } from "react-i18next";
 import { getApiUrl } from "../utils/apiUtils";
 import { safeFetch } from "../utils/errorHandler";
 import { useSalonInfo } from "../hooks/useSalonInfo";
-import { useAuth } from "@crm/contexts/AuthContext";
-import { buildApiUrl } from "@crm/api/client";
+import { useAuth } from "@site/contexts/AuthContext";
+import { buildApiUrl } from "@site/api/client";
 
 export function FAQ() {
   const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);

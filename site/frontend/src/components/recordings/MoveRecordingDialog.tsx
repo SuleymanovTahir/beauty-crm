@@ -7,18 +7,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@crm/components/ui/dialog';
-import { Button } from '@crm/components/ui/button';
-import { Label } from '@crm/components/ui/label';
+} from '@site/components/ui/dialog';
+import { Button } from '@site/components/ui/button';
+import { Label } from '@site/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@crm/components/ui/select';
+} from '@site/components/ui/select';
 import { toast } from 'sonner';
-import { api } from "@crm/services/api";
+import { api } from "@site/services/api";
 
 interface FolderNode {
   id: number;

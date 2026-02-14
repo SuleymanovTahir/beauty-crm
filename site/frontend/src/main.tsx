@@ -5,10 +5,10 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { AuthProvider } from "@crm/contexts/AuthContext";
+import { AuthProvider } from "@site/contexts/AuthContext";
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { installApiNamespaceFetchInterceptor } from '@crm/api/client';
+import { installApiNamespaceFetchInterceptor } from '@site/api/client';
 
 installApiNamespaceFetchInterceptor();
 
