@@ -49,7 +49,7 @@ import { ru } from 'date-fns/locale/ru';
 
 
 export const BookingSection = () => {
-  const { t, i18n } = useTranslation(['booking', 'public_landing', 'common']);
+  const { t, i18n } = useTranslation(['booking', 'public_landing', 'common', 'dynamic']);
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [defaultCountry, setDefaultCountry] = useState<string>('ae');
@@ -353,6 +353,37 @@ export const BookingSection = () => {
     return category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
   };
 
+  const getServiceDisplayName = (service: any): string => {
+    if (!service || typeof service !== 'object') {
+      return '';
+    }
+
+    const serviceKey = typeof service.service_key === 'string' ? service.service_key.trim() : '';
+    if (serviceKey.length > 0) {
+      const translatedByKey = t(`dynamic:services.${serviceKey}.name`, { defaultValue: '' });
+      if (translatedByKey.length > 0) {
+        return translatedByKey;
+      }
+    }
+
+    const serviceId = Number(service.id);
+    if (Number.isFinite(serviceId) && serviceId > 0) {
+      const translatedById = t(`dynamic:services.${serviceId}.name`, { defaultValue: '' });
+      if (translatedById.length > 0) {
+        return translatedById;
+      }
+    }
+
+    if (typeof service.name === 'string') {
+      const canonicalName = service.name.trim();
+      if (canonicalName.length > 0) {
+        return canonicalName;
+      }
+    }
+
+    return '';
+  };
+
   return (
     <section id="booking" className="py-12 sm:py-16 lg:py-20 bg-background">
       <div className="max-w-2xl mx-auto px-3 sm:px-4 lg:px-6">
@@ -416,7 +447,7 @@ export const BookingSection = () => {
                       formData.selectedServices.map(id => {
                         const s = services.find(srv => srv.id === id);
                         if (!s) return null;
-                        const serviceName = t(`dynamic:services.${id}.name`, { defaultValue: s.name || "" });
+                        const serviceName = getServiceDisplayName(s);
                         return (
                           <span key={id} className="bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded-full border border-primary/20">
                             {serviceName}
@@ -440,11 +471,13 @@ export const BookingSection = () => {
                         {services
                           .filter((s: any) => s.category === category)
                           .map((service: any) => {
-                            const serviceName = t(`dynamic:services.${service.id}.name`, { defaultValue: service.name || "" });
+                            const serviceName = getServiceDisplayName(service);
+                            const canonicalServiceName = typeof service?.name === 'string' ? service.name.trim() : '';
+                            const commandItemValue = `${serviceName} ${canonicalServiceName}`.trim();
                             return (
                               <CommandItem
                                 key={service.id}
-                                value={`${serviceName} ${service.name}`}
+                                value={commandItemValue.length > 0 ? commandItemValue : String(service.id)}
                                 onSelect={() => {
                                   setFormData(prev => ({
                                     ...prev,
