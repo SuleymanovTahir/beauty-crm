@@ -135,32 +135,11 @@ export default function AdminDashboard() {
 
   const quickActions = [
     {
-      title: t('quick_actions.user_management.title'),
-      description: t('quick_actions.user_management.description'),
-      icon: Users,
-      path: '/admin/users',
-      color: 'from-blue-500 to-cyan-500',
-    },
-    {
       title: t('quick_actions.loyalty_management.title'),
       description: t('quick_actions.loyalty_management.description'),
       icon: Gift,
       path: '/admin/loyalty',
       color: 'from-blue-500 to-pink-500',
-    },
-    {
-      title: t('quick_actions.referral_program.title'),
-      description: t('quick_actions.referral_program.description'),
-      icon: Award,
-      path: '/admin/referrals',
-      color: 'from-orange-500 to-red-500',
-    },
-    {
-      title: t('quick_actions.challenges.title'),
-      description: t('quick_actions.challenges.description'),
-      icon: Target,
-      path: '/admin/challenges',
-      color: 'from-green-500 to-emerald-500',
     },
     {
       title: t('quick_actions.notifications.title'),
@@ -175,6 +154,27 @@ export default function AdminDashboard() {
       icon: Image,
       path: '/admin/gallery',
       color: 'from-pink-500 to-rose-500',
+    },
+    {
+      title: t('quick_actions.feature_management.title', { defaultValue: 'Feature Management' }),
+      description: t('quick_actions.feature_management.description', { defaultValue: 'Manage platform feature availability' }),
+      icon: Target,
+      path: '/admin/features',
+      color: 'from-green-500 to-emerald-500',
+    },
+    {
+      title: t('quick_actions.user_management.title'),
+      description: t('quick_actions.user_management.description'),
+      icon: Users,
+      path: '/admin/dashboard',
+      color: 'from-blue-500 to-cyan-500',
+    },
+    {
+      title: t('quick_actions.referral_program.title'),
+      description: t('quick_actions.referral_program.description'),
+      icon: Award,
+      path: '/admin/dashboard',
+      color: 'from-orange-500 to-red-500',
     },
   ];
 
