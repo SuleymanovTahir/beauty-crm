@@ -7,6 +7,8 @@ export const API_NAMESPACE_PREFIXES = {
   crm: '/api/crm',
   site: '/api/site',
 } as const;
+const CRM_RUNTIME_PATH_PREFIXES = ['/crm', '/admin', '/manager', '/sales', '/saler', '/marketer', '/employee'] as const;
+const SITE_RUNTIME_API_PREFIXES = ['/api/public', '/api/public-admin', '/api/client', '/api/cookies', '/api/analytics/visitors'] as const;
 
 interface FetchOptions extends RequestInit {
   body?: any
@@ -33,7 +35,22 @@ function matchesPathPrefix(path: string, prefix: string): boolean {
   return path.startsWith(`${prefix}/`)
 }
 
-export function resolveApiEndpoint(endpoint: string): string {
+function getCurrentPathname(): string {
+  if (typeof window === 'undefined') {
+    return ''
+  }
+  return window.location.pathname
+}
+
+function isCrmRuntimePath(pathname: string): boolean {
+  return CRM_RUNTIME_PATH_PREFIXES.some((prefix) => matchesPathPrefix(pathname, prefix))
+}
+
+function isSiteRuntimeApi(path: string): boolean {
+  return SITE_RUNTIME_API_PREFIXES.some((prefix) => matchesPathPrefix(path, prefix))
+}
+
+function normalizeLegacyNamespacedEndpoint(endpoint: string): string {
   if (!endpoint.startsWith('/api')) {
     return endpoint
   }
@@ -54,15 +71,42 @@ export function resolveApiEndpoint(endpoint: string): string {
   return endpoint
 }
 
+export function resolveApiEndpoint(endpoint: string): string {
+  const normalizedEndpoint = normalizeLegacyNamespacedEndpoint(endpoint)
+  if (!normalizedEndpoint.startsWith('/api')) {
+    return normalizedEndpoint
+  }
+
+  const { path, suffix } = splitApiEndpoint(normalizedEndpoint)
+
+  // Split deployment routing:
+  // CRM/Admin runtime pages should hit CRM backend via /crm/api/*,
+  // while site/account/public APIs remain on /api/*.
+  const currentPathname = getCurrentPathname()
+  if (isCrmRuntimePath(currentPathname) && !isSiteRuntimeApi(path)) {
+    const normalizedPath = path.slice('/api'.length) || '/'
+    const tail = normalizedPath === '/' ? '' : normalizedPath
+    return `/crm/api${tail}${suffix}`
+  }
+
+  return normalizedEndpoint
+}
+
 export function buildApiUrl(endpoint: string, baseUrl: string = BASE_URL): string {
   return `${baseUrl}${resolveApiEndpoint(endpoint)}`
+}
+
+function resolveWebSocketEndpoint(endpoint: string): string {
+  // WebSocket routes are terminated on /api/* in production split nginx.
+  // Keep WS paths on /api and only normalize legacy /api/crm|/api/site inputs.
+  return normalizeLegacyNamespacedEndpoint(endpoint)
 }
 
 export function buildWebSocketUrl(endpoint: string, baseUrl: string = BASE_URL): string {
   const fallbackOrigin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost'
   const parsedBase = new URL(baseUrl, fallbackOrigin)
   const wsProtocol = parsedBase.protocol === 'https:' ? 'wss:' : 'ws:'
-  const resolvedEndpoint = resolveApiEndpoint(endpoint)
+  const resolvedEndpoint = resolveWebSocketEndpoint(endpoint)
   return `${wsProtocol}//${parsedBase.host}${resolvedEndpoint}`
 }
 

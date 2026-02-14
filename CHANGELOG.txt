@@ -1,3 +1,39 @@
+## [2026-02-14] Hotfix: WS Routing + Public Slots + Landing Console Noise
+- WebSocket routing fixed for split deploy in frontend API client:
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/crm/api/client.ts`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/crm/api/client.ts`
+  - `buildWebSocketUrl()` no longer applies CRM runtime rewrite to `/crm/api/*`; WS endpoints now stay on `/api/ws/*` and `/api/webrtc/*` (with legacy `/api/crm/*` normalization only), matching production nginx WebSocket termination.
+- Public booking availability restored on Site runtime:
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/product_groups/site/router_mount.py`
+  - mounted `api.schedule` under `/api`, which re-enables:
+    - `GET /api/public/available-slots`
+    - `GET /api/public/available-slots/batch`
+  - This removes `404` in landing booking flow for slots lookup.
+- Removed noisy success image logs from landing components (both split frontends):
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/site/public_landing/components/Hero.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/site/public_landing/components/Gallery.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/site/public_landing/components/Portfolio.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/site/public_landing/components/Hero.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/site/public_landing/components/Gallery.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/site/public_landing/components/Portfolio.tsx`
+  - `onLoad console.log(...)` removed; `onError` logs kept.
+
+## [2026-02-14] Admin Runtime Routing + Real Recent Activity
+- Исправлена маршрутизация API в split frontend для CRM/Admin runtime-контекста:
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/crm/api/client.ts`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/crm/api/client.ts`
+  - `resolveApiEndpoint()` теперь в путях `/crm|/admin|/manager|/sales|/saler|/marketer|/employee` автоматически направляет CRM-запросы в `/crm/api/*` (вместо `/api/*`), что устраняет `404` на endpoints вроде:
+    - `/api/unread-count`, `/api/messengers/enabled`, `/api/notifications`, `/api/menu-settings`, `/api/dashboard/kpi`, `/api/bot-analytics`.
+  - Site runtime API (`/api/public*`, `/api/public-admin*`, `/api/client*`, `/api/cookies*`, `/api/analytics/visitors*`) остается на site backend.
+- Удален фейковый хардкод блока “Недавняя активность” на `/admin/dashboard`:
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/site/pages/adminPanel/Dashboard.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/site/pages/adminPanel/Dashboard.tsx`
+  - Блок теперь строится из реальных данных `/api/notifications?unread_only=false&limit=3` и отображает относительное время; при отсутствии данных — `common:no_items`.
+- Валидация:
+  - `npm --prefix site/frontend run type-check` passed,
+  - `npm --prefix crm/frontend run type-check` passed,
+  - production dist для `site/frontend` и `crm/frontend` пересобран и синхронизирован на сервер.
+
 ## [2026-02-14] Hotfix: `/crm` Redirect Loop and Missing Hero Banner (`banner2.webp`)
 - Исправлен ложный редирект `https://mlediamant.com/crm -> /admin/dashboard` в split-deploy:
   - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/crm/services/api.ts`

@@ -135,7 +135,6 @@ export function Portfolio() {
                   alt={item.title}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  onLoad={(e) => console.log(`[Portfolio] Image loaded successfully: ${(e.target as HTMLImageElement).src}`)}
                   onError={(e) => console.error(`[Portfolio] Image failed to load: ${(e.target as HTMLImageElement).src}`)}
                 />
                 <div className="portfolio-overlay">

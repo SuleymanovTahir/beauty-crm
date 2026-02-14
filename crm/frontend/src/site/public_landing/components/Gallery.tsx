@@ -76,7 +76,6 @@ export function Gallery() {
                 alt={item.title}
                 loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                onLoad={(e) => console.log(`[Gallery] Image loaded successfully: ${(e.target as HTMLImageElement).src}`)}
                 onError={(e) => console.error(`[Gallery] Image failed to load: ${(e.target as HTMLImageElement).src}`)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
