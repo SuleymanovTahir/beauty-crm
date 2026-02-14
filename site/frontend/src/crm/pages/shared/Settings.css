@@ -1,0 +1,185 @@
+/* Settings page styles */
+
+.settings-container {
+  padding: 1rem;
+}
+
+.currency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.social-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .settings-container {
+    padding: 2rem;
+  }
+}
+
+.settings-alert-box {
+  background-color: #fefce8;
+  border: 1px solid #fef08a;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.settings-info-box {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.settings-text-yellow {
+  color: #ca8a04;
+}
+
+.settings-text-blue {
+  color: #1d4ed8;
+}
+
+.settings-text-blue-dark {
+  color: #1e40af;
+}
+
+.settings-text-green {
+  color: #16a34a;
+}
+
+.settings-icon-email {
+  color: #2563eb;
+}
+
+.settings-icon-telegram {
+  color: #16a34a;
+}
+
+.settings-icon-instagram {
+  color: #2563eb;
+}
+.settings-text-primary {
+  color: #ec4899; /* pink-500 */
+}
+
+.settings-icon-primary {
+  color: #db2777; /* pink-600 */
+}
+
+.settings-tab-trigger-active[data-state="active"] {
+  border-color: #ec4899;
+  background-color: #fdf2f8;
+  color: #db2777;
+}
+
+.settings-label-spacing {
+  margin-bottom: 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.settings-label-spacing svg {
+  flex-shrink: 0;
+}
+
+.settings-general-form input::placeholder,
+.settings-general-form textarea::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+.settings-general-form [data-placeholder] {
+  color: #6b7280;
+}
+
+.settings-loader {
+  color: #ec4899;
+}
+
+.settings-modules-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.settings-modules-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.settings-modules-legend-arrow {
+  color: #9ca3af;
+}
+
+.settings-module-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.settings-module-difference-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  border-radius: 9999px;
+  border: 1px solid #e5e7eb;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.settings-module-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  padding: 0.625rem 0.75rem;
+}
+
+.settings-module-row-default {
+  background-color: #ffffff;
+}
+
+.settings-module-row-changed {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.settings-module-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.settings-module-default-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid #d1d5db;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  color: #4b5563;
+}

@@ -1,0 +1,158 @@
+"""
+Unified System Migration Runner
+Executes core initialization and data maintenance.
+"""
+import sys
+import os
+from datetime import datetime
+from db.init import init_database
+from db.connection import get_db_connection
+from utils.logger import log_info, log_error
+
+def print_header(text):
+    print("\n" + "="*80)
+    print(f"  {text}")
+    print("="*80)
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+def create_sessions_table():
+    """Create sessions table for user authentication."""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute('''CREATE TABLE IF NOT EXISTS sessions (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            session_token TEXT UNIQUE NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP NOT NULL
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_sessions_token_expires ON sessions (session_token, expires_at)")
+        conn.commit()
+        log_info("✅ Sessions table created/verified", "migrations")
+    except Exception as e:
+        conn.rollback()
+        log_error(f"❌ Failed to create sessions table: {e}", "migrations")
+        raise
+    finally:
+        conn.close()
+
+def create_chat_history_table():
+    """Create chat_history table for messenger conversations."""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute('''CREATE TABLE IF NOT EXISTS chat_history (
+            id SERIAL PRIMARY KEY,
+            instagram_id TEXT REFERENCES clients(instagram_id) ON DELETE CASCADE,
+            message TEXT,
+            sender TEXT,
+            message_type TEXT DEFAULT 'text',
+            is_read BOOLEAN DEFAULT FALSE,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        conn.commit()
+        log_info("✅ Chat history table created/verified", "migrations")
+    except Exception as e:
+        conn.rollback()
+        log_error(f"❌ Failed to create chat_history table: {e}", "migrations")
+        raise
+    finally:
+        conn.close()
+
+def run_all_migrations():
+    """Main entry point for database health and setup."""
+    # Advisory lock to prevent multiple workers from running migrations simultaneously
+    # Lock ID 99999 covers the ENTIRE migration process (different from init_database's 12345)
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("SELECT pg_try_advisory_lock(99999)")
+    got_lock = c.fetchone()[0]
+    if not got_lock:
+        log_info("⏳ Another worker is running migrations, skipping...", "migrations")
+        conn.close()
+        return True  # Return success since another worker will handle it
+
+    print_header("SYSTEM INITIALIZATION & SYNC")
+    print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Database: PostgreSQL")
+
+    try:
+        # 1. Core Schema Sync
+        print_header("CORE SCHEMA INITIALIZATION")
+        init_database()
+
+        # 1.5 Create sessions table (auth)
+        create_sessions_table()
+
+        # 1.6 Create chat_history table (messaging)
+        create_chat_history_table()
+        
+        # 2. Optional Data Maintenance
+        if _env_flag("RUN_MIGRATION_MAINTENANCE", default=True):
+            print_header("DATA MAINTENANCE")
+            try:
+                from scripts.maintenance.fix_data import run_all_fixes
+                run_all_fixes()
+                log_info("✅ Data maintenance tasks completed", "migrations")
+            except Exception as e:
+                log_error(f"⚠️  Data maintenance skipped: {e}", "migrations")
+        else:
+            log_info("⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)", "migrations")
+
+        # 3. Optional Production Seeding
+        if _env_flag("RUN_MIGRATION_PROD_SEED", default=False):
+            print_header("PRODUCTION SEEDING")
+            try:
+                from scripts.setup.seed_production_data import seed_production_data
+                seed_production_data()
+                log_info("✅ Production data seeded", "migrations")
+            except Exception as e:
+                log_error(f"⚠️  Seeding skipped: {e}", "migrations")
+        else:
+            log_info("⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)", "migrations")
+
+        # 4. Optional Test Seeding
+        if _env_flag("RUN_MIGRATION_TEST_SEED", default=False):
+            print_header("USER DATA SEEDING")
+            try:
+                from scripts.testing.data.seed_test_data import seed_data
+                seed_data()
+                log_info("✅ User data seeded (including admin)", "migrations")
+            except Exception as e:
+                log_error(f"⚠️  User seeding skipped: {e}", "migrations")
+        else:
+            log_info("⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)", "migrations")
+
+        print_header("SYNC COMPLETED SUCCESSFULLY")
+        # Release lock before returning (also in finally as backup)
+        try:
+            c.execute("SELECT pg_advisory_unlock(99999)")
+            conn.close()
+        except:
+            pass
+        return True
+
+    except Exception as e:
+        print(f"\n❌ Critical system setup error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+    finally:
+        # Release advisory lock
+        try:
+            c.execute("SELECT pg_advisory_unlock(99999)")
+            conn.close()
+        except:
+            pass
+
+if __name__ == "__main__":
+    success = run_all_migrations()
+    sys.exit(0 if success else 1)

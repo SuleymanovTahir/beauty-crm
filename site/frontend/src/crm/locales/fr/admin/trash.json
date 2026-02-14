@@ -1,0 +1,33 @@
+{
+  "confirm_empty_trash": "Êtes-vous sûr de vouloir supprimer définitivement tous les éléments de la corbeille\u00a0?",
+  "delete_selected": "Supprimer la sélection",
+  "empty_desc": "Les éléments supprimés seront affichés ici",
+  "empty_title": "La corbeille est vide",
+  "empty_trash": "Vider la corbeille",
+  "filter_all": "Tous",
+  "important_info": "Informations importantes",
+  "info_desc": "Les éléments de la corbeille sont conservés indéfiniment, mais nous vous recommandons de vider la corbeille périodiquement pour conserver performances optimales de la base de données. La restauration d'un employé le ramène également au statut Actif.",
+  "loading": "Chargement des données...",
+  "not_restorable": "Non récupérable",
+  "objects_count_one": "Il y a un objet {{count}} dans la corbeille",
+  "objects_count_few": "Objets dans la corbeille\u00a0: {{count}}",
+  "objects_count_many": "Objets dans la corbeille\u00a0: {{count}}",
+  "objects_count_other": "Objets dans la corbeille\u00a0: {{count}}",
+  "permanent_delete": "Supprimer définitivement",
+  "permanent_delete_confirm": "Etes-vous sûr\u00a0? Cette action ne peut pas être annulée\u00a0!",
+  "restore": "Restaurer",
+  "restore_selected": "Restaurer la sélection",
+  "search_placeholder": "Recherche par identifiant, motif ou auteur...",
+  "subtitle": "Gérer et restaurer les données supprimées",
+  "title": "Corbeille",
+  "toast": {
+    "delete_error": "Erreur lors de la suppression définitive",
+    "delete_success": "Objet définitivement supprimé",
+    "empty_error": "Erreur lors du panier de nettoyage",
+    "load_error": "Erreur de chargement du panier",
+    "refreshed": "Mise à jour",
+    "restore_error": "Impossible de restaurer l'objet",
+    "restore_success": "{{type}} restauré avec succès",
+    "trash_emptied": "Panier vidé"
+  }
+}

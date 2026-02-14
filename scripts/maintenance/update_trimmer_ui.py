@@ -1,8 +1,13 @@
 import os
+from pathlib import Path
 
-file_path = '/Users/tahir/Desktop/beauty-crm/frontend/src/components/shared/InternalChat.tsx'
+project_root = Path(__file__).resolve().parents[2]
+frontend_group = os.getenv('FRONTEND_GROUP', 'crm').strip().lower()
+if frontend_group not in {'crm', 'site'}:
+    frontend_group = 'crm'
+file_path = project_root / frontend_group / 'frontend' / 'src' / 'components' / 'shared' / 'InternalChat.tsx'
 
-with open(file_path, 'r') as f:
+with open(file_path, 'r', encoding='utf-8') as f:
     lines = f.readlines()
 
 # Generate bars for waveform mock (it will be constant per render)
@@ -104,7 +109,7 @@ for i, line in enumerate(lines):
 
 if start_idx != -1 and end_idx != -1:
     lines[start_idx:end_idx] = [new_trimmer_ui + '\n']
-    with open(file_path, 'w') as f:
+    with open(file_path, 'w', encoding='utf-8') as f:
         f.writelines(lines)
     print(f"✅ Waveform trimmer updated at lines {start_idx}-{end_idx}")
 else:

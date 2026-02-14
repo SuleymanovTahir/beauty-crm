@@ -1,0 +1,97 @@
+{
+  "analyze_further": "Analisar mais detalhadamente",
+  "apply": "Aplicar",
+  "avg_check": "Ticket médio",
+  "avg_time": "Tempo médio",
+  "booked": "Inscritos",
+  "booking_statuses": "Status dos reservas",
+  "bookings": "Reservas",
+  "bookings_trend": "Dinâmica dos reservas",
+  "clarify_services": "Serviços de esclarecimento",
+  "completed": "Visitados",
+  "conversation_stage": "Etapa de diálogo",
+  "conversion": "Conversão",
+  "detailed_analysis": "Análise detalhada do operação do salão",
+  "drop_off_analysis": "Análise de desistências",
+  "drop_offs": "Falhas",
+  "engaged": "Envolvidos",
+  "errors": {
+    "export_failed": "Erro de exportação de arquivo",
+    "invalid_date_range": "A data de início deve ser anterior à data de término",
+    "invalid_period": "Período inválido",
+    "loading_error": "Erro ao carregar",
+    "select_both_dates": "Selecione ambas as datas"
+  },
+  "export": "Exportar",
+  "exporting": "Exportar...",
+  "focus_on_highest_drop_off": "Preste atenção ao estágio com maior desistência",
+  "for_period": "Para o período",
+  "from_visitors": "De visitantes para clientes",
+  "funnel": {
+    "conversion": {
+      "booked_to_completed": "Inscreveu-se -> Visitado",
+      "booking_to_booked": "Iniciou -> Inscreveu-se",
+      "engaged_to_booking": "Envolvido -> Começou a gravação",
+      "visitor_to_engaged": "Visitante -> Envolvido"
+    },
+    "desc": {
+      "booked": "Reserva concluído",
+      "completed": "Serviço prestado",
+      "engaged": "Demonstraram interesse",
+      "started_booking": "Abriram o formulário de reserva",
+      "visitors": "Visitantes do site/redes sociais"
+    },
+    "losses_few": "Perda: {{count}}",
+    "losses_many": "Perda: {{count}}",
+    "losses_one": "Perda: {{count}}",
+    "losses_other": "Perda: {{count}}",
+    "stages": {
+      "booked": "Inscreveu-se",
+      "completed": "Visitaram",
+      "engaged": "Envolvido",
+      "started_booking": "Iniciou a gravação",
+      "visitors": "Visitantes"
+    }
+  },
+  "funnel_chart": "Gráfico de funil",
+  "funnel_overview": "Funil de vendas",
+  "improve_greeting": "Melhorar a saudação",
+  "income": "Receita",
+  "min": "min",
+  "name": "Nome",
+  "need_more_masters": "Precisa de mais mestres",
+  "optimization_tip": "Conselhos de otimização",
+  "peak_hours": "Horas de pico",
+  "per_booking": "Para cada reserva",
+  "percentage": "Porcentagem",
+  "quantity": "Quantidade",
+  "recommendation": "Recomendação",
+  "refresh": "Atualização",
+  "response_time": "Tempo de resposta",
+  "revenue": "Receita",
+  "services_distribution": "Distribuição de serviço",
+  "simplify_contact_collection": "Simplificar contato coleção",
+  "stages": {
+    "after_greeting": "Depois da saudação",
+    "after_price": "Depois do preço",
+    "no_slots": "Sem vagas livres",
+    "service_selection": "Selecionar serviço",
+    "whatsapp_request": "Solicitação de WhatsApp"
+  },
+  "status": {
+    "cancelled": "Cancelada",
+    "completed": "Concluída",
+    "confirmed": "Confirmada",
+    "no_show": "Não chegou",
+    "pending": "Pendente"
+  },
+  "success": {
+    "file_downloaded": "Arquivo baixado com sucesso"
+  },
+  "title": "Analytics",
+  "top_services": "Serviços populares",
+  "try_again": "Tente novamente",
+  "visitors": "Visitantes",
+  "where_clients_leave": "De onde os clientes saem?",
+  "work_on_objections": "Trabalhando com objeções"
+}

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <url>
+    <loc>https://mlediamant.com/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mlediamant.com/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mlediamant.com/?lang=ru" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mlediamant.com/?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://mlediamant.com/?lang=es" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://mlediamant.com/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://mlediamant.com/?lang=fr" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://mlediamant.com/?lang=hi" />
+    <xhtml:link rel="alternate" hreflang="kk" href="https://mlediamant.com/?lang=kk" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://mlediamant.com/?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mlediamant.com/" />
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://mlediamant.com/new-booking</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mlediamant.com/new-booking" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mlediamant.com/new-booking?lang=ru" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mlediamant.com/new-booking?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://mlediamant.com/new-booking?lang=es" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://mlediamant.com/new-booking?lang=de" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://mlediamant.com/new-booking?lang=fr" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://mlediamant.com/new-booking?lang=hi" />
+    <xhtml:link rel="alternate" hreflang="kk" href="https://mlediamant.com/new-booking?lang=kk" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://mlediamant.com/new-booking?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mlediamant.com/new-booking" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://mlediamant.com/privacy-policy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mlediamant.com/privacy-policy" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mlediamant.com/privacy-policy?lang=ru" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mlediamant.com/privacy-policy?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://mlediamant.com/privacy-policy?lang=es" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://mlediamant.com/privacy-policy?lang=de" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://mlediamant.com/privacy-policy?lang=fr" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://mlediamant.com/privacy-policy?lang=hi" />
+    <xhtml:link rel="alternate" hreflang="kk" href="https://mlediamant.com/privacy-policy?lang=kk" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://mlediamant.com/privacy-policy?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mlediamant.com/privacy-policy" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://mlediamant.com/terms</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mlediamant.com/terms" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mlediamant.com/terms?lang=ru" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mlediamant.com/terms?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://mlediamant.com/terms?lang=es" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://mlediamant.com/terms?lang=de" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://mlediamant.com/terms?lang=fr" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://mlediamant.com/terms?lang=hi" />
+    <xhtml:link rel="alternate" hreflang="kk" href="https://mlediamant.com/terms?lang=kk" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://mlediamant.com/terms?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mlediamant.com/terms" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://mlediamant.com/data-deletion</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mlediamant.com/data-deletion" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://mlediamant.com/data-deletion?lang=ru" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mlediamant.com/data-deletion?lang=ar" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://mlediamant.com/data-deletion?lang=es" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://mlediamant.com/data-deletion?lang=de" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://mlediamant.com/data-deletion?lang=fr" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://mlediamant.com/data-deletion?lang=hi" />
+    <xhtml:link rel="alternate" hreflang="kk" href="https://mlediamant.com/data-deletion?lang=kk" />
+    <xhtml:link rel="alternate" hreflang="pt" href="https://mlediamant.com/data-deletion?lang=pt" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mlediamant.com/data-deletion" />
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+
+</urlset>

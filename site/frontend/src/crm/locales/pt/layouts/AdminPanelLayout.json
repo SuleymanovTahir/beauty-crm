@@ -1,0 +1,24 @@
+{
+  "admin_panel": "Painel de administração",
+  "go_to_crm": "Ir para CRM",
+  "logout": "Sair",
+  "menu": {
+    "challenges": "Desafios",
+    "challenges_short": "Metas",
+    "dashboard": "Painel",
+    "dashboard_short": "Página inicial",
+    "feature_management": "Gerenciar recursos",
+    "loyalty_management": "Gerenciar fidelidade",
+    "loyalty_short": "Fidelidade",
+    "more": "Mais",
+    "notifications": "Notificações",
+    "photo_gallery": "Galeria de fotos",
+    "public_content": "Conteúdo público",
+    "referral_program": "Programa de referência",
+    "referrals_short": "Referências",
+    "services": "Serviços",
+    "settings": "Configurações",
+    "team": "Equipe",
+    "user_management": "Usuário gerenciamento"
+  }
+}

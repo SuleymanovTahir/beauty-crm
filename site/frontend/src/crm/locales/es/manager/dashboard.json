@@ -1,0 +1,32 @@
+{
+  "active_clients": "Clientes activos",
+  "booked": "Registrado",
+  "client_base": "Base de datos de clientes",
+  "client_messages": "Mensajes de clientes",
+  "completed": "Visita",
+  "completed_procedures": "Trámites completados",
+  "conversion_rate": "Conversión",
+  "engaged": "Involucrados",
+  "errors": {
+    "loading": "Cargando datos de error",
+    "loading_title": "Cargando error"
+  },
+  "funnel_details": "Más sobre el embudo",
+  "good": "Bien",
+  "key_metrics": "Clave métricas",
+  "loading": "Cargando datos",
+  "manager_desc": "Gestión y análisis de clientes",
+  "manager_panel": "Panel de administrador",
+  "messages": "Mensajes",
+  "normal": "Bien",
+  "open_chat": "Abrir chat",
+  "pending": "En espera",
+  "quick_actions": "Acciones rápidas",
+  "retry": "Inténtalo de nuevo",
+  "sales_funnel": "Embudo de ventas",
+  "started_booking": "reserva iniciada",
+  "total_bookings": "reservas totales",
+  "total_clients": "Total de clientes",
+  "total_revenue": "Ingresos totales",
+  "visitors": "Visitantes"
+}

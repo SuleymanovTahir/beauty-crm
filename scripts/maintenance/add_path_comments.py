@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 def add_path_comment(root_dir):
     for dirpath, dirnames, filenames in os.walk(root_dir):
@@ -15,7 +16,8 @@ def add_path_comment(root_dir):
                     content = f.read()
                 
                 # Calculate relative path
-                rel_path = os.path.relpath(file_path, "/Users/tahir/Desktop/beauty-crm")
+                project_root = Path(__file__).resolve().parents[2]
+                rel_path = os.path.relpath(file_path, str(project_root))
                 # Ensure it starts with / if desired, or just use rel_path. 
                 # User asked to remove /Users/tahir/Desktop/beauty-crm, so /frontend/... is likely expected.
                 expected_comment = f"// /{rel_path}"
@@ -46,5 +48,9 @@ def add_path_comment(root_dir):
                 print(f"Updated {filename}")
 
 if __name__ == "__main__":
-    frontend_dir = "/Users/tahir/Desktop/beauty-crm/frontend"
-    add_path_comment(frontend_dir)
+    project_root = Path(__file__).resolve().parents[2]
+    frontend_group = os.getenv('FRONTEND_GROUP', 'crm').strip().lower()
+    if frontend_group not in {'crm', 'site'}:
+        frontend_group = 'crm'
+    frontend_dir = project_root / frontend_group / 'frontend'
+    add_path_comment(str(frontend_dir))

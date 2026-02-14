@@ -1,8 +1,13 @@
 import json
 from pathlib import Path
+import os
 
 def fix_header_tags():
-    locales_dir = Path('/Users/tahir/Desktop/beauty-crm/frontend/src/locales')
+    base_dir = Path(__file__).resolve().parents[2]
+    frontend_group = os.getenv('FRONTEND_GROUP', 'crm').strip().lower()
+    if frontend_group not in {'crm', 'site'}:
+        frontend_group = 'crm'
+    locales_dir = base_dir / frontend_group / 'frontend' / 'src' / 'locales'
     
     # Reference translations
     header_translations = {

@@ -1,0 +1,56 @@
+{
+  "items": [
+    {
+      "answer": "Vous pouvez vous inscrire à la procédure via le formulaire sur notre site Internet, en nous appelant ou en nous écrivant sur Instagram. Nous vous contacterons pour confirmer votre rendez-vous.",
+      "question": "Comment s'inscrire à la procédure"
+    },
+    {
+      "answer": "Nous acceptons les paiements en espèces et à la date cartes (Visa, MasterCard, American Express). Le paiement est effectué après la prestation du service.",
+      "question": "Quels modes de paiement acceptez-vous ?"
+    },
+    {
+      "answer": "Nous utilisons uniquement des matériaux certifiés haut de gamme provenant des plus grandes marques mondiales. Tous les pigments sont hypoallergéniques et sans danger pour la santé.",
+      "question": "Quels matériaux utilisez-vous"
+    },
+    {
+      "answer": "Oui, tous nos masters sont titulaires de certificats internationaux et suivent régulièrement des formations avancées.",
+      "question": "Vos artisans ont-ils des certificats ?"
+    },
+    {
+      "answer": "Oui, certaines procédures nécessitent une préparation. Nous fournissons des recommandations détaillées lors de l’inscription.",
+      "question": "Une préparation est-elle nécessaire avant l’intervention ?"
+    },
+    {
+      "answer": "Oui, chaque procédure a ses propres contre-indications. Principal : grossesse, allaitement, processus inflammatoires aigus, maladies du sang, oncologie. Avant l'intervention, une consultation avec un spécialiste est nécessaire.",
+      "question": "Y a-t-il des contre-indications aux procédures ?"
+    },
+    {
+      "answer": "Oui, nous garantissons la qualité de tous nos services. Si vous n'êtes pas satisfait du résultat, contactez-nous dans les 7 jours et nous trouverons une solution.",
+      "question": "Fournissez-vous une garantie pour les services"
+    },
+    {
+      "answer": "Oui, nous avons un programme de fidélité cumulatif. Après chaque visite, vous recevez des bonus qui peuvent être utilisés pour payer de futures visites.",
+      "question": "Avez-vous un programme de fidélité"
+    },
+    {
+      "answer": "Oui, nous travaillons 7 jours sur 7.",
+      "question": "Travaillez-vous le week-end"
+    },
+    {
+      "answer": "Oui, nous proposons des chèques-cadeaux pour n'importe quel montant ou pour des services spécifiques. Contactez-nous pour obtenir un certificat.",
+      "question": "Est-il possible de délivrer une attestation pour des prestations ?"
+    },
+    {
+      "answer": "Nous sommes situés au centre de Dubaï. Des informations détaillées sur la façon de s'y rendre sont disponibles sur la page Contacts.",
+      "question": "Où se trouve votre salon ?"
+    },
+    {
+      "answer": "Oui, nous apprécions votre temps et pouvons organiser plusieurs procédures simultanément.",
+      "question": "Faites-vous des procédures à 4 mains ?"
+    },
+    {
+      "answer": "Oui, nous disposons d'un parking gratuit pour les clients.",
+      "question": "Y a-t-il un parking ?"
+    }
+  ]
+}

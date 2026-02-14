@@ -1,0 +1,125 @@
+{
+  "buttons": {
+    "cancel": "Annuler",
+    "save_template": "Enregistrer le modèle",
+    "send_notification": "Envoyer une notification"
+  },
+  "dialogs": {
+    "send": {
+      "description": "Créez une notification ciblée pour vos clients",
+      "form": {
+        "appointment_date": "Appointment Date",
+        "appointment_filter": "Appointment Filter",
+        "appointment_filters": {
+          "date_range": "Date Range",
+          "specific_date": "Specific Date",
+          "tomorrow": "Tomorrow"
+        },
+        "end_date": "End Date",
+        "loyalty_tier": "Niveau de fidélité",
+        "message": "Message",
+        "message_placeholder": "Entrez le texte de la notification...",
+        "notification_type": "Type de canal",
+        "repeat_end_date": "End Repeat On",
+        "repeat_interval": "Repeat Interval",
+        "repeat_intervals": {
+          "daily": "Daily",
+          "monthly": "Monthly",
+          "weekly": "Weekly"
+        },
+        "repeat_notification": "Repeat Notification",
+        "schedule_date": "Send Date",
+        "schedule_notification": "Schedule Notification",
+        "schedule_time": "Send Time",
+        "segments": {
+          "active": "Clients actifs",
+          "all": "Tous les clients",
+          "appointment_based": "By Appointment",
+          "inactive": "Perdu (inactif)",
+          "service_based": "By Service",
+          "tier": "Par niveaux de fidélité"
+        },
+        "select_filter": "Select filter",
+        "select_tier": "Sélectionner le niveau",
+        "service_filter": "Service/Procedure",
+        "service_hint": "Clients who booked this service will receive the notification",
+        "service_placeholder": "Enter service name or ID",
+        "start_date": "Start Date",
+        "target_segment": "Public cible (segment)",
+        "tiers": {
+          "bronze": "Bronze",
+          "gold": "Or",
+          "platinum": "Platine",
+          "silver": "Argent"
+        },
+        "title": "Titre",
+        "title_placeholder": "Entrer titre principal"
+      },
+      "title": "Nouvelle notification"
+    },
+    "template": {
+      "description": "Créez un modèle pour un futur envoi rapide",
+      "form": {
+        "message": "Message",
+        "message_placeholder": "Utilisez {nom} pour remplacer le nom du client",
+        "template_name": "Nom du modèle",
+        "template_name_placeholder": "par exemple\u00a0: Accueillir un nouveau client",
+        "title": "Titre",
+        "title_placeholder": "Titre de la notification",
+        "type": "Type de canal",
+        "types": {
+          "email": "E-mail",
+          "push": "Notification notification push",
+          "sms": "SMS"
+        }
+      },
+      "title": "Création d'un modèle"
+    }
+  },
+  "history": {
+    "description": "Liste des mailings précédemment créés et en cours",
+    "filters": {
+      "all": "Tous les canaux",
+      "email": "E-mail",
+      "push": "Notification notification push",
+      "sms": "SMS"
+    },
+    "scheduled": "Planifié",
+    "table": {
+      "date": "Date",
+      "recipients": "Destinataires",
+      "sent_failed": "Envoyés / Erreurs",
+      "status": "Statut",
+      "title": "En-tête / Objet",
+      "type": "Type"
+    },
+    "title": "Historique des envois"
+  },
+  "save_template": "Enregistrer le modèle",
+  "send_notification": "Envoyer",
+  "stats": {
+    "email_sent": "E-mail",
+    "push_sent": "Notification notification push",
+    "sms_sent": "SMS",
+    "total_sent": "Total envoyé"
+  },
+  "subtitle": "Centre de gestion des mailings et notifications automatiques",
+  "templates": {
+    "description": "Modèles prêts à l'emploi pour gagner du temps",
+    "title": "Mes modèles",
+    "use_template": "Utiliser"
+  },
+  "title": "Notifications",
+  "toasts": {
+    "failed_load": "Erreur lors du chargement des notifications",
+    "failed_save_template": "Échec de l'réservation modèle",
+    "failed_send": "Erreur d'envoi de notification",
+    "sent": "Notification envoyée avec succès",
+    "template_saved": "Modèle enregistré"
+  },
+  "types": {
+    "email": "E-mail",
+    "push": "Notification notification push",
+    "sms": "SMS"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "buttons": {
+    "save": "Save Changes"
+  },
+  "scheduling": {
+    "end_date": "End Date",
+    "hint": "Leave empty for indefinite availability.",
+    "label": "Scheduling (Optional)",
+    "start_date": "Start Date"
+  },
+  "status": {
+    "active": "Active",
+    "disabled": "Disabled",
+    "disabled_switch": "Disabled",
+    "enabled": "Enabled",
+    "globally_disabled": "Feature is currently disabled globally."
+  },
+  "subtitle": "Manage availability of key platform features",
+  "title": "Feature Management",
+  "toasts": {
+    "failed_load": "Failed to load feature configuration",
+    "failed_save": "Failed to save configuration",
+    "saved": "Configuration saved successfully"
+  },
+  "whitelist": {
+    "hint": "Comma-separated User IDs. If set, only these users can access this feature. Leave empty to allow all eligible users.",
+    "label": "Whitelist (Optional)",
+    "placeholder": "e.g. 1, 5, 12"
+  }
+}

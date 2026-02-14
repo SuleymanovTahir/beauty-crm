@@ -1,0 +1,32 @@
+{
+  "active_clients": "Белсенді клиенттер",
+  "booked": "Тіркелді",
+  "client_base": "Тұтынушы базасы",
+  "client_messages": "Клиенттерден келген хабарлар",
+  "completed": "Барды",
+  "completed_procedures": "Аяқталған процедуралар",
+  "conversion_rate": "Түрлендірулер",
+  "engaged": "Қатысқан",
+  "errors": {
+    "loading": "Деректерді жүктеу қатесі",
+    "loading_title": "Жүктеу қатесі"
+  },
+  "funnel_details": "Шұңқыр туралы толығырақ",
+  "good": "Жақсы",
+  "key_metrics": "Негізгі көрсеткіштер",
+  "loading": "Деректерді жүктеу",
+  "manager_desc": "Тұтынушыны басқару және талдау",
+  "manager_panel": "Басқарушы тақтасы",
+  "messages": "Хабарлар",
+  "normal": "Жақсы",
+  "open_chat": "Чатты ашу",
+  "pending": "Күтуде",
+  "quick_actions": "<z71>Access Service",
+  "retry": "Қайталап көріңіз",
+  "sales_funnel": "Сату шұңқыры",
+  "started_booking": "Бастаған жазба",
+  "total_bookings": "Жалпы жазбалар",
+  "total_clients": "Барлығы",
+  "total_revenue": "Жалпы табыс",
+  "visitors": "Келушілер"
+}
