@@ -28,7 +28,7 @@
         "./src/*"
       ],
       "@crm/*": [
-        "./src/crm/*"
+        "../../crm/frontend/src/crm/*"
       ],
       "@site/*": [
         "./src/site/*"
