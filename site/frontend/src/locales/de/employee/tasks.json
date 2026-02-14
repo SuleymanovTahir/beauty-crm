@@ -1,0 +1,12 @@
+{
+  "assigned_to": "Zugewiesen",
+  "due_date": "Fälligkeitsdatum",
+  "manage_your_tasks": "Aufgaben und Aufgaben verwalten",
+  "my_tasks": "Meine Aufgaben",
+  "no_tasks": "Noch keine Aufgaben",
+  "no_tasks_description": "Sie haben keine aktive Aufgaben. Neue Aufgaben werden hier angezeigt, wenn sie zugewiesen werden.",
+  "priority": "Priorität",
+  "status": "Status",
+  "task_description": "Beschreibung",
+  "task_title": "Aufgabenname"
+}

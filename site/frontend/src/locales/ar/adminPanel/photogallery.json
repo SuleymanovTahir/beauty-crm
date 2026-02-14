@@ -1,0 +1,71 @@
+{
+  "actions": {
+    "hide": "إخفاء",
+    "show": "إظهار"
+  },
+  "buttons": {
+    "cancel": "إلغاء",
+    "close": "إغلاق",
+    "upload": "تنزيل"
+  },
+  "card": {
+    "featured": "المفضلة",
+    "toggle_featured": "تبديل المفضلة",
+    "uploaded_by": "تم تحميل {{name}}",
+    "views": "المشاهدات"
+  },
+  "dialogs": {
+    "delete": {
+      "confirm": "هل أنت متأكد من أنك تريد حذف هذه الصورة؟"
+    },
+    "upload": {
+      "description": "إضافة صورة جديدة إلى المعرض",
+      "form": {
+        "after_photo": "صورة \"بعد\"",
+        "before_after": "قبل/بعد",
+        "before_photo": "صورة \"قبل\"",
+        "category": "الفئة",
+        "client": "العميل",
+        "client_hint": "ستكون الصورة متاحة في معرض العميل",
+        "description": "الوصف",
+        "description_placeholder": "صورة الوصف",
+        "photo": "الصورة",
+        "select_client": "حدد العميل",
+        "single_photo": "صورة واحدة",
+        "title": "الاسم",
+        "title_placeholder": "اسم الصورة",
+        "upload_type": "نوع التحميل"
+      },
+      "title": "تحميل صورة"
+    }
+  },
+  "empty": {
+    "description": "تحميل الصور الأولى إلى المعرض",
+    "title": "لا توجد صور بعد"
+  },
+  "filters": {
+    "all_categories": "جميع الفئات",
+    "search_placeholder": "البحث عن الصور..."
+  },
+  "stats": {
+    "featured_photos": "الصور المفضلة",
+    "recent_uploads": "التحميلات الأخيرة",
+    "total_photos": "إجمالي الصور",
+    "total_views": "إجمالي مرات المشاهدة"
+  },
+  "subtitle": "إدارة صور العميل ومحفظته",
+  "title": "معرض الصور",
+  "toasts": {
+    "deleted": "تم حذف الصورة بنجاح",
+    "failed_delete": "فشل حذف الصورة",
+    "failed_featured": "فشل تحديث الحالة المفضلة",
+    "failed_load": "فشل تحميل الصور",
+    "failed_upload": "فشل تحميل الصورة",
+    "failed_visibility": "فشل تحديث الرؤية.",
+    "featured_updated": "تم تحديث الحالة المفضلة",
+    "select_both_photos": "الرجاء تحديد صورة قبل وبعد",
+    "uploaded": "تم تحميل الصورة بنجاح",
+    "visibility_updated": "تم تحديث الرؤية"
+  },
+  "upload_photo": "تحميل الصورة"
+}

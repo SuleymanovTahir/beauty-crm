@@ -1,0 +1,71 @@
+{
+  "actions": {
+    "hide": "Hide",
+    "show": "Show"
+  },
+  "buttons": {
+    "cancel": "Болдырмау",
+    "close": "Жабу",
+    "upload": "Жүктеп алу"
+  },
+  "card": {
+    "featured": "Таңдаулылар",
+    "toggle_featured": "Таңдаулыларды қосу/өшіру",
+    "uploaded_by": "Жүктелді {{name}}",
+    "views": "көрулер"
+  },
+  "dialogs": {
+    "delete": {
+      "confirm": "Осы фотосуретті шынымен жойғыңыз келе ме?"
+    },
+    "upload": {
+      "description": "Галереяға жаңа фотосурет қосу",
+      "form": {
+        "after_photo": "Фотосуреттен кейін",
+        "before_after": "Фотосуретке дейін/кейін",
+        "before_photo": "«Бұрын» фотосы",
+        "category": "Санатты",
+        "client": "Клиент",
+        "client_hint": "Фотосурет клиент галереясында қолжетімді болады",
+        "description": "Сипаттамасы",
+        "description_placeholder": "Фотосурет сипаттамасы",
+        "photo": "Фото",
+        "select_client": "Клиентті таңдау",
+        "single_photo": "Бір фото",
+        "title": "Аты",
+        "title_placeholder": "Фотосурет атауы",
+        "upload_type": "Жүктеп салу түрі"
+      },
+      "title": "Фотосуреттерді жүктеп салу"
+    }
+  },
+  "empty": {
+    "description": "Алғашқы фотосуреттерді галереяға жүктеп салу",
+    "title": "Әлі ешқандай фотосуреттер жоқ"
+  },
+  "filters": {
+    "all_categories": "Барлық санаттар",
+    "search_placeholder": "Фотосуреттер ізделуде..."
+  },
+  "stats": {
+    "featured_photos": "Таңдаулы фотосуреттер",
+    "recent_uploads": "Соңғы жүктеп салулар",
+    "total_photos": "Жалпы фотосурет",
+    "total_views": "Жалпы көрулер саны"
+  },
+  "subtitle": "Клиент фотосуреттері мен портфолиосын басқару",
+  "title": "Фото галереясы",
+  "toasts": {
+    "deleted": "Фотосурет сәтті жойылды",
+    "failed_delete": "Фотосурет жойылмады",
+    "failed_featured": "Таңдаулы күйді жаңарту орындалмады",
+    "failed_load": "Фотосуреттерді жүктеп салу орындалмады",
+    "failed_upload": "Фотосуретті жүктеп салу орындалмады",
+    "failed_visibility": "Failed to update visibility",
+    "featured_updated": "Таңдаулы күй жаңартылды",
+    "select_both_photos": "Please select both before and after photos",
+    "uploaded": "Фотосурет сәтті жүктеп салынды",
+    "visibility_updated": "Visibility updated"
+  },
+  "upload_photo": "Фотосуреттерді жүктеп салу"
+}

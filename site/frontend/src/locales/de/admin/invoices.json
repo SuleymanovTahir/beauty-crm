@@ -1,0 +1,79 @@
+{
+  "actions": "Aktionen",
+  "addInvoice": "Konto erstellen",
+  "addPayment": "Zahlung hinzufügen",
+  "allInvoices": "Alle Konten",
+  "allStatuses": "Alle Status",
+  "board": "Board",
+  "client": "Kunde",
+  "delete": "Löschen",
+  "dueDate": "Fälligkeitsdatum der Zahlung",
+  "errors": {
+    "createError": "Fehler beim Erstellen der Rechnung.",
+    "deleteError": "Fehler beim Löschen der Rechnung.",
+    "paymentError": "Fehler beim Hinzufügen der Zahlung",
+    "sendError": "Fehler beim Senden der Rechnung",
+    "updateError": "Status konnte nicht aktualisiert werden"
+  },
+  "form": {
+    "addItem": "Artikel hinzufügen",
+    "cancel": "Stornieren",
+    "dueDate": "Zahlungsbedingung",
+    "itemName": "Name",
+    "itemPrice": "Preis",
+    "itemQuantity": "Menge",
+    "items": "Rechnungspositionen",
+    "notes": "Notizen",
+    "save": "Speichern",
+    "selectClient": "Kunde auswählen"
+  },
+  "invoiceNumber": "Rechnung Nr.",
+  "manage_stages": "Spalten",
+  "messages": {
+    "confirmDelete": "Sind Sie sicher, dass Sie diese Rechnung löschen möchten?",
+    "invoiceCreated": "Rechnung erstellt",
+    "invoiceDeleted": "Rechnung gelöscht",
+    "invoiceSent": "Rechnung gesendet",
+    "invoiceUpdated": "Rechnung aktualisiert",
+    "paymentAdded": "Zahlung hinzugefügt"
+  },
+  "noInvoices": "Keine Rechnungen noch",
+  "paidAmount": "Bezahlt",
+  "payment": {
+    "add": "Hinzufügen",
+    "amount": "Betrag",
+    "method": "Zahlungsmethode",
+    "methods": {
+      "card": "Karte",
+      "cash": "Bargeld",
+      "online": "Online",
+      "transfer": "Übersetzung"
+    },
+    "notes": "Notizen",
+    "title": "Zahlung hinzufügen"
+  },
+  "search_placeholder": "Nach Nummer oder Kunde suchen...",
+  "sendButton": "Senden",
+  "sendDialog": {
+    "email": "E-Mail",
+    "method": "Sendemethode",
+    "recipient": "Empfänger",
+    "sendButton": "Senden",
+    "telegram": "Telegram",
+    "title": "Rechnung senden",
+    "whatsapp": "WhatsApp"
+  },
+  "status": "Status",
+  "statuses": {
+    "cancelled": "Abgesagt",
+    "draft": "Entwurf",
+    "overdue": "Überfällig",
+    "paid": "Bezahlt",
+    "partial": "Teilweise bezahlt",
+    "partially_paid": "Teilweise bezahlt",
+    "sent": "Gesendet"
+  },
+  "subtitle": "Rechnungen und Zahlungen verwalten",
+  "title": "Konten",
+  "totalAmount": "Summe"
+}

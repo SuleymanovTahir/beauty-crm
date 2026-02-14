@@ -28,7 +28,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import UniversalChallenges from '../shared/Challenges';
 import PromoCodes from './PromoCodes';
-import LoyaltyManagement from '@site/pages/adminPanel/LoyaltyManagement';
+import LoyaltyManagement from './LoyaltyManagement';
 import { QRCodeSVG } from 'qrcode.react';
 
 interface SpecialPackage {

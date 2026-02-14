@@ -1,0 +1,64 @@
+{
+  "buttons": {
+    "add_challenge": "Crear tarea",
+    "create_challenge": "Ejecutar desafío"
+  },
+  "card": {
+    "check_progress": "Actualizar",
+    "details": "Más detalles",
+    "participants": "PARTICIPANTES",
+    "progress": "PROGRESO"
+  },
+  "dialogs": {
+    "add_title": "Nuevo desafío",
+    "delete": {
+      "confirm": "¿Estás seguro de que quieres eliminar este desafío?"
+    },
+    "edit_title": "Editar desafío"
+  },
+  "empty": {
+    "subtitle": "Crea la primera tarea del juego para alentar a los clientes a registrarse con más frecuencia.",
+    "title": "Los desafíos no están configurados"
+  },
+  "fields": {
+    "dates": "Límite temporal",
+    "description": "Público descripción",
+    "reward": "Recompensa",
+    "target_value": "Plan (objetivo)",
+    "title": "Nombre de la tarea",
+    "type": "Metodología del objetivo"
+  },
+  "placeholders": {
+    "description": "¿Cómo verá el cliente esta tarea?",
+    "title": "Por ejemplo: estado oro"
+  },
+  "stats": {
+    "active_challenges": "TAREAS ACTIVAS",
+    "completed_today": "COMPLETADAS HOY",
+    "total_participants": "TOTAL DE PARTICIPANTES"
+  },
+  "status": {
+    "active": "ACTIVAS",
+    "inactive": "PAUSA"
+  },
+  "subtitle": "Aumenta la fidelidad de los clientes con mecánicas de juego y recompensas automáticas.",
+  "title": "Desafíos",
+  "toasts": {
+    "created": "Misión creada",
+    "deleted": "Reto eliminado",
+    "failed_check_progress": "Error al comprobar el progreso",
+    "failed_delete": "Error al eliminar",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_one": "",
+    "progress_checked_other": "",
+    "updated": "Tarea actualizada"
+  },
+  "types": {
+    "referrals": "Recomendaciones",
+    "service": "categoría de servicio",
+    "services": "Servicios",
+    "spend": "Total cantidad gastada",
+    "visits": "Número de visitas"
+  }
+}

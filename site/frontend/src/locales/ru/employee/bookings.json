@@ -1,0 +1,21 @@
+{
+  "my_bookings": "Мои записи",
+  "view_and_manage_bookings": "Просмотр и управление записями клиентов",
+  "all": "Все",
+  "upcoming": "Предстоящие",
+  "past": "Прошедшие",
+  "no_bookings": "Записей пока нет",
+  "no_bookings_description": "У вас нет записей. Новые записи появятся здесь автоматически.",
+  "booking": "Запись",
+  "client": "Клиент",
+  "service": "Услуга",
+  "date_time": "Дата и время",
+  "phone": "Телефон",
+  "notes": "Заметки",
+  "no_name": "Имя не указано",
+  "no_phone": "Телефон не указан",
+  "status_confirmed": "Подтверждена",
+  "status_pending": "Ожидает",
+  "status_cancelled": "Отменена",
+  "status_completed": "Завершена"
+}

@@ -1,0 +1,80 @@
+{
+  "actions": "Действия",
+  "addContract": "Создать договор",
+  "all": "Все",
+  "allContracts": "Все договоры",
+  "allStatuses": "Все статусы",
+  "board": "Доска",
+  "client": "Клиент",
+  "clientContracts": "Клиентские",
+  "contractNumber": "№ Договора",
+  "createdAt": "Дата создания",
+  "editContract": "Редактировать договор",
+  "errors": {
+    "deleteError": "Ошибка удаления контракта.",
+    "saveError": "Ошибка сохранения контракта.",
+    "sendError": "Ошибка отправки контракта",
+    "updateError": "Не удалось обновить статус"
+  },
+  "form": {
+    "cancel": "Отмена",
+    "contractType": "Тип договора",
+    "save": "Сохранить",
+    "selectClient": "Выберите клиента"
+  },
+  "internalContracts": "Внутренние",
+  "manageTypes": "Типы договоров",
+  "manage_stages": "Колонки",
+  "messages": {
+    "confirmDelete": "Вы уверены, что хотите удалить этот договор?",
+    "contractCreated": "Договор создан",
+    "contractDeleted": "Договор удален",
+    "contractSent": "Договор отправлен",
+    "contractUpdated": "Договор обновлен"
+  },
+  "noContracts": "Договоров пока нет",
+  "search_placeholder": "Поиск по номеру или клиенту...",
+  "sendDialog": {
+    "email": "Электронная почта",
+    "instagram": "Инстаграм",
+    "method": "Способ отправки",
+    "recipient": "Получатель",
+    "sendButton": "Отправить",
+    "telegram": "Телеграмма",
+    "title": "Отправить договор",
+    "whatsapp": "WhatsApp"
+  },
+  "status": "Статус",
+  "statuses": {
+    "cancelled": "Отменен",
+    "draft": "Черновик",
+    "sent": "Отправлен",
+    "signed": "Подписан"
+  },
+  "subtitle": "Управление договорами с клиентами",
+  "title": "Договоры",
+  "type": "Тип",
+  "typeManagement": {
+    "add": "Добавить",
+    "code": "Код (лат., уникальный)",
+    "confirmDelete": "Подтвердить удаление",
+    "createType": "Создать тип",
+    "deletePrompt": "Вы хотите удалить этот тип договора. Как поступить с существующими договорами этого типа?",
+    "deleteTitle": "Удаление типа \"{{name}}\"",
+    "deleteWithDocs": "Удалить все договоры",
+    "deleteWithDocsSub": "Все документы этого типа будут удалены безвозвратно.",
+    "description": "Описание",
+    "editType": "Редактировать тип",
+    "keepDocs": "Оставить договоры без типа",
+    "keepDocsSub": "Договоры останутся, но поле \"Тип\" будет очищено.",
+    "messages": {
+      "created": "Тип создан",
+      "deleted": "Тип удален",
+      "updated": "Тип обновлен"
+    },
+    "name": "Название",
+    "system": "Система",
+    "systemProtected": "Система защищена",
+    "title": "Типы договоров"
+  }
+}

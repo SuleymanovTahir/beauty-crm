@@ -1,0 +1,17 @@
+{
+  "backToHome": "← Volver a inicio",
+  "fillAllFields": "Rellene todos los campos",
+  "loggingIn": "grabar...",
+  "loginButton": "Iniciar sesión",
+  "loginError": "Credenciales no válidas",
+  "loginSuccess": "Has realizado correctamente ¡has iniciado sesión! 🎉",
+  "password": "Contraseña",
+  "passwordHint": "Introducida durante el reserva",
+  "passwordPlaceholder": "••••••",
+  "subtitle": "Iniciar sesión en el sistema de gestión del salón",
+  "systemError": "Error de inicio de sesión",
+  "title": "Cuenta personal",
+  "username": "Nombre de usuario o correo electrónico",
+  "usernameHint": "Ingrese su nombre de usuario",
+  "usernamePlaceholder": "administrador"
+}

@@ -1,0 +1,97 @@
+{
+  "analyze_further": "Анализируйте дальше",
+  "apply": "Применить",
+  "avg_check": "Средний чек",
+  "avg_time": "Среднее время",
+  "booking_statuses": "Статусы записей",
+  "bookings": "Записи",
+  "bookings_trend": "Динамика записей",
+  "clarify_services": "Уточнение услуг",
+  "conversation_stage": "Этап диалога",
+  "conversion": "Конверсия",
+  "detailed_analysis": "Детальный анализ работы салона",
+  "drop_off_analysis": "Анализ отсева",
+  "drop_offs": "Отказы",
+  "errors": {
+    "export_failed": "Ошибка экспорта файла",
+    "invalid_date_range": "Дата начала должна быть раньше даты окончания",
+    "invalid_period": "Неверный период",
+    "loading_error": "Ошибка загрузки",
+    "select_both_dates": "Выберите обе даты"
+  },
+  "export": "Экспорт",
+  "exporting": "Экспорт...",
+  "focus_on_highest_drop_off": "Обратите внимание на этап с самым большим отсевом",
+  "for_period": "За период",
+  "from_visitors": "От посетителей к клиентам",
+  "improve_greeting": "Улучшите приветствие",
+  "income": "Доход",
+  "min": "мин",
+  "name": "Имя",
+  "need_more_masters": "Нужно больше мастеров",
+  "optimization_tip": "Совет по оптимизации",
+  "peak_hours": "Пиковые часы",
+  "per_booking": "За каждую запись",
+  "percentage": "Процент",
+  "quantity": "Количество",
+  "recommendation": "Рекомендация",
+  "refresh": "Обновить",
+  "response_time": "Время ответа",
+  "revenue": "Выручка",
+  "services_distribution": "Распределение услуг",
+  "simplify_contact_collection": "Упростите сбор контактов",
+  "stages": {
+    "after_greeting": "После приветствия",
+    "after_price": "После цены",
+    "no_slots": "Нет свободных слотов",
+    "service_selection": "Выбор услуги",
+    "whatsapp_request": "Запрос в WhatsApp"
+  },
+  "status": {
+    "cancelled": "Отменен",
+    "completed": "Завершен",
+    "confirmed": "Подтвержден",
+    "no_show": "Не пришел",
+    "pending": "Ожидает"
+  },
+  "success": {
+    "file_downloaded": "Файл успешно скачан"
+  },
+  "title": "Аналитика",
+  "top_services": "Популярные услуги",
+  "try_again": "Попробуйте снова",
+  "where_clients_leave": "Где уходят клиенты?",
+  "work_on_objections": "Работа с возражениями",
+  "funnel_overview": "Воронка продаж",
+  "visitors": "Посетители",
+  "engaged": "Вовлеченные",
+  "booked": "Записались",
+  "completed": "Посетили",
+  "funnel_chart": "График воронки",
+  "funnel": {
+    "conversion": {
+      "visitor_to_engaged": "Посетитель -> Вовлечен",
+      "engaged_to_booking": "Вовлечен -> Начал запись",
+      "booking_to_booked": "Начал -> Записался",
+      "booked_to_completed": "Записался -> Посетил"
+    },
+    "stages": {
+      "visitors": "Посетители",
+      "engaged": "Вовлеченные",
+      "started_booking": "Начали запись",
+      "booked": "Записались",
+      "completed": "Посетили"
+    },
+    "desc": {
+      "visitors": "Посетители сайта/соцсетей",
+      "engaged": "Проявили интерес",
+      "started_booking": "Открыли форму записи",
+      "booked": "Завершили оформление",
+      "completed": "Услуга оказана"
+    },
+    "losses_one": "Потеря: {{count}}",
+    "losses_few": "Потери: {{count}}",
+    "losses_many": "Потери: {{count}}",
+    "losses_other": "Потери: {{count}}"
+  }
+}

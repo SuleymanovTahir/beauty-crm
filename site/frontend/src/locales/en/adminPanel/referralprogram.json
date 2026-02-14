@@ -1,0 +1,63 @@
+{
+  "buttons": {
+    "cancel": "Cancel",
+    "save_changes": "Save changes"
+  },
+  "current_settings": {
+    "edit": "Edit",
+    "min_purchase": "Minimum purchase price: <strong>{{amount}} {{currency}}</strong>",
+    "referred_bonus": "Friend bonus: <strong>{{points}} points</strong>",
+    "referrer_bonus": "Invitee bonus: <strong>{{points}} points</strong>",
+    "title": "Current bonus configuration"
+  },
+  "dialogs": {
+    "settings": {
+      "description": "Set up bonus points and requirements",
+      "min_purchase_amount": "Minimum purchase price ({{currency}})",
+      "min_purchase_help": "Minimum amount a friend must spend to activate the referral bonus ({{min}} = no minimum)",
+      "referred_bonus": "Referred Friend Bonus Points",
+      "referred_bonus_help": "Points awarded to a friend upon registration",
+      "referrer_bonus": "Referrer bonus points",
+      "referrer_bonus_help": "Points awarded to the referrer when a friend makes their first purchase",
+      "title": "Referral program settings"
+    }
+  },
+  "settings": "Settings",
+  "stats": {
+    "completed_referrals": "Completed referrals",
+    "points_distributed": "Points distributed",
+    "total_referrals": "Total referrals"
+  },
+  "subtitle": "Managing referrals and tracking program effectiveness",
+  "table": {
+    "columns": {
+      "date": "Date",
+      "points_awarded": "Points awarded",
+      "referred_friend": "Invited friend",
+      "referrer": "Referrer",
+      "status": "Status"
+    },
+    "description": "Tracking the status of referrals and distribution of points",
+    "filters": {
+      "all_statuses": "All statuses"
+    },
+    "search_placeholder": "Search for referrals...",
+    "sort": {
+      "date": "By date",
+      "points": "By points",
+      "status": "By status"
+    },
+    "statuses": {
+      "cancelled": "Canceled",
+      "completed": "Completed",
+      "pending": "Waiting"
+    },
+    "title": "Invitation history"
+  },
+  "title": "Referral program",
+  "toasts": {
+    "failed_load": "Failed to load referrals",
+    "failed_save": "Failed to save",
+    "settings_saved": "Settings saved successfully"
+  }
+}

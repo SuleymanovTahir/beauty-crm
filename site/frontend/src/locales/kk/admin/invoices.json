@@ -1,0 +1,79 @@
+{
+  "actions": "Әрекеттер",
+  "addInvoice": "Шот-фактура жасау",
+  "addPayment": "Төлемді қосу",
+  "allInvoices": "Барлық тіркелгілер",
+  "allStatuses": "Барлық күйлер",
+  "board": "Басқарма",
+  "client": "Клиент",
+  "delete": "Жою",
+  "dueDate": "Төлемнің аяқталу күні",
+  "errors": {
+    "createError": "Шот-фактураны жасау қателігі.",
+    "deleteError": "Есептік жазбаны жою қатесі.",
+    "paymentError": "Төлемді қосу қатесі",
+    "sendError": "Шот-фактураны жіберу қатесі",
+    "updateError": "Күйін жаңарту орындалмады"
+  },
+  "form": {
+    "addItem": "Элемент қосу",
+    "cancel": "Болдырмау",
+    "dueDate": "Төлемнің аяқталу күні",
+    "itemName": "Аты",
+    "itemPrice": "Баға",
+    "itemQuantity": "Саны",
+    "items": "Шот-фактура элементтері",
+    "notes": "Ескертпелер",
+    "save": "Сақтау",
+    "selectClient": "Клиентті таңдау"
+  },
+  "invoiceNumber": "Шот-фактура нөмірі",
+  "manage_stages": "Бағандар",
+  "messages": {
+    "confirmDelete": "Бұл есептік жазбаны шынымен жойғыңыз келе ме?",
+    "invoiceCreated": "Шот-фактура жасалды",
+    "invoiceDeleted": "Шот-фактура жойылды",
+    "invoiceSent": "Шот-фактура жіберілді",
+    "invoiceUpdated": "Шот-фактура жаңартылды",
+    "paymentAdded": "Төлем қосылды"
+  },
+  "noInvoices": "Әлі шот-фактуралар жоқ",
+  "paidAmount": "Ақылы",
+  "payment": {
+    "add": "Қосу",
+    "amount": "Сома",
+    "method": "Төлем әдісі",
+    "methods": {
+      "card": "C",
+      "cash": "Қолма-қол ақша",
+      "online": "Онлайн",
+      "transfer": "Аударма"
+    },
+    "notes": "Ескертпелер",
+    "title": "Төлемді қосу"
+  },
+  "search_placeholder": "Нөмір немесе клиент бойынша іздеу...",
+  "sendButton": "Жіберу",
+  "sendDialog": {
+    "email": "Электрондық пошта",
+    "method": "Жіберу әдісі",
+    "recipient": "Алушы",
+    "sendButton": "Жіберу",
+    "telegram": "Telegram",
+    "title": "Шот-фактураны жіберу",
+    "whatsapp": "WhatsApp"
+  },
+  "status": "Күй",
+  "statuses": {
+    "cancelled": "Тоқтатылды",
+    "draft": "Жоба",
+    "overdue": "Мерзімі өткен",
+    "paid": "Төленді",
+    "partial": "Ішінара төленген",
+    "partially_paid": "Ішінара төленген",
+    "sent": "Жіберілді"
+  },
+  "subtitle": "Шот-фактуралар мен төлемдерді басқару",
+  "title": "Тіркелгілер",
+  "totalAmount": "Сома"
+}
