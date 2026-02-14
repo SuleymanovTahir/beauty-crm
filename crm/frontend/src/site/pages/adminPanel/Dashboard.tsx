@@ -15,8 +15,8 @@ export default function AdminDashboard() {
     active_challenges: 0,
     total_loyalty_points: 0,
     total_referrals: 0,
-    pending_notifications: 0,
   });
+  const [recentActivity, setRecentActivity] = useState<Array<{ id: string; message: string; createdAt: string }>>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,27 +26,81 @@ export default function AdminDashboard() {
   const loadStats = async () => {
     try {
       setLoading(true);
-      const response = await fetch(buildApiUrl('/api/admin/stats'), {
-        credentials: 'include',
-      });
+      const [statsResponse, activityResponse] = await Promise.all([
+        fetch(buildApiUrl('/api/admin/stats'), {
+          credentials: 'include',
+        }),
+        fetch(buildApiUrl('/api/notifications?unread_only=false&limit=3'), {
+          credentials: 'include',
+        }),
+      ]);
 
-      if (response.ok) {
-        const data = await response.json();
+      if (statsResponse.ok) {
+        const data = await statsResponse.json();
         if (data.success && data.stats) {
           setStats({
-            total_users: data.stats.total_users || 0,
-            active_challenges: data.stats.active_challenges || 0,
-            total_loyalty_points: data.stats.total_loyalty_points || 0,
-            total_referrals: data.stats.total_referrals || 0,
-            pending_notifications: 0,
+            total_users: data.stats.total_users ?? 0,
+            active_challenges: data.stats.active_challenges ?? 0,
+            total_loyalty_points: data.stats.total_loyalty_points ?? 0,
+            total_referrals: data.stats.total_referrals ?? 0,
           });
         }
       }
+
+      if (activityResponse.ok) {
+        const activityData = await activityResponse.json();
+        const notifications = Array.isArray(activityData?.notifications) ? activityData.notifications : [];
+        const normalizedActivity = notifications
+          .map((item: any, index: number) => {
+            const messageValue =
+              typeof item?.message === 'string' && item.message.trim().length > 0
+                ? item.message.trim()
+                : typeof item?.title === 'string' && item.title.trim().length > 0
+                  ? item.title.trim()
+                  : '';
+
+            const createdAtValue =
+              typeof item?.created_at === 'string' && item.created_at.trim().length > 0
+                ? item.created_at
+                : new Date().toISOString();
+
+            if (messageValue.length === 0) {
+              return null;
+            }
+
+            return {
+              id: String(item?.id ?? index),
+              message: messageValue,
+              createdAt: createdAtValue,
+            };
+          })
+          .filter((item: { id: string; message: string; createdAt: string } | null): item is { id: string; message: string; createdAt: string } => item !== null);
+        setRecentActivity(normalizedActivity);
+      } else {
+        setRecentActivity([]);
+      }
     } catch (error) {
       console.error('Error loading stats:', error);
+      setRecentActivity([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const formatRelativeTime = (createdAt: string) => {
+    const parsedDate = new Date(createdAt);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return '';
+    }
+
+    const diffMs = Date.now() - parsedDate.getTime();
+    const diffHours = Math.max(1, Math.floor(diffMs / (1000 * 60 * 60)));
+    if (diffHours < 24) {
+      return t('recent_activity.hours_ago', { count: diffHours });
+    }
+
+    const diffDays = Math.max(1, Math.floor(diffHours / 24));
+    return t('recent_activity.day_ago', { count: diffDays });
   };
 
   const handleExport = async () => {
@@ -229,39 +283,20 @@ export default function AdminDashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <Gift className="w-5 h-5 text-blue-600" />
+            {recentActivity.map((item) => (
+              <div key={item.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Bell className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">{item.message}</p>
+                  <p className="text-xs text-gray-500">{formatRelativeTime(item.createdAt)}</p>
+                </div>
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">
-                  {t('recent_activity.new_tier_activated')}
-                </p>
-                <p className="text-xs text-gray-500">{t('recent_activity.hours_ago', { count: 2 })}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <Users className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">
-                  {t('recent_activity.users_registered', { count: 15 })}
-                </p>
-                <p className="text-xs text-gray-500">{t('recent_activity.hours_ago', { count: 5 })}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <Target className="w-5 h-5 text-green-600" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">
-                  {t('recent_activity.challenge_completed', { name: 'Summer Glow', count: 23 })}
-                </p>
-                <p className="text-xs text-gray-500">{t('recent_activity.day_ago', { count: 1 })}</p>
-              </div>
-            </div>
+            ))}
+            {recentActivity.length === 0 && (
+              <p className="text-sm text-gray-500">{t('common:no_items')}</p>
+            )}
           </div>
         </CardContent>
       </Card>

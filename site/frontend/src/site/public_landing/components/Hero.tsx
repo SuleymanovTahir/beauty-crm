@@ -84,7 +84,6 @@ export function Hero({ initialBanner, salonInfo }: HeroProps) {
                 (heroBanner?.is_flipped_vertical === 1 || heroBanner?.is_flipped_vertical === true) ? 'scaleY(-1)' : ''
               ].filter(Boolean).join(' ')
             }}
-            onLoad={() => console.log(`[Hero] Banner image loaded successfully: ${backgroundImage}`)}
             onError={() => console.error(`[Hero] Banner image failed to load: ${backgroundImage}`)}
           />
 
