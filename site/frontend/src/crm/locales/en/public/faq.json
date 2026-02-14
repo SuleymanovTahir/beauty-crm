@@ -1,0 +1,73 @@
+{
+  "answer_1": "You can subscribe through our website, by calling or writing on WhatsApp/Instagram.",
+  "answer_2": "We accept payment in cash and bank cards.",
+  "answer_3": "Yes, you can cancel or reschedule your appointment up to {{hours}} hours before your scheduled time.",
+  "answer_4": "Yes, some procedures have medical contraindications. ",
+  "answer_5": "The procedure time depends on the service chosen. ",
+  "answer_6": "Some procedures require special training. ",
+  "cta": {
+    "bookButton": "Sign up for the procedure",
+    "contactButton": "Contact us",
+    "description": "Contact us, we will be happy to answer all your questions",
+    "title": "Couldn't find the answer to your question?"
+  },
+  "faq_title": "Frequently Asked Questions",
+  "question_1": "How to sign up for the procedure?",
+  "question_2": "What payment methods do you accept?",
+  "question_3": "Can I cancel or reschedule an appointment?",
+  "question_4": "Do you have any contraindications to the procedures?",
+  "question_5": "How long does the procedure take?",
+  "question_6": "Is advance preparation necessary for the procedure?",
+  "questions": {
+    "booking": {
+      "answer": "You can subscribe to the procedure through the {{phone, phone}} form on our website, by calling {{phone}}{{/phone}}{{instagram, instagram}} or writing to us on Instagram {{instagram}}{{/instagram}}. ",
+      "question": "How to sign up for the procedure?"
+    },
+    "cancellation": {
+      "answer": "Yes, you can cancel or reschedule your appointment up to {{hours}} hours before your scheduled time. ",
+      "question": "Can I cancel or reschedule an appointment?"
+    },
+    "certificates": {
+      "answer": "Yes, all our masters have international certificates and regularly undergo advanced training courses.",
+      "question": "Are your craftsmen certified?"
+    },
+    "contraindications": {
+      "answer": "Yes, each procedure has its own contraindications. ",
+      "question": "Are there any contraindications to the procedure?"
+    },
+    "gift": {
+      "answer": "Yes, we offer gift certificates for any amount or for certain services. ",
+      "question": "Can I provide a certificate for services?"
+    },
+    "guarantee": {
+      "answer": "Yes, we guarantee the quality of all our services. ",
+      "question": "Do you guarantee services?"
+    },
+    "location": {
+      "answer": "Our address is {{address}}. ",
+      "question": "Where is your salon located?"
+    },
+    "loyalty": {
+      "answer": "Yes, we have a comprehensive loyalty program. ",
+      "question": "Do you have a loyalty program?"
+    },
+    "materials": {
+      "answer": "We use only certified premium materials from the world's leading brands. ",
+      "question": "What materials do you use?"
+    },
+    "payment": {
+      "answer": "We accept payment in cash and cards (Visa, MasterCard, American Express). ",
+      "question": "What payment methods do you accept?"
+    },
+    "preparation": {
+      "answer": "Yes, some procedures require preparation. ",
+      "question": "Is it necessary to prepare before the procedure?"
+    },
+    "weekends": {
+      "answer": "Yes, we are open {{count}} days a week. ",
+      "question": "Do you work on weekends?"
+    }
+  },
+  "subtitle": "Answers to popular questions about our services",
+  "title": "Frequently Asked Questions"
+}

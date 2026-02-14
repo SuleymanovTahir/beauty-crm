@@ -1,0 +1,64 @@
+{
+  "buttons": {
+    "add_challenge": "Reate task",
+    "create_challenge": "3Create task"
+  },
+  "card": {
+    "check_progress": "Жаңарту",
+    "details": "Толығырақ",
+    "participants": "ҚАТЫСУШЫЛАР",
+    "progress": "ПРОГРЕСС"
+  },
+  "dialogs": {
+    "add_title": "Жаңа тапсырма",
+    "delete": {
+      "confirm": "Осы тапсырманы шынымен жойғыңыз келе ме?"
+    },
+    "edit_title": "Тапсырманы өңдеу"
+  },
+  "empty": {
+    "subtitle": "Клиенттерді жиірек тіркелуге шақыру үшін бірінші ойын тапсырмасын жасаңыз.",
+    "title": "Сынақтар орнатылмаған"
+  },
+  "fields": {
+    "dates": "Уақыт шегі",
+    "description": "Жария сипаттама",
+    "reward": "Сыйақы",
+    "target_value": "Жоспар (мақсат)",
+    "title": "Тапсырманың аты",
+    "type": "Мақсат әдістемесі"
+  },
+  "placeholders": {
+    "description": "Клиент бұл тапсырманы қалай көреді?",
+    "title": "Мысалы: Алтын мәртебесі"
+  },
+  "stats": {
+    "active_challenges": "БЕЛСЕНДІ Тапсырмалар",
+    "completed_today": "БҮГІН АЯҚТАҢЫЗ",
+    "total_participants": "ЖАЛПЫ ҚАТЫСУШЫЛАР"
+  },
+  "status": {
+    "active": "БЕЛСЕНДІ",
+    "inactive": "ҮЗІЛУ"
+  },
+  "subtitle": "Ойын механикасы және автоматты сыйақылар арқылы тұтынушылардың адалдығын арттырыңыз.",
+  "title": "Қиындықтар",
+  "toasts": {
+    "created": "Тапсырма жасалды",
+    "deleted": "Тапсырма жойылды",
+    "failed_check_progress": "Орындалу барысын тексеру қатесі",
+    "failed_delete": "Жою кезіндегі қате",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_one": "",
+    "progress_checked_other": "",
+    "updated": "Тапсырма жаңартылды"
+  },
+  "types": {
+    "referrals": "Ұсыныстар",
+    "service": "санат қызметі",
+    "services": "Қызметтер",
+    "spend": "Жұмсалған жалпы сома",
+    "visits": "Кіру саны"
+  }
+}

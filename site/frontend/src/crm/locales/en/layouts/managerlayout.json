@@ -1,0 +1,13 @@
+{
+  "crm": "CRM Panel",
+  "logout": "Log out",
+  "manager": "Manager",
+  "menu": {
+    "analytics": "Analytics",
+    "chat": "Chat",
+    "clients": "Clients",
+    "dashboard": "Dashboard",
+    "funnel": "Funnel",
+    "settings": "Settings"
+  }
+}

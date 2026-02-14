@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@import "./theme.css";
+@import "./landing.css";
+
+@custom-variant dark (&:is(.dark *));
+@source "../../**/*.{js,ts,jsx,tsx}";
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #1c1917;
+    --primary: #db2777;
+    --primary-foreground: #ffffff;
+    --border: #e2e8f0;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* 
+    Essential resets for the Landing Page 
+    Ensuring the pink color #db2777 is used for primary actions.
+  */
+  .bg-primary {
+    background-color: #db2777;
+    color: #ffffff;
+  }
+
+  .text-primary {
+    color: #db2777;
+  }
+
+  /* Specific fix for hero buttons to ensure they look premium */
+  .hero-button-primary {
+    @apply bg-primary text-primary-foreground hover:shadow-xl transition-all;
+  }
+}

@@ -10,8 +10,12 @@ import json
 from pathlib import Path
 
 # Конфигурация
-FRONTEND_DIR = '/Users/tahir/Desktop/beauty-crm/frontend/src'
-LOCALES_DIR = '/Users/tahir/Desktop/beauty-crm/frontend/src/locales'
+BASE_DIR = Path(__file__).resolve().parents[2]
+FRONTEND_GROUP = os.getenv('FRONTEND_GROUP', 'crm').strip().lower()
+if FRONTEND_GROUP not in {'crm', 'site'}:
+    FRONTEND_GROUP = 'crm'
+FRONTEND_DIR = BASE_DIR / FRONTEND_GROUP / 'frontend' / 'src'
+LOCALES_DIR = FRONTEND_DIR / 'locales'
 SOURCE_LANG = 'ru'
 
 def find_translation_keys_in_code():
@@ -34,7 +38,7 @@ def find_translation_keys_in_code():
             
         for file in files:
             if file.endswith(('.tsx', '.ts')):
-                file_path = os.path.join(root, file)
+                file_path = Path(root) / file
                 
                 try:
                     with open(file_path, 'r', encoding='utf-8') as f:
@@ -113,13 +117,13 @@ def map_namespace_to_file(namespace):
     
     # Пытаемся найти в admin
     admin_file = f"admin/{namespace.capitalize()}.json"
-    if os.path.exists(os.path.join(LOCALES_DIR, SOURCE_LANG, admin_file)):
+    if os.path.exists(os.path.join(str(LOCALES_DIR), SOURCE_LANG, admin_file)):
         return admin_file
     
     # Пытаемся найти в других папках
     for folder in ['manager', 'employee', 'public', 'auth', 'layouts', 'components']:
         file_path = f"{folder}/{namespace.capitalize()}.json"
-        if os.path.exists(os.path.join(LOCALES_DIR, SOURCE_LANG, file_path)):
+        if os.path.exists(os.path.join(str(LOCALES_DIR), SOURCE_LANG, file_path)):
             return file_path
     
     return None
@@ -154,7 +158,7 @@ def sync_locale_files():
         
         # Обрабатываем для каждого языка
         for lang_dir in os.listdir(LOCALES_DIR):
-            lang_path = os.path.join(LOCALES_DIR, lang_dir)
+            lang_path = os.path.join(str(LOCALES_DIR), lang_dir)
             
             if not os.path.isdir(lang_path):
                 continue

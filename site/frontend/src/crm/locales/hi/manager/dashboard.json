@@ -1,0 +1,32 @@
+{
+  "active_clients": "सक्रिय ग्राहक",
+  "booked": "साइन अप किया गया",
+  "client_base": "ग्राहक डेटाबेस",
+  "client_messages": "ग्राहकों से संदेश",
+  "completed": "विज़िट किया गया",
+  "completed_procedures": "पूर्ण प्रक्रियाएं",
+  "conversion_rate": "रूपांतरण",
+  "engaged": "जुड़े",
+  "errors": {
+    "loading": "डेटा लोडिंग त्रुटि",
+    "loading_title": "लोडिंग त्रुटि"
+  },
+  "funnel_details": "के बारे में अधिक फ़नल",
+  "good": "अच्छा",
+  "key_metrics": "कुंजी मेट्रिक्स",
+  "loading": "डेटा लोडिंग",
+  "manager_desc": "ग्राहक प्रबंधन और विश्लेषण",
+  "manager_panel": "प्रबंधक पैनल",
+  "messages": "संदेश",
+  "normal": "सामान्य",
+  "open_chat": "चैट खोलें",
+  "pending": "लंबित",
+  "quick_actions": "त्वरित कार्रवाई",
+  "retry": "पुनः प्रयास करें",
+  "sales_funnel": "बिक्री फ़नल",
+  "started_booking": "प्रविष्टि शुरू की",
+  "total_bookings": "कुल प्रविष्टियाँ",
+  "total_clients": "कुल ग्राहक",
+  "total_revenue": "सामान्य राजस्व",
+  "visitors": "विज़िटर"
+}

@@ -1,0 +1,23 @@
+{
+  "address": "Adresse",
+  "email_placeholder": "Entrez votre email",
+  "fill_all_fields": "Veuillez remplir tous les champs",
+  "find_us": "Comment nous trouver",
+  "how_to_contact": "Comment nous contacter",
+  "message": "Message",
+  "message_placeholder": "Parlez-nous de votre question ou d'une offre...",
+  "message_sent": "Message envoyé avec succès ! Nous vous contacterons dans les plus brefs délais.",
+  "name_placeholder": "Entrez votre nom",
+  "phone": "Téléphone",
+  "send_button": "Envoyer un message",
+  "send_error": "Erreur d'envoi du message",
+  "sending": "Envoi...",
+  "subtitle": "Nous apprécions toujours vos questions et suggestions",
+  "title": "Contacts",
+  "try_later": "Réessayez plus tard ou contactez-nous d'une autre manière",
+  "weekdays": "Jours de la semaine",
+  "weekends": "Week-end",
+  "working_hours": "Heures d'ouverture",
+  "write_us": "Écrivez-nous",
+  "your_name": "Votre nom"
+}

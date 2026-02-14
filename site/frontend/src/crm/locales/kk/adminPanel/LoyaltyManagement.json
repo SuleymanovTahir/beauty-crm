@@ -1,0 +1,109 @@
+{
+  "actions": {
+    "activate": "Қосу",
+    "deactivate": "Өшіру"
+  },
+  "adjust_points": "Ұпайлар балансын өзгерту",
+  "buttons": {
+    "add_rule": "Ереже қосу",
+    "adjust_points": "Балансты өзгерту",
+    "cancel": "Болдырмау",
+    "save": "Сақтау",
+    "save_changes": "Өзгерістерді сақтау"
+  },
+  "categories": {
+    "category": "Санатты",
+    "category_placeholder": "Мыс. Маникюр",
+    "description": "Әрбір қызмет санаты үшін ұпай коэффициентін теңшеу",
+    "hint": "Коэффицент тек таңдалған санатқа қолданылады. Ереже өшірілсе, x1 базалық мөлшерлемесі қолданылады.",
+    "multiplier": "Есептеу коэффициенті",
+    "title": "Санат бойынша есептеу ережелері"
+  },
+  "config": {
+    "cashback_hint": "Мысалы: {{percent}}% кешбэк (әрбір {{unit}} жұмсалған үшін {{points}} ұпай)",
+    "cashback_rate": "Кэшбэк (%)",
+    "description": "Адалдық бағдарламасының негізгі параметрлері",
+    "expiration_days": "Ұпайлардың әрекет ету мерзімі (күндер)",
+    "expiration_hint": "Ұпайлар көрсетілген уақыттан кейін автоматты түрде жойылады.",
+    "points_per_unit": "1 бірлік үшін ұпайлар. валюта",
+    "title": "Жаһандық параметрлер"
+  },
+  "confirm_delete_rule": "Осы ережені шынымен жойғыңыз келе ме?",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "Тұтынушының электрондық поштасы",
+      "client_email_placeholder": "Байланыстыру үшін электрондық поштаны енгізіңіз",
+      "description": "Ұпайлар балансын қолмен реттеу",
+      "points": "Ұпайлар саны",
+      "points_placeholder": "Мысалы. 100 немесе -100",
+      "reason": "Себебі",
+      "reason_placeholder": "Өзгеріс себебін көрсетіңіз",
+      "title": "Баланстың өзгеруі"
+    },
+    "edit_tier": {
+      "description": "Артықшылық деңгейін алу шарттарын орнату",
+      "discount_percent": "Жеңілдік пайызы",
+      "min_points": "Ең төменгі ұпай шегі",
+      "status_hint": "Белсенді емес деңгей артықшылықтарды автоматты түрде есептеуге қатыспайды.",
+      "status_label": "Деңгей күйі негізгі ереже өшірілген",
+      "tier_name": "Аты деңгейі",
+      "title": "Деңгейді өңдеу"
+    },
+    "rule": {
+      "description": "Санат үшін жеке есептеу коэффициенті",
+      "status_hint": "Ереже өшірілсе, x1 негізгі есептеуі санатқа қолданылады.",
+      "status_label": "Ереже күйі",
+      "title": "Санат ережесі"
+    }
+  },
+  "stats": {
+    "active_members": "Бағдарлама қатысушылары",
+    "points_redeemed": "Ұпайлар есептен шығарылды",
+    "total_points_issued": "Барлығы есептелген"
+  },
+  "statuses": {
+    "inactive": "Белсенді емес"
+  },
+  "subtitle": "Жеңілдіктерді, артықшылық деңгейлерін және ұпай жинау ережелерін басқару",
+  "tiers": {
+    "description": "Тұтынушыларды сегменттеуге арналған адалдық деңгейлері",
+    "discount": "жеңілдік {{percent}}%",
+    "from_points": "{{points}} ұпайларынан бастап",
+    "starting_level": "Бастапқы деңгей",
+    "title": "Артықшылық деңгейлері"
+  },
+  "title": "Бонус бағдарламасы",
+  "toasts": {
+    "config_updated": "Параметрлер сақталды",
+    "failed_adjust": "Баланс өзгертілмеді",
+    "failed_delete": "Жою кезіндегі қате",
+    "failed_load": "Деректерді жүктеу мүмкін болмады",
+    "failed_save": "Сақтау кезінде қате пайда болды",
+    "failed_update": "Жаңарту кезінде қате",
+    "points_adjusted_add": "Есептелген {{count}} ұпайлар",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_other": "",
+    "points_adjusted_deduct": "{{count}} ұпай есептен шығарылды",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_other": "",
+    "rule_deleted": "Ереже сәтті жойылды",
+    "rule_saved": "Ереже сақталды",
+    "tier_updated": "Деңгей деректері жаңартылды"
+  },
+  "transactions": {
+    "description": "Адалдық ұпайларының транзакция тарихы",
+    "search_placeholder": "Клиент бойынша іздеу...",
+    "table": {
+      "client": "Клиент",
+      "date": "Күн",
+      "points": "Ұпайлар",
+      "reason": "Себебі",
+      "type": "Түрі"
+    },
+    "title": "Соңғы транзакциялар"
+  }
+}

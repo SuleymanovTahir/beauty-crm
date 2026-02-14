@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Preload критичный LCP элемент - логотип -->
+  <link rel="preload" as="image" href="/src/site/public_landing/styles/img/logo.webp" type="image/webp" fetchpriority="high">
+
+  <!-- Async загрузка Google Fonts для предотвращения render-blocking -->
+  <link
+    rel="preload"
+    as="style"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap"
+    onload="this.onload=null;this.rel='stylesheet'"
+  >
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+  </noscript>
+
+  <!-- SEO Meta Tags -->
+  <title>M Le Diamant - Premium Beauty Salon JBR Dubai | Manicure, Keratin, Hair & Spa</title>
+  <meta name="description" content="M Le Diamant - Premium beauty salon in JBR Dubai. Professional manicure, pedicure, keratin treatment, permanent makeup, haircuts, waxing, sugaring, depilation, Moroccan bath, facial cleaning, massage & spa services. Expert masters, online booking. Open daily 9 AM - 9:30 PM in Jumeirah Beach Residence!" />
+  <meta name="keywords" content="beauty salon Dubai, salon JBR, premium salon Dubai, manicure Dubai, pedicure Dubai, keratin treatment Dubai, кератиновое выпрямление Dubai, permanent makeup, перманентный макияж, haircut Dubai, стрижка Dubai, sugaring Dubai, шугаринг Dubai, waxing Dubai, депиляция Dubai, Moroccan bath Dubai, марокканская баня Dubai, spa treatments Dubai, facial cleaning Dubai, чистка лица Dubai, nail salon JBR, gel polish, lash extensions Dubai, наращивание ресниц, massage Dubai, массаж Dubai, balayage Dubai, hair coloring Dubai, окрашивание волос, beauty services JBR, luxury salon Dubai, Jumeirah Beach Residence salon, M Le Diamant">
+  <link rel="canonical" href="https://mlediamant.com/" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/webp" href="/favicon.webp" />
+
+  <!-- Apple Touch Icon для iOS устройств -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="M Le Diamant - Premium Beauty Salon" />
+  <meta property="og:description"
+    content="Experience luxury beauty services with expert masters in a premium atmosphere. Manicure, spa treatments, and personalized care." />
+  <meta property="og:image" content="https://mlediamant.com/assets/logo.webp" />
+  <meta property="og:url" content="https://mlediamant.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ru_RU" />
+  <meta property="og:locale:alternate" content="ar_AE" />
+  <meta property="og:locale:alternate" content="es_ES" />
+  <meta property="og:locale:alternate" content="de_DE" />
+  <meta property="og:locale:alternate" content="fr_FR" />
+  <meta property="og:locale:alternate" content="hi_IN" />
+  <meta property="og:locale:alternate" content="kk_KZ" />
+  <meta property="og:locale:alternate" content="pt_PT" />
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="M Le Diamant" />
+  <meta name="twitter:description" content="Premium beauty salon with expert services in Dubai" />
+  <meta name="twitter:image" content="https://mlediamant.com/assets/logo.webp" />
+
+  <!-- Hreflang for Multi-language Support -->
+  <link rel="alternate" hreflang="en" href="https://mlediamant.com/" />
+  <link rel="alternate" hreflang="ru" href="https://mlediamant.com/?lang=ru" />
+  <link rel="alternate" hreflang="ar" href="https://mlediamant.com/?lang=ar" />
+  <link rel="alternate" hreflang="es" href="https://mlediamant.com/?lang=es" />
+  <link rel="alternate" hreflang="de" href="https://mlediamant.com/?lang=de" />
+  <link rel="alternate" hreflang="fr" href="https://mlediamant.com/?lang=fr" />
+  <link rel="alternate" hreflang="hi" href="https://mlediamant.com/?lang=hi" />
+  <link rel="alternate" hreflang="kk" href="https://mlediamant.com/?lang=kk" />
+  <link rel="alternate" hreflang="pt" href="https://mlediamant.com/?lang=pt" />
+  <link rel="alternate" hreflang="x-default" href="https://mlediamant.com/" />
+
+  <!-- Schema.org Structured Data - BeautySalon -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BeautySalon",
+    "name": "M Le Diamant",
+    "image": "https://mlediamant.com/assets/logo.webp",
+    "url": "https://mlediamant.com",
+    "telephone": "+971526961100",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Dubai",
+      "addressLocality": "Dubai",
+      "addressRegion": "Dubai",
+      "addressCountry": "AE"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 25.2048,
+      "longitude": 55.2708
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "09:00",
+        "closes": "21:30"
+      }
+    ],
+    "sameAs": [
+      "https://instagram.com/mlediamant"
+    ]
+  }
+  </script>
+
+  <!-- Schema.org Structured Data - Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "M Le Diamant",
+    "url": "https://mlediamant.com",
+    "logo": "https://mlediamant.com/assets/logo.webp",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+971526961100",
+      "contactType": "customer service",
+      "availableLanguage": ["English", "Russian", "Arabic", "Spanish", "German", "French", "Hindi", "Kazakh", "Portuguese"]
+    },
+    "sameAs": [
+      "https://instagram.com/mlediamant"
+    ]
+  }
+  </script>
+
+  <!-- Local SEO Metadata Cache Loader (Instant UI update) -->
+  <script>
+    (function () {
+      const cached = localStorage.getItem('seo_metadata');
+      if (cached) {
+        try {
+          const seo = JSON.parse(cached);
+          document.title = seo.seo_title || document.title;
+          const desc = document.querySelector('meta[name="description"]');
+          if (desc) desc.setAttribute('content', seo.seo_description);
+          // Only apply from cache if it's less than 1 hour old
+          if (Date.now() - (seo._timestamp || 0) > 3600000) localStorage.removeItem('seo_metadata');
+        } catch (e) { }
+      }
+    })();
+  </script>
+
+  <!-- Dynamic SEO Metadata Refresher -->
+  <script>
+    // Load SEO metadata from database and update meta tags
+    (async function () {
+      try {
+        const response = await fetch('/api/public/seo-metadata');
+        const seo = await response.json();
+        seo._timestamp = Date.now();
+        localStorage.setItem('seo_metadata', JSON.stringify(seo));
+
+        // Update title and meta
+        document.title = seo.seo_title;
+        document.querySelector('meta[name="description"]').setAttribute('content', seo.seo_description);
+        if (seo.seo_keywords) {
+          const keywordsMeta = document.querySelector('meta[name="keywords"]');
+          if (keywordsMeta) keywordsMeta.setAttribute('content', seo.seo_keywords);
+        }
+
+        // Update Open Graph and Twitter
+        const updateMeta = (selector, attr, value) => {
+          const el = document.querySelector(selector);
+          if (el) el.setAttribute(attr, value);
+        };
+
+        updateMeta('meta[property="og:title"]', 'content', seo.salon_name + ' - Premium Beauty Salon');
+        updateMeta('meta[property="og:description"]', 'content', seo.seo_description);
+        updateMeta('meta[property="og:image"]', 'content', seo.logo_url);
+        updateMeta('meta[property="og:url"]', 'content', seo.base_url);
+
+        updateMeta('meta[name="twitter:title"]', 'content', seo.salon_name);
+        updateMeta('meta[name="twitter:description"]', 'content', `Premium beauty salon with expert services in ${seo.city}`);
+        updateMeta('meta[name="twitter:image"]', 'content', seo.logo_url);
+
+        // Update Schema.org
+        const schemaScripts = document.querySelectorAll('script[type="application/ld+json"]');
+        if (schemaScripts.length >= 2 && seo.schema) {
+          const beautySalonSchema = {
+            "@context": "https://schema.org",
+            "@type": "BeautySalon",
+            "name": seo.schema.name,
+            "image": seo.logo_url,
+            "url": seo.base_url,
+            "telephone": seo.schema.telephone,
+            "priceRange": "$$",
+            "address": seo.schema.address,
+            "geo": seo.schema.geo,
+            "openingHoursSpecification": [{
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+              "opens": seo.schema.openingHours.opens,
+              "closes": seo.schema.openingHours.closes
+            }],
+            "sameAs": seo.schema.sameAs
+          };
+          schemaScripts[0].textContent = JSON.stringify(beautySalonSchema);
+        }
+
+        // ✅ Conditionally load External Scripts
+        if (seo.google_analytics_id) {
+          const ga = document.createElement('script');
+          ga.async = true;
+          ga.src = `https://www.googletagmanager.com/gtag/js?id=${seo.google_analytics_id}`;
+          document.head.appendChild(ga);
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', seo.google_analytics_id);
+        }
+
+        if (seo.facebook_pixel_id) {
+          !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+              n.callMethod ?
+              n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+          }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+          fbq('init', seo.facebook_pixel_id);
+          fbq('track', 'PageView');
+        }
+      } catch (error) {
+        console.warn('⚠️ SEO metadata Refresh failed:', error);
+      }
+    })();
+  </script>
+
+
+  <!-- Google Analytics 4 -->
+
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/site/public_landing/main.tsx"></script>
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+{
+  "name": "M Le Diamant - Premium Beauty Salon",
+  "short_name": "M Le Diamant",
+  "description": "Premium beauty salon in Dubai offering spa, nails, hair, brows, lashes, massage, cosmetology, and permanent makeup services",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ec4899",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon-120x120.png",
+      "sizes": "120x120",
+      "type": "image/png"
+    }
+  ]
+}

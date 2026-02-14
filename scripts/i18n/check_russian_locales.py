@@ -5,8 +5,13 @@
 
 import os
 import json
+from pathlib import Path
 
-LOCALES_DIR = '/Users/tahir/Desktop/beauty-crm/frontend/src/locales'
+BASE_DIR = Path(__file__).resolve().parents[2]
+FRONTEND_GROUP = os.getenv('FRONTEND_GROUP', 'crm').strip().lower()
+if FRONTEND_GROUP not in {'crm', 'site'}:
+    FRONTEND_GROUP = 'crm'
+LOCALES_DIR = BASE_DIR / FRONTEND_GROUP / 'frontend' / 'src' / 'locales'
 SOURCE_LANG = 'ru'
 
 def load_json(path):
@@ -29,8 +34,8 @@ def flatten_dict(d, parent_key='', sep='.'):
 
 def check_russian_files():
     print("🔍 Проверка русских файлов локализации...\n")
-    
-    source_dir = os.path.join(LOCALES_DIR, SOURCE_LANG)
+
+    source_dir = LOCALES_DIR / SOURCE_LANG
     
     empty_values = []
     files_by_category = {
@@ -47,7 +52,7 @@ def check_russian_files():
     for root, dirs, files in os.walk(source_dir):
         for file in files:
             if file.endswith('.json'):
-                file_path = os.path.join(root, file)
+                file_path = Path(root) / file
                 rel_path = os.path.relpath(file_path, source_dir)
                 
                 # Определяем категорию
@@ -57,7 +62,7 @@ def check_russian_files():
                         category = cat
                         break
                 
-                data = load_json(file_path)
+                data = load_json(str(file_path))
                 flat = flatten_dict(data)
                 
                 empty_in_file = []

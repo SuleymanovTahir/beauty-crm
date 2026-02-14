@@ -1,0 +1,11 @@
+{
+  "crm": "CRM",
+  "employee": "Mitarbeiter",
+  "logout": "Abmelden",
+  "menu": {
+    "calendar": "Kalender",
+    "my_bookings": "Meine Buchungen",
+    "profile": "Profil",
+    "settings": "Einstellungen"
+  }
+}

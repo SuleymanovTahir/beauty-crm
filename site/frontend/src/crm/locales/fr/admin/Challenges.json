@@ -1,0 +1,64 @@
+{
+  "buttons": {
+    "add_challenge": "Créer une tâche",
+    "create_challenge": "Lancer un défi"
+  },
+  "card": {
+    "check_progress": "Mise à jour",
+    "details": "Plus de détails",
+    "participants": "PARTICIPANTS",
+    "progress": "PROGRÈS"
+  },
+  "dialogs": {
+    "add_title": "Nouveau défi",
+    "delete": {
+      "confirm": "Êtes-vous sûr de vouloir supprimer ce défi ?"
+    },
+    "edit_title": "Modifier le défi"
+  },
+  "empty": {
+    "subtitle": "Créez la première tâche de jeu pour encourager les clients à s'inscrire plus souvent.",
+    "title": "Les défis ne sont pas configurés"
+  },
+  "fields": {
+    "dates": "Délai",
+    "description": "Public description",
+    "reward": "Récompense",
+    "target_value": "Plan (objectif)",
+    "title": "Nom de la tâche",
+    "type": "Méthode de l'objectif"
+  },
+  "placeholders": {
+    "description": "Comment le client verra-t-il cette tâche ?",
+    "title": "Par exemple : statut Gold"
+  },
+  "stats": {
+    "active_challenges": "TÂCHES ACTIFS",
+    "completed_today": "TERMINÉES AUJOURD'HUI",
+    "total_participants": "TOTAL DES PARTICIPANTS"
+  },
+  "status": {
+    "active": "ACTIFS",
+    "inactive": "PAUSE"
+  },
+  "subtitle": "Augmentez la fidélité des clients grâce aux mécanismes de jeu et aux récompenses automatiques.",
+  "title": "Défis",
+  "toasts": {
+    "created": "Tâche créée",
+    "deleted": "Défi supprimé",
+    "failed_check_progress": "Erreur lors de la vérification de la progression",
+    "failed_delete": "Erreur lors de la suppression",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_one": "",
+    "progress_checked_other": "",
+    "updated": "Tâche mise à jour"
+  },
+  "types": {
+    "referrals": "Recommandations",
+    "service": "service de catégorie",
+    "services": "Services",
+    "spend": "Montant total dépensé",
+    "visits": "Nombre de visites"
+  }
+}

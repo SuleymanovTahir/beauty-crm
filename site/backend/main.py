@@ -1,0 +1,360 @@
+"""
+Beauty CRM - Основное приложение FastAPI (Site runtime)
+"""
+import os
+import sys
+import threading
+import types
+import time
+from contextlib import asynccontextmanager
+from pathlib import Path
+
+# --- СОВМЕСТИМОСТЬ С PYTHON 3.13+ ---
+if sys.version_info >= (3, 13) and "cgi" not in sys.modules:
+    cgi_patch = types.ModuleType("cgi")
+    cgi_patch.escape = lambda s, quote=True: s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;").replace("'", "&#x27;")
+    sys.modules["cgi"] = cgi_patch
+
+from fastapi import FastAPI, Request
+from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+# Основные утилиты
+from utils.logger import log_info, log_error
+from core.config import is_localhost
+from db.connection import init_connection_pool, get_db_connection
+from scripts.maintenance.recreate_database import drop_database, recreate_database  # Uncomment only for manual DB reset
+from db.settings import get_salon_settings
+from utils.utils import ensure_upload_directories
+from middleware import TimingMiddleware
+from middleware.user_activity import UserActivityMiddleware
+
+# Архитектура роутеров (Единый источник истины - SSOT)
+from product_groups.shared import mount_shared_routers
+from product_groups.site import (
+    mount_site_account_public_routers,
+    start_site_runtime_services,
+    SITE_ONLY_PREFIXES,
+    SITE_ONLY_EXACT_PATHS,
+)
+from utils.redis_pubsub import redis_pubsub
+import asyncio
+
+# Глобальное состояние приложения
+salon_config = None
+_feature_gate_cache = {
+    "expires_at": 0.0,
+    "site_enabled": True,
+}
+
+_SITE_ONLY_PREFIXES = SITE_ONLY_PREFIXES
+_SITE_ONLY_EXACT_PATHS = SITE_ONLY_EXACT_PATHS
+
+
+def _normalize_feature_flag(raw_value, default_value: bool) -> bool:
+    if raw_value is None:
+        return default_value
+    if isinstance(raw_value, str):
+        normalized = raw_value.strip().lower()
+        if normalized in {"1", "true", "yes", "on"}:
+            return True
+        if normalized in {"0", "false", "no", "off"}:
+            return False
+        return default_value
+    return bool(raw_value)
+
+
+def _path_matches(path: str, prefix: str) -> bool:
+    if path == prefix:
+        return True
+    return path.startswith(f"{prefix}/")
+
+
+def _get_feature_gates_cached() -> dict:
+    now = time.time()
+    if _feature_gate_cache["expires_at"] > now:
+        return {
+            "site_enabled": _feature_gate_cache["site_enabled"],
+        }
+
+    try:
+        settings = get_salon_settings()
+        site_enabled = _normalize_feature_flag(settings.get("site_enabled"), True)
+    except Exception as error:
+        log_error(f"Feature-gate load failed: {error}", "feature-gates")
+        site_enabled = True
+
+    _feature_gate_cache["site_enabled"] = site_enabled
+    _feature_gate_cache["expires_at"] = now + 10
+
+    return {
+        "site_enabled": site_enabled,
+    }
+
+
+class ModernStaticFiles(StaticFiles):
+    """Статические файлы с агрессивным кешированием"""
+
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "public, max-age=3600"
+        return response
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Управление жизненным циклом базы данных и site runtime"""
+    log_info("=" * 60, "boot")
+    log_info("🚀 Двигатель Site запускается...", "boot")
+    log_info("🧭 Runtime backend group: site", "boot")
+
+    # 1. Настройка окружения
+    ensure_upload_directories()
+
+    # 2. Слой базы данных
+
+    # [ОПАСНО: РУЧНОЙ СБРОС БД] - Раскомментируйте строки ниже только для ПОЛНОГО сброса данных
+    # ⚠️ НЕ ЗАПУСКАТЬ В PRODUCTION! Удалит все данные!
+    # ⚠️ НЕ СОВМЕСТИМО С GUNICORN с несколькими workers - используйте только локально с 1 worker
+    # log_info("⚠️  Удаление базы данных...", "startup")
+    # drop_database()
+    # log_info("🔄 Создание новой базы данных...", "startup")
+    # recreate_database()
+    # log_info("✅ База данных пересоздана. ТЕПЕРЬ ОБЯЗАТЕЛЬНО ЗАПУСТИТЕ МИГРАЦИИ (пункт 3)", "startup")
+
+    init_connection_pool()
+
+    # 3. Redis Pub/Sub (Sink for multi-worker synchronization)
+    redis_ready = await redis_pubsub.connect()
+    app.state.redis_listener = asyncio.create_task(redis_pubsub.start_listening())
+    if redis_ready:
+        log_info("✅ Redis Pub/Sub listener started", "boot")
+    else:
+        if redis_pubsub.redis_enabled:
+            log_info("ℹ️ Redis Pub/Sub unavailable at startup. Local-only WS delivery is active.", "boot")
+        else:
+            log_info("ℹ️ Redis Pub/Sub disabled (REDIS_ENABLED=false). Local-only WS delivery is active.", "boot")
+
+    try:
+        def warmup():
+            try:
+                conn = get_db_connection()
+                conn.cursor().execute("SELECT 1")
+                conn.close()
+            except Exception:
+                pass
+
+        w_threads = [threading.Thread(target=warmup, daemon=True) for _ in range(10)]
+        for thread in w_threads:
+            thread.start()
+        for thread in w_threads:
+            thread.join(timeout=1.0)
+        log_info("✅ Пул соединений прогрет", "boot")
+    except Exception as error:
+        log_error(f"⚠️  Проблема при прогреве пула: {error}", "boot")
+
+    # 4. Синхронизация схемы БД (по умолчанию отключено в production)
+    run_db_sync = _env_flag(
+        "RUN_STARTUP_DB_SYNC",
+        default=(os.getenv("ENVIRONMENT") != "production"),
+    )
+    if run_db_sync:
+        from db.migrations.run_all_migrations import run_all_migrations
+
+        run_all_migrations()
+    else:
+        log_info("⏭️ Startup DB sync skipped (RUN_STARTUP_DB_SYNC=false)", "boot")
+
+    # 5. Конфигурация
+    global salon_config
+    salon_config = get_salon_settings()
+    log_info(f"✅ Конфигурация салона: {salon_config['name']}", "boot")
+
+    # 6. Опциональные data-fixes (по умолчанию выключено)
+    if _env_flag("RUN_STARTUP_DATA_FIXES", default=False):
+        from scripts.maintenance.fix_data import run_all_fixes
+
+        run_all_fixes()
+    else:
+        log_info("⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)", "boot")
+
+    # 7. Site сервисы
+    start_site_runtime_services()
+
+    yield
+
+    # 8. Завершение работы
+    log_info("🛑 Двигатель Site безопасно останавливается...", "shutdown")
+
+    await redis_pubsub.stop()
+    if hasattr(app.state, "redis_listener"):
+        app.state.redis_listener.cancel()
+        try:
+            await app.state.redis_listener
+        except asyncio.CancelledError:
+            pass
+
+
+# Подключение ресурсов
+BASE_DIR = Path(__file__).resolve().parent
+FRONTEND_DIR = BASE_DIR.parent / "frontend"
+
+
+def _resolve_cors_policy() -> tuple[list[str], str | None]:
+    # При allow_credentials=True нельзя использовать "*", поэтому используем динамический список или регулярку
+    cors_origins = ["*"]
+    cors_allow_origin_regex = None
+
+    if os.getenv("ENVIRONMENT") == "development" or is_localhost():
+        cors_allow_origin_regex = r"https?://(localhost|127\.0\.0\.1)(:[0-9]+)?"
+        cors_origins = []
+        return cors_origins, cors_allow_origin_regex
+
+    cors_origins = []
+    for key in ["FRONTEND_URL", "PUBLIC_URL", "PRODUCTION_URL", "BASE_URL"]:
+        val = os.getenv(key)
+        if val:
+            clean_val = val.strip().rstrip("/")
+            if clean_val and clean_val not in cors_origins:
+                cors_origins.append(clean_val)
+                # Automatically add 'www' variant if it's a domain
+                if "://" in clean_val and "www." not in clean_val:
+                    protocol, rest = clean_val.split("://", 1)
+                    www_variant = f"{protocol}://www.{rest}"
+                    if www_variant not in cors_origins:
+                        cors_origins.append(www_variant)
+
+    return cors_origins, cors_allow_origin_regex
+
+
+async def feature_gate_middleware(request: Request, call_next):
+    path = request.url.path
+
+    if path.startswith("/api/"):
+        is_site_only_prefix = any(_path_matches(path, prefix) for prefix in _SITE_ONLY_PREFIXES)
+        is_site_only_path = path in _SITE_ONLY_EXACT_PATHS
+        is_site_only_route = is_site_only_prefix or is_site_only_path
+
+        gates = _get_feature_gates_cached()
+        if not gates["site_enabled"] and is_site_only_route:
+            return JSONResponse(
+                status_code=404,
+                content={
+                    "error": "site_module_disabled",
+                    "message": "Site and account module is disabled for this workspace",
+                },
+            )
+
+    return await call_next(request)
+
+
+def _register_middlewares(app: FastAPI):
+    limiter = Limiter(
+        key_func=get_remote_address,
+        enabled=(os.getenv("ENVIRONMENT") == "production"),
+    )
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+    cors_origins, cors_allow_origin_regex = _resolve_cors_policy()
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=cors_origins,
+        allow_origin_regex=cors_allow_origin_regex,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    app.add_middleware(GZipMiddleware, minimum_size=1000)
+    app.add_middleware(TimingMiddleware)
+    app.add_middleware(UserActivityMiddleware)
+    app.middleware("http")(feature_gate_middleware)
+
+
+def _register_static_assets(app: FastAPI):
+    app.mount("/static", ModernStaticFiles(directory=str(BASE_DIR / "static")), name="static")
+
+    frontend_img_candidates = [
+        FRONTEND_DIR / "src" / "site" / "public_landing" / "styles" / "img",
+        FRONTEND_DIR / "public_landing" / "styles" / "img",
+    ]
+    for frontend_img_dir in frontend_img_candidates:
+        if frontend_img_dir.exists():
+            app.mount("/landing-images", ModernStaticFiles(directory=str(frontend_img_dir)), name="landing_images")
+            break
+
+
+def _register_product_routers(app: FastAPI):
+    mount_shared_routers(app)
+    mount_site_account_public_routers(app)
+
+
+def _register_runtime_endpoints(app: FastAPI):
+    @app.api_route("/health", methods=["GET", "HEAD"])
+    async def health_check():
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT 1")
+            conn.close()
+            db_status = "ok"
+        except Exception as error:
+            log_error(f"Health check DB error: {error}", "health")
+            db_status = "error"
+
+        return {
+            "status": "ok" if db_status == "ok" else "degraded",
+            "database": db_status,
+            "version": "2.0",
+            "backend_product_group": "site",
+            "crm_runtime_enabled": False,
+            "site_runtime_enabled": True,
+        }
+
+    @app.get("/api/runtime-profile")
+    async def runtime_profile():
+        return {
+            "backend_product_group": "site",
+            "crm_runtime_enabled": False,
+            "site_runtime_enabled": True,
+        }
+
+    @app.get("/")
+    async def root():
+        return RedirectResponse(url="/static/index.html")
+
+
+def create_app() -> FastAPI:
+    app = FastAPI(title="Beauty Site", lifespan=lifespan)
+    app.state.backend_product_group = "site"
+
+    _register_middlewares(app)
+    _register_static_assets(app)
+    _register_product_routers(app)
+    _register_runtime_endpoints(app)
+    return app
+
+
+app = create_app()
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", "8000")),
+        reload=True,
+    )

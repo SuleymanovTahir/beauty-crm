@@ -1,0 +1,73 @@
+{
+  "answer_1": "Vous pouvez vous inscrire via notre site Internet en appelant ou en écrivant à WhatsApp/Instagram.",
+  "answer_2": "Nous acceptons les paiements en espèces et par carte bancaire.",
+  "answer_3": "Oui, vous pouvez annuler ou reprogrammer un rendez-vous au plus tard {{hours}} heures avant l'heure prévue.",
+  "answer_4": "Oui, certaines procédures ont des contre-indications médicales. Avant d'écrire, consultez notre spécialiste.",
+  "answer_5": "Le délai de procédure dépend du service choisi. Généralement de {{min}} minutes à {{max}} heures.",
+  "answer_6": "Certaines procédures nécessitent une préparation particulière. Le spécialiste vous en informera lors de votre inscription.",
+  "cta": {
+    "bookButton": "Inscrivez-vous à la procédure",
+    "contactButton": "Contactez-nous",
+    "description": "Contactez-nous, nous serons ravis de répondre à toutes vos questions",
+    "title": "Vous n'avez pas trouvé de réponse à votre question ?"
+  },
+  "faq_title": "Questions fréquemment posées",
+  "question_1": "Comment s'inscrire à la procédure ?",
+  "question_2": "Quels modes de paiement utilisez-vous ? acceptez-vous ?",
+  "question_3": "Puis-je annuler ou reporter un rendez-vous ?",
+  "question_4": "Avez-vous des contre-indications à l'intervention ?",
+  "question_5": "Combien de temps dure l'intervention ?",
+  "question_6": "Avez-vous besoin d'une préparation préalable à l'intervention ?",
+  "questions": {
+    "booking": {
+      "answer": "Vous pouvez vous inscrire à l'intervention via le formulaire {{phone, phone}} sur notre site Internet, en appelant {{phone}}{{/phone}}{{instagram, instagram}} ou en nous écrivant sur Instagram {{instagram}}{{/instagram}}. Nous vous contacterons pour confirmer votre rendez-vous.",
+      "question": "Comment prendre rendez-vous ?"
+    },
+    "cancellation": {
+      "answer": "Oui, vous pouvez annuler ou reprogrammer votre rendez-vous jusqu'à {{hours}} heures avant l'heure prévue. En cas d'annulation moins de {{hours}} heures à l'avance, une pénalité de {{percent}}% du coût de la prestation pourra être facturée.",
+      "question": "Puis-je annuler ou reprogrammer un rendez-vous ?"
+    },
+    "certificates": {
+      "answer": "Oui, tous nos masters sont titulaires de certificats internationaux et suivent régulièrement des formations avancées.",
+      "question": "Vos techniciens sont-ils certifiés ?"
+    },
+    "contraindications": {
+      "answer": "Oui, chaque procédure a ses propres contre-indications. Principal : grossesse, allaitement, processus inflammatoires aigus, maladies du sang, oncologie. Avant l'intervention, une consultation avec un spécialiste est requise.",
+      "question": "Y a-t-il des contre-indications à l'intervention ?"
+    },
+    "gift": {
+      "answer": "Oui, nous offrons des chèques-cadeaux pour n'importe quel montant ou pour certains services. Contactez-nous pour recevoir un certificat.",
+      "question": "Puis-je fournir un certificat pour des services ?"
+    },
+    "guarantee": {
+      "answer": "Oui, nous garantissons la qualité de tous nos services. Si vous n'êtes pas satisfait du résultat, contactez-nous dans les {{count}} jours et nous trouverons une solution.",
+      "question": "Garantissez-vous les services ?"
+    },
+    "location": {
+      "answer": "Notre adresse : {{address}}. Les détails sur la façon de s'y rendre peuvent être trouvés sur la page Contact.",
+      "question": "Où se trouve votre salon ?"
+    },
+    "loyalty": {
+      "answer": "Oui, nous avons un programme de fidélité complet. Après chaque visite, vous recevrez des bonus qui pourront être utilisés pour payer de futures visites.",
+      "question": "Avez-vous un programme de fidélité ?"
+    },
+    "materials": {
+      "answer": "Nous utilisons uniquement des matériaux certifiés haut de gamme provenant des plus grandes marques mondiales. Tous les pigments sont hypoallergéniques et sans danger pour la santé.",
+      "question": "Quels matériaux utilisez-vous ?"
+    },
+    "payment": {
+      "answer": "Nous acceptons les paiements en espèces et à la date cartes (Visa, MasterCard, American Express). Le paiement est effectué après la prestation du service.",
+      "question": "Quels modes de paiement acceptez-vous ?"
+    },
+    "preparation": {
+      "answer": "Oui, certaines procédures nécessitent une préparation. Nous vous fournirons des recommandations détaillées lors de l'inscription.",
+      "question": "Devez-vous vous préparer avant l'intervention ?"
+    },
+    "weekends": {
+      "answer": "Oui, nous sommes ouverts {{count}} jours à la date semaine. {{будние дни, будние дни}}En semaine {{weekdays}}{{/weekdays}}{{выходные, выходные}}, week-end {{weekends}}{{/weekends}}.",
+      "question": "Travaillez-vous le week-end ?"
+    }
+  },
+  "subtitle": "Réponses aux questions fréquentes sur nos services",
+  "title": "Questions fréquemment posées"
+}

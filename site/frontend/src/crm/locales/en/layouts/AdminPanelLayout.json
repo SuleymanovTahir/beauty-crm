@@ -1,0 +1,24 @@
+{
+  "admin_panel": "Admin panel",
+  "go_to_crm": "Go to CRM",
+  "logout": "Log out",
+  "menu": {
+    "challenges": "Challenges",
+    "challenges_short": "Goals",
+    "dashboard": "Control Panel",
+    "dashboard_short": "Home",
+    "feature_management": "Feature Management",
+    "loyalty_management": "Loyalty management",
+    "loyalty_short": "Loyalty",
+    "more": "More",
+    "notifications": "Notifications",
+    "photo_gallery": "Photo gallery",
+    "public_content": "Public Content",
+    "referral_program": "Referral program",
+    "referrals_short": "Referrals",
+    "services": "Services",
+    "settings": "Settings",
+    "team": "Team",
+    "user_management": "User management"
+  }
+}

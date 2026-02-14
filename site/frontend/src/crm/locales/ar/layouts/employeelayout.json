@@ -1,0 +1,11 @@
+{
+  "crm": "CRM",
+  "employee": "الموظف",
+  "logout": "تسجيل الخروج",
+  "menu": {
+    "calendar": "التقويم",
+    "my_bookings": "حجوزاتي",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات"
+  }
+}

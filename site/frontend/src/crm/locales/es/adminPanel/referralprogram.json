@@ -1,0 +1,63 @@
+{
+  "buttons": {
+    "cancel": "Cancelar",
+    "save_changes": "Guardar cambios"
+  },
+  "current_settings": {
+    "edit": "Editar",
+    "min_purchase": "Costo mínimo de compra: <strong>{{amount}} {{currency}}</strong>",
+    "referred_bonus": "Bonificación de amigo: <strong>{{points}} puntos</strong>",
+    "referrer_bonus": "Bonificación de invitado: <strong>{{points}} puntos</strong>",
+    "title": "Configuración de bonificación actual"
+  },
+  "dialogs": {
+    "settings": {
+      "description": "Configuración de puntos de bonificación y requisitos",
+      "min_purchase_amount": "Valor mínimo de compra ({{currency}})",
+      "min_purchase_help": "Monto mínimo que debe gastar un amigo para activar el bono por recomendación ({{min}} = sin mínimo)",
+      "referred_bonus": "puntos de bonificación de amigo invitado",
+      "referred_bonus_help": "puntos otorgados a un amigo al registrarse",
+      "referrer_bonus": "puntos de bonificación de recomendador",
+      "referrer_bonus_help": "puntos otorgados a un recomendador cuando un amigo realiza su primera compra",
+      "title": "Configuración del programa de recomendación"
+    }
+  },
+  "settings": "Configuración",
+  "stats": {
+    "completed_referrals": "Recomendaciones completadas",
+    "points_distributed": "puntos distribuidos",
+    "total_referrals": "Total de referencias"
+  },
+  "subtitle": "Administrar referencias y realizar un seguimiento de la eficacia del programa",
+  "table": {
+    "columns": {
+      "date": "Fecha",
+      "points_awarded": "puntos otorgados",
+      "referred_friend": "Amigo invitado",
+      "referrer": "Recomendador",
+      "status": "Estado"
+    },
+    "description": "Seguimiento del estado de referencia y distribución de puntos",
+    "filters": {
+      "all_statuses": "All Statuses"
+    },
+    "search_placeholder": "Buscando referencias...",
+    "sort": {
+      "date": "Sort by Date",
+      "points": "Sort by Points",
+      "status": "Sort by Status"
+    },
+    "statuses": {
+      "cancelled": "Cancelado",
+      "completed": "Completado",
+      "pending": "En espera"
+    },
+    "title": "Historial de invitaciones"
+  },
+  "title": "Programa de recomendaciones",
+  "toasts": {
+    "failed_load": "Error al cargar las referencias",
+    "failed_save": "Error al guardar",
+    "settings_saved": "Configuración guardada correctamente"
+  }
+}

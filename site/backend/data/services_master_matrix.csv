@@ -1,0 +1,85 @@
+Category,Service,Price,Duration,Mestan,Jennifer,Simo,Lyazzat,Gulya
+Hair wash,Hair Cut Kids,"60 - 80",30-50m,On,-,On,-,-
+,Blow Dry,"100 - 250",60m,On,On,On,-,-
+,Hair wash,60,30m,Off,Off,Off,-,-
+,Hair cut,175,60m,Off,-,Off,-,-
+,Trimming without wash,"80 - 100",60m,Off,-,Off,-,-
+,Hair style,"225 - 500",60m,Off,-,Off,-,-
+,Hair cut and blow dry,"250 - 300",60m,Off,-,Off,-,-
+Highlights,Roots Color and blow dry,"200 - 350",60m,On,-,On,-,-
+,Full Head Color and blow dry,"350 - 500",120m,On,-,On,-,-
+,Balayage+Cut+hair style,400,120m,Off,-,Off,-,-
+,"Ombre, shatush, air-touch","1,000 - 1,500",120m,On,-,On,-,-
+,Balayage,"700 - 1,200",60m,Off,-,Off,-,-
+,Roots bleach and blow dry,"350 - 450",60m,Off,-,Off,-,-
+,Toner and blow dry,"300 - 450",60m,Off,-,Off,-,-
+,Bleach hair,"1,300 - 2,300",60m,Off,-,Off,-,-
+Hair Treatment,Hair Treatment,"600 - 1,500",180m,On,On,On,-,-
+,Natural Treatment,200,60m,On,-,On,-,-
+,Hair extension (only removal),"1,500",60m,Off,-,Off,-,-
+,Hair extensions (1 can),"10 - 12",60m,Off,-,Off,-,-
+Eyelashes/Eyebrows,Eyebrows coloring,40,60m,On,-,-,-,-
+,Remove lashes,50,60m,-,On,-,-,-
+Manicure/Pedicure,Manicure basic,80,60m,-,On,-,On,On
+,Pedicure basic,100,60m,-,On,-,On,On
+,Manicure classic,100,60m,-,On,-,On,On
+,Pedicure classic,120,60m,-,On,-,On,On
+,Manicure gel,130,60m,-,On,-,On,On
+,Pedicure gel,160,60m,-,On,-,On,On
+,Spa manicure,50,60m,-,On,-,On,On
+,Remove classic,30,60m,-,On,-,On,On
+,Remove gel,"25 - 50",60m,-,On,-,On,On
+,Change gel,"100 - 120",60m,-,-,-,On,On
+,Spa pedicure,60,60m,-,On,-,On,On
+,Change classic polish,"40 - 90",60m,-,-,-,On,On
+,French,30,60m,-,Off,-,Off,Off
+,Hard gel,30,60m,-,Off,-,Off,Off
+,Baby manicure,50,60m,-,Off,-,Off,Off
+,Japanese manicure,100,90m,-,On,-,On,On
+,Nail design,30,60m,-,-,-,Off,Off
+,Починка 1 ноготь,35,60m,-,-,-,Off,Off
+,Накладные ногти,250,60m,-,-,-,Off,Off
+,Podology,200,60m,-,-,-,-,Off
+Nail Extension,Remove nail extensions,50,60m,-,On,-,On,On
+,Gel overlay,250,60m,-,-,-,Off,-
+,Gel extension,350,60m,-,-,-,Off,-
+,Acrylic overlay,300,60m,-,-,-,Off,Off
+,Acrylic extension,380,60m,-,-,-,Off,Off
+Waxing/Sugaring,Full legs,150,60m,-,On,-,-,On
+,Half legs,80,60m,-,On,-,-,On
+,Full arms,80,60m,-,On,-,-,On
+,Half arms,50,60m,-,On,-,-,On
+,Full body,400,60m,-,On,-,-,On
+,Bikini line,100,60m,-,-,-,-,On
+,Under arms,50,60m,-,Off,-,-,Off
+,Full bikini,150,60m,-,-,-,-,Off
+,Brazilian,120,60m,-,-,-,-,On
+,Full face,90,60m,-,-,-,-,On
+,Cheeks,40,60m,-,-,-,-,On
+,Upper lip,30,60m,-,-,-,-,On
+,Chin,30,60m,-,-,-,-,On
+Massage,Moroccan bath loofa,50,30m,-,On,-,-,-
+,Moroccan bathhouse,250,30m,-,On,-,-,-
+,Head 40 min,100,60m,-,Off,-,-,-
+,Leg/feet/ hand 40 min,150,60m,-,Off,-,-,-
+,Neck & shoulder 30 min,165,60m,-,Off,-,-,-
+,Back 30 min,180,60m,-,Off,-,-,-
+,Full body 60 min,260,60m,-,Off,-,-,-
+,Hotstone,310,60m,-,Off,-,-,-
+,Anti-cellulite massage,"300",60m,-,On,-,-,-
+,Back massage (5-10),"540 - 960",60m,-,Off,-,-,-
+,Classic general massage,"1,080 - 1,920",60m,-,Off,-,-,-
+,Sculpture body massage,370,60m,-,On,-,-,-
+Skin Care,Deep facial cleaning,400,60m,-,On,-,-,-
+,Face lift massage with mask,250,30m,-,On,-,-,-
+,Medical facial cleaning,450,60m,-,On,-,-,-
+,Peeling,"300 - 400",60m,-,On,-,-,-
+,Permanent Brows,800,120m,On,-,-,-,-
+,Permanent Lips,800,120m,On,-,-,-,-
+,Permanent Makeup Correction,800,120m,On,-,-,-,-
+,Hair Keratin Capsule Extension,1000,180m,On,-,On,-,-
+Promo,Blow dry packages 5,500,60m,On,-,-,-,-
+,Promo 390,390,60m,Off,Off,-,Off,Off
+,Promotion overlay manicure,145,90m,-,Off,-,Off,Off
+,Promo mani pedi 250,125,60m,-,Off,-,Off,Off
+,Combo basic 150,75,60m,-,Off,-,Off,Off

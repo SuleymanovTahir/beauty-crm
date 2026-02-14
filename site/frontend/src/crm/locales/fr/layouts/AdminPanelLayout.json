@@ -1,0 +1,24 @@
+{
+  "admin_panel": "Panneau d'administration",
+  "go_to_crm": "Accéder au CRM",
+  "logout": "Déconnexion",
+  "menu": {
+    "challenges": "Défis",
+    "challenges_short": "Objectifs",
+    "dashboard": "Panneau de configuration",
+    "dashboard_short": "Accueil",
+    "feature_management": "Gérer Fonctionnalités",
+    "loyalty_management": "Gestion de la fidélité",
+    "loyalty_short": "Fidélité",
+    "more": "Plus",
+    "notifications": "Notifications",
+    "photo_gallery": "Galerie de photos",
+    "public_content": "Contenu public",
+    "referral_program": "Programme de parrainage",
+    "referrals_short": "Parrainages",
+    "services": "Services",
+    "settings": "Paramètres",
+    "team": "Équipe",
+    "user_management": "Utilisateur gestion"
+  }
+}

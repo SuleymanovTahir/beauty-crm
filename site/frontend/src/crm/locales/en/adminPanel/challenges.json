@@ -1,0 +1,69 @@
+{
+  "buttons": {
+    "cancel": "Cancel",
+    "create_challenge": "Create a goal",
+    "update_challenge": "Save changes"
+  },
+  "card": {
+    "check_progress": "Check progress",
+    "completed": "completed",
+    "progress": "Progress",
+    "pts": "points",
+    "reward": "Reward",
+    "target": "Target"
+  },
+  "create_challenge": "Create a new goal",
+  "dialogs": {
+    "create": {
+      "description": "Set up activity parameters and completion bonus",
+      "form": {
+        "challenge_type": "Activity type",
+        "description": "Description of the task",
+        "description_placeholder": "Ex: Visit the salon {{count}} times this month",
+        "end_date": "End date",
+        "reward_placeholder": "{{points}}",
+        "reward_points": "bonus points",
+        "start_date": "Start date",
+        "target_placeholder": "{{points}}",
+        "target_value": "Target quantity",
+        "title": "Goal name",
+        "title_placeholder": "For example: Summer makeover"
+      },
+      "title": "Creating a Goal",
+      "title_edit": "Editing a target"
+    },
+    "delete": {
+      "confirm": "Are you sure you want to delete this activity? "
+    }
+  },
+  "stats": {
+    "active_challenges": "Active targets",
+    "completions": "Executions",
+    "total_participants": "Participants"
+  },
+  "statuses": {
+    "active": "Active",
+    "completed": "Completed",
+    "upcoming": "Upcoming"
+  },
+  "subtitle": "Manage game mechanics and goals to increase customer loyalty",
+  "title": "Goals and achievements",
+  "toasts": {
+    "created": "Activity created successfully",
+    "deleted": "Activity deleted",
+    "failed_check_progress": "Failed to update progress",
+    "failed_create": "Error creating activity",
+    "failed_delete": "Error during deletion",
+    "failed_load": "Failed to load data",
+    "progress_checked_one": "Progress updated for {{count}} member",
+    "progress_checked_few": "Progress updated for {{count}} participants",
+    "progress_checked_many": "Progress updated for {{count}} participants",
+    "progress_checked_other": "Progress updated for {{count}} participants"
+  },
+  "types": {
+    "referrals": "Referrals",
+    "services": "Services",
+    "spending": "Spending",
+    "visits": "Visits"
+  }
+}

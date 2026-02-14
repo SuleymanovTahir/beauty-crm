@@ -1,0 +1,4 @@
+@import "tailwindcss";
+@import "./crm/styles/globals.css";
+@import "./crm/styles/messenger-themes.css";
+@import "react-datepicker/dist/react-datepicker.css";

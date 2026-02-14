@@ -1,0 +1,97 @@
+/* /frontend/src/components/layouts/PublicLayout.css */
+.public-layout {
+  --brand-primary: #db2777; /* pink-600 */
+  --brand-primary-hover: #be185d; /* pink-700 */
+  --brand-secondary: #2563eb; /* blue-600 */
+  --brand-bg-soft: #fdf2f8; /* pink-50 */
+  --brand-bg-soft-hover: #fce7f3; /* pink-100 */
+  --brand-whatsapp: #22c55e; /* green-600 */
+  --brand-whatsapp-bg: #f0fdf4; /* green-50 */
+  --brand-whatsapp-hover: #16a34a; /* green-600 hover */
+  --footer-bg: #0f172a; /* slate-900 */
+  --footer-text: #94a3b8; /* slate-400 */
+}
+
+.brand-gradient {
+  background: linear-gradient(to bottom right, #ec4899, #db2777, #2563eb);
+}
+
+.brand-text-gradient {
+  background: linear-gradient(to right, #111827, #4b5563);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-text-primary {
+  color: var(--brand-primary);
+}
+
+.brand-link {
+  color: #4b5563;
+}
+
+.brand-link:hover,
+.brand-link.active {
+  color: var(--brand-primary);
+}
+
+.nav-underline {
+  height: 2px;
+  background-color: var(--brand-primary);
+}
+
+.btn-primary-gradient {
+  background: linear-gradient(to right, #ec4899, #db2777);
+  box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.2);
+}
+
+.btn-primary-gradient:hover {
+  box-shadow: 0 20px 25px -5px rgba(236, 72, 153, 0.4);
+}
+
+.social-icon-instagram {
+  background-color: var(--brand-bg-soft);
+  color: var(--brand-primary);
+}
+
+.social-icon-instagram:hover {
+  background-color: var(--brand-bg-soft-hover);
+}
+
+.social-icon-whatsapp {
+  background-color: var(--brand-whatsapp-bg);
+  color: var(--brand-whatsapp);
+}
+
+.social-icon-whatsapp:hover {
+  background-color: #dcfce7; /* green-100 */
+}
+
+.footer-section-title {
+  color: var(--brand-primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.footer-link {
+  color: var(--footer-text);
+  transition: color 0.3s;
+}
+
+.footer-link:hover {
+  color: white;
+}
+
+.footer-contact-icon {
+  background-color: #1e293b; /* slate-800 */
+}
+
+.footer-contact-item:hover .footer-contact-icon {
+  background-color: rgba(219, 39, 119, 0.2);
+}
+
+.footer-working-hours-item {
+  background-color: rgba(30, 41, 59, 0.5);
+}

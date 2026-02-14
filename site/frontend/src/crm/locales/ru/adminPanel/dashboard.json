@@ -1,0 +1,97 @@
+{
+  "active_clients": "Активные клиенты",
+  "active_sessions": "Активных сессий",
+  "all_bookings": "Все записи",
+  "analytics": "Аналитика",
+  "average_check": "Средний чек",
+  "bookings": "Записи",
+  "bot_analytics": "Бот Аналитика",
+  "cancellations": "Отмены",
+  "client": "Клиент",
+  "client_database": "База клиентов",
+  "conversion": "Конверсия",
+  "date_filter": "Период",
+  "datetime": "Дата/Время",
+  "filter_custom": "Свой период",
+  "filter_last_month": "Прошлый месяц",
+  "filter_last30days": "Последние 30 дней",
+  "filter_last7days": "Последние 7 дней",
+  "filter_this_month": "Этот месяц",
+  "filter_today": "Сегодня",
+  "filter_yesterday": "Вчера",
+  "from": "От",
+  "id": "ID",
+  "latest_bookings": "Последние записи",
+  "new_booking": "Новая запись",
+  "new_clients": "Новые клиенты",
+  "no_active_leads": "Нет активных заявок",
+  "quick_actions": {
+    "challenges": {
+      "description": "Создание и управление целями",
+      "title": "Цели"
+    },
+    "loyalty_management": {
+      "description": "Управление баллами лояльности и уровнями",
+      "title": "Управление лояльностью"
+    },
+    "notifications": {
+      "description": "Отправка и управление уведомлениями",
+      "title": "Уведомления"
+    },
+    "photo_gallery": {
+      "description": "Управление фотографиями клиентов и портфолио",
+      "title": "Фото галерея"
+    },
+    "referral_program": {
+      "description": "Просмотр и управление рефералами",
+      "title": "Реферальная программа"
+    },
+    "title": "Быстрые действия",
+    "user_management": {
+      "description": "Управление учетными записями и разрешениями пользователей",
+      "title": "Управление пользователями"
+    }
+  },
+  "recent_activity": {
+    "challenge_completed_one": "Цель \"{{name}}\" завершена {{count}} пользователем",
+    "challenge_completed_few": "Цель \"{{name}}\" завершена {{count}} пользователями",
+    "challenge_completed_many": "Цель \"{{name}}\" завершена {{count}} пользователями",
+    "challenge_completed_other": "Цель \"{{name}}\" завершена {{count}} пользователями",
+    "day_ago_one": "{{count}} день назад",
+    "day_ago_few": "{{count}} дня назад",
+    "day_ago_many": "{{count}} дней назад",
+    "day_ago_other": "{{count}} дней назад",
+    "hours_ago_one": "{{count}} час назад",
+    "hours_ago_few": "{{count}} часа назад",
+    "hours_ago_many": "{{count}} часов назад",
+    "hours_ago_other": "{{count}} часов назад",
+    "new_tier_activated": "Новый уровень лояльности активирован",
+    "subtitle": "Последние действия в админ-панели",
+    "title": "Недавняя активность",
+    "users_registered_one": "{{count}} новый пользователь зарегистрирован",
+    "users_registered_few": "{{count}} новых пользователя зарегистрировано",
+    "users_registered_many": "{{count}} новых пользователей зарегистрировано",
+    "users_registered_other": "{{count}} новых пользователей зарегистрировано"
+  },
+  "recent_leads": "Последние заявки",
+  "report": "Отчет",
+  "revenue": "Доход",
+  "stats": {
+    "active_challenges": "Активных целей",
+    "from_last_month": "от прошлого месяца",
+    "loyalty_points_issued": "Выдано баллов лояльности",
+    "total_referrals": "Всего рефералов",
+    "total_users": "Всего пользователей"
+  },
+  "status_cancelled": "Отменено",
+  "status_completed": "Завершено",
+  "status_confirmed": "Подтверждено",
+  "status_pending": "Ожидание",
+  "subtitle": "Управление пользователями, лояльностью и вовлеченностью",
+  "title": "Панель управления",
+  "to": "До",
+  "total_clients": "Всего клиентов",
+  "vip_clients": "VIP-клиенты",
+  "visits": "Визитов",
+  "welcome": "Добро пожаловать обратно! Вот что происходит в вашем салоне сегодня."
+}

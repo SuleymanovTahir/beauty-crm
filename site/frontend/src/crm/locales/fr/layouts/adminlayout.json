@@ -1,0 +1,28 @@
+{
+  "admin": "Administrateur",
+  "admin_panel": "Panneau d'administration",
+  "crm": "Panneau CRM",
+  "logout": "Déconnexion",
+  "logout_success": "Vous vous êtes déconnecté avec succès",
+  "menu": {
+    "analytics": "Analytics",
+    "audit_log": "Journaux d'audit",
+    "bookings": "Réservations",
+    "bot_settings": "Paramètres du robot",
+    "calendar": "Calendrier",
+    "chat": "Chat",
+    "clients": "Clients",
+    "dashboard": "Tableau de bord",
+    "feedback": "Commentaires",
+    "funnel": "Entonnoir",
+    "plans": "Plans",
+    "public_content": "Contenu public",
+    "services": "Services",
+    "settings": "Paramètres",
+    "tasks": "Tâches",
+    "telephony": "Téléphonie",
+    "trash": "Corbeille",
+    "users": "Utilisateurs",
+    "visitors": "Visiteurs"
+  }
+}
