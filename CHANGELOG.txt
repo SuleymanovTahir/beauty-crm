@@ -492,3 +492,9 @@
 - `crm/backend/tests/test_gender_avatars.py`: replaced brittle hardcoded male-name assertion with DB-based male-employee validation.
 - `crm/backend/main.py` and `site/backend/main.py`: added commented manual hooks for `run_all_migrations`, `run_all_fixes`, `run_all_tests`, `run_all_tests2`, `run_all_tests3`.
 - Validation: full migration/fix/test cycles rerun in both projects, all orchestrator runs passed.
+
+## [2026-02-14] Site Frontend API Boundary Cleanup
+- `site/frontend/src/services/api.ts`: removed CRM-only endpoints; kept only site/account/public methods used by `site/frontend/src`.
+- `site/frontend/src/api/client.ts`: removed unused CRM client methods and retained URL namespace helpers.
+- `site/frontend/src/i18n.ts` and `site/frontend/src/utils/platformRouting.ts`: removed CRM/manager/employee mappings and made site redirects/locale loading site-only.
+- Validation: `npm run build` in `site/frontend` passed after cleanup; `locales-data` bundle reduced from `~4.6 MB` to `~1.39 MB` (raw chunk size).

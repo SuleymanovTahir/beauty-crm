@@ -7,8 +7,8 @@ export interface PlatformGates {
 
 export const DEFAULT_PLATFORM_GATES: PlatformGates = {
   site_enabled: true,
-  crm_enabled: true,
-  product_mode: 'both',
+  crm_enabled: false,
+  product_mode: 'site',
   business_type: 'beauty',
 };
 
@@ -56,20 +56,28 @@ export const normalizePlatformGates = (rawValue: unknown): PlatformGates => {
   };
 };
 
-const getRoleHomePath = (role?: string): string => {
-  const normalizedRole = normalizeRole(role);
+const SITE_ADMIN_ROLES = new Set([
+  'director',
+  'admin',
+  'accountant',
+  'manager',
+  'sales',
+  'marketer',
+  'employee',
+])
 
-  if (normalizedRole === 'director') return '/crm/dashboard';
-  if (normalizedRole === 'admin') return '/crm/dashboard';
-  if (normalizedRole === 'accountant') return '/crm/dashboard';
-  if (normalizedRole === 'manager') return '/manager/dashboard';
-  if (normalizedRole === 'sales') return '/sales/clients';
-  if (normalizedRole === 'marketer') return '/marketer/analytics';
-  if (normalizedRole === 'employee') return '/employee/dashboard';
-  if (normalizedRole === 'client') return '/account';
+const getSiteHomePath = (role?: string): string => {
+  const normalizedRole = normalizeRole(role)
 
-  return '/';
-};
+  if (normalizedRole === 'client') {
+    return '/account/dashboard'
+  }
+  if (SITE_ADMIN_ROLES.has(normalizedRole)) {
+    return '/admin/dashboard'
+  }
+
+  return '/'
+}
 
 export const getRoleHomePathByGates = (
   role: string | undefined,
@@ -77,29 +85,13 @@ export const getRoleHomePathByGates = (
   crmSuiteEnabled: boolean,
 ): string => {
   const normalizedRole = normalizeRole(role);
-
-  if (normalizedRole === 'client') {
-    if (siteSuiteEnabled) {
-      return '/account/dashboard';
-    }
-    if (crmSuiteEnabled) {
-      return '/crm/login';
-    }
-    return '/';
-  }
-
-  if (crmSuiteEnabled) {
-    return getRoleHomePath(normalizedRole);
-  }
-
   if (siteSuiteEnabled) {
-    if (['admin', 'director', 'accountant'].includes(normalizedRole)) {
-      return '/admin/dashboard';
-    }
-    return '/';
+    return getSiteHomePath(normalizedRole)
   }
-
-  return '/';
+  if (crmSuiteEnabled) {
+    return '/crm/login'
+  }
+  return '/'
 };
 
 export const getUnauthenticatedSitePathByGates = (
@@ -111,19 +103,6 @@ export const getUnauthenticatedSitePathByGates = (
   }
   if (crmSuiteEnabled) {
     return '/crm/login';
-  }
-  return '/';
-};
-
-export const getUnauthenticatedCrmPathByGates = (
-  siteSuiteEnabled: boolean,
-  crmSuiteEnabled: boolean,
-): string => {
-  if (crmSuiteEnabled) {
-    return '/crm/login';
-  }
-  if (siteSuiteEnabled) {
-    return '/login';
   }
   return '/';
 };

@@ -9,6 +9,7 @@ const namespaces = [
   'account',
   'public',
   'auth/login',
+  'auth/register',
   'auth/forgotpassword',
   'auth/reset_password',
   'auth/verify_email',
@@ -29,8 +30,22 @@ const namespaces = [
   'adminpanel/photogallery',
   'adminpanel/featuremanagement'
 ];
-// Используем import.meta as any для обхода ошибки типов с Vite
-const localeFiles = (import.meta as any).glob('./locales/**/*.json', { eager: true });
+const localeFiles = (import.meta as any).glob(
+  [
+    './locales/*/common.json',
+    './locales/*/account.json',
+    './locales/*/public.json',
+    './locales/*/booking.json',
+    './locales/*/dynamic.json',
+    './locales/*/auth/*.json',
+    './locales/*/layouts/*.json',
+    './locales/*/components/*.json',
+    './locales/*/public_landing.json',
+    './locales/*/public_landing/*.json',
+    './locales/*/adminpanel/*.json'
+  ],
+  { eager: true }
+);
 
 // Create a case-insensitive map of available locale files
 const lowercaseLocaleFiles: Record<string, string> = {};
@@ -68,89 +83,16 @@ for (const lang of languages) {
     }
   }
 
-  // Add aliases for backward compatibility
-  // Admin pages
-  resources[lang]['analytics'] = resources[lang]['admin/analytics'];
-  resources[lang]['bookingDetail'] = resources[lang]['admin/bookingdetail'];
-  resources[lang]['bookings'] = resources[lang]['admin/bookings'];
-  resources[lang]['botSettings'] = resources[lang]['admin/botsettings'];
-  resources[lang]['botsettings'] = resources[lang]['admin/botsettings'];
-  resources[lang]['calendar'] = resources[lang]['admin/calendar'];
-  resources[lang]['clientDetail'] = resources[lang]['admin/clientdetail'];
-  resources[lang]['clients'] = resources[lang]['admin/clients'];
-  resources[lang]['createUser'] = resources[lang]['admin/createuser'];
-  resources[lang]['createuser'] = resources[lang]['admin/createuser'];
-  resources[lang]['dashboard'] = resources[lang]['admin/dashboard'];
-  resources[lang]['editUser'] = resources[lang]['admin/edituser'];
-  resources[lang]['edituser'] = resources[lang]['admin/edituser'];
-  resources[lang]['services'] = resources[lang]['admin/services'];
-  resources[lang]['settings'] = resources[lang]['admin/settings'];
-  resources[lang]['specialPackages'] = resources[lang]['admin/specialpackages'];
-  resources[lang]['users'] = resources[lang]['admin/users'];
-  resources[lang]['funnel'] = resources[lang]['pages/funnel'] || resources[lang]['admin/funnel'];
-  resources[lang]['tasks'] = resources[lang]['admin/tasks'];
-  resources[lang]['telephony'] = resources[lang]['admin/telephony'];
-  resources[lang]['broadcasts'] = resources[lang]['admin/broadcasts'];
-  resources[lang]['menucustomization'] = resources[lang]['admin/menucustomization'];
-
-  // Manager pages
-  resources[lang]['chat'] = resources[lang]['manager/chat'];
-  resources[lang]['managerFunnel'] = resources[lang]['manager/funnel'];
-  resources[lang]['messages'] = resources[lang]['manager/messages'];
-  resources[lang]['managerSettings'] = resources[lang]['manager/settings'];
-  resources[lang]['managerDashboard'] = resources[lang]['manager/dashboard'];
-
-  // Employee pages
-  resources[lang]['employeeDashboard'] = resources[lang]['employee/dashboard'];
-  resources[lang]['employeeProfile'] = resources[lang]['employee/profile'];
-  resources[lang]['employeeBookings'] = resources[lang]['employee/bookings'];
-  resources[lang]['employeeServices'] = resources[lang]['employee/services'];
-
-  // Auth pages
+  // Auth aliases
   resources[lang]['login'] = resources[lang]['auth/login'];
   resources[lang]['register'] = resources[lang]['auth/register'];
   resources[lang]['forgotPassword'] = resources[lang]['auth/forgotpassword'];
   resources[lang]['resetPassword'] = resources[lang]['auth/reset_password'];
   resources[lang]['verifyEmail'] = resources[lang]['auth/verify_email'];
 
-  // Public pages - add both full path and short aliases
-  resources[lang]['about'] = resources[lang]['public/about'];
-  resources[lang]['contacts'] = resources[lang]['public/contacts'];
-  resources[lang]['cooperation'] = resources[lang]['public/cooperation'];
-  resources[lang]['dataDeletion'] = resources[lang]['public/datadeletion'];
-  resources[lang]['datadeletion'] = resources[lang]['public/datadeletion'];
-  resources[lang]['faq'] = resources[lang]['public/faq'];
-  resources[lang]['home'] = resources[lang]['public/home'];
-  resources[lang]['priceList'] = resources[lang]['public/pricelist'];
-  resources[lang]['pricelist'] = resources[lang]['public/pricelist'];
-  resources[lang]['privacyPolicy'] = resources[lang]['public/privacypolicy'];
-  resources[lang]['success'] = resources[lang]['public/success'];
-  resources[lang]['terms'] = resources[lang]['public/terms'];
-  resources[lang]['userCabinet'] = resources[lang]['public/usercabinet'];
-  resources[lang]['usercabinet'] = resources[lang]['public/usercabinet'];
-  resources[lang]['public'] = resources[lang]['public/public'];
-
-  // Additional namespaces used in public pages
-  resources[lang]['stats'] = resources[lang]['public/about']; // Stats are in About page
-  resources[lang]['cta'] = resources[lang]['public/about']; // CTA is in About page
-
-  // Layouts
-  resources[lang]['adminLayout'] = resources[lang]['layouts/adminlayout'];
-  resources[lang]['adminPanelLayout'] = resources[lang]['layouts/adminpanellayout'];
-  resources[lang]['employeeLayout'] = resources[lang]['layouts/employeelayout'];
-  resources[lang]['managerLayout'] = resources[lang]['layouts/managerlayout'];
-  resources[lang]['publicLayout'] = resources[lang]['layouts/publiclayout'];
-
-  // adminPanel aliases
-  resources[lang]['adminPanel/dashboard'] = resources[lang]['adminpanel/dashboard'];
-  resources[lang]['adminPanel/loyaltyManagement'] = resources[lang]['adminpanel/loyaltymanagement'];
-  resources[lang]['adminPanel/referralProgram'] = resources[lang]['adminpanel/referralprogram'];
-  resources[lang]['adminPanel/challenges'] = resources[lang]['adminpanel/challenges'];
-  resources[lang]['adminPanel/notificationsDashboard'] = resources[lang]['adminpanel/notificationsdashboard'];
-  resources[lang]['adminPanel/photoGallery'] = resources[lang]['adminpanel/photogallery'];
-  resources[lang]['adminPanel/featureManagement'] = resources[lang]['adminpanel/featuremanagement'];
-
-  // Components
+  // Components aliases
+  resources[lang]['components/LanguageSwitcher'] = resources[lang]['components/languageswitcher'];
+  resources[lang]['components/PublicLanguageSwitcher'] = resources[lang]['components/publiclanguageswitcher'];
   resources[lang]['languageSwitcher'] = resources[lang]['components/languageswitcher'];
   resources[lang]['publicLanguageSwitcher'] = resources[lang]['components/publiclanguageswitcher'];
 }
