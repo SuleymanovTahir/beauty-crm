@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
-🧪 ЕДИНЫЙ ФАЙЛ ДЛЯ ЗАПУСКА ВСЕХ ТЕСТОВ
-
-Запускает все основные тесты CRM системы.
+Единый запуск основных тестов site runtime.
 Использование: python3 test_all.py
 """
 import sys
@@ -128,14 +126,14 @@ def test_database():
         return False
 
 def test_new_features():
-    """Тест 2: Новые функции (Dashboard, Schedule, Loyalty, AutoBooking)"""
-    print_section("ТЕСТ 2: Новые функции CRM")
+    """Тест 2: Новые функции (Analytics, Schedule, Loyalty)"""
+    print_section("ТЕСТ 2: Новые функции Site")
 
     try:
+        from db.connection import get_db_connection
         from services.analytics import AnalyticsService
         from services.master_schedule import MasterScheduleService
         from services.loyalty import LoyaltyService
-        from services.auto_booking import AutoBookingService
 
         results = {}
 
@@ -218,18 +216,6 @@ def test_new_features():
             print(f"   ❌ Лояльность ошибка: {e}")
             results['Loyalty'] = False
 
-        # 2.4 Auto Booking
-        print("\n   [2.4] Автозаполнение окон...")
-        try:
-            auto_booking = AutoBookingService()
-
-            # Проверяем что сервис создается без ошибок
-            print(f"   ✅ Автозаполнение работает")
-            results['AutoBooking'] = True
-        except Exception as e:
-            print(f"   ❌ Автозаполнение ошибка: {e}")
-            results['AutoBooking'] = False
-
         # Итоги
         success_count = sum(1 for r in results.values() if r)
         total_count = len(results)
@@ -243,80 +229,46 @@ def test_new_features():
         traceback.print_exc()
         return False
 
-def test_smart_assistant():
-    """Тест 3: SmartAssistant"""
-    print_section("ТЕСТ 3: SmartAssistant (AI)")
+def test_site_boundaries():
+    """Тест 3: Проверка границ site runtime"""
+    print_section("ТЕСТ 3: Проверка границ Site")
 
-    test_client = "test_user_123"
-    
-    try:
-        from services.smart_assistant import SmartAssistant
+    crm_only_modules = [
+        "services.smart_assistant",
+        "services.auto_booking",
+        "api.marketplace_integrations",
+        "api.broadcasts",
+        "api.reminders",
+    ]
 
-        # SmartAssistant требует client_id в __init__
-        assistant = SmartAssistant(client_id=test_client)
-
-        # Проверяем, что assistant создается без ошибок
-        print(f"   ✅ SmartAssistant инициализирован (client_id={test_client})")
-
-        # Пробуем получить рекомендацию
+    results = {}
+    for module_name in crm_only_modules:
         try:
-            recommendations = assistant.get_next_visit_recommendation()
+            __import__(module_name)
+            print(f"   ❌ {module_name} должен быть недоступен в site runtime")
+            results[module_name] = False
+        except ModuleNotFoundError:
+            print(f"   ✅ {module_name} недоступен (ожидаемо)")
+            results[module_name] = True
+        except Exception as error:
+            print(f"   ⚠️  {module_name}: неожиданная ошибка ({error})")
+            results[module_name] = False
 
-            if recommendations:
-                print(f"   ✅ Рекомендации работают")
-                print(f"       - Мастер: {recommendations.get('master', 'N/A')}")
-                print(f"       - Услуга: {recommendations.get('service', 'N/A')}")
-                result = True
-            else:
-                print(f"   ⚠️  Рекомендации пусты (может быть нормально для нового клиента)")
-                result = True
-
-        except Exception as e:
-            print(f"   ⚠️  Ошибка рекомендаций: {e}")
-            print(f"   ℹ️  Может быть нормально если нет данных о клиенте")
-            result = True
-
-    except Exception as e:
-        print(f"   ❌ ОШИБКА: {e}")
-        traceback.print_exc()
-        result = False
-    
-    finally:
-        # Cleanup: удаляем тестовые данные
-        print(f"\n   🧹 Очистка тестовых данных...")
-        try:
-            from core.config import DATABASE_NAME
-            from db.connection import get_db_connection
-            
-            conn = get_db_connection()
-            c = conn.cursor()
-            
-            # Удаляем тестового клиента и связанные данные
-            c.execute("DELETE FROM conversations WHERE client_id = %s", (test_client,))
-            c.execute("DELETE FROM clients WHERE instagram_id = %s", (test_client,))
-            deleted_conversations = c.rowcount
-            
-            conn.commit()
-            conn.close()
-            
-            print(f"   ✅ Тестовые данные удалены (клиент: {test_client})")
-            
-        except Exception as cleanup_error:
-            print(f"   ⚠️  Ошибка очистки: {cleanup_error}")
-    
-    return result
+    return all(results.values())
 
 def test_api_imports():
     """Тест 4: Проверка API модулей"""
     print_section("ТЕСТ 4: Проверка API модулей")
 
     api_modules = [
-        ('api.dashboard', 'Dashboard API'),
+        ('api.admin_features', 'Admin Features API'),
+        ('api.notifications', 'Notifications API'),
+        ('api.notifications_ws', 'Notifications WebSocket API'),
         ('api.schedule', 'Schedule API'),
-        ('api.loyalty', 'Loyalty API'),
-        ('api.auto_booking', 'AutoBooking API'),
-        ('api.bookings', 'Bookings API'),
-        ('api.clients', 'Clients API'),
+        ('api.visitor_analytics', 'Visitor Analytics API'),
+        ('site_api.public_admin', 'Public Admin API'),
+        ('site_api.client_auth', 'Client Auth API'),
+        ('site_api.public', 'Public API'),
     ]
 
     results = {}
@@ -339,7 +291,7 @@ def test_api_imports():
 
 def main():
     """Запуск всех тестов"""
-    print_header("ТЕСТИРОВАНИЕ CRM СИСТЕМЫ")
+    print_header("ТЕСТИРОВАНИЕ SITE RUNTIME")
     print(f"Дата: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"Python: {sys.version}")
 
@@ -348,7 +300,7 @@ def main():
     # Запускаем тесты
     results["1. База данных"] = test_database()
     results["2. Новые функции"] = test_new_features()
-    results["3. SmartAssistant"] = test_smart_assistant()
+    results["3. Границы Site"] = test_site_boundaries()
     results["4. API модули"] = test_api_imports()
 
     # Итоги

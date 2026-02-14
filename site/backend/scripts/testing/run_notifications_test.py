@@ -5,15 +5,24 @@
 import asyncio
 import sys
 import os
-from datetime import datetime, timedelta
+import importlib
 
 # Добавляем путь к backend для импортов
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from db.connection import get_db_connection
 from services.universal_messenger import send_universal_message
-from api.broadcasts import BroadcastRequest, process_broadcast_sending
 from utils.logger import log_info, log_error
+
+try:
+    broadcasts_module = importlib.import_module("api.broadcasts")
+    BroadcastRequest = getattr(broadcasts_module, "BroadcastRequest")
+    process_broadcast_sending = getattr(broadcasts_module, "process_broadcast_sending")
+    BROADCASTS_API_AVAILABLE = True
+except ModuleNotFoundError:
+    BroadcastRequest = None
+    process_broadcast_sending = None
+    BROADCASTS_API_AVAILABLE = False
 
 async def run_notifications_test():
     print("🧪 Запуск тестирования системы уведомлений...")
@@ -38,9 +47,9 @@ async def run_notifications_test():
         admin_id, admin_user, admin_email, admin_tg = admin
         print(f"✅ Используем админа: {admin_user} (ID: {admin_id})")
 
-        # Настройка реальных данных для теста
-        real_email = "ii3391609@gmail.com"
-        real_tg_id = "906813754"
+        # Данные для теста берутся из окружения или текущего пользователя
+        real_email = os.getenv("NOTIFICATIONS_TEST_EMAIL") or admin_email
+        real_tg_id = os.getenv("NOTIFICATIONS_TEST_TELEGRAM_ID") or admin_tg
 
         # 2. Тест UniversalMessenger (In-App)
         print("\n--- [1] Тест In-App уведомления ---")
@@ -60,39 +69,40 @@ async def run_notifications_test():
 
         # 3. Тест шаблонизатора (Клиентские письма)
         print("\n--- [2] Тест красивых писем (Email) ---")
-        
-        # 3.1 Запись
-        print("📨 Отправка подтверждения записи...")
-        res_booking = await send_universal_message(
-            recipient_id=real_email,
-            template_name="booking_confirmation",
-            context={
-                "name": "Турсунай",
-                "service": "Комплексный уход",
-                "master": "Гуля",
-                "date": "12.02.2026",
-                "time": "14:00"
-            },
-            platform='email'
-        )
-        if res_booking.get("success"):
-            print("✅ Письмо о записи успешно отправлено!")
+        if not real_email:
+            print("⚠️  Email не настроен. Укажите NOTIFICATIONS_TEST_EMAIL или email у пользователя.")
+        else:
+            # 3.1 Запись
+            print("📨 Отправка подтверждения записи...")
+            res_booking = await send_universal_message(
+                recipient_id=real_email,
+                template_name="booking_confirmation",
+                context={
+                    "name": "Турсунай",
+                    "service": "Комплексный уход",
+                    "master": "Гуля",
+                    "date": "12.02.2026",
+                    "time": "14:00"
+                },
+                platform='email'
+            )
+            if res_booking.get("success"):
+                print("✅ Письмо о записи успешно отправлено!")
 
-        # 3.2 День рождения
-        print("📨 Отправка поздравления с днем рождения...")
-        res_bday = await send_universal_message(
-            recipient_id=real_email,
-            template_name="birthday_greeting",
-            context={
-                "name": "Турсунай"
-            },
-            platform='email'
-        )
-        if res_bday.get("success"):
-            print("✅ Письмо о дне рождения успешно отправлено!")
-            
-        if not res_booking.get("success") or not res_bday.get("success"):
-            print(f"❌ Ошибки при отправке: {res_booking.get('error')} / {res_bday.get('error')}")
+            # 3.2 День рождения
+            print("📨 Отправка поздравления с днем рождения...")
+            res_bday = await send_universal_message(
+                recipient_id=real_email,
+                template_name="birthday_greeting",
+                context={
+                    "name": "Турсунай"
+                },
+                platform='email'
+            )
+            if res_bday.get("success"):
+                print("✅ Письмо о дне рождения успешно отправлено!")
+            if not res_booking.get("success") or not res_bday.get("success"):
+                print(f"❌ Ошибки при отправке: {res_booking.get('error')} / {res_bday.get('error')}")
 
         # 4. Тест мастер-уведомлений (Подготовка данных)
         print("\n--- [3] Тест через master_notifications ---")
@@ -116,20 +126,23 @@ async def run_notifications_test():
 
         # 5. Тест рассылки (A/B тест на себе)
         print("\n--- [4] Тест рассылки (A/B) ---")
-        broadcast = BroadcastRequest(
-            subscription_type="promotions",
-            channels=["notification", "email", "telegram"], 
-            subject="A/B Тест Рассылка (Real)",
-            message="Тестовое сообщение для проверки почты и ТГ",
-            user_ids=[admin_id], 
-            force_send=True,
-            template_name="birthday_greeting", 
-            template_b_name="birthday_greeting", 
-            split_ratio=0.5
-        )
-        
-        await process_broadcast_sending(broadcast, admin_id)
-        print("✅ Процесс рассылки завершен")
+        if BROADCASTS_API_AVAILABLE:
+            broadcast = BroadcastRequest(
+                subscription_type="promotions",
+                channels=["notification", "email", "telegram"],
+                subject="A/B Тест Рассылка (Real)",
+                message="Тестовое сообщение для проверки почты и ТГ",
+                user_ids=[admin_id],
+                force_send=True,
+                template_name="birthday_greeting",
+                template_b_name="birthday_greeting",
+                split_ratio=0.5
+            )
+
+            await process_broadcast_sending(broadcast, admin_id)
+            print("✅ Процесс рассылки завершен")
+        else:
+            print("⚠️  api.broadcasts отсутствует в site runtime, этап пропущен")
 
         # 6. Проверка статистики
         print("\n--- [5] Проверка аналитики ---")

@@ -201,50 +201,30 @@ def test_api_endpoints():
         return False
 
 # ==============================================================================
-# ТЕСТ 4: Проверка SmartAssistant
+# ТЕСТ 4: Проверка границ site runtime
 # ==============================================================================
 
-def test_smart_assistant():
-    """Тест SmartAssistant"""
-    print("\nТЕСТ 4: Проверка SmartAssistant")
+def test_site_boundaries():
+    """Тест границ site runtime"""
+    print("\nТЕСТ 4: Проверка границ site runtime")
     print("-" * 80)
 
     try:
-        # Правильный путь импорта
-        from services.smart_assistant import SmartAssistant
-
-        # Проверяем __init__ signature
-        import inspect
-        sig = inspect.signature(SmartAssistant.__init__)
-        params = list(sig.parameters.keys())
-
-        print(f"   Параметры __init__: {params}")
-
-        if 'client_id' in params:
-            print("   ℹ️  SmartAssistant требует client_id при создании")
-
-            # Пробуем создать с тестовым client_id
+        crm_only_modules = [
+            "services.smart_assistant",
+            "services.auto_booking",
+            "api.marketplace_integrations",
+            "api.broadcasts",
+            "api.reminders",
+        ]
+        for module_name in crm_only_modules:
             try:
-                assistant = SmartAssistant(client_id="test_client")
-                print("   ✅ SmartAssistant создан успешно (с client_id)")
-                return True
-            except Exception as e:
-                print(f"   ❌ Ошибка создания SmartAssistant: {e}")
+                __import__(module_name)
+                print(f"   ❌ Модуль не должен быть доступен: {module_name}")
                 return False
-        else:
-            # Старый API без client_id
-            try:
-                assistant = SmartAssistant()
-                print("   ✅ SmartAssistant создан успешно (без client_id)")
-                return True
-            except Exception as e:
-                print(f"   ❌ Ошибка создания SmartAssistant: {e}")
-                return False
-
-    except ImportError as e:
-        print(f"   ❌ Не удалось импортировать SmartAssistant: {e}")
-        print(f"   💡 Проверьте путь: services/smart_assistant.py")
-        return False
+            except ModuleNotFoundError:
+                print(f"   ✅ Недоступен (ожидаемо): {module_name}")
+        return True
     except Exception as e:
         print(f"❌ ОШИБКА: {e}")
         import traceback
@@ -366,7 +346,7 @@ async def run_full_diagnostics():
     results.append(("Подключение к БД", test_database_connection()))
     results.append(("Порты сервера", test_server_ports()))
     results.append(("API эндпоинты", test_api_endpoints()))
-    results.append(("SmartAssistant", test_smart_assistant()))
+    results.append(("Границы site runtime", test_site_boundaries()))
     results.append(("Email уведомления", await test_email_notifications()))
     results.append(("Instagram API", await test_instagram_api()))
 
@@ -410,10 +390,10 @@ async def run_full_diagnostics():
                     print("      - Проверьте порт 8000: lsof -i :8000")
                     print("      - Проверьте логи: tail -f logs/app.log")
 
-                if "SmartAssistant" in name:
-                    print("   🔧 SmartAssistant требует исправления:")
-                    print("      - Обновите вызовы SmartAssistant(client_id=...)")
-                    print("      - Проверьте tests/test_all.py")
+                if "Границы site runtime" in name:
+                    print("   🔧 Нарушены границы runtime:")
+                    print("      - Убедитесь, что CRM-only модули удалены из site/backend")
+                    print("      - Проверьте tests/test_all.py и startup/startup_tests.py")
 
                 if "Порты" in name:
                     print("   🔧 Сервер не запущен:")

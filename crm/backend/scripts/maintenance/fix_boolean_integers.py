@@ -64,7 +64,6 @@ def main():
         'scripts/diagnostics/debug_availability.py',
         'scripts/testing/data/seed_full_data.py',
         'scripts/testing/data/seed_test_data.py',
-        'scripts/translations/review_translations.py',
         'tests/comprehensive_test.py',
         'tests/test_gender_avatars.py',
         'tests/verify_bot_logic.py'

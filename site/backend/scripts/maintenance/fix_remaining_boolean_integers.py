@@ -2,7 +2,6 @@
 """
 Автоматическое исправление ВСЕХ boolean integer проблем
 """
-import os
 import re
 from pathlib import Path
 
@@ -60,8 +59,10 @@ def main():
     
     # Файлы для исправления (из результатов сканирования)
     files_to_fix = [
-        'api/internal_chat.py',
-        'api/user_management.py',
+        'api/admin_features.py',
+        'api/notifications.py',
+        'api/schedule.py',
+        'db/employees.py',
         'db/plans.py',
     ]
     

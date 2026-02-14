@@ -123,31 +123,43 @@ def remove_hardcoded_defaults():
     else:
         print(f"ℹ️  {file_path} - изменений не требуется")
     
-    # 4. api/seo_metadata.py
+    # 4. seo_metadata.py
     print("\n" + "=" * 80)
-    print("4. Обработка api/seo_metadata.py")
+    print("4. Обработка seo_metadata.py")
     print("=" * 80)
-    
-    file_path = "api/seo_metadata.py"
-    with open(file_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    original = content
-    
-    # Удаляем дефолт для phone
-    pattern = r'"phone":\s*salon\.get\(\'phone\',\s*\'\+971526961100\'\)'
-    replacement = '"phone": salon.get(\'phone\')'
-    
-    if re.search(pattern, content):
-        content = re.sub(pattern, replacement, content)
-        changes.append(f"  ✅ {file_path}: удалён дефолт phone")
-    
-    if content != original:
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(content)
-        print(f"✅ Обновлён {file_path}")
+
+    seo_candidates = [
+        "crm_api/seo_metadata.py",
+        "api/seo_metadata.py",
+    ]
+    file_path = None
+    for candidate in seo_candidates:
+        if os.path.exists(candidate):
+            file_path = candidate
+            break
+
+    if file_path is None:
+        print("ℹ️  seo_metadata.py не найден - этап пропущен")
     else:
-        print(f"ℹ️  {file_path} - изменений не требуется")
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        original = content
+
+        # Удаляем дефолт для phone
+        pattern = r'"phone":\s*salon\.get\(\'phone\',\s*\'\+971526961100\'\)'
+        replacement = '"phone": salon.get(\'phone\')'
+
+        if re.search(pattern, content):
+            content = re.sub(pattern, replacement, content)
+            changes.append(f"  ✅ {file_path}: удалён дефолт phone")
+
+        if content != original:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            print(f"✅ Обновлён {file_path}")
+        else:
+            print(f"ℹ️  {file_path} - изменений не требуется")
     
     # Итоги
     print("\n" + "=" * 80)

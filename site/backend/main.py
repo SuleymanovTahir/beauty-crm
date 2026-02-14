@@ -190,6 +190,18 @@ async def lifespan(app: FastAPI):
     else:
         log_info("⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)", "boot")
 
+    # [MANUAL DEBUG HOOKS] Keep commented; enable only for local diagnostics.
+    # from db.migrations.run_all_migrations import run_all_migrations
+    # run_all_migrations()
+    # from scripts.maintenance.fix_data import run_all_fixes
+    # run_all_fixes()
+    # from tests.run_all_tests import run_all_tests
+    # run_all_tests()
+    # from tests.run_all_test2 import run_all_tests2
+    # run_all_tests2()
+    # from tests.run_all_test3 import run_all_tests3
+    # run_all_tests3()
+
     # 7. Site сервисы
     start_site_runtime_services()
 

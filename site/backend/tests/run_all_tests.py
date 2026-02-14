@@ -128,7 +128,7 @@ def check_services_without_masters():
 
 def run_all_tests():
     """Запуск всех тестов проекта"""
-    print_header("ЗАПУСК ВСЕХ ТЕСТОВ BEAUTY CRM")
+    print_header("ЗАПУСК ВСЕХ ТЕСТОВ BEAUTY SITE")
     print(f"Дата: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     # 0. Подготовка данных
@@ -144,7 +144,7 @@ def run_all_tests():
 
     # 1. Основные тесты (теперь тихие если PASS)
     from tests.test_all import main as test_all_main
-    results.append(("test_all.py - Основные тесты", *run_suite("test_all.py", func=test_all_main, description="База данных + Ассистент + API")))
+    results.append(("test_all.py - Основные тесты", *run_suite("test_all.py", func=test_all_main, description="База данных + Site API + границы runtime")))
 
     from tests.test_detailed import main as test_detailed_main
     results.append(("test_detailed.py - Детальные тесты", *run_suite("test_detailed.py", func=test_detailed_main, description="Клиенты, записи, сотрудники")))
@@ -153,7 +153,6 @@ def run_all_tests():
     results.append(("test_new_features.py - Новые функции", *run_suite("test_new_features.py", func=test_new_features_main, description="Новые фичи системы")))
 
     # 2. Модульные тесты через subprocess
-    results.append(("api/test_reminders_api.py", *run_suite("api/test_reminders_api.py", subprocess_path="api/test_reminders_api.py")))
     results.append(("api/test_notifications_api.py", *run_suite("api/test_notifications_api.py", subprocess_path="api/test_notifications_api.py")))
     results.append(("test_schedule.py", *run_suite("test_schedule.py", subprocess_path="test_schedule.py")))
     results.append(("test_employee_management.py", *run_suite("test_employee_management.py", subprocess_path="test_employee_management.py")))

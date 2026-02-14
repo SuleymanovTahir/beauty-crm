@@ -75,7 +75,7 @@ def run_suite_subprocess(subprocess_path, description=""):
 
 def run_all_tests3():
     """Запуск третьей очереди тестов проекта"""
-    print_header("ЗАПУСК ТЕСТОВ BEAUTY CRM (V3)")
+    print_header("ЗАПУСК ТЕСТОВ BEAUTY SITE (V3)")
     print(f"Дата: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     results = []
@@ -90,8 +90,6 @@ def run_all_tests3():
     results.append(("scripts/testing/test_registration.py", *run_suite_subprocess("scripts/testing/test_registration.py", description="Тесты системы регистрации и подтверждения")))
 
     # 4. Manual/Special Logic Tests
-    results.append(("tests/manual/test_bot_persona.py", *run_suite_subprocess("tests/manual/test_bot_persona.py", description="Проверка личности и стиля общения бота")))
-    results.append(("tests/manual/verify_prices.py", *run_suite_subprocess("tests/manual/verify_prices.py", description="Верификация цен для специфических мастеров")))
     results.append(("tests/manual/test_settings_save.py", *run_suite_subprocess("tests/manual/test_settings_save.py", description="Тест сохранения настроек уведомлений")))
 
     # 5. Startup Extras
