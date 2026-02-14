@@ -7,6 +7,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const EXTERNAL_CRM_SRC = path.resolve(__dirname, "../../crm/frontend/src/crm");
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -114,12 +115,15 @@ export default defineConfig(({ mode }) => {
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@crm": path.resolve(__dirname, "./src/crm"),
+      "@crm": EXTERNAL_CRM_SRC,
       "@site": path.resolve(__dirname, "./src/site"),
       "@beauty-crm/shared": path.resolve(__dirname, "./shared/src"),
     },
   },
   server: {
+    fs: {
+      allow: [path.resolve(__dirname, ".."), path.resolve(__dirname, "../../crm/frontend/src")],
+    },
     proxy: {
       "/api": {
         target: BACKEND_URL,
