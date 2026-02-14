@@ -19,6 +19,36 @@ from core.config import (
     ROLES
 )
 
+_DEFAULT_OBJECTION_KEYWORDS = {
+    "price": ["дорого", "expensive", "цена", "price", "cost"],
+    "think": ["подумаю", "подумать", "think", "thinking"],
+    "no_time": ["времени нет", "no time", "busy", "занят"],
+    "far": ["далеко", "far", "distance"],
+    "pain": ["больно", "pain", "hurts", "painful"],
+}
+
+_DEFAULT_SERVICE_SYNONYMS = {
+    "кератин": ["hair treatment", "кератиновое выпрямление", "keratin"],
+    "ботокс": ["hair treatment", "hair botox"],
+    "счастье для волос": ["hair treatment", "happy hair"],
+    "укладка": ["blow dry", "styling"],
+    "окрашивание": ["hair color", "coloring", "roots"],
+    "снятие": ["removal", "gel removal"],
+    "дизайн": ["nail art", "design"],
+}
+
+_DEFAULT_PROMPT_HEADERS = {
+    "SALON_INFO": "[SALON CORE INFORMATION]",
+    "SERVICES": "[SALON SERVICES LIST]",
+    "MASTERS": "[STAFF & QUALIFICATIONS]",
+    "HISTORY": "HISTORY (Recent Messages):",
+    "PREFERENCES": "[CLIENT PROFILE & PREFERENCES]",
+    "OBJECTIONS": "[HISTORY OF CLIENT CONCERNS]",
+    "AVAILABILITY": "[SCHEDULE AVAILABILITY - {service_name}]",
+    "UNKNOWN_SERVICE": "[AWAITING SERVICE CLARIFICATION]",
+    "NOT_FOUND_SERVICE": "[SERVICE SEARCH CLARIFICATION]",
+}
+
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
@@ -745,8 +775,7 @@ def _replace_bot_placeholders(bot_settings: dict, salon_settings: dict) -> dict:
 
 def _get_default_bot_settings() -> dict:
     """Дефолтные настройки бота"""
-    from bot.constants import SERVICE_SYNONYMS, OBJECTION_KEYWORDS, PROMPT_HEADERS
-    
+
     salon_name_env = os.getenv('SALON_NAME', 'Beauty Salon')
     bot_name_env = os.getenv('BOT_NAME', 'Assistant')
     
@@ -817,9 +846,9 @@ def _get_default_bot_settings() -> dict:
         2. Never invent time slots that are not present in the database.
         3. If no slots are available, offer a waitlist or the next closest date.
         """,
-        "service_synonyms": json.dumps(SERVICE_SYNONYMS, ensure_ascii=False),
-        "objection_keywords": json.dumps(OBJECTION_KEYWORDS, ensure_ascii=False),
-        "prompt_headers": json.dumps(PROMPT_HEADERS, ensure_ascii=False),
+        "service_synonyms": json.dumps(_DEFAULT_SERVICE_SYNONYMS, ensure_ascii=False),
+        "objection_keywords": json.dumps(_DEFAULT_OBJECTION_KEYWORDS, ensure_ascii=False),
+        "prompt_headers": json.dumps(_DEFAULT_PROMPT_HEADERS, ensure_ascii=False),
     }
 
 def update_bot_settings(data: dict) -> bool:

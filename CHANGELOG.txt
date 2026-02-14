@@ -1,3 +1,60 @@
+## [2026-02-14] Site Bot Decoupling + Frontend Shared Package Removal
+- Site runtime kept intact for required admin modules: notifications, schedule, visitor analytics.
+- Removed Site bot runtime contour and bot-only files:
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/backend/bot/*`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/backend/services/smart_assistant.py`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/backend/services/auto_booking.py`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/backend/api/chat_ws.py`
+- Removed Site bot settings API surface:
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/settings.py` no longer exposes `/bot-settings`, `/settings/bot`, `/bot-settings/reload`.
+- Removed direct dependency of Site DB settings on `bot.constants`:
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/db/settings.py` now uses local default dictionaries for bot placeholders (`service_synonyms`, `objection_keywords`, `prompt_headers`).
+- Removed duplicated unused local package `@beauty-crm/shared` from both frontends:
+  - deleted directories `/Users/tahir/Desktop/beauty-crm/site/frontend/shared` and `/Users/tahir/Desktop/beauty-crm/crm/frontend/shared`,
+  - removed alias/path/include entries in:
+    - `/Users/tahir/Desktop/beauty-crm/site/frontend/vite.config.ts`,
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/vite.config.ts`,
+    - `/Users/tahir/Desktop/beauty-crm/site/frontend/tsconfig.json`,
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/tsconfig.json`,
+    - `/Users/tahir/Desktop/beauty-crm/site/frontend/package.json`,
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/package.json`,
+    - lockfiles synced in both projects.
+- Validation:
+  - `npm run build` passed in `/Users/tahir/Desktop/beauty-crm/site/frontend`
+  - `npm run build` passed in `/Users/tahir/Desktop/beauty-crm/crm/frontend`
+  - `python3 -m compileall -q site/backend` passed
+  - `python3 -m compileall -q crm/backend` passed
+  - `python3 scripts/diagnostics/verify_backend.py --boundaries --smoke-runtime` passed in both `site/backend` and `crm/backend`
+
+## [2026-02-14] Cleanup: Site/CRM Boundary Pruning (Keep Notifications + Schedule + Analytics in Site)
+- User-confirmed keep list in Site runtime preserved:
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/api/notifications.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/api/notifications_ws.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/api/schedule.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/api/visitor_analytics.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/api/admin_features.py`
+- Removed non-required Site API surface (`73` files) from `/Users/tahir/Desktop/beauty-crm/site/backend/api` to reduce cross-contour drift.
+- Simplified `/Users/tahir/Desktop/beauty-crm/site/backend/api/__init__.py` to minimal package marker (no mass router imports).
+- Removed unmounted Site webhooks runtime:
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/backend/webhooks/__init__.py`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/backend/webhooks/telegram.py`
+- Removed duplicate dead backend contour from CRM project:
+  - deleted full `/Users/tahir/Desktop/beauty-crm/crm/backend/api` tree (runtime uses `crm_api/*`).
+- Removed dead CRM frontend pages/components not mounted anymore:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/PublicContent.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/VisitorAnalytics.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/VisitorAnalytics.css`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/admin/publicContent/*`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/services/visitorApi.ts`
+- Removed unused Site frontend layout files:
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/layouts/PublicLayout.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/layouts/PublicLayout.css`
+- Validation:
+  - `npm run build` passed in `/Users/tahir/Desktop/beauty-crm/site/frontend`
+  - `npm run build` passed in `/Users/tahir/Desktop/beauty-crm/crm/frontend`
+  - `python3 -m compileall -q site/backend` passed
+  - `python3 -m compileall -q crm/backend` passed
+
 ## [2026-02-14] Hotfix: WS Routing + Public Slots + Landing Console Noise
 - WebSocket routing fixed for split deploy in frontend API client:
   - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/crm/api/client.ts`
@@ -441,60 +498,3 @@
   - Updated `apiCall` and direct login/upload requests to use the shared resolver.
 - `frontend/src/main.tsx`:
   - Enabled API namespace fetch interceptor at app bootstrap.
-- `frontend/src/services/api.ts`:
-  - Integrated the same resolver into base request pipeline so all `this.request('/api/...')` calls are auto-routed to the proper namespace.
-  - Updated direct `fetch(...)` paths (telephony upload, roles, register, exports/imports, gallery upload, generic upload, ringtone upload) to use the namespace-aware URL builder.
-  - Request timing logs now print resolved endpoint path (including `/api/site/*` or `/api/crm/*`) for easier split-runtime diagnostics.
-- `frontend/src/services/galleryApi.ts`, `frontend/src/services/visitorApi.ts`, `frontend/src/services/webrtc.ts`:
-  - Removed remaining direct `/api/*` fetch bypasses in service layer and switched them to `buildApiUrl(...)`.
-  - Visitor analytics export and WebRTC DND/call-log requests now follow the same namespace routing contract as the rest of CRM API calls.
-- Additional UI/API cleanup for split safety:
-  - Converted remaining direct page/component API fetches to namespace-aware URLs in:
-    - `frontend/src/pages/adminPanel/LoyaltyManagement.tsx`,
-    - `frontend/src/pages/adminPanel/PhotoGallery.tsx`,
-    - `frontend/src/pages/adminPanel/NotificationsDashboard.tsx`,
-    - `frontend/src/pages/shared/Referrals.tsx`,
-    - `frontend/src/pages/shared/Services.tsx`,
-
-## [2026-02-14] Frontend Source Flatten + Site Backend Namespace Cleanup
-- Frontend structure flattened:
-  - moved `crm/frontend/src/crm/*` into `crm/frontend/src/*` (removed nested `src/crm` wrapper),
-  - moved `site/frontend/src/site/*` into `site/frontend/src/*` (removed nested `src/site` wrapper).
-- Updated path contracts after flatten:
-  - aliases/paths in `crm/frontend/vite.config.ts`, `site/frontend/vite.config.ts`, `crm/frontend/tsconfig.json`, `site/frontend/tsconfig.json`,
-  - `crm/frontend/src/i18n.ts` locale glob changed from `./crm/locales/**` to `./locales/**`,
-  - landing entry/preload paths fixed in `crm/frontend/src/public_landing_site_entry.tsx` and `site/frontend/public_landing.html`,
-  - CSS imports fixed in `crm/frontend/src/index.css` and `site/frontend/src/index.css`.
-- Fixed broken landing image symlinks for both frontends to new `src/public_landing/styles/img` target.
-- Site backend decoupling hardening:
-  - replaced `from crm_api...` imports with local `from api...` in runtime-adjacent modules/tests/scripts to remove direct `crm_api` namespace dependency from Site backend.
-- Validation:
-  - `npm run build` passed for both `crm/frontend` and `site/frontend`,
-  - `python3 -m py_compile` passed for all modified Site backend Python files.
-
-## [2026-02-14] Hard Boundary Cleanup: CRM vs Site Source Isolation
-- Frontend source isolation hardened:
-  - CRM frontend build no longer includes landing entry (`public_landing.html` removed from CRM build input and removed from CRM files).
-  - CRM frontend no longer references Site source paths or `@site/*` imports.
-  - Site frontend no longer references CRM source by filesystem path; `@crm` now resolves locally inside Site project.
-- CRM cleanup:
-  - Removed CRM-side site landing artifacts (`public_landing.html`, `src/public_landing_site_entry.tsx`).
-  - Removed obsolete Site-dependent CRM layout (`components/layouts/PublicLayout.tsx` + css).
-  - Replaced `@site` loyalty import in CRM admin special packages with local CRM module.
-  - Added local CRM not-found page to avoid Site dependency.
-- Site cleanup:
-  - Site frontend style imports switched to local `src/styles/*`.
-  - Site frontend app routing operates in Site-only contour (`public/account/admin`) with no CRM page imports.
-- Backend boundary safety:
-  - Site backend keeps local `api.*` imports only (no `crm_api` imports).
-  - CRM backend keeps `crm_api` namespace only (no `site_api` imports).
-- Validation:
-  - `npm run build` passes for both `crm/frontend` and `site/frontend` after isolation changes.
-
-## [2026-02-14] Boundary Cleanup Wave 2
-- Site frontend: replaced `@crm/*` imports with `@site/*`, removed unused CRM-only component trees and dead auth files.
-- Site frontend layout: rewritten to site-only admin navigation; removed WebRTC/messenger/unread polling dependencies that caused 404 in site runtime.
-- API routing: both frontends now use plain `/api/*` (optional `VITE_API_PATH_PREFIX`), no internal `/api/crm` or `/api/site` split logic.
-- Site backend: mounted site-admin routers (admin features + notifications + WS) and removed CRM links/channels (`/crm/*`, `crm:*`) from runtime paths.
-- Backend asset paths updated to flattened source structure (no `src/site` or `src/crm` assumptions).
-- Validation: `npm run build` for both frontends and `python3 -m py_compile` for modified backend files passed.

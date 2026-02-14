@@ -119,7 +119,6 @@ export default defineConfig(({ mode }) => {
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "@crm": path.resolve(__dirname, "./src"),
-      "@beauty-crm/shared": path.resolve(__dirname, "./shared/src"),
     },
   },
   server: {
