@@ -77,11 +77,11 @@ export const CRM_MENU_DEFAULT_ORDER = [
 export const CRM_MENU_GROUPS: Record<string, string[]> = {
     'chat-group': ['chat', 'internal-chat'],
     'catalog-group': ['services', 'service-change-requests', 'products'],
-    'analytics-group': ['analytics', 'visitor-analytics'],
+    'analytics-group': ['analytics'],
     'finance-group': ['invoices', 'contracts'],
     'tools-group': ['tasks', 'broadcasts', 'telephony', 'referrals', 'promo-codes', 'loyalty', 'challenges'],
     'integrations-group': ['messengers', 'payment-integrations', 'marketplace-integrations'],
-    'settings-group': ['settings', 'team', 'public-content', 'bot-settings', 'audit-log', 'trash'],
+    'settings-group': ['settings', 'team', 'bot-settings', 'audit-log', 'trash'],
 };
 
 type BusinessModuleBinding = {
@@ -98,7 +98,6 @@ const MENU_MODULE_BINDINGS: Record<string, BusinessModuleBinding> = {
     services: { suite: 'crm', module: 'services' },
     tasks: { suite: 'crm', module: 'tasks' },
     analytics: { suite: 'crm', module: 'analytics' },
-    'visitor-analytics': { suite: 'crm', module: 'visitor_analytics' },
     funnel: { suite: 'crm', module: 'funnel' },
     products: { suite: 'crm', module: 'products' },
     invoices: { suite: 'crm', module: 'invoices' },
@@ -113,7 +112,6 @@ const MENU_MODULE_BINDINGS: Record<string, BusinessModuleBinding> = {
     'promo-codes': { suite: 'crm', module: 'promo_codes' },
     'service-change-requests': { suite: 'crm', module: 'service_change_requests' },
     settings: { suite: 'crm', module: 'settings' },
-    'public-content': { suite: 'crm', module: 'public_content' },
     'bot-settings': { suite: 'crm', module: 'bot_settings' },
     notifications: { suite: 'crm', module: 'notifications' },
     plans: { suite: 'crm', module: 'plans' },
@@ -163,12 +161,6 @@ export const buildCrmMenuCatalog = ({
         'products': { icon: Package, label: t('menu.products'), path: `${rolePrefix}/products`, req: () => permissions.roleLevel >= 70 },
         'analytics-group': { icon: BarChart3, label: t('menu.analytics'), req: () => permissions.canViewAnalytics },
         'analytics': { icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, req: () => permissions.canViewAnalytics },
-        'visitor-analytics': {
-            icon: Users,
-            label: t('menu.visitors'),
-            path: rolePrefix === '/crm' ? '/admin/visitor-analytics' : `${rolePrefix}/visitor-analytics`,
-            req: () => permissions.roleLevel >= 70,
-        },
         'finance-group': { icon: Receipt, label: t('menu.finance'), req: () => permissions.roleLevel >= 70 },
         'invoices': { icon: Receipt, label: t('menu.invoices'), path: `${rolePrefix}/invoices`, req: () => permissions.roleLevel >= 70 },
         'contracts': { icon: Briefcase, label: t('menu.contracts'), path: `${rolePrefix}/contracts`, req: () => permissions.roleLevel >= 70 },
@@ -187,12 +179,6 @@ export const buildCrmMenuCatalog = ({
         'settings-group': { icon: Settings, label: t('menu.settings'), req: () => permissions.canEditSettings },
         'settings': { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, req: () => permissions.canEditSettings },
         'team': { icon: Users, label: t('menu.team', { defaultValue: 'Команда' }), path: `${rolePrefix}/team`, req: () => permissions.roleLevel >= 70 },
-        'public-content': {
-            icon: Globe,
-            label: t('menu.public_content'),
-            path: rolePrefix === '/crm' ? '/admin/public-content' : `${rolePrefix}/public-content`,
-            req: () => permissions.roleLevel >= 70,
-        },
         'bot-settings': { icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, req: () => permissions.canViewBotSettings },
         'audit-log': { icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, req: () => userRole === 'director' },
         'trash': { icon: Trash2, label: t('menu.trash'), path: `${rolePrefix}/trash`, req: () => permissions.roleLevel >= 70 },

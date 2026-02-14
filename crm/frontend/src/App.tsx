@@ -1,6 +1,6 @@
 // /frontend/src/App.tsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Toaster } from '@crm/components/ui/sonner';
 import './i18n';
@@ -147,12 +147,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   return <>{element}</>;
-};
-
-const RedirectCrmPublicContentToAdmin: React.FC = () => {
-  const { tab } = useParams<{ tab?: string }>();
-  const targetPath = tab ? `/admin/public-content/${tab}` : '/admin/public-content';
-  return <Navigate to={targetPath} replace />;
 };
 
 export default function App() {
@@ -427,8 +421,6 @@ export default function App() {
                   <Route path="calendar" element={<Calendar />} />
                   <Route path="settings/:tab?" element={<Settings />} />
                   <Route path="bot-settings/:tab?" element={<BotSettings />} />
-                  <Route path="public-content/:tab?" element={<RedirectCrmPublicContentToAdmin />} />
-                  <Route path="visitor-analytics" element={<Navigate to="/admin/visitor-analytics" replace />} />
                   <Route path="funnel" element={<Funnel />} />
                   <Route path="tasks" element={<UniversalTasks />} />
                   <Route path="telephony" element={<Telephony />} />
@@ -509,7 +501,6 @@ export default function App() {
                   <Route path="internal-chat" element={<InternalChat />} />
                   <Route path="promo-codes" element={<PromoCodes />} />
                   <Route path="special-packages" element={<SpecialPackages />} />
-                  <Route path="visitor-analytics" element={<VisitorAnalytics />} />
                   <Route path="" element={<Navigate to="dashboard" replace />} />
                 </Route>
               ) : (
@@ -598,7 +589,6 @@ export default function App() {
                 >
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="analytics" element={<Analytics />} />
-                  <Route path="visitor-analytics" element={<VisitorAnalytics />} />
                   <Route path="funnel" element={<Funnel />} />
                   <Route path="clients" element={<Clients />} />
                   <Route path="tasks" element={<CRMTasks />} />

@@ -235,6 +235,31 @@ def _check_integration_contract(backend_root: Path, project_name: str) -> list[s
     return violations
 
 
+def _check_changelog_limit(project_root: Path, max_lines: int = 500) -> list[str]:
+    changelog_candidates = [
+        project_root / "CHANGELOG.txt",
+        project_root.parent / "CHANGELOG.txt",
+    ]
+    changelog_path = next((path for path in changelog_candidates if path.exists()), None)
+
+    if changelog_path is None:
+        searched_paths = ", ".join(str(path) for path in changelog_candidates)
+        return [f"❌ CHANGELOG.txt not found (checked: {searched_paths})"]
+
+    try:
+        with changelog_path.open("r", encoding="utf-8", errors="ignore") as changelog_file:
+            line_count = sum(1 for _ in changelog_file)
+    except OSError as error:
+        return [f"❌ Cannot read CHANGELOG.txt ({changelog_path}): {error}"]
+
+    if line_count > max_lines:
+        return [
+            f"❌ CHANGELOG.txt exceeds limit ({line_count}/{max_lines}) -> {changelog_path}"
+        ]
+
+    return []
+
+
 def _run_runtime_smoke_checks() -> int:
     _, backend_root, project_name = _resolve_paths()
     print(f"🔧 Runtime smoke check started for project: {project_name}")
@@ -332,6 +357,7 @@ def _run_boundary_checks() -> int:
     violations.extend(_check_forbidden_route_namespaces(backend_root, project_name))
     violations.extend(_check_legacy_namespace_markers(backend_root))
     violations.extend(_check_integration_contract(backend_root, project_name))
+    violations.extend(_check_changelog_limit(project_root))
 
     if violations:
         print("❌ Boundary check failed")
