@@ -19,7 +19,6 @@ FRONTEND_LOCALES_DIR = Path(__file__).parent.parent.parent.parent / "frontend" /
 
 # Files to check for missing translations
 LOCALE_FILES = [
-    "public_landing.json",
     "common.json",
     "components.json"
 ]

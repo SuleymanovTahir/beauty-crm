@@ -178,7 +178,6 @@ export default function UniversalServices() {
         'layouts/mainlayout',
         'employee/services',
         'common',
-        'public_landing/services',
         'dynamic',
         'booking'
     ]);
@@ -313,23 +312,13 @@ export default function UniversalServices() {
             return bookingLabel;
         }
 
-        const publicLabel = t(`public_landing/services:categories.${normalizedCategory}`, { defaultValue: '' }).trim();
-        if (publicLabel.length > 0) {
-            return publicLabel;
-        }
-
         return category;
     }, [t]);
 
     const getServiceDisplayName = useCallback((service: Service): string => {
         const sourceName = typeof service.name === 'string' ? service.name : '';
-        if (typeof service.key === 'string' && service.key.trim().length > 0) {
-            return t(`public_landing/services:items.${service.key}.name`, {
-                defaultValue: sourceName
-            });
-        }
         return sourceName;
-    }, [t]);
+    }, []);
 
     const filteredAndSortedServices = useMemo(() => {
         const normalizedSearch = searchTerm.trim().toLowerCase();

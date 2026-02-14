@@ -1495,47 +1495,29 @@ async def send_notification(request: Request, session_token: Optional[str] = Coo
         # Если не запланировано - отправить сразу
         # Если не запланировано - отправить сразу
         if not scheduled:
-            # Реальная отправка уведомлений через Telegram
-            from integrations.telegram_bot import telegram_bot
-            
-            sent_count = 0
-            failed_count = 0
-            message_text = data.get("message")
-            
-            for row in filtered_recipients:
-                inst_id = row[0]
-                tg_id = row[1] if len(row) > 1 else None
-                
-                chat_id = None
-                if tg_id:
-                     chat_id = tg_id
-                elif inst_id and str(inst_id).startswith('telegram_'):
-                     chat_id = str(inst_id).replace('telegram_', '')
-                
-                if chat_id:
-                    try:
-                        res = telegram_bot.send_message(int(chat_id), message_text)
-                        if res.get("ok"):
-                            sent_count += 1
-                        else:
-                            failed_count += 1
-                            log_error(f"Telegram send failed for {chat_id}: {res}", "api")
-                    except Exception as e:
-                        failed_count += 1
-                        log_error(f"Error sending to {chat_id}: {e}", "api")
-
+            # Site runtime does not dispatch Telegram bot messages directly.
+            log_info(
+                f"Immediate notification {notification_id} stored without Telegram dispatch (site runtime)",
+                "api",
+            )
             if "failed_count" in notification_columns:
-                c.execute("""
+                c.execute(
+                    """
                     UPDATE notification_history
-                    SET sent_count = %s, failed_count = %s, sent_at = CURRENT_TIMESTAMP, status = 'sent'
+                    SET sent_count = %s, failed_count = %s, sent_at = CURRENT_TIMESTAMP, status = 'failed'
                     WHERE id = %s
-                """, (sent_count, failed_count, notification_id))
+                    """,
+                    (0, recipients_count, notification_id),
+                )
             else:
-                c.execute("""
+                c.execute(
+                    """
                     UPDATE notification_history
-                    SET sent_count = %s, sent_at = CURRENT_TIMESTAMP, status = 'sent'
+                    SET sent_count = %s, sent_at = CURRENT_TIMESTAMP, status = 'failed'
                     WHERE id = %s
-                """, (sent_count, notification_id))
+                    """,
+                    (0, notification_id),
+                )
 
         conn.commit()
         conn.close()

@@ -833,8 +833,7 @@ def run_fix():
         if c.rowcount > 0:
             log_info(f"   ✅ Removed {c.rowcount} non-landing gallery items", "maintenance")
 
-        # 4.1 Seed landing content baseline if public tables are empty
-        seed_public_landing_baseline(c)
+        # 4.1 Site landing baseline seeding is excluded from CRM runtime maintenance.
 
         # 5. Sync Employee Photos & Detailed Info
         log_info("👨‍💼 Updating employee photos, bios and status...", "maintenance")

@@ -30,9 +30,8 @@ def _landing_asset_exists(url: str) -> bool:
         return False
     relative_path = url[len('/landing-images/'):]
     candidates = [
-        Path(BASE_DIR).parent / "frontend" / "src" / "public_landing" / "styles" / "img" / relative_path,
-        Path(BASE_DIR).parent / "frontend" / "public_landing" / "styles" / "img" / relative_path,
         Path(BASE_DIR).parent / "frontend" / "dist" / "landing-images" / relative_path,
+        Path(BASE_DIR) / "static" / "images" / relative_path,
     ]
     return any(path.exists() for path in candidates)
 
@@ -130,7 +129,7 @@ def map_image_path(url: str) -> str:
 
     original_url = url
 
-    # Маппинг старых путей на новые (frontend/public_landing/styles/img/)
+    # Маппинг старых путей на унифицированный /landing-images/
     path_mappings = {
         '/static/images/salon/': '/landing-images/salon/',
         '/static/uploads/images/salon/': '/landing-images/salon/',

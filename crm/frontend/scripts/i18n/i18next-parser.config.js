@@ -4,8 +4,7 @@ module.exports = {
   locales: ["ru", "en", "es", "ar", "hi", "kk", "pt", "fr", "de"],
   output: path.resolve(__dirname, '../../src/locales/$LOCALE/$NAMESPACE.json'),
   input: [
-    path.resolve(__dirname, '../../src/**/*.{js,jsx,ts,tsx}'),
-    path.resolve(__dirname, '../../public_landing/**/*.{js,jsx,ts,tsx}')
+    path.resolve(__dirname, '../../src/**/*.{js,jsx,ts,tsx}')
   ],
   defaultNamespace: 'common',
   keySeparator: '.',
