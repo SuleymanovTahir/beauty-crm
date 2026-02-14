@@ -28,8 +28,6 @@ from core.config import (
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from db.settings import (
-    get_bot_settings,
-    update_bot_settings,
     get_salon_settings,
     update_salon_settings,
     get_business_profile_matrix,
@@ -197,98 +195,6 @@ async def get_notification_settings(
     except Exception as e:
         log_error(f"Error loading notification settings: {e}", "settings")
         raise HTTPException(status_code=500, detail=str(e))
-
-# ===== BOT SETTINGS =====
-
-@router.get("/bot-settings")
-async def get_bot_settings_api(session_token: Optional[str] = Cookie(None)):
-    """
-    Получить настройки бота (только director, admin, sales)
-    """
-    from utils.utils import require_auth
-    from utils.logger import log_warning
-    
-    user = require_auth(session_token)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    # 🔒 Только director, admin, sales могут видеть настройки бота
-    ALLOWED_BOT_SETTINGS_ROLES = ["director", "admin", "sales"]
-    
-    if user["role"] not in ALLOWED_BOT_SETTINGS_ROLES:
-        log_warning(
-            f"🔒 SECURITY: {user['role']} {user['username']} attempted to view bot settings", 
-            "security"
-        )
-        raise HTTPException(
-            status_code=403,
-            detail="Only director, admin, and sales can view bot settings"
-        )
-    
-    try:
-        settings = get_bot_settings()
-        return settings
-    except Exception as e:
-        log_error(f"Error loading bot settings: {e}", "settings")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.post("/settings/bot")
-async def update_bot_settings_api(request: Request, session_token: Optional[str] = Cookie(None)):
-    """
-    Обновить настройки бота (только director, admin, sales)
-    """
-    from utils.utils import require_auth
-    from utils.logger import log_warning
-    
-    user = require_auth(session_token)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    # 🔒 Только director, admin, sales могут изменять настройки бота
-    ALLOWED_BOT_SETTINGS_ROLES = ["director", "admin", "sales"]
-    
-    if user["role"] not in ALLOWED_BOT_SETTINGS_ROLES:
-        log_warning(
-            f"🔒 SECURITY: {user['role']} {user['username']} attempted to update bot settings", 
-            "security"
-        )
-        raise HTTPException(
-            status_code=403,
-            detail="Only director, admin, and sales can update bot settings"
-        )
-    
-    try:
-        data = await request.json()
-        success = update_bot_settings(data)
-
-        if success:
-            log_info(f"Bot settings updated by {user['role']} {user['username']}", "settings")
-            return {"success": True, "message": "Bot settings updated"}
-        else:
-            raise HTTPException(status_code=500, detail="Failed to update bot settings")
-    except Exception as e:
-        log_error(f"Error updating bot settings: {e}", "settings")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.post("/bot-settings/reload")
-async def reload_bot():
-    """
-    Перезагрузить бота (очистить кеш)
-    """
-    try:
-        # Очищаем кеш бота
-        from bot import get_bot
-        bot = get_bot()
-
-        # Перезагружаем настройки из БД
-        bot.reload_settings()
-
-        log_info("Bot settings reloaded successfully", "settings")
-        return {"success": True, "message": "Bot reloaded"}
-    except Exception as e:
-        log_error(f"Error reloading bot: {e}", "settings")
-        # Возвращаем success=True даже при ошибке, чтобы не блокировать UI
-        return {"success": True, "message": "Settings saved (bot reload skipped)"}
 
 # ===== BACKUP =====
 

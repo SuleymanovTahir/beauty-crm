@@ -29,18 +29,11 @@
       ],
       "@crm/*": [
         "./src/*"
-      ],
-      "@beauty-crm/shared": [
-        "./shared/src/index.ts"
-      ],
-      "@beauty-crm/shared/*": [
-        "./shared/src/*"
       ]
     }
   },
   "include": [
     "src",
-    "./shared/src",
     "create-locale-structure.js"
   ],
   "exclude": [
