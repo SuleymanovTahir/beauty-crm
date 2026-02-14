@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Save, Users, Activity, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@crm/components/ui/card';
-import { Button } from '@crm/components/ui/button';
-import { Input } from '@crm/components/ui/input';
-import { Label } from '@crm/components/ui/label';
-import { Switch } from '@crm/components/ui/switch';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@site/components/ui/card';
+import { Button } from '@site/components/ui/button';
+import { Input } from '@site/components/ui/input';
+import { Label } from '@site/components/ui/label';
+import { Switch } from '@site/components/ui/switch';
 import { toast } from 'sonner';
-import { buildApiUrl } from '@crm/api/client';
+import { buildApiUrl } from '@site/api/client';
 
 interface FeatureConfig {
     enabled: boolean;

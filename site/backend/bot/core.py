@@ -501,7 +501,7 @@ class SalonBot:
                                     
                                     Последнее сообщение: "{user_message}"
                                     
-                                    Перейти в чат CRM: https://beauty-crm.com/admin/chat?client_id={instagram_id}
+                                    Open Site Admin: /admin/notifications
                                     """,
                                     html=f"""
                                     <h2>🔥 Клиент требует внимания!</h2>
@@ -510,7 +510,7 @@ class SalonBot:
                                     <p><strong>Ссылка:</strong> <a href="{profile_link}" style="color: #1a73e8;">{profile_link}</a></p>
                                     <hr>
                                     <p><strong>Сообщение:</strong> "{user_message}"</p>
-                                    <p><a href="https://beauty-crm.com/admin/chat?client_id={instagram_id}" style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Перейти в чат CRM</a></p>
+                                    <p><a href="/admin/notifications" style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Open Site Admin</a></p>
                                     """
                                 )
                                 print(f"📧 Escalation email sent to {manager_email}")
@@ -526,7 +526,7 @@ class SalonBot:
 {client_info_text}
 <b>Сообщение:</b> <i>"{user_message}"</i>
 
-<a href="https://beauty-crm.com/admin/chat?client_id={instagram_id}">👉 ОТВЕТИТЬ В CRM</a>
+<a href="/admin/notifications">👉 OPEN SITE ADMIN</a>
 """
                     )
                     print(f"⚠️ Escalation notification sent to {len(managers)} managers")
@@ -1297,7 +1297,7 @@ class SalonBot:
                                 
                                 Ответ бота: '{response_text}'
                                 
-                                Перейти в чат: https://beauty-crm.com/admin/chat?client_id={instagram_id}
+                                Open Site Admin: /admin/notifications
                                 """,
                                 html=f"""
                                 <h2>🤖 Авто-эскалация</h2>
@@ -1310,7 +1310,7 @@ class SalonBot:
                                 </div>
                                 <hr>
                                 <p><strong>Ответ бота:</strong> {response_text}</p>
-                                <p><a href="https://beauty-crm.com/admin/chat?client_id={instagram_id}" style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Перейти в чат CRM</a></p>
+                                <p><a href="/admin/notifications" style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Open Site Admin</a></p>
                                 """
                             )
                             print(f"   📧 Auto-escalation email sent to {manager_email}")

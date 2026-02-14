@@ -1,7 +1,7 @@
 /**
  * Analytics utility for public landing page
  */
-import { buildApiUrl } from '@crm/api/client';
+import { buildApiUrl } from '@site/api/client';
 
 export const trackSection = async (sectionId: string) => {
     try {

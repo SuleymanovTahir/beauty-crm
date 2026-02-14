@@ -42,7 +42,7 @@ def convert_to_webp(image_path, quality=85):
 def main():
     frontend_dir = Path(__file__).resolve().parent
     target_dir = Path(os.getenv("IMAGE_CONVERT_TARGET_DIR", str(
-        frontend_dir / "src" / "site" / "public_landing" / "styles" / "img" / "portfolio"
+        frontend_dir / "src" / "public_landing" / "styles" / "img" / "portfolio"
     )))
     
     if not target_dir.exists():

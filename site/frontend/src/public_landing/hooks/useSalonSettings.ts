@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { api } from '@crm/services/api';
+import { api } from '@site/services/api';
 import { DEFAULT_VALUES } from '../utils/constants';
 
 export interface SalonSettings {

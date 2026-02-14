@@ -8,10 +8,10 @@ import { CheckCircle2, Calendar, Clock, Phone, Loader2, Ticket, X } from 'lucide
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { api } from '@crm/services/api';
-import { useAuth } from '@crm/contexts/AuthContext';
-import { getLocalizedName, getDateLocale as getDateLocaleCentral } from '@crm/utils/i18nUtils';
-import { useCurrency } from '@crm/hooks/useSalonSettings';
+import { api } from '@site/services/api';
+import { useAuth } from '@site/contexts/AuthContext';
+import { getLocalizedName, getDateLocale as getDateLocaleCentral } from '@site/utils/i18nUtils';
+import { useCurrency } from '@site/hooks/useSalonSettings';
 import { AuthPrompt } from './AuthPrompt';
 import {
     buildReferralBookingSource,

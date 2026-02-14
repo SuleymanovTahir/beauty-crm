@@ -6,19 +6,19 @@ import { User, Lock, Mail, Eye, EyeOff, Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useAuth } from '@crm/contexts/AuthContext';
-import { api } from '@crm/services/api';
+import { useAuth } from '@site/contexts/AuthContext';
+import { api } from '@site/services/api';
 import { useSalonSettings } from '../hooks/useSalonSettings';
 import { DEFAULT_VALUES } from '../utils/constants';
 import logo from '../styles/img/logo.png';
-import PublicLanguageSwitcher from '@crm/components/PublicLanguageSwitcher';
+import PublicLanguageSwitcher from '@site/components/PublicLanguageSwitcher';
 import { validatePhone } from '../utils/validation';
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import {
   DEFAULT_PLATFORM_GATES,
   getRoleHomePathByGates,
   normalizePlatformGates,
-} from '@crm/utils/platformRouting';
+} from '@site/utils/platformRouting';
 import '../styles/css/index.css';
 
 // hCaptcha Site Key: задайте VITE_HCAPTCHA_SITE_KEY в .env. Без ключа — тестовый. Инструкция: docs/HCAPTCHA_KEYS.md

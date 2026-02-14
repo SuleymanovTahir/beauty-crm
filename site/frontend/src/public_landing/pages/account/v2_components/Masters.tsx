@@ -8,7 +8,7 @@ import { Switch } from './ui/switch';
 import { Label } from './ui/label';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { apiClient } from '@crm/api/client';
+import { apiClient } from '@site/api/client';
 
 export function Masters() {
   const { t, i18n } = useTranslation(['account', 'common']);

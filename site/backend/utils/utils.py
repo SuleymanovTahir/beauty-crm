@@ -30,8 +30,7 @@ def _landing_asset_exists(url: str) -> bool:
         return False
     relative_path = url[len('/landing-images/'):]
     candidates = [
-        Path(BASE_DIR).parent / "frontend" / "src" / "site" / "public_landing" / "styles" / "img" / relative_path,
-        Path(BASE_DIR).parent / "frontend" / "src" / "crm" / "public_landing" / "styles" / "img" / relative_path,
+        Path(BASE_DIR).parent / "frontend" / "src" / "public_landing" / "styles" / "img" / relative_path,
         Path(BASE_DIR).parent / "frontend" / "public_landing" / "styles" / "img" / relative_path,
         Path(BASE_DIR).parent / "frontend" / "dist" / "landing-images" / relative_path,
     ]

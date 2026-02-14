@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Input } from './ui/input';
 import { Search, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { getLocalizedName } from '@crm/utils/i18nUtils';
+import { getLocalizedName } from '@site/utils/i18nUtils';
 import { getApiUrl } from '../../../utils/apiUtils';
 import { safeFetch } from '../../../utils/errorHandler';
-import { useCurrency } from '@crm/hooks/useSalonSettings';
-import { buildApiUrl } from '@crm/api/client';
+import { useCurrency } from '@site/hooks/useSalonSettings';
+import { buildApiUrl } from '@site/api/client';
 
 interface ServicesStepProps {
     selectedServices: any[];

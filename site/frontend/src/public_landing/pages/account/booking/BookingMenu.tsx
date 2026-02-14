@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { useCurrency } from '@crm/hooks/useSalonSettings';
+import { useCurrency } from '@site/hooks/useSalonSettings';
 import { Button } from './ui/button';
 import { Scissors, User, Calendar, Check, ChevronRight, X, Edit } from 'lucide-react';
 import { motion } from 'motion/react';
-import { getLocalizedName } from '@crm/utils/i18nUtils';
+import { getLocalizedName } from '@site/utils/i18nUtils';
 
 interface BookingMenuProps {
     bookingState: any;

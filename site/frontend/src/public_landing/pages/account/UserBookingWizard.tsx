@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@crm/contexts/AuthContext';
+import { useAuth } from '@site/contexts/AuthContext';
 import { format, parseISO } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { Toaster } from '../../components/ui/sonner';
-import { api } from '@crm/services/api';
-import PublicLanguageSwitcher from '@crm/components/PublicLanguageSwitcher';
+import { api } from '@site/services/api';
+import PublicLanguageSwitcher from '@site/components/PublicLanguageSwitcher';
 import { useTranslation } from 'react-i18next';
-import { getLocalizedName } from '@crm/utils/i18nUtils';
+import { getLocalizedName } from '@site/utils/i18nUtils';
 
 // New Synced Components
-import { useCurrency } from '@crm/hooks/useSalonSettings';
+import { useCurrency } from '@site/hooks/useSalonSettings';
 import { BookingMenu } from './booking/BookingMenu';
 import { ServicesStep } from './booking/ServicesStep';
 import { ProfessionalStep } from './booking/ProfessionalStep';

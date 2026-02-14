@@ -1,16 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card } from '@crm/components/ui/card';
-import { Label } from '@crm/components/ui/label';
-import { Input } from '@crm/components/ui/input';
+import { Card } from '@site/components/ui/card';
+import { Label } from '@site/components/ui/label';
+import { Input } from '@site/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@crm/components/ui/select';
-import { Button } from '@crm/components/ui/button';
+} from '@site/components/ui/select';
+import { Button } from '@site/components/ui/button';
 import { X } from 'lucide-react';
 
 interface Filters {

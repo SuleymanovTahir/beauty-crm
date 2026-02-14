@@ -6,7 +6,7 @@ import { Badge } from './ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { apiClient } from '@crm/api/client';
+import { apiClient } from '@site/api/client';
 
 export function Gallery() {
   const { t } = useTranslation(['account', 'common']);

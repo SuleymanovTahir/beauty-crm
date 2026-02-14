@@ -3,93 +3,28 @@
 import i18n from '../i18n';
 
 export const BASE_URL = import.meta.env.VITE_API_URL || window.location.origin;
-export const API_NAMESPACE_PREFIXES = {
-  crm: '/api/crm',
-  site: '/api/site',
-} as const;
-const CRM_RUNTIME_PATH_PREFIXES = ['/crm', '/admin', '/manager', '/sales', '/saler', '/marketer', '/employee'] as const;
-const SITE_RUNTIME_API_PREFIXES = ['/api/public', '/api/public-admin', '/api/client', '/api/cookies', '/api/analytics/visitors'] as const;
+const API_PATH_PREFIX = String(import.meta.env.VITE_API_PATH_PREFIX || '')
+  .trim()
+  .replace(/\/+$/, '');
 
 interface FetchOptions extends RequestInit {
   body?: any
 }
 
-function splitApiEndpoint(endpoint: string): { path: string; suffix: string } {
-  const queryIndex = endpoint.indexOf('?')
-  const hashIndex = endpoint.indexOf('#')
-  const suffixIndexCandidates = [queryIndex, hashIndex].filter(index => index >= 0)
-  const suffixIndex = suffixIndexCandidates.length > 0 ? Math.min(...suffixIndexCandidates) : -1
-  if (suffixIndex < 0) {
-    return { path: endpoint, suffix: '' }
-  }
-  return {
-    path: endpoint.slice(0, suffixIndex),
-    suffix: endpoint.slice(suffixIndex),
-  }
-}
-
-function matchesPathPrefix(path: string, prefix: string): boolean {
-  if (path === prefix) {
-    return true
-  }
-  return path.startsWith(`${prefix}/`)
-}
-
-function getCurrentPathname(): string {
-  if (typeof window === 'undefined') {
-    return ''
-  }
-  return window.location.pathname
-}
-
-function isCrmRuntimePath(pathname: string): boolean {
-  return CRM_RUNTIME_PATH_PREFIXES.some((prefix) => matchesPathPrefix(pathname, prefix))
-}
-
-function isSiteRuntimeApi(path: string): boolean {
-  return SITE_RUNTIME_API_PREFIXES.some((prefix) => matchesPathPrefix(path, prefix))
-}
-
 function normalizeLegacyNamespacedEndpoint(endpoint: string): string {
-  if (!endpoint.startsWith('/api')) {
+  return endpoint
+}
+
+function applyApiPathPrefix(endpoint: string): string {
+  if (!endpoint.startsWith('/api') || API_PATH_PREFIX.length === 0) {
     return endpoint
   }
-
-  const { path, suffix } = splitApiEndpoint(endpoint)
-  if (matchesPathPrefix(path, API_NAMESPACE_PREFIXES.crm)) {
-    const normalizedPath = path.slice(API_NAMESPACE_PREFIXES.crm.length) || '/'
-    const tail = normalizedPath === '/' ? '' : normalizedPath
-    return `/api${tail}${suffix}`
-  }
-
-  if (matchesPathPrefix(path, API_NAMESPACE_PREFIXES.site)) {
-    const normalizedPath = path.slice(API_NAMESPACE_PREFIXES.site.length) || '/'
-    const tail = normalizedPath === '/' ? '' : normalizedPath
-    return `/api${tail}${suffix}`
-  }
-
-  return endpoint
+  return `${API_PATH_PREFIX}${endpoint}`
 }
 
 export function resolveApiEndpoint(endpoint: string): string {
   const normalizedEndpoint = normalizeLegacyNamespacedEndpoint(endpoint)
-  if (!normalizedEndpoint.startsWith('/api')) {
-    return normalizedEndpoint
-  }
-
-  const { path, suffix } = splitApiEndpoint(normalizedEndpoint)
-
-  // Split deployment routing:
-  // CRM/Admin runtime pages should hit CRM backend via /crm/api/*,
-  // while site/account/public APIs remain on /api/*.
-  const currentPathname = getCurrentPathname()
-  if (isCrmRuntimePath(currentPathname) && !isSiteRuntimeApi(path)) {
-    const normalizedPath = path.slice('/api'.length) || '/'
-    const tail = normalizedPath === '/' ? '' : normalizedPath
-    return `/crm/api${tail}${suffix}`
-  }
-
-  return normalizedEndpoint
+  return applyApiPathPrefix(normalizedEndpoint)
 }
 
 export function buildApiUrl(endpoint: string, baseUrl: string = BASE_URL): string {
@@ -97,9 +32,8 @@ export function buildApiUrl(endpoint: string, baseUrl: string = BASE_URL): strin
 }
 
 function resolveWebSocketEndpoint(endpoint: string): string {
-  // WebSocket routes are terminated on /api/* in production split nginx.
-  // Keep WS paths on /api and only normalize legacy /api/crm|/api/site inputs.
-  return normalizeLegacyNamespacedEndpoint(endpoint)
+  const normalizedEndpoint = normalizeLegacyNamespacedEndpoint(endpoint)
+  return applyApiPathPrefix(normalizedEndpoint)
 }
 
 export function buildWebSocketUrl(endpoint: string, baseUrl: string = BASE_URL): string {

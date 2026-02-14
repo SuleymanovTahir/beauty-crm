@@ -3,9 +3,9 @@ import { Search, Clock, ChevronDown, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "@crm/hooks/useSalonSettings";
+import { useCurrency } from "@site/hooks/useSalonSettings";
 import { LIMITS } from "../utils/constants";
-import { buildApiUrl } from "@crm/api/client";
+import { buildApiUrl } from "@site/api/client";
 
 interface Service {
   id: number;

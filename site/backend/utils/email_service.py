@@ -378,7 +378,7 @@ def wrap_email_html(title: str, content: str, unsubscribe_link: Optional[str] = 
     
     # Unsubscribe link logic
     from core.config import PUBLIC_URL
-    final_unsubscribe = unsubscribe_link or f"{PUBLIC_URL.rstrip('/')}/crm/settings"
+    final_unsubscribe = unsubscribe_link or f"{PUBLIC_URL.rstrip('/')}/unsubscribe"
     
     html = f"""
     <!DOCTYPE html>

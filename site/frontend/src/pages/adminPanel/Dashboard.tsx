@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import { Users, Gift, Award, Target, Bell, Image, ArrowRight, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@crm/components/ui/card';
-import { Button } from '@crm/components/ui/button';
-import { buildApiUrl } from '@crm/api/client';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@site/components/ui/card';
+import { Button } from '@site/components/ui/button';
+import { buildApiUrl } from '@site/api/client';
 
 
 export default function AdminDashboard() {

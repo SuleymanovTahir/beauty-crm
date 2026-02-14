@@ -1,6 +1,5 @@
 """
-Централизованная система логирования для CRM
-Создайте этот файл: logger.py
+Централизованная система логирования для Site runtime.
 """
 import logging
 import sys
@@ -11,12 +10,12 @@ from logging.handlers import RotatingFileHandler
 MAX_LOG_BYTES = 20 * 1024  # 20KB
 MAX_BACKUP_COUNT = 1  # Хранить только 1 бэкап
 
-def setup_logger(name: str = "crm", log_file: str = "app.log") -> logging.Logger:
+def setup_logger(name: str = "site", log_file: str = "app.log") -> logging.Logger:
     """
     Настраивает и возвращает централизованный logger
 
     Args:
-        name: Имя логгера (по умолчанию "crm")
+        name: Имя логгера (по умолчанию "site")
         log_file: Имя файла для логов
 
     Returns:

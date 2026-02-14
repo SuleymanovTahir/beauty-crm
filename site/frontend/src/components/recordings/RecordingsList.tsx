@@ -14,15 +14,15 @@ import {
   Archive,
   ArchiveRestore,
 } from 'lucide-react';
-import { Button } from '@crm/components/ui/button';
-import { Card } from '@crm/components/ui/card';
+import { Button } from '@site/components/ui/button';
+import { Card } from '@site/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@crm/components/ui/dropdown-menu';
+} from '@site/components/ui/dropdown-menu';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,9 +32,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@crm/components/ui/alert-dialog';
+} from '@site/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { api } from "@crm/services/api";
+import { api } from "@site/services/api";
 import RenameRecordingDialog from './RenameRecordingDialog';
 import MoveRecordingDialog from './MoveRecordingDialog';
 

@@ -131,7 +131,7 @@ def notify_new_registration_pending(
         title=title,
         content=content,
         trigger_type="new_registration",
-        action_url="/crm/admin/pending-users"
+        action_url="/admin/dashboard"
     )
 
     # Async WebSocket notification
@@ -142,14 +142,14 @@ def notify_new_registration_pending(
                 title=title,
                 content=content,
                 trigger_type="new_registration",
-                action_url="/crm/admin/pending-users"
+                action_url="/admin/dashboard"
             ))
         else:
             loop.run_until_complete(notify_admins_websocket(
                 title=title,
                 content=content,
                 trigger_type="new_registration",
-                action_url="/crm/admin/pending-users"
+                action_url="/admin/dashboard"
             ))
     except RuntimeError:
         # No event loop, skip WebSocket notification
@@ -174,7 +174,7 @@ def notify_new_booking(
         title=title,
         content=content,
         trigger_type="new_booking",
-        action_url=f"/crm/booking/{booking_id}"
+        action_url=f"/admin/dashboard?booking_id={booking_id}"
     )
 
     try:
@@ -184,7 +184,7 @@ def notify_new_booking(
                 title=title,
                 content=content,
                 trigger_type="new_booking",
-                action_url=f"/crm/booking/{booking_id}"
+                action_url=f"/admin/dashboard?booking_id={booking_id}"
             ))
     except RuntimeError:
         pass
@@ -204,7 +204,7 @@ def notify_new_client(
     contact_info = client_phone or client_email or "контактные данные не указаны"
     content = f"Новый клиент: {client_name} ({contact_info})"
 
-    action_url = f"/crm/clients/{client_id}" if client_id else "/crm/clients"
+    action_url = f"/admin/dashboard?client_id={client_id}" if client_id else "/admin/dashboard"
 
     create_admin_notification(
         title=title,
@@ -239,7 +239,7 @@ def notify_newsletter_subscription(
         title=title,
         content=content,
         trigger_type="newsletter_subscription",
-        action_url="/crm/admin/settings"
+        action_url="/admin/notifications"
     )
 
     try:
@@ -249,7 +249,7 @@ def notify_newsletter_subscription(
                 title=title,
                 content=content,
                 trigger_type="newsletter_subscription",
-                action_url="/crm/admin/settings"
+                action_url="/admin/notifications"
             ))
     except RuntimeError:
         pass
@@ -269,7 +269,7 @@ def notify_email_verified(
         title=title,
         content=content,
         trigger_type="email_verified",
-        action_url="/crm/admin/pending-users"
+        action_url="/admin/dashboard"
     )
 
     try:
@@ -279,7 +279,7 @@ def notify_email_verified(
                 title=title,
                 content=content,
                 trigger_type="email_verified",
-                action_url="/crm/admin/pending-users"
+                action_url="/admin/dashboard"
             ))
     except RuntimeError:
         pass

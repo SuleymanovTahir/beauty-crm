@@ -1,13 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Toaster } from '@crm/components/ui/sonner';
+import { Toaster } from '@site/components/ui/sonner';
 import './i18n';
-import { useAuth } from '@crm/contexts/AuthContext';
-import { ThemeProvider } from '@crm/contexts/ThemeContext';
-import { normalizeRole } from '@crm/utils/platformRouting';
+import { useAuth } from '@site/contexts/AuthContext';
+import { ThemeProvider } from '@site/contexts/ThemeContext';
+import { normalizeRole } from '@site/utils/platformRouting';
 
-const UniversalLayout = React.lazy(() => import('@crm/components/layouts/UniversalLayout'));
+const UniversalLayout = React.lazy(() => import('@site/components/layouts/UniversalLayout'));
 
 const AdminPanelDashboard = React.lazy(() => import('@site/pages/adminPanel/Dashboard'));
 const LoyaltyManagement = React.lazy(() => import('@site/pages/adminPanel/LoyaltyManagement'));
@@ -30,6 +30,25 @@ const LoginPage = React.lazy(() => import('@site/public_landing/pages/LoginPage'
 const VerifyEmail = React.lazy(() => import('@site/pages/auth/VerifyEmail'));
 const ForgotPassword = React.lazy(() => import('@site/pages/auth/ForgotPassword'));
 const ResetPassword = React.lazy(() => import('@site/pages/auth/ResetPassword'));
+
+const getCrmEntryUrl = (): string => {
+  const configuredUrl = String(import.meta.env.VITE_CRM_URL || '').trim();
+  if (configuredUrl.length > 0) {
+    return configuredUrl;
+  }
+  if (import.meta.env.DEV) {
+    return 'http://localhost:5174/crm/login';
+  }
+  return '/crm/login';
+};
+
+const RedirectToCrm: React.FC = () => {
+  React.useEffect(() => {
+    window.location.assign(getCrmEntryUrl());
+  }, []);
+
+  return null;
+};
 
 interface ProtectedRouteProps {
   element: React.ReactNode;
@@ -208,11 +227,7 @@ export default function App() {
 
               <Route
                 path="/crm/*"
-                element={
-                  currentUser
-                    ? (isAdminRole(currentUser.role) ? <Navigate to="/admin/dashboard" replace /> : <Navigate to="/account/dashboard" replace />)
-                    : <Navigate to={SITE_LOGIN_PATH} replace />
-                }
+                element={<RedirectToCrm />}
               />
 
               <Route path="*" element={<NotFound />} />

@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { supportedLanguages } from '@crm/utils/i18nUtils';
+import { supportedLanguages } from '@site/utils/i18nUtils';
 
 export const languages = supportedLanguages.map(l => l.code);
 const namespaces = [

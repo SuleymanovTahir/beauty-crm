@@ -4,7 +4,7 @@ import { safeFetch } from "../utils/errorHandler";
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { buildApiUrl } from "@crm/api/client";
+import { buildApiUrl } from "@site/api/client";
 
 export function CookieConsent() {
   const { t } = useTranslation(['public_landing', 'common']);

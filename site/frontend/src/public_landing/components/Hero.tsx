@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PromoTimer } from "./PromoTimer";
 import { fetchPublicApi, getApiUrl } from "../utils/apiUtils";
-import { useCurrency } from "@crm/hooks/useSalonSettings";
+import { useCurrency } from "@site/hooks/useSalonSettings";
 
 interface HeroProps {
   initialBanner?: any;

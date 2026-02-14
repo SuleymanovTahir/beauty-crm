@@ -4,9 +4,10 @@
 
 from datetime import datetime
 from db.connection import get_db_connection
+from core.config import PUBLIC_URL
 import logging
 
-logger = logging.getLogger('crm')
+logger = logging.getLogger('site')
 
 async def save_rating(instagram_id: str, rating: int, comment: str = None):
     """Сохранить оценку клиента"""
@@ -44,6 +45,7 @@ async def save_rating(instagram_id: str, rating: int, comment: str = None):
 async def alert_manager(instagram_id: str, rating: int, comment: str):
     """Уведомить менеджера о плохом отзыве через Telegram"""
     logger.warning(f"⚠️ NEGATIVE FEEDBACK from {instagram_id}: {rating}/5 - {comment}")
+    notification_link = f"{PUBLIC_URL.rstrip('/')}/admin/notifications"
     
     try:
         from integrations.telegram_bot import send_telegram_alert
@@ -116,7 +118,7 @@ async def alert_manager(instagram_id: str, rating: int, comment: str):
 📱 {client_phone}
 {platform_icon} <a href="{profile_link}">{platform_name} Профиль</a>
 
-<a href="https://beauty-crm.com/admin/chat?client_id={instagram_id}">👉 ОТВЕТИТЬ В CRM</a>
+<a href="{notification_link}">👉 OPEN SITE ADMIN</a>
 """
         
         # 1. Send Telegram Alert
@@ -134,7 +136,7 @@ async def alert_manager(instagram_id: str, rating: int, comment: str):
                 title=f"💔 Плохой отзыв ({rating}/5)",
                 message=f"{client_name}: {comment or 'Без комментария'}",
                 notification_type="urgent",
-                action_url=f"/admin/chat?client_id={instagram_id}"
+                action_url="/admin/notifications"
             )
             
             # Email Notification
@@ -154,7 +156,7 @@ async def alert_manager(instagram_id: str, rating: int, comment: str):
                         Телефон: {client_phone}
                         Ссылка: {profile_link}
                         
-                        Перейти в CRM: https://beauty-crm.com/admin/chat?client_id={instagram_id}
+                        Open Site Admin: {notification_link}
                         """,
                         html=f"""
                         <h2>💔 Негативный отзыв</h2>
@@ -165,7 +167,7 @@ async def alert_manager(instagram_id: str, rating: int, comment: str):
                         </div>
                         <p><strong>Контакты:</strong> {client_phone} | <a href="{profile_link}">{platform_name}</a></p>
                         <br>
-                        <a href="https://beauty-crm.com/admin/chat?client_id={instagram_id}" style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Разрешить ситуацию</a>
+                        <a href="{notification_link}" style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Open Site Admin</a>
                         """
                     )
                     logger.info(f"📧 Feedback email sent to {manager_email}")

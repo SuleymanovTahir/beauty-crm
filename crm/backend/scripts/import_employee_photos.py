@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 PROJECT_DIR = BACKEND_DIR.parent
 SOURCE_CANDIDATES = [
-    PROJECT_DIR / "frontend" / "src" / "site" / "public_landing" / "styles" / "img" / "staff",
+    PROJECT_DIR / "frontend" / "src" / "public_landing" / "styles" / "img" / "staff",
     PROJECT_DIR / "frontend" / "public_landing" / "styles" / "img" / "Сотрудники",
     PROJECT_DIR / "frontend" / "public_landing" / "styles" / "img" / "staff",
 ]

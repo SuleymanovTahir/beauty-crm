@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Plus, Upload, Search, SlidersHorizontal } from 'lucide-react';
-import { Button } from '@crm/components/ui/button';
-import { Input } from '@crm/components/ui/input';
-import { ScrollArea } from '@crm/components/ui/scroll-area';
-import { Card } from '@crm/components/ui/card';
+import { Button } from '@site/components/ui/button';
+import { Input } from '@site/components/ui/input';
+import { ScrollArea } from '@site/components/ui/scroll-area';
+import { Card } from '@site/components/ui/card';
 import { toast } from 'sonner';
-import { api } from '@crm/services/api';
+import { api } from '@site/services/api';
 import FolderTree from './FolderTree';
 import RecordingsList from './RecordingsList';
 import CreateFolderDialog from './CreateFolderDialog';

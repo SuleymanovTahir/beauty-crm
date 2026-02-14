@@ -1,19 +1,19 @@
 // /frontend/src/pages/auth/ForgotPassword.tsx
 import React, { useState } from "react";
 import { Mail, ArrowLeft, Loader, CheckCircle } from "lucide-react";
-import { Button } from "@crm/components/ui/button";
-import { Input } from "@crm/components/ui/input";
-import { Label } from "@crm/components/ui/label";
+import { Button } from "@site/components/ui/button";
+import { Input } from "@site/components/ui/input";
+import { Label } from "@site/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { api } from "@crm/services/api";
+import { api } from "@site/services/api";
 import { useTranslation } from "react-i18next";
-import LanguageSwitcher from "@crm/components/LanguageSwitcher";
+import LanguageSwitcher from "@site/components/LanguageSwitcher";
 import {
   DEFAULT_PLATFORM_GATES,
   getUnauthenticatedSitePathByGates,
   normalizePlatformGates,
-} from "@crm/utils/platformRouting";
+} from "@site/utils/platformRouting";
 
 export default function ForgotPassword() {
   const navigate = useNavigate();

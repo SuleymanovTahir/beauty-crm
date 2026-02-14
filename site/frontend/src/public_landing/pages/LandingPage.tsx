@@ -9,7 +9,7 @@ import { Footer } from '../components/Footer';
 import { trackSection } from '../utils/analytics';
 import { QRCodeSVG } from 'qrcode.react';
 import { Copy, Download, Share2 } from 'lucide-react';
-import { api } from '@crm/services/api';
+import { api } from '@site/services/api';
 import {
   captureReferralAttributionFromCurrentUrl,
   getLanguageFromQuery,

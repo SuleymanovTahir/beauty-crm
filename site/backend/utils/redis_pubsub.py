@@ -49,7 +49,7 @@ class RedisPubSubManager:
         if not self.pubsub:
             return
         try:
-            await self.pubsub.punsubscribe("crm:*")
+            await self.pubsub.punsubscribe("site:*")
         except Exception:
             pass
         try:
@@ -168,8 +168,8 @@ class RedisPubSubManager:
 
                     if not self.pubsub:
                         self.pubsub = self.sub_client.pubsub()
-                        await self.pubsub.psubscribe("crm:*")
-                        log_info("📡 Redis Pub/Sub subscribed to crm:*", "pubsub")
+                        await self.pubsub.psubscribe("site:*")
+                        log_info("📡 Redis Pub/Sub subscribed to site:*", "pubsub")
 
                     message = await self.pubsub.get_message(ignore_subscribe_messages=True, timeout=1.0)
                     if message:

@@ -6,7 +6,7 @@
  *
  * Пример использования:
  * ```tsx
- * import { RoleHierarchy, PermissionChecker } from '@crm/utils/permissions';
+ * import { RoleHierarchy, PermissionChecker } from '@site/utils/permissions';
  *
  * // Проверка иерархии
  * if (RoleHierarchy.canManageRole(currentUserRole, targetRole)) {
