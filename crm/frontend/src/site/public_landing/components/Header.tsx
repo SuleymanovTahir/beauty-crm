@@ -9,8 +9,9 @@ import { formatInstagramUrl, formatWhatsAppUrl } from "../utils/urlUtils";
 import { useSalonInfo } from "../hooks/useSalonInfo";
 import { DEFAULT_VALUES } from "../utils/constants";
 import { normalizeSeoLanguage, syncHtmlLanguageMeta, syncLanguageQueryParam } from "../utils/urlUtils";
-import logo from "../styles/img/logo.png";
-import logoWebp from "../styles/img/logo.webp";
+
+const FALLBACK_LOGO_PNG = '/landing-images/logo.png';
+const FALLBACK_LOGO_WEBP = '/landing-images/logo.webp';
 
 const navigation = [
   { name: "Главная", href: "#home", key: "homeTag" },
@@ -43,6 +44,8 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
     syncHtmlLanguageMeta(nextLanguage);
   };
   const { salonInfo, salonName, logoUrl } = useSalonInfo(propSalonInfo);
+  const resolvedLogoPng = logoUrl && logoUrl.trim().length > 0 ? logoUrl : FALLBACK_LOGO_PNG;
+  const resolvedLogoWebp = logoUrl && logoUrl.trim().length > 0 ? logoUrl : FALLBACK_LOGO_WEBP;
   const [isScrolled, setIsScrolled] = useState(false);
   const isHomePage = window.location.pathname === "/";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -135,17 +138,17 @@ export function Header({ salonInfo: propSalonInfo }: HeaderProps) {
             <div className="flex-shrink-0">
               <a href="/" className="block">
                 <picture>
-                  <source srcSet={logoUrl || logoWebp} type="image/webp" />
+                  <source srcSet={resolvedLogoWebp} type="image/webp" />
                   <img
-                    src={logoUrl || logo}
+                    src={resolvedLogoPng}
                     alt={salonName || DEFAULT_VALUES.DEFAULT_SALON_NAME_ALT}
                     className="h-10 sm:h-12 w-auto object-contain"
                     loading="eager"
                     fetchPriority="high"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      if (target.src !== logo) {
-                        target.src = logo;
+                      if (target.src !== FALLBACK_LOGO_PNG) {
+                        target.src = FALLBACK_LOGO_PNG;
                       }
                     }}
                   />

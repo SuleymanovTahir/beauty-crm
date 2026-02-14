@@ -152,6 +152,10 @@ export default function Broadcasts() {
   // Unsubscribed users state
   const [unsubscribed, setUnsubscribed] = useState<any[]>([]);
   const [loadingUnsubscribed, setLoadingUnsubscribed] = useState(false);
+  const [unsubscribedDateFromInput, setUnsubscribedDateFromInput] = useState('');
+  const [unsubscribedDateToInput, setUnsubscribedDateToInput] = useState('');
+  const [unsubscribedDateFromFilter, setUnsubscribedDateFromFilter] = useState('');
+  const [unsubscribedDateToFilter, setUnsubscribedDateToFilter] = useState('');
   const [clearPeriod, setClearPeriod] = useState('all');
   const [selectedHistoryIds, setSelectedHistoryIds] = useState<number[]>([]);
   const [deletingHistory, setDeletingHistory] = useState(false);
@@ -199,6 +203,18 @@ export default function Broadcasts() {
     } finally {
       setLoadingUnsubscribed(false);
     }
+  };
+
+  const applyUnsubscribedDateFilters = () => {
+    setUnsubscribedDateFromFilter(unsubscribedDateFromInput);
+    setUnsubscribedDateToFilter(unsubscribedDateToInput);
+  };
+
+  const resetUnsubscribedDateFilters = () => {
+    setUnsubscribedDateFromInput('');
+    setUnsubscribedDateToInput('');
+    setUnsubscribedDateFromFilter('');
+    setUnsubscribedDateToFilter('');
   };
 
   // Перезагружаем пользователей при смене языка
@@ -724,6 +740,43 @@ export default function Broadcasts() {
       </div>
     );
   }
+
+  const filteredUnsubscribed = unsubscribed.filter((unsubscribedItem) => {
+    const hasFromFilter = unsubscribedDateFromFilter.length > 0;
+    const hasToFilter = unsubscribedDateToFilter.length > 0;
+
+    if (!hasFromFilter && !hasToFilter) {
+      return true;
+    }
+
+    const rawDate = String(unsubscribedItem?.unsubscribed_at ?? '').trim();
+    if (rawDate.length === 0) {
+      return false;
+    }
+
+    const unsubscribeDate = new Date(rawDate);
+    if (Number.isNaN(unsubscribeDate.getTime())) {
+      return false;
+    }
+
+    if (hasFromFilter) {
+      const fromDate = new Date(`${unsubscribedDateFromFilter}T00:00:00`);
+      if (!Number.isNaN(fromDate.getTime()) && unsubscribeDate < fromDate) {
+        return false;
+      }
+    }
+
+    if (hasToFilter) {
+      const toDate = new Date(`${unsubscribedDateToFilter}T23:59:59`);
+      if (!Number.isNaN(toDate.getTime()) && unsubscribeDate > toDate) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+  const hasUnsubscribedDateFilter = unsubscribedDateFromFilter.length > 0 || unsubscribedDateToFilter.length > 0;
 
   return (
     <div className="p-8">
@@ -1693,14 +1746,45 @@ export default function Broadcasts() {
               </Button>
             </div>
 
+            <div className="mb-6 flex flex-wrap items-end gap-3">
+              <div className="flex flex-col gap-1">
+                <Label className="text-xs text-gray-500">{t('common:from')}</Label>
+                <Input
+                  type="date"
+                  value={unsubscribedDateFromInput}
+                  onChange={(event) => setUnsubscribedDateFromInput(event.target.value)}
+                  className="h-10"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <Label className="text-xs text-gray-500">{t('common:to')}</Label>
+                <Input
+                  type="date"
+                  value={unsubscribedDateToInput}
+                  onChange={(event) => setUnsubscribedDateToInput(event.target.value)}
+                  className="h-10"
+                />
+              </div>
+              <Button type="button" onClick={applyUnsubscribedDateFilters} className="h-10">
+                {t('common:apply')}
+              </Button>
+              <Button type="button" variant="outline" onClick={resetUnsubscribedDateFilters} className="h-10">
+                {t('common:reset')}
+              </Button>
+            </div>
+
             {loadingUnsubscribed ? (
               <div className="flex justify-center py-20">
                 <Loader className="w-10 h-10 animate-spin text-pink-600" />
               </div>
-            ) : unsubscribed.length === 0 ? (
+            ) : filteredUnsubscribed.length === 0 ? (
               <div className="text-center py-20 border-2 border-dashed border-gray-100 rounded-2xl">
                 <UserCheck className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">{t('no_unsubscribed', 'Отписавшихся пользователей пока нет. Все ваши клиенты довольны! 😊')}</p>
+                <p className="text-gray-500">
+                  {hasUnsubscribedDateFilter
+                    ? t('no_recipients_found', 'По выбранному периоду совпадений нет')
+                    : t('no_unsubscribed', 'Отписавшихся пользователей пока нет.')}
+                </p>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -1714,7 +1798,7 @@ export default function Broadcasts() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
-                    {unsubscribed.map((unsub) => (
+                    {filteredUnsubscribed.map((unsub) => (
                       <tr key={unsub.id} className="hover:bg-gray-50 transition-colors group">
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
@@ -1731,11 +1815,11 @@ export default function Broadcasts() {
                         </td>
                         <td className="py-3 px-4">
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                            {t(unsub.mailing_type) || unsub.mailing_type}
+                            {t(unsub.mailing_type, { defaultValue: unsub.mailing_type })}
                           </span>
                         </td>
                         <td className="py-4 px-4 text-sm text-gray-600">
-                          {unsub.unsubscribed_at ? new Date(unsub.unsubscribed_at).toLocaleString('ru-RU', {
+                          {unsub.unsubscribed_at ? new Date(unsub.unsubscribed_at).toLocaleString(i18n.language, {
                             day: '2-digit',
                             month: '2-digit',
                             year: 'numeric',
