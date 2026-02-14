@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Repeat, CheckCircle, Loader2, CalendarPlus } from 'lucide-react';
-import { Card, CardContent } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Card, CardContent } from '@site/public_landing/components/ui/card';
+import { Button } from '@site/public_landing/components/ui/button';
+import { Badge } from '@site/public_landing/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@site/public_landing/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@site/public_landing/components/ui/tabs';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '@site/api/client';
 import { toast } from 'sonner';

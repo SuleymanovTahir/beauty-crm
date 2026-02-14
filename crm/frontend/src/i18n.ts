@@ -1,196 +1,123 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
-import { supportedLanguages } from '@crm/utils/i18nUtils';
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
+import { supportedLanguages } from '@crm/utils/i18nUtils'
 
-export const languages = supportedLanguages.map(l => l.code);
+export const languages = supportedLanguages.map((language) => language.code)
+
 const namespaces = [
   'common',
   'account',
   'admin-components',
   'components',
+  'booking',
+  'dynamic',
   'admin/analytics',
+  'admin/audit-log',
   'admin/bookingdetail',
   'admin/bookings',
   'admin/botsettings',
   'admin/broadcasts',
   'admin/calendar',
+  'admin/challenges',
   'admin/clientdetail',
   'admin/clients',
+  'admin/contracts',
   'admin/createuser',
   'admin/dashboard',
-  'admin/edituser',
+  'admin/funnel',
+  'admin/integrations',
+  'admin/invoices',
+  'admin/menucustomization',
+  'admin/pending_registrations',
   'admin/permissionmanagement',
-  'admin/permissionstab',
   'admin/plans',
-  'admin/publiccontent',
+  'admin/products',
+  'admin/promocodes',
   'admin/services',
   'admin/settings',
   'admin/specialpackages',
-  'admin/users',
-  'admin/visitoranalytics',
-  'admin/funnel',
   'admin/tasks',
   'admin/telephony',
   'admin/trash',
-  'admin/audit-log',
-  'admin/invoices',
-  'admin/products',
-  'admin/contracts',
-  'admin/integrations',
-  'admin/menucustomization',
-  'admin/pending_registrations',
+  'admin/users',
   'manager/chat',
-  'manager/dashboard',
-  'manager/funnel',
-  'manager/messages',
-  'manager/settings',
   'employee/dashboard',
   'employee/profile',
-  'employee/bookings',
   'employee/services',
   'auth/login',
   'auth/register',
   'auth/forgotpassword',
   'auth/reset_password',
   'auth/verify_email',
-  'layouts/adminlayout',
   'layouts/mainlayout',
-  'layouts/employeelayout',
-  'layouts/managerlayout',
+  'layouts/adminpanellayout',
   'components/languageswitcher',
-  'components/employeelayout',
-  'booking',
-  'dynamic',
+  'public_landing',
+  'public_landing/services',
   'adminpanel/loyaltymanagement',
   'adminpanel/referralprogram',
   'adminpanel/challenges',
-  'pages/funnel'
-];
-// Используем import.meta as any для обхода ошибки типов с Vite
-const localeFiles = (import.meta as any).glob('./locales/**/*.json', { eager: true });
+]
 
-// Create a case-insensitive map of available locale files
-const lowercaseLocaleFiles: Record<string, string> = {};
-Object.keys(localeFiles).forEach(key => {
-  lowercaseLocaleFiles[key.toLowerCase()] = key;
-});
+const localeFiles = (import.meta as any).glob(
+  [
+    './locales/*/common.json',
+    './locales/*/account.json',
+    './locales/*/admin-components.json',
+    './locales/*/components.json',
+    './locales/*/booking.json',
+    './locales/*/dynamic.json',
+    './locales/*/admin/*.json',
+    './locales/*/manager/chat.json',
+    './locales/*/employee/dashboard.json',
+    './locales/*/employee/profile.json',
+    './locales/*/employee/services.json',
+    './locales/*/auth/*.json',
+    './locales/*/layouts/mainlayout.json',
+    './locales/*/layouts/adminpanellayout.json',
+    './locales/*/components/languageswitcher.json',
+    './locales/*/public_landing.json',
+    './locales/*/public_landing/services.json',
+    './locales/*/adminPanel/LoyaltyManagement.json',
+    './locales/*/adminPanel/referralprogram.json',
+    './locales/*/adminPanel/challenges.json',
+  ],
+  { eager: true },
+)
 
-const resources: Record<string, any> = {};
+const lowercaseLocaleFiles: Record<string, string> = {}
+Object.keys(localeFiles).forEach((key) => {
+  lowercaseLocaleFiles[key.toLowerCase()] = key
+})
+
+const resources: Record<string, any> = {}
 
 for (const lang of languages) {
-  resources[lang] = {};
-  for (const ns of namespaces) {
-    const standardKey = `./locales/${lang}/${ns}.json`;
-    let key = standardKey;
-
-    // Support for separate public_landing folder
-    if (ns.startsWith('public_landing/')) {
-      const cleanNs = ns.replace('public_landing/', '');
-      const altKey = `./locales/public_landing/${lang}/${cleanNs}.json`;
-      if (lowercaseLocaleFiles[altKey.toLowerCase()]) {
-        key = lowercaseLocaleFiles[altKey.toLowerCase()];
-      }
+  resources[lang] = {}
+  for (const namespace of namespaces) {
+    const standardKey = `./locales/${lang}/${namespace}.json`
+    const lookupKey = lowercaseLocaleFiles[standardKey.toLowerCase()] ?? standardKey
+    if (localeFiles[lookupKey]) {
+      resources[lang][namespace] = (localeFiles[lookupKey] as any).default || localeFiles[lookupKey]
     } else {
-      // Use the case-insensitive map to find the actual key
-      if (lowercaseLocaleFiles[standardKey.toLowerCase()]) {
-        key = lowercaseLocaleFiles[standardKey.toLowerCase()];
-      }
-    }
-
-    if (localeFiles[key] && key !== standardKey || localeFiles[standardKey]) {
-      const actualKey = localeFiles[key] ? key : standardKey;
-      resources[lang][ns] = (localeFiles[actualKey] as any).default || localeFiles[actualKey];
-    } else {
-      resources[lang][ns] = {};
+      resources[lang][namespace] = {}
     }
   }
 
-  // Add aliases for backward compatibility
-  // Admin pages
-  resources[lang]['analytics'] = resources[lang]['admin/analytics'];
-  resources[lang]['bookingDetail'] = resources[lang]['admin/bookingdetail'];
-  resources[lang]['bookings'] = resources[lang]['admin/bookings'];
-  resources[lang]['botSettings'] = resources[lang]['admin/botsettings'];
-  resources[lang]['botsettings'] = resources[lang]['admin/botsettings'];
-  resources[lang]['calendar'] = resources[lang]['admin/calendar'];
-  resources[lang]['clientDetail'] = resources[lang]['admin/clientdetail'];
-  resources[lang]['clients'] = resources[lang]['admin/clients'];
-  resources[lang]['createUser'] = resources[lang]['admin/createuser'];
-  resources[lang]['createuser'] = resources[lang]['admin/createuser'];
-  resources[lang]['dashboard'] = resources[lang]['admin/dashboard'];
-  resources[lang]['editUser'] = resources[lang]['admin/edituser'];
-  resources[lang]['edituser'] = resources[lang]['admin/edituser'];
-  resources[lang]['services'] = resources[lang]['admin/services'];
-  resources[lang]['settings'] = resources[lang]['admin/settings'];
-  resources[lang]['specialPackages'] = resources[lang]['admin/specialpackages'];
-  resources[lang]['users'] = resources[lang]['admin/users'];
-  resources[lang]['funnel'] = resources[lang]['pages/funnel'] || resources[lang]['admin/funnel'];
-  resources[lang]['tasks'] = resources[lang]['admin/tasks'];
-  resources[lang]['telephony'] = resources[lang]['admin/telephony'];
-  resources[lang]['broadcasts'] = resources[lang]['admin/broadcasts'];
-  resources[lang]['menucustomization'] = resources[lang]['admin/menucustomization'];
-
-  // Manager pages
-  resources[lang]['chat'] = resources[lang]['manager/chat'];
-  resources[lang]['managerFunnel'] = resources[lang]['manager/funnel'];
-  resources[lang]['messages'] = resources[lang]['manager/messages'];
-  resources[lang]['managerSettings'] = resources[lang]['manager/settings'];
-  resources[lang]['managerDashboard'] = resources[lang]['manager/dashboard'];
-
-  // Employee pages
-  resources[lang]['employeeDashboard'] = resources[lang]['employee/dashboard'];
-  resources[lang]['employeeProfile'] = resources[lang]['employee/profile'];
-  resources[lang]['employeeBookings'] = resources[lang]['employee/bookings'];
-  resources[lang]['employeeServices'] = resources[lang]['employee/services'];
-
-  // Auth pages
-  resources[lang]['login'] = resources[lang]['auth/login'];
-  resources[lang]['register'] = resources[lang]['auth/register'];
-  resources[lang]['forgotPassword'] = resources[lang]['auth/forgotpassword'];
-  resources[lang]['resetPassword'] = resources[lang]['auth/reset_password'];
-  resources[lang]['verifyEmail'] = resources[lang]['auth/verify_email'];
-
-  // Public pages - add both full path and short aliases
-  resources[lang]['about'] = resources[lang]['public/about'];
-  resources[lang]['contacts'] = resources[lang]['public/contacts'];
-  resources[lang]['cooperation'] = resources[lang]['public/cooperation'];
-  resources[lang]['dataDeletion'] = resources[lang]['public/datadeletion'];
-  resources[lang]['datadeletion'] = resources[lang]['public/datadeletion'];
-  resources[lang]['faq'] = resources[lang]['public/faq'];
-  resources[lang]['home'] = resources[lang]['public/home'];
-  resources[lang]['priceList'] = resources[lang]['public/pricelist'];
-  resources[lang]['pricelist'] = resources[lang]['public/pricelist'];
-  resources[lang]['privacyPolicy'] = resources[lang]['public/privacypolicy'];
-  resources[lang]['success'] = resources[lang]['public/success'];
-  resources[lang]['terms'] = resources[lang]['public/terms'];
-  resources[lang]['userCabinet'] = resources[lang]['public/usercabinet'];
-  resources[lang]['usercabinet'] = resources[lang]['public/usercabinet'];
-  resources[lang]['public'] = resources[lang]['public/public'];
-
-  // Additional namespaces used in public pages
-  resources[lang]['stats'] = resources[lang]['public/about']; // Stats are in About page
-  resources[lang]['cta'] = resources[lang]['public/about']; // CTA is in About page
-
-  // Layouts
-  resources[lang]['adminLayout'] = resources[lang]['layouts/adminlayout'];
-  resources[lang]['adminPanelLayout'] = resources[lang]['layouts/adminpanellayout'];
-  resources[lang]['employeeLayout'] = resources[lang]['layouts/employeelayout'];
-  resources[lang]['managerLayout'] = resources[lang]['layouts/managerlayout'];
-  resources[lang]['publicLayout'] = resources[lang]['layouts/publiclayout'];
-
-  // adminPanel aliases
-  resources[lang]['adminPanel/dashboard'] = resources[lang]['adminpanel/dashboard'];
-  resources[lang]['adminPanel/loyaltyManagement'] = resources[lang]['adminpanel/loyaltymanagement'];
-  resources[lang]['adminPanel/referralProgram'] = resources[lang]['adminpanel/referralprogram'];
-  resources[lang]['adminPanel/challenges'] = resources[lang]['adminpanel/challenges'];
-  resources[lang]['adminPanel/notificationsDashboard'] = resources[lang]['adminpanel/notificationsdashboard'];
-  resources[lang]['adminPanel/photoGallery'] = resources[lang]['adminpanel/photogallery'];
-  resources[lang]['adminPanel/featureManagement'] = resources[lang]['adminpanel/featuremanagement'];
-
-  // Components
-  resources[lang]['languageSwitcher'] = resources[lang]['components/languageswitcher'];
-  resources[lang]['publicLanguageSwitcher'] = resources[lang]['components/publiclanguageswitcher'];
+  // Alias namespaces used in CRM UI.
+  resources[lang].analytics = resources[lang]['admin/analytics']
+  resources[lang].bookingDetail = resources[lang]['admin/bookingdetail']
+  resources[lang].bookingdetail = resources[lang]['admin/bookingdetail']
+  resources[lang].bookings = resources[lang]['admin/bookings']
+  resources[lang].calendar = resources[lang]['admin/calendar']
+  resources[lang].clients = resources[lang]['admin/clients']
+  resources[lang].settings = resources[lang]['admin/settings']
+  resources[lang].services = resources[lang]['admin/services']
+  resources[lang].telephony = resources[lang]['admin/telephony']
+  resources[lang].chat = resources[lang]['manager/chat']
+  resources[lang]['employee/Dashboard'] = resources[lang]['employee/dashboard']
+  resources[lang]['components/LanguageSwitcher'] = resources[lang]['components/languageswitcher']
 }
 
 i18n
@@ -202,20 +129,13 @@ i18n
     defaultNS: 'common',
     ns: namespaces,
     interpolation: {
-      escapeValue: false
+      escapeValue: false,
     },
     detection: {
       order: ['querystring', 'localStorage', 'navigator'],
       lookupQuerystring: 'lang',
-      caches: ['localStorage']
-    }
-  });
+      caches: ['localStorage'],
+    },
+  })
 
-// Auto-detect language based on country (only on first visit)
-// autoDetectAndSetLanguage().then((detectedLang) => {
-//   if (i18n.language !== detectedLang) {
-//     i18n.changeLanguage(detectedLang);
-//   }
-// });
-
-export default i18n;
+export default i18n

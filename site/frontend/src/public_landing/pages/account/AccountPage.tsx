@@ -17,7 +17,7 @@ import {
   Gift
 } from 'lucide-react';
 import { Toaster } from '../../components/ui/sonner';
-import { Avatar, AvatarImage, AvatarFallback } from './v2_components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@site/public_landing/components/ui/avatar';
 import { Dashboard } from './v2_components/Dashboard';
 import { Appointments } from './v2_components/Appointments';
 import { Gallery } from './v2_components/Gallery';

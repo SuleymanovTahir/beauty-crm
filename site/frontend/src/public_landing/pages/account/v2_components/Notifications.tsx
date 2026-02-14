@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Bell, Calendar, Tag, Award, Check, CheckCheck, Loader2 } from 'lucide-react';
-import { Card, CardContent } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
+import { Card, CardContent } from '@site/public_landing/components/ui/card';
+import { Button } from '@site/public_landing/components/ui/button';
+import { Badge } from '@site/public_landing/components/ui/badge';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '@site/api/client';
