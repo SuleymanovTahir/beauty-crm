@@ -57,7 +57,6 @@ def _check_forbidden_imports(backend_root: Path, project_name: str) -> list[str]
             backend_root / "site_api" / "public.py",
             backend_root / "site_api" / "uploads.py",
             backend_root / "core" / "auth.py",
-            backend_root / "integrations" / "telegram_bot.py",
             backend_root / "services" / "universal_messenger.py",
             backend_root / "services" / "feedback_service.py",
             backend_root / "services" / "crm_integration.py",

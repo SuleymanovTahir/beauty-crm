@@ -148,15 +148,8 @@ async def send_universal_message(
                     error_msg = res.get("error")
             
         elif platform == 'telegram':
-            chat_id = await resolve_telegram_id(recipient_id)
-            if chat_id:
-                from integrations.telegram_bot import telegram_bot
-                res = await telegram_bot.send_message(chat_id, final_text)
-                success = res.get("ok", False)
-                if not success: error_msg = res.get("description") or str(res)
-            else:
-                error_msg = "Telegram chat_id not found"
-                success = False
+            error_msg = "Telegram channel is disabled in site runtime"
+            success = False
             
         elif platform == 'email':
             from utils.email_service import send_email

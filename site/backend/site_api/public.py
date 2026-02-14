@@ -994,9 +994,7 @@ def create_public_booking(data: BookingCreate, background_tasks: BackgroundTasks
 def notify_admin_new_booking(data: BookingCreate, booking_id: int, services_str: str):
     """Уведомить админа о новой заявке"""
     from utils.email import send_email_sync
-    from integrations.telegram_bot import send_telegram_alert
     import os
-    import asyncio
     
     admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
     source_display = "Landing Page" if data.source == 'public_landing' else "Website"
@@ -1015,30 +1013,11 @@ def notify_admin_new_booking(data: BookingCreate, booking_id: int, services_str:
             send_email_sync([admin_email], subject, message)
         except Exception as e:
             log_error(f"Booking notification email failed: {e}", "public")
-    try:
-        tg_msg = (
-            f"📅 <b>NEW BOOKING REQUEST</b>\n"
-            f"━━━━━━━━━━━━━━━━━━\n"
-            f"👤 <b>Client:</b> {data.name}\n"
-            f"📞 <b>Phone:</b> <code>{data.phone}</code>\n"
-            f"🕒 <b>Time:</b> {data.date} at {data.time}\n"
-            f"💅 <b>Services:</b>\n{services_str}\n"
-            f"━━━━━━━━━━━━━━━━━━\n"
-            f"Source: {source_display}"
-        )
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop.run_until_complete(send_telegram_alert(tg_msg))
-        loop.close()
-    except Exception as e:
-        log_error(f"Booking Telegram alert failed: {e}", "public")
 
 def process_contact_notifications(form: ContactForm):
     """Обработка уведомлений о сообщении"""
     from utils.email import send_email_sync
-    from integrations.telegram_bot import send_telegram_alert
     import os
-    import asyncio
     
     admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USERNAME')
     
@@ -1049,11 +1028,3 @@ def process_contact_notifications(form: ContactForm):
             send_email_sync([admin_email], subject, msg)
         except Exception as e:
             log_error(f"Contact form notification email failed: {e}", "public")
-    try:
-        tg_msg = f"📩 <b>New Message</b>\n\n<b>From:</b> {form.name}\n<b>Email:</b> {form.email}\n\n<b>Message:</b>\n{form.message}"
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop.run_until_complete(send_telegram_alert(tg_msg))
-        loop.close()
-    except Exception as e:
-        log_error(f"Contact form Telegram alert failed: {e}", "public")

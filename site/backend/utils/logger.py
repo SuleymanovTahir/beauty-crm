@@ -83,21 +83,8 @@ def log_debug(message: str, module: str = "main"):
 
 # logger.py - дополнение
 def send_telegram_alert(message):
-    """Отправка критических ошибок в Telegram"""
-    import requests
-    import os
-    token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_MANAGER_CHAT_ID")
-    
-    if token and chat_id:
-        try:
-            requests.post(
-                f"https://api.telegram.org/bot{token}/sendMessage",
-                json={"chat_id": chat_id, "text": message},
-                timeout=5
-            )
-        except Exception as e:
-            logger.error(f"[logger] Ошибка отправки в Telegram: {e}")
+    """Telegram alerts are disabled in Site runtime."""
+    logger.warning("[logger] Telegram alert skipped (disabled in Site runtime)")
 
 def log_critical(message, module, exc_info=True):
     logger.critical(f"[{module}] {message}", exc_info=exc_info)

@@ -541,44 +541,13 @@ async def notify_admin_registration(user_data: dict, success: bool = True, error
     """
     Уведомить администратора о новой регистрации или ошибке при регистрации
     """
-    from integrations.telegram_bot import send_telegram_alert
     from utils.email_service import send_admin_notification_email
-    from db.settings import get_salon_settings
     import os
 
-    salon_settings = get_salon_settings()
-    salon_name = salon_settings.get('name', 'Beauty CRM')
-    
-    status_emoji = "✅" if success else "❌"
-    title = "Новая регистрация" if success else "Ошибка при регистрации"
-    
-    # Формируем сообщение для Telegram
-    tg_msg = (
-        f"{status_emoji} <b>{title}</b>\n"
-        f"━━━━━━━━━━━━━━━━━━\n"
-        f"👤 <b>Name:</b> {user_data.get('full_name', 'Not specified')}\n"
-        f"📧 <b>Email:</b> {user_data.get('email', 'Not specified')}\n"
-        f"👤 <b>Username:</b> {user_data.get('username', 'Not specified')}\n"
-        f"👔 <b>Role:</b> {user_data.get('role', 'employee')}\n"
-        f"📱 <b>Tel:</b> <code>{user_data.get('phone', 'Not specified')}</code>\n"
-    )
-    
-    if not success:
-        tg_msg += (
-            f"━━━━━━━━━━━━━━━━━━\n"
-            f"⚠️ <b>Stage:</b> {stage}\n"
-            f"🚫 <b>Error:</b> {error_msg}\n"
-        )
-    else:
-        tg_msg += (
-            f"━━━━━━━━━━━━━━━━━━\n"
-            f"✨ User is awaiting approval.\n"
-        )
+    _ = error_msg
+    _ = stage
 
-    # 1. Отправляем в Telegram
-    await send_telegram_alert(tg_msg)
-    
-    # 2. Отправляем на Email (только при успехе или критической ошибке)
+    # Site runtime keeps admin notifications via email only.
     if success:
         admin_email = os.getenv('FROM_EMAIL') or os.getenv('SMTP_USER')
         if admin_email:
