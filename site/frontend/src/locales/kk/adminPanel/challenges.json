@@ -1,0 +1,69 @@
+{
+  "buttons": {
+    "cancel": "Болдырмау",
+    "create_challenge": "Создать цель",
+    "update_challenge": "Өзгерістерді сақтау"
+  },
+  "card": {
+    "check_progress": "Check Progress",
+    "completed": "завершено",
+    "progress": "Прогресс",
+    "pts": "баллов",
+    "reward": "Сыйақы",
+    "target": "Цель"
+  },
+  "create_challenge": "Создать новую цель",
+  "dialogs": {
+    "create": {
+      "description": "Настройте параметры активности и бонус за выполнение",
+      "form": {
+        "challenge_type": "Тип активности",
+        "description": "Описание задачи",
+        "description_placeholder": "Напр: Посетите салон {{count}} раза в этом месяце",
+        "end_date": "Аяқтау күні",
+        "reward_placeholder": "{{points}}",
+        "reward_points": "бонусных баллов",
+        "start_date": "Бастау күні",
+        "target_placeholder": "{{count}}",
+        "target_value": "Целевое количество",
+        "title": "Название цели",
+        "title_placeholder": "Напр: Летнее преображение"
+      },
+      "title": "Создание цели",
+      "title_edit": "Редактирование цели"
+    },
+    "delete": {
+      "confirm": "Вы уверены, что хотите удалить эту активность? Весь прогресс участников будет потерян."
+    }
+  },
+  "stats": {
+    "active_challenges": "Белсенді мақсаттар",
+    "completions": "Выполнений",
+    "total_participants": "Участников"
+  },
+  "statuses": {
+    "active": "Активный",
+    "completed": "Завершенный",
+    "upcoming": "Алдағы"
+  },
+  "subtitle": "Тұтынушының адалдығын арттыру үшін ойын механикасы мен мақсаттарын басқару",
+  "title": "Мақсаттар мен жетістіктер",
+  "toasts": {
+    "created": "Әрекет сәтті жасалды",
+    "deleted": "Әрекет жойылды",
+    "failed_check_progress": "Failed to check progress",
+    "failed_create": "Әрекетті жасау қатесі",
+    "failed_delete": "Жою кезіндегі қате",
+    "failed_load": "Деректерді жүктеу мүмкін болмады",
+    "progress_checked_few": "{{count}} мүшелері үшін орындалу барысы жаңартылды",
+    "progress_checked_many": "{{count}} мүшелері үшін орындалу барысы жаңартылды",
+    "progress_checked_one": "{{count}} мүшесі үшін орындалу барысы жаңартылды",
+    "progress_checked_other": "{{count}} мүшелері үшін орындалу барысы жаңартылды"
+  },
+  "types": {
+    "referrals": "Референциялар",
+    "services": "Қызметтер",
+    "spending": "Шығындар",
+    "visits": "Кірулер"
+  }
+}

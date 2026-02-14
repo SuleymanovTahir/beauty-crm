@@ -1,0 +1,71 @@
+{
+  "actions": {
+    "hide": "Hide",
+    "show": "Show"
+  },
+  "buttons": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "upload": "Download"
+  },
+  "card": {
+    "featured": "Favorites",
+    "toggle_featured": "Toggle Favorites",
+    "uploaded_by": "Loaded by {{name}}",
+    "views": "views"
+  },
+  "dialogs": {
+    "delete": {
+      "confirm": "Are you sure you want to delete this photo?"
+    },
+    "upload": {
+      "description": "Add a new photo to the gallery",
+      "form": {
+        "after_photo": "Photo \"After\"",
+        "before_after": "Before/After",
+        "before_photo": "Photo \"Before\"",
+        "category": "Category",
+        "client": "Client",
+        "client_hint": "The photo will be available in the client's gallery",
+        "description": "Description",
+        "description_placeholder": "Photo description",
+        "photo": "Photo",
+        "select_client": "Select client",
+        "single_photo": "One photo",
+        "title": "Name",
+        "title_placeholder": "Photo title",
+        "upload_type": "Load Type"
+      },
+      "title": "Upload photo"
+    }
+  },
+  "empty": {
+    "description": "Upload your first photos to the gallery",
+    "title": "No photos yet"
+  },
+  "filters": {
+    "all_categories": "All categories",
+    "search_placeholder": "Searching for photos..."
+  },
+  "stats": {
+    "featured_photos": "Featured photos",
+    "recent_uploads": "Recent downloads",
+    "total_photos": "Total photos",
+    "total_views": "Total views"
+  },
+  "subtitle": "Client photo and portfolio management",
+  "title": "Photo gallery",
+  "toasts": {
+    "deleted": "Photo deleted successfully",
+    "failed_delete": "Failed to delete photo",
+    "failed_featured": "Failed to update favorite status",
+    "failed_load": "Failed to upload photos",
+    "failed_upload": "Failed to upload photo",
+    "failed_visibility": "Failed to update visibility.",
+    "featured_updated": "Favorite status updated",
+    "select_both_photos": "Please select a before and after photo",
+    "uploaded": "Photo uploaded successfully",
+    "visibility_updated": "Visibility updated"
+  },
+  "upload_photo": "Upload photo"
+}

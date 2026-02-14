@@ -1,0 +1,53 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Kasymova Gulchekhre",
+      "position": "Maestro de uñas y Depilación con cera",
+      "bio": "Gulya es una reconocida experta en el campo de la manicura, la depilación y el cuidado facial profesional con 8 años de experiencia. A través de su dominio de las técnicas de transformación estética y su atención al detalle, crea imágenes impecables, brindando a cada cliente el más alto nivel de atención y enfoque profesional.",
+      "photo": ""
+    },
+    {
+      "id": 2,
+      "name": "Jennifer Peradilla",
+      "position": "Maestro de belleza universal",
+      "bio": "Jennifer encarna el talento de una profesional multidisciplinaria. Ella realiza con maestría procedimientos de belleza tanto básicos como complejos, brindando un enfoque integral y armonioso a su transformación.",
+      "photo": ""
+    },
+    {
+      "id": 3,
+      "name": "Amandurdyyeva Mestan",
+      "position": "Estilista y maquillador permanente",
+      "bio": "Mestan es un maestro único que combina el talento de un estilista de primer nivel y un experto en maquillaje permanente. Su profundo conocimiento le permite crear imágenes completas e impecables que resaltan su individualidad.",
+      "photo": ""
+    },
+    {
+      "id": 4,
+      "name": "Mokhammed Sabri",
+      "position": "Estilista",
+      "bio": "Simo es el principal experto de nuestro salón en el campo del cuidado premium y coloración compleja. Sus muchos años de experiencia internacional y técnicas patentadas garantizan resultados de la más alta clase.",
+      "photo": ""
+    },
+    {
+      "id": 5,
+      "name": "Kozhabay Lyazat",
+      "position": "Maestro de uñas",
+      "bio": "Lyazat es un verdadero perfeccionista en la industria de servicios de uñas. Con impecable gusto y atención al detalle, crea la manicura y pedicura perfecta, cuidando la estética y la salud de tus manos.",
+      "photo": ""
+    },
+    {
+      "id": 6,
+      "name": "Tursunaí",
+      "position": "Propietario / Director",
+      "bio": "",
+      "photo": ""
+    },
+    {
+      "id": 7,
+      "name": "Administración",
+      "position": "Administrador del sistema",
+      "bio": "",
+      "photo": ""
+    }
+  ]
+}

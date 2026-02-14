@@ -1,0 +1,39 @@
+{
+  "items": [
+    {
+      "text": "Toller Salon! Die Meister sind wahre Profis. Ich habe ein permanentes Augenbrauen-Make-up gemacht, das Ergebnis hat alle Erwartungen übertroffen. Sehr natürlich und schön.",
+      "author_name": "Anna Petrowa",
+      "employee_name": "",
+      "employee_position": "Permanent Make-up",
+      "rating": 5
+    },
+    {
+      "text": "Der beste Schönheitssalon in Dubai!",
+      "author_name": "Sarah Jenkins",
+      "employee_name": "",
+      "employee_position": "Wimpern",
+      "rating": 5
+    },
+    {
+      "text": "Ich gehe jetzt seit einem Jahr zur Maniküre und Pediküre hierher. Immer perfekt sauber, steril und hochwertig. Ich empfehle es allen meinen Freunden!",
+      "author_name": "Elena Smirnova",
+      "employee_name": "",
+      "employee_position": "Maniküre und Pediküre",
+      "rating": 5
+    },
+    {
+      "text": "Unglaublicher Service. Ich hatte eine Gesichtsbehandlung und meine Haut strahlt. Ich werde auf jeden Fall wiederkommen!",
+      "author_name": "Mariya Gonsales",
+      "employee_name": "",
+      "employee_position": "Gesichtspflege",
+      "rating": 5
+    },
+    {
+      "text": "Exzellenter Service und professionelles Personal.",
+      "author_name": "Fatima Al-Sayed",
+      "employee_name": "",
+      "employee_position": "Microblading",
+      "rating": 5
+    }
+  ]
+}

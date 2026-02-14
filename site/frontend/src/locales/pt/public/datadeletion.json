@@ -1,0 +1,23 @@
+{
+  "after_item1": "Todos os seus dados pessoais serão excluídos permanentemente",
+  "after_item2": "O histórico de reservas e visitas será anonimizado",
+  "after_item3": "Você pode criar uma nova conta a qualquer momento horário",
+  "after_title": "O que acontece após a exclusão",
+  "data_item1": "Nome e dados de contato (telefone, email)",
+  "data_item2": "Histórico de visitas e agendamentos para procedimentos",
+  "data_item3": "Fotos de trabalho (com seu consentimento)",
+  "data_item4": "Preferências e comentários sobre serviços",
+  "delete_text": "Por favor, exclua todos os meus dados pessoais",
+  "email_option": "Você também pode enviar uma solicitação por e-mail:",
+  "help_desc": "Se você tiver dúvidas sobre o processo de exclusão de dados, entre em contato conosco pelo Instagram",
+  "help_title": "Precisa de ajuda?",
+  "how_to_desc": "Para excluir todos os seus dados, envie-nos uma mensagem no Instagram Direct",
+  "how_to_text": "com o seguinte texto",
+  "how_to_title": "Como solicitar a exclusão de dados",
+  "intro": "Respeitamos seu direito à privacidade e fornecer a oportunidade de excluir todos os seus dados pessoais de nosso sistema.",
+  "or_email": "ou por e-mail",
+  "processing_desc": "Processaremos sua solicitação dentro de sete dias úteis e enviaremos a confirmação da exclusão de dados.",
+  "processing_title": "Cronograma de processamento da solicitação",
+  "title": "Exclusão de dados",
+  "what_data_title": "Quais dados armazenamos"
+}

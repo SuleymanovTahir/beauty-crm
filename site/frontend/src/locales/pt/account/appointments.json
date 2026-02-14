@@ -1,0 +1,21 @@
+{
+  "button_book": "Inscreva-se",
+  "button_cancel": "Cancelar",
+  "button_change": "Alterar",
+  "button_repeat": "Repetir",
+  "history_empty": "Você ainda não tem reservas concluídas",
+  "history_empty_desc": "Seu histórico aparecerá aqui após sua primeira visita",
+  "no_upcoming": "Não há reservas futuras",
+  "no_upcoming_desc": "É hora de agendar uma nova visita ao especialista",
+  "recurring_desc": "Configure visitas automáticas para estar sempre em forma",
+  "recurring_title": "Visitas regulares",
+  "status_cancelled": "Cancelado",
+  "status_completed": "Concluído",
+  "status_upcoming": "Pendentes",
+  "subtitle": "Gerencie seus reservas e visualize seu histórico de visitas",
+  "tab_history": "Histórico",
+  "tab_recurring": "Regular",
+  "tab_upcoming": "Mais próximo",
+  "title": "Meus reservas",
+  "unknown_master": "Mestre não especificado"
+}
