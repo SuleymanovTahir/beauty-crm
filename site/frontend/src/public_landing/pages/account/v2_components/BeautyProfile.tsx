@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, TrendingUp, Calendar, AlertCircle, Loader2, MessageCircle } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Progress } from './ui/progress';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@site/public_landing/components/ui/card';
+import { Button } from '@site/public_landing/components/ui/button';
+import { Badge } from '@site/public_landing/components/ui/badge';
+import { Progress } from '@site/public_landing/components/ui/progress';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '@site/api/client';
 import { toast } from 'sonner';

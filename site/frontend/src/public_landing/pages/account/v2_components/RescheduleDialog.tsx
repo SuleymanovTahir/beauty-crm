@@ -1,8 +1,8 @@
 
 import { useTranslation } from 'react-i18next';
 import { Calendar, User, Scissors, Settings2 } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@site/public_landing/components/ui/dialog';
+import { Button } from '@site/public_landing/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 interface RescheduleDialogProps {

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, Heart, Calendar, Loader2, Users } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
-import { Switch } from './ui/switch';
-import { Label } from './ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@site/public_landing/components/ui/card';
+import { Button } from '@site/public_landing/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@site/public_landing/components/ui/avatar';
+import { Switch } from '@site/public_landing/components/ui/switch';
+import { Label } from '@site/public_landing/components/ui/label';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '@site/api/client';

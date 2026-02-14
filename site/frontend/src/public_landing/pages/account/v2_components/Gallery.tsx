@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Download, Share2, ChevronLeft, ChevronRight, Loader2, Trash2 } from 'lucide-react';
-import { Card, CardContent } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { Card, CardContent } from '@site/public_landing/components/ui/card';
+import { Button } from '@site/public_landing/components/ui/button';
+import { Badge } from '@site/public_landing/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@site/public_landing/components/ui/dialog';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { apiClient } from '@site/api/client';

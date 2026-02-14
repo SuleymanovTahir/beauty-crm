@@ -7,7 +7,6 @@ export const languages = supportedLanguages.map(l => l.code);
 const namespaces = [
   'common',
   'account',
-  'public',
   'auth/login',
   'auth/register',
   'auth/forgotpassword',
@@ -16,8 +15,6 @@ const namespaces = [
   'auth/verify',
   'layouts/mainlayout',
   'layouts/adminpanellayout',
-  'components/languageswitcher',
-  'components/publiclanguageswitcher',
   'public_landing',
   'public_landing/services',
   'public_landing/faq',
@@ -34,15 +31,13 @@ const localeFiles = (import.meta as any).glob(
   [
     './locales/*/common.json',
     './locales/*/account.json',
-    './locales/*/public.json',
     './locales/*/booking.json',
     './locales/*/dynamic.json',
     './locales/*/auth/*.json',
     './locales/*/layouts/*.json',
-    './locales/*/components/*.json',
     './locales/*/public_landing.json',
     './locales/*/public_landing/*.json',
-    './locales/*/adminpanel/*.json'
+    './locales/*/adminPanel/*.json'
   ],
   { eager: true }
 );
@@ -89,12 +84,6 @@ for (const lang of languages) {
   resources[lang]['forgotPassword'] = resources[lang]['auth/forgotpassword'];
   resources[lang]['resetPassword'] = resources[lang]['auth/reset_password'];
   resources[lang]['verifyEmail'] = resources[lang]['auth/verify_email'];
-
-  // Components aliases
-  resources[lang]['components/LanguageSwitcher'] = resources[lang]['components/languageswitcher'];
-  resources[lang]['components/PublicLanguageSwitcher'] = resources[lang]['components/publiclanguageswitcher'];
-  resources[lang]['languageSwitcher'] = resources[lang]['components/languageswitcher'];
-  resources[lang]['publicLanguageSwitcher'] = resources[lang]['components/publiclanguageswitcher'];
 }
 
 i18n
