@@ -50,28 +50,27 @@ def startup_test_notifications():
         log_error(f"  ❌ Ошибка проверки: {e}", "startup_test")
         return False
 
-def startup_test_reminders_api():
-    """Проверка API напоминаний (прямой вызов функций)"""
+def startup_test_site_boundaries():
+    """Проверка, что CRM-only модули недоступны в site runtime"""
     try:
-        log_info("⏰ Проверка API напоминаний...", "startup_test")
-
-        from api.reminders import create_booking_reminder_settings_table
-
-        # Создаем таблицу если её нет
-        create_booking_reminder_settings_table()
-
-        # Проверяем результат
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("SELECT COUNT(*) FROM booking_reminder_settings")
-        count = c.fetchone()[0]
-        conn.close()
-
-        log_info(f"  ✅ Таблица готова, записей: {count}", "startup_test")
+        log_info("🧭 Проверка границ site runtime...", "startup_test")
+        crm_only_modules = [
+            "api.reminders",
+            "api.broadcasts",
+            "api.marketplace_integrations",
+            "services.smart_assistant",
+            "services.auto_booking",
+        ]
+        for module_name in crm_only_modules:
+            try:
+                __import__(module_name)
+                log_error(f"  ❌ Модуль не должен быть доступен: {module_name}", "startup_test")
+                return False
+            except ModuleNotFoundError:
+                log_info(f"  ✅ Недоступен (ожидаемо): {module_name}", "startup_test")
         return True
-
     except Exception as e:
-        log_error(f"  ❌ Ошибка API напоминаний: {e}", "startup_test")
+        log_error(f"  ❌ Ошибка проверки границ: {e}", "startup_test")
         return False
 
 def startup_test_notifications_api():
@@ -124,8 +123,8 @@ def run_all_startup_tests():
     # 1. Проверка таблиц
     results.append(startup_test_notifications())
 
-    # 2. Проверка API напоминаний
-    results.append(startup_test_reminders_api())
+    # 2. Проверка границ runtime
+    results.append(startup_test_site_boundaries())
 
     # 3. Проверка API уведомлений
     results.append(startup_test_notifications_api())

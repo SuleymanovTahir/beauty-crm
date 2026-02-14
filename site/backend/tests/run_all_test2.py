@@ -73,7 +73,7 @@ def run_suite(suite_name, func=None, subprocess_path=None, description=""):
 
 def run_all_tests2():
     """Запуск всех дополнительных тестов проекта"""
-    print_header("ЗАПУСК ДОПОЛНИТЕЛЬНЫХ ТЕСТОВ BEAUTY CRM (V2)")
+    print_header("ЗАПУСК ДОПОЛНИТЕЛЬНЫХ ТЕСТОВ BEAUTY SITE (V2)")
     print(f"Дата: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     results = []
@@ -81,25 +81,22 @@ def run_all_tests2():
     # 1. Comprehensive Test (Detailed Audit)
     results.append(("comprehensive_test.py", *run_suite("comprehensive_test.py", subprocess_path="comprehensive_test.py", description="Максимально подробная проверка всей системы")))
 
-    # 2. Integration & Marketplace
-    results.append(("test_marketplace_integration.py", *run_suite("test_marketplace_integration.py", subprocess_path="test_marketplace_integration.py", description="Интеграция с YClients, Booksy и др.")))
-
-    # 3. Security & Logic
+    # 2. Security & Logic
     results.append(("test_permissions.py", *run_suite("test_permissions.py", subprocess_path="test_permissions.py", description="Права доступа и роли")))
 
-    # 4. Special Tests
+    # 3. Special Tests
     results.append(("test_employee_services_full.py", *run_suite("test_employee_services_full.py", subprocess_path="test_employee_services_full.py", description="Полный цикл услуг сотрудников")))
     results.append(("test_feedback_logic.py", *run_suite("test_feedback_logic.py", subprocess_path="test_feedback_logic.py", description="Логика сбора отзывов")))
     results.append(("test_gender_avatars.py", *run_suite("test_gender_avatars.py", subprocess_path="test_gender_avatars.py", description="Генерация аватарок по полу")))
 
-    # 5. UI & Utils
+    # 4. UI & Utils
     results.append(("test_ui_logic.py", *run_suite("test_ui_logic.py", subprocess_path="test_ui_logic.py", description="Логика интерфейса")))
 
-    # 6. API Extensions
+    # 5. API Extensions
     results.append(("api/test_booking_email_notification.py", *run_suite("api/test_booking_email_notification.py", subprocess_path="api/test_booking_email_notification.py", description="Email уведомления о записях")))
     results.append(("api/test_save_notifications.py", *run_suite("api/test_save_notifications.py", subprocess_path="api/test_save_notifications.py", description="Сохранение уведомлений в БД")))
 
-    # 7. System Checks
+    # 6. System Checks
     results.append(("startup/startup_tests.py", *run_suite("startup/startup_tests.py", subprocess_path="startup/startup_tests.py", description="Тесты при запуске системы")))
     results.append(("check_employees.py", *run_suite("check_employees.py", subprocess_path="check_employees.py", description="Валидация списка сотрудников")))
     results.append(("check_services.py", *run_suite("check_services.py", subprocess_path="check_services.py", description="Валидация списка услуг")))

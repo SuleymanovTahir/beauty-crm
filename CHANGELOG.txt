@@ -484,17 +484,11 @@
 - Validation:
   - `npm run type-check` passed after structure split.
 
-## [2026-02-13] Frontend API Namespace Routing (Site vs CRM)
-- `frontend/src/api/client.ts`:
-  - Added centralized endpoint resolver for split API namespaces:
-    - site/account routes are mapped to `/api/site/*`,
-    - CRM routes are mapped to `/api/crm/*`,
-    - shared auth/bootstrap endpoints stay on `/api/*`.
-  - Added reusable helpers:
-    - `resolveApiEndpoint(endpoint)`,
-    - `buildApiUrl(endpoint, baseUrl)`.
-    - `buildWebSocketUrl(endpoint, baseUrl)`.
-  - Added global `fetch` interceptor (`installApiNamespaceFetchInterceptor`) that rewrites same-backend `/api/*` calls through the same resolver, so direct `fetch('/api/...')` in pages/components also follows namespace split without duplicating logic.
-  - Updated `apiCall` and direct login/upload requests to use the shared resolver.
-- `frontend/src/main.tsx`:
-  - Enabled API namespace fetch interceptor at app bootstrap.
+## [2026-02-14] Backend Orchestrator Reliability (CRM + Site)
+- Added backend-root `sys.path` bootstrap for standalone runners:
+  - `site/backend/db/migrations/run_all_migrations.py`, `crm/backend/db/migrations/run_all_migrations.py`.
+  - `site/backend/scripts/maintenance/fix_data.py`, `crm/backend/scripts/maintenance/fix_data.py`.
+- `crm/backend/tests/test_all.py`: API import checks switched to `crm_api.*`.
+- `crm/backend/tests/test_gender_avatars.py`: replaced brittle hardcoded male-name assertion with DB-based male-employee validation.
+- `crm/backend/main.py` and `site/backend/main.py`: added commented manual hooks for `run_all_migrations`, `run_all_fixes`, `run_all_tests`, `run_all_tests2`, `run_all_tests3`.
+- Validation: full migration/fix/test cycles rerun in both projects, all orchestrator runs passed.

@@ -311,12 +311,12 @@ def test_api_imports():
     print_section("ТЕСТ 4: Проверка API модулей")
 
     api_modules = [
-        ('api.dashboard', 'Dashboard API'),
-        ('api.schedule', 'Schedule API'),
-        ('api.loyalty', 'Loyalty API'),
-        ('api.auto_booking', 'AutoBooking API'),
-        ('api.bookings', 'Bookings API'),
-        ('api.clients', 'Clients API'),
+        ('crm_api.dashboard', 'Dashboard API'),
+        ('crm_api.schedule', 'Schedule API'),
+        ('crm_api.loyalty', 'Loyalty API'),
+        ('crm_api.auto_booking', 'AutoBooking API'),
+        ('crm_api.bookings', 'Bookings API'),
+        ('crm_api.clients', 'Clients API'),
     ]
 
     results = {}

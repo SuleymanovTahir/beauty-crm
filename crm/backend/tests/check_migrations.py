@@ -4,9 +4,13 @@
 Запуск: python check_migrations.py
 """
 
-from db.connection import get_db_connection
 import json
+import os
 import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from db.connection import get_db_connection
 
 
 def check_database():

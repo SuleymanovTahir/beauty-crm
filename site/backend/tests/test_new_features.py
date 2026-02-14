@@ -4,11 +4,10 @@
 1. Dashboard с KPI
 2. Расписание мастеров
 3. Программа лояльности
-4. Автозаполнение окон
 """
 import sys
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # Добавляем путь к backend
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
@@ -19,7 +18,6 @@ TEST_CONFIG = get_test_config()
 from services.analytics import AnalyticsService
 from services.master_schedule import MasterScheduleService
 from services.loyalty import LoyaltyService
-from services.auto_booking import AutoBookingService
 
 def print_section(title):
     """Печать заголовка секции"""
@@ -222,75 +220,10 @@ def test_loyalty_program():
         traceback.print_exc()
         return False
 
-def test_auto_booking():
-    """Тест 4: Автозаполнение окон"""
-    print_section("ТЕСТ 4: Автозаполнение окон записи")
-
-    try:
-        auto_booking = AutoBookingService()
-        today = datetime.now().strftime('%Y-%m-%d')
-        week_later = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
-
-        # Тест 4.1: Поиск клиентов для слотов
-        print_subsection("Рекомендации клиентов для доступных слотов")
-        recommendations = auto_booking.find_clients_for_slots(
-            date=today,
-            master_name=None,  # Все мастера
-            min_days_since_visit=21
-        )
-
-        print(f"   Найдено рекомендаций: {len(recommendations)}")
-
-        if recommendations:
-            print(f"\n   Топ-5 рекомендаций:")
-            for i, rec in enumerate(recommendations[:5], 1):
-                print(f"   {i}. {rec['client_name']} ({rec['client_id']})")
-                print(f"      - Мастер: {rec['master']}")
-                print(f"      - Время: {rec['date']} {rec['time']}")
-                print(f"      - Услуга: {rec['service']}")
-                print(f"      - Уверенность: {rec['confidence']*100:.0f}%")
-                print(f"      - Причина: {rec['reason']}")
-        else:
-            print(f"   ℹ️  Нет рекомендаций (возможно, нет свободных слотов или подходящих клиентов)")
-
-        # Тест 4.2: Недогруженные слоты
-        print_subsection("Анализ недогруженных слотов на неделю")
-        underutilized = auto_booking.get_underutilized_slots(today, week_later)
-
-        if underutilized:
-            print(f"   Найдено мастеров с доступными слотами: {len(underutilized)}")
-            for master, info in underutilized.items():
-                print(f"\n   {master}:")
-                print(f"      - Всего свободных слотов: {info['total_available_slots']}")
-                print(f"      - Дней с доступностью: {len(info['dates_with_availability'])}")
-
-                if info['dates_with_availability']:
-                    first_day = info['dates_with_availability'][0]
-                    print(f"      - Пример ({first_day['date']}): {first_day['available_slots']} слотов")
-        else:
-            print(f"   ℹ️  Все слоты заполнены или нет данных о расписании")
-
-        # Тест 4.3: Автоматические предложения на день
-        print_subsection("Автоматические предложения на сегодня")
-        daily_suggestions = auto_booking.auto_suggest_bookings(today, max_suggestions=5)
-
-        print(f"   Предложений на сегодня: {len(daily_suggestions)}")
-        for i, sug in enumerate(daily_suggestions, 1):
-            print(f"   {i}. {sug['client_name']} -> {sug['master']} в {sug['time']}")
-            print(f"      Уверенность: {sug['confidence']*100:.0f}%")
-
-        return True
-
-    except Exception as e:
-        print(f"❌ ОШИБКА: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
-
 def main():
     """Запуск всех тестов"""
     print("\n" + "="*80)
-    print("  ТЕСТИРОВАНИЕ НОВЫХ ФУНКЦИЙ CRM")
+    print("  ТЕСТИРОВАНИЕ НОВЫХ ФУНКЦИЙ SITE")
     print("="*80)
     print(f"  Дата: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("="*80)
@@ -298,8 +231,7 @@ def main():
     results = {
         "Dashboard с KPI": test_analytics(),
         "Расписание мастеров": test_master_schedule(),
-        "Программа лояльности": test_loyalty_program(),
-        "Автозаполнение окон": test_auto_booking()
+        "Программа лояльности": test_loyalty_program()
     }
 
     # Итоги

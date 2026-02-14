@@ -12,7 +12,6 @@ backend_dir = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(backend_dir))
 
 from db.connection import get_db_connection
-from core.config import DATABASE_NAME
 
 def test_booking_reminder_settings_table():
     """Проверить таблицу booking_reminder_settings"""
@@ -70,40 +69,26 @@ def test_booking_reminder_settings_table():
         print(traceback.format_exc())
         return False
 
-def test_reminders_api_direct():
-    """Тестировать API функции напрямую"""
+def test_reminders_module_absent():
+    """Проверяем, что reminders API не доступен в site runtime"""
     print("\n" + "=" * 70)
-    print("ТЕСТИРОВАНИЕ ФУНКЦИЙ API (прямой вызов)")
+    print("ПРОВЕРКА ГРАНИЦ RUNTIME")
     print("=" * 70)
 
     try:
-        from api.reminders import create_booking_reminder_settings_table
-
-        print("\n1️⃣ Создание таблицы booking_reminder_settings...")
-        create_booking_reminder_settings_table()
-        print("   ✅ Функция создания таблицы выполнена")
-
-        # Проверяем что таблица создалась
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_name='booking_reminder_settings'")
-        exists = c.fetchone()
-        conn.close()
-
-        if exists:
-            print("   ✅ Таблица успешно создана")
-            return True
-        else:
-            print("   ❌ Таблица не создана")
-            return False
-
+        __import__("api.reminders")
+        print("   ❌ api.reminders не должен импортироваться в site runtime")
+        return False
+    except ModuleNotFoundError:
+        print("   ✅ api.reminders недоступен (ожидаемо)")
+        return True
     except Exception as e:
-        print(f"\n❌ ОШИБКА при тестировании API:")
+        print(f"\n❌ ОШИБКА при проверке границ runtime:")
         print(traceback.format_exc())
         return False
 
 def test_reminders_http():
-    """Тестировать через HTTP запросы"""
+    """Проверяем отсутствие legacy reminders endpoint в site runtime"""
     print("\n" + "=" * 70)
     print("ТЕСТИРОВАНИЕ HTTP API")
     print("=" * 70)
@@ -114,23 +99,17 @@ def test_reminders_http():
 
         client = TestClient(app)
 
-        # Нужна авторизация, поэтому проверим только доступность
-        print("\n1️⃣ GET /api/booking-reminder-settings (требует авторизации)")
+        print("\n1️⃣ GET /api/booking-reminder-settings (должен отсутствовать)")
         response = client.get("/api/booking-reminder-settings")
 
         print(f"   Статус: {response.status_code}")
 
-        if response.status_code == 401:
-            print("   ✅ Эндпоинт работает (требует авторизации)")
-            return True
-        elif response.status_code == 200:
-            data = response.json()
-            print(f"   ✅ Успешный ответ!")
-            print(f"   Настроек: {len(data.get('settings', []))}")
+        if response.status_code == 404:
+            print("   ✅ Legacy endpoint отсутствует (ожидаемо)")
             return True
         else:
-            print(f"   ⚠️  Неожиданный статус: {response.status_code}")
-            print(f"   Ответ: {response.text[:200]}")
+            print(f"   ❌ Неожиданный статус: {response.status_code}")
+            print(f"   Ответ: {response.text[:300]}")
             return False
 
     except ImportError:
@@ -205,8 +184,8 @@ if __name__ == "__main__":
     # 1. Проверка таблицы
     results.append(("Таблица booking_reminder_settings", test_booking_reminder_settings_table()))
 
-    # 2. Прямой вызов API
-    results.append(("Создание таблицы (API)", test_reminders_api_direct()))
+    # 2. Проверка недоступности reminders API
+    results.append(("Граница runtime (api.reminders)", test_reminders_module_absent()))
 
     # 3. HTTP тесты
     results.append(("HTTP эндпоинты", test_reminders_http()))

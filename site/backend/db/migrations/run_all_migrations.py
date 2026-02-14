@@ -5,6 +5,11 @@ Executes core initialization and data maintenance.
 import sys
 import os
 from datetime import datetime
+
+BACKEND_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if BACKEND_ROOT not in sys.path:
+    sys.path.insert(0, BACKEND_ROOT)
+
 from db.init import init_database
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error

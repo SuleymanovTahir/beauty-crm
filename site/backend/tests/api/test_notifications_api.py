@@ -3,7 +3,6 @@
 Тестовый скрипт для проверки API уведомлений
 """
 import sys
-import os
 import traceback
 from pathlib import Path
 
@@ -12,7 +11,6 @@ backend_dir = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(backend_dir))
 
 from db.connection import get_db_connection
-from core.config import DATABASE_NAME
 
 def test_database_tables():
     """Проверить существование таблиц"""
@@ -110,32 +108,6 @@ def test_notifications_endpoint():
         print(traceback.format_exc())
         return False
 
-def test_booking_reminder_endpoint():
-    """Тестировать эндпоинт booking-reminder-settings напрямую"""
-    print("\n" + "=" * 70)
-    print("ТЕСТИРОВАНИЕ GET /api/booking-reminder-settings")
-    print("=" * 70)
-
-    try:
-        from api.reminders import get_booking_reminder_settings
-        from unittest.mock import patch
-        import asyncio
-
-        print("\n🔄 Вызов get_booking_reminder_settings()...")
-        
-        # Mock require_auth to return a test user
-        with patch('utils.utils.require_auth', return_value={"id": 1, "username": "test_admin", "role": "admin"}):
-            result = asyncio.run(get_booking_reminder_settings())
-            
-        print("\n✅ УСПЕШНО!")
-        print(f"Результат: {result}")
-        return True
-
-    except Exception as e:
-        print(f"\n❌ ОШИБКА при импорте эндпоинта:")
-        print(traceback.format_exc())
-        return False
-
 def test_http_request():
     """Тест HTTP запроса к API (пропускается при старте сервера)"""
     print("\n" + "=" * 70)
@@ -160,10 +132,7 @@ if __name__ == "__main__":
     # 2. Прямой вызов функции
     results.append(("Прямой вызов API функции", test_notifications_endpoint()))
 
-    # 3. Проверка booking reminders
-    results.append(("Booking reminders эндпоинт", test_booking_reminder_endpoint()))
-
-    # 4. HTTP запрос
+    # 3. HTTP запрос
     results.append(("HTTP запрос", test_http_request()))
 
     # Итоги
