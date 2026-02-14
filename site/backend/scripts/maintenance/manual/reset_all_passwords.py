@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Script to reset passwords for all staff users with unique passwords.
-Run from backend directory: python3 scripts/reset_all_passwords.py
+Run from backend directory: python3 scripts/maintenance/manual/reset_all_passwords.py
 """
 
 import hashlib

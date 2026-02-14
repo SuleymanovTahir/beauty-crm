@@ -195,11 +195,11 @@ async def lifespan(app: FastAPI):
     # run_all_migrations()
     # from scripts.maintenance.fix_data import run_all_fixes
     # run_all_fixes()
-    # from tests.run_all_tests import run_all_tests
+    # from tests.runners.run_all_tests import run_all_tests
     # run_all_tests()
-    # from tests.run_all_test2 import run_all_tests2
+    # from tests.runners.run_all_test2 import run_all_tests2
     # run_all_tests2()
-    # from tests.run_all_test3 import run_all_tests3
+    # from tests.runners.run_all_test3 import run_all_tests3
     # run_all_tests3()
 
     # 7. Site сервисы

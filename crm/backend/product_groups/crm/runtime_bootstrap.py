@@ -51,7 +51,7 @@ def start_crm_schedulers() -> bool:
     from bot.reminders.retention import check_client_retention
     from bot.reminders.appointments import check_appointment_reminders
     from scripts.maintenance.housekeeping import run_housekeeping
-    from scripts.cleanup_sessions import cleanup_expired_sessions
+    from scripts.maintenance.cleanup_sessions import cleanup_expired_sessions
 
     cron.add_job(check_and_send_reminders, "interval", minutes=30, id="ig_reminders")
     cron.add_job(check_abandoned_bookings, "interval", minutes=10, id="abandoned")

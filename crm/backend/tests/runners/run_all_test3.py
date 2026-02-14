@@ -9,7 +9,9 @@ import subprocess
 from datetime import datetime
 
 # Добавляем путь к backend для импортов
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+BACKEND_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if BACKEND_ROOT not in sys.path:
+    sys.path.insert(0, BACKEND_ROOT)
 
 def print_header(text):
     """Красивый заголовок"""
@@ -34,11 +36,10 @@ def run_suite_subprocess(subprocess_path, description=""):
     success = False
     try:
         # Resolve path relative to backend root
-        backend_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        abs_path = os.path.join(backend_root, subprocess_path)
+        abs_path = os.path.join(BACKEND_ROOT, subprocess_path)
         
         env = os.environ.copy()
-        env["PYTHONPATH"] = backend_root
+        env["PYTHONPATH"] = BACKEND_ROOT
         env["SKIP_REAL_MAIL"] = "true"
         
         result = subprocess.run(

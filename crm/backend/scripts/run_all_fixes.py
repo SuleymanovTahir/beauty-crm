@@ -1,4 +1,5 @@
 import asyncio
+import os
 import sys
 
 # Add backend directory to path
