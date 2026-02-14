@@ -5,13 +5,13 @@ Dedicated runner for all bot-related functionality tests.
 """
 import sys
 import os
-import asyncio
 from datetime import datetime
 
 # Add global path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from utils.logger import log_info, log_error
+BACKEND_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+TESTS_ROOT = os.path.join(BACKEND_ROOT, "tests")
+if BACKEND_ROOT not in sys.path:
+    sys.path.insert(0, BACKEND_ROOT)
 
 def print_header(text):
     print("\n" + "=" * 80)
@@ -24,11 +24,15 @@ def run_suite(suite_name, subprocess_path=None):
     print("-" * 80)
     
     import subprocess
+    env = os.environ.copy()
+    env["PYTHONPATH"] = BACKEND_ROOT
+    env["SKIP_REAL_MAIL"] = "true"
     result = subprocess.run(
-        [sys.executable, os.path.join(os.path.dirname(__file__), subprocess_path)],
+        [sys.executable, os.path.join(TESTS_ROOT, subprocess_path)],
         capture_output=True,
         text=True,
-        timeout=300
+        timeout=300,
+        env=env,
     )
     
     if result.stdout:

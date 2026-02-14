@@ -8,7 +8,10 @@ import os
 from datetime import datetime
 
 # Добавляем путь к backend для импортов
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+BACKEND_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+TESTS_ROOT = os.path.join(BACKEND_ROOT, "tests")
+if BACKEND_ROOT not in sys.path:
+    sys.path.insert(0, BACKEND_ROOT)
 
 def print_header(text):
     """Красивый заголовок"""
@@ -54,8 +57,9 @@ def run_suite(suite_name, func=None, subprocess_path=None, description=""):
             import subprocess
             env = os.environ.copy()
             env["SKIP_REAL_MAIL"] = "true"
+            env["PYTHONPATH"] = BACKEND_ROOT
             result = subprocess.run(
-                [sys.executable, os.path.join(os.path.dirname(__file__), subprocess_path)],
+                [sys.executable, os.path.join(TESTS_ROOT, subprocess_path)],
                 capture_output=True,
                 text=True,
                 timeout=300,
