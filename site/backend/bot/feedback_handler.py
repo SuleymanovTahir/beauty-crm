@@ -8,7 +8,7 @@ from bot.ai_responses import generate_ai_response
 from db import detect_and_save_language
 from services.universal_messenger import send_universal_message
 from utils.logger import log_info, log_error
-from crm_api.notifications import create_notification
+from api.notifications import create_notification
 from db.users import get_all_users
 
 async def handle_feedback_response(sender_id: str, message_text: str) -> bool:

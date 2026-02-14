@@ -77,7 +77,7 @@ def test_reminders_api_direct():
     print("=" * 70)
 
     try:
-        from crm_api.reminders import create_booking_reminder_settings_table
+        from api.reminders import create_booking_reminder_settings_table
 
         print("\n1️⃣ Создание таблицы booking_reminder_settings...")
         create_booking_reminder_settings_table()

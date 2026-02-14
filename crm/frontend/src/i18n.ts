@@ -91,7 +91,7 @@ const namespaces = [
   'pages/funnel'
 ];
 // Используем import.meta as any для обхода ошибки типов с Vite
-const localeFiles = (import.meta as any).glob('./crm/locales/**/*.json', { eager: true });
+const localeFiles = (import.meta as any).glob('./locales/**/*.json', { eager: true });
 
 // Create a case-insensitive map of available locale files
 const lowercaseLocaleFiles: Record<string, string> = {};
@@ -104,13 +104,13 @@ const resources: Record<string, any> = {};
 for (const lang of languages) {
   resources[lang] = {};
   for (const ns of namespaces) {
-    const standardKey = `./crm/locales/${lang}/${ns}.json`;
+    const standardKey = `./locales/${lang}/${ns}.json`;
     let key = standardKey;
 
     // Support for separate public_landing folder
     if (ns.startsWith('public_landing/')) {
       const cleanNs = ns.replace('public_landing/', '');
-      const altKey = `./crm/locales/public_landing/${lang}/${cleanNs}.json`;
+      const altKey = `./locales/public_landing/${lang}/${cleanNs}.json`;
       if (lowercaseLocaleFiles[altKey.toLowerCase()]) {
         key = lowercaseLocaleFiles[altKey.toLowerCase()];
       }

@@ -91,7 +91,7 @@ def test_notifications_endpoint():
     print("=" * 70)
 
     try:
-        from crm_api.notifications import get_notification_settings_api
+        from api.notifications import get_notification_settings_api
         from unittest.mock import patch
         import asyncio
 
@@ -117,7 +117,7 @@ def test_booking_reminder_endpoint():
     print("=" * 70)
 
     try:
-        from crm_api.reminders import get_booking_reminder_settings
+        from api.reminders import get_booking_reminder_settings
         from unittest.mock import patch
         import asyncio
 

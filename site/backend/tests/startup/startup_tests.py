@@ -55,7 +55,7 @@ def startup_test_reminders_api():
     try:
         log_info("⏰ Проверка API напоминаний...", "startup_test")
 
-        from crm_api.reminders import create_booking_reminder_settings_table
+        from api.reminders import create_booking_reminder_settings_table
 
         # Создаем таблицу если её нет
         create_booking_reminder_settings_table()
