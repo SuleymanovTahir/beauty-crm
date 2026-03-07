@@ -1023,6 +1023,7 @@ def run_fix():
         from utils.utils import hash_password, verify_password
 
         staff_fixes = [
+            ('tursunay', 'Турсунай'),
             ('gulcehre', 'Касымова Гульчехре'),
             ('jennifer', 'Перадилья Дженнифер'),
             ('mestan', 'Amandurdyyeva Mestan'),

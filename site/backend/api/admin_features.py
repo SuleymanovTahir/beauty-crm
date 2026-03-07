@@ -766,6 +766,136 @@ async def get_referral_stats(session_token: Optional[str] = Cookie(None)):
 # LOYALTY MANAGEMENT API
 # ============================================================================
 
+@router.get("/admin/loyalty/config")
+async def get_loyalty_config(session_token: Optional[str] = Cookie(None)):
+    """Получить глобальные настройки лояльности"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        from services.loyalty import LoyaltyService
+
+        config = LoyaltyService().get_loyalty_config()
+        return {
+            "success": True,
+            "config": {
+                "loyalty_points_conversion_rate": float(config.get("loyalty_points_conversion_rate", 0) or 0),
+                "points_expiration_days": int(config.get("points_expiration_days", 365) or 365),
+            }
+        }
+    except Exception as e:
+        log_error(f"Error getting loyalty config: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/admin/loyalty/config")
+async def update_loyalty_config(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Обновить глобальные настройки лояльности"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        from services.loyalty import LoyaltyService
+
+        data = await request.json()
+        try:
+            rate = float(data.get("loyalty_points_conversion_rate", 0))
+        except (TypeError, ValueError):
+            rate = 0.0
+        if rate < 0:
+            rate = 0.0
+
+        try:
+            expiration_days = int(data.get("points_expiration_days", 365))
+        except (TypeError, ValueError):
+            expiration_days = 365
+        if expiration_days < 1:
+            expiration_days = 1
+
+        if LoyaltyService().update_loyalty_config(rate, expiration_days):
+            return {"success": True}
+
+        return JSONResponse({"error": "Failed to update loyalty config"}, status_code=500)
+    except Exception as e:
+        log_error(f"Error updating loyalty config: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/admin/loyalty/categories")
+async def get_loyalty_category_rules(session_token: Optional[str] = Cookie(None)):
+    """Получить правила начисления по категориям"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        from services.loyalty import LoyaltyService
+
+        rules = LoyaltyService().get_category_rules()
+        return {"success": True, "rules": rules}
+    except Exception as e:
+        log_error(f"Error getting loyalty category rules: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/admin/loyalty/categories")
+async def save_loyalty_category_rule(request: Request, session_token: Optional[str] = Cookie(None)):
+    """Создать или обновить правило начисления по категории"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        from services.loyalty import LoyaltyService
+
+        data = await request.json()
+        category = str(data.get("category") or "").strip()
+        if len(category) == 0:
+            return JSONResponse({"error": "Category is required"}, status_code=400)
+
+        try:
+            points_multiplier = float(data.get("points_multiplier", 1))
+        except (TypeError, ValueError):
+            points_multiplier = 1.0
+        if points_multiplier < 0:
+            points_multiplier = 0.0
+
+        raw_is_active = data.get("is_active", True)
+        is_active = raw_is_active if isinstance(raw_is_active, bool) else str(raw_is_active).strip().lower() in ["1", "true", "yes", "on"]
+
+        if LoyaltyService().update_category_rule(category, points_multiplier, is_active):
+            return {"success": True}
+
+        return JSONResponse({"error": "Failed to save category rule"}, status_code=500)
+    except Exception as e:
+        log_error(f"Error saving loyalty category rule: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.delete("/admin/loyalty/categories")
+async def delete_loyalty_category_rule(category: str, session_token: Optional[str] = Cookie(None)):
+    """Удалить правило начисления по категории"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    normalized_category = str(category or "").strip()
+    if len(normalized_category) == 0:
+        return JSONResponse({"error": "Category is required"}, status_code=400)
+
+    try:
+        from services.loyalty import LoyaltyService
+
+        if LoyaltyService().delete_category_rule(normalized_category):
+            return {"success": True}
+
+        return JSONResponse({"error": "Failed to delete category rule"}, status_code=500)
+    except Exception as e:
+        log_error(f"Error deleting loyalty category rule: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 @router.get("/admin/loyalty/tiers")
 async def get_loyalty_tiers(session_token: Optional[str] = Cookie(None)):
     """Получить уровни лояльности"""
@@ -1551,6 +1681,41 @@ def _remove_gallery_file(path_url: Optional[str]):
             log_info(f"Deleted file: {file_path}", "api")
         except Exception as e:
             log_error(f"Error deleting file {file_path}: {e}", "api")
+
+
+@router.get("/clients")
+async def get_clients_for_gallery(session_token: Optional[str] = Cookie(None)):
+    """Получить упрощенный список клиентов для привязки фото"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director", "manager"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    try:
+        from db.clients import get_all_clients
+
+        rows = get_all_clients(limit=500)
+        clients = []
+        for index, row in enumerate(rows, start=1):
+            instagram_id = str(row[0] or "").strip()
+            username = str(row[1] or "").strip()
+            display_name = str(row[3] or "").strip()
+
+            if len(display_name) == 0:
+                display_name = username if len(username) > 0 else instagram_id
+
+            if len(display_name) == 0 and len(instagram_id) == 0:
+                continue
+
+            clients.append({
+                "id": index,
+                "instagram_id": instagram_id,
+                "name": display_name,
+            })
+
+        return {"success": True, "clients": clients}
+    except Exception as e:
+        log_error(f"Error getting clients for gallery: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.get("/admin/gallery/photos")
 async def get_gallery_photos(session_token: Optional[str] = Cookie(None)):

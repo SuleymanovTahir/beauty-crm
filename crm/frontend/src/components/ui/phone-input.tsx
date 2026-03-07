@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { PhoneInput as ReactPhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
+import { detectCountry as detectBrowserCountry } from '@crm/utils/languageDetection';
 
 interface PhoneInputProps {
   value: string;
@@ -22,26 +23,21 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
 
   useEffect(() => {
     // Auto-detect country based on user's location
-    const detectCountry = async () => {
+    const resolveDefaultCountry = async () => {
       try {
-        // Try to get country from IP geolocation
-        const response = await fetch('https://ipapi.co/json/');
-        const data = await response.json();
-        const countryCode = data.country_code?.toLowerCase();
+        const countryCode = (await detectBrowserCountry())?.toLowerCase();
 
         if (countryCode) {
-          // Map special cases for language detection later
           setDefaultCountry(countryCode);
         }
-      } catch (error) {
-        console.log('Could not detect country, using default (UAE)');
-        // If detection fails, keep UAE as default
+      } catch (_error) {
+        // Keep the initial default country when browser context is insufficient.
       }
     };
 
     // Only detect country if no value is provided
     if (!value || value === '' || value === '+971') {
-      detectCountry();
+      resolveDefaultCountry();
     }
   }, []);
 

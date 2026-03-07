@@ -379,6 +379,7 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
     """Получить данные для аналитики с периодом"""
     conn = get_db_connection()
     c = conn.cursor()
+    table_columns_cache: Dict[str, Set[str]] = {}
 
     def _extract_section_name(url_value: str) -> str:
         normalized_url = str(url_value or "").strip().lower()
@@ -402,6 +403,18 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         if normalized_url == "":
             return False
         return "booking" in normalized_url
+
+    def _get_table_columns(table_name: str) -> Set[str]:
+        if table_name in table_columns_cache:
+            return table_columns_cache[table_name]
+        c.execute("""
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = %s
+        """, (table_name,))
+        columns = {row[0] for row in c.fetchall()}
+        table_columns_cache[table_name] = columns
+        return columns
 
     def _cramers_v_from_contingency(rows: list) -> Dict[str, float]:
         if not rows:
@@ -458,6 +471,18 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         mean_value = _mean(values)
         variance = sum((value - mean_value) ** 2 for value in values) / float(values_count - 1)
         return math.sqrt(max(variance, 0.0))
+
+    clients_columns = _get_table_columns("clients")
+    has_client_country = "country" in clients_columns
+    has_client_city = "city" in clients_columns
+    if has_client_country and has_client_city:
+        client_region_sql = "COALESCE(NULLIF(TRIM(cl.country), ''), NULLIF(TRIM(cl.city), ''), 'Unknown')"
+    elif has_client_country:
+        client_region_sql = "COALESCE(NULLIF(TRIM(cl.country), ''), 'Unknown')"
+    elif has_client_city:
+        client_region_sql = "COALESCE(NULLIF(TRIM(cl.city), ''), 'Unknown')"
+    else:
+        client_region_sql = "'Unknown'"
 
     def _coefficient_of_variation(values: List[float]) -> float:
         if not values:
@@ -893,9 +918,9 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         ]
 
         # Регионы с максимальным числом записей
-        c.execute("""
+        c.execute(f"""
             SELECT
-                COALESCE(NULLIF(TRIM(cl.country), ''), NULLIF(TRIM(cl.city), ''), 'Unknown') as region_name,
+                {client_region_sql} as region_name,
                 COUNT(*) as bookings_count,
                 COALESCE(SUM(b.revenue), 0) as total_revenue
             FROM bookings b
@@ -1026,9 +1051,9 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         section_rows.sort(key=lambda item: item["total_seconds"], reverse=True)
 
         # Тест силы связи: регион x источник записи
-        c.execute("""
+        c.execute(f"""
             SELECT
-                COALESCE(NULLIF(TRIM(cl.country), ''), 'Unknown') as region_name,
+                {client_region_sql} as region_name,
                 COALESCE(NULLIF(TRIM(b.source), ''), 'unknown') as source_name,
                 COUNT(*) as pair_count
             FROM bookings b
@@ -1055,9 +1080,9 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         elif cramers_v >= 0.1:
             association_strength = "weak"
 
-        c.execute("""
+        c.execute(f"""
             SELECT
-                COALESCE(NULLIF(TRIM(cl.country), ''), 'Unknown') as region_name,
+                {client_region_sql} as region_name,
                 COALESCE(NULLIF(TRIM(b.source), ''), 'unknown') as source_name,
                 COALESCE(b.revenue, 0) as revenue_value
             FROM bookings b
@@ -1172,22 +1197,7 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         # ============================================================
         # Extended analytics blocks (10 requested directions)
         # ============================================================
-        table_columns_cache: Dict[str, Set[str]] = {}
-
-        def _get_table_columns(table_name: str) -> Set[str]:
-            if table_name in table_columns_cache:
-                return table_columns_cache[table_name]
-            c.execute("""
-                SELECT column_name
-                FROM information_schema.columns
-                WHERE table_name = %s
-            """, (table_name,))
-            columns = {row[0] for row in c.fetchall()}
-            table_columns_cache[table_name] = columns
-            return columns
-
         bookings_columns = _get_table_columns("bookings")
-        clients_columns = _get_table_columns("clients")
         users_columns = _get_table_columns("users")
 
         has_booking_master_user_id = "master_user_id" in bookings_columns

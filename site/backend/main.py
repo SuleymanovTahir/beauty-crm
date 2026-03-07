@@ -6,6 +6,7 @@ import sys
 import threading
 import types
 import time
+import concurrent.futures
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -113,6 +114,104 @@ def _env_flag(name: str, default: bool = False) -> bool:
     return raw.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _read_int_env(name: str, default: int) -> int:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    try:
+        return int(str(raw).strip())
+    except (TypeError, ValueError):
+        return default
+
+
+def _resolve_reload_mode() -> bool:
+    explicit_reload = os.getenv("BACKEND_RELOAD")
+    if explicit_reload is not None:
+        return explicit_reload.strip().lower() in {"1", "true", "yes", "on"}
+
+    if _read_int_env("BACKEND_WORKERS", 0) > 1 or _read_int_env("WEB_CONCURRENCY", 0) > 1:
+        return False
+
+    return os.getenv("ENVIRONMENT") != "production" and is_localhost()
+
+
+def _resolve_worker_count(reload_enabled: bool) -> int:
+    explicit_workers = _read_int_env("BACKEND_WORKERS", 0)
+    if explicit_workers <= 0:
+        explicit_workers = _read_int_env("WEB_CONCURRENCY", 0)
+
+    if explicit_workers > 0:
+        return max(1, explicit_workers)
+    if reload_enabled:
+        return 1
+
+    cpu_count = os.cpu_count() or 2
+    return max(2, min(8, cpu_count))
+
+
+def _resolve_thread_pool_workers() -> int:
+    explicit_threads = _read_int_env("BACKEND_THREAD_POOL_WORKERS", 0)
+    if explicit_threads > 0:
+        return max(8, explicit_threads)
+
+    cpu_count = os.cpu_count() or 2
+    return max(16, min(48, cpu_count * 2))
+
+
+def _configure_runtime_threading(app: FastAPI, runtime_label: str) -> None:
+    thread_workers = _resolve_thread_pool_workers()
+    loop = asyncio.get_running_loop()
+    executor = concurrent.futures.ThreadPoolExecutor(
+        max_workers=thread_workers,
+        thread_name_prefix=f"{runtime_label}-io",
+    )
+    loop.set_default_executor(executor)
+    app.state.default_executor = executor
+
+    try:
+        from anyio import to_thread
+
+        limiter = to_thread.current_default_thread_limiter()
+        current_tokens = int(getattr(limiter, "total_tokens", 0) or 0)
+        if current_tokens < thread_workers:
+            limiter.total_tokens = thread_workers
+    except Exception as error:
+        log_info(f"ℹ️ AnyIO thread limiter tuning skipped: {error}", "boot")
+
+    log_info(f"✅ Thread runtime tuned ({thread_workers} threads per worker)", "boot")
+
+
+def _shutdown_runtime_threading(app: FastAPI) -> None:
+    executor = getattr(app.state, "default_executor", None)
+    if executor is None:
+        return
+
+    try:
+        executor.shutdown(wait=False, cancel_futures=True)
+    except Exception as error:
+        log_error(f"Error shutting down thread executor: {error}", "shutdown")
+    finally:
+        app.state.default_executor = None
+
+
+def _build_server_run_kwargs() -> dict:
+    reload_enabled = _resolve_reload_mode()
+    worker_count = _resolve_worker_count(reload_enabled)
+    os.environ["UVICORN_RELOAD"] = "true" if reload_enabled else "false"
+    os.environ.setdefault("BACKEND_WORKERS", str(worker_count))
+
+    run_kwargs = {
+        "host": "0.0.0.0",
+        "port": int(os.getenv("PORT", "8000")),
+        "reload": reload_enabled,
+        "backlog": _read_int_env("BACKEND_BACKLOG", 2048),
+        "timeout_keep_alive": _read_int_env("BACKEND_KEEPALIVE_SECONDS", 10),
+    }
+    if not reload_enabled and worker_count > 1:
+        run_kwargs["workers"] = worker_count
+    return run_kwargs
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Управление жизненным циклом базы данных и site runtime"""
@@ -135,6 +234,7 @@ async def lifespan(app: FastAPI):
     # log_info("✅ База данных пересоздана. ТЕПЕРЬ ОБЯЗАТЕЛЬНО ЗАПУСТИТЕ МИГРАЦИИ (пункт 3)", "startup")
 
     init_connection_pool()
+    _configure_runtime_threading(app, "site")
 
     # 3. Redis Pub/Sub (Sink for multi-worker synchronization)
     redis_ready = await redis_pubsub.connect()
@@ -217,6 +317,7 @@ async def lifespan(app: FastAPI):
             await app.state.redis_listener
         except asyncio.CancelledError:
             pass
+    _shutdown_runtime_threading(app)
 
 
 # Подключение ресурсов
@@ -365,9 +466,9 @@ app = create_app()
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=int(os.getenv("PORT", "8000")),
-        reload=True,
+    server_kwargs = _build_server_run_kwargs()
+    log_info(
+        f"🚀 Starting Site runtime with reload={server_kwargs['reload']} workers={server_kwargs.get('workers', 1)}",
+        "boot"
     )
+    uvicorn.run("main:app", **server_kwargs)

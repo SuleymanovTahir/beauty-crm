@@ -374,7 +374,7 @@ _salon_settings_cache_time = None
 _salon_settings_cache_ttl = 0  # Disabled for CRM - always fetch fresh data
 
 @router.get("/platform-gates")
-async def get_platform_gates():
+def get_platform_gates():
     """
     Легкий публичный endpoint для feature-gates маршрутизации (site/crm).
     """
@@ -389,7 +389,7 @@ async def get_platform_gates():
 
 @router.get("/business-profile/matrix")
 @require_permission(["settings_view", "settings_edit_branding"])
-async def get_business_profile_matrix_api(session_token: Optional[str] = Cookie(None)):
+def get_business_profile_matrix_api(session_token: Optional[str] = Cookie(None)):
     """
     Матрица модулей/прав по business_type + текущий эффективный профиль workspace.
     """
@@ -458,7 +458,7 @@ async def update_business_profile_config_api(request: Request, session_token: Op
         raise HTTPException(status_code=500, detail=str(error))
 
 @router.get("/salon-settings")
-async def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
+def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
     """
     Получить настройки салона (публичный доступ для базовой информации)
     """
@@ -507,6 +507,10 @@ async def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
     
     public_settings = {k: v for k, v in settings.items() if k in public_fields}
     return public_settings
+
+@router.get("/public/salon-settings")
+def get_public_salon_settings_api(session_token: Optional[str] = Cookie(None)):
+    return get_salon_settings_api(session_token)
 
 @router.post("/salon-settings")
 @require_permission(["settings_edit", "settings_edit_branding", "settings_edit_finance", "settings_edit_integrations", "settings_edit_loyalty", "settings_edit_schedule"])
@@ -589,7 +593,7 @@ async def update_salon_settings_api(request: Request, session_token: Optional[st
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/salon-settings/working-hours")
-async def get_salon_working_hours():
+def get_salon_working_hours():
     """Получить рабочие часы салона из настроек"""
     try:
         from db import get_salon_settings
@@ -633,7 +637,7 @@ async def get_salon_working_hours():
 # ===== CURRENCY MANAGEMENT =====
 
 @router.get("/settings/currencies")
-async def get_currencies():
+def get_currencies():
     """Получить список всех доступных валют"""
     try:
         conn = get_db_connection()
@@ -714,7 +718,7 @@ async def delete_currency(code: str, session_token: Optional[str] = Cookie(None)
 # ===== FEATURE MANAGEMENT =====
 
 @router.get("/features")
-async def get_features_config():
+def get_features_config():
     """Получить конфигурацию всех фича-флагов"""
     service = FeatureService()
     return service.get_features_config()

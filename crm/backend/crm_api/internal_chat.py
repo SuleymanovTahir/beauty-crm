@@ -315,7 +315,7 @@ async def get_chat_users(
     return response
 
 @router.get("/unread-count")
-async def get_unread_count(session_token: Optional[str] = Cookie(None)):
+def get_unread_count(session_token: Optional[str] = Cookie(None)):
     """Получить количество непрочитанных сообщений"""
     user = require_auth(session_token)
     if not user:
@@ -933,4 +933,3 @@ async def get_call_logs(limit: int = 50, session_token: Optional[str] = Cookie(N
     
     conn.close()
     return {"logs": logs}
-

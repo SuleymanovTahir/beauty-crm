@@ -390,8 +390,19 @@ export default function AdminSettings() {
   });
 
   const [users, setUsers] = useState<any[]>([]);
+  const canLoadBusinessProfile = userPermissions.canEditBranding || userPermissions.canEditSettings;
+  const canLoadRoles = userPermissions.canViewRoles || userPermissions.canEditRoles;
+  const canLoadUsers = userPermissions.canViewAllUsers || userPermissions.canEditSettings || userPermissions.canEditSchedule;
+  const canLoadSubscriptions = userPermissions.canEditIntegrations || userPermissions.canEditSettings;
+  const canLoadReminderSettings = userPermissions.canEditSchedule || userPermissions.canEditSettings;
+  const canLoadHolidays = userPermissions.canEditSchedule || userPermissions.canEditSettings;
+  const canLoadCurrencies = userPermissions.canEditFinancialSettings || userPermissions.canEditSettings;
 
   const loadUsers = async () => {
+    if (!canLoadUsers) {
+      setUsers([]);
+      return;
+    }
     try {
       const data = await api.getUsers(i18n.language);
       setUsers(data?.users || data || []);
@@ -401,17 +412,31 @@ export default function AdminSettings() {
   };
 
   useEffect(() => {
-    loadRoles();
     loadSalonSettings();
-    loadBusinessProfileConfiguration();
     loadProfile();
     loadNotificationSettings();
-    loadSubscriptions();
-    loadBookingReminderSettings();
-    loadHolidays();
-    loadCurrencies();
-    loadUsers();
-  }, []);
+    if (canLoadRoles) {
+      loadRoles();
+    }
+    if (canLoadBusinessProfile) {
+      loadBusinessProfileConfiguration();
+    }
+    if (canLoadSubscriptions) {
+      loadSubscriptions();
+    }
+    if (canLoadReminderSettings) {
+      loadBookingReminderSettings();
+    }
+    if (canLoadHolidays) {
+      loadHolidays();
+    }
+    if (canLoadCurrencies) {
+      loadCurrencies();
+    }
+    if (canLoadUsers) {
+      loadUsers();
+    }
+  }, [canLoadBusinessProfile, canLoadCurrencies, canLoadHolidays, canLoadReminderSettings, canLoadRoles, canLoadSubscriptions, canLoadUsers]);
 
 
 
@@ -452,6 +477,9 @@ export default function AdminSettings() {
   };
 
   const loadBusinessProfileConfiguration = async () => {
+    if (!canLoadBusinessProfile) {
+      return;
+    }
     try {
       setBusinessProfileLoading(true);
       const response = await api.getBusinessProfileMatrix();
@@ -712,6 +740,10 @@ export default function AdminSettings() {
 
 
   const loadRoles = async () => {
+    if (!canLoadRoles) {
+      setRoles([]);
+      return;
+    }
     try {
       setLoadingRoles(true);
       const data = await api.getRoles();

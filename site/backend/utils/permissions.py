@@ -16,6 +16,7 @@
         # Можно редактировать пользователей
 """
 
+import inspect
 import logging
 from typing import Optional, Dict, List, Tuple, Union
 from functools import wraps
@@ -370,7 +371,10 @@ def require_role(allowed_roles: List[str]):
                     status_code=403
                 )
 
-            return await func(*args, session_token=session_token, **kwargs)
+            result = func(*args, session_token=session_token, **kwargs)
+            if inspect.isawaitable(result):
+                return await result
+            return result
 
         return wrapper
     return decorator
@@ -403,7 +407,10 @@ def require_permission(permission: Union[str, List[str]]):
                     status_code=403
                 )
 
-            return await func(*args, session_token=session_token, **kwargs)
+            result = func(*args, session_token=session_token, **kwargs)
+            if inspect.isawaitable(result):
+                return await result
+            return result
 
         return wrapper
     return decorator

@@ -74,6 +74,26 @@ export default function UniversalDashboard() {
     if (currentUser?.role === 'admin' || currentUser?.role === 'director') return '/crm';
     return `/${currentUser?.role || 'employee'}`;
   }, [currentUser?.role]);
+  const currentRole = currentUser?.role || 'employee';
+  const canRequestBotAnalytics = ['admin', 'director', 'manager'].includes(currentRole);
+  const canOpenBookingsRoute = permissions.canViewAllBookings || currentRole === 'employee' || currentRole === 'sales';
+  const canOpenClientsRoute = rolePrefix !== '/employee';
+  const canOpenBookingDetail = rolePrefix === '/crm';
+  const dashboardHomePath = currentRole === 'sales'
+    ? '/sales/clients'
+    : currentRole === 'marketer'
+      ? '/marketer/analytics'
+      : `${rolePrefix}/dashboard`;
+  const bookingsPath = canOpenBookingsRoute ? `${rolePrefix}/bookings` : dashboardHomePath;
+  const resolveBookingTargetPath = (bookingId: number) => {
+    if (canOpenBookingDetail) {
+      return `${rolePrefix}/bookings/${bookingId}`;
+    }
+    if (canOpenBookingsRoute) {
+      return bookingsPath;
+    }
+    return null;
+  };
 
   useEffect(() => {
     loadDashboardData();
@@ -157,33 +177,37 @@ export default function UniversalDashboard() {
         api.get(`/api/dashboard/kpi?${params.toString()}`).catch(() => null),
         api.getBookings(),
         api.getClients(),
-        api.get('/api/bot-analytics?days=30').catch(() => null),
-        api.getPublicSalonSettings().catch(() => ({ currency: '' })),
+        canRequestBotAnalytics ? api.get('/api/bot-analytics?days=30').catch(() => null) : Promise.resolve(null),
+        api.getPublicSalonSettings().catch(() => api.getSalonSettings().catch(() => ({ currency: '' }))),
       ]);
 
       // Transform kpiData to stats format for compatibility
       if (kpiData?.success && kpiData.kpi) {
         const k = kpiData.kpi;
+        const revenueMetrics = typeof k.revenue === 'object' && k.revenue !== null ? k.revenue : {};
+        const bookingMetrics = typeof k.bookings === 'object' && k.bookings !== null ? k.bookings : {};
+        const clientMetrics = typeof k.clients === 'object' && k.clients !== null ? k.clients : {};
+        const trendMetrics = typeof k.trends === 'object' && k.trends !== null ? k.trends : null;
         const transformedStats: Stats = {
-          total_revenue: k.revenue.total,
-          total_bookings: k.bookings.total,
-          completed_bookings: k.bookings.completed,
-          pending_bookings: k.bookings.total - k.bookings.completed - k.bookings.cancelled,
-          cancelled_bookings: k.bookings.cancelled,
-          conversion_rate: k.bookings.completion_rate,
-          new_clients: k.clients.new,
-          leads: k.bookings.total, // fallback
-          customers: k.clients.total_active,
+          total_revenue: Number(revenueMetrics.total ?? 0),
+          total_bookings: Number(bookingMetrics.total ?? 0),
+          completed_bookings: Number(bookingMetrics.completed ?? 0),
+          pending_bookings: Number(bookingMetrics.total ?? 0) - Number(bookingMetrics.completed ?? 0) - Number(bookingMetrics.cancelled ?? 0),
+          cancelled_bookings: Number(bookingMetrics.cancelled ?? 0),
+          conversion_rate: Number(bookingMetrics.completion_rate ?? 0),
+          new_clients: Number(clientMetrics.new ?? 0),
+          leads: Number(bookingMetrics.total ?? 0),
+          customers: Number(clientMetrics.total_active ?? 0),
           total_client_messages: 0,
           total_bot_messages: 0,
           vip_clients: 0,
-          active_clients: k.clients.total_active,
-          avg_booking_value: k.revenue.average_check,
-          cancellation_rate: k.bookings.cancellation_rate,
-          total_clients: k.clients.total_active, // fallback
-          growth: k.trends ? {
-            revenue: { percentage: k.trends.revenue_change_percent, trend: k.trends.revenue_change_percent >= 0 ? 'up' : 'down' },
-            total_clients: { percentage: k.trends.bookings_change_percent, trend: k.trends.bookings_change_percent >= 0 ? 'up' : 'down' },
+          active_clients: Number(clientMetrics.total_active ?? 0),
+          avg_booking_value: Number(revenueMetrics.average_check ?? 0),
+          cancellation_rate: Number(bookingMetrics.cancellation_rate ?? 0),
+          total_clients: Number(clientMetrics.total_active ?? 0),
+          growth: trendMetrics ? {
+            revenue: { percentage: Number(trendMetrics.revenue_change_percent ?? 0), trend: Number(trendMetrics.revenue_change_percent ?? 0) >= 0 ? 'up' : 'down' },
+            total_clients: { percentage: Number(trendMetrics.bookings_change_percent ?? 0), trend: Number(trendMetrics.bookings_change_percent ?? 0) >= 0 ? 'up' : 'down' },
             new_clients: { percentage: 0, trend: 'stable' },
             vip_clients: { percentage: 0, trend: 'stable' },
             active_clients: { percentage: 0, trend: 'stable' },
@@ -388,7 +412,12 @@ export default function UniversalDashboard() {
                       isPast ? 'border-gray-300 bg-gray-50 opacity-60' :
                         'border-blue-300 bg-white hover:bg-blue-50'
                       }`}
-                    onClick={() => navigate(`${rolePrefix}/bookings/${booking.id}`)}
+                    onClick={() => {
+                      const targetPath = resolveBookingTargetPath(booking.id);
+                      if (targetPath !== null) {
+                        navigate(targetPath);
+                      }
+                    }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4 flex-1">
@@ -557,13 +586,24 @@ export default function UniversalDashboard() {
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold">{t('admin/dashboard:latest_bookings')}</h2>
-            <Link to={`${rolePrefix}/bookings`} className="text-pink-600 text-sm font-medium hover:underline">{t('admin/dashboard:all_bookings')}</Link>
+            {canOpenBookingsRoute && (
+              <Link to={bookingsPath} className="text-pink-600 text-sm font-medium hover:underline">{t('admin/dashboard:all_bookings')}</Link>
+            )}
           </div>
           <div className="space-y-4">
             {filteredRecentBookings.map((booking) => {
               const badge = getStatusBadge(booking.status);
+              const bookingTargetPath = resolveBookingTargetPath(booking.id);
               return (
-                <div key={booking.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => navigate(`${rolePrefix}/bookings/${booking.id}`)}>
+                <div
+                  key={booking.id}
+                  className={`flex items-center justify-between p-4 bg-gray-50 rounded-lg transition-colors ${bookingTargetPath !== null ? 'hover:bg-gray-100 cursor-pointer' : ''}`}
+                  onClick={() => {
+                    if (bookingTargetPath !== null) {
+                      navigate(bookingTargetPath);
+                    }
+                  }}
+                >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full overflow-hidden border">
                       <img src={getDynamicAvatar(booking.name, 'cold', booking.gender)} alt="" className="w-full h-full object-cover" />
@@ -588,12 +628,16 @@ export default function UniversalDashboard() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-bold mb-4">{t('admin/dashboard:quick_actions')}</h2>
             <div className="space-y-2">
-              <Button className="w-full justify-start gap-2 bg-pink-600 hover:bg-pink-700" onClick={() => navigate(`${rolePrefix}/bookings`)}>
-                <Calendar className="w-4 h-4" /> {t('admin/dashboard:new_booking')}
-              </Button>
-              <Button variant="outline" className="w-full justify-start gap-2" onClick={() => navigate(`${rolePrefix}/clients`)}>
-                <Users className="w-4 h-4" /> {t('admin/dashboard:client_database')}
-              </Button>
+              {canOpenBookingsRoute && (
+                <Button className="w-full justify-start gap-2 bg-pink-600 hover:bg-pink-700" onClick={() => navigate(bookingsPath)}>
+                  <Calendar className="w-4 h-4" /> {t('admin/dashboard:new_booking')}
+                </Button>
+              )}
+              {canOpenClientsRoute && (
+                <Button variant="outline" className="w-full justify-start gap-2" onClick={() => navigate(`${rolePrefix}/clients`)}>
+                  <Users className="w-4 h-4" /> {t('admin/dashboard:client_database')}
+                </Button>
+              )}
               {permissions.canViewAnalytics && (
                 <Button variant="outline" className="w-full justify-start gap-2" onClick={() => navigate(`${rolePrefix}/analytics`)}>
                   <TrendingUp className="w-4 h-4" /> {t('admin/dashboard:analytics')}

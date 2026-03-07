@@ -1,3 +1,26 @@
+## [2026-03-08] Site Account Runtime Hardening + CRM Telephony/WebRTC Log Cleanup
+- Fixed schema-safe account runtime for live employee logins in:
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/client_auth.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/services/loyalty.py`
+- Removed multiple real backend failures that appeared during role-based account navigation:
+  - client resolution now maps site account users to real `clients` records through `clients` and `bookings` data instead of falling back to invalid synthetic IDs,
+  - `/api/client/dashboard` no longer queries missing `clients.total_saved` or `bookings.master_id`,
+  - `/api/client/beauty-metrics` no longer depends on missing `services.duration_minutes`,
+  - `/api/client/gallery` no longer joins on missing `client_gallery.service_id`,
+  - `/api/client/favorite-masters` now tolerates missing `ratings` table and missing `bookings.master_id`,
+  - loyalty account creation is skipped when no real client exists, preventing FK/runtime failures for account-only users.
+- Fixed CRM terminal/runtime noise in:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/telephony.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/webrtc_signaling.py`
+- Telephony settings now read/write via existing `salon_settings.custom_settings['telephony_settings']` instead of the nonexistent `salon_settings.telephony_settings` column, removing the live warning on `/crm/telephony`.
+- WebRTC signaling now treats short client disconnect codes from `internal-chat` as expected socket closes, so `/api/webrtc/signal` no longer logs false `ERROR` entries like `WebSocket error: 2` during normal page open/close flows.
+- Validation:
+  - `python3 -m py_compile crm/backend/crm_api/telephony.py crm/backend/crm_api/webrtc_signaling.py site/backend/site_api/client_auth.py site/backend/services/loyalty.py`
+  - `python3 -m compileall -q crm/backend`
+  - `venv/bin/python tests/runners/run_all_tests.py` in `/Users/tahir/Desktop/beauty-crm/site/backend` passed `8/8`
+  - live headless checks passed for `/crm/telephony` and `/employee/internal-chat`
+  - current `/Users/tahir/Desktop/beauty-crm/crm/backend/logs/app.log` and `/Users/tahir/Desktop/beauty-crm/site/backend/logs/app.log` contain no fresh `ERROR` or `Traceback` entries after the fixes
+
 ## [2026-03-07] Analytics/Telephony Hardening + Frontend Locale Sync Recovery
 - Hardened `/crm` analytics and telephony against partial API payloads in:
   - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/Analytics.tsx`
@@ -11,6 +34,12 @@
   - removed browser-side `ipapi.co` country detection from `/Users/tahir/Desktop/beauty-crm/site/frontend/src/utils/languageDetection.ts`, `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/ui/phone-input.tsx`, `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/BookingSection.tsx`,
   - removed dead `IP_API` constant from `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/utils/constants.ts`,
   - fixed `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/pages/TermsOfUse.tsx` to normalize `{ success, services }` payload from `/api/public/services` instead of treating it as an array, which removed the live browser console error `Failed to fetch services` on `/terms`.
+- Site route/runtime stabilization for full public + admin + account audit:
+  - normalized `/api/public/services` consumption in `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/pages/ServiceDetail.tsx` and `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/pages/ProcedureDetail.tsx`, restoring `/service/:category` and `/service/:category/:service`,
+  - stopped invalid referral tokens from poisoning later flows in `/Users/tahir/Desktop/beauty-crm/site/frontend/src/services/api.ts`, `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/pages/LandingPage.tsx`, `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/BookingSection.tsx`, `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/pages/account/booking/ConfirmStep.tsx`,
+  - added missing site runtime endpoints in `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/settings.py`, `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/client_auth.py`, `/Users/tahir/Desktop/beauty-crm/site/backend/api/admin_features.py` for account menu settings, promo codes, special packages, loyalty config/categories and gallery client lookup,
+  - fixed admin runtime consumers in `/Users/tahir/Desktop/beauty-crm/site/frontend/src/pages/adminPanel/FeatureManagement.tsx` and `/Users/tahir/Desktop/beauty-crm/site/frontend/src/pages/adminPanel/Dashboard.tsx` so `/admin/features` uses the existing `/api/features` contract and dashboard quick actions no longer trigger duplicate React keys,
+  - changed `/api/public/referral-links/{share_token}` in `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/settings.py` to return `{ success: true, profile: null }` for missing tokens, removing browser 404 noise on invalid `/ref/...` links during live audit.
 - `npm --prefix crm/frontend run db:i18n:auto`: `i18n:extract` completed, but `db:i18n:extract` failed because local PostgreSQL was unavailable at `127.0.0.1:5432`.
 - Recovery: `npm --prefix crm/frontend run i18n:sync` completed; `npm --prefix crm/frontend run i18n:check-only` now reports `0` missing keys and `0` empty values.
 - Validation passed: `i18n:check-only`, `type-check`, `build`, `python3 -m py_compile crm/backend/crm_api/telephony.py crm/backend/db/analytics.py`.

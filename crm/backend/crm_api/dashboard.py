@@ -13,7 +13,7 @@ from db.connection import get_db_connection
 router = APIRouter(tags=["Dashboard"])
 
 @router.post("/dashboard/migrate-payroll")
-async def migrate_payroll_columns(
+def migrate_payroll_columns(
     current_user: dict = Depends(get_current_user)
 ):
     """
@@ -52,7 +52,7 @@ async def migrate_payroll_columns(
             conn.close()
 
 @router.get("/dashboard/employee-stats")
-async def get_employee_stats(
+def get_employee_stats(
     current_user: dict = Depends(get_current_user)
 ):
     """
@@ -69,7 +69,7 @@ async def get_employee_stats(
         del service
 
 @router.get("/dashboard/kpi")
-async def get_dashboard_kpi(
+def get_dashboard_kpi(
     period: str = Query("month", description="Period: today, week, month, year, custom"),
     start_date: Optional[str] = Query(None, description="Start date for custom period (YYYY-MM-DD HH:MM:SS)"),
     end_date: Optional[str] = Query(None, description="End date for custom period (YYYY-MM-DD HH:MM:SS)"),
@@ -108,7 +108,7 @@ async def get_dashboard_kpi(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 @router.get("/dashboard/master-stats/{master_name}")
-async def get_master_stats(
+def get_master_stats(
     master_name: str,
     date: str = Query(..., description="Date (YYYY-MM-DD)"),
     session_token: Optional[str] = Cookie(None)

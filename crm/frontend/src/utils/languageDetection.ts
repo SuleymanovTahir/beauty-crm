@@ -20,10 +20,63 @@ const ARABIC_COUNTRIES = [
   'PS', 'OM', 'KW', 'MR', 'QA', 'BH', 'DJ', 'KM'
 ];
 
-interface CountryDetectionResult {
-  country_code: string;
-  country_name: string;
-  languages?: string[];
+function extractCountryCodeFromLocale(localeValue: string | null | undefined): string | null {
+  const normalizedLocale = String(localeValue || '').trim();
+  if (!normalizedLocale) {
+    return null;
+  }
+
+  const localeParts = normalizedLocale.replace(/_/g, '-').split('-');
+  for (let index = localeParts.length - 1; index >= 0; index -= 1) {
+    const part = localeParts[index]?.trim();
+    if (part && /^[a-z]{2}$/i.test(part)) {
+      return part.toUpperCase();
+    }
+  }
+
+  return null;
+}
+
+function detectCountryFromBrowserContext(): string | null {
+  const languageCandidates = Array.isArray(navigator.languages) && navigator.languages.length > 0
+    ? navigator.languages
+    : [navigator.language];
+
+  for (const candidate of languageCandidates) {
+    const localeCountry = extractCountryCodeFromLocale(candidate);
+    if (localeCountry) {
+      return localeCountry;
+    }
+  }
+
+  const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const timezoneCountryMap: Record<string, string> = {
+    'Asia/Dubai': 'AE',
+    'Europe/Moscow': 'RU',
+    'Asia/Almaty': 'KZ',
+    'Asia/Aqtau': 'KZ',
+    'Asia/Aqtobe': 'KZ',
+    'Asia/Atyrau': 'KZ',
+    'Asia/Oral': 'KZ',
+    'Asia/Qostanay': 'KZ',
+    'Asia/Qyzylorda': 'KZ',
+    'Asia/Shymkent': 'KZ',
+    'Asia/Tashkent': 'UZ',
+    'Asia/Bishkek': 'KG',
+    'Asia/Dushanbe': 'TJ',
+    'Asia/Tbilisi': 'GE',
+    'Asia/Yerevan': 'AM',
+    'Asia/Baku': 'AZ',
+    'Europe/Minsk': 'BY',
+    'Europe/Chisinau': 'MD',
+  };
+
+  const timezoneCountry = timezoneCountryMap[browserTimezone];
+  if (timezoneCountry) {
+    return timezoneCountry;
+  }
+
+  return null;
 }
 
 export async function detectCountry(): Promise<string | null> {
@@ -32,11 +85,10 @@ export async function detectCountry(): Promise<string | null> {
   if (cachedCountry) return cachedCountry;
 
   try {
-    const response = await fetch('https://ipapi.co/json/');
-    const data: CountryDetectionResult = await response.json();
-    if (data.country_code) {
-      localStorage.setItem('user_country', data.country_code);
-      return data.country_code;
+    const detectedCountry = detectCountryFromBrowserContext();
+    if (detectedCountry) {
+      localStorage.setItem('user_country', detectedCountry);
+      return detectedCountry;
     }
     return null;
   } catch (error) {

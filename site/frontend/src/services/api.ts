@@ -426,7 +426,14 @@ export class ApiClient {
     const endpoint = queryString.length > 0
       ? `/api/public/referral-links/${encodeURIComponent(shareToken)}?${queryString}`
       : `/api/public/referral-links/${encodeURIComponent(shareToken)}`
-    return this.request<any>(endpoint)
+    try {
+      return await this.request<any>(endpoint)
+    } catch (error: any) {
+      if (error?.status === 404) {
+        return null
+      }
+      throw error
+    }
   }
 
   async getAvailableDates(masterName: string, year: number, month: number, duration: number = 60) {

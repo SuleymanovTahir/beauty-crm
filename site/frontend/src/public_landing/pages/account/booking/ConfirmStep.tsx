@@ -16,6 +16,7 @@ import { AuthPrompt } from './AuthPrompt';
 import {
     buildReferralBookingSource,
     captureReferralAttributionFromCurrentUrl,
+    clearStoredReferralAttribution,
     getStoredReferralAttribution,
     persistReferralAttribution
 } from '../../../utils/urlUtils';
@@ -160,11 +161,15 @@ export function ConfirmStep({
                     shareToken
                 };
             }
+
+            clearStoredReferralAttribution();
+            return null;
         } catch (error) {
             console.error('Error resolving referral attribution in booking confirmation:', error);
+            clearStoredReferralAttribution();
         }
 
-        return { campaignId: 0, shareToken };
+        return null;
     };
 
     const handlePhoneSubmit = () => {

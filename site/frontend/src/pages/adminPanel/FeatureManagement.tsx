@@ -48,7 +48,7 @@ export default function FeatureManagement() {
 
     const loadConfig = async () => {
         try {
-            const response = await fetch(buildApiUrl('/api/admin/features'), { credentials: 'include' });
+            const response = await fetch(buildApiUrl('/api/features'), { credentials: 'include' });
             const data = await response.json();
             // Ensure we have defaults for all keys
             const defaults: AllFeaturesConfig = {};
@@ -66,7 +66,7 @@ export default function FeatureManagement() {
 
     const handleSave = async () => {
         try {
-            const response = await fetch(buildApiUrl('/api/admin/features'), {
+            const response = await fetch(buildApiUrl('/api/features'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

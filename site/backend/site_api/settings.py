@@ -280,7 +280,7 @@ _salon_settings_cache_time = None
 _salon_settings_cache_ttl = 0  # Disabled for CRM - always fetch fresh data
 
 @router.get("/platform-gates")
-async def get_platform_gates():
+def get_platform_gates():
     """
     Легкий публичный endpoint для feature-gates маршрутизации (site/crm).
     """
@@ -295,7 +295,7 @@ async def get_platform_gates():
 
 @router.get("/business-profile/matrix")
 @require_permission(["settings_view", "settings_edit_branding"])
-async def get_business_profile_matrix_api(session_token: Optional[str] = Cookie(None)):
+def get_business_profile_matrix_api(session_token: Optional[str] = Cookie(None)):
     """
     Матрица модулей/прав по business_type + текущий эффективный профиль workspace.
     """
@@ -364,7 +364,7 @@ async def update_business_profile_config_api(request: Request, session_token: Op
         raise HTTPException(status_code=500, detail=str(error))
 
 @router.get("/salon-settings")
-async def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
+def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
     """
     Получить настройки салона (публичный доступ для базовой информации)
     """
@@ -495,7 +495,7 @@ async def update_salon_settings_api(request: Request, session_token: Optional[st
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/salon-settings/working-hours")
-async def get_salon_working_hours():
+def get_salon_working_hours():
     """Получить рабочие часы салона из настроек"""
     try:
         from db import get_salon_settings
@@ -539,7 +539,7 @@ async def get_salon_working_hours():
 # ===== CURRENCY MANAGEMENT =====
 
 @router.get("/settings/currencies")
-async def get_currencies():
+def get_currencies():
     """Получить список всех доступных валют"""
     try:
         conn = get_db_connection()
@@ -620,7 +620,7 @@ async def delete_currency(code: str, session_token: Optional[str] = Cookie(None)
 # ===== FEATURE MANAGEMENT =====
 
 @router.get("/features")
-async def get_features_config():
+def get_features_config():
     """Получить конфигурацию всех фича-флагов"""
     service = FeatureService()
     return service.get_features_config()
@@ -643,6 +643,354 @@ async def update_features_config(request: Request, session_token: Optional[str] 
     except Exception as e:
         log_error(f"Error updating features: {e}", "settings")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+def _normalize_string_list(raw_value: Any) -> List[str]:
+    if raw_value is None:
+        return []
+
+    values: List[Any]
+    if isinstance(raw_value, (list, tuple, set)):
+        values = list(raw_value)
+    elif isinstance(raw_value, str):
+        normalized_value = raw_value.strip()
+        if len(normalized_value) == 0:
+            return []
+
+        values = []
+        if normalized_value.startswith("[") or normalized_value.startswith("{"):
+            try:
+                import json
+
+                parsed_value = json.loads(normalized_value)
+                if isinstance(parsed_value, list):
+                    values = parsed_value
+                elif parsed_value is not None:
+                    values = [parsed_value]
+            except Exception:
+                values = []
+
+        if len(values) == 0:
+            values = normalized_value.split(",")
+    else:
+        values = [raw_value]
+
+    normalized_items: List[str] = []
+    for value in values:
+        normalized_item = str(value).strip()
+        if len(normalized_item) == 0:
+            continue
+        normalized_items.append(normalized_item)
+
+    return normalized_items
+
+
+def _get_client_identifier_candidates(user: Optional[Dict[str, Any]], explicit_client_id: Optional[str] = None) -> List[str]:
+    candidates: List[str] = []
+
+    def add_candidate(raw_value: Any) -> None:
+        if raw_value is None:
+            return
+
+        normalized_value = str(raw_value).strip()
+        if len(normalized_value) == 0:
+            return
+        if normalized_value in candidates:
+            return
+        candidates.append(normalized_value)
+
+    add_candidate(explicit_client_id)
+
+    if not isinstance(user, dict):
+        return candidates
+
+    add_candidate(user.get("username"))
+    add_candidate(user.get("id"))
+
+    conn = None
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        user_id = user.get("id")
+        user_email = user.get("email")
+        user_phone = user.get("phone")
+
+        if user_id is not None:
+            c.execute("SELECT instagram_id FROM clients WHERE user_id = %s LIMIT 1", (user_id,))
+            row = c.fetchone()
+            if row:
+                add_candidate(row[0])
+
+        if len(candidates) < 3 and isinstance(user_email, str) and len(user_email.strip()) > 0:
+            c.execute("SELECT instagram_id FROM clients WHERE email = %s LIMIT 1", (user_email.strip(),))
+            row = c.fetchone()
+            if row:
+                add_candidate(row[0])
+
+        if len(candidates) < 3 and isinstance(user_phone, str) and len(user_phone.strip()) > 0:
+            c.execute("SELECT instagram_id FROM clients WHERE phone = %s LIMIT 1", (user_phone.strip(),))
+            row = c.fetchone()
+            if row:
+                add_candidate(row[0])
+    except Exception as error:
+        log_error(f"Error resolving client identifiers: {error}", "settings")
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return candidates
+
+
+def get_account_menu_settings_payload(user: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    default_payload = {
+        "hidden_items": [],
+        "apply_mode": "all",
+        "target_client_ids": [],
+    }
+
+    if not isinstance(user, dict):
+        return default_payload
+
+    conn = None
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        user_id = user.get("id")
+        if user_id is not None:
+            c.execute("SELECT hidden_items FROM menu_settings WHERE user_id = %s LIMIT 1", (user_id,))
+            user_row = c.fetchone()
+            if user_row:
+                return {
+                    "hidden_items": _normalize_string_list(user_row[0]),
+                    "apply_mode": "selected",
+                    "target_client_ids": [str(user_id)],
+                }
+
+        role_candidates: List[str] = []
+        normalized_role = str(user.get("role") or "").strip()
+        if len(normalized_role) > 0:
+            role_candidates.append(normalized_role)
+        if normalized_role == "client":
+            role_candidates.extend(["client_account", "account"])
+
+        for role_key in role_candidates:
+            c.execute("SELECT hidden_items FROM menu_settings WHERE role = %s LIMIT 1", (role_key,))
+            role_row = c.fetchone()
+            if role_row:
+                return {
+                    "hidden_items": _normalize_string_list(role_row[0]),
+                    "apply_mode": "all",
+                    "target_client_ids": [],
+                }
+    except Exception as error:
+        log_error(f"Error loading account menu settings: {error}", "settings")
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return default_payload
+
+
+@router.get("/account-menu-settings")
+def get_account_menu_settings(session_token: Optional[str] = Cookie(None)):
+    from utils.utils import require_auth
+
+    user = require_auth(session_token)
+    return get_account_menu_settings_payload(user)
+
+
+@router.get("/promo-codes")
+def get_active_promo_codes(session_token: Optional[str] = Cookie(None)):
+    from utils.utils import require_auth
+
+    user = require_auth(session_token)
+    client_identifiers = set(_get_client_identifier_candidates(user))
+    conn = None
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        now = datetime.now()
+        c.execute("""
+            SELECT
+                id,
+                code,
+                discount_type,
+                value,
+                min_amount,
+                valid_from,
+                valid_until,
+                max_uses,
+                current_uses,
+                COALESCE(is_active, FALSE),
+                category,
+                description,
+                created_at,
+                COALESCE(target_scope, 'all'),
+                target_category_names,
+                target_service_ids,
+                target_client_ids
+            FROM promo_codes
+            WHERE COALESCE(is_active, FALSE) = TRUE
+              AND (valid_from IS NULL OR valid_from <= %s)
+              AND (valid_until IS NULL OR valid_until >= %s)
+            ORDER BY created_at DESC, id DESC
+        """, (now, now))
+
+        promo_codes = []
+        for row in c.fetchall():
+            target_scope = str(row[13] or "all").strip().lower()
+            target_categories = _normalize_string_list(row[14])
+            target_service_ids = [
+                int(value)
+                for value in _normalize_string_list(row[15])
+                if value.isdigit()
+            ]
+            target_client_ids = _normalize_string_list(row[16])
+
+            if target_scope == "clients" and len(target_client_ids) > 0:
+                if not any(candidate in target_client_ids for candidate in client_identifiers):
+                    continue
+
+            promo_codes.append({
+                "id": row[0],
+                "code": row[1],
+                "discount_type": row[2],
+                "value": row[3] or 0,
+                "min_amount": row[4] or 0,
+                "valid_from": row[5].isoformat() if row[5] else None,
+                "valid_until": row[6].isoformat() if row[6] else None,
+                "max_uses": row[7],
+                "current_uses": row[8] or 0,
+                "is_active": bool(row[9]),
+                "category": row[10],
+                "description": row[11],
+                "created_at": row[12].isoformat() if row[12] else now.isoformat(),
+                "target_scope": target_scope,
+                "target_categories": target_categories,
+                "target_service_ids": target_service_ids,
+                "target_client_ids": target_client_ids,
+            })
+
+        return {"promo_codes": promo_codes}
+    except psycopg2.errors.UndefinedTable:
+        return {"promo_codes": []}
+    except Exception as error:
+        log_error(f"Error loading promo codes: {error}", "settings")
+        raise HTTPException(status_code=500, detail=str(error))
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+@router.api_route("/promo-codes/validate", methods=["GET", "POST"])
+async def validate_promo_code_api(
+    code: str = Query(...),
+    amount: float = Query(0),
+    service_ids: Optional[str] = Query(None),
+    service_categories: Optional[str] = Query(None),
+    client_id: Optional[str] = Query(None),
+    session_token: Optional[str] = Cookie(None),
+):
+    from db.promo_codes import validate_promo_code
+    from utils.utils import require_auth
+
+    user = require_auth(session_token)
+    normalized_service_ids = [
+        int(value)
+        for value in _normalize_string_list(service_ids)
+        if value.isdigit()
+    ]
+    normalized_service_categories = _normalize_string_list(service_categories)
+    client_identifier_candidates = _get_client_identifier_candidates(user, client_id)
+
+    validation_candidates: List[Optional[str]] = [None]
+    if len(client_identifier_candidates) > 0:
+        validation_candidates = client_identifier_candidates
+
+    last_result: Optional[Dict[str, Any]] = None
+    for candidate in validation_candidates:
+        result = validate_promo_code(
+            code=code,
+            booking_amount=max(0, float(amount or 0)),
+            service_ids=normalized_service_ids,
+            service_categories=normalized_service_categories,
+            client_id=candidate,
+        )
+        last_result = result
+        if result.get("valid") is True:
+            return result
+
+    if last_result is not None:
+        return last_result
+
+    return {"valid": False, "error": "Промокод не найден или неактивен"}
+
+
+@router.get("/services/special-packages")
+def get_special_packages_api(active_only: bool = True):
+    conn = None
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        now = datetime.now()
+
+        if active_only:
+            c.execute("""
+                SELECT
+                    id,
+                    name,
+                    description,
+                    original_price,
+                    special_price,
+                    promo_code,
+                    valid_until,
+                    COALESCE(is_active, TRUE)
+                FROM special_packages
+                WHERE COALESCE(is_active, TRUE) = TRUE
+                  AND (valid_from IS NULL OR valid_from <= %s)
+                  AND (valid_until IS NULL OR valid_until >= %s)
+                ORDER BY created_at DESC, id DESC
+            """, (now, now))
+        else:
+            c.execute("""
+                SELECT
+                    id,
+                    name,
+                    description,
+                    original_price,
+                    special_price,
+                    promo_code,
+                    valid_until,
+                    COALESCE(is_active, TRUE)
+                FROM special_packages
+                ORDER BY created_at DESC, id DESC
+            """)
+
+        packages = [
+            {
+                "id": row[0],
+                "name": row[1],
+                "description": row[2],
+                "original_price": row[3] or 0,
+                "special_price": row[4] or 0,
+                "promo_code": row[5],
+                "valid_until": row[6].isoformat() if row[6] else None,
+                "is_active": bool(row[7]),
+            }
+            for row in c.fetchall()
+        ]
+
+        return {"success": True, "packages": packages}
+    except psycopg2.errors.UndefinedTable:
+        return {"success": True, "packages": []}
+    except Exception as error:
+        log_error(f"Error loading special packages: {error}", "settings")
+        raise HTTPException(status_code=500, detail=str(error))
+    finally:
+        if conn is not None:
+            conn.close()
 
 # ===== REFERRAL CAMPAIGNS =====
 import json
@@ -1212,7 +1560,7 @@ async def get_public_referral_link_profile(
     try:
         normalized_token = str(share_token or "").strip().lower()
         if not normalized_token:
-            raise HTTPException(status_code=404, detail="Referral link not found")
+            return {"success": True, "profile": None}
 
         start_date, end_date = _parse_referral_analytics_range(period, date_from, date_to)
         conn = get_db_connection()
@@ -1294,7 +1642,7 @@ async def get_public_referral_link_profile(
 
         if campaign_id is None:
             conn.close()
-            raise HTTPException(status_code=404, detail="Referral link not found")
+            return {"success": True, "profile": None}
 
         c.execute(
             """

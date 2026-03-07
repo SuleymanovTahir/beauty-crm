@@ -135,6 +135,7 @@ export default function AdminDashboard() {
 
   const quickActions = [
     {
+      id: 'loyalty-management',
       title: t('quick_actions.loyalty_management.title'),
       description: t('quick_actions.loyalty_management.description'),
       icon: Gift,
@@ -142,6 +143,7 @@ export default function AdminDashboard() {
       color: 'from-blue-500 to-pink-500',
     },
     {
+      id: 'notifications',
       title: t('quick_actions.notifications.title'),
       description: t('quick_actions.notifications.description'),
       icon: Bell,
@@ -149,6 +151,7 @@ export default function AdminDashboard() {
       color: 'from-indigo-500 to-blue-500',
     },
     {
+      id: 'photo-gallery',
       title: t('quick_actions.photo_gallery.title'),
       description: t('quick_actions.photo_gallery.description'),
       icon: Image,
@@ -156,6 +159,7 @@ export default function AdminDashboard() {
       color: 'from-pink-500 to-rose-500',
     },
     {
+      id: 'feature-management',
       title: t('quick_actions.feature_management.title', { defaultValue: 'Feature Management' }),
       description: t('quick_actions.feature_management.description', { defaultValue: 'Manage platform feature availability' }),
       icon: Target,
@@ -163,6 +167,7 @@ export default function AdminDashboard() {
       color: 'from-green-500 to-emerald-500',
     },
     {
+      id: 'user-management',
       title: t('quick_actions.user_management.title'),
       description: t('quick_actions.user_management.description'),
       icon: Users,
@@ -170,6 +175,7 @@ export default function AdminDashboard() {
       color: 'from-blue-500 to-cyan-500',
     },
     {
+      id: 'referral-program',
       title: t('quick_actions.referral_program.title'),
       description: t('quick_actions.referral_program.description'),
       icon: Award,
@@ -252,7 +258,7 @@ export default function AdminDashboard() {
           {quickActions.map((action) => {
             const Icon = action.icon;
             return (
-              <Link key={action.path} to={action.path}>
+              <Link key={action.id} to={action.path}>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">

@@ -17,23 +17,43 @@ class LoyaltyService:
     def __init__(self):
         pass
 
+    def _client_exists(self, cursor, client_id: Optional[str]) -> bool:
+        normalized_client_id = str(client_id).strip() if client_id is not None else ""
+        if normalized_client_id == "":
+            return False
+
+        cursor.execute(
+            "SELECT 1 FROM clients WHERE instagram_id = %s LIMIT 1",
+            (normalized_client_id,),
+        )
+        return cursor.fetchone() is not None
+
     def get_client_loyalty(self, client_id: str) -> Optional[Dict]:
         """Получить данные лояльности клиента"""
         conn = get_db_connection()
         c = conn.cursor()
 
         try:
+            normalized_client_id = str(client_id).strip() if client_id is not None else ""
+            if normalized_client_id == "":
+                return {
+                    "total_points": 0,
+                    "available_points": 0,
+                    "spent_points": 0,
+                    "loyalty_level": "bronze"
+                }
+
             c.execute("""
                 SELECT total_points, available_points, spent_points, loyalty_level
                 FROM client_loyalty_points
                 WHERE client_id = %s
-            """, (client_id,))
+            """, (normalized_client_id,))
 
             result = c.fetchone()
 
             if not result:
-                # Создаем запись для нового клиента
-                self._create_loyalty_account(client_id)
+                if self._client_exists(c, normalized_client_id):
+                    self._create_loyalty_account(normalized_client_id)
                 return {
                     "total_points": 0,
                     "available_points": 0,
@@ -60,6 +80,11 @@ class LoyaltyService:
         c = conn.cursor()
 
         try:
+            normalized_client_id = str(client_id).strip() if client_id is not None else ""
+            if not self._client_exists(c, normalized_client_id):
+                log_info(f"Skipped loyalty account creation for unresolved client_id='{normalized_client_id}'", "loyalty")
+                return False
+
             now = datetime.now().isoformat()
 
             c.execute("""
@@ -67,7 +92,7 @@ class LoyaltyService:
                 (client_id, total_points, available_points, spent_points, loyalty_level, created_at, updated_at)
                 VALUES (%s, 0, 0, 0, 'bronze', %s, %s)
                 ON CONFLICT (client_id) DO NOTHING
-            """, (client_id, now, now))
+            """, (normalized_client_id, now, now))
 
             conn.commit()
             return True

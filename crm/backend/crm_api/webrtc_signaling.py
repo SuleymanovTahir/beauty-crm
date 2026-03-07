@@ -26,6 +26,22 @@ active_calls: Dict[str, dict] = {}
 # Структура: {user_id: "available" | "busy" | "calling" | "on_hold"}
 user_call_status: Dict[int, str] = {}
 
+
+def _is_expected_websocket_close(error: Exception) -> bool:
+    close_code = getattr(error, "code", None)
+    if isinstance(close_code, int) and (close_code in {1000, 1001, 1005} or 0 <= close_code < 1000):
+        return True
+
+    message = str(error).strip().lower()
+    if message.isdigit() and 0 <= int(message) < 1000:
+        return True
+
+    return (
+        message in {"1000", "1001", "1005", "5"}
+        or "disconnect message" in message
+        or "websocket is not connected" in message
+    )
+
 def get_user_dnd(user_id: int) -> bool:
     """Проверить DND статус пользователя в БД"""
     try:
@@ -168,13 +184,57 @@ async def websocket_endpoint(websocket: WebSocket):
     """
     user_id = None
 
+    async def cleanup_disconnect() -> None:
+        nonlocal user_id
+
+        if not user_id:
+            return
+
+        is_offline = manager.disconnect(user_id, websocket)
+        user_call_status[user_id] = "available"
+
+        log_info(f"WebSocket disconnect cleanup for user {user_id}", "webrtc")
+        await manager.broadcast({
+            "type": "hangup",
+            "from": user_id
+        })
+
+        if is_offline:
+            if user_id in user_call_status:
+                del user_call_status[user_id]
+
+            await manager.broadcast({
+                "type": "user_status",
+                "user_id": user_id,
+                "status": "offline",
+                "last_seen": datetime.now().isoformat()
+            })
+
+            try:
+                conn = get_db_connection()
+                c = conn.cursor()
+                c.execute("UPDATE user_status SET is_online = false WHERE user_id = %s", (user_id,))
+                conn.commit()
+                conn.close()
+            except Exception as e:
+                log_error(f"Error updating offline status in DB: {e}", "webrtc")
+
+        log_info(f"WebSocket disconnected: user {user_id}", "webrtc")
+
     try:
         await websocket.accept()
         log_info("🔌 WebRTC WS: Connection accepted", "webrtc")
 
         while True:
             # Получаем сообщение от клиента
-            data = await websocket.receive_json()
+            try:
+                data = await websocket.receive_json()
+            except WebSocketDisconnect:
+                raise
+            except Exception as receive_error:
+                if _is_expected_websocket_close(receive_error):
+                    raise WebSocketDisconnect(code=getattr(receive_error, "code", 1005))
+                raise
             message_type = data.get("type")
 
             # Регистрация пользователя
@@ -414,53 +474,15 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
     except WebSocketDisconnect:
-        if user_id:
-            # 1. First remove the connection so we don't try to broadcast to it
-            is_offline = manager.disconnect(user_id, websocket)
-            
-            # 2. Reset status
-            user_call_status[user_id] = "available"
-
-            # 3. Then send hangup cleanup to others
-            log_info(f"WebSocket disconnect cleanup for user {user_id}", "webrtc")
-            await manager.broadcast({
-                "type": "hangup",
-                "from": user_id
-            })
-            
-            if is_offline:
-                if user_id in user_call_status: del user_call_status[user_id]
-                # Broadcast offline status only if no connections left
-                await manager.broadcast({
-                    "type": "user_status",
-                    "user_id": user_id,
-                    "status": "offline",
-                    "last_seen": datetime.now().isoformat()
-                })
-                
-                # Update DB status to offline
-                try:
-                    conn = get_db_connection()
-                    c = conn.cursor()
-                    c.execute("UPDATE user_status SET is_online = false WHERE user_id = %s", (user_id,))
-                    conn.commit()
-                    conn.close()
-                except Exception as e:
-                    log_error(f"Error updating offline status in DB: {e}", "webrtc")
-                    
-            log_info(f"WebSocket disconnected: user {user_id}", "webrtc")
+        await cleanup_disconnect()
     except Exception as e:
+        if _is_expected_websocket_close(e):
+            await cleanup_disconnect()
+            log_info(f"WebSocket closed without signaling error: {getattr(e, 'code', str(e))}", "webrtc")
+            return
+
         log_error(f"WebSocket error: {e}", "webrtc")
-        if user_id:
-            # Also send cleanup on error
-            try:
-                await manager.broadcast({
-                    "type": "hangup",
-                    "from": user_id
-                })
-            except:
-                pass
-            manager.disconnect(user_id, websocket)
+        await cleanup_disconnect()
 
 
 @router.get("/online-users")

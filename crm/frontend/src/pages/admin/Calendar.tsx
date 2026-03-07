@@ -240,11 +240,24 @@ export default function Calendar({
   const loadData = async () => {
     try {
       setLoading(true);
+      const usersPromise = employeeFilter
+        ? Promise.resolve({
+            users: currentUser?.id
+              ? [{
+                  id: Number(currentUser.id),
+                  username: String(currentUser.username || ''),
+                  full_name: String(currentUser.full_name || ''),
+                  role: String(currentUser.role || 'employee'),
+                  is_service_provider: true,
+                }]
+              : [],
+          })
+        : api.getUsers(i18n.language);
       const [bookingsData, servicesData, clientsData, usersData] = await Promise.all([
         api.getBookings({ page: 1, limit: 5000, sort: 'datetime', order: 'desc', language: i18n.language }),
         api.getServices(true, i18n.language),
         api.getClients(),
-        api.getUsers(i18n.language)
+        usersPromise
       ]);
 
       setBookings(bookingsData.bookings || []);

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 import hashlib
 import secrets
 from datetime import datetime, timedelta
-from typing import Optional, Set
+from typing import Any, Optional, Set
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
@@ -47,42 +47,89 @@ def generate_token() -> str:
 def _get_client_id(user: dict, cursor) -> str:
     """Универсальный помощник для получения instagram_id клиента"""
     log_info(f"🔍 Determining client_id for user: {user.get('id')} ({user.get('username')})", "client_auth")
-    # 1. Сначала пробуем социальные ID из сессии
-    instagram_id = user.get("instagram_id")
-    telegram_id = user.get("telegram_id")
-    
-    if instagram_id: return instagram_id
-    if telegram_id: return telegram_id
-    
-    # 2. Если их нет, ищем в таблице clients по email или телефону
+    client_columns = _get_table_columns(cursor, "clients")
+    user_id = user.get("id")
     user_email = user.get("email")
     user_phone = user.get("phone")
-    
-    if user_email:
+
+    instagram_id = user.get("instagram_id")
+    if instagram_id:
+        cursor.execute("SELECT instagram_id FROM clients WHERE instagram_id = %s LIMIT 1", (str(instagram_id),))
+        row = cursor.fetchone()
+        if row:
+            return row[0]
+
+    telegram_id = user.get("telegram_id")
+    if telegram_id and "telegram_id" in client_columns:
+        cursor.execute("SELECT instagram_id FROM clients WHERE telegram_id = %s LIMIT 1", (str(telegram_id),))
+        row = cursor.fetchone()
+        if row:
+            return row[0]
+
+    if user_id is not None and "user_id" in client_columns:
+        cursor.execute("SELECT instagram_id FROM clients WHERE user_id = %s LIMIT 1", (user_id,))
+        row = cursor.fetchone()
+        if row:
+            return row[0]
+
+    if user_email and "email" in client_columns:
         cursor.execute("SELECT instagram_id FROM clients WHERE email = %s LIMIT 1", (user_email,))
         row = cursor.fetchone()
-        if row: return row[0]
-        
-    if user_phone:
+        if row:
+            return row[0]
+
+    if user_phone and "phone" in client_columns:
         cursor.execute("SELECT instagram_id FROM clients WHERE phone = %s LIMIT 1", (user_phone,))
         row = cursor.fetchone()
-        if row: return row[0]
-        
-    # 3. Наконец, пробуем по username
+        if row:
+            return row[0]
+
     username = user.get("username")
-    if username:
+    if username and "instagram_id" in client_columns:
         cursor.execute("SELECT instagram_id FROM clients WHERE instagram_id = %s LIMIT 1", (username,))
         row = cursor.fetchone()
-        if row: return row[0]
-        
-    # 4. Проверяем, есть ли запись в client_loyalty_points по user_id
-    user_id = str(user.get("id", ""))
-    if user_id:
-        cursor.execute("SELECT client_id FROM client_loyalty_points WHERE client_id = %s", (user_id,))
-        if cursor.fetchone(): return user_id
-        
-    # 5. Крайний случай - возвращаем user_id как строку
-    return user_id
+        if row:
+            return row[0]
+
+    full_name = user.get("full_name")
+    if full_name and "name" in client_columns:
+        cursor.execute("SELECT instagram_id FROM clients WHERE LOWER(name) = LOWER(%s) LIMIT 1", (full_name,))
+        row = cursor.fetchone()
+        if row:
+            return row[0]
+
+    booking_lookup_clauses = []
+    booking_lookup_params = []
+    if user_phone:
+        booking_lookup_clauses.append("phone = %s")
+        booking_lookup_params.append(user_phone)
+    if user_id is not None:
+        booking_lookup_clauses.append("user_id = %s")
+        booking_lookup_params.append(user_id)
+    if username:
+        booking_lookup_clauses.append("instagram_id = %s")
+        booking_lookup_params.append(username)
+
+    if booking_lookup_clauses:
+        cursor.execute(f"""
+            SELECT instagram_id
+            FROM bookings
+            WHERE instagram_id IS NOT NULL
+              AND ({' OR '.join(booking_lookup_clauses)})
+            ORDER BY datetime DESC
+            LIMIT 1
+        """, tuple(booking_lookup_params))
+        row = cursor.fetchone()
+        if row:
+            return row[0]
+
+    if instagram_id:
+        return str(instagram_id)
+    if username:
+        return str(username)
+    if telegram_id:
+        return str(telegram_id)
+    return ""
 
 
 def _get_table_columns(cursor, table_name: str) -> Set[str]:
@@ -93,12 +140,41 @@ def _get_table_columns(cursor, table_name: str) -> Set[str]:
     """, (table_name,))
     return {row[0] for row in cursor.fetchall()}
 
+
+def _table_exists(cursor, table_name: str) -> bool:
+    cursor.execute("""
+        SELECT EXISTS (
+            SELECT 1
+            FROM information_schema.tables
+            WHERE table_schema = 'public' AND table_name = %s
+        )
+    """, (table_name,))
+    row = cursor.fetchone()
+    return bool(row[0]) if row else False
+
+
+def _parse_duration_minutes(raw_duration: Any) -> int:
+    if raw_duration is None:
+        return 60
+    if isinstance(raw_duration, (int, float)):
+        return max(1, int(raw_duration))
+
+    raw_value = str(raw_duration).strip()
+    digits = "".join(ch for ch in raw_value if ch.isdigit())
+    if digits == "":
+        return 60
+
+    try:
+        return max(1, int(digits))
+    except Exception:
+        return 60
+
 # ============================================================================
 # ENDPOINTS
 # ============================================================================
 
 @router.get("/dashboard")
-async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
+def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -114,9 +190,11 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
     user_email = user.get("email")
 
     try:
-        # Get client row for stats
-        c.execute("""
-            SELECT loyalty_points, referral_code, total_saved, name, phone, email 
+        client_columns = _get_table_columns(c, "clients")
+        referral_code_sql = "referral_code" if "referral_code" in client_columns else "NULL::TEXT AS referral_code"
+
+        c.execute(f"""
+            SELECT COALESCE(loyalty_points, 0), {referral_code_sql}, name, phone, email
             FROM clients
             WHERE instagram_id = %s
             LIMIT 1
@@ -127,35 +205,14 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         # Get loyalty points and info correctly
         from services.loyalty import LoyaltyService
         loyalty_service = LoyaltyService()
-        loyalty_data = loyalty_service.get_client_loyalty(client_id)
+        loyalty_data = loyalty_service.get_client_loyalty(client_id) if client_id else None
         
         points = loyalty_data.get("available_points", 0) if loyalty_data else 0
-        total_spent = 0
-        total_saved = 0
-        
-        # Get actual totals if possible
-        try:
-            c.execute("SELECT total_spend, total_saved FROM clients WHERE instagram_id = %s", (client_id,))
-            spent_row = c.fetchone()
-            if spent_row:
-                total_spent = spent_row[0] or 0
-                total_saved = spent_row[1] or 0
-        except: pass
-
-        loyalty = {
-            "points": points,
-            "available_points": points,
-            "total_points": loyalty_data.get("total_points", 0) if loyalty_data else points,
-            "tier": (loyalty_data.get("loyalty_level", "bronze") if loyalty_data else "bronze").capitalize(),
-            "referral_code": client_row[1] if client_row and client_row[1] else None,
-            "total_saved": total_saved,
-            "total_spent": total_spent
-        }
 
         client_info = {
-            "name": (client_row[3] if client_row and client_row[3] else user.get("full_name", "")),
-            "phone": (client_row[4] if client_row and client_row[4] else user_phone or ""),
-            "email": (client_row[5] if client_row and client_row[5] else user_email or "")
+            "name": (client_row[2] if client_row and client_row[2] else user.get("full_name", "")),
+            "phone": (client_row[3] if client_row and client_row[3] else user_phone or ""),
+            "email": (client_row[4] if client_row and client_row[4] else user_email or "")
         }
 
         current_time = datetime.now().isoformat()
@@ -182,10 +239,16 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
 
         # Search for recent visits
         c.execute("""
-            SELECT b.id, b.service_name, b.datetime, b.master, b.master_id, 
+            SELECT b.id, b.service_name, b.datetime, b.master, COALESCE(b.master_user_id, u.id), 
                    COALESCE(u.photo, u.photo_url), u.full_name, s.id, b.revenue
             FROM bookings b
-            LEFT JOIN users u ON (LOWER(b.master) = LOWER(u.full_name) OR LOWER(b.master) = LOWER(u.username))
+            LEFT JOIN users u ON (
+                (b.master_user_id IS NOT NULL AND b.master_user_id = u.id)
+                OR (
+                    b.master_user_id IS NULL
+                    AND (LOWER(b.master) = LOWER(u.full_name) OR LOWER(b.master) = LOWER(u.username))
+                )
+            )
             LEFT JOIN services s ON LOWER(b.service_name) = LOWER(s.name)
             WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
             AND b.status = 'completed'
@@ -278,7 +341,7 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
             },
             "achievements_summary": {
                 "unlocked": unlocked,
-                "total": total_ach or 4
+                "total": total_ach or 0
             }
         }
     except Exception as e:
@@ -288,7 +351,7 @@ async def get_client_dashboard(session_token: Optional[str] = Cookie(None)):
         conn.close()
 
 @router.get("/achievements")
-async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
+def get_client_achievements(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
 
@@ -507,7 +570,7 @@ async def get_client_achievements(session_token: Optional[str] = Cookie(None)):
         return {"success": True, "achievements": [], "challenges": []}
 
 @router.get("/features")
-async def get_client_features(session_token: Optional[str] = Cookie(None)):
+def get_client_features(session_token: Optional[str] = Cookie(None)):
     """Получить доступные фичи для клиента"""
     user = require_auth(session_token)
     # If not authenticated, we can still return general availability (without whitelist)
@@ -542,8 +605,23 @@ async def get_client_features(session_token: Optional[str] = Cookie(None)):
         
     return {"success": True, "features": features}
 
+
+@router.get("/account-menu-settings")
+def get_client_account_menu_settings(session_token: Optional[str] = Cookie(None)):
+    user = require_auth(session_token)
+    if not user:
+        return {
+            "hidden_items": [],
+            "apply_mode": "all",
+            "target_client_ids": [],
+        }
+
+    from site_api.settings import get_account_menu_settings_payload
+
+    return get_account_menu_settings_payload(user)
+
 @router.get("/beauty-metrics")
-async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None)):
+def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
     
@@ -610,13 +688,12 @@ async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None))
             SELECT 
                 b.service_name,
                 MAX(b.datetime::timestamp) as last_visit,
-                s.duration_minutes,
                 COALESCE(s.recommended_interval_days, 30) as interval_days
             FROM bookings b
             JOIN services s ON LOWER(b.service_name) = LOWER(s.name)
             WHERE (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
             AND b.status = 'completed'
-            GROUP BY b.service_name, s.duration_minutes, s.recommended_interval_days
+            GROUP BY b.service_name, s.recommended_interval_days
             ORDER BY last_visit DESC
             LIMIT 10
         """, (client_id, user_phone, user_id))
@@ -628,7 +705,7 @@ async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None))
         for row in c.fetchall():
             service_name = row[0]
             last_visit = row[1]
-            interval_days = row[3]  # From database
+            interval_days = row[2]  # From database
             
             # Calculate days since last visit
             days_since = (now - last_visit).days
@@ -656,7 +733,7 @@ async def get_client_beauty_metrics(session_token: Optional[str] = Cookie(None))
             conn.close()
 
 @router.get("/my-notifications")
-async def get_client_notifications(session_token: Optional[str] = Cookie(None)):
+def get_client_notifications(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
 
@@ -755,7 +832,7 @@ async def mark_all_notifications_read(session_token: Optional[str] = Cookie(None
             conn.close()
 
 @router.get("/my-bookings")
-async def get_client_bookings(
+def get_client_bookings(
     session_token: Optional[str] = Cookie(None),
     language: str = "ru"
 ):
@@ -821,7 +898,7 @@ async def get_client_bookings(
                 "master_name": localized_master_name,
                 "master_photo": photo,
                 "master_id": r[8],
-                "duration_minutes": r[10],
+                "duration_minutes": _parse_duration_minutes(r[10]),
             })
 
         # Fetch currency
@@ -838,7 +915,7 @@ async def get_client_bookings(
             conn.close()
 
 @router.get("/loyalty")
-async def get_loyalty(session_token: Optional[str] = Cookie(None)):
+def get_loyalty(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
 
@@ -921,7 +998,7 @@ async def get_loyalty(session_token: Optional[str] = Cookie(None)):
             conn.close()
 
 @router.get("/profile")
-async def get_client_profile(session_token: Optional[str] = Cookie(None)):
+def get_client_profile(session_token: Optional[str] = Cookie(None)):
     """Get full client profile information"""
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
@@ -931,10 +1008,13 @@ async def get_client_profile(session_token: Optional[str] = Cookie(None)):
         c = conn.cursor()
 
         client_id = _get_client_id(user, c)
+        client_columns = _get_table_columns(c, "clients")
+        client_avatar_sql = "profile_pic AS avatar" if "profile_pic" in client_columns else "NULL::TEXT AS avatar"
+        client_preferences_sql = "preferences" if "preferences" in client_columns else "NULL::TEXT AS preferences"
 
         # Get client data from clients table
-        c.execute("""
-            SELECT name, phone, email, avatar, birthday, created_at, preferences
+        c.execute(f"""
+            SELECT name, phone, email, {client_avatar_sql}, birthday, created_at, {client_preferences_sql}
             FROM clients
             WHERE instagram_id = %s
             LIMIT 1
@@ -1012,7 +1092,7 @@ def get_discount_for_tier(tier: str) -> int:
     return discount_map.get(tier.lower(), 0)
 
 @router.get("/gallery")
-async def get_gallery(session_token: Optional[str] = Cookie(None)):
+def get_gallery(session_token: Optional[str] = Cookie(None)):
     user = require_auth(session_token)
     if not user: raise HTTPException(status_code=401)
     
@@ -1024,9 +1104,8 @@ async def get_gallery(session_token: Optional[str] = Cookie(None)):
         
         c.execute("""
             SELECT cg.id, cg.before_photo, cg.after_photo, cg.created_at, 
-                   s.name as service_name, u.full_name as master_name, cg.notes, cg.category
+                   cg.category as service_name, u.full_name as master_name, cg.notes, cg.category
             FROM client_gallery cg
-            LEFT JOIN services s ON cg.service_id = s.id
             LEFT JOIN users u ON cg.master_id = u.id
             WHERE cg.client_id = %s
             ORDER BY cg.created_at DESC
@@ -1051,7 +1130,7 @@ async def get_gallery(session_token: Optional[str] = Cookie(None)):
                 "service": row[4],
                 "master_name": row[5],
                 "notes": row[6],
-                "category": row[7] or 'other'
+                "category": row[7] or ""
             })
             
         return {"success": True, "gallery": items}
@@ -1063,7 +1142,7 @@ async def get_gallery(session_token: Optional[str] = Cookie(None)):
             conn.close()
 
 @router.get("/favorite-masters")
-async def get_fav_masters(
+def get_fav_masters(
     session_token: Optional[str] = Cookie(None),
     language: str = 'ru'
 ):
@@ -1086,28 +1165,43 @@ async def get_fav_masters(
         position_field = f'position_{language}'
         name_field = f'full_name_{language}'
         spec_field = f'specialization_{language}'
+        user_columns = _get_table_columns(c, "users")
+
+        safe_position_field = position_field if position_field in user_columns else "position"
+        safe_name_field = name_field if name_field in user_columns else "full_name"
+        safe_spec_field = spec_field if spec_field in user_columns else "specialization"
+        has_ratings_table = _table_exists(c, "ratings")
+        ratings_join_sql = "LEFT JOIN ratings r ON r.booking_id = b.id" if has_ratings_table else ""
+        ratings_avg_sql = "COALESCE(AVG(r.rating), 0) as rating" if has_ratings_table else "0::DOUBLE PRECISION as rating"
+        ratings_count_sql = "COUNT(DISTINCT r.id) as reviews_count" if has_ratings_table else "0 as reviews_count"
 
         # Get only masters where the client had completed bookings
         c.execute(f"""
             SELECT
                 u.id,
-                COALESCE(u.{name_field}, u.full_name) as name,
-                COALESCE(u.{position_field}, u.position) as position,
+                COALESCE(u.{safe_name_field}, u.full_name) as name,
+                COALESCE(u.{safe_position_field}, u.position) as position,
                 COALESCE(u.photo, u.photo_url),
-                COALESCE(u.{spec_field}, u.specialization) as specialization,
+                COALESCE(u.{safe_spec_field}, u.specialization) as specialization,
                 CASE WHEN cfm.master_id IS NOT NULL THEN true ELSE false END as is_favorite,
-                COALESCE(AVG(r.rating), 0) as rating,
-                COUNT(DISTINCT r.id) as reviews_count,
+                {ratings_avg_sql},
+                {ratings_count_sql},
                 COUNT(DISTINCT b.id) as total_bookings
             FROM users u
-            INNER JOIN bookings b ON b.master_id = u.id
+            INNER JOIN bookings b ON (
+                (b.master_user_id IS NOT NULL AND b.master_user_id = u.id)
+                OR (
+                    b.master_user_id IS NULL
+                    AND (LOWER(b.master) = LOWER(u.full_name) OR LOWER(b.master) = LOWER(u.username))
+                )
+            )
             LEFT JOIN client_favorite_masters cfm ON cfm.master_id = u.id AND cfm.client_id = %s
-            LEFT JOIN ratings r ON r.booking_id = b.id
+            {ratings_join_sql}
             WHERE u.is_service_provider = true 
             AND u.is_active = true
             AND (b.instagram_id = %s OR b.phone = %s OR b.user_id = %s)
             AND b.status = 'completed'
-            GROUP BY u.id, u.{name_field}, u.full_name, u.{position_field}, u.position, u.photo, u.photo_url, u.{spec_field}, u.specialization, cfm.master_id
+            GROUP BY u.id, u.{safe_name_field}, u.full_name, u.{safe_position_field}, u.position, u.photo, u.photo_url, u.{safe_spec_field}, u.specialization, cfm.master_id
             ORDER BY total_bookings DESC, u.full_name
         """, (client_id, client_id, user.get("phone"), user.get("id")))
 

@@ -28,6 +28,7 @@ import { detectCountry } from '@site/utils/languageDetection';
 import {
   buildReferralBookingSource,
   captureReferralAttributionFromCurrentUrl,
+  clearStoredReferralAttribution,
   getStoredReferralAttribution,
   persistReferralAttribution
 } from '../utils/urlUtils';
@@ -233,16 +234,22 @@ export const BookingSection = () => {
           persistReferralAttribution(nextAttribution, window.location.pathname);
           return;
         }
-      } catch (error) {
-        console.error('Error resolving referral link:', error);
-      }
 
-      const fallbackAttribution = {
-        campaignId: 0,
-        shareToken: fallbackShareToken
-      };
-      setReferralAttribution(fallbackAttribution);
-      persistReferralAttribution(fallbackAttribution, window.location.pathname);
+        clearStoredReferralAttribution();
+        setReferralAttribution({
+          campaignId: 0,
+          shareToken: ''
+        });
+        return;
+      } catch (error) {
+        clearStoredReferralAttribution();
+        console.error('Error resolving referral link:', error);
+        setReferralAttribution({
+          campaignId: 0,
+          shareToken: ''
+        });
+        return;
+      }
     };
 
     resolveReferralAttribution();

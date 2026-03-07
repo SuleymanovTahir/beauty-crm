@@ -126,13 +126,30 @@ export function ProcedureDetail() {
       .catch(() => { });
 
     if (!serviceId) return;
-    fetch(buildApiUrl(`/api/public/services/${serviceId}?language=${encodeURIComponent(language)}`, API_URL))
+    fetch(buildApiUrl(`/api/public/services?language=${encodeURIComponent(language)}`, API_URL))
       .then((r) => {
-        if (!r.ok) throw new Error("Failed to load service");
+        if (!r.ok) throw new Error("Failed to load services");
         return r.json();
       })
       .then((data) => {
-        setService(data);
+        const servicesList = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.services)
+            ? data.services
+            : Array.isArray(data?.categories)
+              ? data.categories.flatMap((categoryItem: any) => (
+                  Array.isArray(categoryItem?.items)
+                    ? categoryItem.items.map((item: any) => ({ ...item, category: categoryItem.id }))
+                    : []
+                ))
+              : [];
+
+        const matchedService = servicesList.find((item: any) => Number(item?.id) === serviceId) ?? null;
+        setService(matchedService);
+        if (!matchedService) {
+          return;
+        }
+
         // Try to find portfolio image for this service
         const routeCategory = getSafeString(category);
         safeFetch(buildApiUrl(`/api/public/gallery?category=portfolio&language=${language}`, API_URL))

@@ -12,6 +12,7 @@ import { Copy, Download, Share2 } from 'lucide-react';
 import { api } from '@site/services/api';
 import {
   captureReferralAttributionFromCurrentUrl,
+  clearStoredReferralAttribution,
   getLanguageFromQuery,
   persistReferralAttribution,
   normalizeSeoLanguage,
@@ -277,9 +278,12 @@ export function LandingPage() {
             campaignId: Number(profile.campaign_id),
             shareToken: normalizedToken
           }, window.location.pathname);
+        } else {
+          clearStoredReferralAttribution();
         }
       } catch (error) {
         console.error('Error loading referral profile:', error);
+        clearStoredReferralAttribution();
         setReferralProfile(null);
       } finally {
         setReferralLoading(false);

@@ -392,7 +392,7 @@ async def send_chat_file(
     
 
 @router.get("/unread-count")
-async def get_unread_count(session_token: Optional[str] = Cookie(None)):
+def get_unread_count(session_token: Optional[str] = Cookie(None)):
     """Получить количество непрочитанных сообщений"""
     import time as time_module
     request_start = time_module.time()

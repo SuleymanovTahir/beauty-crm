@@ -1,7 +1,51 @@
+import os
+from typing import Optional
+
+import psycopg2
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from utils.logger import log_info
+from utils.logger import log_info, log_error
 
+
+_SCHEDULER_LOCK_KEY = 910001
+_scheduler_lock_conn = None
+_crm_scheduler: Optional[AsyncIOScheduler] = None
+
+
+def _open_scheduler_lock_connection():
+    conn = psycopg2.connect(
+        host=os.getenv("POSTGRES_HOST", "localhost"),
+        port=os.getenv("POSTGRES_PORT", "5432"),
+        database=os.getenv("POSTGRES_DB", "beauty_crm"),
+        user=os.getenv("POSTGRES_USER", "beauty_crm_user"),
+        password=os.getenv("POSTGRES_PASSWORD", ""),
+        connect_timeout=5,
+    )
+    conn.autocommit = True
+    return conn
+
+
+def _try_acquire_scheduler_leadership() -> bool:
+    global _scheduler_lock_conn
+
+    if _scheduler_lock_conn is not None:
+        return True
+
+    try:
+        conn = _open_scheduler_lock_connection()
+        c = conn.cursor()
+        c.execute("SELECT pg_try_advisory_lock(%s)", (_SCHEDULER_LOCK_KEY,))
+        row = c.fetchone()
+        if row and row[0]:
+            _scheduler_lock_conn = conn
+            log_info("✅ CRM scheduler leadership acquired by current worker", "boot")
+            return True
+        conn.close()
+        log_info("⏭️ CRM schedulers already owned by another worker", "boot")
+        return False
+    except Exception as error:
+        log_error(f"Failed to acquire CRM scheduler leadership: {error}", "boot")
+        return False
 
 def start_crm_runtime_services() -> None:
     """
@@ -21,9 +65,17 @@ def start_crm_schedulers() -> bool:
     Returns:
         bool: True when schedulers are started, False when scheduler module is disabled.
     """
+    global _crm_scheduler
+
     from modules import is_module_enabled
 
     if not is_module_enabled("scheduler"):
+        return False
+
+    if _crm_scheduler is not None:
+        return True
+
+    if not _try_acquire_scheduler_leadership():
         return False
 
     from scheduler import (
@@ -74,5 +126,31 @@ def start_crm_schedulers() -> bool:
 
     start_trash_cleanup_scheduler(cron)
     cron.start()
+    _crm_scheduler = cron
     log_info("✅ Планировщики (Mission-control) активны", "boot")
     return True
+
+
+def stop_crm_schedulers() -> None:
+    global _crm_scheduler, _scheduler_lock_conn
+
+    if _crm_scheduler is not None:
+        try:
+            _crm_scheduler.shutdown(wait=False)
+        except Exception as error:
+            log_error(f"Error shutting down CRM scheduler: {error}", "shutdown")
+        finally:
+            _crm_scheduler = None
+
+    if _scheduler_lock_conn is not None:
+        try:
+            c = _scheduler_lock_conn.cursor()
+            c.execute("SELECT pg_advisory_unlock(%s)", (_SCHEDULER_LOCK_KEY,))
+        except Exception as error:
+            log_error(f"Error releasing CRM scheduler leadership: {error}", "shutdown")
+        finally:
+            try:
+                _scheduler_lock_conn.close()
+            except Exception:
+                pass
+            _scheduler_lock_conn = None

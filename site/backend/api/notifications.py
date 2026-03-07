@@ -67,7 +67,7 @@ def _get_template_storage_columns(template_columns: set[str], base_column: str) 
 
 
 @router.get("/notifications")
-async def get_notifications(
+def get_notifications(
     unread_only: bool = Query(False),
     limit: int = Query(50),
     session_token: Optional[str] = Cookie(None)
@@ -193,7 +193,7 @@ async def mark_all_notifications_read(
 
 
 @router.get("/notifications/unread-count")
-async def get_unread_count(session_token: Optional[str] = Cookie(None)):
+def get_unread_count(session_token: Optional[str] = Cookie(None)):
     """Количество непрочитанных"""
     user = require_auth(session_token)
     if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)

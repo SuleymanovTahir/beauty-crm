@@ -98,6 +98,41 @@ def _normalize_employee_name(value: Optional[str]) -> str:
     return "Unassigned"
 
 
+def _normalize_custom_settings(raw_value: Any) -> Dict[str, Any]:
+    if isinstance(raw_value, dict):
+        return raw_value
+    if isinstance(raw_value, str):
+        try:
+            parsed_value = json.loads(raw_value)
+            if isinstance(parsed_value, dict):
+                return parsed_value
+        except (TypeError, ValueError):
+            return {}
+    return {}
+
+
+def _get_saved_telephony_settings(cursor) -> Dict[str, Any]:
+    cursor.execute("SELECT custom_settings FROM salon_settings WHERE id = 1")
+    row = cursor.fetchone()
+    custom_settings = _normalize_custom_settings(row[0] if row else {})
+    saved_settings = custom_settings.get("telephony_settings", {})
+    if isinstance(saved_settings, dict):
+        return saved_settings
+    return {}
+
+
+def _save_telephony_settings(cursor, settings_payload: Dict[str, Any]) -> None:
+    cursor.execute("SELECT custom_settings FROM salon_settings WHERE id = 1")
+    row = cursor.fetchone()
+    salon_custom_settings = _normalize_custom_settings(row[0] if row else {})
+    salon_custom_settings["telephony_settings"] = settings_payload
+    cursor.execute("""
+        UPDATE salon_settings
+        SET custom_settings = %s, updated_at = CURRENT_TIMESTAMP
+        WHERE id = 1
+    """, (salon_custom_settings,))
+
+
 def _parse_weekdays(weekdays_raw: Optional[str]) -> Optional[Set[int]]:
     if not weekdays_raw:
         return None
@@ -282,13 +317,11 @@ async def get_telephony_settings(current_user: dict = Depends(get_current_user))
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("SELECT telephony_settings FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        if row and row[0]:
-            return json.loads(row[0])
-        return {}
+        return _get_saved_telephony_settings(c)
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.warning(f"Could not fetch telephony settings (maybe column missing?): {e}")
+        logger.warning(f"Could not fetch telephony settings from custom_settings: {e}")
         return {}
     finally:
         conn.close()
@@ -301,11 +334,7 @@ async def save_telephony_settings(settings: TelephonySettings, current_user: dic
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        c.execute("""
-            UPDATE salon_settings 
-            SET telephony_settings = %s 
-            WHERE id = 1
-        """, (settings.model_dump_json(),))
+        _save_telephony_settings(c, settings.model_dump())
         conn.commit()
         return {"success": True}
     except Exception as e:

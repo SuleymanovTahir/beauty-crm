@@ -4,6 +4,7 @@
 """
 import os
 import re
+import inspect
 import urllib.parse
 from functools import lru_cache
 from pathlib import Path
@@ -364,7 +365,10 @@ def require_permission(permission: str):
                     detail=f"Недостаточно прав. Требуется: {permission}"
                 )
             
-            return await func(*args, session_token=session_token, **kwargs)
+            result = func(*args, session_token=session_token, **kwargs)
+            if inspect.isawaitable(result):
+                return await result
+            return result
         return wrapper
     return decorator
 

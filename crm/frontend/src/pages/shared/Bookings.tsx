@@ -614,11 +614,25 @@ export default function UniversalBookings() {
                 }
                 : null;
 
+            const usersPromise = isEmployee
+                ? Promise.resolve({
+                    users: currentUser
+                        ? [{
+                            id: currentUser.id,
+                            username: currentUser.username,
+                            full_name: currentUser.full_name,
+                            role: currentUser.role,
+                            is_service_provider: true,
+                        }]
+                        : [],
+                })
+                : api.getUsers(i18n.language);
+
             const [bookingsData, clientsData, servicesData, usersData, previousPeriodData] = await Promise.all([
                 api.getBookings(currentParams),
                 api.getClients(),
                 api.getServices(i18n.language, false),
-                api.getUsers(i18n.language),
+                usersPromise,
                 previousParams ? api.getBookings(previousParams) : Promise.resolve(null)
             ]);
 

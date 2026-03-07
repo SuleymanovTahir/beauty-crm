@@ -181,6 +181,9 @@ class AnalyticsService:
             params.append(master)
 
         # Новые клиенты за период
+        new_clients_params: List[Any] = [start_date, end_date, start_date, end_date]
+        if master:
+            new_clients_params.append(master)
         self.c.execute(f"""
             SELECT COUNT(DISTINCT instagram_id)
             FROM bookings
@@ -191,7 +194,7 @@ class AnalyticsService:
                 WHERE first_contact BETWEEN %s AND %s
             )
             {master_clause}
-        """, tuple(params + [start_date, end_date]))
+        """, tuple(new_clients_params))
         new_clients = self.c.fetchone()[0]
 
         # Возвращающиеся клиенты

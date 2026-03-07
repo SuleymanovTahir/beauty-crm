@@ -7,6 +7,53 @@ from utils.logger import log_info, log_error, log_warning
 # Global connection pool
 _connection_pool = None
 
+
+def _read_int_env(name: str, default: int) -> int:
+    raw_value = os.getenv(name)
+    if raw_value is None:
+        return default
+    try:
+        return int(str(raw_value).strip())
+    except (TypeError, ValueError):
+        return default
+
+
+def _clamp_int(value: int, minimum: int, maximum: int) -> int:
+    return max(minimum, min(maximum, value))
+
+
+def _resolve_worker_count() -> int:
+    explicit_workers = _read_int_env("BACKEND_WORKERS", 0)
+    if explicit_workers <= 0:
+        explicit_workers = _read_int_env("WEB_CONCURRENCY", 0)
+
+    if explicit_workers > 0:
+        return max(1, explicit_workers)
+
+    if os.getenv("UVICORN_RELOAD", "").strip().lower() in {"1", "true", "yes", "on"}:
+        return 1
+
+    if os.getenv("ENVIRONMENT") == "production":
+        cpu_count = os.cpu_count() or 2
+        return max(2, min(8, cpu_count))
+
+    return 1
+
+
+def _resolve_pool_bounds() -> tuple[int, int]:
+    explicit_min = _read_int_env("DB_POOL_MIN", 0)
+    explicit_max = _read_int_env("DB_POOL_MAX", 0)
+    if explicit_min > 0 or explicit_max > 0:
+        maxconn = max(1, explicit_max or explicit_min)
+        minconn = max(1, min(explicit_min or maxconn, maxconn))
+        return minconn, maxconn
+
+    worker_count = _resolve_worker_count()
+    total_target = max(32, _read_int_env("DB_POOL_MAX_TOTAL", 160))
+    per_worker_max = _clamp_int(total_target // max(1, worker_count), 12, 80)
+    per_worker_min = _clamp_int(max(4, per_worker_max // 4), 4, per_worker_max)
+    return per_worker_min, per_worker_max
+
 def init_connection_pool():
     """Initialize the connection pool if it doesn't exist.
 
@@ -22,9 +69,10 @@ def init_connection_pool():
 
         for attempt in range(max_retries):
             try:
+                minconn, maxconn = _resolve_pool_bounds()
                 _connection_pool = pool.ThreadedConnectionPool(
-                    minconn=5,  # Минимум соединений - создаются при инициализации (не блокируем старт)
-                    maxconn=100,  # Максимум соединений для параллелизма
+                    minconn=minconn,
+                    maxconn=maxconn,
                     host=os.getenv('POSTGRES_HOST', 'localhost'),
                     port=os.getenv('POSTGRES_PORT', '5432'),
                     database=os.getenv('POSTGRES_DB', 'beauty_crm'),
@@ -34,7 +82,10 @@ def init_connection_pool():
                     connect_timeout=5,  # Таймаут подключения
                     options='-c statement_timeout=30000'  # 30 секунд на запрос
                 )
-                log_info("✅ Database connection pool initialized (5-100 connections)", "db")
+                log_info(
+                    f"✅ Database connection pool initialized ({minconn}-{maxconn} per worker, workers={_resolve_worker_count()})",
+                    "db"
+                )
                 return  # Success
             except Exception as e:
                 last_error = e

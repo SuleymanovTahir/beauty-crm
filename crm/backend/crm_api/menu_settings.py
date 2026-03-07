@@ -186,7 +186,7 @@ def _resolve_client_id(cursor, current_user: dict) -> Optional[str]:
     return None
 
 @router.get("/menu-settings", response_model=MenuSettingsResponse)
-async def get_menu_settings(current_user: dict = Depends(get_current_user)):
+def get_menu_settings(current_user: dict = Depends(get_current_user)):
     """Get menu settings for current user or their role"""
     logger.info(f"Fetching menu settings for user {current_user.get('id')} with role {current_user.get('role')}")
     
@@ -333,7 +333,7 @@ async def save_menu_settings(
         conn.close()
 
 @router.get("/account-menu-settings", response_model=AccountMenuSettingsResponse)
-async def get_account_menu_settings(current_user: dict = Depends(get_current_user)):
+def get_account_menu_settings(current_user: dict = Depends(get_current_user)):
     if current_user.get("role") not in ADMIN_ROLES:
         raise HTTPException(status_code=403, detail="Forbidden")
 
@@ -398,7 +398,7 @@ async def save_account_menu_settings(
         conn.close()
 
 @router.get("/client/account-menu-settings")
-async def get_client_account_menu_settings(current_user: dict = Depends(get_current_user)):
+def get_client_account_menu_settings(current_user: dict = Depends(get_current_user)):
     current_role = str(current_user.get("role") or "")
     is_client_role = current_role == "client"
 
