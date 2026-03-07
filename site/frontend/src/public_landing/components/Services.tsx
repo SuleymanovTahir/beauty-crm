@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useCurrency } from "@site/hooks/useSalonSettings";
 import { LIMITS } from "../utils/constants";
 import { buildApiUrl } from "@site/api/client";
+import { Link } from "react-router-dom";
 
 interface Service {
   id: number;
@@ -20,13 +21,56 @@ interface ServicesProps {
   initialServices?: Service[];
 }
 
+const slugifyAscii = (value: string): string => (
+  String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+);
+
+const getCategoryPath = (category: string): string => {
+  const normalizedCategory = String(category ?? "").trim().toLowerCase();
+  if (normalizedCategory.length === 0) {
+    return "";
+  }
+  return `/service/${encodeURIComponent(normalizedCategory)}`;
+};
+
+const getServicePath = (service: Service): string => {
+  const serviceId = Number(service?.id);
+  const normalizedCategory = String(service?.category ?? "").trim().toLowerCase();
+
+  if (!Number.isFinite(serviceId)) {
+    return "";
+  }
+  if (serviceId <= 0) {
+    return "";
+  }
+  if (normalizedCategory.length === 0) {
+    return "";
+  }
+
+  const keySlug = slugifyAscii(String(service?.service_key ?? ""));
+  const nameSlug = slugifyAscii(String(service?.name ?? ""));
+  const fallbackSlug = `service-${serviceId}`;
+  const slug = keySlug.length > 0
+    ? keySlug
+    : nameSlug.length > 0
+      ? nameSlug
+      : fallbackSlug;
+
+  return `/service/${encodeURIComponent(normalizedCategory)}/${serviceId}-${encodeURIComponent(slug)}`;
+};
+
 export function Services({ initialServices }: ServicesProps) {
   const { t, i18n } = useTranslation(['public_landing', 'booking', 'common', 'dynamic']);
   const { formatCurrency } = useCurrency();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [displayCount, setDisplayCount] = useState<number>(LIMITS.DISPLAY_SERVICES_COUNT);
-  const [services, setServices] = useState<Service[]>(initialServices || []);
+  const [services, setServices] = useState<Service[]>(initialServices ?? []);
   const [categories, setCategories] = useState<{ id: string, label: string }[]>([]);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -112,14 +156,14 @@ export function Services({ initialServices }: ServicesProps) {
 
 
   const filteredServices = services.filter((service) => {
-    const matchesCategory = activeCategory === "all" || service.category === activeCategory;
+    const matchesCategory = activeCategory === "all" ? true : service.category === activeCategory;
     const matchesSearch = (service?.name ?? "").toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
   const displayedServices = filteredServices.slice(0, displayCount);
 
-  const activeCategoryLabel = categories.find(c => c.id === activeCategory)?.label || t('allServices');
+  const activeCategoryLabel = categories.find((category) => category.id === activeCategory)?.label ?? t('allServices');
 
   return (
     <section id="services" className="py-12 sm:py-16 lg:py-20 bg-background">
@@ -208,41 +252,63 @@ export function Services({ initialServices }: ServicesProps) {
                 key={service.id}
                 className="service-card group cursor-pointer relative overflow-hidden"
               >
-                <div className="service-category-tag ">
-                  {categories.find(c => c.id === service.category)?.label}
-                </div>
-                <div className="flex justify-between items-start mb-3 sm:mb-4 gap-2">
-                  <h3 className="text-[13px] sm:text-base font-medium group-hover:text-primary transition-colors pr-2">
-                    {t(`dynamic:services.${service.service_key}.name`, { defaultValue: service.name || "" })}
-                  </h3>
-                  <div className="service-badge flex-shrink-0 ">
-                    {formatCurrency(service.price)}
-                  </div>
-                </div>
-                <div className="service-footer">
-                  <div className="service-meta">
-                    <Clock className="w-3.5 h-3.5 mr-1.5 opacity-60" />
-                    <span className="flex items-center gap-1.5">
-                      <span>{service.duration && service.duration !== 0 ? `${service.duration} ` : ""}{t('min')}</span>
-                    </span>
-                    {/* <span className="text-muted-foreground/30">•</span>
+                {(() => {
+                  const categoryPath = getCategoryPath(service.category);
+                  const servicePath = getServicePath(service);
+                  const categoryLabel = categories.find((category) => category.id === service.category)?.label;
+                  const serviceTitle = t(`dynamic:services.${service.service_key}.name`, { defaultValue: service.name ?? "" });
+
+                  return (
+                    <>
+                      <div className="service-category-tag ">
+                        {categoryPath.length > 0 ? (
+                          <Link to={categoryPath} className="inline-flex hover:underline">
+                            {categoryLabel}
+                          </Link>
+                        ) : (
+                          categoryLabel
+                        )}
+                      </div>
+                      <div className="flex justify-between items-start mb-3 sm:mb-4 gap-2">
+                        <h3 className="text-[13px] sm:text-base font-medium group-hover:text-primary transition-colors pr-2">
+                          {servicePath.length > 0 ? (
+                            <Link to={servicePath} className="hover:underline">
+                              {serviceTitle}
+                            </Link>
+                          ) : (
+                            serviceTitle
+                          )}
+                        </h3>
+                        <div className="service-badge flex-shrink-0 ">
+                          {formatCurrency(service.price)}
+                        </div>
+                      </div>
+                      <div className="service-footer">
+                        <div className="service-meta">
+                          <Clock className="w-3.5 h-3.5 mr-1.5 opacity-60" />
+                          <span className="flex items-center gap-1.5">
+                            <span>{service.duration && service.duration !== 0 ? `${service.duration} ` : ""}{t('min')}</span>
+                          </span>
+                          {/* <span className="text-muted-foreground/30">•</span>
                       <span className="text-[10px] uppercase tracking-wider opacity-70">
                         {categories.find(c => c.id === service.category)?.label}
                       </span> */}
-                  </div>
-                  <Button
-                    size="sm"
-                    className="service-book-btn translate-y-1"
-                    onClick={() => {
-                      const serviceId = service.id;
-                      window.location.hash = `booking?service=${serviceId}`;
-                      document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                  >
-                    {t('book')}
-                  </Button>
-
-                </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          className="service-book-btn translate-y-1"
+                          onClick={() => {
+                            const serviceId = service.id;
+                            window.location.hash = `booking?service=${serviceId}`;
+                            document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
+                          }}
+                        >
+                          {t('book')}
+                        </Button>
+                      </div>
+                    </>
+                  );
+                })()}
               </motion.div>
             ))}
           </AnimatePresence>

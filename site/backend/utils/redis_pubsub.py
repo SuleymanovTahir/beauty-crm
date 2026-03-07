@@ -299,16 +299,23 @@ class RedisPubSubManager:
     def register_handler(self, prefix: str, handler: Callable[[str, Dict[str, Any]], Awaitable[None]]) -> None:
         self._handlers[prefix] = handler
 
-    def _poll_postgres_message(self, timeout: float) -> Optional[str]:
+    def _poll_postgres_messages(self, timeout: float) -> list[str]:
         if not self.pg_sub_conn:
-            return None
+            return []
+        if self.pg_sub_conn.notifies:
+            payloads = [notify.payload for notify in self.pg_sub_conn.notifies]
+            self.pg_sub_conn.notifies.clear()
+            return payloads
+
         ready, _, _ = select.select([self.pg_sub_conn], [], [], timeout)
         if not ready:
-            return None
+            return []
         self.pg_sub_conn.poll()
         if not self.pg_sub_conn.notifies:
-            return None
-        return self.pg_sub_conn.notifies.pop(0).payload
+            return []
+        payloads = [notify.payload for notify in self.pg_sub_conn.notifies]
+        self.pg_sub_conn.notifies.clear()
+        return payloads
 
     async def start_listening(self) -> None:
         if not self.redis_enabled and not self.pg_enabled:
@@ -358,17 +365,18 @@ class RedisPubSubManager:
                         continue
 
                     if self.transport_name == "postgres":
-                        payload = await asyncio.to_thread(self._poll_postgres_message, 1.0)
-                        if not payload:
+                        payloads = await asyncio.to_thread(self._poll_postgres_messages, 1.0)
+                        if not payloads:
                             continue
 
-                        try:
-                            channel, data = self._decode_pg_payload(payload)
-                        except Exception as error:
-                            log_error(f"Failed to decode PostgreSQL Pub/Sub payload: {error}", "pubsub")
-                            continue
+                        for payload in payloads:
+                            try:
+                                channel, data = self._decode_pg_payload(payload)
+                            except Exception as error:
+                                log_error(f"Failed to decode PostgreSQL Pub/Sub payload: {error}", "pubsub")
+                                continue
 
-                        await self._dispatch(channel, data)
+                            await self._dispatch(channel, data)
                         continue
 
                     await asyncio.sleep(1)

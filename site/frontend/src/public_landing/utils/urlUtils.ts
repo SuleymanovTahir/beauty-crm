@@ -233,6 +233,65 @@ export const syncHtmlLanguageMeta = (language: string): void => {
     });
 };
 
+export const getSeoBaseUrl = (): string => {
+  const configuredBaseUrl = String(import.meta.env.VITE_SITE_URL || import.meta.env.VITE_API_URL || '').trim();
+  if (configuredBaseUrl.length > 0) {
+    return trimBaseUrl(configuredBaseUrl);
+  }
+
+  if (typeof window !== 'undefined' && typeof window.location?.origin === 'string') {
+    return trimBaseUrl(window.location.origin);
+  }
+
+  return '';
+};
+
+interface StaticSeoConfig {
+  baseUrl?: string;
+  pathname: string;
+  language: string;
+  title: string;
+  description?: string;
+}
+
+export const syncStaticPageSeo = ({
+  baseUrl,
+  pathname,
+  language,
+  title,
+  description = '',
+}: StaticSeoConfig): string => {
+  const normalizedLanguage = normalizeSeoLanguage(language);
+  const resolvedBaseUrl = trimBaseUrl(baseUrl || getSeoBaseUrl());
+  const canonicalUrl = syncCanonicalAndHreflang(resolvedBaseUrl, pathname, normalizedLanguage);
+
+  syncLanguageQueryParam(normalizedLanguage);
+  syncHtmlLanguageMeta(normalizedLanguage);
+
+  if (title.trim().length > 0) {
+    document.title = title;
+    upsertMeta('meta[name="title"]', 'content', title);
+    upsertMeta('meta[property="og:title"]', 'content', title);
+    upsertMeta('meta[name="twitter:title"]', 'content', title);
+    upsertMeta('meta[property="twitter:title"]', 'content', title);
+  }
+
+  if (description.trim().length > 0) {
+    upsertMeta('meta[name="description"]', 'content', description);
+    upsertMeta('meta[property="og:description"]', 'content', description);
+    upsertMeta('meta[name="twitter:description"]', 'content', description);
+    upsertMeta('meta[property="twitter:description"]', 'content', description);
+  }
+
+  upsertMeta('meta[name="robots"]', 'content', 'index, follow');
+  upsertMeta('meta[name="language"]', 'content', normalizedLanguage);
+  upsertMeta('meta[property="og:url"]', 'content', canonicalUrl);
+  upsertMeta('meta[property="twitter:url"]', 'content', canonicalUrl);
+  upsertMeta('meta[name="twitter:url"]', 'content', canonicalUrl);
+
+  return canonicalUrl;
+};
+
 export interface ReferralAttributionState {
   campaignId: number;
   shareToken: string;

@@ -7,12 +7,37 @@ import { useCurrency } from "@site/hooks/useSalonSettings";
 import { getApiUrl } from "../utils/apiUtils";
 import { safeFetch } from "../utils/errorHandler";
 import { buildApiUrl } from "@site/api/client";
+import {
+    getLanguageFromQuery,
+    normalizeSeoLanguage,
+    syncStaticPageSeo,
+} from "../utils/urlUtils";
 import '../styles/css/index.css';
 
 export function TermsOfUse() {
     const { t, i18n } = useTranslation(['public_landing', 'common']);
     const { currency } = useCurrency();
     const [services, setServices] = useState<any[]>([]);
+
+    useEffect(() => {
+        const queryLanguage = getLanguageFromQuery();
+        const targetLanguage = normalizeSeoLanguage(queryLanguage || i18n.language);
+        if (normalizeSeoLanguage(i18n.language) !== targetLanguage) {
+            i18n.changeLanguage(targetLanguage);
+        }
+    }, [i18n, i18n.language]);
+
+    useEffect(() => {
+        const language = normalizeSeoLanguage(i18n.language);
+        syncStaticPageSeo({
+            pathname: '/terms',
+            language,
+            title: t('termsTitle', { defaultValue: 'УСЛОВИЯ ИСПОЛЬЗОВАНИЯ' }),
+            description: t('termsSection1Text', {
+                defaultValue: 'Добро пожаловать на веб-сайт M Le Diamant. Используя наш веб-сайт и услуги, вы соглашаетесь соблюдать и быть связанными настоящими Условиями использования.',
+            }).slice(0, 300),
+        });
+    }, [i18n.language, t]);
 
     useEffect(() => {
         const fetchServices = async () => {

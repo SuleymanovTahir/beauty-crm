@@ -1,3 +1,38 @@
+## [2026-03-08] Site SEO Indexing Fix: Prerender Route Discovery + Dynamic Sitemap + Internal Linking
+- Fixed the public site SEO build flow so `site/frontend` standard production build now generates prerendered HTML for public routes instead of shipping SPA-only HTML:
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/package.json`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/scripts/prerender-public.mjs`
+- `prerender-public.mjs` now correctly understands the real `/api/public/services` response shape (`{ success, services }`) and discovers:
+  - category pages `/service/<category>`
+  - procedure pages `/service/<category>/<id>-<slug>`
+  - `/new-booking`
+- Hardened `site/frontend/scripts/prerender-public.mjs` so preview-time public SEO rendering is now reliable instead of timing-dependent:
+  - rewrites browser `fetch`/XHR calls for API-origin public data back through preview origin during prerender,
+  - proxies preview/API requests with explicit CORS headers for headless rendering,
+  - waits for route-specific SEO readiness (`canonical`, `og:url`, non-empty `h1`) before saving HTML,
+  - supports `PRERENDER_ROUTES` for fast single-route verification without changing the main build flow.
+- Added sitemap generation directly from the prerendered route set in `/Users/tahir/Desktop/beauty-crm/site/frontend/scripts/prerender-public.mjs`:
+  - `dist/sitemap.xml` is now built from the same route graph as prerendered HTML,
+  - hreflang alternates are emitted for all supported site languages,
+  - this removes the old drift where the public sitemap listed only a few static routes.
+- Strengthened public internal linking from the landing services grid in `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/Services.tsx`:
+  - service category tags now link to indexable category pages,
+  - service titles now link to indexable procedure pages,
+  - removed `||` usage from the touched TSX file to stay aligned with project rules.
+- Fixed missing SEO synchronization on static public routes so prerender no longer ships homepage canonicals for legal/booking pages:
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/utils/urlUtils.ts`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/pages/TermsOfUse.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/pages/PrivacyPolicy.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/pages/DataDeletion.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/pages/account/UserBookingWizard.tsx`
+  - these routes now publish their own `title`, `description`, `canonical`, `og:url`, language tags, and hreflang state during prerender.
+- Fixed a real backend sitemap bug in `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/sitemap.py`:
+  - category URLs were being built from the tuple slot for `description` instead of `category`,
+  - dynamic sitemap category entries now use the correct `services.category` source.
+- IMPORTANT TO REMEMBER:
+  - Brand indexing in Google can succeed even when commercial route indexing is weak; Yandex is much less forgiving with SPA-only HTML.
+  - For this project, public SEO must rely on prerendered HTML plus a sitemap generated from the same discovered routes, otherwise service pages stay invisible to crawlers.
+
 ## [2026-03-08] Backend Concurrency Upgrade for High User Load
 - Raised backend concurrency ceiling in both runtimes:
   - `/Users/tahir/Desktop/beauty-crm/crm/backend/main.py`

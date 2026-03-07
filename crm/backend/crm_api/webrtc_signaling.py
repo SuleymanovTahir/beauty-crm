@@ -33,6 +33,8 @@ def _is_expected_websocket_close(error: Exception) -> bool:
         return True
 
     message = str(error).strip().lower()
+    if not message:
+        return True
     if message.isdigit() and 0 <= int(message) < 1000:
         return True
 
@@ -40,6 +42,9 @@ def _is_expected_websocket_close(error: Exception) -> bool:
         message in {"1000", "1001", "1005", "5"}
         or "disconnect message" in message
         or "websocket is not connected" in message
+        or "after sending 'websocket.close'" in message
+        or "cannot call send" in message
+        or "cannot write to closing transport" in message
     )
 
 def get_user_dnd(user_id: int) -> bool:
@@ -347,16 +352,21 @@ def release_call_session(user_id: int, peer_id: Optional[int] = None) -> dict[st
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        states = _fetch_user_states(c, [user_id], for_update=True)
+        states = _fetch_user_states(c, [user_id], for_update=False)
         user_state = states.get(user_id)
         if not user_state:
             conn.rollback()
             return {"peer_id": None}
 
         actual_peer_id = peer_id if _safe_int(peer_id) is not None else user_state.get("peer_id")
+        lock_ids = [user_id]
         if actual_peer_id is not None:
-            states = _fetch_user_states(c, [user_id, actual_peer_id], for_update=True)
-            user_state = states.get(user_id)
+            lock_ids.append(actual_peer_id)
+        states = _fetch_user_states(c, lock_ids, for_update=True)
+        user_state = states.get(user_id)
+        if not user_state:
+            conn.rollback()
+            return {"peer_id": None}
         peer_state = states.get(actual_peer_id) if actual_peer_id is not None else None
 
         _update_call_state(c, user_id, CALL_STATUS_AVAILABLE, None)
@@ -461,7 +471,8 @@ class ConnectionManager:
                 try:
                     await connection.send_json(message)
                 except Exception as e:
-                    log_error(f"Error sending local to user {user_id}: {e}", "webrtc")
+                    if not _is_expected_websocket_close(e):
+                        log_error(f"Error sending local to user {user_id}: {e}", "webrtc")
                     dead_sockets.append(connection)
             
             for ds in dead_sockets:
@@ -538,29 +549,33 @@ async def websocket_endpoint(websocket: WebSocket):
         if not user_id:
             return
 
-        manager.disconnect(user_id, websocket)
-        presence_result = mark_user_disconnected(user_id)
-        is_offline = bool(presence_result.get("became_offline"))
+        disconnected_user_id = user_id
+        try:
+            manager.disconnect(disconnected_user_id, websocket)
+            presence_result = mark_user_disconnected(disconnected_user_id)
+            is_offline = bool(presence_result.get("became_offline"))
 
-        log_info(f"WebSocket disconnect cleanup for user {user_id}", "webrtc")
-        if is_offline:
-            release_result = release_call_session(user_id)
-            peer_id = release_result.get("peer_id")
-            if peer_id is not None:
-                await manager.send_to_user(peer_id, {
-                    "type": "hangup",
-                    "from": user_id
+            log_info(f"WebSocket disconnect cleanup for user {disconnected_user_id}", "webrtc")
+            if is_offline:
+                release_result = release_call_session(disconnected_user_id)
+                peer_id = release_result.get("peer_id")
+                if peer_id is not None:
+                    await manager.send_to_user(peer_id, {
+                        "type": "hangup",
+                        "from": disconnected_user_id
+                    })
+
+                await manager.broadcast({
+                    "type": "user_status",
+                    "user_id": disconnected_user_id,
+                    "status": "offline",
+                    "last_seen": datetime.now().isoformat()
                 })
-
-            await manager.broadcast({
-                "type": "user_status",
-                "user_id": user_id,
-                "status": "offline",
-                "last_seen": datetime.now().isoformat()
-            })
-
-        log_info(f"WebSocket disconnected: user {user_id}", "webrtc")
-        user_id = None
+        except Exception as error:
+            log_error(f"Disconnect cleanup failed for user {disconnected_user_id}: {error}", "webrtc")
+        finally:
+            log_info(f"WebSocket disconnected: user {disconnected_user_id}", "webrtc")
+            user_id = None
 
     try:
         origin_header = websocket.headers.get("origin")

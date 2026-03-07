@@ -1,11 +1,37 @@
 //new/pages/PrivacyPolicy.tsx
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import {
+    getLanguageFromQuery,
+    normalizeSeoLanguage,
+    syncStaticPageSeo,
+} from "../utils/urlUtils";
 import '../styles/css/index.css';
 
 export function PrivacyPolicy() {
-    const { t } = useTranslation(['public_landing', 'common']);
+    const { t, i18n } = useTranslation(['public_landing', 'common']);
+
+    useEffect(() => {
+        const queryLanguage = getLanguageFromQuery();
+        const targetLanguage = normalizeSeoLanguage(queryLanguage || i18n.language);
+        if (normalizeSeoLanguage(i18n.language) !== targetLanguage) {
+            i18n.changeLanguage(targetLanguage);
+        }
+    }, [i18n, i18n.language]);
+
+    useEffect(() => {
+        const language = normalizeSeoLanguage(i18n.language);
+        syncStaticPageSeo({
+            pathname: '/privacy-policy',
+            language,
+            title: t('privacyTitle', { defaultValue: 'ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ' }),
+            description: t('privacySection1Text1', {
+                defaultValue: 'M Le Diamant уважает вашу конфиденциальность и обязуется защищать ваши персональные данные.',
+            }).slice(0, 300),
+        });
+    }, [i18n.language, t]);
 
     return (
         <div className="min-h-screen bg-background relative overflow-hidden">

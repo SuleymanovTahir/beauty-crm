@@ -9,6 +9,11 @@ import { api } from '@site/services/api';
 import PublicLanguageSwitcher from '@site/components/PublicLanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 import { getLocalizedName } from '@site/utils/i18nUtils';
+import {
+  getLanguageFromQuery,
+  normalizeSeoLanguage,
+  syncStaticPageSeo,
+} from '@site/public_landing/utils/urlUtils';
 
 // New Synced Components
 import { useCurrency } from '@site/hooks/useSalonSettings';
@@ -81,6 +86,24 @@ export function UserBookingWizard({ onClose, onSuccess }: Props) {
   const { t, i18n } = useTranslation(['booking', 'common']);
   const { formatCurrency } = useCurrency();
   const { user } = useAuth();
+
+  useEffect(() => {
+    const queryLanguage = getLanguageFromQuery();
+    const targetLanguage = normalizeSeoLanguage(queryLanguage || i18n.language);
+    if (normalizeSeoLanguage(i18n.language) !== targetLanguage) {
+      i18n.changeLanguage(targetLanguage);
+    }
+  }, [i18n, i18n.language]);
+
+  useEffect(() => {
+    const language = normalizeSeoLanguage(i18n.language);
+    syncStaticPageSeo({
+      pathname: '/new-booking',
+      language,
+      title: t('newBooking', 'Booking'),
+      description: t('bookingDesc', 'Choose a convenient time for your visit').slice(0, 300),
+    });
+  }, [i18n.language, t]);
 
   // Helper for Russian pluralization
   const getPluralForm = (count: number, one: string, few: string, many: string) => {

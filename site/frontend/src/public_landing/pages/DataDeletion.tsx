@@ -3,10 +3,33 @@ import { useTranslation } from 'react-i18next';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { useSalonSettings } from '../hooks/useSalonSettings';
+import {
+    getLanguageFromQuery,
+    normalizeSeoLanguage,
+    syncStaticPageSeo,
+} from '../utils/urlUtils';
 
 const DataDeletion: React.FC = () => {
-    const { t } = useTranslation('public_landing');
+    const { t, i18n } = useTranslation('public_landing');
     const { email: salonEmail } = useSalonSettings();
+
+    React.useEffect(() => {
+        const queryLanguage = getLanguageFromQuery();
+        const targetLanguage = normalizeSeoLanguage(queryLanguage || i18n.language);
+        if (normalizeSeoLanguage(i18n.language) !== targetLanguage) {
+            i18n.changeLanguage(targetLanguage);
+        }
+    }, [i18n, i18n.language]);
+
+    React.useEffect(() => {
+        const language = normalizeSeoLanguage(i18n.language);
+        syncStaticPageSeo({
+            pathname: '/data-deletion',
+            language,
+            title: t('dataDeletion.title', 'Instruction for Data Deletion'),
+            description: t('dataDeletion.description', 'If you want to delete your data from our system, please follow these steps:').slice(0, 300),
+        });
+    }, [i18n.language, t]);
 
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">

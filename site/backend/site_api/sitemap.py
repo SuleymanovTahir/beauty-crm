@@ -76,7 +76,7 @@ async def generate_sitemap():
     # Add category pages: /service/<category>
     try:
         services = get_all_services(active_only=True)
-        categories = sorted({str(s[9]).strip() for s in services if len(s) > 9 and s[9]})
+        categories = sorted({str(s[3]).strip() for s in services if len(s) > 3 and s[3]})
         for cat in categories:
             # Make URL-safe; keep slashes if category is nested.
             cat_slug = quote(cat.lower(), safe="/-._~")
