@@ -1,5 +1,4 @@
 import os
-import psycopg2
 from psycopg2 import pool
 from psycopg2.extras import DictCursor, RealDictCursor
 from utils.logger import log_info, log_error, log_warning
@@ -49,9 +48,9 @@ def _resolve_pool_bounds() -> tuple[int, int]:
         return minconn, maxconn
 
     worker_count = _resolve_worker_count()
-    total_target = max(32, _read_int_env("DB_POOL_MAX_TOTAL", 160))
-    per_worker_max = _clamp_int(total_target // max(1, worker_count), 12, 80)
-    per_worker_min = _clamp_int(max(4, per_worker_max // 4), 4, per_worker_max)
+    total_target = max(8, _read_int_env("DB_POOL_MAX_TOTAL", 24))
+    per_worker_max = _clamp_int(total_target // max(1, worker_count), 4, 24)
+    per_worker_min = _clamp_int(max(1, per_worker_max // 4), 1, per_worker_max)
     return per_worker_min, per_worker_max
 
 def init_connection_pool():
@@ -206,29 +205,25 @@ def get_db_connection():
     import time
     start_time = time.time()
     try:
-        conn = _connection_pool.getconn()
-        duration = (time.time() - start_time) * 1000
-        if duration > 100:
-            log_warning(f"🕒 Connection acquisition took {duration:.2f}ms", "db")
-        return ConnectionWrapper(conn, from_pool=True)
+        wait_timeout_ms = max(50, _read_int_env("DB_POOL_WAIT_MS", 750))
+        retry_interval_ms = _clamp_int(_read_int_env("DB_POOL_RETRY_MS", 25), 10, 250)
+        deadline = time.monotonic() + (wait_timeout_ms / 1000.0)
+
+        while True:
+            try:
+                conn = _connection_pool.getconn()
+                duration = (time.time() - start_time) * 1000
+                if duration > 100:
+                    log_warning(f"🕒 Connection acquisition took {duration:.2f}ms", "db")
+                return ConnectionWrapper(conn, from_pool=True)
+            except pool.PoolError:
+                if time.monotonic() >= deadline:
+                    raise
+                time.sleep(retry_interval_ms / 1000.0)
     except pool.PoolError as e:
-        # Pool exhausted - fallback to a direct connection quickly
         duration = (time.time() - start_time) * 1000
-        log_warning(f"⚠️ Pool exhausted after {duration:.2f}ms: {e}", "db")
-        try:
-            direct_conn = psycopg2.connect(
-                host=os.getenv('POSTGRES_HOST', 'localhost'),
-                port=os.getenv('POSTGRES_PORT', '5432'),
-                database=os.getenv('POSTGRES_DB', 'beauty_crm'),
-                user=os.getenv('POSTGRES_USER', 'beauty_crm_user'),
-                password=os.getenv('POSTGRES_PASSWORD', ''),
-                connect_timeout=1,
-            )
-            log_warning("⚠️ Using direct connection fallback (pool exhausted)", "db")
-            return ConnectionWrapper(direct_conn, from_pool=False)
-        except Exception as direct_e:
-            log_error(f"❌ Direct connection fallback failed: {direct_e}", "db")
-            raise
+        log_error(f"❌ Connection pool exhausted after {duration:.2f}ms: {e}", "db")
+        raise
     except Exception as e:
         log_error(f"Failed to get connection from pool: {e}", "db")
         raise

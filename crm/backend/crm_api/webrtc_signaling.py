@@ -2,30 +2,16 @@
 WebRTC Signaling Server для видео/аудио звонков
 Использует WebSocket для обмена SDP предложениями и ICE кандидатами
 """
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
 from typing import Any, Dict, Optional, Set
 import json
-import time
 from datetime import datetime
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from utils.redis_pubsub import redis_pubsub
-from utils.utils import is_allowed_websocket_origin, require_websocket_auth
-import asyncio
+from utils.utils import get_current_user, is_allowed_websocket_origin, require_websocket_auth
 
 router = APIRouter(tags=["WebRTC"])
-
-# Хранилище активных WebSocket соединений
-# Структура: {user_id: Set[WebSocket]}
-active_connections: Dict[int, Set[WebSocket]] = {}
-
-# Хранилище активных звонков
-# Структура: {room_id: {participants: {user_id: {joined_at, socket}}, type, start_time}}
-active_calls: Dict[str, dict] = {}
-
-# Статус пользователей (для индикации занятости)
-# Структура: {user_id: "available" | "busy" | "calling" | "on_hold"}
-user_call_status: Dict[int, str] = {}
 
 CALL_STATUS_AVAILABLE = "available"
 CALL_STATUS_CALLING = "calling"
@@ -100,19 +86,6 @@ def _normalize_call_status(status: Optional[str]) -> str:
     return CALL_STATUS_AVAILABLE
 
 
-def _set_local_call_status(user_id: Optional[int], status: Optional[str]) -> None:
-    normalized_user_id = _safe_int(user_id)
-    if normalized_user_id is None:
-        return
-
-    normalized_status = _normalize_call_status(status)
-    if normalized_status == CALL_STATUS_AVAILABLE:
-        user_call_status.pop(normalized_user_id, None)
-        return
-
-    user_call_status[normalized_user_id] = normalized_status
-
-
 def _ensure_user_status_rows(cursor, user_ids: list[int]) -> None:
     unique_ids = sorted({int(user_id) for user_id in user_ids if _safe_int(user_id) is not None})
     if not unique_ids:
@@ -127,10 +100,11 @@ def _ensure_user_status_rows(cursor, user_ids: list[int]) -> None:
                 is_dnd,
                 call_status,
                 current_call_peer_id,
+                ws_connection_count,
                 call_updated_at,
                 updated_at
             )
-            VALUES (%s, FALSE, FALSE, %s, NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            VALUES (%s, FALSE, FALSE, %s, NULL, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             ON CONFLICT (user_id) DO NOTHING
             """,
             (user_id, CALL_STATUS_AVAILABLE),
@@ -152,6 +126,7 @@ def _fetch_user_states(cursor, user_ids: list[int], for_update: bool = False) ->
                COALESCE(is_dnd, FALSE),
                COALESCE(call_status, %s),
                current_call_peer_id,
+               COALESCE(ws_connection_count, 0),
                last_seen,
                updated_at
         FROM user_status
@@ -169,8 +144,9 @@ def _fetch_user_states(cursor, user_ids: list[int], for_update: bool = False) ->
             "is_dnd": bool(row[2]),
             "call_status": _normalize_call_status(row[3]),
             "peer_id": _safe_int(row[4]),
-            "last_seen": row[5],
-            "updated_at": row[6],
+            "ws_connection_count": max(0, _safe_int(row[5]) or 0),
+            "last_seen": row[6],
+            "updated_at": row[7],
         }
     return states
 
@@ -189,38 +165,83 @@ def _update_call_state(cursor, user_id: int, status: str, peer_id: Optional[int]
     )
 
 
-def _update_online_presence(user_id: int, is_online: bool) -> None:
+def mark_user_connected(user_id: int) -> dict[str, Any]:
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        _ensure_user_status_rows(c, [user_id])
-        if is_online:
-            now = datetime.now()
+        states = _fetch_user_states(c, [user_id], for_update=True)
+        user_state = states.get(int(user_id))
+        if not user_state:
+            conn.rollback()
+            return {"became_online": False, "connection_count": 0}
+
+        previous_count = max(0, _safe_int(user_state.get("ws_connection_count")) or 0)
+        next_count = previous_count + 1
+        now = datetime.now()
+        c.execute(
+            """
+            UPDATE user_status
+            SET is_online = TRUE,
+                ws_connection_count = %s,
+                last_seen = %s,
+                updated_at = %s
+            WHERE user_id = %s
+            """,
+            (next_count, now, now, user_id),
+        )
+        conn.commit()
+        return {
+            "became_online": previous_count == 0,
+            "connection_count": next_count,
+        }
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+
+def mark_user_disconnected(user_id: int) -> dict[str, Any]:
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        states = _fetch_user_states(c, [user_id], for_update=True)
+        user_state = states.get(int(user_id))
+        if not user_state:
+            conn.rollback()
+            return {"became_offline": False, "connection_count": 0}
+
+        previous_count = max(0, _safe_int(user_state.get("ws_connection_count")) or 0)
+        next_count = max(0, previous_count - 1)
+        if next_count > 0:
             c.execute(
                 """
                 UPDATE user_status
                 SET is_online = TRUE,
-                    last_seen = %s,
-                    updated_at = %s
+                    ws_connection_count = %s,
+                    last_seen = CURRENT_TIMESTAMP,
+                    updated_at = CURRENT_TIMESTAMP
                 WHERE user_id = %s
                 """,
-                (now, now, user_id),
+                (next_count, user_id),
             )
         else:
             c.execute(
                 """
                 UPDATE user_status
                 SET is_online = FALSE,
-                    call_status = %s,
-                    current_call_peer_id = NULL,
+                    ws_connection_count = 0,
                     last_seen = CURRENT_TIMESTAMP,
-                    call_updated_at = CURRENT_TIMESTAMP,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE user_id = %s
                 """,
-                (CALL_STATUS_AVAILABLE, user_id),
+                (user_id,),
             )
         conn.commit()
+        return {
+            "became_offline": previous_count > 0 and next_count == 0,
+            "connection_count": next_count,
+        }
     except Exception:
         conn.rollback()
         raise
@@ -239,6 +260,7 @@ def get_user_call_state(user_id: int) -> dict[str, Any]:
             "is_dnd": False,
             "call_status": CALL_STATUS_AVAILABLE,
             "peer_id": None,
+            "ws_connection_count": 0,
             "last_seen": None,
             "updated_at": None,
         })
@@ -277,8 +299,6 @@ def reserve_call_session(caller_id: int, callee_id: int) -> dict[str, Any]:
         _update_call_state(c, callee_id, CALL_STATUS_RINGING, caller_id)
         conn.commit()
 
-        _set_local_call_status(caller_id, CALL_STATUS_CALLING)
-        _set_local_call_status(callee_id, CALL_STATUS_RINGING)
         return {"ok": True, "callee_status": CALL_STATUS_AVAILABLE}
     except Exception:
         conn.rollback()
@@ -315,8 +335,6 @@ def accept_call_session(callee_id: int, caller_id: int) -> dict[str, Any]:
         _update_call_state(c, callee_id, CALL_STATUS_BUSY, caller_id)
         conn.commit()
 
-        _set_local_call_status(caller_id, CALL_STATUS_BUSY)
-        _set_local_call_status(callee_id, CALL_STATUS_BUSY)
         return {"ok": True}
     except Exception:
         conn.rollback()
@@ -329,19 +347,16 @@ def release_call_session(user_id: int, peer_id: Optional[int] = None) -> dict[st
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        initial_state = get_user_call_state(user_id)
-        linked_peer_id = peer_id if _safe_int(peer_id) is not None else initial_state.get("peer_id")
-        lock_ids = [user_id]
-        if linked_peer_id is not None:
-            lock_ids.append(linked_peer_id)
-
-        states = _fetch_user_states(c, lock_ids, for_update=True)
+        states = _fetch_user_states(c, [user_id], for_update=True)
         user_state = states.get(user_id)
         if not user_state:
             conn.rollback()
             return {"peer_id": None}
 
-        actual_peer_id = linked_peer_id if linked_peer_id is not None else user_state.get("peer_id")
+        actual_peer_id = peer_id if _safe_int(peer_id) is not None else user_state.get("peer_id")
+        if actual_peer_id is not None:
+            states = _fetch_user_states(c, [user_id, actual_peer_id], for_update=True)
+            user_state = states.get(user_id)
         peer_state = states.get(actual_peer_id) if actual_peer_id is not None else None
 
         _update_call_state(c, user_id, CALL_STATUS_AVAILABLE, None)
@@ -351,10 +366,6 @@ def release_call_session(user_id: int, peer_id: Optional[int] = None) -> dict[st
             released_peer_id = actual_peer_id
 
         conn.commit()
-
-        _set_local_call_status(user_id, CALL_STATUS_AVAILABLE)
-        if released_peer_id is not None:
-            _set_local_call_status(released_peer_id, CALL_STATUS_AVAILABLE)
 
         return {"peer_id": released_peer_id}
     except Exception:
@@ -398,7 +409,6 @@ def set_call_session_status(user_id: int, peer_id: int, status: str) -> bool:
 
         _update_call_state(c, user_id, status, peer_id)
         conn.commit()
-        _set_local_call_status(user_id, status)
         return True
     except Exception:
         conn.rollback()
@@ -528,19 +538,19 @@ async def websocket_endpoint(websocket: WebSocket):
         if not user_id:
             return
 
-        is_offline = manager.disconnect(user_id, websocket)
-        release_result = release_call_session(user_id)
-        peer_id = release_result.get("peer_id")
+        manager.disconnect(user_id, websocket)
+        presence_result = mark_user_disconnected(user_id)
+        is_offline = bool(presence_result.get("became_offline"))
 
         log_info(f"WebSocket disconnect cleanup for user {user_id}", "webrtc")
-        if peer_id is not None:
-            await manager.send_to_user(peer_id, {
-                "type": "hangup",
-                "from": user_id
-            })
-
         if is_offline:
-            user_call_status.pop(user_id, None)
+            release_result = release_call_session(user_id)
+            peer_id = release_result.get("peer_id")
+            if peer_id is not None:
+                await manager.send_to_user(peer_id, {
+                    "type": "hangup",
+                    "from": user_id
+                })
 
             await manager.broadcast({
                 "type": "user_status",
@@ -549,12 +559,8 @@ async def websocket_endpoint(websocket: WebSocket):
                 "last_seen": datetime.now().isoformat()
             })
 
-            try:
-                _update_online_presence(user_id, False)
-            except Exception as e:
-                log_error(f"Error updating offline status in DB: {e}", "webrtc")
-
         log_info(f"WebSocket disconnected: user {user_id}", "webrtc")
+        user_id = None
 
     try:
         origin_header = websocket.headers.get("origin")
@@ -586,6 +592,13 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # Регистрация пользователя
             if message_type == "register":
+                if user_id is not None:
+                    await websocket.send_json({
+                        "type": "error",
+                        "message": "Already registered"
+                    })
+                    continue
+
                 claimed_user_id = _safe_int(data.get("user_id"))
                 authenticated_user_id = int(authenticated_user["id"])
                 if claimed_user_id is not None and claimed_user_id != authenticated_user_id:
@@ -600,18 +613,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 is_first_local_connection = user_id not in manager.active_connections
                 await manager.connect(user_id, websocket)
 
-                if is_first_local_connection:
-                    await manager.broadcast({
-                        "type": "user_status",
-                        "user_id": user_id,
-                        "status": "online",
-                        "timestamp": datetime.now().isoformat()
-                    })
-
                 try:
-                    _update_online_presence(user_id, True)
-                    _set_local_call_status(user_id, CALL_STATUS_AVAILABLE)
+                    presence_result = mark_user_connected(user_id)
                 except Exception as e:
+                    manager.disconnect(user_id, websocket)
+                    user_id = None
                     log_error(f"Error updating online status in DB: {e}", "webrtc")
                     await websocket.send_json({
                         "type": "error",
@@ -619,10 +625,22 @@ async def websocket_endpoint(websocket: WebSocket):
                     })
                     continue
 
+                if is_first_local_connection and presence_result.get("became_online"):
+                    await manager.broadcast({
+                        "type": "user_status",
+                        "user_id": user_id,
+                        "status": "online",
+                        "timestamp": datetime.now().isoformat()
+                    })
+
+                current_state = get_user_call_state(user_id)
+
                 await websocket.send_json({
                     "type": "registered",
                     "user_id": user_id,
-                    "success": True
+                    "success": True,
+                    "call_status": current_state.get("call_status"),
+                    "connection_count": current_state.get("ws_connection_count", 0),
                 })
 
                 log_info(f"User {user_id} registered for WebRTC and marked online", "webrtc")
@@ -863,7 +881,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
 @router.get("/online-users")
-async def get_online_users():
+async def get_online_users(_current_user: dict = Depends(get_current_user)):
     """Получить список пользователей онлайн"""
     try:
         conn = get_db_connection()

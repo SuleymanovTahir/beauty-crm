@@ -302,6 +302,8 @@ def test_webrtc_call_state_security():
             accept_call_session,
             get_user_call_state,
             is_call_peer,
+            mark_user_connected,
+            mark_user_disconnected,
             release_call_session,
             reserve_call_session,
         )
@@ -315,19 +317,51 @@ def test_webrtc_call_state_security():
         for user_id in [caller_id, callee_id, intruder_id]:
             c.execute("""
                 INSERT INTO user_status (
-                    user_id, is_online, is_dnd, call_status, current_call_peer_id, call_updated_at, updated_at
+                    user_id, is_online, is_dnd, call_status, current_call_peer_id, ws_connection_count, call_updated_at, updated_at
                 )
-                VALUES (%s, TRUE, FALSE, 'available', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                VALUES (%s, TRUE, FALSE, 'available', NULL, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
                 ON CONFLICT (user_id) DO UPDATE
                 SET is_online = TRUE,
                     is_dnd = FALSE,
                     call_status = 'available',
                     current_call_peer_id = NULL,
+                    ws_connection_count = 0,
                     call_updated_at = CURRENT_TIMESTAMP,
                     updated_at = CURRENT_TIMESTAMP
             """, (user_id,))
         conn.commit()
         conn.close()
+
+        print_subsection("Глобальный online/offline по нескольким WS-сессиям")
+        first_connect = mark_user_connected(caller_id)
+        second_connect = mark_user_connected(caller_id)
+        caller_state = get_user_call_state(caller_id)
+        assert first_connect.get("became_online") is True
+        assert second_connect.get("became_online") is False
+        assert caller_state["is_online"] is True
+        assert caller_state["ws_connection_count"] == 2
+        print("   ✅ Первый connect включает online, второй только увеличивает общий счетчик")
+
+        first_disconnect = mark_user_disconnected(caller_id)
+        caller_state = get_user_call_state(caller_id)
+        assert first_disconnect.get("became_offline") is False
+        assert caller_state["is_online"] is True
+        assert caller_state["ws_connection_count"] == 1
+        print("   ✅ При закрытии одной WS-сессии пользователь остается online")
+
+        second_disconnect = mark_user_disconnected(caller_id)
+        caller_state = get_user_call_state(caller_id)
+        assert second_disconnect.get("became_offline") is True
+        assert caller_state["is_online"] is False
+        assert caller_state["ws_connection_count"] == 0
+        print("   ✅ Offline наступает только после закрытия последней WS-сессии")
+
+        reconnect = mark_user_connected(caller_id)
+        caller_state = get_user_call_state(caller_id)
+        assert reconnect.get("became_online") is True
+        assert caller_state["is_online"] is True
+        assert caller_state["ws_connection_count"] == 1
+        print("   ✅ Пользователь корректно возвращается online после повторного подключения")
 
         print_subsection("Резервирование звонка между двумя пользователями")
         reserve_result = reserve_call_session(caller_id, callee_id)
