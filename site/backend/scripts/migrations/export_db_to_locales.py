@@ -19,6 +19,7 @@ load_dotenv(backend_dir / '.env.local')
 load_dotenv(backend_dir / '.env')
 
 from db.connection import get_db_connection
+from utils.language_utils import normalize_public_person_name, normalize_position_label
 
 # Frontend locales path
 FRONTEND_DIR = backend_dir.parent / 'frontend'
@@ -314,14 +315,14 @@ def export_reviews():
                 review_id, text, author_name, employee_name, employee_position, rating = row
 
                 translated_text = get_translation(translations, "public_reviews", review_id, "text", lang, text or "")
-                translated_author = get_translation(translations, "public_reviews", review_id, "author_name", lang, author_name or "")
-                translated_emp_name = get_translation(translations, "public_reviews", review_id, "employee_name", lang, employee_name or "")
+                canonical_author = normalize_public_person_name(author_name)
+                canonical_employee_name = normalize_public_person_name(employee_name)
                 translated_emp_pos = get_translation(translations, "public_reviews", review_id, "employee_position", lang, employee_position or "")
 
                 items.append({
                     "text": translated_text,
-                    "author_name": translated_author,
-                    "employee_name": translated_emp_name,
+                    "author_name": canonical_author,
+                    "employee_name": canonical_employee_name,
                     "employee_position": translated_emp_pos,
                     "rating": rating or 5
                 })
@@ -380,7 +381,7 @@ def export_employees():
                 items.append({
                     "id": emp_id,
                     "name": translated_name,
-                    "position": translated_position,
+                    "position": normalize_position_label(translated_position, lang),
                     "bio": translated_bio,
                     "photo": photo_url or ""
                 })

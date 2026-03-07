@@ -26,15 +26,15 @@ LANGUAGES = ["ru", "en", "ar", "es", "de", "fr", "hi", "kk", "pt"]
 SOURCE_LANG = 'ru'
 
 BAD_TRANSLATION_MARKERS = {
-    'ru': ['ремонт 1 наращивания', 'ремонт 1 гелевого ногтя', 'ремонт 1 гелевого ногтей', 'пилингт', 'наращивание ногтей (гель)'],
-    'en': ['interior settings', 'mail mailings', 'repair 1 extension', 'repair 1 gel nail'],
-    'es': ['hasta fecha', 'reparación de 1 uña de gel', 'pelar'],
-    'fr': ['à la date', "réparation d'un ongle en gel", 'peluchage'],
-    'de': ['datum bis', 'reparatur von 1 gel-nagel'],
-    'pt': ['até data', 'de data', 'reparo de 1 unha em gel', 'descamação'],
-    'ar': ['إصلاح ظفر جل واحد'],
-    'hi': ['1 जेल नाखून की मरम्मत', 'छीलना'],
-    'kk': ['1 гель тырнағын жөндеу', 'пиллинг']
+    'ru': ['ремонт 1 наращивания', 'ремонт 1 гелевого ногтя', 'ремонт 1 гелевого ногтей', 'пилингт', 'наращивание ногтей (гель)', 'мастер универсальной красоты', 'универсальный мастер красоты'],
+    'en': ['interior settings', 'mail mailings', 'repair 1 extension', 'repair 1 gel nail', 'universal beauty master'],
+    'es': ['hasta fecha', 'reparación de 1 uña de gel', 'pelar', 'maestro de belleza universal'],
+    'fr': ['à la date', "réparation d'un ongle en gel", 'peluchage', 'universal beauty master'],
+    'de': ['datum bis', 'reparatur von 1 gel-nagel', 'universal beauty master'],
+    'pt': ['até data', 'de data', 'reparo de 1 unha em gel', 'descamação', 'universal beauty master'],
+    'ar': ['إصلاح ظفر جل واحد', 'عالم تجميل عالمي'],
+    'hi': ['1 जेल नाखून की मरम्मत', 'छीलना', 'यूनिवर्सल ब्यूटी मास्टर'],
+    'kk': ['1 гель тырнағын жөндеу', 'пиллинг', 'мастер универсальной красоты']
 }
 
 def is_bad_translation(value: str, target_lang: str) -> bool:

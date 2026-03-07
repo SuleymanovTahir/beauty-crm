@@ -8,15 +8,17 @@ import { buildApiUrl } from "@site/api/client";
 interface Review {
   id: number;
   name: string;
+  author_name?: string;
   avatar_url: string;
   rating: number;
   employee_position: string;
+  position?: string;
   text: string;
   created_at: string;
 }
 
 export function ReviewsSection() {
-  const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -27,23 +29,24 @@ export function ReviewsSection() {
         const res = await safeFetch(buildApiUrl(`/api/public/reviews?language=${i18n.language}`, API_URL));
         const data = await res.json();
 
-        if (data.reviews && data.reviews.length > 0) {
-          // Map backend data to match expected structure if needed, or just use as is if compatible.
-          // Backend returns: id, name (or author_name), avatar_url, rating, employee_position, text (or text_xx), created_at
+        if (Array.isArray(data.reviews) && data.reviews.length > 0) {
           const mappedReviews = data.reviews.map((review: any) => {
-            let avatarUrl = review.avatar_url || "";
+            let avatarUrl = review.avatar_url ?? "";
             if (avatarUrl && !avatarUrl.startsWith('http')) {
               avatarUrl = `${API_URL}${avatarUrl.startsWith('/') ? '' : '/'}${avatarUrl}`;
             }
 
+            const reviewName = review.name ?? review.author_name ?? "";
+            const reviewPosition = review.employee_position ?? review.position ?? "";
+
             return {
               id: review.id,
-              name: t(`dynamic:public_reviews.${review.id}.author_name`, { defaultValue: review.name || review.author_name || "" }),
+              name: reviewName,
               avatar_url: avatarUrl,
-              rating: review.rating || 5,
-              employee_position: t(`dynamic:public_reviews.${review.id}.employee_position`, { defaultValue: review.employee_position || "" }),
-              text: t(`dynamic:public_reviews.${review.id}.text`, { defaultValue: review.text || "" }),
-              created_at: review.created_at || ""
+              rating: review.rating ?? 5,
+              employee_position: reviewPosition,
+              text: review.text ?? "",
+              created_at: review.created_at ?? ""
             };
           });
           setReviews(mappedReviews);

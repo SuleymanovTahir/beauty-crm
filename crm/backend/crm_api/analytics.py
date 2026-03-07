@@ -129,6 +129,9 @@ async def get_analytics_api(
     period: int = Query(30),
     date_from: str = Query(None),
     date_to: str = Query(None),
+    service_name: str = Query(None),
+    product_name: str = Query(None),
+    forecast_horizon_days: int = Query(14),
     session_token: Optional[str] = Cookie(None)
 ):
     """Получить аналитику за период (3 уровня доступа)"""
@@ -144,9 +147,20 @@ async def get_analytics_api(
     
     # Получаем данные
     if date_from and date_to:
-        data = get_analytics_data(date_from=date_from, date_to=date_to)
+        data = get_analytics_data(
+            date_from=date_from,
+            date_to=date_to,
+            service_name=service_name,
+            product_name=product_name,
+            forecast_horizon_days=forecast_horizon_days,
+        )
     else:
-        data = get_analytics_data(days=period)
+        data = get_analytics_data(
+            days=period,
+            service_name=service_name,
+            product_name=product_name,
+            forecast_horizon_days=forecast_horizon_days,
+        )
     
     # Анонимизируем
     return anonymize_analytics_data(data, access_level)

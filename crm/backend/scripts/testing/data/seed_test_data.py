@@ -8,9 +8,11 @@ import os
 import random
 import string
 from datetime import datetime
+from pathlib import Path
 
 # Добавляем backend в путь
 backend_dir = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+PROJECT_ROOT = Path(__file__).resolve().parents[5]
 if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
 
@@ -154,11 +156,11 @@ def seed_data():
     ]
 
     # Файл для сохранения паролей
-    credentials_path = os.path.join(backend_dir, "staff_credentials.txt")
+    credentials_path = PROJECT_ROOT / "staff_credentials.txt"
 
     # Загружаем существующие пароли из файла (если есть)
     existing_passwords = {}
-    if os.path.exists(credentials_path):
+    if credentials_path.exists():
         try:
             with open(credentials_path, "r", encoding="utf-8") as f:
                 current_username = None

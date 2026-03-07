@@ -2,12 +2,50 @@
 Утилиты для работы с языками - универсальные функции без хардкода
 """
 from typing import List, Optional
+import re
 import time
 
 # Поддерживаемые языки - единый источник истины
 SUPPORTED_LANGUAGES = ['ru', 'en', 'ar', 'es', 'de', 'fr', 'hi', 'kk', 'pt']
 DEFAULT_LANGUAGE = 'en'
 FALLBACK_LANGUAGE = 'en'
+
+POSITION_NORMALIZATION_RULES = {
+    "beauty_specialist": {
+        "variants": {
+            "universal beauty master",
+            "beauty specialist",
+            "мастер универсальной красоты",
+            "универсальный мастер красоты",
+            "мастер универсал",
+            "мастер-универсал",
+            "maestro de belleza universal",
+            "universal beauty master",
+            "عالم تجميل عالمي",
+            "यूनिवर्सल ब्यूटी मास्टर",
+        },
+        "labels": {
+            "ru": "Бьюти-специалист",
+            "en": "Beauty Specialist",
+            "ar": "أخصائية تجميل",
+            "es": "Especialista en belleza",
+            "de": "Beauty-Spezialistin",
+            "fr": "Spécialiste beauté",
+            "hi": "ब्यूटी स्पेशलिस्ट",
+            "kk": "Бьюти-специалист",
+            "pt": "Especialista em beleza",
+        },
+    },
+}
+
+PUBLIC_NAME_OVERRIDES = {
+    "анна петрова": "Anna Petrova",
+    "сара дженкинс": "Sarah Jenkins",
+    "елена смирнова": "Elena Smirnova",
+    "мария гонсалес": "Mariya Gonsales",
+    "фатима аль сайед": "Fatima Al-Sayed",
+    "фатима аль-сайед": "Fatima Al-Sayed",
+}
 
 # Cache for dynamic translations (language -> {translations dict, load_time})
 _translations_cache = {}
@@ -54,6 +92,44 @@ def get_transliterated_name(name: str, language: str) -> str:
     except ImportError:
         return name
 
+
+def normalize_public_person_name(name: str) -> str:
+    """
+    Нормализовать имя для публичного отображения без русификации.
+    Канонический вид для отзывов и публичных карточек — латиница, если имя было на кириллице.
+    """
+    clean_name = " ".join(str(name or "").split())
+    if not clean_name:
+        return ""
+
+    normalized_name = re.sub(r"[^\w\sа-яё]", " ", clean_name.casefold(), flags=re.IGNORECASE)
+    normalized_name = re.sub(r"\s+", " ", normalized_name).strip()
+    canonical_name = PUBLIC_NAME_OVERRIDES.get(normalized_name)
+    if canonical_name:
+        return canonical_name
+
+    return get_transliterated_name(clean_name, "en")
+
+
+def normalize_position_label(position: str, language: str) -> str:
+    """
+    Исправить известные некорректные/неестественные должности на нормальный label.
+    """
+    clean_position = " ".join(str(position or "").split())
+    if not clean_position:
+        return ""
+
+    normalized_language = validate_language(language)
+    normalized_position = re.sub(r"[\-–—]", " ", clean_position.casefold())
+    normalized_position = re.sub(r"\s+", " ", normalized_position).strip()
+
+    for rule in POSITION_NORMALIZATION_RULES.values():
+        if normalized_position in rule["variants"]:
+            labels = rule["labels"]
+            return labels.get(normalized_language, labels[FALLBACK_LANGUAGE])
+
+    return clean_position
+
 def translate_position(position: str, language: str) -> str:
     """
     Перевод должности с использованием словаря BeautySalonTranslator.
@@ -62,6 +138,9 @@ def translate_position(position: str, language: str) -> str:
         return ""
         
     language = validate_language(language)
+    normalized_position = normalize_position_label(position, language)
+    if normalized_position != " ".join(str(position).split()):
+        return normalized_position
     
     if language == 'ru':
         try:
@@ -71,11 +150,14 @@ def translate_position(position: str, language: str) -> str:
                 result = BEAUTY_SALON_TERMS[pos_lower]
                 # Делаем первую букву заглавной
                 if result:
+                    normalized_result = normalize_position_label(result, language)
+                    if normalized_result:
+                        return normalized_result
                     return result[0].upper() + result[1:]
         except ImportError:
             pass
     
-    return position
+    return normalize_position_label(position, language)
 
 def _load_translations(language: str) -> dict:
     """Load translations from file with caching and pre-indexing for performance"""

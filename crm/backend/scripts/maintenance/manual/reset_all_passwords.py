@@ -1,119 +1,136 @@
 #!/usr/bin/env python3
 """
-Script to reset passwords for all staff users with unique passwords.
+Reset staff usernames/passwords from the canonical repo-root staff_credentials.txt file.
 Run from backend directory: python3 scripts/maintenance/manual/reset_all_passwords.py
 """
 
-import hashlib
-import os
-from datetime import datetime
-import psycopg2
+import sys
+from pathlib import Path
 
-# Database connection
-DB_CONFIG = {
-    'host': 'localhost',
-    'port': 5432,
-    'database': 'beauty_crm',
-    'user': 'beauty_crm_user',
-    'password': 'local_password'
-}
+BACKEND_ROOT = Path(__file__).resolve().parents[3]
+PROJECT_ROOT = Path(__file__).resolve().parents[5]
+if str(BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(BACKEND_ROOT))
 
-# Unique passwords for each user (username -> password)
-USER_PASSWORDS = {
-    'admin': 'admin123',        # Will be changed to tahir
-    'tahir': 'admin123',        # Tahir's password
-    'tursunai': 'tursunai123',
-    'simo': 'simo123',
-    'jennifer': 'jennifer123',
-    'mestan': 'mestan123',
-    'lyazzat': 'lyazzat123',
-    'Akbota': 'akbota123',
-    'gulya': 'gulya123',
-}
+from db.connection import get_db_connection
+from utils.utils import hash_password
 
-def get_connection():
-    return psycopg2.connect(**DB_CONFIG)
+CANONICAL_CREDENTIALS_PATH = PROJECT_ROOT / "staff_credentials.txt"
+
+
+def _flush_credential_entry(entries, entry):
+    required_keys = {"role", "name", "username", "password"}
+    if required_keys.issubset(entry.keys()):
+        entries.append({
+            "role": entry["role"],
+            "name": entry["name"],
+            "username": entry["username"],
+            "password": entry["password"],
+        })
+    return {}
+
+
+def load_canonical_credentials():
+    if not CANONICAL_CREDENTIALS_PATH.exists():
+        raise FileNotFoundError(f"Canonical credentials file not found: {CANONICAL_CREDENTIALS_PATH}")
+
+    entries = []
+    current_entry = {}
+    with open(CANONICAL_CREDENTIALS_PATH, "r", encoding="utf-8") as file:
+        for raw_line in file:
+            line = raw_line.strip()
+            if not line or line.startswith("==="):
+                continue
+            if line.startswith("Role: "):
+                current_entry["role"] = line.replace("Role: ", "", 1)
+            elif line.startswith("Name: "):
+                current_entry["name"] = line.replace("Name: ", "", 1)
+            elif line.startswith("Username: "):
+                current_entry["username"] = line.replace("Username: ", "", 1)
+            elif line.startswith("Password: "):
+                current_entry["password"] = line.replace("Password: ", "", 1)
+            elif set(line) == {"-"}:
+                current_entry = _flush_credential_entry(entries, current_entry)
+
+    _flush_credential_entry(entries, current_entry)
+
+    if not entries:
+        raise ValueError(f"No credentials found in {CANONICAL_CREDENTIALS_PATH}")
+
+    return entries
+
+
+def write_canonical_credentials(entries):
+    with open(CANONICAL_CREDENTIALS_PATH, "w", encoding="utf-8") as file:
+        file.write("=== USERS CREDENTIALS (Fixed & Active) ===\n\n")
+        for entry in entries:
+            file.write(f"Role: {entry['role']}\n")
+            file.write(f"Name: {entry['name']}\n")
+            file.write(f"Username: {entry['username']}\n")
+            file.write(f"Password: {entry['password']}\n")
+            file.write("-" * 30 + "\n")
+
 
 def reset_passwords():
-    conn = get_connection()
-    c = conn.cursor()
+    credentials = load_canonical_credentials()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    print("🔧 Resetting staff usernames and passwords from canonical credentials...")
 
     try:
-        # First, change admin login to tahir
-        print("\n[1] Changing login 'admin' -> 'tahir'...")
-        c.execute("UPDATE users SET username = 'tahir' WHERE username = 'admin'")
-        if c.rowcount > 0:
-            print("   [OK] Login changed from 'admin' to 'tahir'")
-        else:
-            print("   [INFO] User 'admin' not found or already changed")
+        updated_count = 0
+        for credential in credentials:
+            cursor.execute(
+                """
+                    SELECT id
+                    FROM users
+                    WHERE username = %s OR full_name = %s
+                    ORDER BY CASE WHEN username = %s THEN 0 ELSE 1 END, id ASC
+                    LIMIT 1
+                """,
+                (credential["username"], credential["name"], credential["username"]),
+            )
+            user_row = cursor.fetchone()
 
-        # Get all staff users (not clients)
-        c.execute("""
-            SELECT id, username, full_name, role, position
-            FROM users
-            WHERE role != 'client' AND deleted_at IS NULL
-            ORDER BY role, full_name
-        """)
-        users = c.fetchall()
+            if not user_row:
+                print(f"⚠️ User not found for credentials entry: {credential['username']} / {credential['name']}")
+                continue
 
-        if not users:
-            print("No staff users found!")
-            return
+            password_hash = hash_password(credential["password"])
+            cursor.execute(
+                """
+                    UPDATE users
+                    SET username = %s,
+                        full_name = %s,
+                        role = %s,
+                        is_active = TRUE,
+                        password_hash = %s
+                    WHERE id = %s
+                """,
+                (
+                    credential["username"],
+                    credential["name"],
+                    credential["role"],
+                    password_hash,
+                    user_row[0],
+                ),
+            )
+            updated_count += 1
+            print(f"✅ Synced credentials for: {credential['username']}")
 
-        print(f"\n[2] Resetting passwords for {len(users)} users...")
-        print("=" * 60)
-
-        credentials = []
-
-        for user in users:
-            user_id, username, full_name, role, position = user
-
-            # Get password for user (default if not specified)
-            password = USER_PASSWORDS.get(username, f"{username.lower()}123")
-            password_hash = hashlib.sha256(password.encode()).hexdigest()
-
-            # Update password
-            c.execute("""
-                UPDATE users SET password_hash = %s WHERE id = %s
-            """, (password_hash, user_id))
-
-            credentials.append({
-                'name': full_name,
-                'login': username,
-                'role': role,
-                'position': position or 'N/A',
-                'password': password
-            })
-
-            print(f"  [OK] {full_name} ({username}) - {role} - password: {password}")
-
+        write_canonical_credentials(credentials)
         conn.commit()
-        print("=" * 60)
-        print(f"Successfully reset {len(users)} passwords!")
+        print(f"✅ Staff credentials synchronized: {updated_count}")
+        print(f"✅ Canonical credentials file refreshed: {CANONICAL_CREDENTIALS_PATH}")
 
-        # Write credentials file
-        cred_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'staff_credentials.txt')
-        with open(cred_file, 'w', encoding='utf-8') as f:
-            f.write("=== STAFF CREDENTIALS (CONFIDENTIAL) ===\n")
-            f.write(f"Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-            f.write("=" * 40 + "\n\n")
-
-            for cred in credentials:
-                f.write(f"Name: {cred['name']}\n")
-                f.write(f"Login: {cred['login']}\n")
-                f.write(f"Role: {cred['role']}\n")
-                f.write(f"Position: {cred['position']}\n")
-                f.write(f"Password: {cred['password']}\n")
-                f.write("-" * 40 + "\n")
-
-        print(f"\nCredentials saved to: {cred_file}")
-
-    except Exception as e:
+    except Exception as exc:
         conn.rollback()
-        print(f"ERROR: {e}")
+        print(f"❌ Failed to reset passwords: {exc}")
         raise
     finally:
         conn.close()
+
 
 if __name__ == "__main__":
     reset_passwords()

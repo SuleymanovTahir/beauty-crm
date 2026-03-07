@@ -11,6 +11,7 @@ if BACKEND_ROOT not in sys.path:
 
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
+from utils.language_utils import normalize_public_person_name
 from utils.utils import map_image_path
 
 
@@ -417,6 +418,41 @@ def _cleanup_existing_public_reviews(cursor) -> int:
     return len(ids_to_delete)
 
 
+def _normalize_existing_public_review_names(cursor) -> int:
+    cursor.execute(
+        """
+            SELECT id, author_name, employee_name
+            FROM public_reviews
+            WHERE is_active = TRUE
+            ORDER BY display_order ASC, id ASC
+        """
+    )
+    rows = cursor.fetchall()
+    if not rows:
+        return 0
+
+    updated = 0
+    for row_id, author_name, employee_name in rows:
+        normalized_author = normalize_public_person_name(author_name)
+        normalized_employee = normalize_public_person_name(employee_name)
+
+        if normalized_author == (author_name or "").strip() and normalized_employee == (employee_name or "").strip():
+            continue
+
+        cursor.execute(
+            """
+                UPDATE public_reviews
+                SET author_name = %s,
+                    employee_name = %s
+                WHERE id = %s
+            """,
+            (normalized_author, normalized_employee, row_id),
+        )
+        updated += 1
+
+    return updated
+
+
 def _cleanup_existing_public_faq(cursor) -> int:
     cursor.execute(
         """
@@ -696,13 +732,13 @@ def _seed_reviews_if_empty(cursor) -> int:
         if not text:
             continue
 
-        author_name = (item.get("author_name") or f"Клиент {index}").strip()
+        author_name = normalize_public_person_name(item.get("author_name") or f"Client {index}")
         author_key = _normalize_text(author_name)
         text_key = _normalize_text(text)
         if text_key in seen_texts or author_key in seen_authors:
             continue
 
-        employee_name = (item.get("employee_name") or "").strip()
+        employee_name = normalize_public_person_name(item.get("employee_name") or "")
         employee_position = (item.get("employee_position") or "").strip()
         rating_raw = item.get("rating", 5)
 
@@ -782,6 +818,10 @@ def run_fix():
         if deleted_reviews > 0:
             log_info(f"   ✅ Removed {deleted_reviews} duplicate reviews", "maintenance")
 
+        normalized_review_names = _normalize_existing_public_review_names(c)
+        if normalized_review_names > 0:
+            log_info(f"   ✅ Normalized {normalized_review_names} public review names", "maintenance")
+
         deleted_faq = _cleanup_existing_public_faq(c)
         if deleted_faq > 0:
             log_info(f"   ✅ Removed {deleted_faq} duplicate/brand-hardcoded FAQ entries", "maintenance")
@@ -841,6 +881,7 @@ def run_fix():
         employee_data = {
             'gulcehre': {
                 'full_name': 'Касымова Гульчехре',
+                'position': 'Мастер маникюра и депиляции',
                 'photo': '/landing-images/staff/Gulya.webp',
                 'nickname': 'Gulya',
                 'email': 'gulcehraautova@gmail.com',
@@ -851,6 +892,7 @@ def run_fix():
             },
             'mestan': {
                 'full_name': 'Amandurdyyeva Mestan',
+                'position': 'Стилист по волосам и мастер перманентного макияжа',
                 'photo': '/landing-images/staff/Mestan.webp',
                 'nickname': 'Mestan',
                 'email': 'amandurdyyeva80@gmail.com',
@@ -861,6 +903,7 @@ def run_fix():
             },
             'sabri': {
                 'full_name': 'Мохаммед Сабри',
+                'position': 'Топ-стилист',
                 'photo': '/landing-images/staff/Simo.webp',
                 'nickname': 'Simo',
                 'email': 'sabrisimo363@gmail.com',
@@ -871,16 +914,18 @@ def run_fix():
             },
             'jennifer': {
                 'full_name': 'Перадилья Дженнифер',
+                'position': 'Бьюти-специалист',
                 'photo': '/landing-images/staff/Jennifer.webp',
                 'nickname': 'Jennifer',
                 'email': 'peradillajennifer47@gmail.com',
                 'phone': '+971564208308',
                 'bio': 'Дженнифер воплощает в себе талант многопрофильного специалиста. Она виртуозно выполняет как базовые, так и сложные бьюти-процедуры, обеспечивая комплексный и гармоничный подход к вашему преображению.',
-                'specialization': 'Универсальный мастер красоты',
+                'specialization': 'Ногтевой сервис, депиляция, косметология, массаж',
                 'years_of_experience': 12
             },
             'lyazat': {
                 'full_name': 'Kozhabay Lyazat',
+                'position': 'Мастер маникюра',
                 'photo': '/landing-images/staff/Lyazzat.webp',
                 'nickname': 'Lyazat',
                 'email': 'lazzat.kozhabaeva@mail.ru',
@@ -895,6 +940,7 @@ def run_fix():
             c.execute("""
                 UPDATE users SET 
                     full_name = %s,
+                    position = %s,
                     photo = %s, 
                     nickname = %s,
                     email = %s,
@@ -907,7 +953,7 @@ def run_fix():
                     is_public_visible = TRUE 
                 WHERE username = %s OR full_name = %s
             """, (
-                data['full_name'], data['photo'], data['nickname'], 
+                data['full_name'], data['position'], data['photo'], data['nickname'], 
                 data.get('email'), data.get('phone'),
                 data['bio'], data['specialization'], data['years_of_experience'],
                 username, data['full_name']
@@ -1032,9 +1078,9 @@ def run_fix():
             ('lyazat', 'Kozhabay Lyazat')
         ]
         
-        credentials_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "staff_credentials.txt")
+        credentials_path = _project_root() / "staff_credentials.txt"
         passwords = {}
-        if os.path.exists(credentials_path):
+        if credentials_path.exists():
             try:
                 with open(credentials_path, "r", encoding="utf-8") as f:
                     curr_u = None

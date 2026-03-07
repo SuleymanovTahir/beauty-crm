@@ -8,9 +8,11 @@ import os
 import random
 import string
 from datetime import datetime
+from pathlib import Path
 
 # Добавляем backend в путь
 backend_dir = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+PROJECT_ROOT = Path(__file__).resolve().parents[5]
 if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
 
@@ -147,18 +149,18 @@ def seed_data():
         {'username': 'admin', 'full_name': 'Admin', 'role': 'director', 'is_service_provider': False, 'position': 'Owner'},
         {'username': 'sabri', 'full_name': 'Мохаммед Сабри', 'role': 'employee', 'is_service_provider': True, 'position': 'Топ-стилист'},
         {'username': 'mestan', 'full_name': 'Amandurdyyeva Mestan', 'role': 'employee', 'is_service_provider': True, 'position': 'Стилист по волосам и Мастер по перманентному макияжу'},
-        {'username': 'jennifer', 'full_name': 'Перадилья Дженнифер', 'role': 'employee', 'is_service_provider': True, 'position': 'Мастер универсальной красоты'},
+        {'username': 'jennifer', 'full_name': 'Перадилья Дженнифер', 'role': 'employee', 'is_service_provider': True, 'position': 'Бьюти-специалист'},
         {'username': 'gulcehre', 'full_name': 'Касымова Гульчехре', 'role': 'employee', 'is_service_provider': True, 'position': 'Мастер маникюра и депиляции, ухода за лицом'},
         {'username': 'lyazat', 'full_name': 'Kozhabay Lyazat', 'role': 'employee', 'is_service_provider': True, 'position': 'Мастер маникюра'},
         {'username': 'tursunay', 'full_name': 'Турсунай', 'role': 'director', 'is_service_provider': False, 'position': 'Owner'}
     ]
 
     # Файл для сохранения паролей
-    credentials_path = os.path.join(backend_dir, "staff_credentials.txt")
+    credentials_path = PROJECT_ROOT / "staff_credentials.txt"
 
     # Загружаем существующие пароли из файла (если есть)
     existing_passwords = {}
-    if os.path.exists(credentials_path):
+    if credentials_path.exists():
         try:
             with open(credentials_path, "r", encoding="utf-8") as f:
                 current_username = None

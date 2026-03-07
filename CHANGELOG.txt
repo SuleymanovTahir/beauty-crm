@@ -1,5 +1,180 @@
+## [2026-03-08] Duplicate Audit + Staff Credentials SSOT Cleanup
+- Audited exact duplicates after the project split into `crm` and `site`.
+- Mirrored-file summary:
+  - backend: `305` shared relative paths between `crm/backend` and `site/backend`, of which `261` are still byte-identical and `44` already diverged,
+  - frontend: `249` shared relative paths between `crm/frontend` and `site/frontend`, of which `183` are still byte-identical and `66` already diverged.
+- Highest-value exact duplicate that could already cause drift was staff credentials:
+  - `crm/backend/staff_credentials.txt`
+  - `site/backend/staff_credentials.txt`
+  - both files were byte-identical (`sha256 181730c81ceeb283cb8b2616ab81ed018f85a5932b416ea28f25dd1f36b8dda2`) and contained the same 37-line credential list.
+- Fixed this drift source by moving staff credentials to one repo-root SSOT file:
+  - added `/Users/tahir/Desktop/beauty-crm/staff_credentials.txt`
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/backend/staff_credentials.txt`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/backend/staff_credentials.txt`
+  - updated both backends to read/write the repo-root credentials file from:
+    - `/Users/tahir/Desktop/beauty-crm/crm/backend/force_sync_pwd.py`
+    - `/Users/tahir/Desktop/beauty-crm/site/backend/force_sync_pwd.py`
+    - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/manual/reset_all_passwords.py`
+    - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/maintenance/manual/reset_all_passwords.py`
+    - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/fix_data.py`
+    - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/maintenance/fix_data.py`
+    - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/testing/data/seed_test_data.py`
+    - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/testing/data/seed_test_data.py`
+- Removed one confirmed dead frontend duplicate:
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/PublicLanguageSwitcher.tsx`
+  - audit confirmed there were no remaining CRM imports of `PublicLanguageSwitcher`.
+- Validation:
+  - `find` now returns only one credentials file: `/Users/tahir/Desktop/beauty-crm/staff_credentials.txt`
+  - `python3 -m py_compile` passed for all updated backend files.
+  - `npm --prefix crm/frontend run type-check` passed after removing the dead CRM component copy.
+- IMPORTANT TO REMEMBER:
+  - Staff credentials now have exactly one valid source: `/Users/tahir/Desktop/beauty-crm/staff_credentials.txt`
+  - Never recreate `crm/backend/staff_credentials.txt` or `site/backend/staff_credentials.txt`
+  - The remaining duplicate audit should prioritize large identical mirrored files and dead frontend translation payloads before touching already-diverged product-specific files.
+
+## [2026-03-08] Site Build Speed Recovery: Fast Local Build + Separate SEO Prerender
+- Investigated why `npm run build` in `/Users/tahir/Desktop/beauty-crm/site/frontend` regressed from a few seconds to several minutes.
+- Root cause:
+  - `site/frontend/package.json` had turned `build` into a full SEO pipeline with `vite build` plus `prerender-public.mjs`,
+  - current public data produces `100` prerender routes (`5` static + `15` categories + `80` procedure/detail routes),
+  - even after speeding up prerender itself, a full SEO pass still cannot realistically behave like a 1-5 second local build.
+- Final script split:
+  - `npm run build` in `/Users/tahir/Desktop/beauty-crm/site/frontend` is fast again and runs only `PRERENDER=1 vite build`,
+  - `npm run build:seo` now performs the full public SEO build: fast bundle build plus `node scripts/prerender-public.mjs`,
+  - `npm run prerender:public` aliases `npm run build:seo`.
+- Optimized `/Users/tahir/Desktop/beauty-crm/site/frontend/scripts/prerender-public.mjs` without removing SEO output:
+  - added configurable parallel prerender workers via `PRERENDER_CONCURRENCY`,
+  - default concurrency now auto-detects machine parallelism and caps at `6`,
+  - page navigation now waits for `domcontentloaded` and then relies on existing SEO readiness checks instead of always waiting for `networkidle2`,
+  - extracted route rendering into a worker-safe function so one preview server/browser can process multiple pages concurrently,
+  - added a safe debug-state fallback for false-negative readiness timeouts on already-rendered static SEO pages (`/terms`, `/privacy-policy`, `/data-deletion`, `/new-booking`).
+- Validation:
+  - `/usr/bin/time -p npm run build` in `/Users/tahir/Desktop/beauty-crm/site/frontend`: `real 3.53`
+  - old `/usr/bin/time -p node scripts/prerender-public.mjs`: `real 207.14` for `100` routes
+  - optimized full SEO build remains available via `npm run build:seo`: `real 56.32`
+  - SEO output still completes for all `100` routes and writes prerendered HTML plus `dist/sitemap.xml`.
+- IMPORTANT TO REMEMBER:
+  - Use `npm run build` for normal local build checks and fast frontend bundling.
+  - Use `npm run build:seo` only when you really need prerendered public HTML/sitemap for SEO or deploy verification.
+  - If local SEO verification only needs a spot check, use `PRERENDER_ROUTES=/some-route node scripts/prerender-public.mjs` to limit scope instead of weakening the full SEO build.
+
+## [2026-03-08] CRM Analytics Clarity Upgrade: Filterable Noise/Forecast + Human Labels + Layout Fix
+- Reworked CRM analytics so advanced blocks are no longer opaque or misleading on tiny samples:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/analytics.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/analytics.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/Analytics.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/services/api.ts`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/api/client.ts`
+- Added backend analytics filters for:
+  - service name,
+  - product name,
+  - forecast horizon days.
+- These filters now affect the blocks the user called out most:
+  - data reliability / noise,
+  - attribution,
+  - slot load forecast,
+  - no-show and cancellation risk,
+  - unit economics,
+  - time-to-book.
+- Data reliability now returns a real noise breakdown instead of a single opaque score:
+  - missing region/source share and counts,
+  - revenue outlier share and count,
+  - hourly distribution instability,
+  - per-factor contribution to total noise score.
+- Slot forecast is now clearer:
+  - forecast horizon is selectable from frontend,
+  - response now includes historical sample size, active slot count, and applied scope,
+  - frontend explains that values like `0.20` mean a probability/average for similar slots, not “0.20 of a slot”.
+- Website sections before booking is now less misleading on tiny traffic:
+  - account URLs are recognized as a separate section,
+  - each row includes session counts and whether the sample is reliable,
+  - summary shows tracked sessions vs booking sessions,
+  - UI warns when 100% comes from too small a sample.
+- Human-readable labels were added for raw channel codes such as `unknown`, `client_cabinet`, `public_landing`, `manual`, etc., so attribution and time-to-book tables no longer expose backend keys directly.
+- The advanced analytics page layout was changed from uneven 2-column rows to stacked cards to remove large empty gaps on the right side when one card is much taller than its neighbor.
+- Fixed a small frontend performance bug on this page:
+  - changing period used to trigger a duplicate analytics request,
+  - `Analytics.tsx` now avoids the extra reload.
+- Translation sync:
+  - updated `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/locales/ru/admin/analytics.json` with the new analytics wording,
+  - then ran `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run i18n:sync`,
+  - this also filled other pre-existing missing CRM locale keys across the project, not just analytics,
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run i18n:check-only` now reports `0` missing keys and `0` empty values.
+- Validation:
+  - `python3 -m py_compile crm/backend/db/analytics.py crm/backend/crm_api/analytics.py`
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run type-check`
+  - runtime smoke via `get_analytics_data(...)` confirmed:
+    - `website_sections_summary` is present,
+    - noise breakdown has 3 components,
+    - filtered forecast scope/horizon are returned correctly.
+- IMPORTANT TO REMEMBER:
+  - CRM analytics quality metrics must always explain which concrete factors create the score; raw trust/noise numbers without decomposition are not acceptable.
+  - For sections-before-booking and similar behavioral metrics, tiny sample sizes must be surfaced explicitly, otherwise `100%` looks like a false certainty.
+  - Reuse existing analytics API instead of adding parallel “fix” endpoints; extend `get_analytics_data(...)` and the main page so filters and explanations stay SSOT.
+
+## [2026-03-08] Staff Credentials Cleanup: Removed False Duplicates and Legacy Reset Drift
+- Fixed credentials drift around `staff_credentials.txt` so the project no longer contains a second stale credentials file with wrong logins/password hints.
+- Removed false duplicate files that contained outdated legacy accounts like `tahir`, `gulya`, `lyazzat`, `simo`, `tursunai` and passwords such as `admin123`, `defaultPassword123`, `jenn123 (likely)`:
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/maintenance/staff_credentials.txt`
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/staff_credentials.txt`
+- Reworked manual reset scripts to use only the canonical backend credentials file instead of hardcoded stale usernames/passwords:
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/maintenance/manual/reset_all_passwords.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/manual/reset_all_passwords.py`
+  - these scripts now read `/backend/staff_credentials.txt`, sync `username/full_name/role/password_hash`, and refresh the same canonical file instead of writing a second conflicting copy under `scripts/maintenance/`.
+- Reworked force-sync helpers to use the same canonical credentials source:
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/force_sync_pwd.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/force_sync_pwd.py`
+- Removed another source of confusion in backend test docs:
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/testing/test_registration.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/testing/test_registration.py`
+  - old `admin/admin123` wording was replaced with generic `admin/director`.
+- Validation:
+  - `python3 -m py_compile` passed for updated reset/sync/testing files.
+  - canonical credentials parsing smoke returned current active usernames/passwords from `/Users/tahir/Desktop/beauty-crm/site/backend/staff_credentials.txt`.
+  - `find` now returns only canonical files:
+    - `/Users/tahir/Desktop/beauty-crm/site/backend/staff_credentials.txt`
+    - `/Users/tahir/Desktop/beauty-crm/crm/backend/staff_credentials.txt`
+- IMPORTANT TO REMEMBER:
+  - For staff access, the only valid credentials files are the backend-root files. Never recreate `scripts/maintenance/staff_credentials.txt`.
+  - Manual password reset utilities must read the canonical backend-root credentials file instead of shipping their own hardcoded user/password list.
+
+## [2026-03-08] Public Team/Reviews Cleanup: Canonical Names + Position Normalization + Dead Duplicate Removal
+- Fixed public landing data flow so frontend no longer re-translates already localized API payload for employee cards and reviews:
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/TeamSection.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/ReviewsSection.tsx`
+- Team and reviews now render backend-provided values directly, which removed the bad Jennifer title override from `dynamic.json` and stopped public review author names from being russified on the frontend.
+- Added backend normalization for known bad public labels and names:
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/utils/language_utils.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/db/public_content.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/public.py`
+  - `normalize_position_label(...)` now converts bad variants like `Universal Beauty Master` / `Мастер универсальной красоты` to a real salon role (`Beauty Specialist` / `Бьюти-специалист` and localized equivalents).
+  - `normalize_public_person_name(...)` now keeps review/client names in canonical non-russified form for public display.
+- Fixed translation/export pipeline so review names are no longer treated as translatable content:
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/translations/config.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/migrations/export_db_to_locales.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/translations/translator.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/translations/fix_bad_translations.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/utils/beauty_translator.py`
+- Fixed SSOT seed/maintenance sources so the bad Jennifer role is not reintroduced from database initialization or maintenance sync:
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/db/init.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/testing/data/seed_test_data.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/maintenance/fix_data.py`
+  - `fix_data.py` now also updates `users.position` during staff sync and normalizes existing `public_reviews.author_name` / `employee_name`.
+- Removed dead duplicated mock data files that were byte-identical and unused:
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/data/mockData.ts`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/pages/account/v2_components/mockData.ts`
+- Validation:
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/site/frontend run type-check`
+  - `python3 -m py_compile` for updated backend files
+  - direct runtime smoke:
+    - `get_public_employees('ru'/'en')` returns Jennifer as `Бьюти-специалист` / `Beauty Specialist`
+    - `get_public_reviews_list('ru')` returns canonical names like `Anna Petrova`, `Sarah Jenkins`
+- IMPORTANT TO REMEMBER:
+  - Proper names in `public_reviews` are not translatable UI copy. Keep them canonical and do not send them through locale translation flow.
+  - Public site components should prefer already localized backend/API payload over a second frontend pass through `dynamic.json`, otherwise bad translations and stale locale files override correct data.
+
 ## [2026-03-08] Site SEO Indexing Fix: Prerender Route Discovery + Dynamic Sitemap + Internal Linking
-- Fixed the public site SEO build flow so `site/frontend` standard production build now generates prerendered HTML for public routes instead of shipping SPA-only HTML:
+- Fixed the public site SEO build flow so the dedicated SEO build in `site/frontend` generates prerendered HTML for public routes instead of shipping SPA-only HTML:
   - `/Users/tahir/Desktop/beauty-crm/site/frontend/package.json`
   - `/Users/tahir/Desktop/beauty-crm/site/frontend/scripts/prerender-public.mjs`
 - `prerender-public.mjs` now correctly understands the real `/api/public/services` response shape (`{ success, services }`) and discovers:

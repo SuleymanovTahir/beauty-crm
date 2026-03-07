@@ -15,6 +15,7 @@ import http from "node:http";
 import https from "node:https";
 import fsSync from "node:fs";
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
@@ -116,6 +117,16 @@ const ROUTE_OVERRIDE = String(process.env.PRERENDER_ROUTES || "")
   .map((route) => route.trim())
   .filter((route) => route.length > 0)
   .map((route) => normalizeRoutePath(route));
+const DETECTED_PARALLELISM = typeof os.availableParallelism === "function"
+  ? os.availableParallelism()
+  : os.cpus().length;
+const DEFAULT_PRERENDER_CONCURRENCY = Math.max(1, Math.min(6, DETECTED_PARALLELISM));
+const PRERENDER_CONCURRENCY = (() => {
+  const parsed = Number.parseInt(String(process.env.PRERENDER_CONCURRENCY || ""), 10);
+  return Number.isFinite(parsed) && parsed > 0
+    ? parsed
+    : DEFAULT_PRERENDER_CONCURRENCY;
+})();
 
 function log(...args) {
   process.stdout.write(args.join(" ") + "\n");
@@ -323,9 +334,26 @@ async function readPageDebugState(page) {
   });
 }
 
+function isDebugStateReady(debugState, canonicalUrl, requireHeading) {
+  if (debugState.canonicalHref !== canonicalUrl) {
+    return false;
+  }
+  if (debugState.ogUrl.length > 0 && debugState.ogUrl !== canonicalUrl) {
+    return false;
+  }
+  if (debugState.title.trim().length === 0 || debugState.bodyPreview.trim().length === 0) {
+    return false;
+  }
+  if (requireHeading && debugState.h1Text.trim().length === 0) {
+    return false;
+  }
+  return true;
+}
+
 async function waitForRouteReady(page, route) {
   const normalizedRoute = normalizeRoutePath(route);
   const expectedCanonicalUrl = getExpectedCanonicalUrl(normalizedRoute);
+  const requireHeading = isServiceRoute(normalizedRoute);
 
   const readinessPredicate = (canonicalUrl, requireHeading) => {
     const canonicalHref = document
@@ -336,6 +364,8 @@ async function waitForRouteReady(page, route) {
       ?.getAttribute("content") || "";
     const title = document.title.trim();
     const rootText = document.getElementById("root")?.textContent?.trim() || "";
+    const bodyText = document.body?.innerText?.trim() || "";
+    const contentText = rootText || bodyText;
     const headingText = document.querySelector("h1")?.textContent?.trim() || "";
 
     if (canonicalHref !== canonicalUrl) {
@@ -344,7 +374,7 @@ async function waitForRouteReady(page, route) {
     if (ogUrl.length > 0 && ogUrl !== canonicalUrl) {
       return false;
     }
-    if (title.length === 0 || rootText.length === 0) {
+    if (title.length === 0 || contentText.length === 0) {
       return false;
     }
     if (requireHeading && headingText.length === 0) {
@@ -355,7 +385,7 @@ async function waitForRouteReady(page, route) {
   };
 
   try {
-    if (isServiceRoute(normalizedRoute)) {
+    if (requireHeading) {
       await page.waitForFunction(readinessPredicate, {
         timeout: 25_000,
       }, expectedCanonicalUrl, true);
@@ -366,6 +396,10 @@ async function waitForRouteReady(page, route) {
     }
   } catch (error) {
     const debugState = await readPageDebugState(page);
+    if (isDebugStateReady(debugState, expectedCanonicalUrl, requireHeading)) {
+      log(`ℹ️ SEO readiness fallback accepted for ${normalizedRoute}`);
+      return;
+    }
     throw new Error(
       `SEO readiness timeout for ${normalizedRoute}: ${JSON.stringify(debugState)}`
     );
@@ -432,6 +466,40 @@ async function preparePrerenderPage(page) {
 async function ensureDirForFile(filePath) {
   const dir = path.dirname(filePath);
   await fs.mkdir(dir, { recursive: true });
+}
+
+async function runWithConcurrency(items, concurrency, iteratee) {
+  const workerCount = Math.max(1, Math.min(concurrency, items.length || 1));
+  let nextIndex = 0;
+  let firstError = null;
+
+  await Promise.all(Array.from({ length: workerCount }, async () => {
+    while (true) {
+      if (firstError) {
+        return;
+      }
+
+      const currentIndex = nextIndex;
+      nextIndex += 1;
+
+      if (currentIndex >= items.length) {
+        return;
+      }
+
+      try {
+        await iteratee(items[currentIndex], currentIndex);
+      } catch (error) {
+        if (!firstError) {
+          firstError = error instanceof Error ? error : new Error(String(error));
+        }
+        return;
+      }
+    }
+  }));
+
+  if (firstError) {
+    throw firstError;
+  }
 }
 
 async function startPreview() {
@@ -508,6 +576,98 @@ async function getRoutes() {
   return baseRoutes;
 }
 
+async function prerenderRoute(browser, route, routeIndex, totalRoutes) {
+  const url = getPrerenderVisitUrl(route);
+  log(`→ [${routeIndex + 1}/${totalRoutes}] ${route}`);
+  const page = await browser.newPage();
+
+  try {
+    await preparePrerenderPage(page);
+    page.setDefaultNavigationTimeout(60_000);
+
+    page.on("console", (message) => {
+      const type = message.type();
+      if (type === "error" || type === "warning") {
+        log(`⚠️ Browser ${type} on ${route}: ${message.text()}`);
+      }
+    });
+    page.on("pageerror", (error) => {
+      log(`⚠️ Page error on ${route}: ${error instanceof Error ? error.message : error}`);
+    });
+    page.on("requestfailed", (request) => {
+      log(`⚠️ Request failed on ${route}: ${request.url()} (${request.failure()?.errorText || "unknown"})`);
+    });
+    page.on("request", async (request) => {
+      const requestUrl = request.url();
+      const isPreviewApiRequest = requestUrl.startsWith(`${PREVIEW_BASE}/api/`);
+      const isPreviewUploadRequest = requestUrl.startsWith(`${PREVIEW_BASE}/uploads/`);
+      const isApiOriginApiRequest = requestUrl.startsWith(`${API_ORIGIN}/api/`);
+      const isApiOriginUploadRequest = requestUrl.startsWith(`${API_ORIGIN}/uploads/`);
+
+      if (
+        !isPreviewApiRequest &&
+        !isPreviewUploadRequest &&
+        !isApiOriginApiRequest &&
+        !isApiOriginUploadRequest
+      ) {
+        await request.continue();
+        return;
+      }
+
+      try {
+        const parsedUrl = new URL(requestUrl);
+        const proxiedUrl = new URL(`${parsedUrl.pathname}${parsedUrl.search}`, `${API_ORIGIN}/`).toString();
+        const proxiedHeaders = { ...request.headers() };
+        delete proxiedHeaders.host;
+        delete proxiedHeaders.connection;
+        delete proxiedHeaders["content-length"];
+        const requestBody = typeof request.postData === "function"
+          ? request.postData()
+          : undefined;
+
+        const proxiedResponse = await fetch(proxiedUrl, {
+          method: request.method(),
+          headers: proxiedHeaders,
+          body: requestBody,
+          redirect: "follow",
+        });
+        const responseBody = Buffer.from(await proxiedResponse.arrayBuffer());
+        const responseHeaders = Object.fromEntries(proxiedResponse.headers.entries());
+        responseHeaders["access-control-allow-origin"] = PREVIEW_BASE;
+        responseHeaders["access-control-allow-credentials"] = "true";
+        responseHeaders.vary = appendHeaderValue(responseHeaders.vary, "Origin");
+
+        await request.respond({
+          status: proxiedResponse.status,
+          headers: responseHeaders,
+          body: responseBody,
+        });
+      } catch (error) {
+        log(`⚠️ API proxy failed for ${requestUrl}: ${error instanceof Error ? error.message : error}`);
+        await request.respond({
+          status: 502,
+          headers: {
+            "content-type": "application/json",
+            "access-control-allow-origin": PREVIEW_BASE,
+            "access-control-allow-credentials": "true",
+          },
+          body: JSON.stringify({ error: "prerender_proxy_failed" }),
+        });
+      }
+    });
+
+    await page.goto(url, { waitUntil: "domcontentloaded" });
+    await waitForRouteReady(page, route);
+
+    const html = await page.content();
+    const outFile = routeToFile(route);
+    await ensureDirForFile(outFile);
+    await fs.writeFile(outFile, html, "utf8");
+  } finally {
+    await page.close();
+  }
+}
+
 async function main() {
   // Ensure dist exists
   await fs.access(distDir);
@@ -536,99 +696,14 @@ async function main() {
   try {
     const routes = await getRoutes();
     log(`🔎 Routes to prerender: ${routes.length}`);
-
-    for (const route of routes) {
-      const url = getPrerenderVisitUrl(route);
-      log(`→ ${route}`);
-      const page = await browser.newPage();
-
-      try {
-        await preparePrerenderPage(page);
-        page.setDefaultNavigationTimeout(60_000);
-
-        page.on("console", (message) => {
-          const type = message.type();
-          if (type === "error" || type === "warning") {
-            log(`⚠️ Browser ${type} on ${route}: ${message.text()}`);
-          }
-        });
-        page.on("pageerror", (error) => {
-          log(`⚠️ Page error on ${route}: ${error instanceof Error ? error.message : error}`);
-        });
-        page.on("requestfailed", (request) => {
-          log(`⚠️ Request failed on ${route}: ${request.url()} (${request.failure()?.errorText || "unknown"})`);
-        });
-        page.on("request", async (request) => {
-          const requestUrl = request.url();
-          const isPreviewApiRequest = requestUrl.startsWith(`${PREVIEW_BASE}/api/`);
-          const isPreviewUploadRequest = requestUrl.startsWith(`${PREVIEW_BASE}/uploads/`);
-          const isApiOriginApiRequest = requestUrl.startsWith(`${API_ORIGIN}/api/`);
-          const isApiOriginUploadRequest = requestUrl.startsWith(`${API_ORIGIN}/uploads/`);
-
-          if (
-            !isPreviewApiRequest &&
-            !isPreviewUploadRequest &&
-            !isApiOriginApiRequest &&
-            !isApiOriginUploadRequest
-          ) {
-            await request.continue();
-            return;
-          }
-
-          try {
-            const parsedUrl = new URL(requestUrl);
-            const proxiedUrl = new URL(`${parsedUrl.pathname}${parsedUrl.search}`, `${API_ORIGIN}/`).toString();
-            const proxiedHeaders = { ...request.headers() };
-            delete proxiedHeaders.host;
-            delete proxiedHeaders.connection;
-            delete proxiedHeaders["content-length"];
-            const requestBody = typeof request.postData === "function"
-              ? request.postData()
-              : undefined;
-
-            const proxiedResponse = await fetch(proxiedUrl, {
-              method: request.method(),
-              headers: proxiedHeaders,
-              body: requestBody,
-              redirect: "follow",
-            });
-            const responseBody = Buffer.from(await proxiedResponse.arrayBuffer());
-            const responseHeaders = Object.fromEntries(proxiedResponse.headers.entries());
-            responseHeaders["access-control-allow-origin"] = PREVIEW_BASE;
-            responseHeaders["access-control-allow-credentials"] = "true";
-            responseHeaders.vary = appendHeaderValue(responseHeaders.vary, "Origin");
-
-            await request.respond({
-              status: proxiedResponse.status,
-              headers: responseHeaders,
-              body: responseBody,
-            });
-          } catch (error) {
-            log(`⚠️ API proxy failed for ${requestUrl}: ${error instanceof Error ? error.message : error}`);
-            await request.respond({
-              status: 502,
-              headers: {
-                "content-type": "application/json",
-                "access-control-allow-origin": PREVIEW_BASE,
-                "access-control-allow-credentials": "true",
-              },
-              body: JSON.stringify({ error: "prerender_proxy_failed" }),
-            });
-          }
-        });
-
-        await page.goto(url, { waitUntil: "networkidle2" });
-        await waitForRouteReady(page, route);
-        await new Promise((resolve) => setTimeout(resolve, 150));
-
-        const html = await page.content();
-        const outFile = routeToFile(route);
-        await ensureDirForFile(outFile);
-        await fs.writeFile(outFile, html, "utf8");
-      } finally {
-        await page.close();
-      }
-    }
+    log(`⚡ Prerender concurrency: ${Math.max(1, Math.min(PRERENDER_CONCURRENCY, routes.length || 1))}`);
+    await runWithConcurrency(
+      routes,
+      PRERENDER_CONCURRENCY,
+      async (route, routeIndex) => {
+        await prerenderRoute(browser, route, routeIndex, routes.length);
+      },
+    );
 
     await writeSitemap(routes);
   } finally {

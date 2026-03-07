@@ -2110,7 +2110,7 @@ def init_database():
         # Продуктовые сотрудники
         default_employees = [
             ('Kasymova Gulcehre', 'gulcehre', 'employee', 'Nail & Waxing Master', 'female', 'gulcehraautova@gmail.com', '+971525814262'),
-            ('Peradilla Jennifer', 'jennifer', 'employee', 'Universal Beauty Master', 'female', 'peradillajennifer47@gmail.com', '+971564208308'),
+            ('Peradilla Jennifer', 'jennifer', 'employee', 'Nail, Hair, Waxing Master', 'female', 'peradillajennifer47@gmail.com', '+971564208308'),
             ('Amandurdyyeva Mestan', 'mestan', 'employee', 'Hair Stylist & Permanent Makeup Artist', 'female', 'amandurdyyeva80@gmail.com', '+971501800346'),
             ('Mohamed Sabri', 'sabri', 'employee', 'Hair Stylist', 'male', 'sabrisimo363@gmail.com', '+971503477993'),
             ('Kozhabay Lyazat', 'lyazat', 'employee', 'Nail Master', 'female', 'lazzat.kozhabaeva@mail.ru', '+971505303871'),

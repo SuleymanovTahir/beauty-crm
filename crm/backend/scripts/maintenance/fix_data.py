@@ -1031,9 +1031,9 @@ def run_fix():
             ('lyazat', 'Kozhabay Lyazat')
         ]
         
-        credentials_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "staff_credentials.txt")
+        credentials_path = _project_root() / "staff_credentials.txt"
         passwords = {}
-        if os.path.exists(credentials_path):
+        if credentials_path.exists():
             try:
                 with open(credentials_path, "r", encoding="utf-8") as f:
                     curr_u = None

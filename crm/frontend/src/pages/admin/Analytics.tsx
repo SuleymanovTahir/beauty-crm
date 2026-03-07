@@ -10,6 +10,7 @@ import { PeriodFilter } from '../../components/shared/PeriodFilter';
 import { useCurrency } from '../../hooks/useSalonSettings';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import './Analytics.css';
 
 interface AnalyticsData {
@@ -43,7 +44,14 @@ interface AnalyticsData {
     session_count: number;
     sessions_before_booking: number;
     to_booking_rate: number;
+    reliable_sample: boolean;
   }>;
+  website_sections_summary?: {
+    tracked_sessions: number;
+    booking_sessions: number;
+    low_sample: boolean;
+    includes_account_pages: boolean;
+  };
   association_tests?: {
     region_vs_booking_source?: {
       chi_square: number;
@@ -57,14 +65,26 @@ interface AnalyticsData {
   data_reliability?: {
     sample_size: number;
     unknown_region_share: number;
+    unknown_region_count: number;
     unknown_source_share: number;
+    unknown_source_count: number;
     revenue_outlier_share: number;
+    revenue_outlier_count: number;
     hourly_cv: number;
     noise_score: number;
     noise_level: string;
     trust_score: number;
     can_trust: boolean;
     confidence_level: string;
+    filters?: {
+      service_name: string | null;
+      product_name: string | null;
+    };
+    noise_components?: Array<{
+      key: string;
+      score: number;
+      raw_value: number;
+    }>;
   };
   statistical_tests?: {
     chi_square_region_vs_booking_source?: {
@@ -159,6 +179,12 @@ interface AnalyticsData {
     generated_from_period: {
       start_date: string;
       end_date: string;
+    };
+    historical_sample_size: number;
+    active_slot_count: number;
+    scope: {
+      service_name: string | null;
+      product_name: string | null;
     };
     upcoming_days: Array<{
       date: string;
@@ -364,6 +390,8 @@ interface Stats {
   conversion_rate: number;
 }
 
+const ALL_FILTER_VALUE = '__all__';
+
 const COLORS = [
   'var(--chart-pink)',
   'var(--chart-purple)',
@@ -377,6 +405,11 @@ export default function Analytics() {
   const [period, setPeriod] = useState<string>('30');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [selectedServiceName, setSelectedServiceName] = useState('');
+  const [selectedProductName, setSelectedProductName] = useState('');
+  const [forecastHorizonDays, setForecastHorizonDays] = useState('14');
+  const [serviceOptions, setServiceOptions] = useState<string[]>([]);
+  const [productOptions, setProductOptions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -384,7 +417,7 @@ export default function Analytics() {
   const [funnel, setFunnel] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const { t, i18n: i18nInstance } = useTranslation(['analytics', 'common']);
+  const { t, i18n: i18nInstance } = useTranslation(['analytics', 'common', 'admin/calendar']);
   const { user } = useAuth();
   const userRole = typeof user?.role === 'string' ? user.role : '';
   const permissions = usePermissions(userRole);
@@ -397,10 +430,44 @@ export default function Analytics() {
   }, []);
 
   useEffect(() => {
+    const loadFilterOptions = async () => {
+      try {
+        const [servicesResponse, productsResponse] = await Promise.all([
+          api.getServices(true, i18nInstance.language),
+          api.getProducts(undefined, true)
+        ]);
+
+        const nextServiceOptions = Array.isArray(servicesResponse?.services)
+          ? Array.from(new Set<string>(
+            servicesResponse.services
+              .map((serviceItem: { name?: string }) => String(serviceItem?.name ?? '').trim())
+              .filter((serviceName: string): serviceName is string => serviceName.length > 0)
+          )).sort((leftValue: string, rightValue: string) => leftValue.localeCompare(rightValue, i18nInstance.language))
+          : [];
+
+        const nextProductOptions = Array.isArray(productsResponse?.products)
+          ? Array.from(new Set<string>(
+            productsResponse.products
+              .map((productItem: { name?: string }) => String(productItem?.name ?? '').trim())
+              .filter((productName: string): productName is string => productName.length > 0)
+          )).sort((leftValue: string, rightValue: string) => leftValue.localeCompare(rightValue, i18nInstance.language))
+          : [];
+
+        setServiceOptions(nextServiceOptions);
+        setProductOptions(nextProductOptions);
+      } catch (filterOptionsError) {
+        console.error('Error loading analytics filter options:', filterOptionsError);
+      }
+    };
+
+    void loadFilterOptions();
+  }, [i18nInstance.language]);
+
+  useEffect(() => {
     if (period !== 'custom') {
-      loadData();
+      void loadData();
     }
-  }, [period]);
+  }, [period, selectedServiceName, selectedProductName, forecastHorizonDays]);
 
   const loadData = async () => {
     console.log('🔍 [Analytics] Starting to load analytics data...');
@@ -425,12 +492,17 @@ export default function Analytics() {
 
       // Параллельная загрузка всех данных для ускорения (оптимизация производительности)
       console.log('📊 [Analytics] Loading all data in parallel...');
+      const analyticsRequestOptions = {
+        serviceName: selectedServiceName,
+        productName: selectedProductName,
+        forecastHorizonDays: Number.parseInt(forecastHorizonDays, 10)
+      };
       const [statsData, funnelData, analyticsData] = await Promise.all([
         api.getStats(),
         api.get('/api/analytics/funnel'),
         dateFrom && dateTo
-          ? api.getAnalytics(0, dateFrom, dateTo)
-          : api.getAnalytics(periodNum)
+          ? api.getAnalytics(0, dateFrom, dateTo, analyticsRequestOptions)
+          : api.getAnalytics(periodNum, undefined, undefined, analyticsRequestOptions)
       ]);
 
       console.log('✅ [Analytics] All data loaded successfully!');
@@ -458,7 +530,6 @@ export default function Analytics() {
     if (value !== 'custom') {
       setDateFrom('');
       setDateTo('');
-      setTimeout(() => loadData(), 0);
     }
   };
 
@@ -471,7 +542,7 @@ export default function Analytics() {
       toast.error(t('analytics:errors.invalid_date_range'));
       return;
     }
-    loadData();
+    void loadData();
   };
 
   const handleExportCSV = async () => {
@@ -528,6 +599,51 @@ export default function Analytics() {
   }
 
   const toArray = <T,>(value: T[] | undefined | null): T[] => (Array.isArray(value) ? value : []);
+  const getChannelLabel = (channelValue: string) => {
+    const normalizedChannel = String(channelValue ?? '').trim().toLowerCase();
+    const channelLabelMap: Record<string, string> = {
+      unknown: t('analytics:channel_unknown'),
+      client_cabinet: t('analytics:channel_client_cabinet'),
+      public_landing: t('analytics:channel_public_landing'),
+      website: t('analytics:channel_website'),
+      instagram: t('analytics:channel_instagram'),
+      whatsapp: t('analytics:channel_whatsapp'),
+      telegram: t('analytics:channel_telegram'),
+      manual: t('analytics:channel_manual'),
+      crm: t('analytics:channel_crm'),
+      call: t('analytics:channel_call'),
+      messenger: t('analytics:channel_messenger')
+    };
+    return channelLabelMap[normalizedChannel] ?? normalizedChannel;
+  };
+  const formatChannelPath = (pathValue: string) => pathValue
+    .split('->')
+    .map((pathChunk) => getChannelLabel(pathChunk.trim()))
+    .join(' -> ');
+  const getSectionLabel = (sectionValue: string) => {
+    const normalizedSection = String(sectionValue ?? '').trim().toLowerCase();
+    return t(`analytics:section_values.${normalizedSection}`, normalizedSection);
+  };
+  const formatForecastPredictedBookings = (predictedValue: number) => {
+    const safePredictedValue = Number.isFinite(predictedValue) ? predictedValue : 0;
+    const roundedValue = safePredictedValue.toFixed(2);
+    if (safePredictedValue <= 0) {
+      return roundedValue;
+    }
+    if (safePredictedValue < 1) {
+      const approxSlots = Math.max(1, Math.round(1 / safePredictedValue));
+      return t('analytics:forecast_predicted_less_than_one', '{{value}} (примерно 1 запись на {{slots}} похожих слотов)', {
+        value: roundedValue,
+        slots: approxSlots
+      });
+    }
+    return roundedValue;
+  };
+  const getNoiseComponentLabel = (componentKey: string) => t(`analytics:noise_component_labels.${componentKey}`, componentKey);
+  const getUnitEconomicsModelLabel = (modelValue: string) => t(`analytics:unit_model_values.${modelValue}`, modelValue);
+  const getUnitEconomicsModelDescription = (modelValue: string) => t(`analytics:unit_model_descriptions.${modelValue}`, modelValue);
+  const selectedServiceValue = selectedServiceName !== '' ? selectedServiceName : ALL_FILTER_VALUE;
+  const selectedProductValue = selectedProductName !== '' ? selectedProductName : ALL_FILTER_VALUE;
 
   const bookingsTrendData = toArray(analytics?.bookings_by_day).map(([date, count]) => ({
     name: isMobile
@@ -572,6 +688,7 @@ export default function Analytics() {
   const websiteSectionsData = Array.isArray(analytics?.website_sections_before_booking)
     ? analytics.website_sections_before_booking.slice(0, 10)
     : [];
+  const websiteSectionsSummary = analytics?.website_sections_summary;
 
   const regionAssociation = analytics?.association_tests?.region_vs_booking_source;
   const dataReliability = analytics?.data_reliability;
@@ -689,6 +806,7 @@ export default function Analytics() {
     kendall_section_time_vs_booking_rate: t('analytics:test_kendall', 'Kendall: время на секции vs конверсия'),
     pearson_section_time_vs_booking_rate: t('analytics:test_pearson', 'Pearson: время на секции vs конверсия')
   };
+  const noiseComponentsData = toArray(dataReliability?.noise_components);
   const hasStatsQualityBlock = dataReliability ? true : statTestRows.length > 0;
   const cohortSummaryData = toArray(analytics?.cohort_retention_ltv?.summary).slice(0, 6);
   const cohortHeatmapM1Data = toArray(analytics?.cohort_retention_ltv?.heatmap)
@@ -709,6 +827,11 @@ export default function Analytics() {
     load_level: dayItem.load_level
   }));
   const forecastHighLoadSlotsData = toArray(analytics?.load_forecast?.high_load_slots).slice(0, 12);
+  const forecastScopeDescription = analytics?.load_forecast?.scope?.service_name
+    ? t('analytics:forecast_scope_service', { service: analytics.load_forecast.scope.service_name })
+    : analytics?.load_forecast?.scope?.product_name
+      ? t('analytics:forecast_scope_product', { product: analytics.load_forecast.scope.product_name })
+      : t('analytics:forecast_scope_all');
 
   const noShowServiceData = toArray(analytics?.no_show_cancellation_analytics?.services).slice(0, 10);
   const noShowHourlyData = toArray(analytics?.no_show_cancellation_analytics?.hours);
@@ -791,6 +914,56 @@ export default function Analytics() {
             showAllOption={false}
           />
 
+          <div className="flex flex-col gap-2">
+            <p className="text-xs text-gray-500">{t('analytics:service_filter')}</p>
+            <Select
+              value={selectedServiceValue}
+              onValueChange={(value) => setSelectedServiceName(value === ALL_FILTER_VALUE ? '' : value)}
+            >
+              <SelectTrigger className="w-full md:w-[220px]">
+                <SelectValue placeholder={t('analytics:service_filter')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_FILTER_VALUE}>{t('admin/calendar:all_services')}</SelectItem>
+                {serviceOptions.map((serviceName) => (
+                  <SelectItem key={serviceName} value={serviceName}>{serviceName}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <p className="text-xs text-gray-500">{t('analytics:product_filter')}</p>
+            <Select
+              value={selectedProductValue}
+              onValueChange={(value) => setSelectedProductName(value === ALL_FILTER_VALUE ? '' : value)}
+            >
+              <SelectTrigger className="w-full md:w-[220px]">
+                <SelectValue placeholder={t('analytics:product_filter')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_FILTER_VALUE}>{t('analytics:all_products')}</SelectItem>
+                {productOptions.map((productName) => (
+                  <SelectItem key={productName} value={productName}>{productName}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <p className="text-xs text-gray-500">{t('analytics:forecast_horizon')}</p>
+            <Select value={forecastHorizonDays} onValueChange={setForecastHorizonDays}>
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder={t('analytics:forecast_horizon')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7">7</SelectItem>
+                <SelectItem value="14">14</SelectItem>
+                <SelectItem value="30">30</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {period === 'custom' && (
             <Button onClick={handleApplyCustomDates} className="analytics-apply-button bg-pink-600 hover:bg-pink-700 w-full sm:w-auto text-sm md:text-base">
               {t('analytics:apply')}
@@ -814,6 +987,9 @@ export default function Analytics() {
             {exporting ? t('analytics:exporting') : t('analytics:export')}
           </Button>
         </div>
+        <p className="mt-3 text-xs md:text-sm text-gray-500">
+          {t('analytics:filters_description')}
+        </p>
       </div>
 
       {/* Stats Cards */}
@@ -1025,7 +1201,7 @@ export default function Analytics() {
       )}
 
       {/* Booking Time + Region */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+      <div className="grid grid-cols-1 gap-4 md:gap-6 mb-6 md:mb-8">
         {bookingsByHourData.length > 0 && (
           <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
             <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">
@@ -1062,7 +1238,7 @@ export default function Analytics() {
       </div>
 
       {/* Product + Website Pre-booking */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+      <div className="grid grid-cols-1 gap-4 md:gap-6 mb-6 md:mb-8">
         {topProductsData.length > 0 && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="p-4 md:p-6 border-b border-gray-200">
@@ -1101,24 +1277,58 @@ export default function Analytics() {
               <h2 className="text-base md:text-xl text-gray-900">
                 {t('analytics:website_sections_before_booking', 'Секции сайта перед записью')}
               </h2>
+              <p className="mt-2 text-xs md:text-sm text-gray-600">
+                {t('analytics:website_sections_description')}
+              </p>
+              {websiteSectionsSummary && (
+                <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-3">
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="text-xs text-gray-500">{t('analytics:tracked_sessions')}</p>
+                    <p className="text-base font-semibold text-gray-900">{websiteSectionsSummary.tracked_sessions}</p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="text-xs text-gray-500">{t('analytics:booking_sessions')}</p>
+                    <p className="text-base font-semibold text-gray-900">{websiteSectionsSummary.booking_sessions}</p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="text-xs text-gray-500">{t('analytics:sample_reliability')}</p>
+                    <p className="text-base font-semibold text-gray-900">
+                      {websiteSectionsSummary.low_sample
+                        ? t('analytics:sample_low')
+                        : t('analytics:sample_ok')}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:section', 'Секция')}</th>
+                    <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:sessions_with_section')}</th>
+                    <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:sessions_to_booking')}</th>
                     <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:avg_time_seconds', 'Среднее время (сек)')}</th>
                     <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:total_time_seconds', 'Общее время (сек)')}</th>
-                    <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:to_booking_rate', 'Конверсия в запись')}</th>
+                    <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:to_booking_rate_sessions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {websiteSectionsData.map((sectionItem, sectionIndex) => (
                     <tr key={`section-${sectionIndex}`} className="hover:bg-gray-50">
-                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{sectionItem.section}</td>
+                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{getSectionLabel(sectionItem.section)}</td>
+                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{sectionItem.session_count}</td>
+                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{sectionItem.sessions_before_booking}</td>
                       <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{sectionItem.avg_seconds.toFixed(1)}</td>
                       <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{sectionItem.total_seconds.toFixed(1)}</td>
-                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-blue-700">{sectionItem.to_booking_rate.toFixed(1)}%</td>
+                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-blue-700">
+                        <div>{sectionItem.to_booking_rate.toFixed(1)}%</div>
+                        <div className="text-[11px] text-gray-500">
+                          {sectionItem.reliable_sample
+                            ? t('analytics:sample_ok')
+                            : t('analytics:website_sections_low_sample')}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -1134,6 +1344,9 @@ export default function Analytics() {
           <h2 className="text-base md:text-xl text-gray-900 mb-3">
             {t('analytics:region_source_association', 'Связь региона и источника записи')}
           </h2>
+          <p className="text-sm text-gray-600 mb-4">
+            {t('analytics:region_source_association_description')}
+          </p>
           <p className="text-sm text-gray-700 mb-2">
             {t('analytics:chi_square_label', 'Chi-square')}: {regionAssociation.chi_square.toFixed(2)}
           </p>
@@ -1152,12 +1365,15 @@ export default function Analytics() {
       )}
 
       {hasStatsQualityBlock && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="grid grid-cols-1 gap-4 md:gap-6 mb-6 md:mb-8">
           {dataReliability && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
               <h2 className="text-base md:text-xl text-gray-900 mb-4">
                 {t('analytics:data_reliability_title', 'Шум и доверие к данным')}
               </h2>
+              <p className="mb-4 text-sm text-gray-600">
+                {t('analytics:data_reliability_description')}
+              </p>
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div className="rounded-lg bg-gray-50 p-3">
                   <p className="text-xs text-gray-500">{t('analytics:trust_score', 'Trust score')}</p>
@@ -1170,11 +1386,29 @@ export default function Analytics() {
                   </p>
                 </div>
               </div>
+              <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:sample_size')}</p>
+                  <p className="text-base font-semibold text-gray-900">{dataReliability.sample_size}</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:service_filter')}</p>
+                  <p className="text-base font-semibold text-gray-900">
+                    {dataReliability.filters?.service_name ?? t('admin/calendar:all_services')}
+                  </p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:product_filter')}</p>
+                  <p className="text-base font-semibold text-gray-900">
+                    {dataReliability.filters?.product_name ?? t('analytics:all_products')}
+                  </p>
+                </div>
+              </div>
               <div className="space-y-2 text-sm text-gray-700">
                 <p>{t('analytics:noise_score', 'Noise score')}: {dataReliability.noise_score.toFixed(1)} / 100</p>
-                <p>{t('analytics:unknown_region_share', 'Доля неизвестного региона')}: {dataReliability.unknown_region_share.toFixed(2)}%</p>
-                <p>{t('analytics:unknown_source_share', 'Доля неизвестного источника')}: {dataReliability.unknown_source_share.toFixed(2)}%</p>
-                <p>{t('analytics:revenue_outlier_share', 'Доля выбросов по выручке')}: {dataReliability.revenue_outlier_share.toFixed(2)}%</p>
+                <p>{t('analytics:unknown_region_share', 'Доля неизвестного региона')}: {dataReliability.unknown_region_share.toFixed(2)}% ({dataReliability.unknown_region_count})</p>
+                <p>{t('analytics:unknown_source_share', 'Доля неизвестного источника')}: {dataReliability.unknown_source_share.toFixed(2)}% ({dataReliability.unknown_source_count})</p>
+                <p>{t('analytics:revenue_outlier_share', 'Доля выбросов по выручке')}: {dataReliability.revenue_outlier_share.toFixed(2)}% ({dataReliability.revenue_outlier_count})</p>
                 <p>{t('analytics:hourly_cv', 'Коэффициент вариации по часам')}: {dataReliability.hourly_cv.toFixed(4)}</p>
                 <p>
                   {t('analytics:can_trust_data', 'Можно ли доверять данным')}:{' '}
@@ -1187,6 +1421,23 @@ export default function Analytics() {
                   {t(`analytics:confidence_values.${dataReliability.confidence_level}`, dataReliability.confidence_level)}
                 </p>
               </div>
+              {noiseComponentsData.length > 0 && (
+                <div className="mt-5 rounded-xl border border-gray-200">
+                  <div className="border-b border-gray-200 px-4 py-3">
+                    <h3 className="text-sm md:text-base text-gray-900">{t('analytics:noise_breakdown_title')}</h3>
+                    <p className="mt-1 text-xs md:text-sm text-gray-600">{t('analytics:noise_breakdown_description')}</p>
+                  </div>
+                  <div className="divide-y divide-gray-200">
+                    {noiseComponentsData.map((componentItem) => (
+                      <div key={componentItem.key} className="grid grid-cols-1 gap-2 px-4 py-3 md:grid-cols-[1.8fr_1fr_1fr] md:items-center">
+                        <p className="text-sm text-gray-900">{getNoiseComponentLabel(componentItem.key)}</p>
+                        <p className="text-sm text-gray-600">{componentItem.raw_value.toFixed(2)}</p>
+                        <p className="text-sm font-medium text-gray-900">{componentItem.score.toFixed(1)} / 100</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -1247,7 +1498,7 @@ export default function Analytics() {
       )}
 
       {hasCohortAttributionBlock && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="grid grid-cols-1 gap-4 md:gap-6 mb-6 md:mb-8">
           {cohortSummaryData.length > 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 md:p-6 border-b border-gray-200">
@@ -1322,6 +1573,9 @@ export default function Analytics() {
               <div className="p-4 md:p-6 border-b border-gray-200">
                 <h2 className="text-base md:text-xl text-gray-900">{t('analytics:attribution_title')}</h2>
                 <p className="text-xs md:text-sm text-gray-600 mt-2">
+                  {t('analytics:attribution_description')}
+                </p>
+                <p className="text-xs md:text-sm text-gray-600 mt-2">
                   {t('analytics:sample_size')}: {analytics?.attribution_multi_touch?.sample_size ?? 0}
                 </p>
               </div>
@@ -1329,7 +1583,7 @@ export default function Analytics() {
                 <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={attributionChannelsData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                    <XAxis dataKey="channel" interval={0} angle={-20} textAnchor="end" height={70} />
+                    <XAxis dataKey="channel" interval={0} angle={-20} textAnchor="end" height={70} tickFormatter={getChannelLabel} />
                     <YAxis />
                     <Tooltip />
                     <Legend />
@@ -1351,7 +1605,7 @@ export default function Analytics() {
                   <tbody className="divide-y divide-gray-200">
                     {attributionChannelsData.map((rowItem) => (
                       <tr key={rowItem.channel} className="hover:bg-gray-50">
-                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.channel}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{getChannelLabel(rowItem.channel)}</td>
                         <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.first_touch}</td>
                         <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.last_touch}</td>
                         <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.linear_share.toFixed(2)}%</td>
@@ -1366,7 +1620,7 @@ export default function Analytics() {
                   <div className="space-y-2">
                     {attributionPathsData.map((pathItem) => (
                       <div key={pathItem.path} className="flex items-center justify-between text-sm text-gray-700">
-                        <span>{pathItem.path}</span>
+                        <span>{formatChannelPath(pathItem.path)}</span>
                         <span className="font-medium text-gray-900">{pathItem.count}</span>
                       </div>
                     ))}
@@ -1379,14 +1633,28 @@ export default function Analytics() {
       )}
 
       {hasForecastNoShowBlock && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="grid grid-cols-1 gap-4 md:gap-6 mb-6 md:mb-8">
           {forecastUpcomingData.length > 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 md:p-6 border-b border-gray-200">
                 <h2 className="text-base md:text-xl text-gray-900">{t('analytics:load_forecast_title')}</h2>
                 <p className="text-xs md:text-sm text-gray-600 mt-2">
+                  {t('analytics:forecast_description')}
+                </p>
+                <p className="text-xs md:text-sm text-gray-600 mt-2">
                   {t('analytics:forecast_horizon')}: {analytics?.load_forecast?.horizon_days ?? 0}
                 </p>
+                <p className="text-xs md:text-sm text-gray-600 mt-1">{forecastScopeDescription}</p>
+                <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="text-xs text-gray-500">{t('analytics:forecast_historical_sample')}</p>
+                    <p className="text-base font-semibold text-gray-900">{analytics?.load_forecast?.historical_sample_size ?? 0}</p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="text-xs text-gray-500">{t('analytics:forecast_active_slots')}</p>
+                    <p className="text-base font-semibold text-gray-900">{analytics?.load_forecast?.active_slot_count ?? 0}</p>
+                  </div>
+                </div>
               </div>
               <div className="p-4 md:p-6 border-b border-gray-200">
                 <ResponsiveContainer width="100%" height={260}>
@@ -1412,7 +1680,7 @@ export default function Analytics() {
                     {(analytics?.load_forecast?.upcoming_days ?? []).slice(0, 10).map((rowItem) => (
                       <tr key={rowItem.date} className="hover:bg-gray-50">
                         <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.date}</td>
-                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.predicted_total_bookings.toFixed(2)}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{formatForecastPredictedBookings(rowItem.predicted_total_bookings)}</td>
                         <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">
                           {t(`analytics:load_level_${rowItem.load_level}`)}
                         </td>
@@ -1424,11 +1692,12 @@ export default function Analytics() {
               {forecastHighLoadSlotsData.length > 0 && (
                 <div className="p-4 md:p-6 border-t border-gray-200">
                   <h3 className="text-sm md:text-base text-gray-900 mb-3">{t('analytics:high_load_slots')}</h3>
+                  <p className="mb-3 text-xs md:text-sm text-gray-600">{t('analytics:high_load_slots_description')}</p>
                   <div className="space-y-2">
                     {forecastHighLoadSlotsData.map((rowItem) => (
                       <div key={`${rowItem.date}-${rowItem.hour}`} className="flex items-center justify-between text-sm text-gray-700">
                         <span>{rowItem.date} {rowItem.hour}</span>
-                        <span className="font-medium text-gray-900">{rowItem.predicted_bookings.toFixed(2)}</span>
+                        <span className="font-medium text-gray-900">{formatForecastPredictedBookings(rowItem.predicted_bookings)}</span>
                       </div>
                     ))}
                   </div>
@@ -1500,13 +1769,16 @@ export default function Analytics() {
       )}
 
       {hasUnitTimeBlock && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="grid grid-cols-1 gap-4 md:gap-6 mb-6 md:mb-8">
           {unitEconomicsServices.length > 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 md:p-6 border-b border-gray-200">
                 <h2 className="text-base md:text-xl text-gray-900">{t('analytics:unit_economics_title')}</h2>
                 <p className="text-xs md:text-sm text-gray-600 mt-2">
-                  {t('analytics:unit_model')}: {analytics?.unit_economics?.model ?? '—'}
+                  {t('analytics:unit_model')}: {getUnitEconomicsModelLabel(analytics?.unit_economics?.model ?? '')}
+                </p>
+                <p className="text-xs md:text-sm text-gray-600 mt-1">
+                  {getUnitEconomicsModelDescription(analytics?.unit_economics?.model ?? '')}
                 </p>
               </div>
               {unitEconomicsSummary && (
@@ -1570,6 +1842,8 @@ export default function Analytics() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 md:p-6 border-b border-gray-200">
                 <h2 className="text-base md:text-xl text-gray-900">{t('analytics:time_to_book_title')}</h2>
+                <p className="text-xs md:text-sm text-gray-600 mt-2">{t('analytics:time_to_book_description')}</p>
+                <p className="text-xs md:text-sm text-gray-600 mt-1">{t('analytics:median_explanation')}</p>
               </div>
               <div className="grid grid-cols-2 gap-3 p-4 md:p-6 border-b border-gray-200">
                 <div className="rounded-lg bg-gray-50 p-3">
@@ -1613,7 +1887,7 @@ export default function Analytics() {
                   <tbody className="divide-y divide-gray-200">
                     {timeToBookSourceData.map((rowItem) => (
                       <tr key={rowItem.source} className="hover:bg-gray-50">
-                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.source}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{getChannelLabel(rowItem.source)}</td>
                         <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.sample_size}</td>
                         <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.avg_minutes.toFixed(1)}</td>
                         <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.median_minutes.toFixed(1)}</td>
@@ -1628,7 +1902,7 @@ export default function Analytics() {
       )}
 
       {hasFunnelPromoBlock && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="grid grid-cols-1 gap-4 md:gap-6 mb-6 md:mb-8">
           {fullFunnelData && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 md:p-6 border-b border-gray-200">
@@ -1764,7 +2038,7 @@ export default function Analytics() {
       )}
 
       {hasRfmSlaBlock && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="grid grid-cols-1 gap-4 md:gap-6 mb-6 md:mb-8">
           {rfmSegmentationData && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 md:p-6 border-b border-gray-200">

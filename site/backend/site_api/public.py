@@ -137,6 +137,22 @@ def get_russian_plural(number, one, two, five):
     if n1 == 1: return one
     return five
 
+
+def _localize_public_reviews(reviews: List[Dict], lang_key: str) -> None:
+    from utils.language_utils import get_dynamic_translation
+
+    for item in reviews:
+        translated_position = get_dynamic_translation(
+            'public_reviews',
+            item['id'],
+            'employee_position',
+            lang_key,
+            item.get('employee_position', ''),
+        )
+        item['text'] = get_dynamic_translation('public_reviews', item['id'], 'text', lang_key, item['text'])
+        item['employee_position'] = translated_position
+        item['position'] = translated_position
+
 # ============================================================================
 # MODELS
 # ============================================================================
@@ -207,10 +223,7 @@ def get_public_salon_settings(language: str = "ru"):
              item['answer'] = get_dynamic_translation('public_faq', item['id'], 'answer', lang_key, item['answer'])
 
         reviews = get_active_reviews(language=lang_key, limit=10)
-        # Enrich Reviews with dynamic translations
-        for item in reviews:
-             item['text'] = get_dynamic_translation('public_reviews', item['id'], 'text', lang_key, item['text'])
-             item['position'] = get_dynamic_translation('public_reviews', item['id'], 'employee_position', lang_key, item.get('position', ''))
+        _localize_public_reviews(reviews, lang_key)
 
         # Google Maps Embed logic
         gm_raw = settings.get("google_maps", "")
@@ -254,7 +267,13 @@ def get_public_employees(
     language: str = Query('ru', description="Language code")
 ) -> List[Dict]:
     """Список активных сотрудников для лендинга"""
-    from utils.language_utils import validate_language, get_localized_name, translate_position, get_dynamic_translation
+    from utils.language_utils import (
+        validate_language,
+        get_localized_name,
+        translate_position,
+        get_dynamic_translation,
+        normalize_position_label,
+    )
     
     conn = None
     try:
@@ -270,8 +289,20 @@ def get_public_employees(
 
         integrated_employees = fetch_employees(language=lang_key)
         if isinstance(integrated_employees, list):
-            cache.set(cache_key, integrated_employees, expire=CACHE_TTL_SHORT)
-            return integrated_employees
+            normalized_employees = []
+            for employee in integrated_employees:
+                if not isinstance(employee, dict):
+                    continue
+
+                employee_copy = dict(employee)
+                raw_position = employee_copy.get("role") or employee_copy.get("position") or ""
+                final_position = normalize_position_label(str(raw_position), lang_key)
+                employee_copy["role"] = final_position
+                employee_copy["position"] = final_position
+                normalized_employees.append(employee_copy)
+
+            cache.set(cache_key, normalized_employees, expire=CACHE_TTL_SHORT)
+            return normalized_employees
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -359,7 +390,14 @@ def get_public_employees(
             
             # Translate position
             raw_position = row_dict["position"] or "Specialist"
-            final_position = translate_position(raw_position, lang_key)
+            translated_position = get_dynamic_translation(
+                'users',
+                emp_id,
+                'position',
+                lang_key,
+                translate_position(raw_position, lang_key),
+            )
+            final_position = normalize_position_label(translated_position, lang_key)
 
             # Translate bio/specialty
             bio = get_dynamic_translation('users', emp_id, 'bio', lang_key, row_dict["bio"])
@@ -530,14 +568,11 @@ def get_public_services(language: str = "ru"):
 @router.api_route("/reviews", methods=["GET", "HEAD"])
 def get_public_reviews_list(language: str = "ru", limit: int = 10):
     """Список отзывов локализованные"""
-    from utils.language_utils import validate_language, get_dynamic_translation
+    from utils.language_utils import validate_language
     lang_key = validate_language(language)
     reviews = get_active_reviews(language=lang_key, limit=limit)
-    
-    # Enrich with translations
-    for item in reviews:
-         item['text'] = get_dynamic_translation('public_reviews', item['id'], 'text', lang_key, item['text'])
-         item['position'] = get_dynamic_translation('public_reviews', item['id'], 'employee_position', lang_key, item.get('position', ''))
+
+    _localize_public_reviews(reviews, lang_key)
          
     return {"success": True, "reviews": reviews}
 
@@ -708,16 +743,14 @@ def get_initial_load(language: str = "ru"):
     
     # FAQ & Reviews
     from utils.language_utils import get_dynamic_translation
-    
+
     faqs = get_active_faq(language=lang_key)
     for item in faqs:
          item['question'] = get_dynamic_translation('public_faq', item['id'], 'question', lang_key, item['question'])
          item['answer'] = get_dynamic_translation('public_faq', item['id'], 'answer', lang_key, item['answer'])
 
     reviews = get_active_reviews(language=lang_key, limit=10)
-    for item in reviews:
-         item['text'] = get_dynamic_translation('public_reviews', item['id'], 'text', lang_key, item['text'])
-         item['position'] = get_dynamic_translation('public_reviews', item['id'], 'employee_position', lang_key, item.get('position', ''))
+    _localize_public_reviews(reviews, lang_key)
     
     # SEO
     try:

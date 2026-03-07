@@ -287,11 +287,51 @@ export const apiClient = {
     }),
 
   // ===== ANALYTICS =====
-  getAnalytics: (period: number = 30) =>
-    apiCall(`/api/analytics?period=${period}`),
+  getAnalytics: (
+    period: number = 30,
+    options?: {
+      serviceName?: string;
+      productName?: string;
+      forecastHorizonDays?: number;
+    }
+  ) => {
+    const params = new URLSearchParams({ period: String(period) });
+    if (options?.serviceName) {
+      params.set('service_name', options.serviceName);
+    }
+    if (options?.productName) {
+      params.set('product_name', options.productName);
+    }
+    if (options?.forecastHorizonDays) {
+      params.set('forecast_horizon_days', String(options.forecastHorizonDays));
+    }
+    return apiCall(`/api/analytics?${params.toString()}`);
+  },
 
-  getAnalyticsRange: (dateFrom: string, dateTo: string) =>
-    apiCall(`/api/analytics?date_from=${dateFrom}&date_to=${dateTo}`),
+  getAnalyticsRange: (
+    dateFrom: string,
+    dateTo: string,
+    options?: {
+      serviceName?: string;
+      productName?: string;
+      forecastHorizonDays?: number;
+    }
+  ) => {
+    const params = new URLSearchParams({
+      date_from: dateFrom,
+      date_to: dateTo,
+    });
+    if (options?.serviceName) {
+      params.set('service_name', options.serviceName);
+    }
+    if (options?.productName) {
+      params.set('product_name', options.productName);
+    }
+    if (options?.forecastHorizonDays) {
+      params.set('forecast_horizon_days', String(options.forecastHorizonDays));
+    }
+    return apiCall(`/api/analytics?${params.toString()}`);
+  },
 
   getFunnel: () =>
     apiCall('/api/funnel'),

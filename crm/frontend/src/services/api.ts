@@ -435,10 +435,28 @@ export class ApiClient {
   }
 
 
-  async getAnalytics(period: number = 30, dateFrom?: string, dateTo?: string) {
+  async getAnalytics(
+    period: number = 30,
+    dateFrom?: string,
+    dateTo?: string,
+    options?: {
+      serviceName?: string;
+      productName?: string;
+      forecastHorizonDays?: number;
+    }
+  ) {
     let url = `/api/analytics?period=${period}`
     if (dateFrom && dateTo) {
       url += `&date_from=${dateFrom}&date_to=${dateTo}`
+    }
+    if (options?.serviceName) {
+      url += `&service_name=${encodeURIComponent(options.serviceName)}`
+    }
+    if (options?.productName) {
+      url += `&product_name=${encodeURIComponent(options.productName)}`
+    }
+    if (options?.forecastHorizonDays) {
+      url += `&forecast_horizon_days=${options.forecastHorizonDays}`
     }
     return this.request<any>(url)
   }

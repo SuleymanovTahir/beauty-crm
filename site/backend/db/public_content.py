@@ -37,6 +37,15 @@ def get_active_reviews(language: str = 'ru', limit: Optional[int] = None) -> Lis
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description]
         reviews = [dict(zip(columns, row)) for row in rows]
+        try:
+            from utils.language_utils import normalize_public_person_name
+            for review in reviews:
+                review["name"] = normalize_public_person_name(review.get("name"))
+                review["author_name"] = review["name"]
+                if review.get("employee_name"):
+                    review["employee_name"] = normalize_public_person_name(review["employee_name"])
+        except Exception:
+            pass
         return reviews
     except Exception as e:
         log_error(f"Ошибка получения отзывов: {e}", "db")

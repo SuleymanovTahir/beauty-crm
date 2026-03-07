@@ -13,14 +13,19 @@ interface TeamMember {
   specialty: string;
   image: string;
   experience: number | string;
+  hasExperience: boolean;
   age?: number | null;
 }
 
 export function TeamSection() {
-  const { t, i18n } = useTranslation(['public_landing', 'common', 'dynamic']);
+  const { t, i18n } = useTranslation(['public_landing', 'common']);
   const language = i18n.language;
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [displayCount, setDisplayCount] = useState(8);
+
+  const hasExperienceValue = (experience: TeamMember['experience'] | undefined) => {
+    return experience !== undefined && experience !== null && experience !== 0 && experience !== "0" && experience !== "";
+  };
 
   // Helper function to capitalize names (ALL CAPS -> Title Case)
   const capitalizeName = (name: string) => {
@@ -57,11 +62,11 @@ export function TeamSection() {
 
         if (Array.isArray(data)) {
           const teamMembers = data.map((emp: any) => {
-            const name = capitalizeName(emp.name);
-            const stableKey = emp.username ?? emp.id;
-            const translatedRole = t(`dynamic:users.${stableKey}.position`, { defaultValue: emp.role ?? "" });
-            const role = normalizeRoleCase(translatedRole);
-            const specialty = t(`dynamic:users.${stableKey}.bio`, { defaultValue: emp.specialty ?? "" });
+            const name = capitalizeName(emp.name ?? "");
+            const role = normalizeRoleCase(emp.role ?? "");
+            const specialty = emp.specialty ?? emp.bio ?? emp.specialization ?? "";
+            const hasExperience = hasExperienceValue(emp.experience);
+            const avatarName = emp.name ?? 'Staff';
 
             return {
               id: emp.id,
@@ -70,19 +75,20 @@ export function TeamSection() {
               // Prevent showing name twice if role/specialty is erroneously set to the name
               role: role.toLowerCase() === name.toLowerCase() ? "" : role,
               specialty: specialty.toLowerCase() === name.toLowerCase() ? "" : specialty,
-              experience: emp.experience || 0,
+              experience: emp.experience ?? 0,
+              hasExperience,
               age: emp.age,
               image: emp.image ? (
                 emp.image.startsWith('http') ? emp.image :
                   `${API_URL}${emp.image.startsWith('/') ? '' : '/'}${emp.image}`
-              ) : `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name || 'Staff')}&background=ec4899&color=fff&size=400`
+              ) : `https://ui-avatars.com/api/?name=${encodeURIComponent(avatarName)}&background=ec4899&color=fff&size=400`
             };
           });
           setTeam(teamMembers);
         } else {
           setTeam([]);
         }
-      } catch (error) {
+      } catch {
         setTeam([]);
       }
     };
@@ -108,42 +114,46 @@ export function TeamSection() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 max-w-6xl mx-auto">
-          {displayedMembers.map((member) => (
-            <div key={member.id} className="team-card">
-              <div className="aspect-[3/4] overflow-hidden relative">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  loading="lazy"
-                  className="w-full h-full object-cover object-top"
-                />
-                <div className="team-card-overlay">
-                  <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3">
-                    {(Boolean(member.experience && member.experience !== 0 && member.experience !== "0") || member.age) && (
-                      <div className="flex flex-wrap items-center gap-1.5 text-primary-foreground mb-1">
-                        {Boolean(member.experience && member.experience !== 0 && member.experience !== "0") && (
-                          <>
-                            <Award className="w-3 h-3" />
-                            <span className="text-xs">{member.experience}</span>
-                          </>
-                        )}
-                        {member.age && (
-                          <span className="text-xs opacity-90 border-l border-white/30 pl-1.5 ml-1">
-                            {getAgeLabel(member.age)}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                    <p className="text-primary-foreground text-xs line-clamp-2">{member.specialty}</p>
+          {displayedMembers.map((member) => {
+            const showMeta = member.hasExperience ? true : Boolean(member.age);
+
+            return (
+              <div key={member.id} className="team-card">
+                <div className="aspect-[3/4] overflow-hidden relative">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    loading="lazy"
+                    className="w-full h-full object-cover object-top"
+                  />
+                  <div className="team-card-overlay">
+                    <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3">
+                      {showMeta && (
+                        <div className="flex flex-wrap items-center gap-1.5 text-primary-foreground mb-1">
+                          {member.hasExperience && (
+                            <>
+                              <Award className="w-3 h-3" />
+                              <span className="text-xs">{member.experience}</span>
+                            </>
+                          )}
+                          {member.age && (
+                            <span className="text-xs opacity-90 border-l border-white/30 pl-1.5 ml-1">
+                              {getAgeLabel(member.age)}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <p className="text-primary-foreground text-xs line-clamp-2">{member.specialty}</p>
+                    </div>
                   </div>
                 </div>
+                <div className="p-2 sm:p-3">
+                  <h3 className="text-sm sm:text-base text-[var(--heading)] mb-0.5">{member.name}</h3>
+                  <p className="text-xs text-muted-foreground">{member.role}</p>
+                </div>
               </div>
-              <div className="p-2 sm:p-3">
-                <h3 className="text-sm sm:text-base text-[var(--heading)] mb-0.5">{member.name}</h3>
-                <p className="text-xs text-muted-foreground">{member.role}</p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {displayCount < team.length && (

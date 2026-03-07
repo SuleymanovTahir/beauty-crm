@@ -375,7 +375,7 @@ def get_stats(comparison_period: str = "7days"):
         "comparison_context": context
     }
 
-def get_analytics_data(days=30, date_from=None, date_to=None):
+def get_analytics_data(days=30, date_from=None, date_to=None, service_name=None, product_name=None, forecast_horizon_days=14):
     """Получить данные для аналитики с периодом"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -388,8 +388,22 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         if "#" in normalized_url:
             extracted_section = normalized_url.split("#", 1)[1].split("?", 1)[0].strip()
             return extracted_section if extracted_section else "hero"
+        if "/account" in normalized_url or "client_cabinet" in normalized_url or "cabinet" in normalized_url:
+            return "account"
+        if "new-booking" in normalized_url:
+            return "booking"
         if "booking" in normalized_url:
             return "booking"
+        if "testimonials" in normalized_url:
+            return "testimonials"
+        if "team" in normalized_url:
+            return "team"
+        if "faq" in normalized_url:
+            return "faq"
+        if "gallery" in normalized_url:
+            return "gallery"
+        if "map" in normalized_url:
+            return "map-section"
         if "service" in normalized_url:
             return "services"
         if "portfolio" in normalized_url:
@@ -508,19 +522,37 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         fraction = position - lower_index
         return lower_value + (upper_value - lower_value) * fraction
 
-    def _iqr_outlier_share(values: List[float]) -> float:
+    def _iqr_outlier_stats(values: List[float]) -> Dict[str, float]:
         if len(values) < 4:
-            return 0.0
+            return {
+                "share": 0.0,
+                "count": 0.0,
+                "lower_bound": 0.0,
+                "upper_bound": 0.0,
+            }
         sorted_values = sorted(values)
         q1 = _percentile(sorted_values, 0.25)
         q3 = _percentile(sorted_values, 0.75)
         iqr = q3 - q1
         if math.isclose(iqr, 0.0):
-            return 0.0
+            return {
+                "share": 0.0,
+                "count": 0.0,
+                "lower_bound": q1,
+                "upper_bound": q3,
+            }
         lower_bound = q1 - 1.5 * iqr
         upper_bound = q3 + 1.5 * iqr
         outliers_count = sum(1 for value in sorted_values if value < lower_bound or value > upper_bound)
-        return outliers_count / float(len(sorted_values))
+        return {
+            "share": outliers_count / float(len(sorted_values)),
+            "count": float(outliers_count),
+            "lower_bound": lower_bound,
+            "upper_bound": upper_bound,
+        }
+
+    def _iqr_outlier_share(values: List[float]) -> float:
+        return float(_iqr_outlier_stats(values)["share"])
 
     def _rank_values(values: List[float]) -> List[float]:
         values_count = len(values)
@@ -809,6 +841,14 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
             return "unknown"
         return normalized_value
 
+    normalized_service_name = str(service_name or "").strip()
+    normalized_product_name = str(product_name or "").strip()
+    try:
+        resolved_forecast_horizon_days = int(forecast_horizon_days)
+    except (TypeError, ValueError):
+        resolved_forecast_horizon_days = 14
+    resolved_forecast_horizon_days = max(1, min(resolved_forecast_horizon_days, 90))
+
     try:
         if date_from and date_to:
             start_date = date_from
@@ -817,31 +857,53 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
             start_date = (get_current_time() - timedelta(days=days)).isoformat()
             end_date = get_current_time().isoformat()
 
+        def _build_booking_filters(booking_alias: str = "b", date_column: str = "created_at") -> Tuple[str, List[Any]]:
+            conditions = [
+                f"{booking_alias}.{date_column} >= %s",
+                f"{booking_alias}.{date_column} <= %s",
+            ]
+            parameters: List[Any] = [start_date, end_date]
+            if normalized_service_name != "":
+                conditions.append(f"COALESCE(NULLIF(TRIM({booking_alias}.service_name), ''), 'Unknown') = %s")
+                parameters.append(normalized_service_name)
+            if normalized_product_name != "":
+                conditions.append(f"""{booking_alias}.id IN (
+                    SELECT DISTINCT pm.booking_id
+                    FROM product_movements pm
+                    JOIN products p ON p.id = pm.product_id
+                    WHERE pm.booking_id IS NOT NULL
+                      AND LOWER(TRIM(p.name)) = LOWER(%s)
+                )""")
+                parameters.append(normalized_product_name)
+            return " AND ".join(conditions), parameters
+
+        booking_filters_sql, booking_filters_params = _build_booking_filters("b")
+
         # Записи по дням
-        c.execute("""SELECT DATE(created_at) as date, COUNT(*) as count
-                     FROM bookings
-                     WHERE created_at >= %s AND created_at <= %s
-                     GROUP BY DATE(created_at)
-                     ORDER BY date""", (start_date, end_date))
+        c.execute(f"""SELECT DATE(b.created_at) as date, COUNT(*) as count
+                     FROM bookings b
+                     WHERE {booking_filters_sql}
+                     GROUP BY DATE(b.created_at)
+                     ORDER BY date""", booking_filters_params)
         bookings_by_day = c.fetchall()
         if not bookings_by_day:
             bookings_by_day = [(get_current_time().strftime('%Y-%m-%d'), 0)]
 
         # Статистика по услугам
-        c.execute("""SELECT service_name, COUNT(*) as count, SUM(revenue) as revenue
-                     FROM bookings
-                     WHERE created_at >= %s AND created_at <= %s
-                     GROUP BY service_name
-                     ORDER BY count DESC""", (start_date, end_date))
+        c.execute(f"""SELECT b.service_name, COUNT(*) as count, SUM(b.revenue) as revenue
+                     FROM bookings b
+                     WHERE {booking_filters_sql}
+                     GROUP BY b.service_name
+                     ORDER BY count DESC""", booking_filters_params)
         services_stats = c.fetchall()
         if not services_stats:
             services_stats = [("Нет данных", 0, 0)]
 
         # Статистика по статусам
-        c.execute("""SELECT status, COUNT(*) as count
-                     FROM bookings
-                     WHERE created_at >= %s AND created_at <= %s
-                     GROUP BY status""", (start_date, end_date))
+        c.execute(f"""SELECT b.status, COUNT(*) as count
+                     FROM bookings b
+                     WHERE {booking_filters_sql}
+                     GROUP BY b.status""", booking_filters_params)
         status_stats = c.fetchall()
         if not status_stats:
             status_stats = [("pending", 0)]
@@ -872,15 +934,14 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         avg_response = avg_response_result[0] if avg_response_result and avg_response_result[0] else 0
 
         # Записи по часу суток (когда чаще всего записываются)
-        c.execute("""
-            SELECT EXTRACT(HOUR FROM datetime::TIMESTAMP) as hour_value, COUNT(*) as count_value
-            FROM bookings
-            WHERE datetime IS NOT NULL
-              AND created_at >= %s
-              AND created_at <= %s
-            GROUP BY EXTRACT(HOUR FROM datetime::TIMESTAMP)
+        c.execute(f"""
+            SELECT EXTRACT(HOUR FROM b.datetime::TIMESTAMP) as hour_value, COUNT(*) as count_value
+            FROM bookings b
+            WHERE b.datetime IS NOT NULL
+              AND {booking_filters_sql}
+            GROUP BY EXTRACT(HOUR FROM b.datetime::TIMESTAMP)
             ORDER BY hour_value
-        """, (start_date, end_date))
+        """, booking_filters_params)
         bookings_hour_rows = c.fetchall()
         bookings_by_hour_map = {int(row[0]): int(row[1]) for row in bookings_hour_rows}
         bookings_by_hour = [
@@ -889,15 +950,14 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         ]
 
         # Записи по дням недели
-        c.execute("""
-            SELECT EXTRACT(ISODOW FROM datetime::TIMESTAMP) as weekday_value, COUNT(*) as count_value
-            FROM bookings
-            WHERE datetime IS NOT NULL
-              AND created_at >= %s
-              AND created_at <= %s
-            GROUP BY EXTRACT(ISODOW FROM datetime::TIMESTAMP)
+        c.execute(f"""
+            SELECT EXTRACT(ISODOW FROM b.datetime::TIMESTAMP) as weekday_value, COUNT(*) as count_value
+            FROM bookings b
+            WHERE b.datetime IS NOT NULL
+              AND {booking_filters_sql}
+            GROUP BY EXTRACT(ISODOW FROM b.datetime::TIMESTAMP)
             ORDER BY weekday_value
-        """, (start_date, end_date))
+        """, booking_filters_params)
         weekday_rows = c.fetchall()
         weekday_labels = {
             1: "monday",
@@ -925,11 +985,11 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
                 COALESCE(SUM(b.revenue), 0) as total_revenue
             FROM bookings b
             LEFT JOIN clients cl ON cl.instagram_id = b.instagram_id
-            WHERE b.created_at >= %s AND b.created_at <= %s
+            WHERE {booking_filters_sql}
             GROUP BY region_name
             ORDER BY bookings_count DESC
             LIMIT 20
-        """, (start_date, end_date))
+        """, booking_filters_params)
         bookings_by_region = [
             {
                 "region": row[0],
@@ -939,32 +999,7 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
             for row in c.fetchall()
         ]
 
-        # Товары с наибольшим числом заказов/движений продаж
-        c.execute("""
-            SELECT
-                p.name,
-                SUM(ABS(pm.quantity)) as quantity_sold,
-                COALESCE(SUM(COALESCE(pm.price, p.price, 0) * ABS(pm.quantity)), 0) as total_amount
-            FROM product_movements pm
-            JOIN products p ON p.id = pm.product_id
-            WHERE pm.created_at >= %s
-              AND pm.created_at <= %s
-              AND (
-                  LOWER(COALESCE(pm.movement_type, '')) IN ('sale', 'sold', 'out', 'booking_sale')
-                  OR pm.quantity < 0
-              )
-            GROUP BY p.name
-            ORDER BY quantity_sold DESC
-            LIMIT 15
-        """, (start_date, end_date))
-        top_products = [
-            {
-                "product_name": row[0],
-                "orders": int(row[1] or 0),
-                "amount": float(row[2] or 0),
-            }
-            for row in c.fetchall()
-        ]
+        top_products = []
 
         # Секции сайта перед записью: где пользователи проводят время до booking
         c.execute("""
@@ -992,6 +1027,7 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         section_steps_count: Dict[str, int] = defaultdict(int)
         section_sessions_total: Dict[str, int] = defaultdict(int)
         section_sessions_to_booking: Dict[str, int] = defaultdict(int)
+        booking_sessions_count = 0
 
         for session_events in session_events_map.values():
             session_events.sort(key=lambda item: item["visited_at"])
@@ -1012,6 +1048,8 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
 
             if booking_event_index is None:
                 continue
+
+            booking_sessions_count += 1
 
             booking_time = session_events[booking_event_index]["visited_at"]
             sections_before_booking: Set[str] = set()
@@ -1047,10 +1085,18 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
                 "session_count": section_sessions,
                 "sessions_before_booking": section_booking_sessions,
                 "to_booking_rate": round(to_booking_rate, 2),
+                "reliable_sample": bool(section_sessions >= 10 and section_booking_sessions >= 3),
             })
         section_rows.sort(key=lambda item: item["total_seconds"], reverse=True)
+        website_sections_summary = {
+            "tracked_sessions": len(session_events_map),
+            "booking_sessions": booking_sessions_count,
+            "low_sample": bool(booking_sessions_count < 10),
+            "includes_account_pages": any(row["section"] == "account" for row in section_rows),
+        }
 
         # Тест силы связи: регион x источник записи
+        association_filters_sql, association_filters_params = _build_booking_filters("b")
         c.execute(f"""
             SELECT
                 {client_region_sql} as region_name,
@@ -1058,10 +1104,9 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
                 COUNT(*) as pair_count
             FROM bookings b
             LEFT JOIN clients cl ON cl.instagram_id = b.instagram_id
-            WHERE b.created_at >= %s
-              AND b.created_at <= %s
+            WHERE {association_filters_sql}
             GROUP BY region_name, source_name
-        """, (start_date, end_date))
+        """, association_filters_params)
         association_rows = c.fetchall()
         association_stats = _cramers_v_from_contingency(association_rows)
         cramers_v = association_stats["cramers_v"]
@@ -1087,9 +1132,8 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
                 COALESCE(b.revenue, 0) as revenue_value
             FROM bookings b
             LEFT JOIN clients cl ON cl.instagram_id = b.instagram_id
-            WHERE b.created_at >= %s
-              AND b.created_at <= %s
-        """, (start_date, end_date))
+            WHERE {association_filters_sql}
+        """, association_filters_params)
         booking_detail_rows = c.fetchall()
 
         region_revenue_groups: Dict[str, List[float]] = defaultdict(list)
@@ -1165,15 +1209,16 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         bookings_sample_size = len(booking_detail_rows)
         unknown_region_share = (unknown_region_count / float(bookings_sample_size)) if bookings_sample_size > 0 else 0.0
         unknown_source_share = (unknown_source_count / float(bookings_sample_size)) if bookings_sample_size > 0 else 0.0
-        revenue_outlier_share = _iqr_outlier_share(all_revenue_values)
+        revenue_outlier_stats = _iqr_outlier_stats(all_revenue_values)
+        revenue_outlier_share = float(revenue_outlier_stats["share"])
+        revenue_outlier_count = int(revenue_outlier_stats["count"])
         hourly_counts = [float(hour_row.get("count", 0)) for hour_row in bookings_by_hour]
         hourly_cv = _coefficient_of_variation(hourly_counts)
 
-        noise_score = (
-            min(max(hourly_cv, 0.0), 2.0) / 2.0 * 35.0
-            + min(max(revenue_outlier_share, 0.0), 1.0) * 35.0
-            + min(max((unknown_region_share + unknown_source_share) / 2.0, 0.0), 1.0) * 30.0
-        )
+        hourly_noise_component = min(max(hourly_cv, 0.0), 2.0) / 2.0 * 35.0
+        outlier_noise_component = min(max(revenue_outlier_share, 0.0), 1.0) * 35.0
+        metadata_noise_component = min(max((unknown_region_share + unknown_source_share) / 2.0, 0.0), 1.0) * 30.0
+        noise_score = hourly_noise_component + outlier_noise_component + metadata_noise_component
         sample_confidence = min(1.0, bookings_sample_size / 300.0)
         trust_score = ((100.0 - noise_score) * 0.7) + (sample_confidence * 30.0)
         if len(significant_tests) > 0:
@@ -1222,9 +1267,8 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
                 {booking_source_sql} as booking_source,
                 {booking_promo_code_sql} as booking_promo
             FROM bookings b
-            WHERE b.created_at >= %s
-              AND b.created_at <= %s
-        """, (start_date, end_date))
+            WHERE {booking_filters_sql}
+        """, booking_filters_params)
         booking_fact_rows = c.fetchall()
 
         booking_facts: List[Dict[str, Any]] = []
@@ -1241,6 +1285,42 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
                 "source": _normalize_channel(str(row[8] or "unknown")),
                 "promo_code": str(row[9] or "").strip(),
             })
+        filtered_booking_ids = [int(booking_item["id"]) for booking_item in booking_facts]
+
+        if filtered_booking_ids:
+            top_products_sql = """
+                SELECT
+                    p.name,
+                    SUM(ABS(pm.quantity)) as quantity_sold,
+                    COALESCE(SUM(COALESCE(pm.price, p.price, 0) * ABS(pm.quantity)), 0) as total_amount
+                FROM product_movements pm
+                JOIN products p ON p.id = pm.product_id
+                WHERE pm.created_at >= %s
+                  AND pm.created_at <= %s
+                  AND pm.booking_id = ANY(%s)
+                  AND (
+                      LOWER(COALESCE(pm.movement_type, '')) IN ('sale', 'sold', 'out', 'booking_sale')
+                      OR pm.quantity < 0
+                  )
+            """
+            top_products_params: List[Any] = [start_date, end_date, filtered_booking_ids]
+            if normalized_product_name != "":
+                top_products_sql += " AND LOWER(TRIM(p.name)) = LOWER(%s)"
+                top_products_params.append(normalized_product_name)
+            top_products_sql += """
+                GROUP BY p.name
+                ORDER BY quantity_sold DESC
+                LIMIT 15
+            """
+            c.execute(top_products_sql, top_products_params)
+            top_products = [
+                {
+                    "product_name": row[0],
+                    "orders": int(row[1] or 0),
+                    "amount": float(row[2] or 0),
+                }
+                for row in c.fetchall()
+            ]
 
         users_by_id: Dict[int, Dict[str, Any]] = {}
         users_by_name: Dict[str, Dict[str, Any]] = {}
@@ -1480,12 +1560,11 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
         medium_forecast_threshold = _percentile(sorted_slot_means, 0.5) if sorted_slot_means else 0.0
         high_forecast_threshold = _percentile(sorted_slot_means, 0.8) if sorted_slot_means else 0.0
 
-        forecast_horizon_days = 14
         forecast_start_date = max(get_current_time().date(), period_end_dt.date()) + timedelta(days=1)
         forecast_upcoming_days: List[Dict[str, Any]] = []
         forecast_high_load_slots: List[Dict[str, Any]] = []
 
-        for day_offset in range(forecast_horizon_days):
+        for day_offset in range(resolved_forecast_horizon_days):
             target_date = forecast_start_date + timedelta(days=day_offset)
             target_weekday = target_date.isoweekday()
             candidate_hours = sorted(active_hours_by_dow.get(target_weekday, set()))
@@ -1516,10 +1595,16 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
             })
 
         load_forecast = {
-            "horizon_days": forecast_horizon_days,
+            "horizon_days": resolved_forecast_horizon_days,
             "generated_from_period": {
                 "start_date": str(start_date),
                 "end_date": str(end_date),
+            },
+            "historical_sample_size": len(non_cancelled_bookings),
+            "active_slot_count": len(slot_mean_values),
+            "scope": {
+                "service_name": normalized_service_name if normalized_service_name != "" else None,
+                "product_name": normalized_product_name if normalized_product_name != "" else None,
             },
             "upcoming_days": forecast_upcoming_days,
             "high_load_slots": forecast_high_load_slots[:30],
@@ -1645,8 +1730,8 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
 
         # 5) Unit economics by service / master
         product_cost_by_booking: Dict[int, float] = {}
-        if "product_movements" in table_columns_cache or True:
-            c.execute("""
+        if ("product_movements" in table_columns_cache or True) and filtered_booking_ids:
+            booking_cost_sql = """
                 SELECT
                     pm.booking_id,
                     COALESCE(SUM(ABS(pm.quantity) * COALESCE(p.cost_price, 0)), 0) as booking_cost
@@ -1655,12 +1740,18 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
                 WHERE pm.booking_id IS NOT NULL
                   AND pm.created_at >= %s
                   AND pm.created_at <= %s
+                  AND pm.booking_id = ANY(%s)
                   AND (
                     LOWER(COALESCE(pm.movement_type, '')) IN ('out', 'sale', 'sold', 'booking_sale')
                     OR pm.quantity < 0
                   )
-                GROUP BY pm.booking_id
-            """, (start_date, end_date))
+            """
+            booking_cost_params: List[Any] = [start_date, end_date, filtered_booking_ids]
+            if normalized_product_name != "":
+                booking_cost_sql += " AND LOWER(TRIM(p.name)) = LOWER(%s)"
+                booking_cost_params.append(normalized_product_name)
+            booking_cost_sql += " GROUP BY pm.booking_id"
+            c.execute(booking_cost_sql, booking_cost_params)
             for booking_id_value, booking_cost_value in c.fetchall():
                 product_cost_by_booking[int(booking_id_value)] = float(booking_cost_value or 0.0)
 
@@ -2319,6 +2410,7 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
             "bookings_by_region": bookings_by_region,
             "top_products": top_products,
             "website_sections_before_booking": section_rows[:15],
+            "website_sections_summary": website_sections_summary,
             "association_tests": {
                 "region_vs_booking_source": {
                     "chi_square": association_stats["chi_square"],
@@ -2332,14 +2424,38 @@ def get_analytics_data(days=30, date_from=None, date_to=None):
             "data_reliability": {
                 "sample_size": bookings_sample_size,
                 "unknown_region_share": round(unknown_region_share * 100.0, 2),
+                "unknown_region_count": unknown_region_count,
                 "unknown_source_share": round(unknown_source_share * 100.0, 2),
+                "unknown_source_count": unknown_source_count,
                 "revenue_outlier_share": round(revenue_outlier_share * 100.0, 2),
+                "revenue_outlier_count": revenue_outlier_count,
                 "hourly_cv": round(hourly_cv, 4),
                 "noise_score": round(noise_score, 2),
                 "noise_level": noise_level,
                 "trust_score": round(trust_score, 2),
                 "can_trust": can_trust,
                 "confidence_level": confidence_level,
+                "filters": {
+                    "service_name": normalized_service_name if normalized_service_name != "" else None,
+                    "product_name": normalized_product_name if normalized_product_name != "" else None,
+                },
+                "noise_components": [
+                    {
+                        "key": "hourly_distribution",
+                        "score": round(hourly_noise_component, 2),
+                        "raw_value": round(hourly_cv, 4),
+                    },
+                    {
+                        "key": "revenue_outliers",
+                        "score": round(outlier_noise_component, 2),
+                        "raw_value": round(revenue_outlier_share * 100.0, 2),
+                    },
+                    {
+                        "key": "missing_metadata",
+                        "score": round(metadata_noise_component, 2),
+                        "raw_value": round(((unknown_region_share + unknown_source_share) / 2.0) * 100.0, 2),
+                    },
+                ],
             },
             "statistical_tests": {
                 "chi_square_region_vs_booking_source": chi_square_test,

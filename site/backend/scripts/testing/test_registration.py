@@ -301,7 +301,7 @@ async def test_admin_approval_flow():
 
 
 async def test_first_admin_exception():
-    """Тест что admin/admin123 работает без подтверждений"""
+    """Тест что admin/director работает без подтверждений"""
     print_section("TEST 6: First Admin Exception")
     
     conn = get_db_connection()
