@@ -29,6 +29,8 @@
   "schedule_management": "Кестені басқару: {{name}}",
   "schedule_saved": "Кесте сақталды",
   "schedule_settings": "Жұмыс уақыты мен мерекелер параметрлері",
+  "status_active": "Активно",
+  "status_inactive": "Неактивно",
   "sunday": "Жексенбі",
   "thursday": "Бейсенбі",
   "to": "Бұған дейін",

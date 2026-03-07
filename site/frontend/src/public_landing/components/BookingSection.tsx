@@ -23,8 +23,8 @@ import {
 } from "./ui/popover";
 
 import { PhoneInputWithSearch } from './ui/PhoneInputWithSearch';
-import { DEFAULT_VALUES, EXTERNAL_SERVICES } from '../utils/constants';
-import { safeFetch, safeExternalApiCall } from '../utils/errorHandler';
+import { DEFAULT_VALUES } from '../utils/constants';
+import { detectCountry } from '@site/utils/languageDetection';
 import {
   buildReferralBookingSource,
   captureReferralAttributionFromCurrentUrl,
@@ -72,25 +72,28 @@ export const BookingSection = () => {
 
   // Detect country from geolocation or use saved preference
   useEffect(() => {
+    const fallbackCountryCode = String(DEFAULT_VALUES.COUNTRY_CODE || '').trim().toLowerCase();
+
     const savedCountry = localStorage.getItem('preferred_phone_country');
     if (savedCountry) {
       setDefaultCountry(savedCountry.toLowerCase());
     } else {
-      // Try to detect country from IP with error handling
-      safeExternalApiCall(
-        async () => {
-          const res = await safeFetch(EXTERNAL_SERVICES.IP_API);
-          return res.json();
-        },
-        'IP API',
-        { country_code: DEFAULT_VALUES.COUNTRY_CODE.toUpperCase() }
-      ).then(data => {
-        if (data.country_code) {
-          const countryCode = data.country_code.toLowerCase();
-          setDefaultCountry(countryCode);
-          localStorage.setItem('preferred_phone_country', countryCode);
-        } else {
-          setDefaultCountry(DEFAULT_VALUES.COUNTRY_CODE);
+      detectCountry().then((countryCode) => {
+        if (countryCode) {
+          const normalizedCountryCode = countryCode.toLowerCase();
+          setDefaultCountry(normalizedCountryCode);
+          localStorage.setItem('preferred_phone_country', normalizedCountryCode);
+          return;
+        }
+
+        if (fallbackCountryCode) {
+          setDefaultCountry(fallbackCountryCode);
+          localStorage.setItem('preferred_phone_country', fallbackCountryCode);
+        }
+      }).catch(() => {
+        if (fallbackCountryCode) {
+          setDefaultCountry(fallbackCountryCode);
+          localStorage.setItem('preferred_phone_country', fallbackCountryCode);
         }
       });
     }

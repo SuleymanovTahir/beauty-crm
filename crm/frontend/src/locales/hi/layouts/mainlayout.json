@@ -70,6 +70,7 @@
   "notification_deleted": "अधिसूचना हटाया गया",
   "notifications": "सूचनाएं",
   "roles": {
+    "accountant": "",
     "admin": "",
     "director": "निदेशक",
     "employee": "",

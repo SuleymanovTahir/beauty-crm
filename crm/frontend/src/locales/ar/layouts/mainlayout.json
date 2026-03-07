@@ -70,6 +70,7 @@
   "notification_deleted": "تم حذف الإشعار",
   "notifications": "الإشعارات",
   "roles": {
+    "accountant": "",
     "admin": "",
     "director": "المدير",
     "employee": "",

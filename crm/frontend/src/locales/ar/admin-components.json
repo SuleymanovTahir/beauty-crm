@@ -29,6 +29,8 @@
   "schedule_management": "إدارة الجدول الزمني: {{name}}",
   "schedule_saved": "تم حفظ الجدول",
   "schedule_settings": "إعدادات ساعات العمل والعطلات",
+  "status_active": "Активно",
+  "status_inactive": "Неактивно",
   "sunday": "الأحد",
   "thursday": "الخميس",
   "to": "قبل",

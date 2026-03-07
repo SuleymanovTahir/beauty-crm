@@ -70,6 +70,7 @@
   "notification_deleted": "Уведомление удалено",
   "notifications": "Уведомления",
   "roles": {
+    "accountant": "",
     "admin": "",
     "director": "Директор",
     "employee": "",

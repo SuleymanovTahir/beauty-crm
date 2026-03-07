@@ -17,6 +17,333 @@ interface AnalyticsData {
   services_stats: [string, number, number][];
   status_stats: [string, number][];
   avg_response_time: number;
+  bookings_by_hour?: Array<{
+    hour: string;
+    count: number;
+  }>;
+  bookings_by_weekday?: Array<{
+    weekday: string;
+    iso_weekday: number;
+    count: number;
+  }>;
+  bookings_by_region?: Array<{
+    region: string;
+    bookings: number;
+    revenue: number;
+  }>;
+  top_products?: Array<{
+    product_name: string;
+    orders: number;
+    amount: number;
+  }>;
+  website_sections_before_booking?: Array<{
+    section: string;
+    total_seconds: number;
+    avg_seconds: number;
+    session_count: number;
+    sessions_before_booking: number;
+    to_booking_rate: number;
+  }>;
+  association_tests?: {
+    region_vs_booking_source?: {
+      chi_square: number;
+      cramers_v: number;
+      p_value?: number;
+      significant?: boolean;
+      strength: string;
+      sample_size: number;
+    };
+  };
+  data_reliability?: {
+    sample_size: number;
+    unknown_region_share: number;
+    unknown_source_share: number;
+    revenue_outlier_share: number;
+    hourly_cv: number;
+    noise_score: number;
+    noise_level: string;
+    trust_score: number;
+    can_trust: boolean;
+    confidence_level: string;
+  };
+  statistical_tests?: {
+    chi_square_region_vs_booking_source?: {
+      enabled: boolean;
+      sample_size: number;
+      chi_square: number;
+      df: number;
+      p_value: number;
+      significant: boolean;
+      cramers_v: number;
+      strength: string;
+    };
+    anova_revenue_by_region?: {
+      enabled: boolean;
+      groups_count: number;
+      sample_size: number;
+      f_stat: number;
+      p_value: number;
+      eta_squared: number;
+      significant: boolean;
+      strength: string;
+    };
+    spearman_section_time_vs_booking_rate?: {
+      enabled: boolean;
+      sample_size: number;
+      coefficient: number;
+      p_value: number;
+      significant: boolean;
+      strength: string;
+      direction: string;
+    };
+    kendall_section_time_vs_booking_rate?: {
+      enabled: boolean;
+      sample_size: number;
+      coefficient: number;
+      p_value: number;
+      significant: boolean;
+      strength: string;
+      direction: string;
+    };
+    pearson_section_time_vs_booking_rate?: {
+      enabled: boolean;
+      sample_size: number;
+      coefficient: number;
+      p_value: number;
+      significant: boolean;
+      strength: string;
+      direction: string;
+    };
+    comparison?: {
+      strongest_effect_test: string;
+      strongest_effect_value: number;
+      significant_tests_count: number;
+      enabled_tests_count: number;
+    };
+  };
+  cohort_retention_ltv?: {
+    horizon_months: number;
+    cohorts_analyzed: number;
+    summary: Array<{
+      cohort_month: string;
+      cohort_size: number;
+      m0_retention: number;
+      m1_retention: number;
+      m3_avg_ltv: number;
+    }>;
+    heatmap: Array<{
+      cohort_month: string;
+      month_offset: number;
+      retention_rate: number;
+      avg_ltv: number;
+      active_clients: number;
+      cohort_size: number;
+    }>;
+  };
+  attribution_multi_touch?: {
+    sample_size: number;
+    channels: Array<{
+      channel: string;
+      first_touch: number;
+      last_touch: number;
+      linear_credit: number;
+      linear_share: number;
+    }>;
+    top_paths: Array<{
+      path: string;
+      count: number;
+    }>;
+  };
+  load_forecast?: {
+    horizon_days: number;
+    generated_from_period: {
+      start_date: string;
+      end_date: string;
+    };
+    upcoming_days: Array<{
+      date: string;
+      predicted_total_bookings: number;
+      load_level: string;
+    }>;
+    high_load_slots: Array<{
+      date: string;
+      hour: string;
+      predicted_bookings: number;
+      std: number;
+    }>;
+    method: string;
+  };
+  no_show_cancellation_analytics?: {
+    services: Array<{
+      service_name: string;
+      bookings: number;
+      no_show_rate: number;
+      cancel_rate: number;
+      risk_score: number;
+    }>;
+    hours: Array<{
+      hour: string;
+      bookings: number;
+      no_show_rate: number;
+      cancel_rate: number;
+    }>;
+    weekdays: Array<{
+      iso_weekday: number;
+      bookings: number;
+      no_show_rate: number;
+      cancel_rate: number;
+    }>;
+    high_risk_clients: Array<{
+      client_id: string;
+      bookings: number;
+      no_show_rate: number;
+      cancel_rate: number;
+      risk_score: number;
+      risk_level: string;
+    }>;
+  };
+  unit_economics?: {
+    model: string;
+    services: Array<{
+      service_name: string;
+      bookings: number;
+      revenue: number;
+      commission_cost: number;
+      product_cost: number;
+      variable_cost: number;
+      margin: number;
+      margin_rate: number;
+    }>;
+    masters: Array<{
+      master_name: string;
+      bookings: number;
+      revenue: number;
+      commission_cost: number;
+      product_cost: number;
+      base_salary_period: number;
+      margin_before_salary: number;
+      margin_after_salary: number;
+    }>;
+    summary: {
+      revenue_total: number;
+      variable_cost_total: number;
+      margin_total: number;
+    };
+  };
+  time_to_book?: {
+    sample_size: number;
+    avg_minutes: number;
+    median_minutes: number;
+    min_minutes: number;
+    max_minutes: number;
+    buckets: {
+      under_1h: number;
+      under_6h: number;
+      under_24h: number;
+      under_7d: number;
+      over_7d: number;
+    };
+    by_source: Array<{
+      source: string;
+      avg_minutes: number;
+      median_minutes: number;
+      sample_size: number;
+    }>;
+    by_master: Array<{
+      master_name: string;
+      avg_minutes: number;
+      median_minutes: number;
+      sample_size: number;
+    }>;
+  };
+  full_funnel?: {
+    stages: Array<{
+      stage: string;
+      count: number;
+    }>;
+    conversions: {
+      contact_to_booked: number;
+      booked_to_visited: number;
+      visited_to_repeat: number;
+      contact_to_repeat: number;
+    };
+    sources: {
+      chat_clients: number;
+      messenger_clients: number;
+      call_clients: number;
+    };
+  };
+  promo_uplift?: {
+    promo_bookings: number;
+    regular_bookings: number;
+    promo_completion_rate: number;
+    regular_completion_rate: number;
+    completion_rate_uplift: number;
+    promo_avg_revenue: number;
+    regular_avg_revenue: number;
+    avg_revenue_uplift: number;
+    top_codes: Array<{
+      promo_code: string;
+      bookings: number;
+      completion_rate: number;
+      avg_revenue: number;
+    }>;
+  };
+  rfm_segmentation?: {
+    sample_size: number;
+    segments: Array<{
+      segment: string;
+      count: number;
+    }>;
+    examples: Record<string, Array<{
+      client_id: string;
+      r_score: number;
+      f_score: number;
+      m_score: number;
+      recency_days: number;
+      frequency: number;
+      monetary: number;
+    }>>;
+  };
+  sla_analytics?: {
+    thresholds_seconds: number[];
+    calls_team: {
+      sample_size: number;
+      avg_seconds: number;
+      median_seconds: number;
+      within_thresholds: Array<{
+        seconds: number;
+        rate: number;
+      }>;
+    };
+    chat_team: {
+      sample_size: number;
+      avg_seconds: number;
+      median_seconds: number;
+      within_thresholds: Array<{
+        seconds: number;
+        rate: number;
+      }>;
+    };
+    combined_team: {
+      sample_size: number;
+      avg_seconds: number;
+      median_seconds: number;
+      within_thresholds: Array<{
+        seconds: number;
+        rate: number;
+      }>;
+    };
+    by_employee: Array<{
+      employee_name: string;
+      call_sample_size: number;
+      chat_sample_size: number;
+      combined_sample_size: number;
+      combined_avg_seconds: number;
+      combined_median_seconds: number;
+      combined_sla_5m_rate: number;
+    }>;
+  };
   peak_hours?: Array<{
     hour: string;
     count: number;
@@ -59,7 +386,8 @@ export default function Analytics() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { t, i18n: i18nInstance } = useTranslation(['analytics', 'common']);
   const { user } = useAuth();
-  const permissions = usePermissions(user?.role || 'employee');
+  const userRole = typeof user?.role === 'string' ? user.role : '';
+  const permissions = usePermissions(userRole);
   const { currency, formatCurrency } = useCurrency();
 
   useEffect(() => {
@@ -199,30 +527,245 @@ export default function Analytics() {
     );
   }
 
-  const bookingsTrendData = analytics?.bookings_by_day?.map(([date, count]) => ({
+  const toArray = <T,>(value: T[] | undefined | null): T[] => (Array.isArray(value) ? value : []);
+
+  const bookingsTrendData = toArray(analytics?.bookings_by_day).map(([date, count]) => ({
     name: isMobile
       ? new Date(date).toLocaleDateString(i18nInstance.language, { day: 'numeric', month: 'numeric' })
       : new Date(date).toLocaleDateString(i18nInstance.language, { day: 'numeric', month: 'short' }),
     [t('analytics:bookings')]: count
-  })) || [];
+  }));
 
-  const servicesData = analytics?.services_stats?.map(([name, count, revenue], index) => ({
+  const servicesData = toArray(analytics?.services_stats).map(([name, count, revenue], index) => ({
     name,
     value: count,
     revenue,
     color: COLORS[index % COLORS.length]
-  })) || [];
+  }));
 
-  const statusData = analytics?.status_stats?.map(([status, count]) => ({
+  const statusData = toArray(analytics?.status_stats).map(([status, count]) => ({
     name: t(`analytics:status.${status}`),
     [t('analytics:bookings')]: count
-  })) || [];
+  }));
 
-  const topServices = analytics?.services_stats?.slice(0, 5).map(([name, count, revenue]) => ({
+  const topServices = toArray(analytics?.services_stats).slice(0, 5).map(([name, count, revenue]) => ({
     name,
     count,
     revenue
-  })) || [];
+  }));
+
+  const bookingsByHourData = Array.isArray(analytics?.bookings_by_hour)
+    ? analytics.bookings_by_hour.map((hourItem) => ({
+      hour: hourItem.hour,
+      count: hourItem.count
+    }))
+    : [];
+
+  const bookingsByRegionData = Array.isArray(analytics?.bookings_by_region)
+    ? analytics.bookings_by_region.slice(0, 10)
+    : [];
+
+  const topProductsData = Array.isArray(analytics?.top_products)
+    ? analytics.top_products.slice(0, 10)
+    : [];
+
+  const websiteSectionsData = Array.isArray(analytics?.website_sections_before_booking)
+    ? analytics.website_sections_before_booking.slice(0, 10)
+    : [];
+
+  const regionAssociation = analytics?.association_tests?.region_vs_booking_source;
+  const dataReliability = analytics?.data_reliability;
+  const statisticalTests = analytics?.statistical_tests;
+
+  const formatPValue = (pValue?: number) => {
+    if (pValue === undefined || pValue === null) {
+      return '—';
+    }
+    if (!Number.isFinite(pValue)) {
+      return '—';
+    }
+    if (pValue < 0.001) {
+      return '< 0.001';
+    }
+    return pValue.toFixed(3);
+  };
+
+  const formatEffectValue = (effectValue?: number) => {
+    if (effectValue === undefined || effectValue === null) {
+      return '—';
+    }
+    if (!Number.isFinite(effectValue)) {
+      return '—';
+    }
+    return effectValue.toFixed(4);
+  };
+
+  const correlationConclusion = (
+    significant: boolean | undefined,
+    strength: string | undefined,
+    direction: string | undefined
+  ) => {
+    if (!significant) {
+      return t('analytics:test_conclusion_not_significant', 'Статистически значимой связи не обнаружено');
+    }
+    const directionLabel = direction === 'negative'
+      ? t('analytics:direction_negative', 'отрицательная')
+      : t('analytics:direction_positive', 'положительная');
+    const strengthLabel = t(`analytics:association_strength_values.${strength}`, strength ?? 'none');
+    return t('analytics:test_conclusion_correlation', '{{direction}} связь, сила: {{strength}}', {
+      direction: directionLabel,
+      strength: strengthLabel
+    });
+  };
+
+  const statTestRows = [
+    {
+      key: 'chi_square_region_vs_booking_source',
+      name: t('analytics:test_chi_square', 'Chi-square: регион vs источник'),
+      enabled: statisticalTests?.chi_square_region_vs_booking_source?.enabled,
+      effect: statisticalTests?.chi_square_region_vs_booking_source?.cramers_v,
+      pValue: statisticalTests?.chi_square_region_vs_booking_source?.p_value,
+      significant: statisticalTests?.chi_square_region_vs_booking_source?.significant,
+      conclusion: statisticalTests?.chi_square_region_vs_booking_source?.significant
+        ? t('analytics:test_conclusion_chi_square_significant', 'Категории связаны статистически значимо')
+        : t('analytics:test_conclusion_chi_square_not_significant', 'Значимой связи категорий не выявлено')
+    },
+    {
+      key: 'anova_revenue_by_region',
+      name: t('analytics:test_anova', 'ANOVA: выручка по регионам'),
+      enabled: statisticalTests?.anova_revenue_by_region?.enabled,
+      effect: statisticalTests?.anova_revenue_by_region?.eta_squared,
+      pValue: statisticalTests?.anova_revenue_by_region?.p_value,
+      significant: statisticalTests?.anova_revenue_by_region?.significant,
+      conclusion: statisticalTests?.anova_revenue_by_region?.significant
+        ? t('analytics:test_conclusion_anova_significant', 'Средняя выручка по регионам различается значимо')
+        : t('analytics:test_conclusion_anova_not_significant', 'Значимых различий средней выручки между регионами нет')
+    },
+    {
+      key: 'spearman_section_time_vs_booking_rate',
+      name: t('analytics:test_spearman', 'Spearman: время на секции vs конверсия'),
+      enabled: statisticalTests?.spearman_section_time_vs_booking_rate?.enabled,
+      effect: statisticalTests?.spearman_section_time_vs_booking_rate?.coefficient,
+      pValue: statisticalTests?.spearman_section_time_vs_booking_rate?.p_value,
+      significant: statisticalTests?.spearman_section_time_vs_booking_rate?.significant,
+      conclusion: correlationConclusion(
+        statisticalTests?.spearman_section_time_vs_booking_rate?.significant,
+        statisticalTests?.spearman_section_time_vs_booking_rate?.strength,
+        statisticalTests?.spearman_section_time_vs_booking_rate?.direction
+      )
+    },
+    {
+      key: 'kendall_section_time_vs_booking_rate',
+      name: t('analytics:test_kendall', 'Kendall: время на секции vs конверсия'),
+      enabled: statisticalTests?.kendall_section_time_vs_booking_rate?.enabled,
+      effect: statisticalTests?.kendall_section_time_vs_booking_rate?.coefficient,
+      pValue: statisticalTests?.kendall_section_time_vs_booking_rate?.p_value,
+      significant: statisticalTests?.kendall_section_time_vs_booking_rate?.significant,
+      conclusion: correlationConclusion(
+        statisticalTests?.kendall_section_time_vs_booking_rate?.significant,
+        statisticalTests?.kendall_section_time_vs_booking_rate?.strength,
+        statisticalTests?.kendall_section_time_vs_booking_rate?.direction
+      )
+    },
+    {
+      key: 'pearson_section_time_vs_booking_rate',
+      name: t('analytics:test_pearson', 'Pearson: время на секции vs конверсия'),
+      enabled: statisticalTests?.pearson_section_time_vs_booking_rate?.enabled,
+      effect: statisticalTests?.pearson_section_time_vs_booking_rate?.coefficient,
+      pValue: statisticalTests?.pearson_section_time_vs_booking_rate?.p_value,
+      significant: statisticalTests?.pearson_section_time_vs_booking_rate?.significant,
+      conclusion: correlationConclusion(
+        statisticalTests?.pearson_section_time_vs_booking_rate?.significant,
+        statisticalTests?.pearson_section_time_vs_booking_rate?.strength,
+        statisticalTests?.pearson_section_time_vs_booking_rate?.direction
+      )
+    }
+  ].filter((row) => row.enabled);
+
+  const strongestTestLabelMap: Record<string, string> = {
+    chi_square_region_vs_booking_source: t('analytics:test_chi_square', 'Chi-square: регион vs источник'),
+    anova_revenue_by_region: t('analytics:test_anova', 'ANOVA: выручка по регионам'),
+    spearman_section_time_vs_booking_rate: t('analytics:test_spearman', 'Spearman: время на секции vs конверсия'),
+    kendall_section_time_vs_booking_rate: t('analytics:test_kendall', 'Kendall: время на секции vs конверсия'),
+    pearson_section_time_vs_booking_rate: t('analytics:test_pearson', 'Pearson: время на секции vs конверсия')
+  };
+  const hasStatsQualityBlock = dataReliability ? true : statTestRows.length > 0;
+  const cohortSummaryData = toArray(analytics?.cohort_retention_ltv?.summary).slice(0, 6);
+  const cohortHeatmapM1Data = toArray(analytics?.cohort_retention_ltv?.heatmap)
+    .filter((row) => row.month_offset === 1)
+    .slice(0, 6)
+    .map((row) => ({
+      cohort: row.cohort_month,
+      retention: row.retention_rate,
+      ltv: row.avg_ltv
+    }));
+
+  const attributionChannelsData = toArray(analytics?.attribution_multi_touch?.channels).slice(0, 10);
+  const attributionPathsData = toArray(analytics?.attribution_multi_touch?.top_paths).slice(0, 10);
+
+  const forecastUpcomingData = toArray(analytics?.load_forecast?.upcoming_days).map((dayItem) => ({
+    date: new Date(dayItem.date).toLocaleDateString(i18nInstance.language, { day: 'numeric', month: 'short' }),
+    predicted: dayItem.predicted_total_bookings,
+    load_level: dayItem.load_level
+  }));
+  const forecastHighLoadSlotsData = toArray(analytics?.load_forecast?.high_load_slots).slice(0, 12);
+
+  const noShowServiceData = toArray(analytics?.no_show_cancellation_analytics?.services).slice(0, 10);
+  const noShowHourlyData = toArray(analytics?.no_show_cancellation_analytics?.hours);
+  const noShowHighRiskClientsData = toArray(analytics?.no_show_cancellation_analytics?.high_risk_clients).slice(0, 10);
+
+  const unitEconomicsServices = toArray(analytics?.unit_economics?.services).slice(0, 10);
+  const unitEconomicsMasters = toArray(analytics?.unit_economics?.masters).slice(0, 10);
+  const unitEconomicsSummary = analytics?.unit_economics?.summary;
+
+  const timeToBookData = analytics?.time_to_book;
+  const timeToBookBucketsData = timeToBookData
+    ? [
+      { bucket: t('analytics:ttb_bucket_under_1h'), count: timeToBookData.buckets.under_1h },
+      { bucket: t('analytics:ttb_bucket_under_6h'), count: timeToBookData.buckets.under_6h },
+      { bucket: t('analytics:ttb_bucket_under_24h'), count: timeToBookData.buckets.under_24h },
+      { bucket: t('analytics:ttb_bucket_under_7d'), count: timeToBookData.buckets.under_7d },
+      { bucket: t('analytics:ttb_bucket_over_7d'), count: timeToBookData.buckets.over_7d }
+    ]
+    : [];
+
+  const fullFunnelData = analytics?.full_funnel;
+  const fullFunnelStagesData = (fullFunnelData?.stages ?? []).map((stageItem) => ({
+    stage: t(`analytics:full_funnel_stage_${stageItem.stage}`),
+    count: stageItem.count
+  }));
+
+  const promoUpliftData = analytics?.promo_uplift;
+  const promoCodesData = toArray(promoUpliftData?.top_codes).slice(0, 10);
+
+  const rfmSegmentationData = analytics?.rfm_segmentation;
+  const rfmSegmentsChartData = rfmSegmentationData?.segments ?? [];
+  const rfmLargestSegment = rfmSegmentsChartData.length > 0 ? rfmSegmentsChartData[0].segment : '';
+  const rfmExamplesData = rfmLargestSegment !== ''
+    ? rfmSegmentationData?.examples[rfmLargestSegment] ?? []
+    : [];
+
+  const slaAnalyticsData = analytics?.sla_analytics;
+  const slaEmployeeData = toArray(slaAnalyticsData?.by_employee).slice(0, 10);
+  const slaCombinedThresholdsData = toArray(slaAnalyticsData?.combined_team?.within_thresholds).map((thresholdItem) => ({
+    threshold: `${thresholdItem.seconds}s`,
+    rate: thresholdItem.rate
+  }));
+  const timeToBookSourceData = toArray(timeToBookData?.by_source).slice(0, 8);
+  const secondsToMinutes = (seconds: number) => (seconds / 60).toFixed(1);
+  const formatPercentDelta = (value: number) => {
+    const prefix = value > 0 ? '+' : '';
+    return `${prefix}${value.toFixed(2)}%`;
+  };
+  const formatCurrencyDelta = (value: number) => {
+    const prefix = value > 0 ? '+' : '';
+    return `${prefix}${formatCurrency(value)}`;
+  };
+  const hasCohortAttributionBlock = cohortSummaryData.length + attributionChannelsData.length > 0;
+  const hasForecastNoShowBlock = forecastUpcomingData.length + noShowServiceData.length > 0;
+  const hasUnitTimeBlock = unitEconomicsServices.length + timeToBookBucketsData.length > 0;
+  const hasFunnelPromoBlock = fullFunnelStagesData.length + promoCodesData.length > 0;
+  const hasRfmSlaBlock = rfmSegmentsChartData.length + slaEmployeeData.length > 0;
 
   return (
     <div className="analytics-container p-4 md:p-8 pb-20 md:pb-8">
@@ -288,7 +831,7 @@ export default function Analytics() {
 
           <div className="analytics-stat-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
             <h3 className="analytics-stat-value text-2xl md:text-3xl text-gray-900 mb-1 md:mb-2">
-              {analytics?.avg_response_time.toFixed(0) || 0} {t('analytics:min')}
+              {analytics?.avg_response_time?.toFixed(0) ?? '0'} {t('analytics:min')}
             </h3>
             <p className="analytics-stat-label text-xs md:text-sm text-gray-600 mb-1 md:mb-2">{t('analytics:response_time')}</p>
             <div className="analytics-stat-note text-xs md:text-sm text-blue-600">
@@ -471,7 +1014,7 @@ export default function Analytics() {
                       {service.count}
                     </td>
                     <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-green-600 font-medium">
-                      {permissions.canViewFinancials ? formatCurrency(service.revenue || 0) : '---'}
+                      {permissions.canViewFinancials ? formatCurrency(service.revenue ?? 0) : '---'}
                     </td>
                   </tr>
                 ))}
@@ -480,6 +1023,855 @@ export default function Analytics() {
           </div>
         </div>
       )}
+
+      {/* Booking Time + Region */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+        {bookingsByHourData.length > 0 && (
+          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">
+              {t('analytics:bookings_by_hour', 'В какое время больше всего записей')}
+            </h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={bookingsByHourData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                <XAxis dataKey="hour" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="count" name={t('analytics:bookings')} fill="var(--chart-cyan)" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {bookingsByRegionData.length > 0 && (
+          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
+            <h2 className="text-base md:text-xl text-gray-900 mb-4 md:mb-6">
+              {t('analytics:bookings_by_region', 'Из каких регионов больше всего записей')}
+            </h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={bookingsByRegionData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                <XAxis dataKey="region" interval={0} angle={-20} textAnchor="end" height={70} />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="bookings" name={t('analytics:bookings')} fill="var(--chart-green)" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+      </div>
+
+      {/* Product + Website Pre-booking */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+        {topProductsData.length > 0 && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="p-4 md:p-6 border-b border-gray-200">
+              <h2 className="text-base md:text-xl text-gray-900">
+                {t('analytics:top_products_orders', 'Товары с наибольшим числом заказов')}
+              </h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:name')}</th>
+                    <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:quantity')}</th>
+                    <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:income')}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {topProductsData.map((productItem, productIndex) => (
+                    <tr key={`product-${productIndex}`} className="hover:bg-gray-50">
+                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{productItem.product_name}</td>
+                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{productItem.orders}</td>
+                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-green-700">
+                        {permissions.canViewFinancials ? formatCurrency(productItem.amount) : '---'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {websiteSectionsData.length > 0 && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="p-4 md:p-6 border-b border-gray-200">
+              <h2 className="text-base md:text-xl text-gray-900">
+                {t('analytics:website_sections_before_booking', 'Секции сайта перед записью')}
+              </h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:section', 'Секция')}</th>
+                    <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:avg_time_seconds', 'Среднее время (сек)')}</th>
+                    <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:total_time_seconds', 'Общее время (сек)')}</th>
+                    <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:to_booking_rate', 'Конверсия в запись')}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {websiteSectionsData.map((sectionItem, sectionIndex) => (
+                    <tr key={`section-${sectionIndex}`} className="hover:bg-gray-50">
+                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{sectionItem.section}</td>
+                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{sectionItem.avg_seconds.toFixed(1)}</td>
+                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{sectionItem.total_seconds.toFixed(1)}</td>
+                      <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-blue-700">{sectionItem.to_booking_rate.toFixed(1)}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Category Association Test */}
+      {regionAssociation && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6 mb-6 md:mb-8">
+          <h2 className="text-base md:text-xl text-gray-900 mb-3">
+            {t('analytics:region_source_association', 'Связь региона и источника записи')}
+          </h2>
+          <p className="text-sm text-gray-700 mb-2">
+            {t('analytics:chi_square_label', 'Chi-square')}: {regionAssociation.chi_square.toFixed(2)}
+          </p>
+          <p className="text-sm text-gray-700 mb-2">
+            {t('analytics:cramers_v_label', "Cramer's V")}: {regionAssociation.cramers_v.toFixed(3)}
+          </p>
+          {regionAssociation.p_value !== undefined && (
+            <p className="text-sm text-gray-700 mb-2">
+              {t('analytics:p_value_label', 'P-value')}: {formatPValue(regionAssociation.p_value)}
+            </p>
+          )}
+          <p className="text-sm text-gray-700">
+            {t('analytics:association_strength', 'Сила связи')}: {t(`analytics:association_strength_values.${regionAssociation.strength}`, regionAssociation.strength)}
+          </p>
+        </div>
+      )}
+
+      {hasStatsQualityBlock && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+          {dataReliability && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6">
+              <h2 className="text-base md:text-xl text-gray-900 mb-4">
+                {t('analytics:data_reliability_title', 'Шум и доверие к данным')}
+              </h2>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:trust_score', 'Trust score')}</p>
+                  <p className="text-lg font-semibold text-gray-900">{dataReliability.trust_score.toFixed(1)} / 100</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:noise_level', 'Уровень шума')}</p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    {t(`analytics:noise_level_values.${dataReliability.noise_level}`, dataReliability.noise_level)}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-2 text-sm text-gray-700">
+                <p>{t('analytics:noise_score', 'Noise score')}: {dataReliability.noise_score.toFixed(1)} / 100</p>
+                <p>{t('analytics:unknown_region_share', 'Доля неизвестного региона')}: {dataReliability.unknown_region_share.toFixed(2)}%</p>
+                <p>{t('analytics:unknown_source_share', 'Доля неизвестного источника')}: {dataReliability.unknown_source_share.toFixed(2)}%</p>
+                <p>{t('analytics:revenue_outlier_share', 'Доля выбросов по выручке')}: {dataReliability.revenue_outlier_share.toFixed(2)}%</p>
+                <p>{t('analytics:hourly_cv', 'Коэффициент вариации по часам')}: {dataReliability.hourly_cv.toFixed(4)}</p>
+                <p>
+                  {t('analytics:can_trust_data', 'Можно ли доверять данным')}:{' '}
+                  {dataReliability.can_trust
+                    ? t('analytics:significant_yes', 'Да')
+                    : t('analytics:significant_no', 'Нет')}
+                </p>
+                <p>
+                  {t('analytics:confidence_level', 'Уровень уверенности')}:{' '}
+                  {t(`analytics:confidence_values.${dataReliability.confidence_level}`, dataReliability.confidence_level)}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {statTestRows.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <h2 className="text-base md:text-xl text-gray-900">
+                  {t('analytics:stat_tests_title', 'Статистические тесты и вывод')}
+                </h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:test_name', 'Тест')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:effect_value', 'Эффект')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:p_value_label', 'P-value')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:significant', 'Значимость')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:conclusion_label', 'Вывод')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {statTestRows.map((testRow) => (
+                      <tr key={testRow.key} className="hover:bg-gray-50">
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{testRow.name}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{formatEffectValue(testRow.effect)}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{formatPValue(testRow.pValue)}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">
+                          {testRow.significant
+                            ? t('analytics:significant_yes', 'Да')
+                            : t('analytics:significant_no', 'Нет')}
+                        </td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-700">{testRow.conclusion}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {statisticalTests?.comparison && (
+                <div className="p-4 md:p-6 border-t border-gray-200 bg-gray-50 text-sm text-gray-700">
+                  <p className="mb-1">
+                    {t('analytics:strongest_effect_test', 'Самый сильный эффект')}:{' '}
+                    {strongestTestLabelMap[statisticalTests.comparison.strongest_effect_test] ?? statisticalTests.comparison.strongest_effect_test}
+                  </p>
+                  <p className="mb-1">
+                    {t('analytics:effect_value', 'Эффект')}: {formatEffectValue(statisticalTests.comparison.strongest_effect_value)}
+                  </p>
+                  <p>
+                    {t('analytics:significant_tests_count', 'Значимых тестов')}:{' '}
+                    {statisticalTests.comparison.significant_tests_count} / {statisticalTests.comparison.enabled_tests_count}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {hasCohortAttributionBlock && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+          {cohortSummaryData.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <h2 className="text-base md:text-xl text-gray-900">
+                  {t('analytics:cohort_retention_ltv_title')}
+                </h2>
+                <p className="text-xs md:text-sm text-gray-600 mt-2">
+                  {t('analytics:cohort_horizon_months')}: {analytics?.cohort_retention_ltv?.horizon_months ?? 0},
+                  {' '}
+                  {t('analytics:cohorts_analyzed')}: {analytics?.cohort_retention_ltv?.cohorts_analyzed ?? 0}
+                </p>
+              </div>
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <ResponsiveContainer width="100%" height={260}>
+                  <LineChart data={cohortHeatmapM1Data}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                    <XAxis dataKey="cohort" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="retention" name={t('analytics:cohort_m1_retention')} stroke="var(--chart-pink)" strokeWidth={2} />
+                    <Line type="monotone" dataKey="ltv" name={t('analytics:cohort_m3_ltv')} stroke="var(--chart-cyan)" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:cohort_month')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:cohort_size')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:cohort_m0_retention')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:cohort_m1_retention')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:cohort_m3_ltv')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {cohortSummaryData.map((rowItem) => (
+                      <tr key={rowItem.cohort_month} className="hover:bg-gray-50">
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.cohort_month}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.cohort_size}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.m0_retention.toFixed(1)}%</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.m1_retention.toFixed(1)}%</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">
+                          {permissions.canViewFinancials ? formatCurrency(rowItem.m3_avg_ltv) : '---'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {unitEconomicsMasters.length > 0 && (
+                <div className="p-4 md:p-6 border-t border-gray-200">
+                  <h3 className="text-sm md:text-base text-gray-900 mb-3">{t('analytics:unit_by_master')}</h3>
+                  <div className="space-y-2">
+                    {unitEconomicsMasters.map((rowItem) => (
+                      <div key={rowItem.master_name} className="flex items-center justify-between text-sm">
+                        <span className="text-gray-700">{rowItem.master_name}</span>
+                        <span className="text-gray-900">
+                          {permissions.canViewFinancials ? formatCurrency(rowItem.margin_after_salary) : '---'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {attributionChannelsData.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <h2 className="text-base md:text-xl text-gray-900">{t('analytics:attribution_title')}</h2>
+                <p className="text-xs md:text-sm text-gray-600 mt-2">
+                  {t('analytics:sample_size')}: {analytics?.attribution_multi_touch?.sample_size ?? 0}
+                </p>
+              </div>
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={attributionChannelsData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                    <XAxis dataKey="channel" interval={0} angle={-20} textAnchor="end" height={70} />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="first_touch" name={t('analytics:first_touch')} fill="var(--chart-purple)" />
+                    <Bar dataKey="last_touch" name={t('analytics:last_touch')} fill="var(--chart-cyan)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:channel')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:first_touch')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:last_touch')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:linear_share')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {attributionChannelsData.map((rowItem) => (
+                      <tr key={rowItem.channel} className="hover:bg-gray-50">
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.channel}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.first_touch}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.last_touch}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.linear_share.toFixed(2)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {attributionPathsData.length > 0 && (
+                <div className="p-4 md:p-6 border-t border-gray-200">
+                  <h3 className="text-sm md:text-base text-gray-900 mb-3">{t('analytics:top_paths')}</h3>
+                  <div className="space-y-2">
+                    {attributionPathsData.map((pathItem) => (
+                      <div key={pathItem.path} className="flex items-center justify-between text-sm text-gray-700">
+                        <span>{pathItem.path}</span>
+                        <span className="font-medium text-gray-900">{pathItem.count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {hasForecastNoShowBlock && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+          {forecastUpcomingData.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <h2 className="text-base md:text-xl text-gray-900">{t('analytics:load_forecast_title')}</h2>
+                <p className="text-xs md:text-sm text-gray-600 mt-2">
+                  {t('analytics:forecast_horizon')}: {analytics?.load_forecast?.horizon_days ?? 0}
+                </p>
+              </div>
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <ResponsiveContainer width="100%" height={260}>
+                  <BarChart data={forecastUpcomingData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="predicted" name={t('analytics:predicted_bookings')} fill="var(--chart-green)" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:date')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:predicted_bookings')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:load_level')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {(analytics?.load_forecast?.upcoming_days ?? []).slice(0, 10).map((rowItem) => (
+                      <tr key={rowItem.date} className="hover:bg-gray-50">
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.date}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.predicted_total_bookings.toFixed(2)}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">
+                          {t(`analytics:load_level_${rowItem.load_level}`)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {forecastHighLoadSlotsData.length > 0 && (
+                <div className="p-4 md:p-6 border-t border-gray-200">
+                  <h3 className="text-sm md:text-base text-gray-900 mb-3">{t('analytics:high_load_slots')}</h3>
+                  <div className="space-y-2">
+                    {forecastHighLoadSlotsData.map((rowItem) => (
+                      <div key={`${rowItem.date}-${rowItem.hour}`} className="flex items-center justify-between text-sm text-gray-700">
+                        <span>{rowItem.date} {rowItem.hour}</span>
+                        <span className="font-medium text-gray-900">{rowItem.predicted_bookings.toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {noShowServiceData.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <h2 className="text-base md:text-xl text-gray-900">{t('analytics:no_show_title')}</h2>
+              </div>
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <ResponsiveContainer width="100%" height={260}>
+                  <LineChart data={noShowHourlyData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                    <XAxis dataKey="hour" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="no_show_rate" name={t('analytics:no_show_rate')} stroke="var(--chart-red)" strokeWidth={2} />
+                    <Line type="monotone" dataKey="cancel_rate" name={t('analytics:cancel_rate')} stroke="var(--chart-amber)" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:service')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:bookings')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:no_show_rate')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:cancel_rate')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:risk_score')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {noShowServiceData.map((rowItem) => (
+                      <tr key={rowItem.service_name} className="hover:bg-gray-50">
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.service_name}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.bookings}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.no_show_rate.toFixed(2)}%</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.cancel_rate.toFixed(2)}%</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.risk_score.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {noShowHighRiskClientsData.length > 0 && (
+                <div className="p-4 md:p-6 border-t border-gray-200">
+                  <h3 className="text-sm md:text-base text-gray-900 mb-3">{t('analytics:high_risk_clients')}</h3>
+                  <div className="space-y-2">
+                    {noShowHighRiskClientsData.map((rowItem) => (
+                      <div key={rowItem.client_id} className="flex items-center justify-between text-sm">
+                        <span className="text-gray-700">{rowItem.client_id}</span>
+                        <span className="text-gray-900">
+                          {rowItem.risk_score.toFixed(2)} ({t(`analytics:risk_level_${rowItem.risk_level}`)})
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {hasUnitTimeBlock && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+          {unitEconomicsServices.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <h2 className="text-base md:text-xl text-gray-900">{t('analytics:unit_economics_title')}</h2>
+                <p className="text-xs md:text-sm text-gray-600 mt-2">
+                  {t('analytics:unit_model')}: {analytics?.unit_economics?.model ?? '—'}
+                </p>
+              </div>
+              {unitEconomicsSummary && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 md:p-6 border-b border-gray-200">
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="text-xs text-gray-500">{t('analytics:revenue_total')}</p>
+                    <p className="text-base font-semibold text-gray-900">
+                      {permissions.canViewFinancials ? formatCurrency(unitEconomicsSummary.revenue_total) : '---'}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="text-xs text-gray-500">{t('analytics:variable_cost_total')}</p>
+                    <p className="text-base font-semibold text-gray-900">
+                      {permissions.canViewFinancials ? formatCurrency(unitEconomicsSummary.variable_cost_total) : '---'}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="text-xs text-gray-500">{t('analytics:margin_total')}</p>
+                    <p className="text-base font-semibold text-gray-900">
+                      {permissions.canViewFinancials ? formatCurrency(unitEconomicsSummary.margin_total) : '---'}
+                    </p>
+                  </div>
+                </div>
+              )}
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:service')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:bookings')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:revenue')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:variable_cost_total')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:margin')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:margin_rate')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {unitEconomicsServices.map((rowItem) => (
+                      <tr key={rowItem.service_name} className="hover:bg-gray-50">
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.service_name}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.bookings}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">
+                          {permissions.canViewFinancials ? formatCurrency(rowItem.revenue) : '---'}
+                        </td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">
+                          {permissions.canViewFinancials ? formatCurrency(rowItem.variable_cost) : '---'}
+                        </td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">
+                          {permissions.canViewFinancials ? formatCurrency(rowItem.margin) : '---'}
+                        </td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.margin_rate.toFixed(2)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {timeToBookData && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <h2 className="text-base md:text-xl text-gray-900">{t('analytics:time_to_book_title')}</h2>
+              </div>
+              <div className="grid grid-cols-2 gap-3 p-4 md:p-6 border-b border-gray-200">
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:sample_size')}</p>
+                  <p className="text-base font-semibold text-gray-900">{timeToBookData.sample_size}</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:avg_minutes')}</p>
+                  <p className="text-base font-semibold text-gray-900">{timeToBookData.avg_minutes.toFixed(1)}</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:median_minutes')}</p>
+                  <p className="text-base font-semibold text-gray-900">{timeToBookData.median_minutes.toFixed(1)}</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:max_minutes')}</p>
+                  <p className="text-base font-semibold text-gray-900">{timeToBookData.max_minutes.toFixed(1)}</p>
+                </div>
+              </div>
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={timeToBookBucketsData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                    <XAxis dataKey="bucket" interval={0} angle={-20} textAnchor="end" height={70} />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" name={t('analytics:bookings')} fill="var(--chart-pink)" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:source')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:sample_size')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:avg_minutes')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:median_minutes')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {timeToBookSourceData.map((rowItem) => (
+                      <tr key={rowItem.source} className="hover:bg-gray-50">
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.source}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.sample_size}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.avg_minutes.toFixed(1)}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.median_minutes.toFixed(1)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {hasFunnelPromoBlock && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+          {fullFunnelData && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <h2 className="text-base md:text-xl text-gray-900">{t('analytics:full_funnel_title')}</h2>
+              </div>
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={fullFunnelStagesData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                    <XAxis dataKey="stage" interval={0} angle={-20} textAnchor="end" height={70} />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" name={t('analytics:clients')} fill="var(--chart-purple)" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="grid grid-cols-2 gap-3 p-4 md:p-6 border-b border-gray-200">
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:full_funnel_conversion_contact_booked')}</p>
+                  <p className="text-base font-semibold text-gray-900">{fullFunnelData.conversions.contact_to_booked.toFixed(2)}%</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:full_funnel_conversion_booked_visited')}</p>
+                  <p className="text-base font-semibold text-gray-900">{fullFunnelData.conversions.booked_to_visited.toFixed(2)}%</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:full_funnel_conversion_visited_repeat')}</p>
+                  <p className="text-base font-semibold text-gray-900">{fullFunnelData.conversions.visited_to_repeat.toFixed(2)}%</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:full_funnel_conversion_contact_repeat')}</p>
+                  <p className="text-base font-semibold text-gray-900">{fullFunnelData.conversions.contact_to_repeat.toFixed(2)}%</p>
+                </div>
+              </div>
+              <div className="p-4 md:p-6">
+                <h3 className="text-sm md:text-base text-gray-900 mb-3">{t('analytics:full_funnel_sources_title')}</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="rounded-lg bg-gray-50 p-3 text-center">
+                    <p className="text-xs text-gray-500">{t('analytics:chat_clients')}</p>
+                    <p className="text-base font-semibold text-gray-900">{fullFunnelData.sources.chat_clients}</p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 p-3 text-center">
+                    <p className="text-xs text-gray-500">{t('analytics:messenger_clients')}</p>
+                    <p className="text-base font-semibold text-gray-900">{fullFunnelData.sources.messenger_clients}</p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 p-3 text-center">
+                    <p className="text-xs text-gray-500">{t('analytics:call_clients')}</p>
+                    <p className="text-base font-semibold text-gray-900">{fullFunnelData.sources.call_clients}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {promoUpliftData && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <h2 className="text-base md:text-xl text-gray-900">{t('analytics:promo_uplift_title')}</h2>
+              </div>
+              <div className="grid grid-cols-2 gap-3 p-4 md:p-6 border-b border-gray-200">
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:promo_bookings')}</p>
+                  <p className="text-base font-semibold text-gray-900">{promoUpliftData.promo_bookings}</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:regular_bookings')}</p>
+                  <p className="text-base font-semibold text-gray-900">{promoUpliftData.regular_bookings}</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:completion_rate_uplift')}</p>
+                  <p className="text-base font-semibold text-gray-900">{formatPercentDelta(promoUpliftData.completion_rate_uplift)}</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:avg_revenue_uplift')}</p>
+                  <p className="text-base font-semibold text-gray-900">
+                    {permissions.canViewFinancials ? formatCurrencyDelta(promoUpliftData.avg_revenue_uplift) : '---'}
+                  </p>
+                </div>
+              </div>
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart
+                    data={[
+                      {
+                        name: t('analytics:promo'),
+                        completion: promoUpliftData.promo_completion_rate,
+                        revenue: promoUpliftData.promo_avg_revenue
+                      },
+                      {
+                        name: t('analytics:regular'),
+                        completion: promoUpliftData.regular_completion_rate,
+                        revenue: promoUpliftData.regular_avg_revenue
+                      }
+                    ]}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="completion" name={t('analytics:conversion')} fill="var(--chart-green)" />
+                    <Bar dataKey="revenue" name={t('analytics:avg_check')} fill="var(--chart-cyan)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:promo_code')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:bookings')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:conversion')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:avg_check')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {promoCodesData.map((rowItem) => (
+                      <tr key={rowItem.promo_code} className="hover:bg-gray-50">
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.promo_code}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.bookings}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.completion_rate.toFixed(2)}%</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">
+                          {permissions.canViewFinancials ? formatCurrency(rowItem.avg_revenue) : '---'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {hasRfmSlaBlock && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+          {rfmSegmentationData && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <h2 className="text-base md:text-xl text-gray-900">{t('analytics:rfm_title')}</h2>
+                <p className="text-xs md:text-sm text-gray-600 mt-2">
+                  {t('analytics:sample_size')}: {rfmSegmentationData.sample_size}
+                </p>
+              </div>
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={rfmSegmentsChartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                    <XAxis dataKey="segment" interval={0} angle={-20} textAnchor="end" height={70} tickFormatter={(value) => t(`analytics:rfm_segment_${value}`)} />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" name={t('analytics:clients')} fill="var(--chart-amber)" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              {rfmExamplesData.length > 0 && (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:client')}</th>
+                        <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">R</th>
+                        <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">F</th>
+                        <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">M</th>
+                        <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:recency_days')}</th>
+                        <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:frequency')}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {rfmExamplesData.map((rowItem) => (
+                        <tr key={rowItem.client_id} className="hover:bg-gray-50">
+                          <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.client_id}</td>
+                          <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.r_score}</td>
+                          <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.f_score}</td>
+                          <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.m_score}</td>
+                          <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.recency_days}</td>
+                          <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.frequency}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {slaAnalyticsData && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <h2 className="text-base md:text-xl text-gray-900">{t('analytics:sla_title')}</h2>
+              </div>
+              <div className="grid grid-cols-3 gap-3 p-4 md:p-6 border-b border-gray-200">
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:sla_calls_team')}</p>
+                  <p className="text-sm font-semibold text-gray-900">{secondsToMinutes(slaAnalyticsData.calls_team.avg_seconds)} {t('analytics:min')}</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:sla_chat_team')}</p>
+                  <p className="text-sm font-semibold text-gray-900">{secondsToMinutes(slaAnalyticsData.chat_team.avg_seconds)} {t('analytics:min')}</p>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3">
+                  <p className="text-xs text-gray-500">{t('analytics:sla_combined_team')}</p>
+                  <p className="text-sm font-semibold text-gray-900">{secondsToMinutes(slaAnalyticsData.combined_team.avg_seconds)} {t('analytics:min')}</p>
+                </div>
+              </div>
+              <div className="p-4 md:p-6 border-b border-gray-200">
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={slaCombinedThresholdsData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                    <XAxis dataKey="threshold" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="rate" name={t('analytics:sla_threshold_performance')} fill="var(--chart-green)" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:employee')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:sample_size')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:avg_minutes')}</th>
+                      <th className="px-3 md:px-6 py-3 text-left text-xs md:text-sm text-gray-600">{t('analytics:sla_5m_rate')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {slaEmployeeData.map((rowItem) => (
+                      <tr key={rowItem.employee_name} className="hover:bg-gray-50">
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.employee_name}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.combined_sample_size}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{secondsToMinutes(rowItem.combined_avg_seconds)}</td>
+                        <td className="px-3 md:px-6 py-3 text-xs md:text-sm text-gray-900">{rowItem.combined_sla_5m_rate.toFixed(2)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Funnel Overview */}
       {funnel && (
         <>
@@ -529,7 +1921,7 @@ export default function Analytics() {
                 { name: t('analytics:funnel.stages.booked'), value: funnel.booked, color: 'funnel-stage-booked', desc: t('analytics:funnel.desc.booked') },
                 { name: t('analytics:funnel.stages.completed'), value: funnel.completed, color: 'funnel-stage-completed', desc: t('analytics:funnel.desc.completed') }
               ].map((stage, index, arr) => {
-                const visitorsCount = funnel.visitors || 1;
+                const visitorsCount = Math.max(funnel.visitors ?? 0, 1);
                 const percentage = (stage.value / visitorsCount) * 100;
                 const conversionPercent = (stage.value / visitorsCount) * 100;
                 const prevValue = index > 0 ? arr[index - 1].value : 0;
@@ -650,7 +2042,7 @@ export default function Analytics() {
                         </div>
                       </td>
                       <td className="px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm text-gray-600">
-                        {recommendations[point.stage] || t('analytics:analyze_further')}
+                        {recommendations[point.stage] ?? t('analytics:analyze_further')}
                       </td>
                     </tr>
                   );

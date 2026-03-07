@@ -138,6 +138,8 @@ export function ServiceDetail() {
                 let loadedServices: any[] = [];
                 if (Array.isArray(data)) {
                     loadedServices = data;
+                } else if (Array.isArray(data?.services)) {
+                    loadedServices = data.services;
                 } else if (data.categories) {
                     // Fallback for nested
                     data.categories.forEach((cat: any) => {

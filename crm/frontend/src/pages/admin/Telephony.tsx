@@ -50,6 +50,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/ta
 import {
     BarChart,
     Bar,
+    ComposedChart,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -82,6 +83,83 @@ interface CallLog {
     manual_service_name?: string;
 }
 
+interface ResponseSummary {
+    count: number;
+    avg_seconds: number;
+    min_seconds: number;
+    max_seconds: number;
+    avg_minutes: number;
+    min_minutes: number;
+    max_minutes: number;
+}
+
+interface HistogramPoint {
+    bin_start_minutes: number;
+    bin_end_minutes: number;
+    x_minutes: number;
+    count: number;
+}
+
+interface KdePoint {
+    x_minutes: number;
+    y: number;
+}
+
+interface DistributionData {
+    sample_size: number;
+    histogram: HistogramPoint[];
+    kde: KdePoint[];
+    min_minutes: number;
+    max_minutes: number;
+}
+
+interface EmployeePerformanceRow {
+    employee_name: string;
+    calls_total: number;
+    calls_inbound: number;
+    calls_outbound: number;
+    calls_missed: number;
+    chat_client_messages: number;
+    call_response: ResponseSummary;
+    chat_response: ResponseSummary;
+    combined_response: ResponseSummary;
+}
+
+interface DailyResponseRow {
+    date: string;
+    calls_count: number;
+    calls_avg_seconds: number;
+    calls_min_seconds: number;
+    calls_max_seconds: number;
+    chat_count: number;
+    chat_avg_seconds: number;
+    chat_min_seconds: number;
+    chat_max_seconds: number;
+}
+
+interface TelephonyPerformanceData {
+    summary: {
+        total_calls: number;
+        total_chat_client_messages: number;
+        call_response: ResponseSummary;
+        chat_response: ResponseSummary;
+        combined_response: ResponseSummary;
+    };
+    selected_employee_name?: string | null;
+    employees: EmployeePerformanceRow[];
+    top_callers: Array<{
+        caller_name: string;
+        calls_total: number;
+    }>;
+    daily_response: DailyResponseRow[];
+    distributions: {
+        calls_team: DistributionData;
+        chat_team: DistributionData;
+        calls_selected_employee?: DistributionData | null;
+        chat_selected_employee?: DistributionData | null;
+    };
+}
+
 export default function Telephony() {
     const { t } = useTranslation(['admin/telephony', 'common']);
     const [search, setSearch] = useState('');
@@ -89,6 +167,7 @@ export default function Telephony() {
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [analytics, setAnalytics] = useState<any[]>([]);
+    const [performance, setPerformance] = useState<TelephonyPerformanceData | null>(null);
 
     // Sorting state
     const [sortBy, setSortBy] = useState<string>('created_at');
@@ -119,6 +198,12 @@ export default function Telephony() {
     const [managers, setManagers] = useState<string[]>([]);
     const [minDuration, setMinDuration] = useState<string>('');
     const [maxDuration, setMaxDuration] = useState<string>('');
+    const [workdayStartHour, setWorkdayStartHour] = useState<string>('9');
+    const [workdayEndHour, setWorkdayEndHour] = useState<string>('19');
+    const [excludeLunch, setExcludeLunch] = useState<boolean>(false);
+    const [lunchStartHour, setLunchStartHour] = useState<string>('13');
+    const [lunchEndHour, setLunchEndHour] = useState<string>('14');
+    const [weekdaysFilter, setWeekdaysFilter] = useState<number[]>([1, 2, 3, 4, 5]);
 
     // Lists for selection
     const [allClients, setAllClients] = useState<any[]>([]);
@@ -177,19 +262,37 @@ export default function Telephony() {
         }, 30000);
 
         return () => clearInterval(interval);
-    }, [search, period, dateFrom, dateTo, sortBy, sortOrder, statusFilter, typeFilter, managerFilter, minDuration, maxDuration]);
+    }, [
+        search,
+        period,
+        dateFrom,
+        dateTo,
+        sortBy,
+        sortOrder,
+        statusFilter,
+        typeFilter,
+        managerFilter,
+        minDuration,
+        maxDuration,
+        workdayStartHour,
+        workdayEndHour,
+        excludeLunch,
+        lunchStartHour,
+        lunchEndHour,
+        weekdaysFilter
+    ]);
 
     // Set default manager when opening add dialog
     useEffect(() => {
-        if (showAddDialog && formData.manual_manager_name === '') {
-            const defaultManager = allMasters.find(m =>
+            if (showAddDialog && formData.manual_manager_name === '') {
+                const defaultManager = allMasters.find(m =>
                 (m.position && m.position.toLowerCase().includes('менеджер')) ||
                 (m.role && m.role.toLowerCase().includes('manager'))
             );
             if (defaultManager) {
                 setFormData(prev => ({
                     ...prev,
-                    manual_manager_name: defaultManager.full_name || defaultManager.username
+                    manual_manager_name: defaultManager.full_name ?? defaultManager.username ?? ''
                 }));
             }
         }
@@ -238,7 +341,20 @@ export default function Telephony() {
                 end = '';
             }
 
-            const [callsData, statsData, analyticsData] = await Promise.all([
+            const parsedMinDuration = minDuration !== '' ? Number(minDuration) : Number.NaN;
+            const parsedMaxDuration = maxDuration !== '' ? Number(maxDuration) : Number.NaN;
+            const normalizedMinDuration = Number.isFinite(parsedMinDuration) ? parsedMinDuration : undefined;
+            const normalizedMaxDuration = Number.isFinite(parsedMaxDuration) ? parsedMaxDuration : undefined;
+            const parsedWorkdayStartHour = Number(workdayStartHour);
+            const parsedWorkdayEndHour = Number(workdayEndHour);
+            const parsedLunchStartHour = excludeLunch ? Number(lunchStartHour) : Number.NaN;
+            const parsedLunchEndHour = excludeLunch ? Number(lunchEndHour) : Number.NaN;
+            const normalizedWorkdayStartHour = Number.isFinite(parsedWorkdayStartHour) ? parsedWorkdayStartHour : 0;
+            const normalizedWorkdayEndHour = Number.isFinite(parsedWorkdayEndHour) ? parsedWorkdayEndHour : 24;
+            const normalizedLunchStartHour = Number.isFinite(parsedLunchStartHour) ? parsedLunchStartHour : undefined;
+            const normalizedLunchEndHour = Number.isFinite(parsedLunchEndHour) ? parsedLunchEndHour : undefined;
+
+            const [callsData, statsData, analyticsData, performanceData] = await Promise.all([
                 api.getCalls(search, 50, 0, start, end, undefined, sortBy, sortOrder, statusFilter, typeFilter),
                 api.getTelephonyStats(start, end),
                 api.getTelephonyAnalytics(
@@ -247,17 +363,46 @@ export default function Telephony() {
                     managerFilter === 'all' ? undefined : managerFilter,
                     statusFilter === 'all' ? undefined : statusFilter,
                     typeFilter === 'all' ? undefined : typeFilter,
-                    minDuration ? parseInt(minDuration) : undefined,
-                    maxDuration ? parseInt(maxDuration) : undefined
+                    normalizedMinDuration,
+                    normalizedMaxDuration
+                ),
+                api.getTelephonyPerformance(
+                    start,
+                    end,
+                    statusFilter === 'all' ? undefined : statusFilter,
+                    typeFilter === 'all' ? undefined : typeFilter,
+                    normalizedMinDuration,
+                    normalizedMaxDuration,
+                    managerFilter === 'all' ? undefined : managerFilter,
+                    normalizedWorkdayStartHour,
+                    normalizedWorkdayEndHour,
+                    normalizedLunchStartHour,
+                    normalizedLunchEndHour,
+                    weekdaysFilter
                 )
             ]);
             setCalls(callsData);
             setStats(statsData);
             setAnalytics(analyticsData);
+            setPerformance(performanceData);
 
-            // Extract unique managers for filter
-            const mgrs = Array.from(new Set(callsData.map((c: any) => c.manager_name).filter(Boolean))) as string[];
-            if (mgrs.length > 0) setManagers(mgrs);
+            const managerSet = new Set<string>();
+            callsData.forEach((callItem: any) => {
+                const managerName = typeof callItem?.manager_name === 'string' ? callItem.manager_name.trim() : '';
+                if (managerName.length > 0) {
+                    managerSet.add(managerName);
+                }
+            });
+            if (Array.isArray(performanceData?.employees)) {
+                performanceData.employees.forEach((employeeItem: EmployeePerformanceRow) => {
+                    const managerName = typeof employeeItem?.employee_name === 'string' ? employeeItem.employee_name.trim() : '';
+                    if (managerName.length > 0 && managerName !== 'Unassigned') {
+                        managerSet.add(managerName);
+                    }
+                });
+            }
+            const managerOptions = Array.from(managerSet);
+            setManagers(managerOptions);
 
             // Fetch additional data for dialogs
             const [clientsData, mastersData, servicesData] = await Promise.all([
@@ -265,9 +410,17 @@ export default function Telephony() {
                 api.getMasters(),
                 api.getServices()
             ]);
-            setAllClients(clientsData.clients || []);
-            setAllMasters(mastersData.employees || mastersData.users || (Array.isArray(mastersData) ? mastersData : []));
-            setAllServices(servicesData.services || []);
+            setAllClients(Array.isArray(clientsData.clients) ? clientsData.clients : []);
+            setAllMasters(
+                Array.isArray(mastersData.employees)
+                    ? mastersData.employees
+                    : Array.isArray(mastersData.users)
+                        ? mastersData.users
+                        : Array.isArray(mastersData)
+                            ? mastersData
+                            : []
+            );
+            setAllServices(Array.isArray(servicesData.services) ? servicesData.services : []);
         } catch (error) {
             console.error('Failed to load telephony data:', error);
             toast.error(t('common:error_loading_data', 'Ошибка загрузки данных'));
@@ -453,6 +606,111 @@ export default function Telephony() {
         if (type === 'inbound') return <PhoneIncoming className="w-4 h-4" style={{ color: 'var(--telephony-inbound)' }} />;
         return <PhoneOutgoing className="w-4 h-4" style={{ color: 'var(--telephony-outbound)' }} />;
     };
+
+    const formatResponseSeconds = (secondsValue: number) => {
+        if (!Number.isFinite(secondsValue)) {
+            return '0s';
+        }
+        if (secondsValue <= 0) {
+            return '0s';
+        }
+
+        const totalSeconds = Math.round(secondsValue);
+        const minutes = Math.floor(totalSeconds / 60);
+        const remainingSeconds = totalSeconds % 60;
+        if (minutes <= 0) {
+            return `${remainingSeconds}s`;
+        }
+        if (remainingSeconds <= 0) {
+            return `${minutes}m`;
+        }
+        return `${minutes}m ${remainingSeconds}s`;
+    };
+
+    const toggleWeekdayFilter = (weekdayValue: number) => {
+        setWeekdaysFilter((previousDays) => {
+            if (previousDays.includes(weekdayValue)) {
+                return previousDays.filter((existingDay) => existingDay !== weekdayValue);
+            }
+            return [...previousDays, weekdayValue].sort((leftValue, rightValue) => leftValue - rightValue);
+        });
+    };
+
+    const getNearestKdeValue = (xMinutes: number, kdePoints: KdePoint[]) => {
+        if (!Array.isArray(kdePoints)) {
+            return 0;
+        }
+        if (kdePoints.length === 0) {
+            return 0;
+        }
+        let nearestPoint = kdePoints[0];
+        let nearestDistance = Math.abs((kdePoints[0]?.x_minutes ?? 0) - xMinutes);
+        for (let pointIndex = 1; pointIndex < kdePoints.length; pointIndex += 1) {
+            const currentPoint = kdePoints[pointIndex];
+            const currentDistance = Math.abs((currentPoint?.x_minutes ?? 0) - xMinutes);
+            if (currentDistance < nearestDistance) {
+                nearestPoint = currentPoint;
+                nearestDistance = currentDistance;
+            }
+        }
+        return nearestPoint?.y ?? 0;
+    };
+
+    const mergeHistogramAndKde = (distributionData?: DistributionData | null) => {
+        if (!distributionData) {
+            return [];
+        }
+        if (!Array.isArray(distributionData.histogram)) {
+            return [];
+        }
+        const kdePoints = Array.isArray(distributionData.kde) ? distributionData.kde : [];
+        return distributionData.histogram.map((histogramPoint) => ({
+            x_minutes: histogramPoint.x_minutes,
+            count: histogramPoint.count,
+            kde: getNearestKdeValue(histogramPoint.x_minutes, kdePoints),
+        }));
+    };
+
+    const weekdaysOptions = [
+        { day: 1, label: t('telephony:weekday_monday', 'Пн') },
+        { day: 2, label: t('telephony:weekday_tuesday', 'Вт') },
+        { day: 3, label: t('telephony:weekday_wednesday', 'Ср') },
+        { day: 4, label: t('telephony:weekday_thursday', 'Чт') },
+        { day: 5, label: t('telephony:weekday_friday', 'Пт') },
+        { day: 6, label: t('telephony:weekday_saturday', 'Сб') },
+        { day: 7, label: t('telephony:weekday_sunday', 'Вс') }
+    ];
+
+    const performanceSummary = performance?.summary;
+    const performanceEmployees = Array.isArray(performance?.employees) ? performance.employees : [];
+    const visiblePerformanceEmployees = managerFilter === 'all'
+        ? performanceEmployees
+        : performanceEmployees.filter((employeeItem) => employeeItem.employee_name === managerFilter);
+
+    const dailyResponseTrend = Array.isArray(performance?.daily_response)
+        ? performance.daily_response.map((trendRow) => ({
+            date: trendRow.date,
+            label: trendRow.date ? format(new Date(trendRow.date), 'd MMM', { locale: ru }) : '',
+            calls_avg_minutes: Number((trendRow.calls_avg_seconds / 60).toFixed(2)),
+            chat_avg_minutes: Number((trendRow.chat_avg_seconds / 60).toFixed(2)),
+            calls_count: trendRow.calls_count,
+            chat_count: trendRow.chat_count
+        }))
+        : [];
+
+    const employeeComparisonData = visiblePerformanceEmployees.map((employeeItem) => ({
+        employee_name: employeeItem.employee_name,
+        calls_total: employeeItem.calls_total,
+        chat_messages: employeeItem.chat_client_messages,
+        call_avg_minutes: Number(employeeItem.call_response.avg_minutes.toFixed(2)),
+        chat_avg_minutes: Number(employeeItem.chat_response.avg_minutes.toFixed(2)),
+        combined_avg_minutes: Number(employeeItem.combined_response.avg_minutes.toFixed(2))
+    }));
+
+    const callsDistribution = mergeHistogramAndKde(performance?.distributions?.calls_selected_employee ?? performance?.distributions?.calls_team ?? null);
+    const chatDistribution = mergeHistogramAndKde(performance?.distributions?.chat_selected_employee ?? performance?.distributions?.chat_team ?? null);
+    const topCallersData = Array.isArray(performance?.top_callers) ? performance.top_callers : [];
+    const hasAnalyticsData = analytics.length > 0 ? true : performance !== null;
 
     return (
         <div className="h-full flex flex-col bg-gray-50/50">
@@ -676,6 +934,125 @@ export default function Telephony() {
                                                         onChange={(e) => setMaxDuration(e.target.value)}
                                                         className="h-[42px] bg-white border-gray-200 rounded-xl"
                                                     />
+                                                </div>
+                                            </div>
+
+                                            {/* Workday Start */}
+                                            <div className="flex flex-col gap-1.5">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+                                                    {t('telephony:workday_start_hour', 'Начало рабочего дня')}
+                                                </span>
+                                                <Select value={workdayStartHour} onValueChange={setWorkdayStartHour}>
+                                                    <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {Array.from({ length: 24 }, (_, hourIndex) => (
+                                                            <SelectItem key={`workday-start-${hourIndex}`} value={String(hourIndex)}>
+                                                                {`${String(hourIndex).padStart(2, '0')}:00`}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            {/* Workday End */}
+                                            <div className="flex flex-col gap-1.5">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+                                                    {t('telephony:workday_end_hour', 'Конец рабочего дня')}
+                                                </span>
+                                                <Select value={workdayEndHour} onValueChange={setWorkdayEndHour}>
+                                                    <SelectTrigger className="w-full h-[42px] rounded-xl font-bold bg-white border-gray-200">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {Array.from({ length: 24 }, (_, hourIndex) => {
+                                                            const hourValue = hourIndex + 1;
+                                                            const labelValue = hourValue === 24 ? '24:00' : `${String(hourValue).padStart(2, '0')}:00`;
+                                                            return (
+                                                                <SelectItem key={`workday-end-${hourValue}`} value={String(hourValue)}>
+                                                                    {labelValue}
+                                                                </SelectItem>
+                                                            );
+                                                        })}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            {/* Lunch Break */}
+                                            <div className="sm:col-span-3 flex flex-col gap-2 rounded-xl border border-gray-100 bg-gray-50/50 p-3">
+                                                <div className="flex items-center gap-2">
+                                                    <Checkbox
+                                                        checked={excludeLunch}
+                                                        onCheckedChange={(checked) => setExcludeLunch(Boolean(checked))}
+                                                    />
+                                                    <span className="text-xs font-semibold text-gray-700">
+                                                        {t('telephony:exclude_lunch_break', 'Исключать обеденный перерыв')}
+                                                    </span>
+                                                </div>
+                                                {excludeLunch && (
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                        <div className="flex flex-col gap-1.5">
+                                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                                                {t('telephony:lunch_start_hour', 'Начало обеда')}
+                                                            </span>
+                                                            <Select value={lunchStartHour} onValueChange={setLunchStartHour}>
+                                                                <SelectTrigger className="w-full h-[38px] rounded-xl font-bold bg-white border-gray-200">
+                                                                    <SelectValue />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {Array.from({ length: 24 }, (_, hourIndex) => (
+                                                                        <SelectItem key={`lunch-start-${hourIndex}`} value={String(hourIndex)}>
+                                                                            {`${String(hourIndex).padStart(2, '0')}:00`}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                        <div className="flex flex-col gap-1.5">
+                                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                                                {t('telephony:lunch_end_hour', 'Конец обеда')}
+                                                            </span>
+                                                            <Select value={lunchEndHour} onValueChange={setLunchEndHour}>
+                                                                <SelectTrigger className="w-full h-[38px] rounded-xl font-bold bg-white border-gray-200">
+                                                                    <SelectValue />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {Array.from({ length: 24 }, (_, hourIndex) => {
+                                                                        const hourValue = hourIndex + 1;
+                                                                        const labelValue = hourValue === 24 ? '24:00' : `${String(hourValue).padStart(2, '0')}:00`;
+                                                                        return (
+                                                                            <SelectItem key={`lunch-end-${hourValue}`} value={String(hourValue)}>
+                                                                                {labelValue}
+                                                                            </SelectItem>
+                                                                        );
+                                                                    })}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Weekdays */}
+                                            <div className="sm:col-span-3 flex flex-col gap-2">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">
+                                                    {t('telephony:workdays_filter', 'Рабочие дни для расчета')}
+                                                </span>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {weekdaysOptions.map((weekdayItem) => {
+                                                        const isActive = weekdaysFilter.includes(weekdayItem.day);
+                                                        return (
+                                                            <button
+                                                                key={`weekday-${weekdayItem.day}`}
+                                                                type="button"
+                                                                onClick={() => toggleWeekdayFilter(weekdayItem.day)}
+                                                                className={`h-8 min-w-[42px] rounded-lg border px-2 text-xs font-semibold transition-all ${isActive ? 'border-pink-300 bg-pink-50 text-pink-700' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}
+                                                            >
+                                                                {weekdayItem.label}
+                                                            </button>
+                                                        );
+                                                    })}
                                                 </div>
                                             </div>
                                         </div>
@@ -914,118 +1291,244 @@ export default function Telephony() {
                     </TabsContent>
 
                     <TabsContent value="analytics" className="space-y-6 focus-visible:outline-none">
-                        {analytics.length > 0 ? (
+                        {hasAnalyticsData ? (
                             <div className="space-y-6">
-                                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:dynamics', 'Динамика звонков')}</h3>
-                                    <div className="h-[300px] w-full">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart data={analytics}>
-                                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                                <XAxis
-                                                    dataKey="date"
-                                                    tickFormatter={(value) => {
-                                                        if (!value) return '';
-                                                        try { return format(new Date(value), 'd MMM', { locale: ru }); } catch { return value; }
-                                                    }}
-                                                    fontSize={12}
-                                                />
-                                                <YAxis fontSize={12} />
-                                                <Tooltip
-                                                    labelFormatter={(value) => {
-                                                        if (!value) return '';
-                                                        try { return format(new Date(value), 'd MMMM yyyy', { locale: ru }); } catch { return value; }
-                                                    }}
-                                                />
-                                                <Legend />
-                                                <Bar dataKey="inbound" name={t('telephony:inbound', 'Входящие')} fill="var(--telephony-inbound)" radius={[4, 4, 0, 0]} stackId="a" />
-                                                <Bar dataKey="outbound" name={t('telephony:outbound', 'Исходящие')} fill="var(--telephony-outbound)" radius={[4, 4, 0, 0]} stackId="a" />
-                                                <Bar dataKey="missed" name={t('telephony:missed', 'Пропущенные')} fill="var(--telephony-missed)" radius={[4, 4, 0, 0]} stackId="a" />
-                                            </BarChart>
-                                        </ResponsiveContainer>
+                                {performanceSummary && (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+                                        <div className="rounded-xl border border-gray-200 bg-white p-4">
+                                            <p className="text-xs font-semibold text-gray-500">{t('telephony:total_calls', 'Всего звонков')}</p>
+                                            <p className="text-2xl font-bold text-gray-900">{performanceSummary.total_calls}</p>
+                                        </div>
+                                        <div className="rounded-xl border border-gray-200 bg-white p-4">
+                                            <p className="text-xs font-semibold text-gray-500">{t('telephony:client_messages_total', 'Сообщений от клиентов')}</p>
+                                            <p className="text-2xl font-bold text-gray-900">{performanceSummary.total_chat_client_messages}</p>
+                                        </div>
+                                        <div className="rounded-xl border border-gray-200 bg-white p-4">
+                                            <p className="text-xs font-semibold text-gray-500">{t('telephony:avg_call_response', 'Средний ответ в звонках')}</p>
+                                            <p className="text-2xl font-bold text-gray-900">{formatResponseSeconds(performanceSummary.call_response.avg_seconds)}</p>
+                                        </div>
+                                        <div className="rounded-xl border border-gray-200 bg-white p-4">
+                                            <p className="text-xs font-semibold text-gray-500">{t('telephony:avg_chat_response', 'Средний ответ в чате')}</p>
+                                            <p className="text-2xl font-bold text-gray-900">{formatResponseSeconds(performanceSummary.chat_response.avg_seconds)}</p>
+                                        </div>
+                                        <div className="rounded-xl border border-gray-200 bg-white p-4">
+                                            <p className="text-xs font-semibold text-gray-500">{t('telephony:avg_combined_response', 'Средний ответ общий')}</p>
+                                            <p className="text-2xl font-bold text-gray-900">{formatResponseSeconds(performanceSummary.combined_response.avg_seconds)}</p>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
 
-                                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:average_duration_stats')}</h3>
-                                    <div className="h-[300px] w-full">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={analytics}>
-                                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                                <XAxis
-                                                    dataKey="date"
-                                                    tickFormatter={(value) => {
-                                                        if (!value) return '';
-                                                        try { return format(new Date(value), 'd MMM', { locale: ru }); } catch { return value; }
-                                                    }}
-                                                    fontSize={12}
-                                                />
-                                                <YAxis fontSize={12} />
-                                                <Tooltip />
-                                                <Legend />
-                                                <Line type="monotone" dataKey="avg_duration" name={t('telephony:duration_label', 'Длительность')} stroke="var(--telephony-avg-duration)" strokeWidth={3} dot={{ r: 4, fill: 'var(--telephony-avg-duration)' }} activeDot={{ r: 6 }} />
-                                            </LineChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                {dailyResponseTrend.length > 0 && (
                                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                                        <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:distribution', 'Распределение по типам')}</h3>
-                                        <div className="h-[300px] w-full">
+                                        <h3 className="text-lg font-bold text-gray-900 mb-6">
+                                            {t('telephony:daily_response_dynamics', 'Динамика скорости ответа по дням')}
+                                        </h3>
+                                        <div className="h-[320px] w-full">
                                             <ResponsiveContainer width="100%" height="100%">
-                                                <PieChart>
-                                                    <Pie
-                                                        data={[
-                                                            { name: t('telephony:inbound', 'Входящие'), value: stats.inbound, color: 'var(--telephony-inbound)' },
-                                                            { name: t('telephony:outbound', 'Исходящие'), value: stats.outbound, color: 'var(--telephony-outbound)' },
-                                                            { name: t('telephony:missed', 'Пропущенные'), value: stats.missed, color: 'var(--telephony-missed)' }
-                                                        ].filter(item => item.value > 0)}
-                                                        innerRadius={60}
-                                                        outerRadius={80}
-                                                        paddingAngle={5}
-                                                        dataKey="value"
-                                                    >
-                                                        {[
-                                                            { name: t('telephony:inbound'), value: stats.inbound, color: 'var(--telephony-inbound)' },
-                                                            { name: t('telephony:outbound'), value: stats.outbound, color: 'var(--telephony-outbound)' },
-                                                            { name: t('telephony:missed'), value: stats.missed, color: 'var(--telephony-missed)' }
-                                                        ].filter(item => item.value > 0).map((entry, index) => (
-                                                            <Cell key={`cell-${index}`} fill={entry.color} />
-                                                        ))}
-                                                    </Pie>
+                                                <LineChart data={dailyResponseTrend}>
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                    <XAxis dataKey="label" fontSize={12} />
+                                                    <YAxis fontSize={12} unit="m" />
                                                     <Tooltip />
-                                                    <Legend verticalAlign="bottom" height={36} />
-                                                </PieChart>
+                                                    <Legend />
+                                                    <Line type="monotone" dataKey="calls_avg_minutes" name={t('telephony:avg_call_response', 'Средний ответ в звонках')} stroke="var(--telephony-inbound)" strokeWidth={3} dot={{ r: 3 }} />
+                                                    <Line type="monotone" dataKey="chat_avg_minutes" name={t('telephony:avg_chat_response', 'Средний ответ в чате')} stroke="var(--telephony-outbound)" strokeWidth={3} dot={{ r: 3 }} />
+                                                </LineChart>
                                             </ResponsiveContainer>
                                         </div>
                                     </div>
+                                )}
 
+                                {analytics.length > 0 && (
                                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                                        <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:period_stats', 'Статистика за период')}</h3>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                                                <p className="text-sm text-gray-500 mb-1">{t('telephony:total_calls', 'Всего звонков')}</p>
-                                                <p className="text-2xl font-bold text-gray-900">{stats.total_calls}</p>
-                                            </div>
-                                            <div className="p-4 bg-green-50 rounded-lg border border-green-100">
-                                                <p className="text-sm text-green-600 mb-1">{t('telephony:efficiency', 'Эффективность')}</p>
-                                                <p className="text-2xl font-bold text-green-700">
-                                                    {stats.total_calls > 0 ? Math.round(((stats.inbound + stats.outbound) / stats.total_calls) * 100) : 0}%
-                                                </p>
-                                            </div>
-                                            <div className="col-span-2 p-4 bg-blue-50 rounded-lg border border-blue-100 flex items-center justify-between">
-                                                <div>
-                                                    <p className="text-sm text-blue-600 mb-1">{t('telephony:outbound', 'Исходящие')}</p>
-                                                    <p className="text-2xl font-bold text-blue-700">{stats.outbound}</p>
-                                                </div>
-                                                <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                                    <div className="h-6 w-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" style={{ animationDuration: '3s' }}></div>
-                                                </div>
-                                            </div>
+                                        <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:dynamics', 'Динамика звонков')}</h3>
+                                        <div className="h-[300px] w-full">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <BarChart data={analytics}>
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                    <XAxis
+                                                        dataKey="date"
+                                                        tickFormatter={(value) => {
+                                                            if (!value) return '';
+                                                            try { return format(new Date(value), 'd MMM', { locale: ru }); } catch { return value; }
+                                                        }}
+                                                        fontSize={12}
+                                                    />
+                                                    <YAxis fontSize={12} />
+                                                    <Tooltip
+                                                        labelFormatter={(value) => {
+                                                            if (!value) return '';
+                                                            try { return format(new Date(value), 'd MMMM yyyy', { locale: ru }); } catch { return value; }
+                                                        }}
+                                                    />
+                                                    <Legend />
+                                                    <Bar dataKey="inbound" name={t('telephony:inbound', 'Входящие')} fill="var(--telephony-inbound)" radius={[4, 4, 0, 0]} stackId="a" />
+                                                    <Bar dataKey="outbound" name={t('telephony:outbound', 'Исходящие')} fill="var(--telephony-outbound)" radius={[4, 4, 0, 0]} stackId="a" />
+                                                    <Bar dataKey="missed" name={t('telephony:missed', 'Пропущенные')} fill="var(--telephony-missed)" radius={[4, 4, 0, 0]} stackId="a" />
+                                                </BarChart>
+                                            </ResponsiveContainer>
                                         </div>
                                     </div>
+                                )}
+
+                                {employeeComparisonData.length > 0 && (
+                                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                        <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:employee_comparison', 'Сравнение сотрудников')}</h3>
+                                        <div className="h-[360px] w-full">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <BarChart data={employeeComparisonData}>
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                    <XAxis dataKey="employee_name" fontSize={11} interval={0} angle={-20} textAnchor="end" height={70} />
+                                                    <YAxis yAxisId="left" fontSize={12} />
+                                                    <YAxis yAxisId="right" orientation="right" fontSize={12} unit="m" />
+                                                    <Tooltip />
+                                                    <Legend />
+                                                    <Bar yAxisId="left" dataKey="calls_total" name={t('telephony:total_calls', 'Всего звонков')} fill="var(--telephony-inbound)" radius={[4, 4, 0, 0]} />
+                                                    <Bar yAxisId="left" dataKey="chat_messages" name={t('telephony:client_messages_total', 'Сообщений от клиентов')} fill="var(--telephony-outbound)" radius={[4, 4, 0, 0]} />
+                                                    <Line yAxisId="right" type="monotone" dataKey="combined_avg_minutes" name={t('telephony:avg_combined_response', 'Средний ответ общий')} stroke="var(--telephony-avg-duration)" strokeWidth={2} dot={{ r: 3 }} />
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {(callsDistribution.length > 0 ? true : chatDistribution.length > 0) && (
+                                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                                        {callsDistribution.length > 0 && (
+                                            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                                <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:calls_hist_kde', 'Распределение времени ответа в звонках (Histogram + KDE)')}</h3>
+                                                <div className="h-[320px] w-full">
+                                                    <ResponsiveContainer width="100%" height="100%">
+                                                        <ComposedChart data={callsDistribution}>
+                                                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                            <XAxis type="number" dataKey="x_minutes" fontSize={12} unit="m" />
+                                                            <YAxis yAxisId="left" fontSize={12} />
+                                                            <YAxis yAxisId="right" orientation="right" fontSize={12} />
+                                                            <Tooltip />
+                                                            <Legend />
+                                                            <Bar yAxisId="left" dataKey="count" name={t('telephony:events', 'События')} fill="var(--telephony-inbound)" barSize={14} />
+                                                            <Line yAxisId="right" type="monotone" dataKey="kde" name={t('telephony:kde_density', 'KDE-плотность')} stroke="var(--telephony-avg-duration)" strokeWidth={2} dot={false} />
+                                                        </ComposedChart>
+                                                    </ResponsiveContainer>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {chatDistribution.length > 0 && (
+                                            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                                <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:chat_hist_kde', 'Распределение времени ответа в чате (Histogram + KDE)')}</h3>
+                                                <div className="h-[320px] w-full">
+                                                    <ResponsiveContainer width="100%" height="100%">
+                                                        <ComposedChart data={chatDistribution}>
+                                                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                                            <XAxis type="number" dataKey="x_minutes" fontSize={12} unit="m" />
+                                                            <YAxis yAxisId="left" fontSize={12} />
+                                                            <YAxis yAxisId="right" orientation="right" fontSize={12} />
+                                                            <Tooltip />
+                                                            <Legend />
+                                                            <Bar yAxisId="left" dataKey="count" name={t('telephony:events', 'События')} fill="var(--telephony-outbound)" barSize={14} />
+                                                            <Line yAxisId="right" type="monotone" dataKey="kde" name={t('telephony:kde_density', 'KDE-плотность')} stroke="var(--telephony-avg-duration)" strokeWidth={2} dot={false} />
+                                                        </ComposedChart>
+                                                    </ResponsiveContainer>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    {analytics.length > 0 && (
+                                        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                            <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:distribution', 'Распределение по типам')}</h3>
+                                            <div className="h-[300px] w-full">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <PieChart>
+                                                        <Pie
+                                                            data={[
+                                                                { name: t('telephony:inbound', 'Входящие'), value: stats.inbound, color: 'var(--telephony-inbound)' },
+                                                                { name: t('telephony:outbound', 'Исходящие'), value: stats.outbound, color: 'var(--telephony-outbound)' },
+                                                                { name: t('telephony:missed', 'Пропущенные'), value: stats.missed, color: 'var(--telephony-missed)' }
+                                                            ].filter(item => item.value > 0)}
+                                                            innerRadius={60}
+                                                            outerRadius={80}
+                                                            paddingAngle={5}
+                                                            dataKey="value"
+                                                        >
+                                                            {[
+                                                                { name: t('telephony:inbound'), value: stats.inbound, color: 'var(--telephony-inbound)' },
+                                                                { name: t('telephony:outbound'), value: stats.outbound, color: 'var(--telephony-outbound)' },
+                                                                { name: t('telephony:missed'), value: stats.missed, color: 'var(--telephony-missed)' }
+                                                            ].filter(item => item.value > 0).map((entry, index) => (
+                                                                <Cell key={`cell-${index}`} fill={entry.color} />
+                                                            ))}
+                                                        </Pie>
+                                                        <Tooltip />
+                                                        <Legend verticalAlign="bottom" height={36} />
+                                                    </PieChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {topCallersData.length > 0 && (
+                                        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                            <h3 className="text-lg font-bold text-gray-900 mb-6">{t('telephony:top_callers', 'Кто звонит чаще всего')}</h3>
+                                            <div className="max-h-[300px] overflow-auto">
+                                                <table className="w-full text-sm">
+                                                    <thead>
+                                                        <tr className="border-b border-gray-100">
+                                                            <th className="py-2 text-left text-xs font-semibold text-gray-500">{t('telephony:caller', 'Звонящий')}</th>
+                                                            <th className="py-2 text-right text-xs font-semibold text-gray-500">{t('telephony:total_calls', 'Всего звонков')}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {topCallersData.map((callerRow, callerIndex) => (
+                                                            <tr key={`caller-${callerIndex}`} className="border-b border-gray-50">
+                                                                <td className="py-2 text-gray-800">{callerRow.caller_name}</td>
+                                                                <td className="py-2 text-right font-semibold text-gray-900">{callerRow.calls_total}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
+
+                                {visiblePerformanceEmployees.length > 0 && (
+                                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                                        <h3 className="text-lg font-bold text-gray-900 mb-6">
+                                            {t('telephony:employee_response_table', 'Скорость ответа по сотрудникам')}
+                                        </h3>
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full text-sm">
+                                                <thead>
+                                                    <tr className="border-b border-gray-100">
+                                                        <th className="py-2 pr-3 text-left text-xs font-semibold text-gray-500">{t('telephony:employee', 'Сотрудник')}</th>
+                                                        <th className="py-2 pr-3 text-right text-xs font-semibold text-gray-500">{t('telephony:total_calls', 'Всего звонков')}</th>
+                                                        <th className="py-2 pr-3 text-right text-xs font-semibold text-gray-500">{t('telephony:client_messages_total', 'Сообщений от клиентов')}</th>
+                                                        <th className="py-2 pr-3 text-right text-xs font-semibold text-gray-500">{t('telephony:avg_call_response', 'Средний ответ в звонках')}</th>
+                                                        <th className="py-2 pr-3 text-right text-xs font-semibold text-gray-500">{t('telephony:avg_chat_response', 'Средний ответ в чате')}</th>
+                                                        <th className="py-2 pr-3 text-right text-xs font-semibold text-gray-500">{t('telephony:min_response', 'Минимальный ответ')}</th>
+                                                        <th className="py-2 text-right text-xs font-semibold text-gray-500">{t('telephony:max_response', 'Максимальный ответ')}</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {visiblePerformanceEmployees.map((employeeRow, employeeIndex) => (
+                                                        <tr key={`employee-response-${employeeIndex}`} className="border-b border-gray-50">
+                                                            <td className="py-2 pr-3 font-medium text-gray-900">{employeeRow.employee_name}</td>
+                                                            <td className="py-2 pr-3 text-right text-gray-800">{employeeRow.calls_total}</td>
+                                                            <td className="py-2 pr-3 text-right text-gray-800">{employeeRow.chat_client_messages}</td>
+                                                            <td className="py-2 pr-3 text-right text-gray-800">{formatResponseSeconds(employeeRow.call_response.avg_seconds)}</td>
+                                                            <td className="py-2 pr-3 text-right text-gray-800">{formatResponseSeconds(employeeRow.chat_response.avg_seconds)}</td>
+                                                            <td className="py-2 pr-3 text-right text-gray-800">{formatResponseSeconds(employeeRow.combined_response.min_seconds)}</td>
+                                                            <td className="py-2 text-right text-gray-800">{formatResponseSeconds(employeeRow.combined_response.max_seconds)}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div className="bg-white p-12 text-center rounded-xl border border-gray-200 text-gray-500">

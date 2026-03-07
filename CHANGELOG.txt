@@ -1,3 +1,34 @@
+## [2026-03-07] Analytics/Telephony Hardening + Frontend Locale Sync Recovery
+- Hardened `/crm` analytics and telephony against partial API payloads in:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/Analytics.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/Telephony.tsx`
+- Fixed response-time logic so only inbound calls start response/SLA/funnel contact measurements:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/telephony.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/analytics.py`
+- Replaced broken CRM import of missing `crm_api.public` with local integration helpers in `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/integration.py`; `/api/integration/v1/{services,employees,bookings}` now resolves directly from CRM runtime again.
+- Site frontend runtime hardening:
+  - fixed `react-i18next` menu typing in `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/layouts/UniversalLayout.tsx`,
+  - removed browser-side `ipapi.co` country detection from `/Users/tahir/Desktop/beauty-crm/site/frontend/src/utils/languageDetection.ts`, `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/ui/phone-input.tsx`, `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/BookingSection.tsx`,
+  - removed dead `IP_API` constant from `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/utils/constants.ts`,
+  - fixed `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/pages/TermsOfUse.tsx` to normalize `{ success, services }` payload from `/api/public/services` instead of treating it as an array, which removed the live browser console error `Failed to fetch services` on `/terms`.
+- `npm --prefix crm/frontend run db:i18n:auto`: `i18n:extract` completed, but `db:i18n:extract` failed because local PostgreSQL was unavailable at `127.0.0.1:5432`.
+- Recovery: `npm --prefix crm/frontend run i18n:sync` completed; `npm --prefix crm/frontend run i18n:check-only` now reports `0` missing keys and `0` empty values.
+- Validation passed: `i18n:check-only`, `type-check`, `build`, `python3 -m py_compile crm/backend/crm_api/telephony.py crm/backend/db/analytics.py`.
+
+## [2026-03-04] CRM Telephony Performance Analytics + Extended Admin Analytics
+- Added `/api/telephony/performance` in `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/telephony.py` with employee/workday/break/weekdays filters and combined call/chat response analytics (KPI, daily trend, employee comparison, top callers, histogram + KDE).
+- Extended `/Users/tahir/Desktop/beauty-crm/crm/backend/db/analytics.py` so `get_analytics_data(...)` also returns booking hour/weekday/region/product/section analytics, reliability + statistical tests, and advanced blocks for cohort/LTV, attribution, forecast, no-show, unit economics, time-to-book, full funnel, promo uplift, RFM and SLA.
+- Frontend wiring completed in:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/services/api.ts`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/Telephony.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/Analytics.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/locales/en/admin/telephony.json`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/locales/ru/admin/telephony.json`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/locales/en/admin/analytics.json`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/locales/ru/admin/analytics.json`
+- Validation passed: `npm --prefix crm/frontend run type-check`, `python3 -m py_compile crm/backend/crm_api/telephony.py crm/backend/db/analytics.py`.
+- Note: full `db:i18n:auto` was blocked in this environment because `db:i18n:extract` could not connect to local PostgreSQL (`127.0.0.1:5432`).
+
 ## [2026-02-14] Site Bot Decoupling + Frontend Shared Package Removal
 - Site runtime kept intact for required admin modules: notifications, schedule, visitor analytics.
 - Removed Site bot runtime contour and bot-only files:
@@ -164,51 +195,11 @@
     - crm: `/api/integration/v1/*` routes mounted.
 
 ## [2026-02-14] Stage 3: Optional Integration Adapter (Site ↔ CRM) with Token/Timeout/Cache/Fallback
-- Добавлен явный versioned интеграционный API в CRM:
-  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/integration.py`
-  - подключение в root router: `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/__init__.py`
-  - endpoints:
-    - `GET /api/integration/v1/health`
-    - `GET /api/integration/v1/services`
-    - `GET /api/integration/v1/employees`
-    - `POST /api/integration/v1/bookings`
-  - безопасность:
-    - токен через `X-Integration-Token`,
-    - валидация `secrets.compare_digest`,
-    - feature flag `CRM_INTEGRATION_ENABLED`,
-    - секрет `CRM_INTEGRATION_TOKEN`.
-- Добавлен опциональный CRM adapter-клиент в Site runtime:
-  - `/Users/tahir/Desktop/beauty-crm/site/backend/services/crm_integration.py`
-  - поведение:
-    - `CRM_INTEGRATION_ENABLED` включает интеграцию,
-    - `CRM_INTEGRATION_BASE_URL` задает CRM backend URL,
-    - `CRM_INTEGRATION_TOKEN` для авторизации,
-    - `CRM_INTEGRATION_TIMEOUT_SECONDS` для таймаута запросов,
-    - `CRM_INTEGRATION_CACHE_TTL_SECONDS` для in-memory TTL cache.
-  - graceful fallback:
-    - при недоступности/ошибках CRM site не падает и остается в локальном режиме.
-- Встроен adapter в публичные site endpoints:
-  - `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/public.py`
-  - интеграция применяется к:
-    - `employees`,
-    - `services`,
-    - `bookings` (с fallback на локальный booking flow при недоступности CRM).
-- Усилены автоматические проверки границ для новых адаптеров:
-  - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/diagnostics/verify_backend.py`
-  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/diagnostics/verify_backend.py`
-  - добавлены целевые runtime-файлы:
-    - `crm_api/integration.py`,
-    - `services/crm_integration.py`.
-- Валидация:
-  - `python3 -m py_compile` для обновленных backend-файлов passed,
-  - `venv/bin/python scripts/diagnostics/verify_backend.py --boundaries` passed для `crm/backend` и `site/backend`,
-  - `npm --prefix crm/frontend run check:boundaries` passed,
-  - `npm --prefix site/frontend run check:boundaries` passed,
-  - runtime проверка маршрутов подтвердила наличие:
-    - `/api/integration/v1/health`,
-    - `/api/integration/v1/services`,
-    - `/api/integration/v1/employees`,
-    - `/api/integration/v1/bookings`.
+- Added CRM integration API in `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/integration.py` (`/api/integration/v1/health|services|employees|bookings`) with token-based auth, feature flag and constant-time secret validation.
+- Added optional Site adapter in `/Users/tahir/Desktop/beauty-crm/site/backend/services/crm_integration.py` with URL/token/timeout/cache configuration and graceful local fallback on CRM unavailability.
+- Wired the adapter into `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/public.py` for `employees`, `services` and `bookings`.
+- Extended boundary diagnostics in both backends so integration runtime files are part of the contour contract.
+- Validation passed: `py_compile`, backend boundary checks, frontend boundary checks and runtime route smoke for `/api/integration/v1/*`.
 
 ## [2026-02-14] Stage 2: Backend Contour Cleanup and Runtime Boundary Hardening
 - Продолжено разделение backend-контуров без добавления новых patch-файлов:

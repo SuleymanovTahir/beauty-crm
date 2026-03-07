@@ -27,6 +27,7 @@
   "position_hint": "Select one or more positions",
   "position_label": "Job title",
   "position_placeholder": "Select a position",
+  "role_accountant_desc": "Доступ к расчету и учету зарплаты",
   "role_admin_desc": "Managing users and settings",
   "role_director_desc": "Full access to all features",
   "role_employee_desc": "View your own schedule",

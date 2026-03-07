@@ -30,9 +30,9 @@
     "month": "Month",
     "quarter": "Quarter",
     "two_weeks": "2 weeks",
-    "two_weeks_one": "",
     "two_weeks_few": "",
     "two_weeks_many": "",
+    "two_weeks_one": "",
     "two_weeks_other": "",
     "week": "Week",
     "year": "Year"

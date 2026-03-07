@@ -27,6 +27,7 @@
   "position_hint": "एक या अधिक पदों का चयन करें",
   "position_label": "पद",
   "position_placeholder": "पद का चयन करें",
+  "role_accountant_desc": "Доступ к расчету и учету зарплаты",
   "role_admin_desc": "उपयोगकर्ताओं और सेटिंग्स को प्रबंधित करें",
   "role_director_desc": "सभी कार्यों तक पूर्ण पहुंच",
   "role_employee_desc": "अपना खुद का शेड्यूल देखें",

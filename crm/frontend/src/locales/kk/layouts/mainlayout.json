@@ -70,6 +70,7 @@
   "notification_deleted": "Хабарлама жойылды",
   "notifications": "Хабарландырулар",
   "roles": {
+    "accountant": "",
     "admin": "",
     "director": "Директор",
     "employee": "",

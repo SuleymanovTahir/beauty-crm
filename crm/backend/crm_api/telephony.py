@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks, UploadFile, File, Query
 from typing import List, Optional, Dict, Any, Set
 from pydantic import BaseModel
 from db.connection import get_db_connection
@@ -10,6 +10,7 @@ import logging
 import os
 import shutil
 import asyncio
+import math
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -88,6 +89,189 @@ def _get_table_columns(cursor, table_name: str) -> Set[str]:
         WHERE table_name = %s
     """, (table_name,))
     return {row[0] for row in cursor.fetchall()}
+
+
+def _normalize_employee_name(value: Optional[str]) -> str:
+    normalized_value = str(value or "").strip()
+    if normalized_value:
+        return normalized_value
+    return "Unassigned"
+
+
+def _parse_weekdays(weekdays_raw: Optional[str]) -> Optional[Set[int]]:
+    if not weekdays_raw:
+        return None
+
+    parsed_days: Set[int] = set()
+    for chunk in str(weekdays_raw).split(","):
+        stripped_chunk = chunk.strip()
+        if stripped_chunk == "":
+            continue
+        if not stripped_chunk.isdigit():
+            continue
+        day_value = int(stripped_chunk)
+        if 1 <= day_value <= 7:
+            parsed_days.add(day_value)
+    return parsed_days if parsed_days else None
+
+
+def _is_hour_in_range(hour_value: int, start_hour: int, end_hour: int) -> bool:
+    if start_hour == end_hour:
+        return True
+    if start_hour < end_hour:
+        return start_hour <= hour_value < end_hour
+    return hour_value >= start_hour or hour_value < end_hour
+
+
+def _is_timestamp_allowed(
+    ts_value: datetime,
+    workday_start_hour: int,
+    workday_end_hour: int,
+    break_start_hour: Optional[int],
+    break_end_hour: Optional[int],
+    weekdays_filter: Optional[Set[int]]
+) -> bool:
+    if weekdays_filter is not None and ts_value.isoweekday() not in weekdays_filter:
+        return False
+
+    if not _is_hour_in_range(ts_value.hour, workday_start_hour, workday_end_hour):
+        return False
+
+    if break_start_hour is not None and break_end_hour is not None:
+        if _is_hour_in_range(ts_value.hour, break_start_hour, break_end_hour):
+            return False
+
+    return True
+
+
+def _response_summary(values_seconds: List[float]) -> Dict[str, Any]:
+    if not values_seconds:
+        return {
+            "count": 0,
+            "avg_seconds": 0.0,
+            "min_seconds": 0.0,
+            "max_seconds": 0.0,
+            "avg_minutes": 0.0,
+            "min_minutes": 0.0,
+            "max_minutes": 0.0,
+        }
+
+    values_count = len(values_seconds)
+    values_min = min(values_seconds)
+    values_max = max(values_seconds)
+    values_avg = sum(values_seconds) / values_count
+
+    return {
+        "count": values_count,
+        "avg_seconds": round(values_avg, 2),
+        "min_seconds": round(values_min, 2),
+        "max_seconds": round(values_max, 2),
+        "avg_minutes": round(values_avg / 60.0, 2),
+        "min_minutes": round(values_min / 60.0, 2),
+        "max_minutes": round(values_max / 60.0, 2),
+    }
+
+
+def _percentile(sorted_values: List[float], percentile: float) -> float:
+    if not sorted_values:
+        return 0.0
+    if len(sorted_values) == 1:
+        return sorted_values[0]
+
+    position = (len(sorted_values) - 1) * percentile
+    lower_index = int(math.floor(position))
+    upper_index = int(math.ceil(position))
+    if lower_index == upper_index:
+        return sorted_values[lower_index]
+
+    lower_value = sorted_values[lower_index]
+    upper_value = sorted_values[upper_index]
+    fraction = position - lower_index
+    return lower_value + (upper_value - lower_value) * fraction
+
+
+def _build_histogram_kde(values_seconds: List[float]) -> Dict[str, Any]:
+    if not values_seconds:
+        return {
+            "sample_size": 0,
+            "histogram": [],
+            "kde": [],
+            "min_minutes": 0.0,
+            "max_minutes": 0.0,
+        }
+
+    minutes_values = [max(0.0, value / 60.0) for value in values_seconds]
+    minutes_values.sort()
+
+    sample_size = len(minutes_values)
+    min_value = minutes_values[0]
+    max_value = minutes_values[-1]
+
+    if math.isclose(max_value, min_value):
+        max_value = min_value + 1.0
+
+    bin_count = max(6, min(24, int(math.sqrt(sample_size)) + 1))
+    bin_width = (max_value - min_value) / float(bin_count)
+    if bin_width <= 0:
+        bin_width = 1.0
+
+    bins = [0] * bin_count
+    for value in minutes_values:
+        relative_position = (value - min_value) / bin_width
+        bin_index = int(relative_position)
+        if bin_index >= bin_count:
+            bin_index = bin_count - 1
+        if bin_index < 0:
+            bin_index = 0
+        bins[bin_index] += 1
+
+    histogram = []
+    for bin_index, bin_value in enumerate(bins):
+        bin_start = min_value + (bin_index * bin_width)
+        bin_end = bin_start + bin_width
+        bin_center = bin_start + (bin_width / 2.0)
+        histogram.append({
+            "bin_start_minutes": round(bin_start, 2),
+            "bin_end_minutes": round(bin_end, 2),
+            "x_minutes": round(bin_center, 2),
+            "count": int(bin_value),
+        })
+
+    p25 = _percentile(minutes_values, 0.25)
+    p75 = _percentile(minutes_values, 0.75)
+    iqr = p75 - p25
+    std_guess = max((iqr / 1.349) if iqr > 0 else 0.0, bin_width)
+    bandwidth = 1.06 * std_guess * (sample_size ** (-1.0 / 5.0))
+    if bandwidth <= 0:
+        bandwidth = max(bin_width, 1.0)
+
+    gaussian_scale = 1.0 / (bandwidth * math.sqrt(2.0 * math.pi))
+    kde_points: List[Dict[str, float]] = []
+    total_points = 80
+    for point_index in range(total_points):
+        point_x = min_value + ((max_value - min_value) * point_index / float(total_points - 1))
+        kernel_sum = 0.0
+        for value in minutes_values:
+            z_value = (point_x - value) / bandwidth
+            kernel_sum += math.exp(-0.5 * (z_value ** 2))
+        density = (kernel_sum / float(sample_size)) * gaussian_scale
+        scaled_density = density * sample_size * bin_width
+        kde_points.append({
+            "x_minutes": round(point_x, 2),
+            "y": round(scaled_density, 4),
+        })
+
+    return {
+        "sample_size": sample_size,
+        "histogram": histogram,
+        "kde": kde_points,
+        "min_minutes": round(min_value, 2),
+        "max_minutes": round(max_value, 2),
+    }
+
+
+def _to_iso_date(ts_value: datetime) -> str:
+    return ts_value.date().isoformat()
 
 @router.get("/telephony/settings")
 async def get_telephony_settings(current_user: dict = Depends(get_current_user)):
@@ -402,6 +586,500 @@ async def get_telephony_analytics(
         return []
     finally:
         conn.close()
+
+
+@router.get("/telephony/performance")
+async def get_telephony_performance(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    status: Optional[str] = None,
+    direction: Optional[str] = None,
+    min_duration: Optional[int] = None,
+    max_duration: Optional[int] = None,
+    employee_name: Optional[str] = None,
+    workday_start_hour: int = Query(0, ge=0, le=23),
+    workday_end_hour: int = Query(24, ge=1, le=24),
+    break_start_hour: Optional[int] = Query(None, ge=0, le=23),
+    break_end_hour: Optional[int] = Query(None, ge=1, le=24),
+    weekdays: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    if not _has_telephony_access(current_user):
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    if (break_start_hour is None) != (break_end_hour is None):
+        raise HTTPException(status_code=400, detail="break_start_hour and break_end_hour must be provided together")
+
+    selected_employee_name: Optional[str] = None
+    if employee_name:
+        selected_employee_name = _normalize_employee_name(employee_name)
+
+    weekdays_filter = _parse_weekdays(weekdays)
+
+    normalized_end_date = end_date
+    if normalized_end_date and len(normalized_end_date) == 10:
+        normalized_end_date = f"{normalized_end_date} 23:59:59"
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        call_stats_query = """
+            SELECT
+                cl.id,
+                cl.client_id,
+                cl.phone,
+                COALESCE(NULLIF(TRIM(cl.manual_client_name), ''), NULLIF(TRIM(cl.phone), ''), 'Unknown') as caller_name,
+                cl.direction,
+                cl.status,
+                COALESCE(cl.duration, 0) as duration,
+                cl.created_at,
+                COALESCE(
+                    NULLIF(TRIM(cl.manual_manager_name), ''),
+                    NULLIF(TRIM(b.master), ''),
+                    'Unassigned'
+                ) as manager_name
+            FROM call_logs cl
+            LEFT JOIN bookings b ON b.id = cl.booking_id
+            WHERE 1=1
+        """
+        call_stats_params: List[Any] = []
+        if start_date:
+            call_stats_query += " AND cl.created_at >= %s"
+            call_stats_params.append(start_date)
+        if normalized_end_date:
+            call_stats_query += " AND cl.created_at <= %s"
+            call_stats_params.append(normalized_end_date)
+        if status and status != "all":
+            call_stats_query += " AND cl.status = %s"
+            call_stats_params.append(status)
+        if direction and direction != "all":
+            call_stats_query += " AND cl.direction = %s"
+            call_stats_params.append(direction)
+        if min_duration is not None:
+            call_stats_query += " AND cl.duration >= %s"
+            call_stats_params.append(min_duration)
+        if max_duration is not None:
+            call_stats_query += " AND cl.duration <= %s"
+            call_stats_params.append(max_duration)
+        call_stats_query += " ORDER BY cl.created_at ASC"
+
+        c.execute(call_stats_query, call_stats_params)
+        call_stats_rows = c.fetchall()
+
+        response_calls_query = """
+            SELECT
+                cl.id,
+                cl.client_id,
+                cl.phone,
+                cl.direction,
+                cl.status,
+                cl.created_at,
+                COALESCE(
+                    NULLIF(TRIM(cl.manual_manager_name), ''),
+                    NULLIF(TRIM(b.master), ''),
+                    'Unassigned'
+                ) as manager_name
+            FROM call_logs cl
+            LEFT JOIN bookings b ON b.id = cl.booking_id
+            WHERE 1=1
+        """
+        response_calls_params: List[Any] = []
+        if start_date:
+            response_calls_query += " AND cl.created_at >= %s"
+            response_calls_params.append(start_date)
+        if normalized_end_date:
+            response_calls_query += " AND cl.created_at <= %s"
+            response_calls_params.append(normalized_end_date)
+        response_calls_query += " ORDER BY cl.created_at ASC"
+
+        c.execute(response_calls_query, response_calls_params)
+        response_calls_rows = c.fetchall()
+
+        chat_history_where_clauses = ["ch.instagram_id IS NOT NULL"]
+        chat_history_params: List[Any] = []
+        if start_date:
+            chat_history_where_clauses.append("ch.timestamp >= %s")
+            chat_history_params.append(start_date)
+        if normalized_end_date:
+            chat_history_where_clauses.append("ch.timestamp <= %s")
+            chat_history_params.append(normalized_end_date)
+
+        messenger_where_clauses = ["mm.client_id IS NOT NULL"]
+        messenger_params: List[Any] = []
+        if start_date:
+            messenger_where_clauses.append("mm.created_at >= %s")
+            messenger_params.append(start_date)
+        if normalized_end_date:
+            messenger_where_clauses.append("mm.created_at <= %s")
+            messenger_params.append(normalized_end_date)
+
+        chat_messages_query = f"""
+            SELECT
+                ch.instagram_id as client_id,
+                ch.timestamp as created_at,
+                CASE WHEN ch.sender = 'client' THEN 'client' ELSE 'staff' END as actor,
+                COALESCE(
+                    NULLIF(TRIM(u.full_name), ''),
+                    NULLIF(TRIM(u.username), ''),
+                    'Unassigned'
+                ) as manager_name
+            FROM chat_history ch
+            LEFT JOIN clients cc ON cc.instagram_id = ch.instagram_id
+            LEFT JOIN users u ON u.id = cc.assigned_employee_id
+            WHERE {" AND ".join(chat_history_where_clauses)}
+
+            UNION ALL
+
+            SELECT
+                mm.client_id as client_id,
+                mm.created_at as created_at,
+                CASE WHEN mm.sender_type = 'client' THEN 'client' ELSE 'staff' END as actor,
+                COALESCE(
+                    NULLIF(TRIM(u2.full_name), ''),
+                    NULLIF(TRIM(u2.username), ''),
+                    'Unassigned'
+                ) as manager_name
+            FROM messenger_messages mm
+            LEFT JOIN clients cc2 ON cc2.instagram_id = mm.client_id
+            LEFT JOIN users u2 ON u2.id = cc2.assigned_employee_id
+            WHERE {" AND ".join(messenger_where_clauses)}
+            ORDER BY client_id, created_at
+        """
+        c.execute(chat_messages_query, chat_history_params + messenger_params)
+        chat_rows = c.fetchall()
+
+    except Exception as e:
+        logger.error(f"Error fetching telephony performance data: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+    call_stats_events: List[Dict[str, Any]] = []
+    for row in call_stats_rows:
+        event_time = row[7]
+        if not event_time:
+            continue
+        if not _is_timestamp_allowed(
+            event_time,
+            workday_start_hour,
+            workday_end_hour,
+            break_start_hour,
+            break_end_hour,
+            weekdays_filter
+        ):
+            continue
+        call_stats_events.append({
+            "id": row[0],
+            "client_id": row[1],
+            "phone": row[2],
+            "caller_name": row[3],
+            "direction": row[4],
+            "status": row[5],
+            "duration": int(row[6] or 0),
+            "created_at": event_time,
+            "manager_name": _normalize_employee_name(row[8]),
+        })
+
+    response_call_events: List[Dict[str, Any]] = []
+    for row in response_calls_rows:
+        event_time = row[5]
+        if not event_time:
+            continue
+        response_call_events.append({
+            "id": row[0],
+            "client_id": row[1],
+            "phone": row[2],
+            "direction": row[3],
+            "status": row[4],
+            "created_at": event_time,
+            "manager_name": _normalize_employee_name(row[6]),
+        })
+
+    call_events_by_contact: Dict[str, List[Dict[str, Any]]] = {}
+    for call_event in response_call_events:
+        contact_key = str(call_event.get("client_id") or "").strip()
+        if contact_key == "":
+            contact_key = str(call_event.get("phone") or "").strip()
+        if contact_key == "":
+            contact_key = f"call_id:{call_event['id']}"
+        if contact_key not in call_events_by_contact:
+            call_events_by_contact[contact_key] = []
+        call_events_by_contact[contact_key].append(call_event)
+
+    call_response_records: List[Dict[str, Any]] = []
+    for contact_events in call_events_by_contact.values():
+        contact_events.sort(key=lambda item: item["created_at"])
+        for event_index, start_event in enumerate(contact_events):
+            # Response time should be measured only from inbound calls.
+            is_incoming_call = start_event["direction"] == "inbound"
+            if not is_incoming_call:
+                continue
+            if not _is_timestamp_allowed(
+                start_event["created_at"],
+                workday_start_hour,
+                workday_end_hour,
+                break_start_hour,
+                break_end_hour,
+                weekdays_filter
+            ):
+                continue
+
+            response_event: Optional[Dict[str, Any]] = None
+            for next_event in contact_events[event_index + 1:]:
+                if next_event["direction"] == "outbound":
+                    response_event = next_event
+                    break
+
+            if response_event is None:
+                continue
+
+            response_seconds = (response_event["created_at"] - start_event["created_at"]).total_seconds()
+            if response_seconds < 0:
+                continue
+
+            call_response_records.append({
+                "date": _to_iso_date(start_event["created_at"]),
+                "seconds": float(response_seconds),
+                "manager_name": _normalize_employee_name(response_event["manager_name"]),
+            })
+
+    chat_messages_by_client: Dict[str, List[Dict[str, Any]]] = {}
+    for row in chat_rows:
+        client_key = str(row[0] or "").strip()
+        if client_key == "":
+            continue
+        created_at_value = row[1]
+        if not created_at_value:
+            continue
+
+        if client_key not in chat_messages_by_client:
+            chat_messages_by_client[client_key] = []
+        chat_messages_by_client[client_key].append({
+            "created_at": created_at_value,
+            "actor": "client" if row[2] == "client" else "staff",
+            "manager_name": _normalize_employee_name(row[3]),
+        })
+
+    chat_client_message_counts: Dict[str, int] = {}
+    chat_response_records: List[Dict[str, Any]] = []
+    total_chat_client_messages = 0
+
+    for client_messages in chat_messages_by_client.values():
+        client_messages.sort(key=lambda item: item["created_at"])
+        for message_index, client_message in enumerate(client_messages):
+            if client_message["actor"] != "client":
+                continue
+
+            client_message_time = client_message["created_at"]
+            if not _is_timestamp_allowed(
+                client_message_time,
+                workday_start_hour,
+                workday_end_hour,
+                break_start_hour,
+                break_end_hour,
+                weekdays_filter
+            ):
+                continue
+
+            message_manager = _normalize_employee_name(client_message["manager_name"])
+            chat_client_message_counts[message_manager] = chat_client_message_counts.get(message_manager, 0) + 1
+            total_chat_client_messages += 1
+
+            response_message: Optional[Dict[str, Any]] = None
+            for next_message in client_messages[message_index + 1:]:
+                if next_message["actor"] == "staff":
+                    response_message = next_message
+                    break
+
+            if response_message is None:
+                continue
+
+            response_seconds = (response_message["created_at"] - client_message_time).total_seconds()
+            if response_seconds < 0:
+                continue
+
+            chat_response_records.append({
+                "date": _to_iso_date(client_message_time),
+                "seconds": float(response_seconds),
+                "manager_name": _normalize_employee_name(response_message["manager_name"]),
+            })
+
+    employee_calls_stats: Dict[str, Dict[str, int]] = {}
+    for call_event in call_stats_events:
+        manager_name_value = _normalize_employee_name(call_event["manager_name"])
+        if manager_name_value not in employee_calls_stats:
+            employee_calls_stats[manager_name_value] = {
+                "calls_total": 0,
+                "calls_inbound": 0,
+                "calls_outbound": 0,
+                "calls_missed": 0,
+            }
+
+        employee_calls_stats[manager_name_value]["calls_total"] += 1
+        if call_event["direction"] == "inbound":
+            employee_calls_stats[manager_name_value]["calls_inbound"] += 1
+        if call_event["direction"] == "outbound":
+            employee_calls_stats[manager_name_value]["calls_outbound"] += 1
+        if call_event["status"] == "missed":
+            employee_calls_stats[manager_name_value]["calls_missed"] += 1
+
+    call_response_by_manager: Dict[str, List[float]] = {}
+    for response_record in call_response_records:
+        manager_key = _normalize_employee_name(response_record["manager_name"])
+        if manager_key not in call_response_by_manager:
+            call_response_by_manager[manager_key] = []
+        call_response_by_manager[manager_key].append(response_record["seconds"])
+
+    chat_response_by_manager: Dict[str, List[float]] = {}
+    for response_record in chat_response_records:
+        manager_key = _normalize_employee_name(response_record["manager_name"])
+        if manager_key not in chat_response_by_manager:
+            chat_response_by_manager[manager_key] = []
+        chat_response_by_manager[manager_key].append(response_record["seconds"])
+
+    manager_names_set: Set[str] = set()
+    manager_names_set.update(employee_calls_stats.keys())
+    manager_names_set.update(chat_client_message_counts.keys())
+    manager_names_set.update(call_response_by_manager.keys())
+    manager_names_set.update(chat_response_by_manager.keys())
+    if selected_employee_name:
+        manager_names_set.add(selected_employee_name)
+
+    employees_data: List[Dict[str, Any]] = []
+    for manager_name_value in manager_names_set:
+        call_stats = employee_calls_stats.get(manager_name_value, {
+            "calls_total": 0,
+            "calls_inbound": 0,
+            "calls_outbound": 0,
+            "calls_missed": 0,
+        })
+        call_values = call_response_by_manager.get(manager_name_value, [])
+        chat_values = chat_response_by_manager.get(manager_name_value, [])
+        combined_values = call_values + chat_values
+
+        employees_data.append({
+            "employee_name": manager_name_value,
+            "calls_total": call_stats["calls_total"],
+            "calls_inbound": call_stats["calls_inbound"],
+            "calls_outbound": call_stats["calls_outbound"],
+            "calls_missed": call_stats["calls_missed"],
+            "chat_client_messages": chat_client_message_counts.get(manager_name_value, 0),
+            "call_response": _response_summary(call_values),
+            "chat_response": _response_summary(chat_values),
+            "combined_response": _response_summary(combined_values),
+        })
+
+    employees_data.sort(
+        key=lambda item: (
+            item["calls_total"] + item["chat_client_messages"],
+            item["combined_response"]["count"]
+        ),
+        reverse=True
+    )
+
+    filtered_call_stats_events = call_stats_events
+    filtered_call_response_records = call_response_records
+    filtered_chat_response_records = chat_response_records
+    filtered_chat_client_messages_total = total_chat_client_messages
+
+    if selected_employee_name:
+        filtered_call_stats_events = [
+            event_item for event_item in call_stats_events
+            if _normalize_employee_name(event_item.get("manager_name")) == selected_employee_name
+        ]
+        filtered_call_response_records = [
+            record_item for record_item in call_response_records
+            if _normalize_employee_name(record_item.get("manager_name")) == selected_employee_name
+        ]
+        filtered_chat_response_records = [
+            record_item for record_item in chat_response_records
+            if _normalize_employee_name(record_item.get("manager_name")) == selected_employee_name
+        ]
+        filtered_chat_client_messages_total = chat_client_message_counts.get(selected_employee_name, 0)
+
+    filtered_top_callers_map: Dict[str, int] = {}
+    for call_event in filtered_call_stats_events:
+        caller_name_value = str(call_event.get("caller_name") or "").strip()
+        if caller_name_value == "":
+            caller_name_value = str(call_event.get("phone") or "").strip() or "Unknown"
+        filtered_top_callers_map[caller_name_value] = filtered_top_callers_map.get(caller_name_value, 0) + 1
+
+    top_callers = sorted(filtered_top_callers_map.items(), key=lambda item: item[1], reverse=True)
+    top_callers_data = [
+        {"caller_name": caller_name, "calls_total": int(calls_total)}
+        for caller_name, calls_total in top_callers[:20]
+    ]
+
+    daily_response_map: Dict[str, Dict[str, List[float]]] = {}
+    for call_record in filtered_call_response_records:
+        date_key = call_record["date"]
+        if date_key not in daily_response_map:
+            daily_response_map[date_key] = {"calls": [], "chat": []}
+        daily_response_map[date_key]["calls"].append(call_record["seconds"])
+
+    for chat_record in filtered_chat_response_records:
+        date_key = chat_record["date"]
+        if date_key not in daily_response_map:
+            daily_response_map[date_key] = {"calls": [], "chat": []}
+        daily_response_map[date_key]["chat"].append(chat_record["seconds"])
+
+    daily_response_data: List[Dict[str, Any]] = []
+    for date_key in sorted(daily_response_map.keys()):
+        call_values = daily_response_map[date_key]["calls"]
+        chat_values = daily_response_map[date_key]["chat"]
+        call_summary = _response_summary(call_values)
+        chat_summary = _response_summary(chat_values)
+        daily_response_data.append({
+            "date": date_key,
+            "calls_count": call_summary["count"],
+            "calls_avg_seconds": call_summary["avg_seconds"],
+            "calls_min_seconds": call_summary["min_seconds"],
+            "calls_max_seconds": call_summary["max_seconds"],
+            "chat_count": chat_summary["count"],
+            "chat_avg_seconds": chat_summary["avg_seconds"],
+            "chat_min_seconds": chat_summary["min_seconds"],
+            "chat_max_seconds": chat_summary["max_seconds"],
+        })
+
+    team_call_values = [record["seconds"] for record in filtered_call_response_records]
+    team_chat_values = [record["seconds"] for record in filtered_chat_response_records]
+    team_combined_values = team_call_values + team_chat_values
+
+    selected_call_values: List[float] = []
+    selected_chat_values: List[float] = []
+    if selected_employee_name:
+        selected_call_values = call_response_by_manager.get(selected_employee_name, [])
+        selected_chat_values = chat_response_by_manager.get(selected_employee_name, [])
+
+    return {
+        "summary": {
+            "total_calls": len(filtered_call_stats_events),
+            "total_chat_client_messages": filtered_chat_client_messages_total,
+            "call_response": _response_summary(team_call_values),
+            "chat_response": _response_summary(team_chat_values),
+            "combined_response": _response_summary(team_combined_values),
+        },
+        "time_window": {
+            "workday_start_hour": workday_start_hour,
+            "workday_end_hour": workday_end_hour,
+            "break_start_hour": break_start_hour,
+            "break_end_hour": break_end_hour,
+            "weekdays": sorted(list(weekdays_filter)) if weekdays_filter else [],
+            "start_date": start_date,
+            "end_date": normalized_end_date,
+        },
+        "selected_employee_name": selected_employee_name,
+        "employees": employees_data,
+        "top_callers": top_callers_data,
+        "daily_response": daily_response_data,
+        "distributions": {
+            "calls_team": _build_histogram_kde(team_call_values),
+            "chat_team": _build_histogram_kde(team_chat_values),
+            "calls_selected_employee": _build_histogram_kde(selected_call_values) if selected_employee_name else None,
+            "chat_selected_employee": _build_histogram_kde(selected_chat_values) if selected_employee_name else None,
+        },
+    }
+
 
 @router.post("/telephony/calls")
 async def create_call(call: CallLogCreate, current_user: dict = Depends(get_current_user)):

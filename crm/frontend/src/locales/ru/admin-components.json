@@ -29,6 +29,8 @@
   "schedule_management": "Управление графиком: {{name}}",
   "schedule_saved": "Расписание сохранено",
   "schedule_settings": "Настройки рабочего времени и праздников",
+  "status_active": "Активно",
+  "status_inactive": "Неактивно",
   "sunday": "Воскресенье",
   "thursday": "Четверг",
   "to": "До",

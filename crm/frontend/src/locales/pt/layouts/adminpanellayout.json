@@ -1,0 +1,14 @@
+{
+  "admin_panel": "Админ-панель",
+  "menu": {
+    "challenges": "",
+    "challenges_short": "Цели",
+    "dashboard": "",
+    "dashboard_short": "Главная",
+    "notifications": "",
+    "photo_gallery": "",
+    "referral_program": "",
+    "referrals_short": "Рефералы",
+    "team": "Команда"
+  }
+}

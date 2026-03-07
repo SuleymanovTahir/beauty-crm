@@ -27,6 +27,7 @@
   "position_hint": "Selecione uma ou mais posições",
   "position_label": "Posição",
   "position_placeholder": "Selecione uma posição",
+  "role_accountant_desc": "Доступ к расчету и учету зарплаты",
   "role_admin_desc": "Gerenciar usuários e configurações",
   "role_director_desc": "Acesso total a todos os recursos",
   "role_employee_desc": "Ver os seus próprios agendamento",

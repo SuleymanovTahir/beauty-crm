@@ -10,6 +10,7 @@ import {
   X,
   LogOut,
 } from 'lucide-react';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@site/components/LanguageSwitcher';
 import { Button } from '@site/components/ui/button';
@@ -33,7 +34,7 @@ type MenuItem = {
   icon: ComponentType<{ className?: string }>;
 };
 
-function buildSiteAdminMenu(t: (key: string, options?: unknown) => string): MenuItem[] {
+function buildSiteAdminMenu(t: TFunction): MenuItem[] {
   return [
     {
       id: 'dashboard',

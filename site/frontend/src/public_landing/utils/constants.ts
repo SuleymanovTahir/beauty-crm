@@ -12,7 +12,6 @@ export type TimeInterval = keyof typeof TIME_INTERVALS;
 
 // Внешние сервисы
 export const EXTERNAL_SERVICES = {
-  IP_API: 'https://ipapi.co/json/',
   GOOGLE_MAPS: 'https://maps.google.com',
   WHATSAPP_BASE: 'https://wa.me/',
   GOOGLE_CALENDAR: 'https://calendar.google.com/calendar/render',

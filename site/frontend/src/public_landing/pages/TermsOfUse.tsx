@@ -21,7 +21,13 @@ export function TermsOfUse() {
                 const res = await safeFetch(buildApiUrl(`/api/public/services?language=${i18n.language}`, API_URL));
                 if (res.ok) {
                     const data = await res.json();
-                    setServices(data.slice(0, 10)); // Limit to first 10
+                    const servicesList = Array.isArray(data)
+                        ? data
+                        : Array.isArray(data?.services)
+                            ? data.services
+                            : [];
+
+                    setServices(servicesList.slice(0, 10));
                 }
             } catch (error) {
                 console.error("Failed to fetch services", error);
@@ -60,22 +66,13 @@ export function TermsOfUse() {
                             <p className="text-muted-foreground leading-relaxed mb-4">
                                 {t('termsSection2Text', { defaultValue: 'M Le Diamant предоставляет услуги салона красоты премиум-класса, включая, но не ограничиваясь:' })}
                             </p>
-                            <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
-                                {services.length > 0 ? (
-                                    services.map((service) => (
+                            {services.length > 0 ? (
+                                <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
+                                    {services.map((service) => (
                                         <li key={service.id}>{service.name}</li>
-                                    ))
-                                ) : (
-                                    <>
-                                        <li>{t('serviceManicure', { defaultValue: 'Маникюр и педикюр' })}</li>
-                                        <li>{t('serviceHaircut', { defaultValue: 'Стрижки и укладки волос' })}</li>
-                                        <li>{t('serviceColoring', { defaultValue: 'Окрашивание и процедуры для волос' })}</li>
-                                        <li>{t('serviceMakeup', { defaultValue: 'Макияж и оформление бровей' })}</li>
-                                        <li>{t('serviceSpa', { defaultValue: 'SPA-процедуры и массаж' })}</li>
-                                        <li>{t('serviceCosmetology', { defaultValue: 'Косметологические услуги' })}</li>
-                                    </>
-                                )}
-                            </ul>
+                                    ))}
+                                </ul>
+                            ) : null}
                         </section>
 
                         <section>

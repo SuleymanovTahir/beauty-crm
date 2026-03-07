@@ -253,6 +253,7 @@
   "schedule_autofill_template": "Schedule Autofill Template",
   "schedule_cleared": "Schedule cleared",
   "schedule_filled": "Schedule completed successfully",
+  "schedule_mode_hint": "Выберите режим и нажмите по ячейке в календаре",
   "schedule_pattern": "Schedule",
   "schedule_updated": "Schedule updated",
   "search_placeholder": "Search by name, login or email...",

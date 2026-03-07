@@ -253,6 +253,7 @@
   "schedule_autofill_template": "शेड्यूल ऑटोफिल टेम्पलेट",
   "schedule_cleared": "शेड्यूल साफ़ किया गया",
   "schedule_filled": "शेड्यूल सफलतापूर्वक भरा गया",
+  "schedule_mode_hint": "Выберите режим и нажмите по ячейке в календаре",
   "schedule_pattern": "शेड्यूल",
   "schedule_updated": "शेड्यूल अपडेट किया गया",
   "search_placeholder": "नाम, लॉगिन या ईमेल से खोजें...",

@@ -70,6 +70,7 @@
   "notification_deleted": "Notification deleted",
   "notifications": "Notifications",
   "roles": {
+    "accountant": "",
     "admin": "",
     "director": "Director",
     "employee": "",

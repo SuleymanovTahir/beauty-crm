@@ -29,6 +29,8 @@
   "schedule_management": "Gerenciamento de horário: {{name}}",
   "schedule_saved": "Programação salva",
   "schedule_settings": "Configurações de horário de trabalho e feriados",
+  "status_active": "Активно",
+  "status_inactive": "Неактивно",
   "sunday": "Domingo",
   "thursday": "Quinta-feira",
   "to": "Antes",

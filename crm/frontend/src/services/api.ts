@@ -1020,6 +1020,46 @@ export class ApiClient {
     return this.request<any>(url)
   }
 
+  async getTelephonyPerformance(
+    startDate?: string,
+    endDate?: string,
+    status?: string,
+    direction?: string,
+    minDuration?: number,
+    maxDuration?: number,
+    employeeName?: string,
+    workdayStartHour: number = 0,
+    workdayEndHour: number = 24,
+    breakStartHour?: number,
+    breakEndHour?: number,
+    weekdays: number[] = []
+  ) {
+    let url = '/api/telephony/performance?'
+    if (startDate) url += `start_date=${startDate}&`
+    if (endDate) url += `end_date=${endDate}&`
+    if (status && status !== 'all') url += `status=${status}&`
+    if (direction && direction !== 'all') url += `direction=${direction}&`
+    if (minDuration !== undefined) url += `min_duration=${minDuration}&`
+    if (maxDuration !== undefined) url += `max_duration=${maxDuration}&`
+    if (employeeName && employeeName.length > 0 && employeeName !== 'all') url += `employee_name=${encodeURIComponent(employeeName)}&`
+    url += `workday_start_hour=${Math.trunc(workdayStartHour)}&`
+    url += `workday_end_hour=${Math.trunc(workdayEndHour)}&`
+    if (breakStartHour !== undefined && breakEndHour !== undefined) {
+      url += `break_start_hour=${Math.trunc(breakStartHour)}&`
+      url += `break_end_hour=${Math.trunc(breakEndHour)}&`
+    }
+    if (Array.isArray(weekdays) && weekdays.length > 0) {
+      const normalizedWeekdays = weekdays
+        .map((weekdayValue) => Number(weekdayValue))
+        .filter((weekdayValue) => Number.isInteger(weekdayValue) && weekdayValue >= 1 && weekdayValue <= 7)
+        .map((weekdayValue) => Math.trunc(weekdayValue))
+      if (normalizedWeekdays.length > 0) {
+        url += `weekdays=${normalizedWeekdays.join(',')}&`
+      }
+    }
+    return this.request<any>(url)
+  }
+
   // ===== НАСТРОЙКИ МЕНЮ =====
   async getMenuSettings() {
     return this.request<{ menu_order: string[] | null; hidden_items: string[] | null }>('/api/menu-settings')
