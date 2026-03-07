@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 from utils.logger import log_info, log_error
 from utils.redis_pubsub import redis_pubsub
-from utils.utils import get_total_unread
+from utils.utils import get_total_unread, is_allowed_websocket_origin, require_websocket_auth
 
 router = APIRouter(tags=["Notifications"])
 
@@ -101,18 +101,42 @@ async def notifications_websocket(websocket: WebSocket):
     user_id = None
 
     try:
+        origin_header = websocket.headers.get("origin")
+        if not is_allowed_websocket_origin(origin_header):
+            log_error(f"Blocked notifications websocket origin: {origin_header}", "notifications")
+            await websocket.close(code=1008, reason="invalid_origin")
+            return
+
+        authenticated_user = require_websocket_auth(websocket)
+        if not authenticated_user:
+            log_error("Blocked notifications websocket without valid session", "notifications")
+            await websocket.close(code=1008, reason="unauthorized")
+            return
+
         await websocket.accept()
         log_info("🔔 New WS connection accepted", "notifications")
 
         # Ждём аутентификацию от клиента
         auth_message = await websocket.receive_json()
 
-        if auth_message.get("type") != "auth" or "user_id" not in auth_message:
+        if auth_message.get("type") != "auth":
             await websocket.send_json({"type": "error", "message": "Authentication required"})
-            await websocket.close()
+            await websocket.close(code=1008)
             return
 
-        user_id = auth_message["user_id"]
+        claimed_user_id = auth_message.get("user_id")
+        user_id = int(authenticated_user["id"])
+        if claimed_user_id is not None:
+            try:
+                if int(claimed_user_id) != user_id:
+                    await websocket.send_json({"type": "error", "message": "User mismatch"})
+                    await websocket.close(code=1008)
+                    return
+            except (TypeError, ValueError):
+                await websocket.send_json({"type": "error", "message": "Invalid user id"})
+                await websocket.close(code=1008)
+                return
+
         await notifications_manager.connect(user_id, websocket)
 
         # Подтверждение подключения

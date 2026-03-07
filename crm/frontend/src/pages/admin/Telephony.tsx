@@ -1198,7 +1198,7 @@ export default function Telephony() {
                                                     {call.created_at ? format(new Date(call.created_at), 'dd MMM HH:mm', { locale: ru }) : '-'}
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
-                                                    {(call.recording_url || call.recording_file) ? (
+                                                    {Boolean(call.recording_file ?? call.recording_url) ? (
                                                         <div className="flex justify-end">
                                                             <Popover>
                                                                 <PopoverTrigger asChild>
@@ -1207,7 +1207,7 @@ export default function Telephony() {
                                                                     </Button>
                                                                 </PopoverTrigger>
                                                                 <PopoverContent className="w-[450px] p-0 border-none shadow-2xl bg-transparent" side="left">
-                                                                    <div className="bg-white rounded-2xl shadow-2xl border p-4">
+                                                                        <div className="bg-white rounded-2xl shadow-2xl border p-4">
                                                                         <div className="flex items-center gap-3 mb-3 px-1">
                                                                             <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
                                                                                 <Headphones className="w-6 h-6 text-pink-600" />
@@ -1218,7 +1218,7 @@ export default function Telephony() {
                                                                             </div>
                                                                         </div>
                                                                         <AudioPlayer
-                                                                            url={call.recording_file ? `/static/recordings/${call.recording_file}` : call.recording_url!}
+                                                                            url={`/api/recordings/telephony/${call.id}/media`}
                                                                             autoPlay={true}
                                                                             initialExpanded={true}
                                                                         />

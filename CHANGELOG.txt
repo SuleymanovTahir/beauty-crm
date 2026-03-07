@@ -1,3 +1,46 @@
+## [2026-03-08] Backend Concurrency Upgrade for High User Load
+- Raised backend concurrency ceiling in both runtimes:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/main.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/main.py`
+- Added runtime threadpool tuning for `asyncio.to_thread` / FastAPI AnyIO worker threads and auto server sizing:
+  - `BACKEND_THREAD_POOL_WORKERS` is now honored,
+  - `BACKEND_WORKERS` / `WEB_CONCURRENCY` are now used to calculate worker/process settings,
+  - `BACKEND_BACKLOG` and `BACKEND_KEEPALIVE_SECONDS` are now wired into the startup server config,
+  - `python main.py` no longer hardcodes dev-style `reload=True`; it now auto-switches between localhost reload and multi-worker runtime.
+- Made CRM multi-worker safe for background jobs in `/Users/tahir/Desktop/beauty-crm/crm/backend/product_groups/crm/runtime_bootstrap.py`:
+  - added PostgreSQL advisory-lock leadership for schedulers,
+  - only one worker now owns cron/background schedulers,
+  - shutdown releases the scheduler leadership lock cleanly.
+- Rebalanced PostgreSQL pool sizing per worker instead of fixed `5-100` in:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/connection.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/db/connection.py`
+- Pool sizing is now derived from worker count with safe caps, so multi-worker deployment no longer explodes into `workers * 100` DB connections.
+- Moved hot sync SQL endpoints out of fake-async mode so FastAPI can execute them in threadpool under load:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/dashboard.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/notifications.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/menu_settings.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/settings.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/chat.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/internal_chat.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/api/notifications.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/settings.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/client_auth.py`
+- Extended decorator compatibility so permission wrappers accept both `async def` and `def` endpoints without breaking threadpool execution:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/permissions.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/utils/permissions.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/utils.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/utils/utils.py`
+- Updated server deployment instructions in `/Users/tahir/Desktop/beauty-crm/doc/# 🚀 Полная инструкция деплоя Beauty CRM.ini` from single-process `uvicorn --reload` to multi-worker `gunicorn + UvicornWorker` for backend runtimes.
+- Aligned the remaining local backend launch sections in `/Users/tahir/Desktop/beauty-crm/doc/# 🚀 Полная инструкция деплоя Beauty CRM.ini` to the same multi-worker `python3 main.py` flow with `BACKEND_WORKERS`, `BACKEND_THREAD_POOL_WORKERS`, and `BACKEND_RELOAD=false`, removing the last stale `uvicorn --reload` commands from project instructions.
+- Validation:
+  - `python3 -m py_compile` passed for all modified backend files,
+  - `python3 -m compileall -q crm/backend` passed,
+  - `python3 -m compileall -q site/backend` passed,
+  - `venv/bin/python tests/runners/run_all_tests.py` in `/Users/tahir/Desktop/beauty-crm/site/backend` passed `8/8`,
+  - `venv/bin/python tests/runners/run_all_tests.py` in `/Users/tahir/Desktop/beauty-crm/crm/backend` passed `9/9`,
+  - `git diff --check` passed,
+  - current app logs contain no fresh `ERROR` / `Traceback` after the changes.
+
 ## [2026-03-08] Site Account Runtime Hardening + CRM Telephony/WebRTC Log Cleanup
 - Fixed schema-safe account runtime for live employee logins in:
   - `/Users/tahir/Desktop/beauty-crm/site/backend/site_api/client_auth.py`

@@ -123,14 +123,17 @@ const RecordingsList: React.FC<RecordingsListProps> = ({
     }).format(date);
   };
 
+  const hasRecordingMedia = (recording: Recording): boolean => {
+    return Boolean(recording.recording_file ?? recording.recording_url);
+  };
+
   const getRecordingUrl = (recording: Recording): string | null => {
-    if (recording.recording_url) {
-      return recording.recording_url;
+    if (!hasRecordingMedia(recording)) {
+      return null;
     }
-    if (recording.recording_file) {
-      return `/static/recordings/${recording.recording_file}`;
-    }
-    return null;
+
+    const source = recording.source === 'chat' ? 'chat' : 'telephony';
+    return `/api/recordings/${source}/${recording.id}/media`;
   };
 
   const handlePlayPause = (recording: Recording) => {

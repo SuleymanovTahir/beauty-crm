@@ -7,6 +7,8 @@ from typing import Dict, Set
 import json
 from datetime import datetime
 from utils.logger import log_info, log_error
+from utils.redis_pubsub import redis_pubsub
+from utils.utils import is_allowed_websocket_origin, require_websocket_auth
 
 router = APIRouter(tags=["Chat"])
 
@@ -61,8 +63,15 @@ class ChatConnectionManager:
 
     async def notify_admins(self, message: dict):
         """Отправить сообщение всем подключенным админам"""
+        published = await redis_pubsub.publish("crm:chat:broadcast", message)
+        if published:
+            return
+        await self.notify_admins_local(message)
+
+    async def notify_admins_local(self, message: dict):
+        """Локальная отправка всем подключенным админам"""
         for user_id in list(self.admin_connections.keys()):
-            for connection in self.admin_connections[user_id]:
+            for connection in list(self.admin_connections[user_id]):
                 try:
                     await connection.send_json(message)
                 except Exception as e:
@@ -70,6 +79,14 @@ class ChatConnectionManager:
                     # Соединение будет удалено при следующем disconnect или ошибке
 
 chat_manager = ChatConnectionManager()
+
+
+async def chat_pubsub_handler(channel: str, data: dict):
+    if channel == "crm:chat:broadcast":
+        await chat_manager.notify_admins_local(data)
+
+
+redis_pubsub.register_handler("crm:chat:", chat_pubsub_handler)
 
 @router.websocket("/chat")
 async def chat_websocket(websocket: WebSocket):
@@ -82,6 +99,25 @@ async def chat_websocket(websocket: WebSocket):
     """
     user_id = None
     try:
+        origin_header = websocket.headers.get("origin")
+        if not is_allowed_websocket_origin(origin_header):
+            log_error(f"Blocked chat websocket origin: {origin_header}", "chat")
+            await websocket.close(code=1008, reason="invalid_origin")
+            return
+
+        authenticated_user = require_websocket_auth(websocket)
+        if not authenticated_user:
+            log_error("Blocked chat websocket without valid session", "chat")
+            await websocket.close(code=1008, reason="unauthorized")
+            return
+
+        from utils.permissions import PermissionChecker
+
+        if not PermissionChecker.can_view_instagram_chat(authenticated_user):
+            log_error(f"Blocked chat websocket for role {authenticated_user.get('role')}", "chat")
+            await websocket.close(code=1008, reason="forbidden")
+            return
+
         await websocket.accept()
         log_info("💬 New Chat WS connection accepted", "chat")
         
@@ -92,12 +128,24 @@ async def chat_websocket(websocket: WebSocket):
             await websocket.close()
             return
 
-        if auth_message.get("type") != "auth" or "user_id" not in auth_message:
+        if auth_message.get("type") != "auth":
             await websocket.send_json({"type": "error", "message": "Authentication required"})
-            await websocket.close()
+            await websocket.close(code=1008)
             return
 
-        user_id = int(auth_message["user_id"])
+        claimed_user_id = auth_message.get("user_id")
+        user_id = int(authenticated_user["id"])
+        if claimed_user_id is not None:
+            try:
+                if int(claimed_user_id) != user_id:
+                    await websocket.send_json({"type": "error", "message": "User mismatch"})
+                    await websocket.close(code=1008)
+                    return
+            except (TypeError, ValueError):
+                await websocket.send_json({"type": "error", "message": "Invalid user id"})
+                await websocket.close(code=1008)
+                return
+
         await chat_manager.connect_admin(user_id, websocket)
 
         # Подтверждение

@@ -1555,10 +1555,16 @@ def init_database():
             user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
             is_online BOOLEAN DEFAULT FALSE,
             is_dnd BOOLEAN DEFAULT FALSE, -- Режим "Не беспокоить"
+            call_status TEXT DEFAULT 'available',
+            current_call_peer_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            call_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             last_seen TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
         add_column_if_not_exists('user_status', 'is_dnd', 'BOOLEAN DEFAULT FALSE')
+        add_column_if_not_exists('user_status', 'call_status', "TEXT DEFAULT 'available'")
+        add_column_if_not_exists('user_status', 'current_call_peer_id', 'INTEGER REFERENCES users(id) ON DELETE SET NULL')
+        add_column_if_not_exists('user_status', 'call_updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
 
         c.execute('''CREATE TABLE IF NOT EXISTS user_call_logs (
             id SERIAL PRIMARY KEY,

@@ -62,6 +62,14 @@ export function CallHistorySection({ bookingId, clientId }: CallHistorySectionPr
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
+    const hasRecordingMedia = (call: CallLog): boolean => {
+        return Boolean(call.recording_file ?? call.recording_url);
+    };
+
+    const getRecordingUrl = (call: CallLog): string => {
+        return `/api/recordings/telephony/${call.id}/media`;
+    };
+
     if (loading) {
         return (
             <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
@@ -136,9 +144,9 @@ export function CallHistorySection({ bookingId, clientId }: CallHistorySectionPr
                             </div>
                         )}
 
-                        {(call.recording_url || call.recording_file) && (
+                        {hasRecordingMedia(call) && (
                             <AudioPlayer
-                                url={call.recording_file ? `/static/recordings/${call.recording_file}` : call.recording_url!}
+                                url={getRecordingUrl(call)}
                                 className="mt-3"
                             />
                         )}

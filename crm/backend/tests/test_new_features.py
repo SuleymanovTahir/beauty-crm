@@ -287,6 +287,102 @@ def test_auto_booking():
         traceback.print_exc()
         return False
 
+def test_webrtc_call_state_security():
+    """Тест 5: Изоляция состояний звонка между пользователями"""
+    print_section("ТЕСТ 5: Защита и изоляция звонков WebRTC")
+
+    caller_prefix = "test_webrtc_caller"
+    callee_prefix = "test_webrtc_callee"
+    intruder_prefix = "test_webrtc_intruder"
+
+    try:
+        from tests.test_utils import create_test_user
+        from db.connection import get_db_connection
+        from crm_api.webrtc_signaling import (
+            accept_call_session,
+            get_user_call_state,
+            is_call_peer,
+            release_call_session,
+            reserve_call_session,
+        )
+
+        caller_id = create_test_user(caller_prefix, "Test WebRTC Caller", "admin", "Administrator", False)
+        callee_id = create_test_user(callee_prefix, "Test WebRTC Callee", "employee", "Stylist")
+        intruder_id = create_test_user(intruder_prefix, "Test WebRTC Intruder", "employee", "Stylist")
+
+        conn = get_db_connection()
+        c = conn.cursor()
+        for user_id in [caller_id, callee_id, intruder_id]:
+            c.execute("""
+                INSERT INTO user_status (
+                    user_id, is_online, is_dnd, call_status, current_call_peer_id, call_updated_at, updated_at
+                )
+                VALUES (%s, TRUE, FALSE, 'available', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                ON CONFLICT (user_id) DO UPDATE
+                SET is_online = TRUE,
+                    is_dnd = FALSE,
+                    call_status = 'available',
+                    current_call_peer_id = NULL,
+                    call_updated_at = CURRENT_TIMESTAMP,
+                    updated_at = CURRENT_TIMESTAMP
+            """, (user_id,))
+        conn.commit()
+        conn.close()
+
+        print_subsection("Резервирование звонка между двумя пользователями")
+        reserve_result = reserve_call_session(caller_id, callee_id)
+        assert reserve_result.get("ok") is True
+        caller_state = get_user_call_state(caller_id)
+        callee_state = get_user_call_state(callee_id)
+        assert caller_state["call_status"] == "calling"
+        assert caller_state["peer_id"] == callee_id
+        assert callee_state["call_status"] == "ringing"
+        assert callee_state["peer_id"] == caller_id
+        print("   ✅ Звонок зарезервирован, peer/state записаны в общей БД")
+
+        print_subsection("Блокировка второго звонящего к уже занятому пользователю")
+        intruder_result = reserve_call_session(intruder_id, callee_id)
+        assert intruder_result.get("ok") is False
+        assert intruder_result.get("reason") == "busy"
+        print("   ✅ Второй пользователь получил отказ, состояние не пересеклось")
+
+        print_subsection("Принятие звонка и перевод в BUSY")
+        accept_result = accept_call_session(callee_id, caller_id)
+        assert accept_result.get("ok") is True
+        caller_state = get_user_call_state(caller_id)
+        callee_state = get_user_call_state(callee_id)
+        assert caller_state["call_status"] == "busy"
+        assert callee_state["call_status"] == "busy"
+        assert is_call_peer(caller_id, callee_id) is True
+        assert is_call_peer(callee_id, caller_id) is True
+        print("   ✅ После accept оба участника находятся в BUSY и связаны только друг с другом")
+
+        print_subsection("Освобождение состояния звонка")
+        release_result = release_call_session(caller_id, callee_id)
+        assert release_result.get("peer_id") == callee_id
+        caller_state = get_user_call_state(caller_id)
+        callee_state = get_user_call_state(callee_id)
+        assert caller_state["call_status"] == "available"
+        assert caller_state["peer_id"] is None
+        assert callee_state["call_status"] == "available"
+        assert callee_state["peer_id"] is None
+        print("   ✅ После hangup/release оба пользователя снова доступны")
+
+        return True
+    except Exception as e:
+        print(f"❌ ОШИБКА: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+    finally:
+        try:
+            from tests.test_utils import cleanup_test_users
+            cleanup_test_users(caller_prefix)
+            cleanup_test_users(callee_prefix)
+            cleanup_test_users(intruder_prefix)
+        except Exception:
+            pass
+
 def main():
     """Запуск всех тестов"""
     print("\n" + "="*80)
@@ -299,7 +395,8 @@ def main():
         "Dashboard с KPI": test_analytics(),
         "Расписание мастеров": test_master_schedule(),
         "Программа лояльности": test_loyalty_program(),
-        "Автозаполнение окон": test_auto_booking()
+        "Автозаполнение окон": test_auto_booking(),
+        "Защита состояний звонка": test_webrtc_call_state_security()
     }
 
     # Итоги

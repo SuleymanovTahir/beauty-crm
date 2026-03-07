@@ -6,16 +6,17 @@ import os
 import re
 import inspect
 import urllib.parse
+from http.cookies import SimpleCookie
 from functools import lru_cache
 from pathlib import Path
 from typing import Optional
-from fastapi import Cookie, HTTPException
+from fastapi import Cookie, HTTPException, WebSocket
 
 from db import get_user_by_session, get_all_clients, get_unread_messages_count, get_global_unread_count
 
 from db.settings import get_custom_statuses
 from db.connection import get_db_connection
-from core.config import CLIENT_STATUSES
+from core.config import CLIENT_STATUSES, is_localhost
 from utils.logger import log_info, log_error, log_debug, log_warning
 
 # ===== ДИРЕКТОРИИ И ФАЙЛЫ =====
@@ -282,6 +283,83 @@ def require_auth(session_token: Optional[str] = Cookie(None)):
         log_info(f"⚠️ [require_auth] Invalid or expired session token: {session_token[:10]}...", "auth")
     
     return user if user else None
+
+
+def _normalize_origin_value(raw_origin: str) -> str:
+    origin = str(raw_origin or "").strip()
+    if not origin:
+        return ""
+
+    parsed = urllib.parse.urlsplit(origin)
+    if not parsed.scheme or not parsed.netloc:
+        return ""
+
+    return f"{parsed.scheme.lower()}://{parsed.netloc.lower()}".rstrip("/")
+
+
+@lru_cache(maxsize=1)
+def _get_allowed_websocket_origins() -> tuple[set[str], bool]:
+    if os.getenv("ENVIRONMENT") == "development" or is_localhost():
+        return set(), True
+
+    allowed_origins: set[str] = set()
+    for key in ["FRONTEND_URL", "PUBLIC_URL", "PRODUCTION_URL", "BASE_URL"]:
+        env_value = os.getenv(key)
+        normalized_value = _normalize_origin_value(env_value or "")
+        if not normalized_value:
+            continue
+
+        allowed_origins.add(normalized_value)
+        parsed = urllib.parse.urlsplit(normalized_value)
+        hostname = parsed.hostname or ""
+        if hostname and not hostname.startswith("www."):
+            allowed_origins.add(f"{parsed.scheme}://www.{parsed.netloc}")
+
+    return allowed_origins, False
+
+
+def is_allowed_websocket_origin(origin: Optional[str]) -> bool:
+    normalized_origin = _normalize_origin_value(origin or "")
+    allowed_origins, allow_localhost = _get_allowed_websocket_origins()
+
+    if allow_localhost:
+        if not normalized_origin:
+            return True
+        parsed = urllib.parse.urlsplit(normalized_origin)
+        return (parsed.scheme in {"http", "https"}) and (parsed.hostname in {"localhost", "127.0.0.1"})
+
+    if not normalized_origin:
+        return False
+
+    return normalized_origin in allowed_origins
+
+
+def get_websocket_session_token(websocket: WebSocket) -> Optional[str]:
+    session_token = websocket.cookies.get("session_token")
+    if isinstance(session_token, str) and session_token.strip():
+        return session_token.strip()
+
+    cookie_header = str(websocket.headers.get("cookie", "") or "").strip()
+    if not cookie_header:
+        return None
+
+    try:
+        cookie = SimpleCookie()
+        cookie.load(cookie_header)
+        morsel = cookie.get("session_token")
+        if morsel and morsel.value:
+            return morsel.value.strip()
+    except Exception as error:
+        log_warning(f"Could not parse websocket cookies: {error}", "auth")
+
+    return None
+
+
+def require_websocket_auth(websocket: WebSocket):
+    session_token = get_websocket_session_token(websocket)
+    if not session_token:
+        return None
+    return require_auth(session_token)
 
 def get_current_user_from_token(session_token: Optional[str] = Cookie(None)):
     """
