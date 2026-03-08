@@ -533,6 +533,14 @@ export default function Analytics() {
     }
   };
 
+  const handleServiceFilterChange = (value: string) => {
+    setSelectedServiceName(value === ALL_FILTER_VALUE ? '' : value);
+  };
+
+  const handleProductFilterChange = (value: string) => {
+    setSelectedProductName(value === ALL_FILTER_VALUE ? '' : value);
+  };
+
   const handleApplyCustomDates = () => {
     if (!dateFrom || !dateTo) {
       toast.error(t('analytics:errors.select_both_dates'));
@@ -644,6 +652,60 @@ export default function Analytics() {
   const getUnitEconomicsModelDescription = (modelValue: string) => t(`analytics:unit_model_descriptions.${modelValue}`, modelValue);
   const selectedServiceValue = selectedServiceName !== '' ? selectedServiceName : ALL_FILTER_VALUE;
   const selectedProductValue = selectedProductName !== '' ? selectedProductName : ALL_FILTER_VALUE;
+  const truncateChartLabel = (value: string, maxLength: number = isMobile ? 10 : 16) => {
+    const normalizedValue = String(value ?? '').trim();
+    if (normalizedValue.length <= maxLength) {
+      return normalizedValue;
+    }
+    return `${normalizedValue.slice(0, Math.max(1, maxLength - 1)).trim()}…`;
+  };
+  const getCategoryAxisProps = (
+    formatter?: (value: string) => string,
+    maxLength: number = isMobile ? 10 : 16
+  ) => ({
+    interval: 0 as const,
+    angle: isMobile ? -40 : -28,
+    textAnchor: 'end' as const,
+    height: isMobile ? 84 : 74,
+    tickMargin: 10,
+    tick: { fontSize: isMobile ? 10 : 12 },
+    tickFormatter: (value: string) => truncateChartLabel(
+      formatter ? formatter(String(value ?? '')) : String(value ?? ''),
+      maxLength
+    )
+  });
+  const renderNamedFilterSelect = ({
+    label,
+    value,
+    options,
+    allLabel,
+    onValueChange,
+    triggerClassName
+  }: {
+    label: string;
+    value: string;
+    options: string[];
+    allLabel: string;
+    onValueChange: (value: string) => void;
+    triggerClassName: string;
+  }) => (
+    <div className="analytics-inline-filter">
+      <p className="analytics-inline-filter-label">{label}</p>
+      <Select value={value} onValueChange={onValueChange}>
+        <SelectTrigger className={triggerClassName}>
+          <SelectValue placeholder={label} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={ALL_FILTER_VALUE}>{allLabel}</SelectItem>
+          {options.map((optionValue) => (
+            <SelectItem key={optionValue} value={optionValue}>
+              {optionValue}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
 
   const bookingsTrendData = toArray(analytics?.bookings_by_day).map(([date, count]) => ({
     name: isMobile
@@ -658,6 +720,9 @@ export default function Analytics() {
     revenue,
     color: COLORS[index % COLORS.length]
   }));
+  const showServicesPieLabels = !isMobile
+    && servicesData.length <= 5
+    && servicesData.every((serviceItem) => String(serviceItem.name ?? '').trim().length <= 18);
 
   const statusData = toArray(analytics?.status_stats).map(([status, count]) => ({
     name: t(`analytics:status.${status}`),
@@ -903,77 +968,89 @@ export default function Analytics() {
 
       {/* Filters */}
       <div className="analytics-filter-card bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200 mb-4 md:mb-6">
-        <div className="analytics-filter-row flex flex-col gap-3 sm:flex-row sm:gap-4 sm:flex-wrap sm:items-end">
-          <PeriodFilter
-            period={period}
-            dateFrom={dateFrom}
-            dateTo={dateTo}
-            onPeriodChange={handlePeriodChange}
-            onDateFromChange={setDateFrom}
-            onDateToChange={setDateTo}
-            showAllOption={false}
-          />
-
-          <div className="flex flex-col gap-2">
-            <p className="text-xs text-gray-500">{t('analytics:service_filter')}</p>
-            <Select
-              value={selectedServiceValue}
-              onValueChange={(value) => setSelectedServiceName(value === ALL_FILTER_VALUE ? '' : value)}
-            >
-              <SelectTrigger className="w-full md:w-[220px]">
-                <SelectValue placeholder={t('analytics:service_filter')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL_FILTER_VALUE}>{t('admin/calendar:all_services')}</SelectItem>
-                {serviceOptions.map((serviceName) => (
-                  <SelectItem key={serviceName} value={serviceName}>{serviceName}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="analytics-filter-grid">
+          <div className="analytics-filter-section">
+            <div className="analytics-filter-section-header">
+              <div>
+                <p className="analytics-filter-section-title">{t('common:period')}</p>
+                <p className="analytics-filter-section-description">{t('analytics:for_period')}</p>
+              </div>
+            </div>
+            <div className="analytics-filter-section-content">
+              <PeriodFilter
+                period={period}
+                dateFrom={dateFrom}
+                dateTo={dateTo}
+                onPeriodChange={handlePeriodChange}
+                onDateFromChange={setDateFrom}
+                onDateToChange={setDateTo}
+                className="items-end"
+                showAllOption={false}
+              />
+              {period === 'custom' && (
+                <Button onClick={handleApplyCustomDates} className="analytics-apply-button bg-pink-600 hover:bg-pink-700 w-full sm:w-auto text-sm md:text-base">
+                  {t('analytics:apply')}
+                </Button>
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <p className="text-xs text-gray-500">{t('analytics:product_filter')}</p>
-            <Select
-              value={selectedProductValue}
-              onValueChange={(value) => setSelectedProductName(value === ALL_FILTER_VALUE ? '' : value)}
-            >
-              <SelectTrigger className="w-full md:w-[220px]">
-                <SelectValue placeholder={t('analytics:product_filter')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL_FILTER_VALUE}>{t('analytics:all_products')}</SelectItem>
-                {productOptions.map((productName) => (
-                  <SelectItem key={productName} value={productName}>{productName}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="analytics-filter-section">
+            <div className="analytics-filter-section-header">
+              <Filter className="analytics-filter-section-icon" />
+              <div>
+                <p className="analytics-filter-section-title">{t('analytics:service_filter')} / {t('analytics:product_filter')}</p>
+                <p className="analytics-filter-section-description">{t('analytics:filters_description')}</p>
+              </div>
+            </div>
+            <div className="analytics-filter-scope-grid">
+              {renderNamedFilterSelect({
+                label: t('analytics:service_filter'),
+                value: selectedServiceValue,
+                options: serviceOptions,
+                allLabel: t('admin/calendar:all_services'),
+                onValueChange: handleServiceFilterChange,
+                triggerClassName: 'w-full'
+              })}
+              {renderNamedFilterSelect({
+                label: t('analytics:product_filter'),
+                value: selectedProductValue,
+                options: productOptions,
+                allLabel: t('analytics:all_products'),
+                onValueChange: handleProductFilterChange,
+                triggerClassName: 'w-full'
+              })}
+            </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <p className="text-xs text-gray-500">{t('analytics:forecast_horizon')}</p>
-            <Select value={forecastHorizonDays} onValueChange={setForecastHorizonDays}>
-              <SelectTrigger className="w-full md:w-[180px]">
-                <SelectValue placeholder={t('analytics:forecast_horizon')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">7</SelectItem>
-                <SelectItem value="14">14</SelectItem>
-                <SelectItem value="30">30</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="analytics-filter-section analytics-filter-section-forecast">
+            <div className="analytics-filter-section-header">
+              <Lightbulb className="analytics-filter-section-icon" />
+              <div>
+                <p className="analytics-filter-section-title">{t('analytics:forecast_horizon')}</p>
+                <p className="analytics-filter-section-description">{t('analytics:load_forecast_title')}</p>
+              </div>
+            </div>
+            <div className="analytics-filter-section-content">
+              <Select value={forecastHorizonDays} onValueChange={setForecastHorizonDays}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={t('analytics:forecast_horizon')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">7</SelectItem>
+                  <SelectItem value="14">14</SelectItem>
+                  <SelectItem value="30">30</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
+        </div>
 
-          {period === 'custom' && (
-            <Button onClick={handleApplyCustomDates} className="analytics-apply-button bg-pink-600 hover:bg-pink-700 w-full sm:w-auto text-sm md:text-base">
-              {t('analytics:apply')}
-            </Button>
-          )}
-
+        <div className="analytics-filter-actions">
           <Button
             variant="outline"
             onClick={loadData}
-            className="analytics-refresh-button md:ml-auto"
+            className="analytics-refresh-button"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             {t('analytics:refresh')}
@@ -987,9 +1064,6 @@ export default function Analytics() {
             {exporting ? t('analytics:exporting') : t('analytics:export')}
           </Button>
         </div>
-        <p className="mt-3 text-xs md:text-sm text-gray-500">
-          {t('analytics:filters_description')}
-        </p>
       </div>
 
       {/* Stats Cards */}
@@ -1079,8 +1153,8 @@ export default function Analytics() {
                   cx="50%"
                   cy={isMobile ? "40%" : "50%"}
                   outerRadius={isMobile ? 80 : 100}
-                  label={!isMobile}
-                  labelLine={!isMobile}
+                  label={showServicesPieLabels}
+                  labelLine={showServicesPieLabels}
                 >
                   {servicesData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -1227,7 +1301,7 @@ export default function Analytics() {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={bookingsByRegionData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                <XAxis dataKey="region" interval={0} angle={-20} textAnchor="end" height={70} />
+                <XAxis dataKey="region" {...getCategoryAxisProps(undefined, isMobile ? 9 : 14)} />
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="bookings" name={t('analytics:bookings')} fill="var(--chart-green)" radius={[6, 6, 0, 0]} />
@@ -1392,16 +1466,24 @@ export default function Analytics() {
                   <p className="text-base font-semibold text-gray-900">{dataReliability.sample_size}</p>
                 </div>
                 <div className="rounded-lg bg-gray-50 p-3">
-                  <p className="text-xs text-gray-500">{t('analytics:service_filter')}</p>
-                  <p className="text-base font-semibold text-gray-900">
-                    {dataReliability.filters?.service_name ?? t('admin/calendar:all_services')}
-                  </p>
+                  {renderNamedFilterSelect({
+                    label: t('analytics:service_filter'),
+                    value: selectedServiceValue,
+                    options: serviceOptions,
+                    allLabel: t('admin/calendar:all_services'),
+                    onValueChange: handleServiceFilterChange,
+                    triggerClassName: 'w-full bg-white'
+                  })}
                 </div>
                 <div className="rounded-lg bg-gray-50 p-3">
-                  <p className="text-xs text-gray-500">{t('analytics:product_filter')}</p>
-                  <p className="text-base font-semibold text-gray-900">
-                    {dataReliability.filters?.product_name ?? t('analytics:all_products')}
-                  </p>
+                  {renderNamedFilterSelect({
+                    label: t('analytics:product_filter'),
+                    value: selectedProductValue,
+                    options: productOptions,
+                    allLabel: t('analytics:all_products'),
+                    onValueChange: handleProductFilterChange,
+                    triggerClassName: 'w-full bg-white'
+                  })}
                 </div>
               </div>
               <div className="space-y-2 text-sm text-gray-700">
@@ -1583,7 +1665,7 @@ export default function Analytics() {
                 <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={attributionChannelsData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                    <XAxis dataKey="channel" interval={0} angle={-20} textAnchor="end" height={70} tickFormatter={getChannelLabel} />
+                    <XAxis dataKey="channel" {...getCategoryAxisProps(getChannelLabel, isMobile ? 9 : 14)} />
                     <YAxis />
                     <Tooltip />
                     <Legend />
@@ -1867,7 +1949,7 @@ export default function Analytics() {
                 <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={timeToBookBucketsData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                    <XAxis dataKey="bucket" interval={0} angle={-20} textAnchor="end" height={70} />
+                    <XAxis dataKey="bucket" {...getCategoryAxisProps(undefined, isMobile ? 10 : 14)} />
                     <YAxis />
                     <Tooltip />
                     <Bar dataKey="count" name={t('analytics:bookings')} fill="var(--chart-pink)" radius={[6, 6, 0, 0]} />
@@ -1912,7 +1994,7 @@ export default function Analytics() {
                 <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={fullFunnelStagesData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                    <XAxis dataKey="stage" interval={0} angle={-20} textAnchor="end" height={70} />
+                    <XAxis dataKey="stage" {...getCategoryAxisProps(undefined, isMobile ? 10 : 14)} />
                     <YAxis />
                     <Tooltip />
                     <Bar dataKey="count" name={t('analytics:clients')} fill="var(--chart-purple)" radius={[6, 6, 0, 0]} />
@@ -2051,7 +2133,7 @@ export default function Analytics() {
                 <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={rfmSegmentsChartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
-                    <XAxis dataKey="segment" interval={0} angle={-20} textAnchor="end" height={70} tickFormatter={(value) => t(`analytics:rfm_segment_${value}`)} />
+                    <XAxis dataKey="segment" {...getCategoryAxisProps((value) => t(`analytics:rfm_segment_${value}`), isMobile ? 10 : 14)} />
                     <YAxis />
                     <Tooltip />
                     <Bar dataKey="count" name={t('analytics:clients')} fill="var(--chart-amber)" radius={[6, 6, 0, 0]} />

@@ -6,8 +6,6 @@ import './i18n';
 import { useAuth } from '@crm/contexts/AuthContext';
 import { ThemeProvider } from '@crm/contexts/ThemeContext';
 import { normalizeRole } from '@crm/utils/platformRouting';
-import PromoCodes from '@crm/pages/admin/PromoCodes';
-import SpecialPackages from '@crm/pages/admin/SpecialPackages';
 
 const UniversalLayout = React.lazy(() => import('@crm/components/layouts/UniversalLayout'));
 const Dashboard = React.lazy(() => import('@crm/pages/shared/Dashboard'));
@@ -44,6 +42,8 @@ const InternalChat = React.lazy(() => import('@crm/components/shared/InternalCha
 const NotificationsPage = React.lazy(() => import('@crm/pages/common/Notifications'));
 const Broadcasts = React.lazy(() => import('@crm/pages/admin/Broadcasts'));
 const UniversalProfile = React.lazy(() => import('@crm/pages/shared/Profile'));
+const PromoCodes = React.lazy(() => import('@crm/pages/admin/PromoCodes'));
+const SpecialPackages = React.lazy(() => import('@crm/pages/admin/SpecialPackages'));
 
 const AdminLogin = React.lazy(() => import('@crm/pages/auth/Login'));
 const AdminRegister = React.lazy(() => import('@crm/pages/auth/Register'));

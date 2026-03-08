@@ -796,10 +796,6 @@ export class ApiClient {
     return this.request<any>(`/api/bookings${query ? `?${query}` : ''}`)
   }
 
-  async getClientBookings() {
-    return this.request<any>('/api/client/bookings')
-  }
-
   async getBooking(bookingId: number) {
     return this.request<any>(`/api/bookings/${bookingId}`)
   }
@@ -880,17 +876,6 @@ export class ApiClient {
 
   async getClientLoyalty() {
     return this.request<any>('/api/client/loyalty')
-  }
-
-  async getClientProfile() {
-    return this.request<any>('/api/client/profile')
-  }
-
-  async updateClientProfile(data: any) {
-    return this.request('/api/client/profile', {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
   }
 
   // ===== ЗАМЕТКИ КЛИЕНТА =====
@@ -1560,21 +1545,6 @@ export class ApiClient {
     return this.request<any>(endpoint)
   }
 
-  async getPublicReferralLinkProfile(
-    shareToken: string,
-    params?: { period?: string; date_from?: string; date_to?: string }
-  ) {
-    const query = new URLSearchParams()
-    if (params?.period) query.set('period', params.period)
-    if (params?.date_from) query.set('date_from', params.date_from)
-    if (params?.date_to) query.set('date_to', params.date_to)
-    const queryString = query.toString()
-    const endpoint = queryString.length > 0
-      ? `/api/public/referral-links/${encodeURIComponent(shareToken)}?${queryString}`
-      : `/api/public/referral-links/${encodeURIComponent(shareToken)}`
-    return this.request<any>(endpoint)
-  }
-
   // ===== ADMIN CLIENT GALLERY =====
   async getAdminClientGallery(clientId: string) {
     return this.request<any>(`/api/admin/client-gallery/${clientId}`)
@@ -1983,43 +1953,6 @@ export class ApiClient {
 
   async getTimeOffs(masterName: string) {
     return this.request<any>(`/api/schedule/${masterName}/time-off`)
-  }
-
-  async getAvailableSlots(masterName: string, date: string, duration: number = 60) {
-    return this.request<{
-      success: boolean;
-      master: string;
-      date: string;
-      available_slots: { time: string; is_optimal: boolean }[];
-      count: number;
-    }>(`/api/schedule/${masterName}/available-slots?date=${date}&duration=${duration}`)
-  }
-
-  async getAvailableDates(masterName: string, year: number, month: number, duration: number = 60) {
-    // Use public endpoint to avoid auth issues
-    return this.request<{
-      success: boolean;
-      master: string;
-      year: number;
-      month: number;
-      available_dates: string[]; // YYYY-MM-DD
-    }>(`/api/public/schedule/${masterName}/available-dates?year=${year}&month=${month}&duration=${duration}`)
-  }
-
-  async createHold(data: { service_id: number, master_name: string, date: string, time: string, client_id: string }) {
-    // Публичный endpoint для холда слота находится под /api/public
-    return this.request<{ success: boolean; error?: string }>('/api/public/bookings/hold', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
-  }
-
-  async getAllMastersAvailability(date: string) {
-    return this.request<{
-      success: boolean;
-      date: string;
-      availability: Record<string, string[]>;
-    }>(`/api/schedule/available-slots?date=${date}`);
   }
 
   async getHolidays(start?: string, end?: string): Promise<any[]> {

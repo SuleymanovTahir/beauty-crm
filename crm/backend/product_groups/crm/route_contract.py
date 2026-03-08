@@ -1,5 +1,4 @@
 CRM_MODULE_ROUTE_MATCHERS = [
-    ("visitor_analytics", ("/api/analytics/visitors", "/api/cookies")),
     ("dashboard", ("/api/dashboard", "/api/admin/stats")),
     ("bookings", ("/api/bookings",)),
     ("calendar", ("/api/schedule",)),

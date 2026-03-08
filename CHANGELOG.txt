@@ -1,3 +1,122 @@
+## [2026-03-08] CRM Analytics Filters Sync + Chart Readability
+- Updated `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/Analytics.tsx` and `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/Analytics.css`.
+- Analytics top controls:
+  - split the control area into separate sections for period, scope filters, and forecast horizon so `Горизонт прогноза` no longer reads like a second date-range filter,
+  - kept service/product filters and forecast settings in the main page orchestrator state.
+- Data reliability card:
+  - replaced static `Фильтр по услуге` / `Фильтр по товару` values with interactive selects bound to the same state as the top filters,
+  - changing filters in either place now updates the same request scope.
+- Chart readability:
+  - added shared truncation/rotation rules for long category labels on analytics bar charts,
+  - disabled pie labels automatically when service distribution would likely overlap, relying on legend instead.
+- Validation:
+  - `npm --prefix crm/frontend run type-check`
+  - `npm --prefix crm/frontend run build`
+- IMPORTANT TO REMEMBER:
+  - On analytics pages, duplicate filter UI must reuse the same state setters; do not introduce local “summary-only” filter values in cards, otherwise the page drifts out of sync.
+
+## [2026-03-08] CRM Team Photos in Local Vite
+- Fixed missing employee photos on `http://localhost:5173/crm/team`.
+- Updated `/Users/tahir/Desktop/beauty-crm/crm/frontend/vite.config.ts`:
+  - added dev proxy for `/landing-images` to the CRM backend.
+- Root cause:
+  - backend normalizes some employee photo paths to `/landing-images/...`,
+  - local CRM Vite proxied `/api`, `/uploads`, and `/static`, but not `/landing-images`,
+  - so employee list data loaded correctly while image requests returned 404 from the frontend dev origin.
+- IMPORTANT TO REMEMBER:
+  - When backend starts serving media from a new top-level path, add the same prefix to `server.proxy` in `/Users/tahir/Desktop/beauty-crm/crm/frontend/vite.config.ts`, otherwise local CRM pages can lose images while API data still works.
+
+## [2026-03-08] CRM Frontend Dev Blank Screen: Lazy Route Split + Stable Select Prebundle
+- Investigated `http://localhost:5173/` blank screen in CRM dev runtime and verified it was not a backend/API failure.
+- Reproduced the issue in headless Chromium and captured the exact dev-server fault:
+  - Vite returned `504 Outdated Optimize Dep` for `@radix-ui/react-select`,
+  - the blank screen happened before login rendered because CRM root eagerly imported `SpecialPackages`, which pulls `src/components/ui/select.tsx` during initial boot.
+- Fixed CRM frontend boot path in `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/App.tsx`:
+  - converted `PromoCodes` and `SpecialPackages` from eager imports to `React.lazy(...)`,
+  - this removes heavy admin-only route code from unauthenticated initial load and prevents `select.tsx` from being pulled at root boot.
+- Stabilized Vite dependency optimization in `/Users/tahir/Desktop/beauty-crm/crm/frontend/vite.config.ts`:
+  - added `optimizeDeps.include = ['@radix-ui/react-select']`,
+  - this forces the missing Radix Select dependency to be prebundled up front instead of being discovered late through route code.
+- IMPORTANT TO REMEMBER:
+  - If CRM root opens blank while Vite HTML is still served, inspect `node_modules/.vite/deps` requests first, not React routes first.
+  - `SpecialPackages` is a heavy admin route and must stay lazy; eager-importing it drags `ui/select.tsx` into initial boot.
+  - `@radix-ui/react-select` now has an explicit Vite prebundle rule because lazy/admin route discovery was not stable enough in local dev.
+
+## [2026-03-08] Local Dev Orchestrator: One-Command Startup for All / Site / CRM
+- Added one root local-start script so the full dev stack no longer requires manually launching four separate commands:
+  - added `/Users/tahir/Desktop/beauty-crm/scripts/run_local.sh`
+  - modes:
+    - `all` -> starts `site/backend` + `site/frontend` + `crm/backend` + `crm/frontend`
+    - `site` -> starts only `site/backend` + `site/frontend`
+    - `crm` -> starts only `crm/backend` + `crm/frontend`
+- Script behavior:
+  - auto-detects repo root from its own path, so it can be launched from any cwd,
+  - uses backend defaults matching current local dev usage:
+    - `BACKEND_WORKERS=1`
+    - `BACKEND_THREAD_POOL_WORKERS=8`
+    - `BACKEND_RELOAD=false`
+  - respects env overrides when needed for one-off runs,
+  - traps `Ctrl+C` / termination and stops all child processes started by the script.
+- Updated `/Users/tahir/Desktop/beauty-crm/doc/# 🚀 Полная инструкция деплоя Beauty CRM.ini` section `7) Одновременный запуск локально` to document:
+  - one-command startup for all services,
+  - one-command startup for Site only,
+  - one-command startup for CRM only,
+  - override example for backend worker settings.
+- IMPORTANT TO REMEMBER:
+  - Use `bash /Users/tahir/Desktop/beauty-crm/scripts/run_local.sh all` for the full local stack.
+  - Use `bash /Users/tahir/Desktop/beauty-crm/scripts/run_local.sh site` for only Site.
+  - Use `bash /Users/tahir/Desktop/beauty-crm/scripts/run_local.sh crm` for only CRM.
+
+## [2026-03-08] Duplicate Filename Audit: Route-Scope Check + Dead UI Mirror Cleanup
+- Audited duplicate filenames across the split repo by basename first, then checked file content and actual runtime scope instead of deleting by name alone.
+- Confirmed the current split is still effectively 2 app surfaces, not 4 isolated products:
+  - `/Users/tahir/Desktop/beauty-crm/site/frontend/src/App.tsx` still legitimately serves `public + account + admin`,
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/App.tsx` serves CRM/auth routes and redirects away from `/admin/*`,
+  - so many `site/*` files are not accidental “public leftovers”; they remain live because `site` still owns admin and account flows.
+- Re-ran duplicate-basename audit for code/config files only and separated real mirror code from translation noise:
+  - there were `166` exact duplicate code/CSS basename groups across `crm` and `site`,
+  - the largest exact-duplicate buckets were backend maintenance/test scripts plus shared db/service/utils layers, not just frontend pages.
+- Built a frontend import graph and removed another set of confirmed dead mirrored UI files that had zero incoming imports:
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/ui/calendar.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/ui/separator.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/ui/toggle.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/ui/alert-dialog.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/ui/checkbox.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/ui/dropdown-menu.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/ui/scroll-area.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/ui/select.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/ui/slider.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/ui/alert-dialog.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/ui/dropdown-menu.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/ui/scroll-area.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/ui/select.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/ui/slider.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/ui/table.tsx`
+- Validation after deletion:
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run type-check`
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run build`
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/site/frontend run build`
+  - all passed.
+- Updated exact mirrored-path counts after this pass:
+  - backend: `306` shared relative paths, `260` still byte-identical, `46` already diverged,
+  - frontend: `207` shared relative paths, `142` still byte-identical, `65` already diverged.
+- New high-value hotspot found inside `/Users/tahir/Desktop/beauty-crm/site/frontend`:
+  - `src/components/ui/*` and `src/public_landing/components/ui/*` still contain many near-identical live forks,
+  - strongest similarity pairs still remaining include:
+    - `calendar.tsx` (`1.000`)
+    - `command.tsx` (`0.995`)
+    - `button.tsx` (`0.990`)
+    - `card.tsx` (`0.990`)
+    - `badge.tsx` (`0.988`)
+    - `popover.tsx` (`0.987`)
+    - `toggle.tsx` (`0.987`)
+    - `avatar.tsx` (`0.981`)
+    - `switch.tsx` (`0.981`)
+    - `accordion.tsx` (`0.981`)
+- IMPORTANT TO REMEMBER:
+  - Do not assume same filename means dead duplicate; first verify route ownership because `site` still owns admin/account/public together.
+  - The next profitable cleanup is not more blind deletion; it is consolidating the remaining live `site/frontend/src/components/ui` and `site/frontend/src/public_landing/components/ui` near-clones into one SSOT UI layer.
+
 ## [2026-03-08] Duplicate Audit + Staff Credentials SSOT Cleanup
 - Audited exact duplicates after the project split into `crm` and `site`.
 - Mirrored-file summary:
@@ -23,10 +142,54 @@
 - Removed one confirmed dead frontend duplicate:
   - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/PublicLanguageSwitcher.tsx`
   - audit confirmed there were no remaining CRM imports of `PublicLanguageSwitcher`.
+- Removed one confirmed dead mirrored locale namespace from CRM:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/i18n.ts` no longer loads `booking` namespace,
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/locales/{ar,de,en,es,fr,hi,kk,pt,ru}/booking.json`,
+  - audit found no active CRM `useTranslation(... 'booking' ...)` consumers; CRM uses `admin/bookings`, not the mirrored public `booking` namespace.
+- Removed another confirmed dead duplicate UI pack:
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/ui/chart.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/ui/sidebar.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/ui/use-mobile.ts`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/ui/chart.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/ui/sidebar.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/components/ui/use-mobile.ts`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/ui/chart.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/ui/sidebar.tsx`
+  - deleted `/Users/tahir/Desktop/beauty-crm/site/frontend/src/public_landing/components/ui/use-mobile.ts`
+  - regex import audit found no remaining imports or symbol references for `chart/sidebar/use-mobile` outside those files themselves.
+- Removed an additional mirrored dead UI batch after import-path audit:
+  - deleted these orphaned exact duplicates from both `crm/frontend/src/components/ui` and `site/frontend/src/components/ui`:
+    - `alert.tsx`
+    - `aspect-ratio.tsx`
+    - `breadcrumb.tsx`
+    - `carousel.tsx`
+    - `collapsible.tsx`
+    - `context-menu.tsx`
+    - `drawer.tsx`
+    - `form.tsx`
+    - `hover-card.tsx`
+    - `input-otp.tsx`
+    - `menubar.tsx`
+    - `navigation-menu.tsx`
+    - `pagination.tsx`
+    - `phone-input.tsx`
+    - `radio-group.tsx`
+    - `resizable.tsx`
+    - `sheet.tsx`
+    - `skeleton.tsx`
+    - `toggle-group.tsx`
+    - `tooltip.tsx`
+  - these files had no remaining `import` / `from` references in either frontend after the split.
 - Validation:
   - `find` now returns only one credentials file: `/Users/tahir/Desktop/beauty-crm/staff_credentials.txt`
   - `python3 -m py_compile` passed for all updated backend files.
   - `npm --prefix crm/frontend run type-check` passed after removing the dead CRM component copy.
+  - `npm --prefix crm/frontend run build` passed after removing dead `booking` locale files; `locales-data` raw chunk dropped from about `3434.05 kB` to `3375.59 kB`.
+  - `npm --prefix site/frontend run build` passed after removing dead UI files; site CSS dropped from about `176.92 kB` / `154.16 kB` to `162.68 kB` / `142.37 kB` for the two main CSS assets.
+  - `npm --prefix crm/frontend run build` still passed after dead UI cleanup; main CSS dropped from about `237.40 kB` to `211.25 kB`.
+  - remaining orphan `components/ui` files after this pass:
+    - CRM: `calendar.tsx`, `separator.tsx`, `toggle.tsx`
+    - Site: `alert-dialog.tsx`, `checkbox.tsx`, `dropdown-menu.tsx`, `scroll-area.tsx`, `select.tsx`, `slider.tsx`
 - IMPORTANT TO REMEMBER:
   - Staff credentials now have exactly one valid source: `/Users/tahir/Desktop/beauty-crm/staff_credentials.txt`
   - Never recreate `crm/backend/staff_credentials.txt` or `site/backend/staff_credentials.txt`
@@ -117,10 +280,10 @@
 - Removed false duplicate files that contained outdated legacy accounts like `tahir`, `gulya`, `lyazzat`, `simo`, `tursunai` and passwords such as `admin123`, `defaultPassword123`, `jenn123 (likely)`:
   - deleted `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/maintenance/staff_credentials.txt`
   - deleted `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/staff_credentials.txt`
-- Reworked manual reset scripts to use only the canonical backend credentials file instead of hardcoded stale usernames/passwords:
+- Reworked manual reset scripts to use only the canonical repo-root credentials file instead of hardcoded stale usernames/passwords:
   - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/maintenance/manual/reset_all_passwords.py`
   - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/manual/reset_all_passwords.py`
-  - these scripts now read `/backend/staff_credentials.txt`, sync `username/full_name/role/password_hash`, and refresh the same canonical file instead of writing a second conflicting copy under `scripts/maintenance/`.
+  - these scripts now read `/Users/tahir/Desktop/beauty-crm/staff_credentials.txt`, sync `username/full_name/role/password_hash`, and refresh the same canonical file instead of writing a second conflicting copy under `scripts/maintenance/`.
 - Reworked force-sync helpers to use the same canonical credentials source:
   - `/Users/tahir/Desktop/beauty-crm/site/backend/force_sync_pwd.py`
   - `/Users/tahir/Desktop/beauty-crm/crm/backend/force_sync_pwd.py`
@@ -130,13 +293,12 @@
   - old `admin/admin123` wording was replaced with generic `admin/director`.
 - Validation:
   - `python3 -m py_compile` passed for updated reset/sync/testing files.
-  - canonical credentials parsing smoke returned current active usernames/passwords from `/Users/tahir/Desktop/beauty-crm/site/backend/staff_credentials.txt`.
-  - `find` now returns only canonical files:
-    - `/Users/tahir/Desktop/beauty-crm/site/backend/staff_credentials.txt`
-    - `/Users/tahir/Desktop/beauty-crm/crm/backend/staff_credentials.txt`
+  - canonical credentials parsing smoke returned current active usernames/passwords from `/Users/tahir/Desktop/beauty-crm/staff_credentials.txt`.
+  - `find` now returns only one canonical file:
+    - `/Users/tahir/Desktop/beauty-crm/staff_credentials.txt`
 - IMPORTANT TO REMEMBER:
-  - For staff access, the only valid credentials files are the backend-root files. Never recreate `scripts/maintenance/staff_credentials.txt`.
-  - Manual password reset utilities must read the canonical backend-root credentials file instead of shipping their own hardcoded user/password list.
+  - For staff access, the only valid credentials file is `/Users/tahir/Desktop/beauty-crm/staff_credentials.txt`. Never recreate backend-root or `scripts/maintenance/` copies.
+  - Manual password reset utilities must read the canonical repo-root credentials file instead of shipping their own hardcoded user/password list.
 
 ## [2026-03-08] Public Team/Reviews Cleanup: Canonical Names + Position Normalization + Dead Duplicate Removal
 - Fixed public landing data flow so frontend no longer re-translates already localized API payload for employee cards and reviews:

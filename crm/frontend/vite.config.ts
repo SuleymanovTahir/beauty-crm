@@ -121,6 +121,11 @@ export default defineConfig(({ mode }) => {
       "@crm": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: [
+      "@radix-ui/react-select",
+    ],
+  },
   server: {
     fs: {
       allow: [path.resolve(__dirname, "..")],
@@ -163,6 +168,10 @@ export default defineConfig(({ mode }) => {
         },
       },
       "/uploads": {
+        target: BACKEND_URL,
+        changeOrigin: true,
+      },
+      "/landing-images": {
         target: BACKEND_URL,
         changeOrigin: true,
       },

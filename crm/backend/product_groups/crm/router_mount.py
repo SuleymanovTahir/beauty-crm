@@ -12,7 +12,6 @@ from crm_api.contracts import router as contracts_router
 from crm_api.telephony import router as telephony_router
 from crm_api.recordings import router as recordings_router
 from crm_api.holidays import router as holidays_router
-from crm_api.visitor_analytics import router as visitor_analytics_router
 from crm_api.automation import router as automation_router
 from crm_api.reports import router as reports_router
 from crm_api.audit import router as audit_router
@@ -70,7 +69,6 @@ def mount_crm_routers(app: FastAPI) -> None:
     app.include_router(automation_router, prefix="/api")
     app.include_router(reports_router, prefix="/api")
     app.include_router(holidays_router, prefix="/api/holidays")
-    app.include_router(visitor_analytics_router, prefix="/api")
     app.include_router(audit_router, prefix="/api")
     app.include_router(db_explorer_router)
     app.include_router(push_tokens_router)
