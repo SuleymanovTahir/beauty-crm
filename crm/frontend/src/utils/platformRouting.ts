@@ -59,6 +59,7 @@ export const normalizePlatformGates = (rawValue: unknown): PlatformGates => {
 const getRoleHomePath = (role?: string): string => {
   const normalizedRole = normalizeRole(role);
 
+  if (normalizedRole === 'super_admin') return '/crm/platform';
   if (normalizedRole === 'director') return '/crm/dashboard';
   if (normalizedRole === 'admin') return '/crm/dashboard';
   if (normalizedRole === 'accountant') return '/crm/dashboard';

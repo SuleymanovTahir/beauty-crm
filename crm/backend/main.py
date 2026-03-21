@@ -33,7 +33,7 @@ from db.connection import init_connection_pool, get_db_connection
 from scripts.maintenance.recreate_database import drop_database, recreate_database  # Uncomment only for manual DB reset
 from db.settings import get_salon_settings
 from utils.utils import ensure_upload_directories
-from middleware import TimingMiddleware
+from middleware import TenantContextMiddleware, TimingMiddleware
 from middleware.user_activity import UserActivityMiddleware
 
 # Архитектура роутеров (Единый источник истины - SSOT)
@@ -445,6 +445,7 @@ def _register_middlewares(app: FastAPI):
     )
     app.add_middleware(GZipMiddleware, minimum_size=1000)
     app.add_middleware(TimingMiddleware)
+    app.add_middleware(TenantContextMiddleware)
     app.add_middleware(UserActivityMiddleware)
     app.middleware("http")(feature_gate_middleware)
 

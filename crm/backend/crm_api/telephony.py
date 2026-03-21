@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks, UploadFile, File, Query
 from typing import List, Optional, Dict, Any, Set
 from pydantic import BaseModel
+from db.companies import get_current_company, update_company
 from db.connection import get_db_connection
 from utils.utils import get_current_user
 from datetime import datetime, timedelta
@@ -112,9 +113,9 @@ def _normalize_custom_settings(raw_value: Any) -> Dict[str, Any]:
 
 
 def _get_saved_telephony_settings(cursor) -> Dict[str, Any]:
-    cursor.execute("SELECT custom_settings FROM salon_settings WHERE id = 1")
-    row = cursor.fetchone()
-    custom_settings = _normalize_custom_settings(row[0] if row else {})
+    del cursor
+    company = get_current_company()
+    custom_settings = _normalize_custom_settings(company.get("custom_settings") if company else {})
     saved_settings = custom_settings.get("telephony_settings", {})
     if isinstance(saved_settings, dict):
         return saved_settings
@@ -122,15 +123,13 @@ def _get_saved_telephony_settings(cursor) -> Dict[str, Any]:
 
 
 def _save_telephony_settings(cursor, settings_payload: Dict[str, Any]) -> None:
-    cursor.execute("SELECT custom_settings FROM salon_settings WHERE id = 1")
-    row = cursor.fetchone()
-    salon_custom_settings = _normalize_custom_settings(row[0] if row else {})
-    salon_custom_settings["telephony_settings"] = settings_payload
-    cursor.execute("""
-        UPDATE salon_settings
-        SET custom_settings = %s, updated_at = CURRENT_TIMESTAMP
-        WHERE id = 1
-    """, (salon_custom_settings,))
+    del cursor
+    company = get_current_company()
+    if not company:
+        raise RuntimeError("Current company not found")
+    custom_settings = _normalize_custom_settings(company.get("custom_settings"))
+    custom_settings["telephony_settings"] = settings_payload
+    update_company(int(company["id"]), {"custom_settings": custom_settings})
 
 
 def _parse_weekdays(weekdays_raw: Optional[str]) -> Optional[Set[int]]:

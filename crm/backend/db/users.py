@@ -21,8 +21,8 @@ def get_all_users():
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("""SELECT id, username, password_hash, full_name, email, role, 
-                 created_at, last_login, is_active, is_service_provider 
+    c.execute("""SELECT id, username, password_hash, full_name, email, role,
+                 created_at, last_login, is_active, is_service_provider, company_id
                  FROM users 
                  WHERE deleted_at IS NULL
                  ORDER BY id""")
@@ -48,7 +48,8 @@ def get_all_service_providers():
 
 
 def create_user(username: str, password: str, full_name: str = None,
-                email: str = None, role: str = 'employee', phone: str = None):
+                email: str = None, role: str = 'employee', phone: str = None,
+                company_id: int | None = None):
     """Создать нового пользователя"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -59,9 +60,9 @@ def create_user(username: str, password: str, full_name: str = None,
     
     try:
         c.execute("""INSERT INTO users 
-                     (username, password_hash, full_name, email, role, created_at, phone)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id""",
-                  (username, password_hash, full_name, email, role, now, phone))
+                     (username, password_hash, full_name, email, role, created_at, phone, company_id)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
+                  (username, password_hash, full_name, email, role, now, phone, company_id))
         conn.commit()
         user_id = c.fetchone()[0]
         conn.close()
@@ -84,9 +85,15 @@ def verify_user(username: str, password: str) -> Optional[Dict]:
     c = conn.cursor()
 
     # Сначала проверяем существует ли пользователь вообще (case-insensitive)
-    c.execute("""SELECT id, username, full_name, email, role, employee_id, phone, password_hash, is_active, secondary_role
-                 FROM users
-                 WHERE LOWER(username) = LOWER(%s)""",
+    c.execute("""SELECT
+                    u.id, u.username, u.full_name, u.email, u.role, u.employee_id, u.phone,
+                    u.password_hash, u.is_active, u.secondary_role, u.company_id,
+                    COALESCE(c.name, ''), COALESCE(c.status, 'active')
+                 FROM users u
+                 LEFT JOIN companies c ON c.id = u.company_id
+                 WHERE LOWER(u.username) = LOWER(%s)
+                   AND u.deleted_at IS NULL
+                 LIMIT 1""",
               (username,))
 
     user_row = c.fetchone()
@@ -101,6 +108,11 @@ def verify_user(username: str, password: str) -> Optional[Dict]:
         log_warning(f"[AUTH] User '{username}' exists but is_active=FALSE (pending approval)", "auth")
         # Возвращаем специальный объект чтобы показать правильное сообщение
         return {"status": "inactive", "role": user_row[4]}
+
+    company_status = user_row[12]
+    if user_row[4] != "super_admin" and company_status not in {"active", "trial"}:
+        log_warning(f"[AUTH] User '{username}' company is not active (status={company_status})", "auth")
+        return {"status": "company_inactive", "role": user_row[4]}
 
     stored_hash = user_row[7]
     is_valid = False
@@ -134,7 +146,10 @@ def verify_user(username: str, password: str) -> Optional[Dict]:
             "role": user_row[4],
             "employee_id": user_row[5],
             "phone": user_row[6],
-            "secondary_role": user_row[9]
+            "secondary_role": user_row[9],
+            "company_id": user_row[10],
+            "company_name": user_row[11],
+            "is_super_admin": user_row[4] == "super_admin",
         }
     return None
 
@@ -162,9 +177,9 @@ def get_user_by_email(email: str):
     conn = get_db_connection()
     c = conn.cursor()
     
-    c.execute("""SELECT id, username, full_name, email, phone 
+    c.execute("""SELECT id, username, full_name, email, phone, company_id
                  FROM users 
-                 WHERE email = %s AND is_active = TRUE""", (email,))
+                 WHERE email = %s AND is_active = TRUE AND deleted_at IS NULL""", (email,))
     
     user = c.fetchone()
     conn.close()
@@ -175,13 +190,14 @@ def get_user_by_email(email: str):
             "username": user[1],
             "full_name": user[2],
             "email": user[3],
-            "phone": user[4]
+            "phone": user[4],
+            "company_id": user[5],
         }
     return None
 
 # ===== СЕССИИ =====
 
-def create_session(user_id: int) -> str:
+def create_session(user_id: int, company_id: int | None = None) -> str:
     """Создать сессию для пользователя"""
     conn = get_db_connection()
     c = conn.cursor()
@@ -191,9 +207,15 @@ def create_session(user_id: int) -> str:
     expires = (now + timedelta(days=7)).isoformat()
     
     try:
-        c.execute("""INSERT INTO sessions (user_id, session_token, created_at, expires_at)
-                     VALUES (%s, %s, %s, %s)""",
-                  (user_id, session_token, now.isoformat(), expires))
+        resolved_company_id = company_id
+        if resolved_company_id is None:
+            c.execute("SELECT company_id FROM users WHERE id = %s", (user_id,))
+            row = c.fetchone()
+            resolved_company_id = row[0] if row else None
+
+        c.execute("""INSERT INTO sessions (user_id, company_id, session_token, created_at, expires_at)
+                     VALUES (%s, %s, %s, %s, %s)""",
+                  (user_id, resolved_company_id, session_token, now.isoformat(), expires))
         
         # Обновить last_login
         c.execute("UPDATE users SET last_login = %s WHERE id = %s",
@@ -232,9 +254,12 @@ def get_user_by_session(session_token: str) -> Optional[Dict]:
         now = datetime.now().isoformat()
         
         # Query with proper index usage (idx_sessions_token_expires covers this)
-        c.execute("""SELECT u.id, u.username, u.full_name, u.email, u.role, u.employee_id, u.phone, u.secondary_role
+        c.execute("""SELECT
+                        u.id, u.username, u.full_name, u.email, u.role, u.employee_id, u.phone, u.secondary_role,
+                        COALESCE(s.company_id, u.company_id), COALESCE(c.name, ''), COALESCE(c.status, 'active')
                      FROM users u
                      INNER JOIN sessions s ON u.id = s.user_id
+                     LEFT JOIN companies c ON c.id = COALESCE(s.company_id, u.company_id)
                      WHERE s.session_token = %s 
                      AND s.expires_at > %s 
                      AND u.is_active = TRUE
@@ -244,6 +269,9 @@ def get_user_by_session(session_token: str) -> Optional[Dict]:
         user = c.fetchone()
         
         if user:
+            company_status = user[10]
+            if user[4] != "super_admin" and company_status not in {"active", "trial"}:
+                return None
             user_dict = {
                 "id": user[0],
                 "username": user[1],
@@ -252,7 +280,10 @@ def get_user_by_session(session_token: str) -> Optional[Dict]:
                 "role": user[4],
                 "employee_id": user[5],
                 "phone": user[6],
-                "secondary_role": user[7]
+                "secondary_role": user[7],
+                "company_id": user[8],
+                "company_name": user[9],
+                "is_super_admin": user[4] == "super_admin",
             }
             
             # Cache in Redis (if available)

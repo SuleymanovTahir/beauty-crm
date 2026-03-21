@@ -1,3 +1,97 @@
+## [2026-03-22] Separated Product Brand From Tenant Business Settings
+- Clarified the runtime model for generalized CRM:
+  - `ST CRM` is the product/app name fallback,
+  - tenant business data must come only from `salon_settings`.
+- Updated `/Users/tahir/Desktop/beauty-crm/crm/backend/core/config.py`:
+  - added `APP_NAME` as the centralized product-brand constant with `ST CRM` fallback.
+- Updated user-facing backend fallbacks to use tenant `salon_settings.name` first and `APP_NAME` second:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/settings.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/email.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/email_service.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/notifications/critical_actions.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scheduler/birthday_checker.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/integrations/telegram_bot.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/internal_chat.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/export.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/bot/prompts.py`
+- Updated `/Users/tahir/Desktop/beauty-crm/crm/backend/db/init.py` and `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/currency.py`:
+  - `salon_settings.currency` no longer has a schema default,
+  - existing databases now drop the `salon_settings.currency` column default during schema init,
+  - runtime currency fallback is now empty until the tenant explicitly configures it.
+- Validation on a recreated PostgreSQL database:
+  - after `drop_database()` + `recreate_database()` + `run_all_migrations.py`, `salon_settings.name`, `currency`, `hours_weekdays`, `hours_weekends`, `bot_name` remain `NULL`/empty in the database,
+  - `salon_settings.currency` column default is `NULL`,
+  - `get_bot_settings().greeting_message` still uses `ST CRM` as the product fallback at runtime,
+  - after `fix_data.py`, only system `notification_templates` are added; tenant business fields remain empty.
+- IMPORTANT TO REMEMBER:
+  - never write `ST CRM` into tenant business columns as fake company data,
+  - use `ST CRM` only as product-level fallback text when UI/email/bot content needs a name before the tenant fills settings,
+  - `name`, `currency`, `hours`, phone, email, and similar business fields must stay empty until explicitly configured by the tenant.
+
+## [2026-03-22] Removed Fake Salon Autofill From Generalized CRM Bootstrap
+- Reverted the same-day bootstrap fallback that auto-filled nonexistent salon profile data in clean CRM databases.
+- Updated `/Users/tahir/Desktop/beauty-crm/crm/backend/db/init.py`:
+  - `salon_settings` bootstrap now creates only the technical CRM row (`id=1`, `product_mode='crm'`, feature flags/custom settings),
+  - no longer auto-writes fake `name`,
+  - no longer auto-writes fake `bot_name`,
+  - no longer auto-writes `hours_weekdays` / `hours_weekends`.
+- Updated `/Users/tahir/Desktop/beauty-crm/crm/backend/db/settings.py`:
+  - `get_salon_settings()` now returns empty values for unset business fields instead of inventing salon data,
+  - minimal fallback config is neutral and does not fabricate a salon profile.
+- Updated schedule/runtime behavior so empty CRM data stays empty:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/schedule.py` no longer auto-creates a fake 5/2 `user_schedule`,
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/schedule.py` and `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/settings.py` now return empty working-hours payloads when nothing is configured,
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/services/master_schedule.py` no longer treats salon default hours as an implicit working day.
+- Updated tests to stop depending on salon business settings:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/tests/config.py` now uses test-only schedule slots when CRM settings are empty.
+- Neutralized remaining text fallbacks from salon-specific branding to generic CRM labels in:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/email.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/email_service.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/notifications/critical_actions.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scheduler/birthday_checker.py`
+- Validation on a fully recreated PostgreSQL database:
+  - `venv/bin/python -m py_compile` for changed backend files
+  - `venv/bin/python -c "from scripts.maintenance.recreate_database import clean_static_uploads, drop_database, recreate_database; clean_static_uploads(); drop_database(); recreate_database()"`
+  - `venv/bin/python db/migrations/run_all_migrations.py`
+  - `venv/bin/python scripts/maintenance/fix_data.py`
+  - `venv/bin/python tests/runners/run_all_tests.py`
+  - `venv/bin/python tests/runners/run_all_test2.py`
+  - `venv/bin/python tests/runners/run_all_test3.py`
+- IMPORTANT TO REMEMBER:
+  - generalized CRM bootstrap must not fabricate salon profile data just to make empty systems look configured,
+  - empty `salon_settings` fields are valid until the user explicitly fills them.
+
+## [2026-03-22] `run_local.sh` Now Strictly CRM-Only
+- Cleaned `/Users/tahir/Desktop/beauty-crm/scripts/run_local.sh` so it no longer accepts legacy `all` and `site` modes.
+- The script now starts only the current live contour:
+  - `crm/backend`
+  - `crm/frontend`
+- Validation:
+  - `bash -n /Users/tahir/Desktop/beauty-crm/scripts/run_local.sh`
+  - `bash /Users/tahir/Desktop/beauty-crm/scripts/run_local.sh --help`
+- IMPORTANT TO REMEMBER:
+  - if `site/` is absent in the repository, `run_local.sh` must not silently emulate removed modes,
+  - unsupported modes should fail fast instead of auto-switching.
+
+## [2026-03-22] Deployment Guide Converted To CRM-Only
+- Updated `/Users/tahir/Desktop/beauty-crm/doc/# 🚀 Полная инструкция деплоя Beauty CRM.ini` to match the current repository layout after `site/` removal.
+- Removed stale deploy/run sections for:
+  - `site/backend`
+  - `site/frontend`
+  - `beauty-crm-site`
+  - `scripts/run_local.sh all`
+  - `scripts/run_local.sh site`
+- Kept only current CRM paths and commands:
+  - `/home/ubuntu/beauty_crm/crm/backend`
+  - `/home/ubuntu/beauty_crm/crm/frontend`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend`
+  - `bash /Users/tahir/Desktop/beauty-crm/scripts/run_local.sh`
+  - `bash /Users/tahir/Desktop/beauty-crm/scripts/run_local.sh crm`
+- IMPORTANT TO REMEMBER:
+  - deploy docs for this repo must stay CRM-only unless `site/` is physically restored in the repository,
+  - `run_local.sh` currently supports only the CRM contour; `all` and `site` must not be documented as active modes.
+
 ## [2026-03-22] Fresh CRM Bootstrap: Default Working Hours + Test Runner Alignment
 - Fixed `/Users/tahir/Desktop/beauty-crm/crm/backend/db/init.py` so clean `salon_settings` bootstrap always fills:
   - `hours_weekdays`

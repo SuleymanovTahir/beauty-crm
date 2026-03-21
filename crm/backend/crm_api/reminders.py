@@ -5,8 +5,10 @@ from fastapi import APIRouter, Query, Cookie, HTTPException, Request
 from fastapi.responses import JSONResponse
 from typing import Optional, List
 from datetime import datetime, timedelta
+import json
 
 from core.config import DATABASE_NAME
+from db.companies import get_current_company, update_company
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
@@ -331,36 +333,41 @@ async def get_upcoming_reminders(
 # ============================================================================
 
 def get_reminder_settings_from_salon():
-    """Получить настройки напоминаний из salon_settings"""
-    conn = get_db_connection()
-    c = conn.cursor()
-    try:
-        c.execute("SELECT custom_settings FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        if row and row[0]:
-            return row[0].get('booking_reminders', [])
+    """Получить настройки напоминаний текущей компании."""
+    company = get_current_company()
+    if not company:
         return []
-    finally:
-        conn.close()
+
+    custom_settings = company.get("custom_settings") or {}
+    if isinstance(custom_settings, str):
+        try:
+            custom_settings = json.loads(custom_settings)
+        except Exception:
+            custom_settings = {}
+
+    if isinstance(custom_settings, dict):
+        reminder_settings = custom_settings.get("booking_reminders", [])
+        return reminder_settings if isinstance(reminder_settings, list) else []
+    return []
 
 def save_reminder_settings_to_salon(settings):
-    """Сохранить настройки напоминаний в salon_settings"""
-    conn = get_db_connection()
-    c = conn.cursor()
-    try:
-        c.execute("SELECT custom_settings FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        custom_settings = row[0] if row and row[0] else {}
-        custom_settings['booking_reminders'] = settings
-        
-        c.execute("""
-            UPDATE salon_settings 
-            SET custom_settings = %s, updated_at = CURRENT_TIMESTAMP 
-            WHERE id = 1
-        """, (custom_settings,))
-        conn.commit()
-    finally:
-        conn.close()
+    """Сохранить настройки напоминаний в custom_settings текущей компании."""
+    company = get_current_company()
+    if not company:
+        raise RuntimeError("Current company not found")
+
+    custom_settings = company.get("custom_settings") or {}
+    if isinstance(custom_settings, str):
+        try:
+            custom_settings = json.loads(custom_settings)
+        except Exception:
+            custom_settings = {}
+
+    if not isinstance(custom_settings, dict):
+        custom_settings = {}
+
+    custom_settings["booking_reminders"] = settings
+    update_company(int(company["id"]), {"custom_settings": custom_settings})
 
 @router.get("/booking-reminder-settings")
 async def get_booking_reminder_settings(

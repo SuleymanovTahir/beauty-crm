@@ -18,6 +18,7 @@ const UniversalTasks = React.lazy(() => import('@crm/pages/shared/Tasks'));
 const Chat = React.lazy(() => import('@crm/pages/shared/Chat'));
 const UniversalProfile = React.lazy(() => import('@crm/pages/shared/Profile'));
 const Telephony = React.lazy(() => import('@crm/pages/shared/Telephony'));
+const PlatformAdmin = React.lazy(() => import('@crm/pages/shared/PlatformAdmin'));
 
 const InternalChat = React.lazy(() => import('@crm/components/shared/InternalChat'));
 const NotificationsPage = React.lazy(() => import('@crm/pages/common/Notifications'));
@@ -46,6 +47,9 @@ const getCrmHomePath = (role?: string): string => {
 
   if (normalizedRole === 'director') {
     return '/crm/dashboard';
+  }
+  if (normalizedRole === 'super_admin') {
+    return '/crm/platform';
   }
   if (normalizedRole === 'admin') {
     return '/crm/dashboard';
@@ -81,6 +85,10 @@ const hasRequiredRole = (
   const normalizedRequiredRole = normalizeRole(requiredRole);
   const normalizedCurrentRole = normalizeRole(currentRole);
   const normalizedSecondaryRole = normalizeRole(secondaryRole);
+
+  if (normalizedCurrentRole === 'super_admin' || normalizedSecondaryRole === 'super_admin') {
+    return true;
+  }
 
   if (normalizedRequiredRole === 'admin') {
     return ['admin', 'director', 'accountant'].includes(normalizedCurrentRole)
@@ -207,7 +215,8 @@ export default function App() {
                   />
                 }
               >
-                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="dashboard" element={currentUser?.role === 'super_admin' ? <Navigate to="../platform" replace /> : <Dashboard />} />
+                <Route path="platform" element={<PlatformAdmin />} />
                 <Route path="bookings" element={<Bookings />} />
                 <Route path="chat" element={<Chat />} />
                 <Route path="team" element={<Team />} />
@@ -242,7 +251,7 @@ export default function App() {
                 <Route path="audit-log" element={<Navigate to="../dashboard" replace />} />
                                                                 <Route path="team/:id/:tab?" element={<Team />} />
                 <Route path="bookings/:id" element={<Navigate to="../bookings" replace />} />
-                <Route path="" element={<Navigate to="dashboard" replace />} />
+                <Route path="" element={<Navigate to={currentUser?.role === 'super_admin' ? 'platform' : 'dashboard'} replace />} />
               </Route>
 
               <Route

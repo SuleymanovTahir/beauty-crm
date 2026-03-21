@@ -10,11 +10,11 @@ import psycopg2
 from psycopg2 import errors as pg_errors
 
 from db.connection import get_db_connection
+from db.companies import get_current_company, update_company
 from utils.logger import log_error, log_warning, log_info
 
 from core.config import (
-    DEFAULT_HOURS_WEEKDAYS,
-    DEFAULT_HOURS_WEEKENDS,
+    APP_NAME,
     DEFAULT_REPORT_TIME,
     ROLES
 )
@@ -429,94 +429,92 @@ def _product_mode_to_flags(product_mode: str):
 # ===== НАСТРОЙКИ САЛОНА =====
 
 def get_salon_settings() -> dict:
-    """Получить настройки салона из БД (Архитектура v2.0)"""
-    from utils.currency import get_salon_currency
-    conn = get_db_connection()
-    c = conn.cursor()
-
+    """Получить настройки текущей компании из БД (tenant-aware SSOT)."""
     try:
-        c.execute("SELECT * FROM salon_settings WHERE id = 1")
-        result = c.fetchone()
-
-        if result:
-            columns = [description[0] for description in c.description]
-            row = dict(zip(columns, result))
-            
-            # Extract custom_settings
-            custom = row.get("custom_settings") or {}
-            if isinstance(custom, str):
-                try:
-                    custom = json.loads(custom)
-                except:
-                    custom = {}
-
-            normalized_business_type = _normalize_business_type(row.get("business_type"))
-            business_profile_config = get_effective_business_profile_config(normalized_business_type, custom)
-            hours_weekdays = row.get("hours_weekdays") or DEFAULT_HOURS_WEEKDAYS
-            hours_weekends = row.get("hours_weekends") or DEFAULT_HOURS_WEEKENDS
-
-            return {
-                "id": row.get("id", 1),
-                "name": row.get("name"),
-                "address": row.get("address", ""),
-                "google_maps": row.get("google_maps", ""),
-                "hours_weekdays": hours_weekdays,
-                "hours_weekends": hours_weekends,
-                "lunch_start": row.get("lunch_start"),
-                "lunch_end": row.get("lunch_end"),
-                "phone": row.get("phone", ""),
-                "email": row.get("email"),
-                "instagram": row.get("instagram") or os.getenv('SALON_INSTAGRAM', ''),
-                "whatsapp": row.get("whatsapp"),
-                "booking_url": row.get("booking_url", ""),
-                "timezone": row.get("timezone", "UTC"),
-                "timezone_offset": row.get("timezone_offset", 0),
-                "currency": row.get("currency") or get_salon_currency(),
-                "business_type": normalized_business_type,
-                "crm_enabled": True,
-                "city": row.get("city", ""),
-                "country": row.get("country", ""),
-                "latitude": row.get("latitude"),
-                "longitude": row.get("longitude"),
-                "logo_url": row.get("logo_url", ""),
-                "base_url": row.get("base_url") or os.getenv("BASE_URL", ""),
-                "bot_name": row.get("bot_name"),
-                # Display settings from custom_settings
-                "gallery_display_count": custom.get("gallery_display_count", 6),
-                "portfolio_display_count": custom.get("portfolio_display_count", 6),
-                "services_display_count": custom.get("services_display_count", 6),
-                "faces_display_count": custom.get("faces_display_count", 6),
-                "business_profile_config": business_profile_config,
-                "updated_at": row.get("updated_at")
-            }
-        else:
+        row = get_current_company()
+        if not row:
             log_warning("⚠️ Настройки салона пусты, используются дефолты", "database")
             return _get_default_salon_settings()
+
+        custom = row.get("custom_settings") or {}
+        if isinstance(custom, str):
+            try:
+                custom = json.loads(custom)
+            except Exception:
+                custom = {}
+
+        normalized_business_type = _normalize_business_type(row.get("business_type"))
+        business_profile_config = get_effective_business_profile_config(normalized_business_type, custom)
+        return {
+            "id": row.get("id", 1),
+            "company_id": row.get("id", 1),
+            "access_code": row.get("access_code") or "",
+            "slug": row.get("slug") or "",
+            "status": row.get("status") or "active",
+            "name": row.get("name") or "",
+            "address": row.get("address", ""),
+            "google_maps": row.get("google_maps", ""),
+            "hours_weekdays": row.get("hours_weekdays") or "",
+            "hours_weekends": row.get("hours_weekends") or "",
+            "lunch_start": row.get("lunch_start"),
+            "lunch_end": row.get("lunch_end"),
+            "phone": row.get("phone", ""),
+            "email": row.get("email") or "",
+            "instagram": row.get("instagram") or "",
+            "whatsapp": row.get("whatsapp"),
+            "booking_url": row.get("booking_url", ""),
+            "timezone": row.get("timezone", "UTC"),
+            "timezone_offset": row.get("timezone_offset", 0),
+            "currency": row.get("currency") or "",
+            "business_type": normalized_business_type,
+            "product_mode": row.get("product_mode") or "crm",
+            "crm_enabled": bool(row.get("crm_enabled", True)),
+            "site_enabled": bool(row.get("site_enabled", False)),
+            "city": row.get("city", ""),
+            "country": row.get("country", ""),
+            "latitude": row.get("latitude"),
+            "longitude": row.get("longitude"),
+            "logo_url": row.get("logo_url", ""),
+            "base_url": row.get("base_url") or "",
+            "bot_name": row.get("bot_name") or "",
+            "employee_limit": row.get("employee_limit"),
+            "gallery_display_count": custom.get("gallery_display_count", 6),
+            "portfolio_display_count": custom.get("portfolio_display_count", 6),
+            "services_display_count": custom.get("services_display_count", 6),
+            "faces_display_count": custom.get("faces_display_count", 6),
+            "business_profile_config": business_profile_config,
+            "updated_at": row.get("updated_at"),
+        }
 
     except Exception as e:
         log_error(f"❌ Ошибка в get_salon_settings: {e}", "database")
         return _get_default_salon_settings()
-    finally:
-        conn.close()
 
 def _get_default_salon_settings() -> dict:
-    """Дефолтные настройки салона"""
-    from utils.currency import get_salon_currency
+    """Минимальные настройки generalized CRM без фиктивных бизнес-данных"""
     default_business_type = "other"
     return {
         "id": 1,
-        "name": os.getenv('SALON_NAME', 'ST CRM'),
-        "hours_weekdays": DEFAULT_HOURS_WEEKDAYS,
-        "hours_weekends": DEFAULT_HOURS_WEEKENDS,
+        "name": "",
+        "address": "",
+        "google_maps": "",
+        "hours_weekdays": "",
+        "hours_weekends": "",
         "lunch_start": "",
         "lunch_end": "",
-        "phone": os.getenv('SALON_PHONE', ''),
-        "email": os.getenv('SALON_EMAIL', ''),
-        "instagram": os.getenv('SALON_INSTAGRAM', ''),
-        "bot_name": os.getenv('BOT_NAME', 'ST CRM Assistant'),
+        "phone": "",
+        "email": "",
+        "instagram": "",
+        "whatsapp": "",
+        "booking_url": "",
+        "city": "",
+        "country": "",
+        "logo_url": "",
+        "base_url": "",
+        "bot_name": "",
         "timezone": "UTC",
         "timezone_offset": 0,
-        "currency": get_salon_currency(),
+        "currency": "",
         "business_type": default_business_type,
         "crm_enabled": True,
         "gallery_display_count": 6,
@@ -527,20 +525,19 @@ def _get_default_salon_settings() -> dict:
     }
 
 def update_salon_settings(data: dict) -> bool:
-    """Обновить настройки салона (Архитектура v2.0 - SSOT)"""
-    conn = get_db_connection()
-    c = conn.cursor()
-
+    """Обновить настройки текущей компании (tenant-aware SSOT)."""
     try:
-        # 1. Fetch current for merging custom_settings and business profile
-        c.execute("SELECT custom_settings, business_type FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        custom = row[0] if row and row[0] else {}
-        current_business_type = _normalize_business_type(row[1] if row and len(row) > 1 else "other")
+        current_company = get_current_company()
+        if not current_company:
+            log_warning("⚠️ Нет текущей компании для обновления настроек", "database")
+            return False
+
+        custom = current_company.get("custom_settings") or {}
+        current_business_type = _normalize_business_type(current_company.get("business_type"))
         if isinstance(custom, str):
             try:
                 custom = json.loads(custom)
-            except:
+            except Exception:
                 custom = {}
 
         # 2. Map fields
@@ -557,24 +554,20 @@ def update_salon_settings(data: dict) -> bool:
             'services_display_count', 'faces_display_count'
         ]
 
-        set_parts = []
-        params = []
+        company_payload: dict[str, Any] = {}
         effective_business_type = current_business_type
 
-        # Handle direct fields
         for field in direct_fields:
             if field in data:
                 if field == 'business_type':
                     normalized_business_type = _normalize_business_type(data[field])
-                    set_parts.append(f"{field} = %s")
-                    params.append(normalized_business_type)
+                    company_payload[field] = normalized_business_type
                     effective_business_type = normalized_business_type
                     continue
 
                 if field == 'product_mode':
                     normalized_product_mode = _normalize_product_mode(data[field])
-                    set_parts.append(f"{field} = %s")
-                    params.append(normalized_product_mode)
+                    company_payload[field] = normalized_product_mode
                     continue
 
                 if field == 'crm_enabled':
@@ -582,8 +575,7 @@ def update_salon_settings(data: dict) -> bool:
                     if normalized_flag is None:
                         log_warning(f"⚠️ Невалидный булев флаг пропущен для {field}: {data[field]}", "database")
                         continue
-                    set_parts.append(f"{field} = %s")
-                    params.append(normalized_flag)
+                    company_payload[field] = normalized_flag
                     continue
 
                 if field == 'timezone_offset':
@@ -591,22 +583,18 @@ def update_salon_settings(data: dict) -> bool:
                     if normalized_offset is None:
                         raw_offset = data[field]
                         if isinstance(raw_offset, str) and len(raw_offset.strip()) == 0:
-                            set_parts.append(f"{field} = %s")
-                            params.append(None)
+                            company_payload[field] = None
                             continue
                         if raw_offset is None:
-                            set_parts.append(f"{field} = %s")
-                            params.append(None)
+                            company_payload[field] = None
                             continue
                         log_warning(f"⚠️ Невалидный timezone_offset пропущен: {raw_offset}", "database")
                         continue
 
-                    set_parts.append(f"{field} = %s")
-                    params.append(normalized_offset)
+                    company_payload[field] = normalized_offset
                     continue
 
-                set_parts.append(f"{field} = %s")
-                params.append(data[field])
+                company_payload[field] = data[field]
 
         custom_updated = False
 
@@ -628,79 +616,47 @@ def update_salon_settings(data: dict) -> bool:
             custom_updated = True
         
         if custom_updated:
-            set_parts.append("custom_settings = %s")
-            params.append(json.dumps(custom))
+            company_payload["custom_settings"] = custom
 
-        if not set_parts:
+        if not company_payload:
             return False
 
-        set_parts.append("updated_at = NOW()")
-        params.append(1) # ID = 1
-
-        query = f"UPDATE salon_settings SET {', '.join(set_parts)} WHERE id = %s"
-        c.execute(query, params)
-        conn.commit()
+        update_company(int(current_company["id"]), company_payload)
         log_info(f"✅ Настройки салона обновлены", "database")
         return True
     except Exception as e:
         log_error(f"Ошибка обновления настроек салона: {e}", "database")
-        conn.rollback()
         return False
-    finally:
-        conn.close()
 
 # ===== НАСТРОЙКИ БОТА =====
 
 def get_bot_settings() -> dict:
-    """Получить настройки бота из единой таблицы salon_settings (bot_config)"""
-    conn = get_db_connection()
-    c = conn.cursor()
-
+    """Получить настройки бота текущей компании."""
     try:
-        # Check if bot_config column exists
-        c.execute("""
-            SELECT COUNT(*) FROM information_schema.columns
-            WHERE table_name = 'salon_settings' AND column_name = 'bot_config'
-        """)
-        has_bot_config = c.fetchone()[0] > 0
+        current_company = get_current_company()
+        bot_data = current_company.get("bot_config") if current_company else None
+        if bot_data:
+            if isinstance(bot_data, str):
+                bot_data = json.loads(bot_data)
 
-        if has_bot_config:
-            c.execute("SELECT bot_config FROM salon_settings WHERE id = 1")
-            row = c.fetchone()
+            log_info("✅ Loaded bot settings from companies.bot_config", "database")
+            defaults = _get_default_bot_settings()
+            result_dict = {**defaults, **bot_data}
+            salon_settings = get_salon_settings()
+            return _replace_bot_placeholders(result_dict, salon_settings)
 
-            if row and row[0]:
-                bot_data = row[0]
-                if isinstance(bot_data, str):
-                    bot_data = json.loads(bot_data)
-
-                log_info("✅ Loaded bot settings from salon_settings.bot_config", "database")
-
-                # Дефолты для отсутствующих полей
-                defaults = _get_default_bot_settings()
-
-                # Накладываем данные из БД на дефолты
-                result_dict = {**defaults, **bot_data}
-
-                # Заменяем плейсхолдеры
-                salon_settings = get_salon_settings()
-                result_dict = _replace_bot_placeholders(result_dict, salon_settings)
-
-                return result_dict
-
-        log_warning("⚠️ Настройки бота в salon_settings пусты или колонка отсутствует, используются дефолты", "database")
+        log_warning("⚠️ Настройки бота компании пусты, используются дефолты", "database")
         return _get_default_bot_settings()
 
     except Exception as e:
         log_error(f"❌ Ошибка в get_bot_settings: {e}", "database")
         return _get_default_bot_settings()
-    finally:
-        conn.close()
 
 def _replace_bot_placeholders(bot_settings: dict, salon_settings: dict) -> dict:
     """Заменить плейсхолдеры в настройках бота на реальные значения"""
     replacements = {
-        '{SALON_NAME}': str(salon_settings.get('name') or 'Salon'),
-        '{CURRENCY}': str(salon_settings.get('currency') or 'USD'),
+        '{SALON_NAME}': str(salon_settings.get('name') or APP_NAME),
+        '{CURRENCY}': str(salon_settings.get('currency') or ''),
         '{LOCATION}': f"{salon_settings.get('city') or ''}, {salon_settings.get('address') or ''}".strip(', '),
         '{CITY}': str(salon_settings.get('city') or ''),
         '{ADDRESS}': str(salon_settings.get('address') or ''),
@@ -721,7 +677,7 @@ def _get_default_bot_settings() -> dict:
     """Дефолтные настройки бота"""
     from bot.constants import SERVICE_SYNONYMS, OBJECTION_KEYWORDS, PROMPT_HEADERS
     
-    salon_name_env = os.getenv('SALON_NAME', 'ST CRM')
+    salon_name_env = APP_NAME
     bot_name_env = os.getenv('BOT_NAME', 'Assistant')
     
     try:
@@ -736,7 +692,11 @@ def _get_default_bot_settings() -> dict:
         "id": 1,
         "bot_name": bot_name,
         "personality_traits": "Professional expert with international experience. Confident, charismatic, and knowledgeable. Not intrusive, focusing on high-quality service and attention to detail.",
-        "greeting_message": f"Greetings! Welcome to {salon_name}. How may I assist you with your request today?",
+        "greeting_message": (
+            f"Greetings! Welcome to {salon_name}. How may I assist you with your request today?"
+            if salon_name else
+            "Greetings! How may I assist you with your request today?"
+        ),
         "farewell_message": "Thank you for contacting us. We look forward to seeing you soon!",
         "price_explanation": "Our pricing reflects service scope, quality standards, and specialist expertise.",
         "price_response_template": "{SERVICE}: {PRICE} {CURRENCY}\n{DESCRIPTION}\nTo book an appointment, please choose a convenient time.",
@@ -797,51 +757,25 @@ def _get_default_bot_settings() -> dict:
     }
 
 def update_bot_settings(data: dict) -> bool:
-    """Обновить настройки бота в единой таблице salon_settings"""
-    conn = get_db_connection()
-    c = conn.cursor()
-
+    """Обновить настройки бота текущей компании."""
     try:
-        # Check if bot_config column exists
-        c.execute("""
-            SELECT COUNT(*) FROM information_schema.columns
-            WHERE table_name = 'salon_settings' AND column_name = 'bot_config'
-        """)
-        has_bot_config = c.fetchone()[0] > 0
+        current_company = get_current_company()
+        if not current_company:
+            log_warning("⚠️ Нет текущей компании для обновления bot_config", "database")
+            return False
 
-        if not has_bot_config:
-            # Add bot_config column if it doesn't exist
-            c.execute("ALTER TABLE salon_settings ADD COLUMN IF NOT EXISTS bot_config JSONB DEFAULT '{}'")
-            conn.commit()
-
-        # 1. Получаем текущий конфиг
-        c.execute("SELECT bot_config FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        current_config = row[0] if row and row[0] else {}
-
+        current_config = current_company.get("bot_config") or {}
         if isinstance(current_config, str):
             current_config = json.loads(current_config)
 
-        # 2. Сливаем данные
         updated_config = {**current_config, **data}
-
-        # 3. Сохраняем обратно
-        c.execute("""
-            UPDATE salon_settings
-            SET bot_config = %s, updated_at = CURRENT_TIMESTAMP
-            WHERE id = 1
-        """, (json.dumps(updated_config, cls=DateTimeEncoder),))
-
-        conn.commit()
-        log_info(f"✅ Настройки бота обновлены в salon_settings.bot_config", "database")
+        update_company(int(current_company["id"]), {"bot_config": updated_config})
+        log_info(f"✅ Настройки бота обновлены в companies.bot_config", "database")
         return True
 
     except Exception as e:
         log_error(f"❌ Ошибка обновления настроек бота: {e}", "database")
-        conn.rollback()
         return False
-    finally:
-        conn.close()
 
 # ===== КАСТОМНЫЕ СТАТУСЫ =====
 
@@ -1194,47 +1128,17 @@ def check_user_permission(user_id: int, permission_key: str, action: str = 'view
         conn.close()
 
 def update_bot_globally_enabled(enabled: bool):
-    """Включить/выключить бота глобально (через bot_config)"""
-    conn = get_db_connection()
-    c = conn.cursor()
-
+    """Включить/выключить бота для текущей компании."""
     try:
-        # Check if bot_config column exists
-        c.execute("""
-            SELECT COUNT(*) FROM information_schema.columns
-            WHERE table_name = 'salon_settings' AND column_name = 'bot_config'
-        """)
-        has_bot_config = c.fetchone()[0] > 0
-
-        if not has_bot_config:
-            # Add bot_config column if it doesn't exist
-            c.execute("ALTER TABLE salon_settings ADD COLUMN IF NOT EXISTS bot_config JSONB DEFAULT '{}'")
-            conn.commit()
-
-        # 1. Get current config
-        c.execute("SELECT bot_config FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        current_config = {}
-        if row and row[0]:
-            if isinstance(row[0], str):
-                current_config = json.loads(row[0])
-            else:
-                current_config = row[0]
-
-        # 2. Update field
+        current_company = get_current_company()
+        if not current_company:
+            log_warning("⚠️ Нет текущей компании для обновления bot enabled", "database")
+            return
+        current_config = current_company.get("bot_config") or {}
+        if isinstance(current_config, str):
+            current_config = json.loads(current_config)
         current_config['enabled'] = enabled
-
-        # 3. Save back
-        c.execute("""
-            UPDATE salon_settings
-            SET bot_config = %s, updated_at = CURRENT_TIMESTAMP
-            WHERE id = 1
-        """, (json.dumps(current_config, cls=DateTimeEncoder),))
-
-        conn.commit()
+        update_company(int(current_company["id"]), {"bot_config": current_config})
         log_info(f"✅ Bot globally {'enabled' if enabled else 'disabled'}", "database")
     except Exception as e:
         log_error(f"Error updating bot global status: {e}", "database")
-        conn.rollback()
-    finally:
-        conn.close()

@@ -9,6 +9,7 @@ import json
 import httpx
 
 from core.config import DATABASE_NAME
+from db.companies import get_current_company, update_company
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
@@ -20,6 +21,28 @@ FACEBOOK_GRAPH_API_BASE = "https://graph.facebook.com"
 
 router = APIRouter(tags=["Messengers"])
 
+
+def _load_current_company_messenger_config() -> list[dict]:
+    company = get_current_company()
+    if not company:
+        return []
+
+    messenger_data = company.get("messenger_config") or []
+    if isinstance(messenger_data, str):
+        try:
+            messenger_data = json.loads(messenger_data)
+        except json.JSONDecodeError:
+            return []
+
+    return messenger_data if isinstance(messenger_data, list) else []
+
+
+def _save_current_company_messenger_config(messenger_config: list[dict]) -> None:
+    company = get_current_company()
+    if not company:
+        raise RuntimeError("Current company not found")
+    update_company(int(company["id"]), {"messenger_config": messenger_config})
+
 @router.get("/messengers/settings")
 async def get_messenger_settings(
     session_token: Optional[str] = Cookie(None)
@@ -29,16 +52,8 @@ async def get_messenger_settings(
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    conn = get_db_connection()
-    c = conn.cursor()
-
     try:
-        c.execute("SELECT messenger_config FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        messenger_data = row[0] if row and row[0] else []
-        
-        if isinstance(messenger_data, str):
-            messenger_data = json.loads(messenger_data)
+        messenger_data = _load_current_company_messenger_config()
 
         # Скрываем токены и подготавливаем ответ
         processed_settings = []
@@ -60,8 +75,6 @@ async def get_messenger_settings(
     except Exception as e:
         log_error(f"Error getting messenger settings: {e}", "messengers")
         return JSONResponse({"error": str(e)}, status_code=500)
-    finally:
-        conn.close()
 
 # Simple cache for enabled messengers (fallback when Redis is unavailable)
 _messengers_cache = {}
@@ -93,16 +106,8 @@ async def get_enabled_messengers(
         if time.time() - cached_time < _messengers_cache_ttl:
             return cached_data
 
-    conn = get_db_connection()
-    c = conn.cursor()
-
     try:
-        c.execute("SELECT messenger_config FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        messenger_data = row[0] if row and row[0] else []
-        
-        if isinstance(messenger_data, str):
-            messenger_data = json.loads(messenger_data)
+        messenger_data = _load_current_company_messenger_config()
 
         enabled = []
         for m in messenger_data:
@@ -135,8 +140,6 @@ async def get_enabled_messengers(
             cached_data, _ = _messengers_cache[cache_key]
             return cached_data
         return JSONResponse({"error": str(e)}, status_code=500)
-    finally:
-        conn.close()
 
 @router.put("/messengers/settings/{messenger_type}")
 async def update_messenger_setting(
@@ -154,17 +157,9 @@ async def update_messenger_setting(
     if messenger_type not in valid_types:
         return JSONResponse({"error": "Invalid messenger type"}, status_code=400)
 
-    conn = get_db_connection()
-    c = conn.cursor()
-
     try:
         # 1. Получаем текущий список
-        c.execute("SELECT messenger_config FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        messenger_data = row[0] if row and row[0] else []
-        
-        if isinstance(messenger_data, str):
-            messenger_data = json.loads(messenger_data)
+        messenger_data = _load_current_company_messenger_config()
 
         # 2. Находим нужный мессенджер
         found = False
@@ -189,11 +184,8 @@ async def update_messenger_setting(
             return JSONResponse({"error": "Messenger not found in configuration"}, status_code=404)
 
         # 3. Сохраняем в БД
-        c.execute("UPDATE salon_settings SET messenger_config = %s, updated_at = CURRENT_TIMESTAMP WHERE id = 1", 
-                  (json.dumps(messenger_data),))
-
-        conn.commit()
-        log_info(f"Messenger settings updated in salon_settings: {messenger_type}", "messengers")
+        _save_current_company_messenger_config(messenger_data)
+        log_info(f"Messenger settings updated in companies.messenger_config: {messenger_type}", "messengers")
 
         # Очищаем кэш enabled messengers
         cache_key = "enabled_messengers"
@@ -216,8 +208,6 @@ async def update_messenger_setting(
     except Exception as e:
         log_error(f"Error updating messenger settings: {e}", "messengers")
         return JSONResponse({"error": str(e)}, status_code=500)
-    finally:
-        conn.close()
 
 @router.get("/messengers/{messenger_type}/messages")
 async def get_messenger_messages(

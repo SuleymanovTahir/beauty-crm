@@ -174,11 +174,10 @@ def _estimate_booking_duration_minutes(service_name: str, service_duration_map: 
 
 def _get_salon_currency(c) -> str:
     try:
-        c.execute("SELECT currency FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        return str(row[0] or "AED") if row else "AED"
+        from utils.currency import get_salon_currency
+        return str(get_salon_currency() or "")
     except Exception:
-        return "AED"
+        return ""
 
 
 def _get_prorated_base_salary(base_salary: float, start_date: date, end_date: date) -> float:

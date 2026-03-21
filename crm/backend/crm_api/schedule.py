@@ -7,56 +7,36 @@ from typing import Optional, List, Dict, Any
 from pydantic import BaseModel
 
 from psycopg2.extras import RealDictCursor
-from core.config import (
-    DEFAULT_HOURS_WEEKDAYS,
-    DEFAULT_HOURS_WEEKENDS,
-    DEFAULT_HOURS_START,
-    DEFAULT_HOURS_END,
-    DEFAULT_REPORT_TIME,
-    get_default_hours_dict,
-    get_default_working_hours_response
-)
 from db.connection import get_db_connection
 from utils.utils import require_auth
-from utils.logger import log_error, log_info
+from utils.logger import log_error
 from services.master_schedule import MasterScheduleService
 
 router = APIRouter(tags=["Schedule"])
 
 
-def _parse_hours_range(hours_value: str, fallback_start: str, fallback_end: str) -> tuple[str, str]:
+def _parse_hours_range(hours_value: str) -> tuple[str, str]:
     if not isinstance(hours_value, str):
-        return fallback_start, fallback_end
+        return "", ""
     parts = [part.strip() for part in hours_value.split('-')]
     if len(parts) != 2:
-        return fallback_start, fallback_end
+        return "", ""
     start_time, end_time = parts[0], parts[1]
     if not start_time or not end_time:
-        return fallback_start, fallback_end
+        return "", ""
     return start_time, end_time
 
 
-def _build_default_week_schedule() -> list[dict]:
-    from db import get_salon_settings
-
-    salon = get_salon_settings() or {}
-    weekdays_raw = salon.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)
-    weekends_raw = salon.get('hours_weekends', DEFAULT_HOURS_WEEKENDS)
-    weekday_start, weekday_end = _parse_hours_range(weekdays_raw, DEFAULT_HOURS_START, DEFAULT_HOURS_END)
-    weekend_start, weekend_end = _parse_hours_range(weekends_raw, DEFAULT_HOURS_START, DEFAULT_HOURS_END)
-
-    default_schedule = []
+def _build_empty_week_schedule() -> list[dict]:
+    empty_schedule = []
     for day in range(7):
-        is_working = day < 5  # default 5/2
-        start_time = weekday_start if day < 5 else weekend_start
-        end_time = weekday_end if day < 5 else weekend_end
-        default_schedule.append({
+        empty_schedule.append({
             "day_of_week": day,
-            "start_time": start_time,
-            "end_time": end_time,
-            "is_working": is_working
+            "start_time": "",
+            "end_time": "",
+            "is_working": False,
         })
-    return default_schedule
+    return empty_schedule
 
 
 def _time_to_minutes(time_value: str) -> int:
@@ -260,19 +240,8 @@ async def get_user_schedule(user_id: int):
         """, (user_id,))
         schedule_stats = cursor.fetchone() or {"total_rows": 0}
         if int(schedule_stats.get("total_rows", 0)) == 0:
-            default_schedule = _build_default_week_schedule()
-            for item in default_schedule:
-                cursor.execute("""
-                    INSERT INTO user_schedule (user_id, day_of_week, start_time, end_time, is_active)
-                    VALUES (%s, %s, %s, %s, %s)
-                    ON CONFLICT (user_id, day_of_week) DO UPDATE
-                    SET start_time = EXCLUDED.start_time,
-                        end_time = EXCLUDED.end_time,
-                        is_active = EXCLUDED.is_active,
-                        updated_at = CURRENT_TIMESTAMP
-                """, (user_id, item["day_of_week"], item["start_time"], item["end_time"], bool(item["is_working"])))
-            conn.commit()
-            log_info(f"Auto-filled default 5/2 schedule for user_id={user_id}", "schedule")
+            conn.close()
+            return _build_empty_week_schedule()
         
         master_name = str(user_id)
         conn.close()
@@ -289,10 +258,8 @@ async def get_user_schedule(user_id: int):
         for day in range(7):
             day_schedule = schedule_map.get(day, {})
             
-            # ✅ ИСПРАВЛЕНО: Проверяем на None и используем дефолты
-            # get_working_hours() возвращает None для start_time/end_time если расписание не установлено
-            start_time = day_schedule.get('start_time') or DEFAULT_HOURS_START
-            end_time = day_schedule.get('end_time') or DEFAULT_HOURS_END
+            start_time = day_schedule.get('start_time') or ""
+            end_time = day_schedule.get('end_time') or ""
             is_working = day_schedule.get('is_active', False)
             
             result.append({
@@ -623,27 +590,44 @@ async def get_salon_working_hours():
         from db import get_salon_settings
         salon = get_salon_settings()
         
-        # Парсим часы работы
-        hours_weekdays = salon.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)  # ✅ Используем константу
-        hours_weekends = salon.get('hours_weekends', DEFAULT_HOURS_WEEKENDS)  # ✅ Используем константу
+        hours_weekdays = salon.get('hours_weekdays') or ""
+        hours_weekends = salon.get('hours_weekends') or ""
         lunch_start_raw = salon.get('lunch_start')
         lunch_end_raw = salon.get('lunch_end')
         lunch_start = lunch_start_raw[:5] if isinstance(lunch_start_raw, str) and ':' in lunch_start_raw else ''
         lunch_end = lunch_end_raw[:5] if isinstance(lunch_end_raw, str) and ':' in lunch_end_raw else ''
         
-        # Парсим время начала и конца
         def parse_hours(hours_str):
+            if not isinstance(hours_str, str) or '-' not in hours_str:
+                return {
+                    "start": "",
+                    "end": "",
+                    "start_hour": None,
+                    "end_hour": None
+                }
             parts = hours_str.split('-')
             if len(parts) == 2:
                 start = parts[0].strip()
                 end = parts[1].strip()
+                if not start or not end:
+                    return {
+                        "start": "",
+                        "end": "",
+                        "start_hour": None,
+                        "end_hour": None
+                    }
                 return {
                     "start": start,
                     "end": end,
                     "start_hour": int(start.split(':')[0]),
                     "end_hour": int(end.split(':')[0])
                 }
-            return get_default_hours_dict()  # ✅ Используем функцию
+            return {
+                "start": "",
+                "end": "",
+                "start_hour": None,
+                "end_hour": None
+            }
         
         return {
             "weekdays": parse_hours(hours_weekdays),
@@ -655,6 +639,8 @@ async def get_salon_working_hours():
         }
     except Exception as e:
         log_error(f"Error getting salon working hours: {e}", "settings")
-        # Fallback
-        return get_default_working_hours_response()  # ✅ Используем функцию
-
+        return {
+            "weekdays": {"start": "", "end": "", "start_hour": None, "end_hour": None},
+            "weekends": {"start": "", "end": "", "start_hour": None, "end_hour": None},
+            "lunch": {"start": "", "end": ""}
+        }

@@ -15,15 +15,7 @@ from datetime import datetime, timedelta
 
 from core.config import (
     DATABASE_NAME,
-    DEFAULT_HOURS_WEEKDAYS,
-    DEFAULT_HOURS_WEEKENDS,
-    DEFAULT_HOURS_START,
-    DEFAULT_HOURS_END,
-    DEFAULT_LUNCH_START,
-    DEFAULT_LUNCH_END,
     DEFAULT_REPORT_TIME,
-    get_default_hours_dict,
-    get_default_working_hours_response
 )
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
@@ -588,25 +580,42 @@ def get_salon_working_hours():
         from db import get_salon_settings
         salon = get_salon_settings()
         
-        # Парсим часы работы
-        hours_weekdays = salon.get('hours_weekdays', DEFAULT_HOURS_WEEKDAYS)  # ✅ Используем константу
-        hours_weekends = salon.get('hours_weekends', DEFAULT_HOURS_WEEKENDS)  # ✅ Используем константу
+        hours_weekdays = salon.get('hours_weekdays') or ""
+        hours_weekends = salon.get('hours_weekends') or ""
         lunch_start = salon.get('lunch_start')
         lunch_end = salon.get('lunch_end')
         
-        # Парсим время начала и конца
         def parse_hours(hours_str):
+            if not isinstance(hours_str, str) or '-' not in hours_str:
+                return {
+                    "start": "",
+                    "end": "",
+                    "start_hour": None,
+                    "end_hour": None
+                }
             parts = hours_str.split('-')
             if len(parts) == 2:
                 start = parts[0].strip()
                 end = parts[1].strip()
+                if not start or not end:
+                    return {
+                        "start": "",
+                        "end": "",
+                        "start_hour": None,
+                        "end_hour": None
+                    }
                 return {
                     "start": start,
                     "end": end,
                     "start_hour": int(start.split(':')[0]),
                     "end_hour": int(end.split(':')[0])
                 }
-            return get_default_hours_dict()  # ✅ Используем функцию
+            return {
+                "start": "",
+                "end": "",
+                "start_hour": None,
+                "end_hour": None
+            }
         
         return {
             "weekdays": parse_hours(hours_weekdays),
@@ -618,10 +627,11 @@ def get_salon_working_hours():
         }
     except Exception as e:
         log_error(f"Error getting salon working hours: {e}", "settings")
-        # Fallback
-        return get_default_working_hours_response()  # ✅ Используем функцию
-
-        return get_default_working_hours_response()  # ✅ Используем функцию
+        return {
+            "weekdays": {"start": "", "end": "", "start_hour": None, "end_hour": None},
+            "weekends": {"start": "", "end": "", "start_hour": None, "end_hour": None},
+            "lunch": {"start": "", "end": ""}
+        }
 
 # ===== CURRENCY MANAGEMENT =====
 

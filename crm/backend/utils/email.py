@@ -21,8 +21,8 @@ def _get_salon_name() -> str:
     except Exception as e:
         log_error(f"Could not get salon name from database: {e}", "email")
 
-    # Fallback to environment variable
-    return os.getenv('SALON_NAME', 'Salon')
+    from core.config import APP_NAME
+    return APP_NAME
 
 
 def _get_logo_url() -> str:
@@ -523,11 +523,8 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
         if not salon_settings:
             salon_settings = {}
         
-        salon_name = (
-            salon_settings.get('name')
-            or os.getenv('SALON_BOT_NAME')
-            or 'ST CRM'
-        ).replace(' Bot', '')
+        from core.config import APP_NAME
+        salon_name = (salon_settings.get('name') or APP_NAME).replace(' Bot', '')
         salon_address = salon_settings.get('address')
         salon_phone = salon_settings.get('phone')
         salon_email = salon_settings.get('email', smtp_user) # Fallback to sending email

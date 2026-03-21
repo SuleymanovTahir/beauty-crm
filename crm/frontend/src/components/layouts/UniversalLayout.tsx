@@ -42,6 +42,7 @@ interface MainLayoutProps {
 }
 
 export const CRM_MENU_DEFAULT_ORDER = [
+    'platform',
     'dashboard',
     'bookings',
     'chat-group',
@@ -64,6 +65,7 @@ type BusinessModuleBinding = {
 };
 
 const MENU_MODULE_BINDINGS: Record<string, BusinessModuleBinding> = {
+    platform: { suite: 'crm', module: 'settings' },
     dashboard: { suite: 'crm', module: 'dashboard' },
     bookings: { suite: 'crm', module: 'bookings' },
     team: { suite: 'crm', module: 'team' },
@@ -99,6 +101,7 @@ export const buildCrmMenuCatalog = ({
     permissions: any;
 }) => {
     const items: Record<string, any> = {
+        'platform': { icon: Briefcase, label: t('menu.platform_control', { defaultValue: 'Платформа' }), path: `${rolePrefix}/platform`, req: () => permissions.roleLevel >= 1000 },
         'dashboard': { icon: LayoutDashboard, label: t('menu.dashboard'), path: dashboardPath, req: () => true },
         'bookings': { icon: Calendar, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, req: () => permissions.canViewAllBookings },
         'chat-group': { icon: MessageSquare, label: t('menu.chat'), req: () => true },
@@ -302,6 +305,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
     const getRoleLabel = () => {
         switch (user?.role) {
+            case 'super_admin': return t('roles.super_admin', { defaultValue: 'Platform Owner' });
             case 'director': return t('roles.director');
             case 'admin': return t('roles.admin');
             case 'accountant': return t('roles.accountant', { defaultValue: t('common:role_accountant', 'Бухгалтер') });
@@ -431,6 +435,15 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     }, [menuItems, location.pathname]);
 
     const mainTabs = useMemo(() => {
+        if (user?.role === 'super_admin') {
+            return [
+                { id: 'platform', icon: Briefcase, label: t('menu.platform_control', { defaultValue: 'Платформа' }), path: `${rolePrefix}/platform` },
+                { id: 'team', icon: Users, label: t('menu.team', { defaultValue: 'Команда' }), path: `${rolePrefix}/team` },
+                { id: 'chat', icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: chatUnreadCount + internalChatUnreadCount },
+                { id: 'settings', icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings` },
+                { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
+            ];
+        }
         return [
             { id: 'dashboard', icon: LayoutDashboard, label: t('menu.dashboard'), path: dashboardPath },
             { id: 'funnel', icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel` },
@@ -438,7 +451,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             { id: 'chat', icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: chatUnreadCount + internalChatUnreadCount },
             { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
         ];
-    }, [t, dashboardPath, rolePrefix, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount]);
+    }, [t, dashboardPath, rolePrefix, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount, user?.role]);
 
     const chatSubItems = useMemo(() => [
         { id: 'messengers', icon: Send, label: t('menu.messengers'), path: `${rolePrefix}/messengers`, badge: chatUnreadCount },

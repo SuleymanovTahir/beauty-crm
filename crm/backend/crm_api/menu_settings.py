@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import Optional, List, Any
 from pydantic import BaseModel
 from db.connection import get_db_connection
+from db.companies import get_current_company, update_company
 from utils.utils import get_current_user
 from utils.cache import cache
 import json
@@ -98,11 +99,11 @@ def _normalize_string_list(values: Optional[Any]) -> List[str]:
     return unique_normalized
 
 def _load_salon_menu_config(cursor) -> dict:
-    cursor.execute("SELECT menu_config FROM salon_settings WHERE id = 1")
-    row = cursor.fetchone()
-    if row is None:
+    del cursor
+    company = get_current_company()
+    if company is None:
         return {}
-    raw_value = row[0]
+    raw_value = company.get("menu_config")
     if raw_value is None:
         return {}
     if isinstance(raw_value, dict):
@@ -118,16 +119,11 @@ def _load_salon_menu_config(cursor) -> dict:
     return {}
 
 def _save_salon_menu_config(cursor, config: dict) -> None:
-    cursor.execute(
-        """
-            INSERT INTO salon_settings (id, menu_config, updated_at)
-            VALUES (1, %s::jsonb, CURRENT_TIMESTAMP)
-            ON CONFLICT (id) DO UPDATE SET
-                menu_config = EXCLUDED.menu_config,
-                updated_at = CURRENT_TIMESTAMP
-        """,
-        (json.dumps(config, ensure_ascii=False),)
-    )
+    del cursor
+    company = get_current_company()
+    if company is None:
+        raise RuntimeError("Current company not found")
+    update_company(int(company["id"]), {"menu_config": config})
 
 
 @router.get("/menu-settings", response_model=MenuSettingsResponse)

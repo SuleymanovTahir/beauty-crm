@@ -5,27 +5,24 @@ import requests
 import hashlib
 import math
 from typing import Optional, Dict, Tuple
+from core.config import SALON_LAT as DEFAULT_LOCATION_LAT, SALON_LON as DEFAULT_LOCATION_LON
 from utils.logger import log_info, log_error
 
-# M Le Diamant - Jumeirah Beach Residence, Dubai coordinates
-# From Google Maps: 25.073873893619908, 55.130208507174196
-SALON_LAT = 25.073874
-SALON_LON = 55.130209
+DEFAULT_LAT = float(DEFAULT_LOCATION_LAT or 0)
+DEFAULT_LON = float(DEFAULT_LOCATION_LON or 0)
 
 def get_salon_coordinates() -> Tuple[float, float]:
     """Get salon coordinates from database"""
     try:
-        from db.connection import get_db_connection
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("SELECT latitude, longitude FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        conn.close()
-        if row and row[0] and row[1]:
-            return float(row[0]), float(row[1])
+        from db.settings import get_salon_settings
+        settings = get_salon_settings()
+        latitude = settings.get("latitude")
+        longitude = settings.get("longitude")
+        if latitude is not None and longitude is not None:
+            return float(latitude), float(longitude)
     except Exception as e:
         log_error(f"Error getting salon coordinates from DB: {e}", "geolocation")
-    return SALON_LAT, SALON_LON
+    return DEFAULT_LAT, DEFAULT_LON
 
 def get_ip_hash(ip: str) -> str:
     """Generate SHA256 hash of IP for privacy"""
@@ -40,8 +37,8 @@ def get_location_from_ip(ip: str) -> Optional[Dict]:
     if ip in ['127.0.0.1', 'localhost', '::1'] or ip.startswith('192.168.') or ip.startswith('10.'):
         log_info(f"Using mock geolocation for local IP: {ip}", "geolocation")
         return {
-            'latitude': SALON_LAT,
-            'longitude': SALON_LON,
+            'latitude': DEFAULT_LAT,
+            'longitude': DEFAULT_LON,
             'city': 'Localhost',
             'country': 'Local Network'
         }

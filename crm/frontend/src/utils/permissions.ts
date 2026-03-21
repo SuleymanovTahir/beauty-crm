@@ -44,6 +44,12 @@ const normalizeRole = (role?: string): string => {
  * ВАЖНО: Эта структура должна совпадать с backend/core/config.py ROLES
  */
 export const ROLES: Record<string, Role> = {
+  super_admin: {
+    name: 'Platform Owner',
+    permissions: '*',
+    can_manage_roles: ['super_admin', 'director', 'admin', 'accountant', 'manager', 'sales', 'marketer', 'employee', 'client'],
+    hierarchy_level: 1000,
+  },
   director: {
     name: 'Директор',
     permissions: '*',
@@ -187,7 +193,7 @@ export class RoleHierarchy {
     const normalizedSecondaryRole = normalizeRole(secondaryRole);
 
     // Директор может управлять всеми (включая других директоров)
-    if (normalizedManagerRole === 'director' || normalizedSecondaryRole === 'director') {
+    if (normalizedManagerRole === 'director' || normalizedManagerRole === 'super_admin' || normalizedSecondaryRole === 'director' || normalizedSecondaryRole === 'super_admin') {
       return true;
     }
 
@@ -226,7 +232,7 @@ export class RoleHierarchy {
     const normalizedRole = normalizeRole(role);
 
     // Директор видит все роли (включая director)
-    if (normalizedRole === 'director') {
+    if (normalizedRole === 'director' || normalizedRole === 'super_admin') {
       return Object.keys(ROLES);
     }
 
@@ -243,7 +249,7 @@ export class RoleHierarchy {
     const normalizedSecondaryRole = normalizeRole(secondaryRole);
 
     // Директор всегда имеет доступ
-    if (normalizedRole === 'director' || normalizedSecondaryRole === 'director') {
+    if (normalizedRole === 'director' || normalizedRole === 'super_admin' || normalizedSecondaryRole === 'director' || normalizedSecondaryRole === 'super_admin') {
       return true;
     }
 
@@ -597,6 +603,6 @@ export function usePermissions(role: string, secondaryRole?: string) {
     // Дополнительно
     role: role,
     secondaryRole: secondaryRole,
-    roleLevel: Math.max(ROLES[role]?.hierarchy_level || 0, secondaryRole ? ROLES[secondaryRole]?.hierarchy_level || 0 : 0),
+    roleLevel: Math.max(ROLES[normalizeRole(role)]?.hierarchy_level ?? 0, secondaryRole ? ROLES[normalizeRole(secondaryRole)]?.hierarchy_level ?? 0 : 0),
   };
 }

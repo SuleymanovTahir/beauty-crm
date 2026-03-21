@@ -9,12 +9,6 @@ import re
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 from utils.datetime_utils import get_current_time, get_salon_timezone
-from core.config import (
-    DEFAULT_HOURS_WEEKDAYS,
-    DEFAULT_HOURS_WEEKENDS,
-    DEFAULT_HOURS_START,
-    DEFAULT_HOURS_END
-)
 
 class MasterScheduleService:
     """Сервис управления расписанием мастеров"""
@@ -623,11 +617,9 @@ class MasterScheduleService:
                 "source": "user_schedule",
             }
 
-        range_default = DEFAULT_HOURS_WEEKENDS if day_of_week >= 5 else DEFAULT_HOURS_WEEKDAYS
-        default_start, default_end = self._parse_hours_range(range_default, DEFAULT_HOURS_START, DEFAULT_HOURS_END)
         settings_key = "hours_weekends" if day_of_week >= 5 else "hours_weekdays"
-        configured_range = salon_settings.get(settings_key, range_default)
-        start_time, end_time = self._parse_hours_range(configured_range, default_start, default_end)
+        configured_range = salon_settings.get(settings_key) or ""
+        start_time, end_time = self._parse_hours_range(configured_range, "", "")
         is_working = bool(start_time and end_time and start_time < end_time)
 
         return {

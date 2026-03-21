@@ -291,7 +291,10 @@ export class ApiClient {
     privacy_accepted: boolean,
     newsletter_subscribed: boolean = true,
     captcha_token?: string,
-    business_type: string = ''
+    business_type: string = '',
+    company_name: string = '',
+    company_code: string = '',
+    registration_mode: 'create_company' | 'join_company' = 'join_company',
   ) {
     const formData = new URLSearchParams()
     formData.append('username', username)
@@ -303,6 +306,9 @@ export class ApiClient {
     formData.append('privacy_accepted', privacy_accepted.toString())
     formData.append('newsletter_subscribed', newsletter_subscribed.toString())
     formData.append('business_type', business_type)
+    formData.append('company_name', company_name)
+    formData.append('company_code', company_code)
+    formData.append('registration_mode', registration_mode)
     if (captcha_token) {
       formData.append('captcha_token', captcha_token)
     }
@@ -313,6 +319,144 @@ export class ApiClient {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
+    })
+  }
+
+  async getPlatformOverview() {
+    return this.request<any>('/api/platform-admin/overview')
+  }
+
+  async getPlatformCompanies(search?: string, status?: string) {
+    const params = new URLSearchParams()
+    if (search) params.append('search', search)
+    if (status) params.append('status', status)
+    params.append('include_usage', 'true')
+    const query = params.toString()
+    return this.request<any>(`/api/platform-admin/companies${query ? `?${query}` : ''}`)
+  }
+
+  async getPlatformCompanyUsage(companyId: number) {
+    return this.request<any>(`/api/platform-admin/companies/${companyId}/usage`)
+  }
+
+  async getPlatformCompanySubscription(companyId: number) {
+    return this.request<any>(`/api/platform-admin/companies/${companyId}/subscription`)
+  }
+
+  async createPlatformCompany(data: any) {
+    return this.request<any>('/api/platform-admin/companies', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updatePlatformCompany(companyId: number, data: any) {
+    return this.request<any>(`/api/platform-admin/companies/${companyId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async suspendPlatformCompany(companyId: number) {
+    return this.request<any>(`/api/platform-admin/companies/${companyId}/suspend`, {
+      method: 'POST',
+    })
+  }
+
+  async archivePlatformCompany(companyId: number) {
+    return this.request<any>(`/api/platform-admin/companies/${companyId}/archive`, {
+      method: 'POST',
+    })
+  }
+
+  async deletePlatformCompany(companyId: number) {
+    return this.request<any>(`/api/platform-admin/companies/${companyId}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async getPlatformTariffs() {
+    return this.request<any>('/api/platform-admin/tariffs')
+  }
+
+  async createPlatformTariff(data: any) {
+    return this.request<any>('/api/platform-admin/tariffs', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updatePlatformTariff(tariffId: number, data: any) {
+    return this.request<any>(`/api/platform-admin/tariffs/${tariffId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deletePlatformTariff(tariffId: number) {
+    return this.request<any>(`/api/platform-admin/tariffs/${tariffId}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async assignPlatformSubscription(companyId: number, data: any) {
+    return this.request<any>(`/api/platform-admin/companies/${companyId}/subscription`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getPlatformPayments(companyId?: number, status?: string, limit: number = 100) {
+    const params = new URLSearchParams()
+    if (typeof companyId === 'number') params.append('company_id', String(companyId))
+    if (status) params.append('status', status)
+    params.append('limit', String(limit))
+    return this.request<any>(`/api/platform-admin/payments?${params.toString()}`)
+  }
+
+  async createPlatformPayment(companyId: number, data: any) {
+    return this.request<any>(`/api/platform-admin/companies/${companyId}/payments`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getPlatformAds(companyId?: number, status?: string) {
+    const params = new URLSearchParams()
+    if (typeof companyId === 'number') params.append('company_id', String(companyId))
+    if (status) params.append('status', status)
+    const query = params.toString()
+    return this.request<any>(`/api/platform-admin/ads${query ? `?${query}` : ''}`)
+  }
+
+  async createPlatformAd(data: any) {
+    return this.request<any>('/api/platform-admin/ads', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updatePlatformAd(adId: number, data: any) {
+    return this.request<any>(`/api/platform-admin/ads/${adId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deletePlatformAd(adId: number) {
+    return this.request<any>(`/api/platform-admin/ads/${adId}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async getPlatformBroadcasts() {
+    return this.request<any>('/api/platform-admin/broadcasts')
+  }
+
+  async createPlatformBroadcast(data: any) {
+    return this.request<any>('/api/platform-admin/broadcasts', {
+      method: 'POST',
+      body: JSON.stringify(data),
     })
   }
 

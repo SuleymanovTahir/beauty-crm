@@ -11,9 +11,15 @@ import threading
 import time
 from collections import deque
 
-from core.config import DATABASE_NAME, PUBLIC_URL
+from core.config import DATABASE_NAME, PUBLIC_URL, normalize_role_key
 from db.connection import get_db_connection
 from db.users import verify_user, create_session, delete_session
+from db.companies import (
+    can_add_company_employee,
+    create_company,
+    get_company_by_access_code,
+    update_company,
+)
 from utils.logger import log_info, log_error, log_warning
 from utils.utils import require_auth, validate_password
 import httpx
@@ -89,6 +95,7 @@ _ALLOWED_BUSINESS_TYPES = {
     "other",
 }
 _ALLOWED_PRODUCT_MODES = {"crm"}
+_ALLOWED_REGISTRATION_MODES = {"create_company", "join_company"}
 
 
 def _normalize_business_type(raw_value: Optional[str]) -> str:
@@ -107,6 +114,17 @@ def _normalize_product_mode(raw_value: Optional[str]) -> str:
 
 def _product_mode_to_flags(product_mode: str) -> tuple[bool, bool]:
     return True, False
+
+
+def _normalize_registration_mode(raw_value: Optional[str], role: str, company_name: str, company_code: str) -> str:
+    value = (raw_value or "").strip().lower()
+    if value in _ALLOWED_REGISTRATION_MODES:
+        return value
+    if normalize_role_key(role) == "director" or company_name.strip():
+        return "create_company"
+    if company_code.strip():
+        return "join_company"
+    return "join_company"
 
 # ===== MIDDLEWARE =====
 
@@ -172,8 +190,15 @@ async def api_login(request: Request, username: str = Form(...), password: str =
                 "message": "registration_pending"
             }, status_code=403)
 
+        if user.get("status") == "company_inactive":
+            log_warning(f"User '{username}' company is inactive", "auth")
+            return JSONResponse({
+                "error": "company_inactive",
+                "message": "company_inactive"
+            }, status_code=403)
+
         # ALWAYS create new session for each login to prevent cross-device logout issues
-        session_token = create_session(user["id"])
+        session_token = create_session(user["id"], user.get("company_id"))
         log_info(f"New unique session created for {username}", "auth")
         _clear_login_limit(ip_key)
         _clear_login_limit(user_key)
@@ -187,7 +212,10 @@ async def api_login(request: Request, username: str = Form(...), password: str =
                 "email": user["email"],
                 "role": user["role"],
                 "secondary_role": user.get("secondary_role"),
-                "phone": user.get("phone")
+                "phone": user.get("phone"),
+                "company_id": user.get("company_id"),
+                "company_name": user.get("company_name"),
+                "is_super_admin": bool(user.get("is_super_admin")),
             }
         }
         
@@ -258,7 +286,14 @@ async def google_login(data: dict):
         conn = get_db_connection()
         c = conn.cursor()
         
-        c.execute("SELECT id, username, full_name, email, role, is_active, phone FROM users WHERE email = %s", (email,))
+        c.execute("""
+            SELECT
+                u.id, u.username, u.full_name, u.email, u.role, u.is_active, u.phone,
+                u.company_id, COALESCE(c.name, ''), COALESCE(c.status, 'active')
+            FROM users u
+            LEFT JOIN companies c ON c.id = u.company_id
+            WHERE u.email = %s
+        """, (email,))
         user = c.fetchone()
         
         user_id = None
@@ -266,10 +301,13 @@ async def google_login(data: dict):
         full_name = None
         role = None
         phone = None
+        company_id = None
+        company_name = ""
+        company_status = "active"
         
         if user:
             # Пользователь существует - логиним
-            user_id, username, full_name, db_email, role, is_active, phone = user
+            user_id, username, full_name, db_email, role, is_active, phone, company_id, company_name, company_status = user
             
             # Проверяем is_active
             if not is_active:
@@ -282,73 +320,30 @@ async def google_login(data: dict):
                     }, 
                     status_code=403
                 )
+
+            if role != "super_admin" and company_status not in {"active", "trial"}:
+                conn.close()
+                return JSONResponse({
+                    "error": "company_inactive",
+                    "message": "company_inactive"
+                }, status_code=403)
                 
             # Если email не был подтвержден в нашей системе, подтверждаем т.к. Google доверенный
             c.execute("UPDATE users SET email_verified = TRUE WHERE id = %s AND email_verified = FALSE", (user_id,))
             conn.commit()
             
         else:
-            current_stage = "Регистрация нового пользователя (Google)"
-            # Пользователь не существует - регистрируем
-            username = email.split('@')[0]
-            # Уникальность username
-            c.execute("SELECT id FROM users WHERE username = %s", (username,))
-            if c.fetchone():
-                import random
-                username = f"{username}{random.randint(100, 999)}"
-            
-            user_info['username'] = username
-            full_name = google_data.get("name") or username
-            password_hash = "google_auth_no_password" # Невозможно войти по паролю
-            role = "employee" # Дефолтная роль
-            
-            # Создаем пользователя (требует одобрения админа!)
-            from datetime import datetime
-            now = datetime.now().isoformat()
-            
-            c.execute("""INSERT INTO users 
-                         (username, password_hash, full_name, email, role, created_at, 
-                          is_active, email_verified, privacy_accepted, privacy_accepted_at)
-                         VALUES (%s, %s, %s, %s, %s, %s, FALSE, TRUE, 1, %s) RETURNING id""",
-                      (username, password_hash, full_name, email, role, now, now))
-            
-            user_id = c.fetchone()[0]
-            conn.commit()
             conn.close()
-            
-            current_stage = "Уведомление админа (Google Успех)"
-            # Уведомляем админов
-            user_info.update({
-                'role': role,
-                'position': 'Google Auth'
-            })
-            import asyncio
-            asyncio.create_task(notify_admin_registration(user_info, success=True))
-            
             return JSONResponse(
                 {
-                    "error": "Регистрация успешна! Ожидайте одобрения администратора.",
-                    "error_type": "not_approved",
-                    "message": "Ваш аккаунт создан и ожидает активации."
+                    "error": "google_registration_requires_company",
+                    "message": "Сначала создайте компанию или присоединитесь по коду компании."
                 },
-                status_code=403
+                status_code=400
             )
 
         # 3. Генерируем сессию (для существующих пользователей)
-        import secrets
-        from datetime import timedelta
-        session_token = secrets.token_urlsafe(32)
-        expiry = (datetime.now() + timedelta(days=7)).isoformat()
-        
-        # Re-establish connection if it was closed in the 'if user' block or if it's a new user path
-        # If user existed, conn was closed after update. If new user, conn was closed after insert.
-        # So, we need a new connection for session creation.
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("""INSERT INTO sessions (user_id, session_token, expires_at)
-                     VALUES (%s, %s, %s)""", (user_id, session_token, expiry))
-        conn.commit()
-        conn.close()
+        session_token = create_session(user_id, company_id)
         
         response = JSONResponse({
             "success": True, 
@@ -359,8 +354,11 @@ async def google_login(data: dict):
                 "full_name": full_name,
                 "email": email,
                 "role": role,
-                "secondary_role": user[9] if user and len(user) > 9 else None,
-                "phone": phone
+                "secondary_role": None,
+                "phone": phone,
+                "company_id": company_id,
+                "company_name": company_name,
+                "is_super_admin": role == "super_admin",
             }
         })
         response.set_cookie(
@@ -400,6 +398,7 @@ async def register_client_api(
     full_name: str = Form(...),
     email: str = Form(...),
     phone: str = Form(""),
+    company_code: str = Form(""),
     privacy_accepted: bool = Form(False),
     captcha_token: str = Form(None),
     preferred_language: str = Form("en")
@@ -444,6 +443,8 @@ async def register_client_api(
         role="client",
         position="Клиент",
         phone=phone,
+        company_code=company_code,
+        registration_mode="join_company",
         privacy_accepted=privacy_accepted,
         preferred_language=preferred_language
     )
@@ -458,6 +459,9 @@ async def register_employee_api(
     phone: str = Form(""),
     business_type: str = Form("beauty"),
     product_mode: str = Form("crm"),
+    company_name: str = Form(""),
+    company_code: str = Form(""),
+    registration_mode: str = Form("join_company"),
     privacy_accepted: bool = Form(False),
     newsletter_subscribed: bool = Form(True),
     captcha_token: str = Form(None),
@@ -496,21 +500,6 @@ async def register_employee_api(
             log_error(f"hCaptcha verification error: {e}", "auth")
             # В случае ошибки сети - пропускаем проверку, чтобы не блокировать регистрацию
 
-    # Запрещаем регистрировать директора через общую форму из соображений безопасности
-    # (хотя подтверждение все равно нужно, лучше перестраховаться)
-    if role == "director" and username.lower() != "admin":
-         # Проверяем, есть ли уже директора. Если есть - запрещаем.
-         conn = get_db_connection()
-         c = conn.cursor()
-         c.execute("SELECT COUNT(*) FROM users WHERE role = 'director' AND is_active = TRUE")
-         count = c.fetchone()[0]
-         conn.close()
-         if count > 0:
-             return JSONResponse(
-                 {"error": "Регистрация роли Директор через общую форму запрещена."},
-                 status_code=403
-             )
-
     # Подписка на рассылку
     if newsletter_subscribed and email:
         try:
@@ -528,6 +517,9 @@ async def register_employee_api(
         phone=phone,
         business_type=business_type,
         product_mode=product_mode,
+        company_name=company_name,
+        company_code=company_code,
+        registration_mode=registration_mode,
         privacy_accepted=privacy_accepted,
         preferred_language=preferred_language
     )
@@ -592,22 +584,33 @@ async def api_register(
     phone: str = Form(""),
     business_type: str = Form("beauty"),
     product_mode: str = Form("crm"),
+    company_name: str = Form(""),
+    company_code: str = Form(""),
+    registration_mode: str = Form("join_company"),
     privacy_accepted: bool = Form(False),
     newsletter_subscribed: bool = Form(True),
     preferred_language: str = Form("en")
 ):
     """API: Регистрация нового пользователя (базовый метод)"""
+    normalized_role = normalize_role_key(role) or "employee"
     normalized_business_type = _normalize_business_type(business_type)
     normalized_product_mode = _normalize_product_mode(product_mode)
-    crm_enabled, site_enabled = _product_mode_to_flags(normalized_product_mode)
+    normalized_registration_mode = _normalize_registration_mode(
+        registration_mode,
+        normalized_role,
+        company_name,
+        company_code,
+    )
 
     user_info = {
         'username': username,
         'email': email,
         'full_name': full_name,
-        'role': role,
+        'role': normalized_role,
         'position': position,
         'phone': phone,
+        'company_name': company_name,
+        'company_code': company_code,
         'business_type': normalized_business_type,
         'product_mode': normalized_product_mode,
         'preferred_language': preferred_language
@@ -617,6 +620,8 @@ async def api_register(
     try:
         # Собираем ВСЕ ошибки валидации сразу
         validation_errors = []
+        target_company = None
+        target_company_id = None
 
         # Логин - только латинские буквы, цифры, точки, подчеркивания
         import re
@@ -634,6 +639,18 @@ async def api_register(
 
         if not email or '@' not in email:
             validation_errors.append("error_invalid_email")
+
+        if normalized_role == "super_admin":
+            validation_errors.append("error_role_not_allowed")
+
+        if normalized_registration_mode == "create_company":
+            if normalized_role != "director":
+                validation_errors.append("error_director_required")
+            if len(company_name.strip()) < 2:
+                validation_errors.append("error_company_name_required")
+        else:
+            if len(company_code.strip()) < 3:
+                validation_errors.append("error_company_code_required")
 
         current_stage = "DB Existence Check"
         # Проверяем что логин и email не заняты
@@ -693,6 +710,18 @@ async def api_register(
                 if c.fetchone():
                     validation_errors.append("error_phone_exists")
 
+        if normalized_registration_mode == "join_company" and company_code.strip():
+            target_company = get_company_by_access_code(company_code.strip())
+            if not target_company:
+                validation_errors.append("error_company_not_found")
+            else:
+                target_company_id = int(target_company["id"])
+                company_status = str(target_company.get("status") or "").strip().lower()
+                if company_status not in {"active", "trial"}:
+                    validation_errors.append("error_company_inactive")
+                elif normalized_role != "client" and not can_add_company_employee(target_company_id):
+                    validation_errors.append("error_company_staff_limit_reached")
+
         # Если есть ошибки валидации - возвращаем их все сразу
         if validation_errors:
             conn.close()
@@ -711,25 +740,32 @@ async def api_register(
         from datetime import datetime
         now = datetime.now().isoformat()
 
-        # Первый админ?
-        is_first_admin = False
-        if username.lower() == 'admin' and role == 'director':
-            c.execute("SELECT COUNT(*) FROM users WHERE LOWER(username) = 'admin' AND role = 'director'")
-            is_first_admin = (c.fetchone()[0] == 0)
+        auto_activate = normalized_registration_mode == "create_company" or normalized_role == "client"
+        auto_verify = False
+        approval_required = normalized_role != "client" and normalized_registration_mode != "create_company"
 
-        # Клиенты активируются автоматически, сотрудникам нужно подтверждение админа
-        auto_activate = is_first_admin or (role == 'client')
-        auto_verify = is_first_admin  # Email verification всё равно нужен
+        if normalized_registration_mode == "create_company":
+            current_stage = "Создание компании"
+            target_company = create_company(
+                name=company_name.strip(),
+                email=email or None,
+                phone=phone or None,
+                business_type=normalized_business_type,
+                product_mode=normalized_product_mode,
+                created_by_user_id=None,
+                tariff_key="trial",
+            )
+            target_company_id = int(target_company["id"])
 
         current_stage = "Сохранение пользователя"
         c.execute("""INSERT INTO users
                      (username, password_hash, full_name, email, phone, role, position, created_at,
-                      is_active, email_verified, verification_code, verification_code_expires,
+                      company_id, is_active, email_verified, verification_code, verification_code_expires,
                       email_verification_token, privacy_accepted, privacy_accepted_at, preferred_language)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
-                  (username, password_hash, full_name, email, phone, role, position, now,
-                   auto_activate,  # Клиенты активируются сразу, сотрудники ждут одобрения
-                   True if auto_verify else False,
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id""",
+                  (username, password_hash, full_name, email, phone, normalized_role, position, now,
+                   target_company_id, auto_activate,
+                   auto_verify,
                    verification_code, code_expires,
                    verification_token,
                    int(privacy_accepted), now if privacy_accepted else None,
@@ -737,38 +773,19 @@ async def api_register(
 
         user_id = c.fetchone()[0]
 
+        if normalized_registration_mode == "create_company" and target_company_id is not None:
+            update_company(target_company_id, {"owner_user_id": user_id})
+
         # Если это клиент - создаем запись в clients
-        if role == 'client':
+        if normalized_role == 'client':
             current_stage = "Создание записи клиента"
             # Используем user_{id} как instagram_id для зарегистрированных клиентов
             client_id = f"user_{user_id}"
             c.execute("""INSERT INTO clients
-                         (instagram_id, username, name, email, phone, status, source, user_id, created_at, updated_at)
-                         VALUES (%s, %s, %s, %s, %s, 'new', 'registration', %s, %s, %s)
+                         (instagram_id, username, name, email, phone, status, source, user_id, company_id, created_at, updated_at)
+                         VALUES (%s, %s, %s, %s, %s, 'new', 'registration', %s, %s, %s, %s)
                          ON CONFLICT (instagram_id) DO NOTHING""",
-                      (client_id, username, full_name, email, phone, user_id, now, now))
-
-        current_stage = "Применение профиля бизнеса"
-        c.execute("""
-            UPDATE salon_settings
-            SET business_type = %s,
-                product_mode = %s,
-                crm_enabled = %s,
-                custom_settings = jsonb_set(
-                    COALESCE(custom_settings, '{}'::jsonb),
-                    '{business_profile_config}',
-                    COALESCE(custom_settings -> 'business_profile_config', '{"schema_version": 1}'::jsonb),
-                    TRUE
-                ),
-                site_enabled = %s,
-                updated_at = NOW()
-            WHERE id = 1
-              AND (
-                    business_type IS NULL
-                    OR TRIM(business_type) = ''
-                    OR (business_type = 'beauty' AND COALESCE(product_mode, 'both') = 'both')
-                  )
-        """, (normalized_business_type, normalized_product_mode, crm_enabled, site_enabled))
+                      (client_id, username, full_name, email, phone, user_id, target_company_id, now, now))
 
         conn.commit()
         conn.close()
@@ -781,7 +798,8 @@ async def api_register(
         # Уведомляем админов/директоров о новой регистрации (in-app уведомление)
         try:
             from notifications.admin_notifications import notify_new_registration_pending
-            notify_new_registration_pending(full_name, email, role)
+            if approval_required:
+                notify_new_registration_pending(full_name, email, normalized_role)
         except Exception as e:
             log_error(f"Failed to send admin in-app notification: {e}", "auth")
 
@@ -797,8 +815,18 @@ async def api_register(
 
         return {
             "success": True,
-            "message": "Регистрация успешна! Подтвердите email и дождитесь одобрения руководства.",
-            "user_id": user_id
+            "message": (
+                "Компания создана. Подтвердите email, после этого можно войти в систему."
+                if normalized_registration_mode == "create_company"
+                else "Регистрация успешна! Подтвердите email и дождитесь одобрения компании."
+            ),
+            "user_id": user_id,
+            "company_id": target_company_id,
+            "company_name": target_company.get("name") if isinstance(target_company, dict) else "",
+            "company_code": target_company.get("access_code") if isinstance(target_company, dict) else "",
+            "approval_required": approval_required,
+            "is_first_director": normalized_registration_mode == "create_company",
+            "auto_verified": auto_verify,
         }
 
     except ValueError as ve:

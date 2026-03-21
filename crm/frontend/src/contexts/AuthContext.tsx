@@ -9,6 +9,9 @@ interface User {
   secondary_role?: string;
   email?: string;
   phone?: string;
+  company_id?: number | null;
+  company_name?: string;
+  is_super_admin?: boolean;
 }
 
 interface AuthContextType {
@@ -44,7 +47,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
             role: userData.role,
             secondary_role: userData.secondary_role,
             email: userData.email,
-            phone: userData.phone
+            phone: userData.phone,
+            company_id: userData.company_id ?? null,
+            company_name: userData.company_name ?? '',
+            is_super_admin: userData.is_super_admin === true,
           });
         }
       } catch (err) {

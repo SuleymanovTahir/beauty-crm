@@ -32,8 +32,9 @@ async def send_chat_email_notification(sender_name: str, recipient_email: str, r
         return
 
     try:
+        from core.config import APP_NAME
         salon = get_salon_settings()
-        salon_name = salon.get('name', 'CRM')
+        salon_name = salon.get('name') or APP_NAME
 
         subject = f"💬 Новое сообщение от {sender_name}"
 

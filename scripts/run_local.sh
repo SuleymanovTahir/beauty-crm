@@ -94,11 +94,7 @@ start_crm() {
 }
 
 case "${MODE}" in
-  all|site|crm)
-    if [[ "${MODE}" != "crm" ]]; then
-      echo "[run_local] mode '${MODE}' is deprecated, switching to 'crm'"
-    fi
-    MODE="crm"
+  crm)
     start_crm
     ;;
   help|--help|-h)

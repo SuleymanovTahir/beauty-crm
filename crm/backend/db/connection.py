@@ -8,6 +8,44 @@ from utils.logger import log_info, log_error, log_warning
 _connection_pool = None
 
 
+def _apply_tenant_session_context(raw_conn) -> None:
+    from utils.tenant_context import (
+        get_current_company_id,
+        get_current_user_id,
+        get_current_user_role,
+        is_super_admin_context,
+        is_tenant_bypass_enabled,
+    )
+
+    company_id = get_current_company_id()
+    user_id = get_current_user_id()
+    user_role = get_current_user_role() or ""
+    is_super_admin = is_super_admin_context()
+    tenant_bypass = is_tenant_bypass_enabled()
+
+    cursor = raw_conn.cursor()
+    try:
+        cursor.execute(
+            """
+            SELECT
+                set_config('app.company_id', %s, false),
+                set_config('app.current_user_id', %s, false),
+                set_config('app.current_user_role', %s, false),
+                set_config('app.is_super_admin', %s, false),
+                set_config('app.tenant_bypass', %s, false)
+            """,
+            (
+                str(company_id) if company_id else "",
+                str(user_id) if user_id else "",
+                user_role,
+                "on" if is_super_admin else "off",
+                "on" if tenant_bypass else "off",
+            ),
+        )
+    finally:
+        cursor.close()
+
+
 def _read_int_env(name: str, default: int) -> int:
     raw_value = os.getenv(name)
     if raw_value is None:
@@ -230,6 +268,7 @@ def get_db_connection():
         while True:
             try:
                 conn = _connection_pool.getconn()
+                _apply_tenant_session_context(conn)
                 duration = (time.time() - start_time) * 1000
                 if duration > 100:
                     log_warning(f"🕒 Connection acquisition took {duration:.2f}ms", "db")

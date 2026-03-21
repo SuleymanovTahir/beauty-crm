@@ -125,6 +125,12 @@ export default function Login() {
         return;
       }
 
+      if (err.error === "company_inactive") {
+        setError('company_inactive');
+        toast.error(t('company_inactive', 'Компания временно недоступна'));
+        return;
+      }
+
       // Неверный логин/пароль
       const errorStr = String(err.error || err.message || (typeof err === 'string' ? err : ''));
       if (errorStr.includes('invalid_credentials') || errorStr.includes('user_not_found')) {

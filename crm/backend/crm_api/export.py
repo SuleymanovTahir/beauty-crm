@@ -1281,7 +1281,8 @@ def export_dashboard_report_pdf(stats, bot_analytics, bookings, lang='en'):
     
     # --- HEADER ---
     salon = get_salon_settings()
-    salon_name = salon.get('name', 'Salon')
+    from core.config import APP_NAME
+    salon_name = salon.get('name') or APP_NAME
     elements.append(Paragraph(t(lang, 'crm/dashboard:report', f'{salon_name} Report'), title_style))
     elements.append(Paragraph(f"{t(lang, 'crm/dashboard:datetime', 'Generated')}: {datetime.now().strftime('%d.%m.%Y %H:%M')}", subtitle_style))
     

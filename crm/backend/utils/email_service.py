@@ -132,16 +132,17 @@ def get_email_translation(key: str, language: str = 'en') -> str:
 def get_salon_name() -> str:
     """
     Получить название салона из базы данных
-    Returns: Название салона или 'Beauty Salon' из окружения или по умолчанию
+    Returns: Название бизнеса или нейтральный CRM fallback
     """
     try:
+        from core.config import APP_NAME
         from db import get_salon_settings
         salon_settings = get_salon_settings()
-        # Corrected key from 'salon_name' to 'name'
-        return salon_settings.get('name') or os.getenv('SALON_NAME') or 'Beauty Salon'
+        return salon_settings.get('name') or APP_NAME
     except Exception as e:
         log_warning(f"Could not get salon name: {e}", "email")
-        return os.getenv('SALON_NAME') or 'Beauty Salon'
+        from core.config import APP_NAME
+        return APP_NAME
 
 
 def get_logo_url() -> str:

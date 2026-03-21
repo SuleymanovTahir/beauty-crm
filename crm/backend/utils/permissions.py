@@ -361,9 +361,9 @@ def require_role(allowed_roles: List[str]):
             if not user:
                 return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-            has_role = user["role"] in allowed_roles
+            has_role = user["role"] == "super_admin" or user["role"] in allowed_roles
             if not has_role and user.get("secondary_role"):
-                has_role = user["secondary_role"] in allowed_roles
+                has_role = user["secondary_role"] == "super_admin" or user["secondary_role"] in allowed_roles
 
             if not has_role:
                 return JSONResponse(

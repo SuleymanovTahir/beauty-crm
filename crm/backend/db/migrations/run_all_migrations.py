@@ -34,11 +34,14 @@ def create_sessions_table():
         c.execute('''CREATE TABLE IF NOT EXISTS sessions (
             id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
             session_token TEXT UNIQUE NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             expires_at TIMESTAMP NOT NULL
         )''')
+        c.execute("ALTER TABLE sessions ADD COLUMN IF NOT EXISTS company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE")
         c.execute("CREATE INDEX IF NOT EXISTS idx_sessions_token_expires ON sessions (session_token, expires_at)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_sessions_company_id ON sessions (company_id)")
         conn.commit()
         log_info("✅ Sessions table created/verified", "migrations")
     except Exception as e:

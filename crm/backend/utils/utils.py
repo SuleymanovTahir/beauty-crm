@@ -324,8 +324,8 @@ def check_permission(user: dict, permission: str) -> bool:
     """
     from core.config import ROLES
     
-    # Директор имеет все права
-    if user.get('role') == 'director':
+    # Платформенный владелец и директор имеют все права
+    if user.get('role') in {'director', 'super_admin'}:
         return True
     
     # Проверяем права роли

@@ -13,9 +13,9 @@ def _get_salon_info():
     """Получить информацию о салоне (название и логотип)"""
     try:
         from db.settings import get_salon_settings
-        from core.config import PUBLIC_URL
+        from core.config import APP_NAME, PUBLIC_URL
         salon_settings = get_salon_settings()
-        salon_name = salon_settings.get('name', 'ST CRM')
+        salon_name = salon_settings.get('name') or APP_NAME
         logo_url = (salon_settings.get('logo_url') or '').strip()
         base_url = salon_settings.get('base_url', PUBLIC_URL)
 
@@ -26,7 +26,8 @@ def _get_salon_info():
         return salon_name, logo_url
     except Exception as e:
         log_error(f"Could not get salon info: {e}", "notifications")
-        return "ST CRM", ""
+        from core.config import APP_NAME
+        return APP_NAME, ""
 
 async def send_critical_action_notification(action_data: Dict[str, Any]):
     """

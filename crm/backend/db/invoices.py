@@ -74,8 +74,7 @@ def create_invoice(data: Dict) -> Optional[int]:
         invoice_number = f"INV-{datetime.now().strftime('%Y%m%d')}-{count + 1:04d}"
         
         # Get defaults
-        c.execute("SELECT currency FROM salon_settings WHERE id = 1")
-        currency = (c.fetchone() or [get_salon_currency()])[0]
+        currency = get_salon_currency()
         
         c.execute("SELECT id FROM workflow_stages WHERE entity_type = 'invoice' AND name = 'draft' LIMIT 1")
         stage_id = (c.fetchone() or [None])[0]

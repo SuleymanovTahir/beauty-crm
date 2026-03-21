@@ -177,10 +177,11 @@ class TelegramBot:
                 self.get_or_create_client(chat_id, user)
 
                 # Формируем ответ
+                from core.config import APP_NAME
                 from db.settings import get_bot_settings, get_salon_settings
                 bot_settings = get_bot_settings()
                 salon_settings = get_salon_settings()
-                salon_name = salon_settings.get("name", "Beauty Salon")
+                salon_name = salon_settings.get("name") or APP_NAME
 
                 if text == "/start":
                     # Используем приветствие из настроек бота

@@ -16,6 +16,7 @@ from bot.constants import (
 
 from db.connection import get_db_connection
 from db.services import get_all_services
+from core.config import APP_NAME
 from utils.datetime_utils import get_current_time
 from utils.transliteration import transliterate_name
 
@@ -265,9 +266,11 @@ class PromptBuilder:
         advanced_rules_section = self._build_advanced_rules()
 
         # СБОРКА ПРОМТА
+        salon_name = self.salon.get('name') or APP_NAME
+
         if client_language != 'ru':
             system_prompt = f"""
-        You are {bot_name}, the professional assistant of {self.salon.get('name', 'Beauty Salon')}.
+        You are {bot_name}, the professional assistant of {salon_name}.
         You use the Gemini Pro model to generate responses.
         
         YOUR ROLE & PERSONALITY:
@@ -351,7 +354,7 @@ See you soon! 😊
 """
         else:
             system_prompt = f"""
-        Ты - {bot_name}, профессиональный администратор салона красоты {self.salon.get('name', 'Beauty Salon')}.
+        Ты - {bot_name}, профессиональный администратор {salon_name}.
         Ты используешь модель Gemini Pro для генерации ответов.
         
         ТВОЯ РОЛЬ И ХАРАКТЕР:

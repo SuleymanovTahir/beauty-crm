@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { api } from "@crm/services/api";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@crm/components/LanguageSwitcher";
-import GoogleLoginButton from "@crm/components/GoogleLoginButton";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import {
   getUnauthenticatedCrmPathByGates,
@@ -27,6 +26,8 @@ interface FieldErrors {
   username?: string[];
   email?: string[];
   phone?: string[];
+  company_name?: string[];
+  company_code?: string[];
   business_type?: string[];
   password?: string[];
   confirmPassword?: string[];
@@ -51,6 +52,7 @@ export default function Register() {
   const { t } = useTranslation(['auth/register', 'common']);
   const allowedBusinessTypes = ['beauty', 'restaurant', 'construction', 'factory', 'taxi', 'delivery', 'other'] as const;
   const [formData, setFormData] = useState({
+    registration_mode: "create_company",
     username: "",
     password: "",
     confirmPassword: "",
@@ -58,6 +60,8 @@ export default function Register() {
     email: "",
     phone: "",
     role: "employee",
+    company_name: "",
+    company_code: "",
     business_type: "",
   });
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
@@ -77,6 +81,7 @@ export default function Register() {
     () => getUnauthenticatedCrmPathByGates(normalizedPlatformGates.site_enabled, normalizedPlatformGates.crm_enabled),
     [normalizedPlatformGates.site_enabled, normalizedPlatformGates.crm_enabled],
   );
+  const isCompanyCreation = formData.registration_mode === "create_company";
 
   // Load salon settings
   React.useEffect(() => {
@@ -138,6 +143,11 @@ export default function Register() {
       'error_login_too_short': 'username',
       'error_name_too_short': 'full_name',
       'error_invalid_email': 'email',
+      'error_company_name_required': 'company_name',
+      'error_company_code_required': 'company_code',
+      'error_company_not_found': 'company_code',
+      'error_company_inactive': 'company_code',
+      'error_company_staff_limit_reached': 'company_code',
     };
 
     const translatedErrors: string[] = [];
@@ -206,9 +216,15 @@ export default function Register() {
       errors.phone = [t('common:auth_errors.error_invalid_phone', 'Неверный формат телефона')];
     }
 
-    // Сфера бизнеса
-    if (!(formData.business_type && formData.business_type.trim())) {
-      errors.business_type = [requiredFieldError];
+    if (isCompanyCreation) {
+      if (!(formData.company_name && formData.company_name.trim())) {
+        errors.company_name = [requiredFieldError];
+      }
+      if (!(formData.business_type && formData.business_type.trim())) {
+        errors.business_type = [requiredFieldError];
+      }
+    } else if (!(formData.company_code && formData.company_code.trim())) {
+      errors.company_code = [requiredFieldError];
     }
 
     // Пароль
@@ -264,22 +280,26 @@ export default function Register() {
         formData.full_name,
         formData.email,
         formData.phone,
-        formData.role,
+        isCompanyCreation ? "director" : formData.role,
         privacyAccepted,
         newsletterSubscribed,
         captchaToken ?? undefined,
-        formData.business_type
+        isCompanyCreation ? formData.business_type : "",
+        isCompanyCreation ? formData.company_name : "",
+        isCompanyCreation ? "" : formData.company_code,
+        isCompanyCreation ? "create_company" : "join_company",
       );
 
 
       if (response.success) {
-        // Если это первый директор - он автоматически подтвержден
-        if (response.auto_verified && response.is_first_director) {
-          toast.success(response.message, { duration: 5000 });
-          setTimeout(() => {
-            navigate(crmLoginPath);
-          }, 2000);
-          return;
+        if (isCompanyCreation && response.company_code) {
+          toast.success(
+            t('company_created_with_code', {
+              defaultValue: 'Компания создана. Код компании: {{code}}',
+              code: response.company_code,
+            }),
+            { duration: 9000 },
+          );
         }
 
         setStep("verify");
@@ -506,9 +526,15 @@ export default function Register() {
             <UserPlus className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl text-gray-900 mb-2">
-            {t('register_staff_title', 'Регистрация сотрудника')}
+            {isCompanyCreation
+              ? t('create_company_title', { defaultValue: 'Создать компанию' })
+              : t('join_company_title', { defaultValue: 'Присоединиться к компании' })}
           </h1>
-          <p className="text-gray-600">{t('register_staff_subtitle', 'Пожалуйста, заполните данные для доступа к CRM системе')}</p>
+          <p className="text-gray-600">
+            {isCompanyCreation
+              ? t('create_company_subtitle', { defaultValue: 'Создайте новую компанию и получите код для сотрудников.' })
+              : t('join_company_subtitle', { defaultValue: 'Введите код компании и создайте учётную запись сотрудника.' })}
+          </p>
 
         </div>
 
@@ -519,22 +545,56 @@ export default function Register() {
             </div>
           )}
 
-          <div className="mb-6 space-y-6">
-            <GoogleLoginButton text="signup_with" />
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">
-                  {t('or_register_with_email', 'Или регистрация через email')}
-                </span>
-              </div>
-            </div>
+          <div className="mb-6 grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1">
+            <button
+              type="button"
+              onClick={() => setFormData((prev) => ({ ...prev, registration_mode: "create_company", role: "director", company_code: "" }))}
+              className={`rounded-xl px-3 py-2 text-sm font-medium transition ${isCompanyCreation ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'}`}
+            >
+              {t('mode_create_company', { defaultValue: 'Новая компания' })}
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData((prev) => ({ ...prev, registration_mode: "join_company", role: prev.role === "director" ? "employee" : prev.role, company_name: "", business_type: prev.business_type }))}
+              className={`rounded-xl px-3 py-2 text-sm font-medium transition ${!isCompanyCreation ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600'}`}
+            >
+              {t('mode_join_company', { defaultValue: 'Войти по коду компании' })}
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {isCompanyCreation ? (
+              <div>
+                <Label htmlFor="company_name" className="mb-2 block">{t('company_name_label', { defaultValue: 'Название компании' })} *</Label>
+                <Input
+                  id="company_name"
+                  disabled={loading}
+                  value={formData.company_name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, company_name: e.target.value })
+                  }
+                  placeholder={t('company_name_placeholder', { defaultValue: 'Например, Nova Clinic' })}
+                  className={fieldErrors.company_name ? 'border-red-500' : ''}
+                />
+                <FieldError errors={fieldErrors.company_name} />
+              </div>
+            ) : (
+              <div>
+                <Label htmlFor="company_code" className="mb-2 block">{t('company_code_label', { defaultValue: 'Код компании' })} *</Label>
+                <Input
+                  id="company_code"
+                  disabled={loading}
+                  value={formData.company_code}
+                  onChange={(e) =>
+                    setFormData({ ...formData, company_code: e.target.value.toUpperCase() })
+                  }
+                  placeholder={t('company_code_placeholder', { defaultValue: 'Например, NOVACRM' })}
+                  className={fieldErrors.company_code ? 'border-red-500' : ''}
+                />
+                <FieldError errors={fieldErrors.company_code} />
+              </div>
+            )}
+
             <div>
               <Label htmlFor="full_name" className="mb-2 block">{t('full_name')} *</Label>
               <div className="relative">
@@ -609,55 +669,70 @@ export default function Register() {
               <FieldError errors={fieldErrors.phone} />
             </div>
 
-            <div>
-              <Label htmlFor="role" className="mb-2 block">{t('role_label')}</Label>
-              <Select
-                value={formData.role}
-                onValueChange={(value) => setFormData({ ...formData, role: value })}
-                disabled={loading}
-              >
-                <SelectTrigger id="role" className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="employee">{t('role_employee')}</SelectItem>
-                  <SelectItem value="manager">{t('role_manager')}</SelectItem>
-                  <SelectItem value="admin">{t('role_admin')}</SelectItem>
-                  <SelectItem value="director">{t('role_director')}</SelectItem>
-                  <SelectItem value="sales">{t('role_saler')}</SelectItem>
-                  <SelectItem value="marketer">{t('role_marketer')}</SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-sm text-gray-500 mt-3">
-                {t('role_hint')}
-              </p>
-            </div>
+            {isCompanyCreation ? (
+              <>
+                <div>
+                  <Label htmlFor="role" className="mb-2 block">{t('role_label')}</Label>
+                  <Input
+                    id="role"
+                    disabled
+                    value={t('role_director')}
+                  />
+                  <p className="text-sm text-gray-500 mt-3">
+                    {t('company_owner_hint', { defaultValue: 'Создатель компании получает роль директора и доступ к управлению сотрудниками.' })}
+                  </p>
+                </div>
 
-            <div>
-              <Label htmlFor="business_type" className="mb-2 block">{t('business_type_label')} *</Label>
-              <Select
-                value={formData.business_type}
-                onValueChange={(value) => setFormData({ ...formData, business_type: value })}
-                disabled={loading}
-              >
-                <SelectTrigger id="business_type" className={`w-full ${fieldErrors.business_type ? 'border-red-500' : ''}`}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="beauty">{t('business_type_beauty')}</SelectItem>
-                  <SelectItem value="restaurant">{t('business_type_restaurant')}</SelectItem>
-                  <SelectItem value="construction">{t('business_type_construction')}</SelectItem>
-                  <SelectItem value="factory">{t('business_type_factory')}</SelectItem>
-                  <SelectItem value="taxi">{t('business_type_taxi')}</SelectItem>
-                  <SelectItem value="delivery">{t('business_type_delivery')}</SelectItem>
-                  <SelectItem value="other">{t('business_type_other')}</SelectItem>
-                </SelectContent>
-              </Select>
-              <FieldError errors={fieldErrors.business_type} />
-              <p className="text-sm text-gray-500 mt-3">
-                {t('business_type_hint')}
-              </p>
-            </div>
+                <div>
+                  <Label htmlFor="business_type" className="mb-2 block">{t('business_type_label')} *</Label>
+                  <Select
+                    value={formData.business_type}
+                    onValueChange={(value) => setFormData({ ...formData, business_type: value })}
+                    disabled={loading}
+                  >
+                    <SelectTrigger id="business_type" className={`w-full ${fieldErrors.business_type ? 'border-red-500' : ''}`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beauty">{t('business_type_beauty')}</SelectItem>
+                      <SelectItem value="restaurant">{t('business_type_restaurant')}</SelectItem>
+                      <SelectItem value="construction">{t('business_type_construction')}</SelectItem>
+                      <SelectItem value="factory">{t('business_type_factory')}</SelectItem>
+                      <SelectItem value="taxi">{t('business_type_taxi')}</SelectItem>
+                      <SelectItem value="delivery">{t('business_type_delivery')}</SelectItem>
+                      <SelectItem value="other">{t('business_type_other')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FieldError errors={fieldErrors.business_type} />
+                  <p className="text-sm text-gray-500 mt-3">
+                    {t('business_type_hint')}
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div>
+                <Label htmlFor="role" className="mb-2 block">{t('role_label')}</Label>
+                <Select
+                  value={formData.role}
+                  onValueChange={(value) => setFormData({ ...formData, role: value })}
+                  disabled={loading}
+                >
+                  <SelectTrigger id="role" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="employee">{t('role_employee')}</SelectItem>
+                    <SelectItem value="manager">{t('role_manager')}</SelectItem>
+                    <SelectItem value="admin">{t('role_admin')}</SelectItem>
+                    <SelectItem value="sales">{t('role_saler')}</SelectItem>
+                    <SelectItem value="marketer">{t('role_marketer')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-gray-500 mt-3">
+                  {t('join_company_role_hint', { defaultValue: 'Роль сотрудника внутри существующей компании.' })}
+                </p>
+              </div>
+            )}
 
             <div>
               <Label htmlFor="password" className="mb-2 block">{t('password')} *</Label>

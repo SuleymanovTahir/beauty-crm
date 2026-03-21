@@ -2,10 +2,11 @@
 Инициализация единой базы данных системы
 Единый источник истины (SSOT) для схемы CRM
 """
-from core.config import SALON_CURRENCY_DEFAULT, DEFAULT_HOURS_WEEKDAYS, DEFAULT_HOURS_WEEKENDS
+from core.config import APP_NAME, SALON_CURRENCY_DEFAULT
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 import os
+import re
 
 def init_database():
     """Создать всю схему системы с нуля или синхронизировать существующие таблицы."""
@@ -49,6 +50,62 @@ def init_database():
             c.execute("ALTER TABLE {} ADD COLUMN IF NOT EXISTS {} {}".format(table, column, definition))
         except Exception as e:
             log_error(f"Ошибка при добавлении колонки {column} в {table}: {e}", "db")
+
+    def set_column_default_if_exists(table, column, default_sql):
+        """Set a column default when both table and column already exist."""
+        try:
+            c.execute("""
+                SELECT EXISTS (
+                    SELECT FROM information_schema.columns
+                    WHERE table_name = %s AND column_name = %s
+                )
+            """, (table, column))
+            if not c.fetchone()[0]:
+                return
+            c.execute(f"ALTER TABLE {table} ALTER COLUMN {column} SET DEFAULT {default_sql}")
+        except Exception as e:
+            log_error(f"Ошибка установки дефолта {table}.{column}: {e}", "db")
+
+    def _slugify_company_name(raw_name: str) -> str:
+        normalized = re.sub(r"[^a-z0-9]+", "-", str(raw_name or "").strip().lower()).strip("-")
+        if not normalized:
+            normalized = "company"
+        return normalized[:64]
+
+    def _generate_company_code(base_value: str, fallback_id: int = 0) -> str:
+        cleaned = re.sub(r"[^A-Z0-9]+", "", str(base_value or "").upper())
+        if not cleaned:
+            cleaned = f"COMPANY{fallback_id or 1}"
+        return cleaned[:16]
+
+    def _ensure_company_rls(table_name: str):
+        policy_name = f"{table_name}_tenant_policy"
+        try:
+            c.execute(f"ALTER TABLE {table_name} ENABLE ROW LEVEL SECURITY")
+            c.execute(f"DROP POLICY IF EXISTS {policy_name} ON {table_name}")
+            c.execute(
+                f"""
+                CREATE POLICY {policy_name}
+                ON {table_name}
+                FOR ALL
+                USING (
+                    current_setting('app.tenant_bypass', true) = 'on'
+                    OR (
+                        NULLIF(current_setting('app.company_id', true), '') IS NOT NULL
+                        AND company_id = NULLIF(current_setting('app.company_id', true), '')::INTEGER
+                    )
+                )
+                WITH CHECK (
+                    current_setting('app.tenant_bypass', true) = 'on'
+                    OR (
+                        NULLIF(current_setting('app.company_id', true), '') IS NOT NULL
+                        AND company_id = NULLIF(current_setting('app.company_id', true), '')::INTEGER
+                    )
+                )
+                """
+            )
+        except Exception as e:
+            log_error(f"Ошибка настройки tenant policy для {table_name}: {e}", "db")
 
     def ensure_fk_cascade(table, column, ref_table, ref_column):
         """Гарантирует, что внешний ключ имеет ON DELETE CASCADE"""
@@ -317,6 +374,238 @@ def init_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
 
+        # --- 1.5 MULTI-TENANT SAAS FOUNDATION ---
+        c.execute('''CREATE TABLE IF NOT EXISTS companies (
+            id SERIAL PRIMARY KEY,
+            slug TEXT UNIQUE NOT NULL,
+            access_code TEXT UNIQUE NOT NULL,
+            name TEXT,
+            status TEXT DEFAULT 'active',
+            owner_user_id INTEGER,
+            address TEXT,
+            google_maps TEXT,
+            hours_weekdays TEXT,
+            hours_weekends TEXT,
+            hours TEXT,
+            lunch_start TEXT,
+            lunch_end TEXT,
+            phone TEXT,
+            email TEXT,
+            whatsapp TEXT,
+            instagram TEXT,
+            booking_url TEXT,
+            timezone TEXT DEFAULT 'UTC',
+            timezone_offset INTEGER DEFAULT 0,
+            currency TEXT,
+            business_type TEXT DEFAULT 'other',
+            product_mode TEXT DEFAULT 'crm',
+            crm_enabled BOOLEAN DEFAULT TRUE,
+            site_enabled BOOLEAN DEFAULT FALSE,
+            city TEXT,
+            country TEXT,
+            latitude REAL,
+            longitude REAL,
+            logo_url TEXT,
+            base_url TEXT,
+            main_location TEXT,
+            bot_name TEXT,
+            bot_config JSONB DEFAULT '{}',
+            messenger_config JSONB DEFAULT '[]',
+            menu_config JSONB DEFAULT '{}',
+            custom_settings JSONB DEFAULT '{}',
+            feature_flags JSONB DEFAULT '{}',
+            loyalty_points_conversion_rate REAL DEFAULT 0,
+            points_expiration_days INTEGER DEFAULT 365,
+            employee_limit INTEGER DEFAULT 5,
+            metadata JSONB DEFAULT '{}',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            deleted_at TIMESTAMP NULL
+        )''')
+        c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_companies_slug_unique ON companies(slug)")
+        c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_companies_access_code_unique ON companies(access_code)")
+        add_column_if_not_exists('companies', 'status', "TEXT DEFAULT 'active'")
+        add_column_if_not_exists('companies', 'owner_user_id', 'INTEGER')
+        add_column_if_not_exists('companies', 'employee_limit', 'INTEGER DEFAULT 5')
+        add_column_if_not_exists('companies', 'metadata', "JSONB DEFAULT '{}'")
+
+        c.execute('''CREATE TABLE IF NOT EXISTS tariff_plans (
+            id SERIAL PRIMARY KEY,
+            key TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL,
+            description TEXT,
+            employee_limit INTEGER DEFAULT 5,
+            client_limit INTEGER DEFAULT 0,
+            product_limit INTEGER DEFAULT 0,
+            monthly_message_limit INTEGER DEFAULT 0,
+            storage_limit_mb INTEGER DEFAULT 0,
+            ad_slot_limit INTEGER DEFAULT 0,
+            monthly_price REAL DEFAULT 0,
+            yearly_price REAL DEFAULT 0,
+            currency TEXT,
+            trial_days INTEGER DEFAULT 14,
+            feature_flags JSONB DEFAULT '{}',
+            is_active BOOLEAN DEFAULT TRUE,
+            sort_order INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        add_column_if_not_exists('tariff_plans', 'yearly_price', 'REAL DEFAULT 0')
+        add_column_if_not_exists('tariff_plans', 'currency', 'TEXT')
+        add_column_if_not_exists('tariff_plans', 'trial_days', 'INTEGER DEFAULT 14')
+        add_column_if_not_exists('tariff_plans', 'client_limit', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('tariff_plans', 'product_limit', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('tariff_plans', 'monthly_message_limit', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('tariff_plans', 'storage_limit_mb', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('tariff_plans', 'ad_slot_limit', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('tariff_plans', 'feature_flags', "JSONB DEFAULT '{}'")
+        add_column_if_not_exists('tariff_plans', 'sort_order', 'INTEGER DEFAULT 0')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS company_subscriptions (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE UNIQUE,
+            tariff_plan_id INTEGER REFERENCES tariff_plans(id),
+            status TEXT DEFAULT 'trial',
+            is_trial BOOLEAN DEFAULT TRUE,
+            employee_limit_override INTEGER,
+            client_limit_override INTEGER,
+            product_limit_override INTEGER,
+            monthly_message_limit_override INTEGER,
+            storage_limit_mb_override INTEGER,
+            ad_slot_limit_override INTEGER,
+            billing_cycle_months INTEGER DEFAULT 1,
+            started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            current_period_started_at TIMESTAMP,
+            current_period_ends_at TIMESTAMP,
+            trial_ends_at TIMESTAMP,
+            ends_at TIMESTAMP,
+            current_snapshot JSONB DEFAULT '{}',
+            scheduled_change JSONB DEFAULT '{}',
+            discount_config JSONB DEFAULT '{}',
+            price_override JSONB DEFAULT '{}',
+            auto_renew BOOLEAN DEFAULT TRUE,
+            last_payment_at TIMESTAMP,
+            next_payment_due_at TIMESTAMP,
+            assigned_by_user_id INTEGER,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        add_column_if_not_exists('company_subscriptions', 'status', "TEXT DEFAULT 'trial'")
+        add_column_if_not_exists('company_subscriptions', 'is_trial', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('company_subscriptions', 'employee_limit_override', 'INTEGER')
+        add_column_if_not_exists('company_subscriptions', 'client_limit_override', 'INTEGER')
+        add_column_if_not_exists('company_subscriptions', 'product_limit_override', 'INTEGER')
+        add_column_if_not_exists('company_subscriptions', 'monthly_message_limit_override', 'INTEGER')
+        add_column_if_not_exists('company_subscriptions', 'storage_limit_mb_override', 'INTEGER')
+        add_column_if_not_exists('company_subscriptions', 'ad_slot_limit_override', 'INTEGER')
+        add_column_if_not_exists('company_subscriptions', 'billing_cycle_months', 'INTEGER DEFAULT 1')
+        add_column_if_not_exists('company_subscriptions', 'current_period_started_at', 'TIMESTAMP')
+        add_column_if_not_exists('company_subscriptions', 'current_period_ends_at', 'TIMESTAMP')
+        add_column_if_not_exists('company_subscriptions', 'current_snapshot', "JSONB DEFAULT '{}'")
+        add_column_if_not_exists('company_subscriptions', 'scheduled_change', "JSONB DEFAULT '{}'")
+        add_column_if_not_exists('company_subscriptions', 'discount_config', "JSONB DEFAULT '{}'")
+        add_column_if_not_exists('company_subscriptions', 'price_override', "JSONB DEFAULT '{}'")
+        add_column_if_not_exists('company_subscriptions', 'auto_renew', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('company_subscriptions', 'last_payment_at', 'TIMESTAMP')
+        add_column_if_not_exists('company_subscriptions', 'next_payment_due_at', 'TIMESTAMP')
+        add_column_if_not_exists('company_subscriptions', 'assigned_by_user_id', 'INTEGER')
+        add_column_if_not_exists('company_subscriptions', 'notes', 'TEXT')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS company_payments (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            subscription_id INTEGER REFERENCES company_subscriptions(id) ON DELETE SET NULL,
+            tariff_plan_id INTEGER REFERENCES tariff_plans(id) ON DELETE SET NULL,
+            status TEXT DEFAULT 'paid',
+            amount REAL DEFAULT 0,
+            base_amount REAL DEFAULT 0,
+            discount_amount REAL DEFAULT 0,
+            discount_percent REAL DEFAULT 0,
+            currency TEXT,
+            period_months INTEGER DEFAULT 1,
+            period_started_at TIMESTAMP,
+            period_ends_at TIMESTAMP,
+            due_at TIMESTAMP,
+            paid_at TIMESTAMP,
+            invoice_number TEXT,
+            notes TEXT,
+            metadata JSONB DEFAULT '{}',
+            created_by_user_id INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        add_column_if_not_exists('company_payments', 'status', "TEXT DEFAULT 'paid'")
+        add_column_if_not_exists('company_payments', 'amount', 'REAL DEFAULT 0')
+        add_column_if_not_exists('company_payments', 'base_amount', 'REAL DEFAULT 0')
+        add_column_if_not_exists('company_payments', 'discount_amount', 'REAL DEFAULT 0')
+        add_column_if_not_exists('company_payments', 'discount_percent', 'REAL DEFAULT 0')
+        add_column_if_not_exists('company_payments', 'currency', 'TEXT')
+        add_column_if_not_exists('company_payments', 'period_months', 'INTEGER DEFAULT 1')
+        add_column_if_not_exists('company_payments', 'period_started_at', 'TIMESTAMP')
+        add_column_if_not_exists('company_payments', 'period_ends_at', 'TIMESTAMP')
+        add_column_if_not_exists('company_payments', 'due_at', 'TIMESTAMP')
+        add_column_if_not_exists('company_payments', 'paid_at', 'TIMESTAMP')
+        add_column_if_not_exists('company_payments', 'invoice_number', 'TEXT')
+        add_column_if_not_exists('company_payments', 'notes', 'TEXT')
+        add_column_if_not_exists('company_payments', 'metadata', "JSONB DEFAULT '{}'")
+        add_column_if_not_exists('company_payments', 'created_by_user_id', 'INTEGER REFERENCES users(id)')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_company_payments_company_id ON company_payments(company_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_company_payments_status ON company_payments(status)")
+
+        c.execute('''CREATE TABLE IF NOT EXISTS platform_broadcasts (
+            id SERIAL PRIMARY KEY,
+            title TEXT NOT NULL,
+            message TEXT NOT NULL,
+            delivery_channel TEXT DEFAULT 'email',
+            target_filter JSONB DEFAULT '{}',
+            sent_companies_count INTEGER DEFAULT 0,
+            status TEXT DEFAULT 'draft',
+            created_by_user_id INTEGER,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            sent_at TIMESTAMP
+        )''')
+        add_column_if_not_exists('platform_broadcasts', 'delivery_channel', "TEXT DEFAULT 'email'")
+        add_column_if_not_exists('platform_broadcasts', 'target_filter', "JSONB DEFAULT '{}'")
+        add_column_if_not_exists('platform_broadcasts', 'status', "TEXT DEFAULT 'draft'")
+        add_column_if_not_exists('platform_broadcasts', 'created_by_user_id', 'INTEGER')
+        add_column_if_not_exists('platform_broadcasts', 'sent_at', 'TIMESTAMP')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS platform_ads (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            title TEXT NOT NULL,
+            description TEXT,
+            image_url TEXT,
+            link_url TEXT,
+            placement TEXT NOT NULL,
+            size_label TEXT,
+            width_px INTEGER,
+            height_px INTEGER,
+            status TEXT DEFAULT 'draft',
+            starts_at TIMESTAMP,
+            ends_at TIMESTAMP,
+            notes TEXT,
+            created_by_user_id INTEGER REFERENCES users(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        add_column_if_not_exists('platform_ads', 'company_id', 'INTEGER REFERENCES companies(id) ON DELETE CASCADE')
+        add_column_if_not_exists('platform_ads', 'description', 'TEXT')
+        add_column_if_not_exists('platform_ads', 'image_url', 'TEXT')
+        add_column_if_not_exists('platform_ads', 'link_url', 'TEXT')
+        add_column_if_not_exists('platform_ads', 'placement', 'TEXT')
+        add_column_if_not_exists('platform_ads', 'size_label', 'TEXT')
+        add_column_if_not_exists('platform_ads', 'width_px', 'INTEGER')
+        add_column_if_not_exists('platform_ads', 'height_px', 'INTEGER')
+        add_column_if_not_exists('platform_ads', 'status', "TEXT DEFAULT 'draft'")
+        add_column_if_not_exists('platform_ads', 'starts_at', 'TIMESTAMP')
+        add_column_if_not_exists('platform_ads', 'ends_at', 'TIMESTAMP')
+        add_column_if_not_exists('platform_ads', 'notes', 'TEXT')
+        add_column_if_not_exists('platform_ads', 'created_by_user_id', 'INTEGER REFERENCES users(id)')
+        add_column_if_not_exists('platform_ads', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_platform_ads_company_id ON platform_ads(company_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_platform_ads_status ON platform_ads(status)")
+
         # --- 2. BASE ENTITIES ---
 
         # Users and Staff
@@ -370,6 +659,7 @@ def init_database():
         add_column_if_not_exists('users', 'password_reset_expires', 'TIMESTAMP')
         add_column_if_not_exists('users', 'assigned_employee_id', 'INTEGER')
         add_column_if_not_exists('users', 'preferred_language', "TEXT DEFAULT 'en'")
+        add_column_if_not_exists('users', 'company_id', 'INTEGER REFERENCES companies(id) ON DELETE CASCADE')
 
 
         # Soft Delete Tracking (Trash) - REQUIRED by housekeeping
@@ -422,7 +712,7 @@ def init_database():
             whatsapp TEXT, instagram TEXT,
             booking_url TEXT, timezone TEXT DEFAULT 'UTC',
             timezone_offset INTEGER DEFAULT 0,
-            currency TEXT DEFAULT '{SALON_CURRENCY_DEFAULT}',
+            currency TEXT,
             business_type TEXT DEFAULT 'other',
             product_mode TEXT DEFAULT 'crm',
             crm_enabled BOOLEAN DEFAULT TRUE,
@@ -452,6 +742,7 @@ def init_database():
         add_column_if_not_exists('salon_settings', 'product_mode', "TEXT DEFAULT 'crm'")
         add_column_if_not_exists('salon_settings', 'crm_enabled', 'BOOLEAN DEFAULT TRUE')
         add_column_if_not_exists('salon_settings', 'site_enabled', 'BOOLEAN DEFAULT FALSE')
+        c.execute("ALTER TABLE salon_settings ALTER COLUMN currency DROP DEFAULT")
 
 
         # Registration Audit Log
@@ -1893,6 +2184,62 @@ def init_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
 
+        tenant_tables = [
+            'media_library',
+            'unified_communication_log',
+            'notification_templates',
+            'notification_history',
+            'users',
+            'positions',
+            'services',
+            'user_services',
+            'user_schedule',
+            'user_time_off',
+            'clients',
+            'bookings',
+            'ratings',
+            'products',
+            'product_movements',
+            'tasks',
+            'invoices',
+            'contracts',
+            'client_notes',
+            'client_notifications',
+            'internal_chat',
+            'chat_recordings',
+            'user_status',
+            'user_call_logs',
+            'user_subscriptions',
+            'user_push_tokens',
+            'workflow_stages',
+            'loyalty_levels',
+            'service_change_requests',
+            'call_logs',
+            'messenger_messages',
+            'booking_temp',
+            'salary_settings',
+            'salary_calculations',
+            'payroll_payments',
+            'payment_transactions',
+            'referral_campaigns',
+            'referral_campaign_users',
+            'client_referrals',
+            'referrals',
+            'marketplace_bookings',
+        ]
+        for tenant_table in tenant_tables:
+            add_column_if_not_exists(tenant_table, 'company_id', 'INTEGER REFERENCES companies(id) ON DELETE CASCADE')
+            set_column_default_if_exists(
+                tenant_table,
+                'company_id',
+                "NULLIF(current_setting('app.company_id', true), '')::INTEGER",
+            )
+            try:
+                c.execute(f"CREATE INDEX IF NOT EXISTS idx_{tenant_table}_company_id ON {tenant_table}(company_id)")
+            except Exception as e:
+                log_error(f"Ошибка индекса {tenant_table}.company_id: {e}", "db")
+            _ensure_company_rls(tenant_table)
+
         # --- 7. DEFAULT DATA SYNC ---
 
         # Stages
@@ -1986,49 +2333,253 @@ def init_database():
             )
 
         # CRM-only bootstrap without business/demo auto-fill.
-        requested_name = (os.getenv("SALON_NAME") or "").strip()
-        salon_name = requested_name if len(requested_name) > 0 else "ST CRM"
         c.execute(
             """
-            INSERT INTO salon_settings (id, name, product_mode, crm_enabled, site_enabled, custom_settings)
-            VALUES (1, %s, 'crm', TRUE, FALSE, '{}'::jsonb)
+            INSERT INTO salon_settings (id, product_mode, crm_enabled, site_enabled, custom_settings)
+            VALUES (1, 'crm', TRUE, FALSE, '{}'::jsonb)
             ON CONFLICT (id) DO UPDATE SET
-                name = CASE
-                    WHEN salon_settings.name IS NULL
-                        OR TRIM(salon_settings.name) = ''
-                        OR LOWER(salon_settings.name) LIKE '%%le diamant%%'
-                    THEN EXCLUDED.name
-                    ELSE salon_settings.name
-                END,
                 product_mode = 'crm',
                 crm_enabled = TRUE,
                 site_enabled = FALSE,
                 updated_at = CURRENT_TIMESTAMP
-            """,
-            (salon_name,),
-        )
-        c.execute(
             """
-            UPDATE salon_settings
-            SET bot_name = 'ST CRM Assistant'
-            WHERE id = 1
-                AND (
-                    bot_name IS NULL
-                    OR TRIM(bot_name) = ''
-                    OR LOWER(bot_name) LIKE '%%le diamant%%'
+        )
+
+        default_tariff_rows = [
+            (
+                'trial',
+                'Trial',
+                'Trial access for onboarding a new company',
+                3, 150, 25, 300, 512, 0,
+                0, 0, SALON_CURRENCY_DEFAULT, 14,
+                '{"crm": true, "basic_analytics": true, "team_management": true}',
+                True,
+                0,
+            ),
+            (
+                'starter',
+                'Starter',
+                'Starter plan for small teams',
+                5, 1500, 250, 5000, 2048, 1,
+                39, 390, SALON_CURRENCY_DEFAULT, 14,
+                '{"crm": true, "broadcasts": true, "data_export": true, "automation_rules": true, "ads_manager": true}',
+                True,
+                10,
+            ),
+            (
+                'pro',
+                'Pro',
+                'Professional plan for growing teams',
+                15, 12000, 2500, 60000, 10240, 5,
+                89, 890, SALON_CURRENCY_DEFAULT, 14,
+                '{"crm": true, "telephony": true, "broadcasts": true, "advanced_analytics": true, "automation_rules": true, "webhooks": true, "data_export": true, "audit_log": true, "ads_manager": true, "multi_branch": true}',
+                True,
+                20,
+            ),
+            (
+                'enterprise',
+                'Enterprise',
+                'Enterprise plan for large companies',
+                50, 0, 0, 0, 51200, 20,
+                199, 1990, SALON_CURRENCY_DEFAULT, 14,
+                '{"crm": true, "telephony": true, "broadcasts": true, "marketplace": true, "advanced_analytics": true, "automation_rules": true, "webhooks": true, "data_export": true, "audit_log": true, "multi_branch": true, "custom_branding": true, "api_access": true, "sso": true, "priority_support": true, "ads_manager": true}',
+                True,
+                30,
+            ),
+        ]
+        for tariff_row in default_tariff_rows:
+            c.execute(
+                """
+                INSERT INTO tariff_plans (
+                    key, name, description, employee_limit, client_limit, product_limit,
+                    monthly_message_limit, storage_limit_mb, ad_slot_limit, monthly_price,
+                    yearly_price, currency, trial_days, feature_flags, is_active, sort_order
                 )
-            """
-        )
-        c.execute(
-            """
-            UPDATE salon_settings
-            SET
-                hours_weekdays = COALESCE(NULLIF(TRIM(hours_weekdays), ''), %s),
-                hours_weekends = COALESCE(NULLIF(TRIM(hours_weekends), ''), %s)
-            WHERE id = 1
-            """,
-            (DEFAULT_HOURS_WEEKDAYS, DEFAULT_HOURS_WEEKENDS),
-        )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s, %s)
+                ON CONFLICT (key) DO UPDATE SET
+                    name = EXCLUDED.name,
+                    description = EXCLUDED.description,
+                    employee_limit = EXCLUDED.employee_limit,
+                    client_limit = EXCLUDED.client_limit,
+                    product_limit = EXCLUDED.product_limit,
+                    monthly_message_limit = EXCLUDED.monthly_message_limit,
+                    storage_limit_mb = EXCLUDED.storage_limit_mb,
+                    ad_slot_limit = EXCLUDED.ad_slot_limit,
+                    monthly_price = EXCLUDED.monthly_price,
+                    yearly_price = EXCLUDED.yearly_price,
+                    currency = EXCLUDED.currency,
+                    trial_days = EXCLUDED.trial_days,
+                    feature_flags = EXCLUDED.feature_flags,
+                    is_active = EXCLUDED.is_active,
+                    sort_order = EXCLUDED.sort_order,
+                    updated_at = CURRENT_TIMESTAMP
+                """,
+                tariff_row,
+            )
+
+        c.execute("SELECT id FROM companies WHERE deleted_at IS NULL ORDER BY id ASC LIMIT 1")
+        company_row = c.fetchone()
+        default_company_id = int(company_row[0]) if company_row else None
+
+        if default_company_id is None:
+            c.execute("""
+                SELECT
+                    NULLIF(TRIM(COALESCE(name, '')), ''),
+                    NULLIF(TRIM(COALESCE(email, '')), ''),
+                    NULLIF(TRIM(COALESCE(phone, '')), ''),
+                    NULLIF(TRIM(COALESCE(currency, '')), ''),
+                    COALESCE(timezone, 'UTC'),
+                    COALESCE(timezone_offset, 0),
+                    COALESCE(business_type, 'other'),
+                    COALESCE(product_mode, 'crm'),
+                    COALESCE(crm_enabled, TRUE),
+                    COALESCE(site_enabled, FALSE),
+                    COALESCE(custom_settings, '{}'::jsonb),
+                    COALESCE(bot_config, '{}'::jsonb),
+                    COALESCE(messenger_config, '[]'::jsonb),
+                    COALESCE(menu_config, '{}'::jsonb),
+                    COALESCE(feature_flags, '{}'::jsonb)
+                FROM salon_settings
+                WHERE id = 1
+            """)
+            legacy_settings = c.fetchone()
+            legacy_name = None
+            legacy_email = None
+            legacy_phone = None
+            legacy_currency = None
+            legacy_timezone = 'UTC'
+            legacy_timezone_offset = 0
+            legacy_business_type = 'other'
+            legacy_product_mode = 'crm'
+            legacy_crm_enabled = True
+            legacy_site_enabled = False
+            legacy_custom_settings = {}
+            legacy_bot_config = {}
+            legacy_messenger_config = []
+            legacy_menu_config = {}
+            legacy_feature_flags = {}
+
+            if legacy_settings:
+                legacy_name = legacy_settings[0]
+                legacy_email = legacy_settings[1]
+                legacy_phone = legacy_settings[2]
+                legacy_currency = legacy_settings[3]
+                legacy_timezone = legacy_settings[4]
+                legacy_timezone_offset = legacy_settings[5]
+                legacy_business_type = legacy_settings[6]
+                legacy_product_mode = legacy_settings[7]
+                legacy_crm_enabled = legacy_settings[8]
+                legacy_site_enabled = legacy_settings[9]
+                legacy_custom_settings = legacy_settings[10]
+                legacy_bot_config = legacy_settings[11]
+                legacy_messenger_config = legacy_settings[12]
+                legacy_menu_config = legacy_settings[13]
+                legacy_feature_flags = legacy_settings[14]
+
+            c.execute("SELECT COUNT(*) FROM users")
+            has_users = c.fetchone()[0] > 0
+            c.execute("SELECT COUNT(*) FROM clients")
+            has_clients = c.fetchone()[0] > 0
+            c.execute("SELECT COUNT(*) FROM bookings")
+            has_bookings = c.fetchone()[0] > 0
+            should_create_default_company = bool(
+                has_users or has_clients or has_bookings or legacy_name or legacy_email or legacy_phone
+            )
+
+            if should_create_default_company:
+                company_name = legacy_name or APP_NAME
+                company_slug = _slugify_company_name(company_name)
+                company_code = _generate_company_code(company_name)
+                c.execute(
+                    """
+                    INSERT INTO companies (
+                        slug, access_code, name, email, phone, currency, timezone, timezone_offset,
+                        business_type, product_mode, crm_enabled, site_enabled, custom_settings,
+                        bot_config, messenger_config, menu_config, feature_flags
+                    )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    RETURNING id
+                    """,
+                    (
+                        company_slug,
+                        company_code,
+                        company_name,
+                        legacy_email,
+                        legacy_phone,
+                        legacy_currency,
+                        legacy_timezone,
+                        legacy_timezone_offset,
+                        legacy_business_type,
+                        legacy_product_mode,
+                        legacy_crm_enabled,
+                        legacy_site_enabled,
+                        legacy_custom_settings,
+                        legacy_bot_config,
+                        legacy_messenger_config,
+                        legacy_menu_config,
+                        legacy_feature_flags,
+                    ),
+                )
+                default_company_id = int(c.fetchone()[0])
+
+        if default_company_id is not None:
+            c.execute(
+                """
+                UPDATE users
+                SET company_id = %s
+                WHERE company_id IS NULL
+                  AND role <> 'super_admin'
+                """,
+                (default_company_id,),
+            )
+
+            for tenant_table in [table_name for table_name in tenant_tables if table_name != 'users']:
+                try:
+                    c.execute(
+                        f"""
+                        UPDATE {tenant_table}
+                        SET company_id = %s
+                        WHERE company_id IS NULL
+                        """,
+                        (default_company_id,),
+                    )
+                except Exception as e:
+                    log_error(f"Ошибка backfill company_id для {tenant_table}: {e}", "db")
+
+            c.execute(
+                """
+                SELECT id FROM users
+                WHERE company_id = %s
+                  AND role IN ('director', 'admin')
+                ORDER BY CASE WHEN role = 'director' THEN 0 ELSE 1 END, id ASC
+                LIMIT 1
+                """,
+                (default_company_id,),
+            )
+            owner_row = c.fetchone()
+            if owner_row:
+                c.execute(
+                    "UPDATE companies SET owner_user_id = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s AND owner_user_id IS NULL",
+                    (int(owner_row[0]), default_company_id),
+                )
+
+            c.execute("SELECT id, trial_days, employee_limit FROM tariff_plans WHERE key = 'trial' LIMIT 1")
+            trial_tariff = c.fetchone()
+            if trial_tariff:
+                tariff_id = int(trial_tariff[0])
+                trial_days = int(trial_tariff[1] or 14)
+                employee_limit = int(trial_tariff[2] or 3)
+                c.execute(
+                    """
+                    INSERT INTO company_subscriptions (
+                        company_id, tariff_plan_id, status, is_trial, employee_limit_override,
+                        started_at, trial_ends_at, updated_at
+                    )
+                    VALUES (%s, %s, 'trial', TRUE, %s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + (%s || ' days')::interval, CURRENT_TIMESTAMP)
+                    ON CONFLICT (company_id) DO NOTHING
+                    """,
+                    (default_company_id, tariff_id, employee_limit, str(trial_days)),
+                )
 
         # Universal CRM runtime: remove image-based prefilled content and photo links.
         c.execute("UPDATE users SET photo = NULL WHERE photo IS NOT NULL")

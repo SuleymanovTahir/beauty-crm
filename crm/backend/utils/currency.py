@@ -1,9 +1,7 @@
 """
 Утилита для получения валюты салона из настроек
 """
-from typing import Optional
-
-_cached_currency: Optional[str] = None
+_cached_currency: dict[str, str] = {}
 
 def get_salon_currency() -> str:
     """
@@ -12,31 +10,29 @@ def get_salon_currency() -> str:
     Returns:
         str: Код валюты (например, 'AED', 'USD')
     """
-    global _cached_currency
-    
-    if _cached_currency:
-        return _cached_currency
+    cache_key = "global"
     
     try:
-        from db.connection import get_db_connection
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("SELECT currency FROM salon_settings WHERE id = 1")
-        row = c.fetchone()
-        conn.close()
-        
-        if row and row[0]:
-            _cached_currency = row[0]
-            return row[0]
+        from db.settings import get_salon_settings
+        from utils.tenant_context import get_current_company_id
+
+        company_id = get_current_company_id()
+        if company_id:
+            cache_key = f"company:{company_id}"
+
+        cached_value = _cached_currency.get(cache_key)
+        if cached_value is not None:
+            return cached_value
+
+        currency_value = str(get_salon_settings().get("currency") or "").strip()
+        _cached_currency[cache_key] = currency_value
+        return currency_value
     except Exception:
         pass
     
-    # Fallback to env or default
-    from core.config import SALON_CURRENCY_DEFAULT
-    _cached_currency = SALON_CURRENCY_DEFAULT
-    return SALON_CURRENCY_DEFAULT
+    _cached_currency[cache_key] = ""
+    return _cached_currency[cache_key]
 
 def clear_currency_cache():
     """Очистить кеш валюты (вызывать при обновлении настроек)"""
-    global _cached_currency
-    _cached_currency = None
+    _cached_currency.clear()
