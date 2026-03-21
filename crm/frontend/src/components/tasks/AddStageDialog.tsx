@@ -28,7 +28,7 @@ interface AddStageDialogProps {
 }
 
 export function AddStageDialog({ open, onOpenChange, onSuccess }: AddStageDialogProps) {
-    const { t } = useTranslation(['admin/tasks', 'common']);
+    const { t } = useTranslation(['crm/tasks', 'common']);
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
     const [color, setColor] = useState('bg-gray-500');

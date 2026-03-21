@@ -3,16 +3,28 @@ API endpoint for importing bookings from Excel/CSV files
 """
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
-import pandas as pd
 import io
 from datetime import datetime
 from typing import Dict, List, Any
 from utils.logger import log_info, log_error
+from utils.optional_dependencies import raise_optional_dependency_http
+
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    pd = None
+    PANDAS_AVAILABLE = False
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 
 router = APIRouter()
+
+
+def _ensure_pandas_available() -> None:
+    if not PANDAS_AVAILABLE:
+        raise_optional_dependency_http("Booking import")
 
 def normalize_column_name(col: str) -> str:
     """Normalize column names to match database fields"""
@@ -195,6 +207,7 @@ def find_service(service_name: str) -> str:
 async def import_bookings(file: UploadFile = File(...)):
     """Import bookings from CSV/Excel file"""
     try:
+        _ensure_pandas_available()
         log_info(f"📥 Starting booking import from file: {file.filename}", "import")
         
         contents = await file.read()
@@ -337,6 +350,7 @@ async def import_bookings(file: UploadFile = File(...)):
 async def download_booking_template(format: str = 'csv'):
     """Download booking import template"""
     try:
+        _ensure_pandas_available()
         # Create template dataframe
         template_data = {
             'Client': ['Anna Ivanova', 'Maria Petrova'],

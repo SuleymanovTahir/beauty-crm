@@ -131,7 +131,7 @@ def notify_new_registration_pending(
         title=title,
         content=content,
         trigger_type="new_registration",
-        action_url="/crm/admin/pending-users"
+        action_url="/crm/team"
     )
 
     # Async WebSocket notification
@@ -142,14 +142,14 @@ def notify_new_registration_pending(
                 title=title,
                 content=content,
                 trigger_type="new_registration",
-                action_url="/crm/admin/pending-users"
+                action_url="/crm/team"
             ))
         else:
             loop.run_until_complete(notify_admins_websocket(
                 title=title,
                 content=content,
                 trigger_type="new_registration",
-                action_url="/crm/admin/pending-users"
+                action_url="/crm/team"
             ))
     except RuntimeError:
         # No event loop, skip WebSocket notification
@@ -239,7 +239,7 @@ def notify_newsletter_subscription(
         title=title,
         content=content,
         trigger_type="newsletter_subscription",
-        action_url="/crm/admin/settings"
+        action_url="/crm/settings"
     )
 
     try:
@@ -249,7 +249,7 @@ def notify_newsletter_subscription(
                 title=title,
                 content=content,
                 trigger_type="newsletter_subscription",
-                action_url="/crm/admin/settings"
+                action_url="/crm/settings"
             ))
     except RuntimeError:
         pass
@@ -269,7 +269,7 @@ def notify_email_verified(
         title=title,
         content=content,
         trigger_type="email_verified",
-        action_url="/crm/admin/pending-users"
+        action_url="/crm/team"
     )
 
     try:
@@ -279,7 +279,7 @@ def notify_email_verified(
                 title=title,
                 content=content,
                 trigger_type="email_verified",
-                action_url="/crm/admin/pending-users"
+                action_url="/crm/team"
             ))
     except RuntimeError:
         pass

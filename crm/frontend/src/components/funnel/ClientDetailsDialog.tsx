@@ -61,7 +61,7 @@ interface ClientDetailsDialogProps {
 }
 
 export function ClientDetailsDialog({ open, onOpenChange, client, onSuccess, stages = [], onAddBooking }: ClientDetailsDialogProps) {
-    const { t, i18n } = useTranslation(['admin/funnel', 'common']);
+    const { t, i18n } = useTranslation(['crm/funnel', 'common']);
     const [activeTab, setActiveTab] = useState<'info' | 'bookings'>('info');
 
     // Editable state

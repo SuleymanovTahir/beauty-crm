@@ -1,15 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import {
     Scissors,
     Search,
     Plus,
     History,
     Loader2,
-    Gift,
-    Users,
-    Target,
-    Ticket,
     ArrowUpDown,
     Clock3,
     Pencil,
@@ -141,40 +137,12 @@ function parseDurationToMinutes(duration: unknown): number {
     return 0;
 }
 
-function extractSpecialPackagesCount(response: unknown): number {
-    if (Array.isArray(response)) {
-        return response.length;
-    }
-
-    if (typeof response !== 'object') {
-        return 0;
-    }
-
-    if (response === null) {
-        return 0;
-    }
-
-    const data = response as { packages?: unknown[]; special_packages?: unknown[] };
-    if (Array.isArray(data.packages)) {
-        return data.packages.length;
-    }
-
-    if (Array.isArray(data.special_packages)) {
-        return data.special_packages.length;
-    }
-
-    return 0;
-}
 
 export default function UniversalServices() {
-    const location = useLocation();
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const { user: currentUser } = useAuth();
     const { t, i18n } = useTranslation([
-        'admin/services',
-        'admin/specialpackages',
-        'adminpanel/loyaltymanagement',
+        'crm/services',
         'layouts/mainlayout',
         'employee/services',
         'common',
@@ -184,16 +152,6 @@ export default function UniversalServices() {
     const { currency, formatCurrency } = useCurrency();
 
     const isEmployee = currentUser?.role === 'employee';
-    const rolePrefix = useMemo(() => {
-        if (location.pathname.startsWith('/crm')) return '/crm';
-        if (location.pathname.startsWith('/manager')) return '/manager';
-        if (location.pathname.startsWith('/sales')) return '/sales';
-        if (location.pathname.startsWith('/saler')) return '/sales';
-        if (location.pathname.startsWith('/marketer')) return '/marketer';
-        if (location.pathname.startsWith('/employee')) return '/employee';
-        if (location.pathname.startsWith('/admin')) return '/admin';
-        return '/crm';
-    }, [location.pathname]);
 
     const [activeTab, setActiveTab] = useState<TabType>(() => {
         const tab = searchParams.get('tab');
@@ -201,7 +159,6 @@ export default function UniversalServices() {
     });
 
     const [services, setServices] = useState<Service[]>([]);
-    const [specialPackagesCount, setSpecialPackagesCount] = useState(0);
     const [pendingRequests, setPendingRequests] = useState<Record<number, PendingRequest>>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -244,19 +201,14 @@ export default function UniversalServices() {
                 const data = await response.json() as { services?: Service[]; pending_requests?: Record<number, PendingRequest> };
                 setServices(Array.isArray(data.services) ? data.services : []);
                 setPendingRequests(typeof data.pending_requests === 'object' && data.pending_requests !== null ? data.pending_requests : {});
-                setSpecialPackagesCount(0);
                 return;
             }
 
-            const [servicesResponse, specialPackagesResponse] = await Promise.all([
-                api.getServices(false),
-                api.getSpecialPackages().catch(() => [])
-            ]);
+            const servicesResponse = await api.getServices(false);
 
             const servicesList = Array.isArray(servicesResponse?.services) ? servicesResponse.services : [];
             setServices(servicesList);
             setPendingRequests({});
-            setSpecialPackagesCount(extractSpecialPackagesCount(specialPackagesResponse));
         } catch (err) {
             toast.error(t('common:error_loading'));
         } finally {
@@ -374,9 +326,9 @@ export default function UniversalServices() {
             return '-';
         }
         if (minutes % 60 === 0) {
-            return `${minutes / 60}${t('admin/services:unit_hour')}`;
+            return `${minutes / 60}${t('crm/services:unit_hour')}`;
         }
-        return `${minutes}${t('admin/services:unit_minute')}`;
+        return `${minutes}${t('crm/services:unit_minute')}`;
     };
 
     const openCreateModal = () => {
@@ -385,14 +337,6 @@ export default function UniversalServices() {
         setIsServiceModalOpen(true);
     };
 
-    const openSpecialPackagesSection = (section: 'packages' | 'referrals' | 'challenges' | 'loyalty' | 'promo-codes') => {
-        const nextParams = new URLSearchParams();
-        nextParams.set('section', section);
-        if (section === 'referrals') {
-            nextParams.set('view', 'history');
-        }
-        navigate(`${rolePrefix}/special-packages?${nextParams.toString()}`);
-    };
 
     const handleOpenEdit = (service: Service) => {
         setEditingService(service);
@@ -431,7 +375,7 @@ export default function UniversalServices() {
 
         try {
             await api.deleteService(serviceId);
-            toast.success(t('admin/services:service_deleted'));
+            toast.success(t('crm/services:service_deleted'));
             await loadData();
         } catch (err) {
             toast.error(t('common:error_deleting'));
@@ -459,10 +403,10 @@ export default function UniversalServices() {
                 toast.success(t('employee/services:request_submitted'));
             } else if (editingService !== null) {
                 await api.updateService(editingService.id, serviceFormData);
-                toast.success(t('admin/services:service_updated'));
+                toast.success(t('crm/services:service_updated'));
             } else {
                 await api.createService(serviceFormData);
-                toast.success(t('admin/services:service_added'));
+                toast.success(t('crm/services:service_added'));
             }
 
             setIsServiceModalOpen(false);
@@ -495,77 +439,25 @@ export default function UniversalServices() {
     return (
         <div className="crm-services-page crm-stable-page-height">
             {!isEmployee && (
-                <>
-                    <div className="flex flex-wrap gap-2 mb-6">
-                        <Button
-                            type="button"
-                            variant="default"
-                            className="bg-blue-600 text-white hover:bg-blue-700"
-                        >
-                            <Scissors className="w-4 h-4 mr-2" />
-                            <span>{t('admin/services:services')} ({services.length})</span>
-                        </Button>
-
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                            onClick={() => openSpecialPackagesSection('packages')}
-                        >
-                            <Gift className="w-4 h-4 mr-2" />
-                            <span>{t('admin/specialpackages:tab_packages')} ({specialPackagesCount})</span>
-                        </Button>
-
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                            onClick={() => openSpecialPackagesSection('referrals')}
-                        >
-                            <Users className="w-4 h-4 mr-2" />
-                            <span>{t('admin/specialpackages:tab_referrals')}</span>
-                        </Button>
-
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                            onClick={() => openSpecialPackagesSection('challenges')}
-                        >
-                            <Target className="w-4 h-4 mr-2" />
-                            <span>{t('layouts/mainlayout:menu.challenges')}</span>
-                        </Button>
-
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                            onClick={() => openSpecialPackagesSection('loyalty')}
-                        >
-                            <Gift className="w-4 h-4 mr-2" />
-                            <span>{t('adminpanel/loyaltymanagement:title')}</span>
-                        </Button>
-
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                            onClick={() => openSpecialPackagesSection('promo-codes')}
-                        >
-                            <Ticket className="w-4 h-4 mr-2" />
-                            <span>{t('layouts/mainlayout:menu.promo_codes')}</span>
-                        </Button>
-                    </div>
-                </>
+                <div className="flex flex-wrap gap-2 mb-6">
+                    <Button
+                        type="button"
+                        variant="default"
+                        className="bg-blue-600 text-white hover:bg-blue-700"
+                    >
+                        <Scissors className="w-4 h-4 mr-2" />
+                        <span>{t('crm/services:services')} ({services.length})</span>
+                    </Button>
+                </div>
             )}
 
             <div className="crm-services-header">
                 <h1 className="crm-services-title">
                     <Scissors className="crm-services-title-icon" />
-                    <span>{isEmployee ? t('employee/services:my_services') : t('admin/services:services_and_packages')}</span>
+                    <span>{isEmployee ? t('employee/services:my_services') : t('crm/services:services_and_packages')}</span>
                 </h1>
                 <p className="crm-services-subtitle">
-                    {isEmployee ? t('employee/services:edit_services_description') : t('admin/services:management_of_price_list_and_salon_promotions')}
+                    {isEmployee ? t('employee/services:edit_services_description') : t('crm/services:management_of_price_list_and_salon_promotions')}
                 </p>
             </div>
 
@@ -575,7 +467,7 @@ export default function UniversalServices() {
                         <div className="crm-services-search-wrap">
                             <Search className="crm-services-search-icon" />
                             <Input
-                                placeholder={t('admin/services:search_services')}
+                                placeholder={t('crm/services:search_services')}
                                 value={searchTerm}
                                 onChange={(event) => setSearchTerm(event.target.value)}
                                 className="crm-services-search-input"
@@ -589,7 +481,7 @@ export default function UniversalServices() {
                                     onChange={(event) => setCategoryFilter(event.target.value)}
                                     className="crm-services-category-select"
                                 >
-                                    <option value="all">{t('admin/services:all_categories')}</option>
+                                    <option value="all">{t('crm/services:all_categories')}</option>
                                     {categories.map((category) => (
                                         <option key={category} value={category}>{getCategoryDisplayName(category)}</option>
                                     ))}
@@ -599,7 +491,7 @@ export default function UniversalServices() {
 
                             <Button onClick={openCreateModal} className="crm-services-add-button">
                                 <Plus className="crm-services-add-icon" />
-                                <span>{t('admin/services:add_service')}</span>
+                                <span>{t('crm/services:add_service')}</span>
                             </Button>
                         </div>
                     </div>
@@ -635,7 +527,7 @@ export default function UniversalServices() {
                                 <div className="crm-services-history-card-main">
                                     <h3 className="crm-services-history-name">{request.service_name}</h3>
                                     <p className="crm-services-history-meta">
-                                        {t('admin/services:price')}: {request.requested_price ?? '-'} | {t('admin/services:duration')}: {request.requested_duration ?? '-'}
+                                        {t('crm/services:price')}: {request.requested_price ?? '-'} | {t('crm/services:duration')}: {request.requested_duration ?? '-'}
                                     </p>
                                 </div>
                                 <Badge>{t(`common:status_${request.status}`, request.status)}</Badge>
@@ -658,26 +550,26 @@ export default function UniversalServices() {
                             <tr>
                                 <th>
                                     <button type="button" className="crm-services-sort-button" onClick={() => handleSort('name')}>
-                                        <span>{t('admin/services:name')}</span>
+                                        <span>{t('crm/services:name')}</span>
                                         <ArrowUpDown className="crm-services-sort-icon" />
                                     </button>
                                 </th>
                                 <th>
                                     <button type="button" className="crm-services-sort-button" onClick={() => handleSort('price')}>
-                                        <span>{t('admin/services:price')}</span>
+                                        <span>{t('crm/services:price')}</span>
                                         <ArrowUpDown className="crm-services-sort-icon" />
                                     </button>
                                 </th>
                                 <th>
                                     <button type="button" className="crm-services-sort-button" onClick={() => handleSort('duration')}>
-                                        <span>{t('admin/services:duration')}</span>
+                                        <span>{t('crm/services:duration')}</span>
                                         <ArrowUpDown className="crm-services-sort-icon" />
                                     </button>
                                 </th>
                                 {!isEmployee && (
                                     <th>
                                         <button type="button" className="crm-services-sort-button" onClick={() => handleSort('category')}>
-                                            <span>{t('admin/services:category')}</span>
+                                            <span>{t('crm/services:category')}</span>
                                             <ArrowUpDown className="crm-services-sort-icon" />
                                         </button>
                                     </th>
@@ -722,7 +614,7 @@ export default function UniversalServices() {
                                                 <span className={`crm-services-status-badge ${service.is_active ? 'crm-services-status-badge-active' : 'crm-services-status-badge-inactive'}`}>
                                                     <span>
                                                         {service.is_active
-                                                            ? (isEmployee ? t('common:active') : t('admin/services:active'))
+                                                            ? (isEmployee ? t('common:active') : t('crm/services:active'))
                                                             : t('common:inactive')}
                                                     </span>
                                                 </span>
@@ -771,8 +663,8 @@ export default function UniversalServices() {
                     <DialogHeader>
                         <DialogTitle>
                             {editingService
-                                ? (isEmployee ? t('employee/services:request_service_change') : t('admin/services:edit_service'))
-                                : t('admin/services:add_service')}
+                                ? (isEmployee ? t('employee/services:request_service_change') : t('crm/services:edit_service'))
+                                : t('crm/services:add_service')}
                         </DialogTitle>
                     </DialogHeader>
 
@@ -781,7 +673,7 @@ export default function UniversalServices() {
                             <>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label>{t('admin/services:price')} ({currency ?? ''})</Label>
+                                        <Label>{t('crm/services:price')} ({currency ?? ''})</Label>
                                         <Input
                                             type="number"
                                             value={serviceFormData.price}
@@ -789,7 +681,7 @@ export default function UniversalServices() {
                                         />
                                     </div>
                                     <div>
-                                        <Label>{t('admin/services:duration')} ({t('common:min')})</Label>
+                                        <Label>{t('crm/services:duration')} ({t('common:min')})</Label>
                                         <Input
                                             type="number"
                                             value={serviceFormData.duration}
@@ -815,13 +707,13 @@ export default function UniversalServices() {
                             </>
                         ) : (
                             <>
-                                <Label>{t('admin/services:name')}</Label>
+                                <Label>{t('crm/services:name')}</Label>
                                 <Input
                                     value={serviceFormData.name}
                                     onChange={(event) => setServiceFormData((prev) => ({ ...prev, name: event.target.value }))}
                                 />
 
-                                <Label>{t('admin/services:category')}</Label>
+                                <Label>{t('crm/services:category')}</Label>
                                 <Input
                                     value={serviceFormData.category}
                                     onChange={(event) => setServiceFormData((prev) => ({ ...prev, category: event.target.value }))}
@@ -829,7 +721,7 @@ export default function UniversalServices() {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label>{t('admin/services:price')}</Label>
+                                        <Label>{t('crm/services:price')}</Label>
                                         <Input
                                             type="number"
                                             value={serviceFormData.price}
@@ -837,7 +729,7 @@ export default function UniversalServices() {
                                         />
                                     </div>
                                     <div>
-                                        <Label>{t('admin/services:duration')}</Label>
+                                        <Label>{t('crm/services:duration')}</Label>
                                         <Input
                                             type="number"
                                             value={serviceFormData.duration}

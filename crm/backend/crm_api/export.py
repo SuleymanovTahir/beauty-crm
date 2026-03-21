@@ -13,8 +13,12 @@ from db.settings import get_salon_settings
 from core.config import DATABASE_NAME, SALON_PHONE_DEFAULT
 from db.connection import get_db_connection
 from utils.logger import log_error, log_warning
+from utils.optional_dependencies import OptionalDependencyError, build_optional_dependency_message
 from utils.translation import t, register_fonts
 from utils.utils import require_auth
+
+PDF_UNAVAILABLE_MESSAGE = build_optional_dependency_message("PDF export")
+EXCEL_UNAVAILABLE_MESSAGE = build_optional_dependency_message("Excel import/export")
 
 # Попытка импортировать библиотеки для PDF и Excel
 try:
@@ -28,7 +32,7 @@ try:
     PDF_AVAILABLE = True
 except ImportError:
     PDF_AVAILABLE = False
-    log_warning("ReportLab не установлен. Экспорт в PDF недоступен.", "export")
+    log_warning(PDF_UNAVAILABLE_MESSAGE, "export")
 
 try:
     from openpyxl import Workbook
@@ -37,9 +41,13 @@ try:
     EXCEL_AVAILABLE = True
 except ImportError:
     EXCEL_AVAILABLE = False
-    log_warning("openpyxl не установлен. Экспорт в Excel недоступен.", "export")
+    log_warning(EXCEL_UNAVAILABLE_MESSAGE, "export")
 
 router = APIRouter(tags=["Export"])
+
+
+def _optional_dependency_response(message: str) -> JSONResponse:
+    return JSONResponse({"error": message}, status_code=503)
 
 # ===== ФУНКЦИИ ЭКСПОРТА КЛИЕНТОВ =====
 
@@ -109,7 +117,7 @@ def export_clients_csv(clients, lang='en'):
 def export_clients_pdf(clients, lang='en'):
     """Экспорт клиентов в PDF"""
     if not PDF_AVAILABLE:
-        raise Exception("PDF экспорт недоступен")
+        raise OptionalDependencyError(PDF_UNAVAILABLE_MESSAGE)
     
     fontName = register_fonts()
     
@@ -135,7 +143,7 @@ def export_clients_pdf(clients, lang='en'):
     )
     
     salon = get_salon_settings()
-    clients_base_label = t(lang, 'admin/clients:title', 'База клиентов')
+    clients_base_label = t(lang, 'crm/clients:title', 'База клиентов')
     title = Paragraph(f"{clients_base_label} - {salon['name']}", title_style)
     elements.append(title)
     elements.append(Spacer(1, 12))
@@ -150,7 +158,7 @@ def export_clients_pdf(clients, lang='en'):
         t(lang, 'booking.formName', 'Имя'),
         t(lang, 'common.phone', 'Телефон'),
         t(lang, 'common.status', 'Статус'),
-        t(lang, 'adminPanel.dashboard.visits', 'Визитов'),
+        t(lang, 'crm/dashboard:visits', 'Визитов'),
         'LTV'
     ]]
     
@@ -186,11 +194,11 @@ def export_clients_excel(clients, lang='en'):
     """Экспорт клиентов в Excel"""
     import json
     if not EXCEL_AVAILABLE:
-        raise Exception("Excel экспорт недоступен")
+        raise OptionalDependencyError(EXCEL_UNAVAILABLE_MESSAGE)
     
     wb = Workbook()
     ws = wb.active or wb.create_sheet("Data")
-    ws.title = t(lang, 'admin/clients:title', 'Клиенты')
+    ws.title = t(lang, 'crm/clients:title', 'Клиенты')
     
     # Headers translated if possible, or fallback to English as standard for Excel
     headers = [
@@ -273,13 +281,13 @@ def export_bookings_csv(bookings, lang='en'):
     writer = csv.writer(output)
     
     headers = [
-        t(lang, 'adminPanel.dashboard.id', 'ID'),
-        t(lang, 'adminPanel.dashboard.client', 'Клиент'),
+        t(lang, 'crm/dashboard:id', 'ID'),
+        t(lang, 'crm/dashboard:client', 'Клиент'),
         t(lang, 'common.service', 'Услуга'),
-        t(lang, 'adminPanel.dashboard.datetime', 'Дата/Время'),
+        t(lang, 'crm/dashboard:datetime', 'Дата/Время'),
         t(lang, 'common.phone', 'Телефон'),
         t(lang, 'common.status', 'Статус'),
-        t(lang, 'adminPanel.dashboard.revenue', 'Доход (AED)'),
+        t(lang, 'crm/dashboard:revenue', 'Доход (AED)'),
         t(lang, 'common.created_at', 'Создана')
     ]
     writer.writerow(headers)
@@ -296,7 +304,7 @@ def export_bookings_csv(bookings, lang='en'):
 def export_bookings_pdf(bookings, lang='en'):
     """Экспорт записей в PDF"""
     if not PDF_AVAILABLE:
-        raise Exception("PDF экспорт недоступен")
+        raise OptionalDependencyError(PDF_UNAVAILABLE_MESSAGE)
     
     fontName = register_fonts()
     
@@ -322,7 +330,7 @@ def export_bookings_pdf(bookings, lang='en'):
     )
     
     salon = get_salon_settings()
-    report_title = t(lang, 'adminPanel.dashboard.report', 'Отчет')
+    report_title = t(lang, 'crm/dashboard:report', 'Отчет')
     title = Paragraph(f"{report_title} - {salon['name']}", title_style)
     elements.append(title)
     elements.append(Spacer(1, 12))
@@ -334,12 +342,12 @@ def export_bookings_pdf(bookings, lang='en'):
     elements.append(Spacer(1, 20))
     
     data = [[
-        t(lang, 'adminPanel.dashboard.id', 'ID'),
-        t(lang, 'adminPanel.dashboard.client', 'Клиент'),
+        t(lang, 'crm/dashboard:id', 'ID'),
+        t(lang, 'crm/dashboard:client', 'Клиент'),
         t(lang, 'common.service', 'Услуга'),
         t(lang, 'booking.formDate', 'Дата'),
         t(lang, 'common.status', 'Статус'),
-        t(lang, 'adminPanel.dashboard.revenue', 'Доход')
+        t(lang, 'crm/dashboard:revenue', 'Доход')
     ]]
     
     for b in bookings:
@@ -376,20 +384,20 @@ def export_bookings_pdf(bookings, lang='en'):
 def export_bookings_excel(bookings, lang='en'):
     """Экспорт записей в Excel"""
     if not EXCEL_AVAILABLE:
-        raise Exception("Excel экспорт недоступен")
+        raise OptionalDependencyError(EXCEL_UNAVAILABLE_MESSAGE)
     
     wb = Workbook()
     ws = wb.active or wb.create_sheet("Data")
-    ws.title = t(lang, 'adminPanel.dashboard.bookings', 'Записи')
+    ws.title = t(lang, 'crm/dashboard:bookings', 'Записи')
     
     headers = [
-        t(lang, 'adminPanel.dashboard.id', 'ID'),
-        t(lang, 'adminPanel.dashboard.client', 'Клиент'),
+        t(lang, 'crm/dashboard:id', 'ID'),
+        t(lang, 'crm/dashboard:client', 'Клиент'),
         t(lang, 'common.service', 'Услуга'),
-        t(lang, 'adminPanel.dashboard.datetime', 'Дата/Время'),
+        t(lang, 'crm/dashboard:datetime', 'Дата/Время'),
         t(lang, 'common.phone', 'Телефон'),
         t(lang, 'common.status', 'Статус'),
-        t(lang, 'adminPanel.dashboard.revenue', 'Доход (AED)'),
+        t(lang, 'crm/dashboard:revenue', 'Доход (AED)'),
         t(lang, 'common.created_at', 'Создана')
     ]
     ws.append(headers)
@@ -492,7 +500,7 @@ def export_full_data_csv(lang='en'):
 def export_full_data_excel(lang='en'):
     """Экспорт всех данных в Excel с отдельными листами"""
     if not EXCEL_AVAILABLE:
-        raise Exception("Excel экспорт недоступен")
+        raise OptionalDependencyError(EXCEL_UNAVAILABLE_MESSAGE)
     
     conn = get_db_connection()
     c = conn.cursor()
@@ -500,7 +508,7 @@ def export_full_data_excel(lang='en'):
     wb = Workbook()
     # ===== Лист 1: Клиенты =====
     ws_clients = wb.active or wb.create_sheet("Data")
-    ws_clients.title = t(lang, 'admin/clients:title', 'Клиенты')
+    ws_clients.title = t(lang, 'crm/clients:title', 'Клиенты')
     
     headers = ['ID', 
               t(lang, 'booking.formName', 'Name'),
@@ -559,9 +567,9 @@ def export_full_data_excel(lang='en'):
         cell.alignment = Alignment(horizontal='center')
     
     # ===== Лист 3: Записи =====
-    ws_bookings = wb.create_sheet(t(lang, 'adminPanel.dashboard.bookings', 'Записи'))
-    headers = ['ID', 'Client ID', t(lang, 'adminPanel.dashboard.client', 'Client'), t(lang, 'common.service', 'Service'), t(lang, 'adminPanel.dashboard.datetime', 'Date/Time'), 
-              t(lang, 'common.phone', 'Phone'), t(lang, 'common.status', 'Status'), t(lang, 'adminPanel.dashboard.revenue', 'Revenue')]
+    ws_bookings = wb.create_sheet(t(lang, 'crm/dashboard:bookings', 'Записи'))
+    headers = ['ID', 'Client ID', t(lang, 'crm/dashboard:client', 'Client'), t(lang, 'common.service', 'Service'), t(lang, 'crm/dashboard:datetime', 'Date/Time'), 
+              t(lang, 'common.phone', 'Phone'), t(lang, 'common.status', 'Status'), t(lang, 'crm/dashboard:revenue', 'Revenue')]
     ws_bookings.append(headers)
     
     c.execute("""SELECT b.id, b.instagram_id, b.client_name, b.service_name,
@@ -644,10 +652,14 @@ async def export_clients(
             media_type = "text/csv"
             filename = f"clients_{date_from or 'all'}_{date_to or datetime.now().strftime('%Y%m%d')}.csv"
         elif format == "pdf":
+            if not PDF_AVAILABLE:
+                return _optional_dependency_response(PDF_UNAVAILABLE_MESSAGE)
             content = export_clients_pdf(clients, lang=lang)
             media_type = "application/pdf"
             filename = f"clients_{date_from or 'all'}_{date_to or datetime.now().strftime('%Y%m%d')}.pdf"
         elif format == "excel":
+            if not EXCEL_AVAILABLE:
+                return _optional_dependency_response(EXCEL_UNAVAILABLE_MESSAGE)
             content = export_clients_excel(clients, lang=lang)
             media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             filename = f"clients_{date_from or 'all'}_{date_to or datetime.now().strftime('%Y%m%d')}.xlsx"
@@ -659,6 +671,8 @@ async def export_clients(
             media_type=media_type,
             headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
+    except OptionalDependencyError as error:
+        return _optional_dependency_response(str(error))
     except Exception as e:
         log_error(f"Export error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
@@ -700,10 +714,14 @@ async def export_bookings(
             media_type = "text/csv"
             filename = f"bookings_{datetime.now().strftime('%Y%m%d')}.csv"
         elif format == "pdf":
+            if not PDF_AVAILABLE:
+                return _optional_dependency_response(PDF_UNAVAILABLE_MESSAGE)
             content = export_bookings_pdf(bookings, lang=lang)
             media_type = "application/pdf"
             filename = f"bookings_{datetime.now().strftime('%Y%m%d')}.pdf"
         elif format == "excel":
+            if not EXCEL_AVAILABLE:
+                return _optional_dependency_response(EXCEL_UNAVAILABLE_MESSAGE)
             content = export_bookings_excel(bookings, lang=lang)
             media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             filename = f"bookings_{datetime.now().strftime('%Y%m%d')}.xlsx"
@@ -715,6 +733,8 @@ async def export_bookings(
             media_type=media_type,
             headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
+    except OptionalDependencyError as error:
+        return _optional_dependency_response(str(error))
     except Exception as e:
         log_error(f"Export error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
@@ -743,12 +763,12 @@ async def export_analytics(
             output = io.StringIO()
             writer = csv.writer(output)
             
-            writer.writerow([t(lang, 'booking.formDate', 'Дата'), t(lang, 'adminPanel.dashboard.bookings', 'Записи')])
+            writer.writerow([t(lang, 'booking.formDate', 'Дата'), t(lang, 'crm/dashboard:bookings', 'Записи')])
             for date, count in analytics.get('bookings_by_day', []):
                 writer.writerow([date, count])
             
             writer.writerow([])
-            writer.writerow([t(lang, 'common.service', 'Услуга'), t(lang, 'admin/services:quantity', 'Количество'), t(lang, 'adminPanel.dashboard.revenue', 'Доход')])
+            writer.writerow([t(lang, 'common.service', 'Услуга'), t(lang, 'crm/services:quantity', 'Количество'), t(lang, 'crm/dashboard:revenue', 'Доход')])
             for name, count, revenue in analytics.get('services_stats', []):
                 writer.writerow([name, count, revenue])
             
@@ -759,19 +779,18 @@ async def export_analytics(
         
         elif format == "excel":
             if not EXCEL_AVAILABLE:
-                return JSONResponse({"error": "Excel export not available"}, 
-                                  status_code=500)
+                return _optional_dependency_response(EXCEL_UNAVAILABLE_MESSAGE)
             
             wb = Workbook()
             ws = wb.active or wb.create_sheet("Data")
-            ws.title = t(lang, 'adminPanel.dashboard.analytics', 'Аналитика')
+            ws.title = t(lang, 'crm/dashboard:analytics', 'Аналитика')
             
-            ws.append([t(lang, 'booking.formDate', 'Дата'), t(lang, 'adminPanel.dashboard.bookings', 'Записи')])
+            ws.append([t(lang, 'booking.formDate', 'Дата'), t(lang, 'crm/dashboard:bookings', 'Записи')])
             for date, count in analytics.get('bookings_by_day', []):
                 ws.append([date, count])
             
             ws.append([])
-            ws.append([t(lang, 'common.service', 'Услуга'), t(lang, 'admin/services:quantity', 'Количество'), t(lang, 'adminPanel.dashboard.revenue', 'Доход')])
+            ws.append([t(lang, 'common.service', 'Услуга'), t(lang, 'crm/services:quantity', 'Количество'), t(lang, 'crm/dashboard:revenue', 'Доход')])
             for name, count, revenue in analytics.get('services_stats', []):
                 ws.append([name, count, revenue])
             
@@ -790,6 +809,8 @@ async def export_analytics(
             media_type=media_type,
             headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
+    except OptionalDependencyError as error:
+        return _optional_dependency_response(str(error))
     except Exception as e:
         log_error(f"Export analytics error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
@@ -842,7 +863,7 @@ async def export_messages(
             writer = csv.writer(output)
             
             headers = [
-                t(lang, 'adminPanel.dashboard.id', 'ID'),
+                t(lang, 'crm/dashboard:id', 'ID'),
                 'Instagram ID', 'Username',
                 t(lang, 'booking.formName', 'Имя'),
                 t(lang, 'manager/messages:message', 'Сообщение'),
@@ -866,15 +887,14 @@ async def export_messages(
         
         elif format == "excel":
             if not EXCEL_AVAILABLE:
-                return JSONResponse({"error": "Excel export not available"}, 
-                                  status_code=500)
+                return _optional_dependency_response(EXCEL_UNAVAILABLE_MESSAGE)
             
             wb = Workbook()
             ws = wb.active or wb.create_sheet("Data")
             ws.title = t(lang, 'manager/messages:title', 'Сообщения')
             
             headers = [
-                t(lang, 'adminPanel.dashboard.id', 'ID'),
+                t(lang, 'crm/dashboard:id', 'ID'),
                 'Instagram ID', 'Username',
                 t(lang, 'booking.formName', 'Имя'),
                 t(lang, 'manager/messages:message', 'Сообщение'),
@@ -926,6 +946,8 @@ async def export_messages(
             media_type=media_type,
             headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
+    except OptionalDependencyError as error:
+        return _optional_dependency_response(str(error))
     except Exception as e:
         log_error(f"Export messages error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
@@ -947,6 +969,8 @@ async def export_full_data(
             media_type = "text/csv"
             filename = f"full_data_{datetime.now().strftime('%Y%m%d_%H%M')}.csv"
         elif format == "excel":
+            if not EXCEL_AVAILABLE:
+                return _optional_dependency_response(EXCEL_UNAVAILABLE_MESSAGE)
             content = export_full_data_excel(lang=lang)
             media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             filename = f"full_data_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
@@ -958,6 +982,8 @@ async def export_full_data(
             media_type=media_type,
             headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
+    except OptionalDependencyError as error:
+        return _optional_dependency_response(str(error))
     except Exception as e:
         log_error(f"Full data export error: {e}", "export")
         return JSONResponse({"error": str(e)}, status_code=500)
@@ -987,8 +1013,7 @@ async def download_import_template(
         
         elif format == "excel":
             if not EXCEL_AVAILABLE:
-                return JSONResponse({"error": "Excel support not available"}, 
-                                  status_code=500)
+                return _optional_dependency_response(EXCEL_UNAVAILABLE_MESSAGE)
             
             wb = Workbook()
             ws = wb.active or wb.create_sheet("Data")
@@ -1025,45 +1050,45 @@ def export_dashboard_report_csv(stats, bot_analytics, bookings, lang='en'):
     writer = csv.writer(output)
     
     # 1. Заголовок
-    writer.writerow([t(lang, 'adminPanel.dashboard.report', 'Отчет по салону'), datetime.now().strftime('%d.%m.%Y')])
+    writer.writerow([t(lang, 'crm/dashboard:report', 'Отчет по салону'), datetime.now().strftime('%d.%m.%Y')])
     writer.writerow([])
     
     # 2. Основная статистика (KPI)
-    writer.writerow([t(lang, 'adminPanel.dashboard.analytics', 'Аналитика')])
+    writer.writerow([t(lang, 'crm/dashboard:analytics', 'Аналитика')])
     
     # Клиенты
-    writer.writerow([t(lang, 'adminPanel.dashboard.total_clients', 'Всего клиентов'), stats.get('clients', {}).get('total_active', 0)])
-    writer.writerow([t(lang, 'adminPanel.dashboard.vip_clients', 'VIP-клиенты'), stats.get('clients', {}).get('vip', 0)])
-    writer.writerow([t(lang, 'adminPanel.dashboard.new_clients', 'Новые клиенты'), stats.get('clients', {}).get('new', 0)])
-    writer.writerow([t(lang, 'adminPanel.dashboard.active_clients', 'Активные клиенты'), stats.get('clients', {}).get('total_active', 0)])
+    writer.writerow([t(lang, 'crm/dashboard:total_clients', 'Всего клиентов'), stats.get('clients', {}).get('total_active', 0)])
+    writer.writerow([t(lang, 'crm/dashboard:vip_clients', 'VIP-клиенты'), stats.get('clients', {}).get('vip', 0)])
+    writer.writerow([t(lang, 'crm/dashboard:new_clients', 'Новые клиенты'), stats.get('clients', {}).get('new', 0)])
+    writer.writerow([t(lang, 'crm/dashboard:active_clients', 'Активные клиенты'), stats.get('clients', {}).get('total_active', 0)])
     
     # Финансы
-    writer.writerow([t(lang, 'adminPanel.dashboard.revenue', 'Доход'), stats.get('revenue', {}).get('total', 0)])
-    writer.writerow([t(lang, 'adminPanel.dashboard.average_check', 'Средний чек'), stats.get('revenue', {}).get('average_check', 0)])
+    writer.writerow([t(lang, 'crm/dashboard:revenue', 'Доход'), stats.get('revenue', {}).get('total', 0)])
+    writer.writerow([t(lang, 'crm/dashboard:average_check', 'Средний чек'), stats.get('revenue', {}).get('average_check', 0)])
     
     # Эффективность
-    writer.writerow([t(lang, 'adminPanel.dashboard.cancellations', 'Отмены'), f"{stats.get('bookings', {}).get('cancellation_rate', 0)}%"])
-    writer.writerow([t(lang, 'adminPanel.dashboard.conversion', 'Конверсия'), f"{stats.get('bookings', {}).get('completion_rate', 0)}%"])
+    writer.writerow([t(lang, 'crm/dashboard:cancellations', 'Отмены'), f"{stats.get('bookings', {}).get('cancellation_rate', 0)}%"])
+    writer.writerow([t(lang, 'crm/dashboard:conversion', 'Конверсия'), f"{stats.get('bookings', {}).get('completion_rate', 0)}%"])
     
     writer.writerow([])
     
     # 3. Бот аналитика
     if bot_analytics:
-        writer.writerow([t(lang, 'adminPanel.dashboard.bot_analytics', 'Бот Аналитика')])
-        writer.writerow([t(lang, 'adminPanel.dashboard.active_sessions', 'Активных сессий'), bot_analytics.get('total_sessions', 0)])
-        writer.writerow([t(lang, 'adminPanel.dashboard.conversion', 'Конверсия'), f"{bot_analytics.get('conversion_rate', 0)}%"])
+        writer.writerow([t(lang, 'crm/dashboard:bot_analytics', 'Бот Аналитика')])
+        writer.writerow([t(lang, 'crm/dashboard:active_sessions', 'Активных сессий'), bot_analytics.get('total_sessions', 0)])
+        writer.writerow([t(lang, 'crm/dashboard:conversion', 'Конверсия'), f"{bot_analytics.get('conversion_rate', 0)}%"])
         writer.writerow([])
 
     # 4. Последние записи
-    writer.writerow([t(lang, 'adminPanel.dashboard.latest_bookings', 'Последние записи')])
+    writer.writerow([t(lang, 'crm/dashboard:latest_bookings', 'Последние записи')])
     headers = [
-        t(lang, 'adminPanel.dashboard.id', 'ID'),
-        t(lang, 'adminPanel.dashboard.client', 'Клиент'),
+        t(lang, 'crm/dashboard:id', 'ID'),
+        t(lang, 'crm/dashboard:client', 'Клиент'),
         t(lang, 'common.service', 'Услуга'),
-        t(lang, 'adminPanel.dashboard.datetime', 'Дата/Время'),
+        t(lang, 'crm/dashboard:datetime', 'Дата/Время'),
         t(lang, 'common.phone', 'Телефон'),
         t(lang, 'common.status', 'Статус'),
-        t(lang, 'adminPanel.dashboard.revenue', 'Доход'),
+        t(lang, 'crm/dashboard:revenue', 'Доход'),
     ]
     writer.writerow(headers)
     
@@ -1079,7 +1104,7 @@ def export_dashboard_report_csv(stats, bot_analytics, bookings, lang='en'):
             b[2] or '', 
             date_str, 
             b[4] or '', 
-            t(lang, f'adminPanel.dashboard.status_{b[6]}', b[6]),
+            t(lang, f'crm/dashboard:status_{b[6]}', b[6]),
             b[8] if len(b) > 8 else 0
         ])
 
@@ -1089,12 +1114,12 @@ def export_dashboard_report_csv(stats, bot_analytics, bookings, lang='en'):
 def export_dashboard_report_excel(stats, bot_analytics, bookings, lang='en'):
     """Экспорт сводного отчета дашборда в Excel"""
     if not EXCEL_AVAILABLE:
-        raise Exception("Excel экспорт недоступен")
+        raise OptionalDependencyError(EXCEL_UNAVAILABLE_MESSAGE)
     
     wb = Workbook()
     # --- Лист 1: Обзор (Overview) ---
     ws = wb.active or wb.create_sheet("Data")
-    ws.title = t(lang, 'adminPanel.dashboard.report', 'Обзор')
+    ws.title = t(lang, 'crm/dashboard:report', 'Обзор')
     
     # Стили
     header_font = Font(bold=True, size=14, color="EC4899")
@@ -1102,7 +1127,7 @@ def export_dashboard_report_excel(stats, bot_analytics, bookings, lang='en'):
     bold_font = Font(bold=True)
     
     # Заголовок
-    ws['A1'] = t(lang, 'adminPanel.dashboard.report', 'Отчет по салону')
+    ws['A1'] = t(lang, 'crm/dashboard:report', 'Отчет по салону')
     ws['A1'].font = header_font
     ws['B1'] = datetime.now().strftime('%d.%m.%Y')
     
@@ -1110,14 +1135,14 @@ def export_dashboard_report_excel(stats, bot_analytics, bookings, lang='en'):
     
     # KPI Stats Grid
     stats_to_show = [
-        (t(lang, 'adminPanel.dashboard.total_clients', 'Всего клиентов'), stats.get('clients', {}).get('total_active', 0)),
-        (t(lang, 'adminPanel.dashboard.vip_clients', 'VIP-клиенты'), stats.get('clients', {}).get('vip', 0)),
-        (t(lang, 'adminPanel.dashboard.new_clients', 'Новые клиенты'), stats.get('clients', {}).get('new', 0)),
-        (t(lang, 'adminPanel.dashboard.active_clients', 'Активные клиенты'), stats.get('clients', {}).get('total_active', 0)),
-        (t(lang, 'adminPanel.dashboard.revenue', 'Доход'), f"{stats.get('revenue', {}).get('total', 0)} AED"),
-        (t(lang, 'adminPanel.dashboard.average_check', 'Средний чек'), f"{stats.get('revenue', {}).get('average_check', 0)} AED"),
-        (t(lang, 'adminPanel.dashboard.cancellations', 'Отмены'), f"{stats.get('bookings', {}).get('cancellation_rate', 0)}%"),
-        (t(lang, 'adminPanel.dashboard.conversion', 'Конверсия'), f"{stats.get('bookings', {}).get('completion_rate', 0)}%")
+        (t(lang, 'crm/dashboard:total_clients', 'Всего клиентов'), stats.get('clients', {}).get('total_active', 0)),
+        (t(lang, 'crm/dashboard:vip_clients', 'VIP-клиенты'), stats.get('clients', {}).get('vip', 0)),
+        (t(lang, 'crm/dashboard:new_clients', 'Новые клиенты'), stats.get('clients', {}).get('new', 0)),
+        (t(lang, 'crm/dashboard:active_clients', 'Активные клиенты'), stats.get('clients', {}).get('total_active', 0)),
+        (t(lang, 'crm/dashboard:revenue', 'Доход'), f"{stats.get('revenue', {}).get('total', 0)} AED"),
+        (t(lang, 'crm/dashboard:average_check', 'Средний чек'), f"{stats.get('revenue', {}).get('average_check', 0)} AED"),
+        (t(lang, 'crm/dashboard:cancellations', 'Отмены'), f"{stats.get('bookings', {}).get('cancellation_rate', 0)}%"),
+        (t(lang, 'crm/dashboard:conversion', 'Конверсия'), f"{stats.get('bookings', {}).get('completion_rate', 0)}%")
     ]
     
     for label, value in stats_to_show:
@@ -1129,26 +1154,26 @@ def export_dashboard_report_excel(stats, bot_analytics, bookings, lang='en'):
     
     # Бот аналитика
     if bot_analytics:
-        ws.cell(row=row, column=1, value=t(lang, 'adminPanel.dashboard.bot_analytics', 'Бот Аналитика')).font = sub_header_font
+        ws.cell(row=row, column=1, value=t(lang, 'crm/dashboard:bot_analytics', 'Бот Аналитика')).font = sub_header_font
         row += 1
-        ws.cell(row=row, column=1, value=t(lang, 'adminPanel.dashboard.active_sessions', 'Активных сессий'))
+        ws.cell(row=row, column=1, value=t(lang, 'crm/dashboard:active_sessions', 'Активных сессий'))
         ws.cell(row=row, column=2, value=bot_analytics.get('total_sessions', 0))
         row += 1
-        ws.cell(row=row, column=1, value=t(lang, 'adminPanel.dashboard.conversion', 'Конверсия'))
+        ws.cell(row=row, column=1, value=t(lang, 'crm/dashboard:conversion', 'Конверсия'))
         ws.cell(row=row, column=2, value=f"{bot_analytics.get('conversion_rate', 0)}%")
         row += 2
 
     # --- Лист 2: Записи (Bookings) ---
-    ws_bookings = wb.create_sheet(title=t(lang, 'adminPanel.dashboard.bookings', 'Записи'))
+    ws_bookings = wb.create_sheet(title=t(lang, 'crm/dashboard:bookings', 'Записи'))
     
     headers = [
-        t(lang, 'adminPanel.dashboard.id', 'ID'),
-        t(lang, 'adminPanel.dashboard.client', 'Клиент'),
+        t(lang, 'crm/dashboard:id', 'ID'),
+        t(lang, 'crm/dashboard:client', 'Клиент'),
         t(lang, 'common.service', 'Услуга'),
-        t(lang, 'adminPanel.dashboard.datetime', 'Дата/Время'),
+        t(lang, 'crm/dashboard:datetime', 'Дата/Время'),
         t(lang, 'common.phone', 'Телефон'),
         t(lang, 'common.status', 'Статус'),
-        t(lang, 'adminPanel.dashboard.revenue', 'Доход'),
+        t(lang, 'crm/dashboard:revenue', 'Доход'),
     ]
     ws_bookings.append(headers)
     
@@ -1171,7 +1196,7 @@ def export_dashboard_report_excel(stats, bot_analytics, bookings, lang='en'):
             b[2] or '', 
             date_str, 
             b[4] or '', 
-            t(lang, f'adminPanel.dashboard.status_{b[6]}', b[6]),
+            t(lang, f'crm/dashboard:status_{b[6]}', b[6]),
             b[8] if len(b) > 8 else 0
         ])
 
@@ -1196,7 +1221,7 @@ def export_dashboard_report_excel(stats, bot_analytics, bookings, lang='en'):
 def export_dashboard_report_pdf(stats, bot_analytics, bookings, lang='en'):
     """Экспорт сводного отчета дашборда в PDF (Premium Style)"""
     if not PDF_AVAILABLE:
-        raise Exception("PDF экспорт недоступен")
+        raise OptionalDependencyError(PDF_UNAVAILABLE_MESSAGE)
         
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4, 
@@ -1257,23 +1282,23 @@ def export_dashboard_report_pdf(stats, bot_analytics, bookings, lang='en'):
     # --- HEADER ---
     salon = get_salon_settings()
     salon_name = salon.get('name', 'Salon')
-    elements.append(Paragraph(t(lang, 'adminPanel.dashboard.report', f'{salon_name} Report'), title_style))
-    elements.append(Paragraph(f"{t(lang, 'adminPanel.dashboard.datetime', 'Generated')}: {datetime.now().strftime('%d.%m.%Y %H:%M')}", subtitle_style))
+    elements.append(Paragraph(t(lang, 'crm/dashboard:report', f'{salon_name} Report'), title_style))
+    elements.append(Paragraph(f"{t(lang, 'crm/dashboard:datetime', 'Generated')}: {datetime.now().strftime('%d.%m.%Y %H:%M')}", subtitle_style))
     
     # --- KPI ANALYTICS SECTION ---
-    elements.append(Paragraph(t(lang, 'adminPanel.dashboard.analytics', 'Analytics Overview'), section_style))
+    elements.append(Paragraph(t(lang, 'crm/dashboard:analytics', 'Analytics Overview'), section_style))
     
     # Подготовка данных для таблицы KPI (2 колонки для компактности)
     # Формат: [Метка, Значение]
     kpi_data = [
-        [t(lang, 'adminPanel.dashboard.total_clients', 'Всего клиентов'), str(stats.get('clients', {}).get('total_active', 0))],
-        [t(lang, 'adminPanel.dashboard.vip_clients', 'VIP-клиенты'), str(stats.get('clients', {}).get('vip', 0))],
-        [t(lang, 'adminPanel.dashboard.new_clients', 'Новые клиенты'), str(stats.get('clients', {}).get('new', 0))],
-        [t(lang, 'adminPanel.dashboard.active_clients', 'Активные клиенты'), str(stats.get('clients', {}).get('total_active', 0))],
-        [t(lang, 'adminPanel.dashboard.revenue', 'Доход'), f"{stats.get('revenue', {}).get('total', 0)} AED"],
-        [t(lang, 'adminPanel.dashboard.average_check', 'Средний чек'), f"{stats.get('revenue', {}).get('average_check', 0)} AED"],
-        [t(lang, 'adminPanel.dashboard.cancellations', 'Отмены'), f"{stats.get('bookings', {}).get('cancellation_rate', 0)}%"],
-        [t(lang, 'adminPanel.dashboard.conversion', 'Конверсия'), f"{stats.get('bookings', {}).get('completion_rate', 0)}%"]
+        [t(lang, 'crm/dashboard:total_clients', 'Всего клиентов'), str(stats.get('clients', {}).get('total_active', 0))],
+        [t(lang, 'crm/dashboard:vip_clients', 'VIP-клиенты'), str(stats.get('clients', {}).get('vip', 0))],
+        [t(lang, 'crm/dashboard:new_clients', 'Новые клиенты'), str(stats.get('clients', {}).get('new', 0))],
+        [t(lang, 'crm/dashboard:active_clients', 'Активные клиенты'), str(stats.get('clients', {}).get('total_active', 0))],
+        [t(lang, 'crm/dashboard:revenue', 'Доход'), f"{stats.get('revenue', {}).get('total', 0)} AED"],
+        [t(lang, 'crm/dashboard:average_check', 'Средний чек'), f"{stats.get('revenue', {}).get('average_check', 0)} AED"],
+        [t(lang, 'crm/dashboard:cancellations', 'Отмены'), f"{stats.get('bookings', {}).get('cancellation_rate', 0)}%"],
+        [t(lang, 'crm/dashboard:conversion', 'Конверсия'), f"{stats.get('bookings', {}).get('completion_rate', 0)}%"]
     ]
 
     # Стилизация таблицы KPI
@@ -1303,11 +1328,11 @@ def export_dashboard_report_pdf(stats, bot_analytics, bookings, lang='en'):
 
     # --- BOT ANALYTICS SECTION ---
     if bot_analytics:
-        elements.append(Paragraph(t(lang, 'adminPanel.dashboard.bot_analytics', 'Bot Analytics'), section_style))
+        elements.append(Paragraph(t(lang, 'crm/dashboard:bot_analytics', 'Bot Analytics'), section_style))
         
         bot_data = [
-            [t(lang, 'adminPanel.dashboard.active_sessions', 'Active Sessions'), str(bot_analytics.get('total_sessions', 0))],
-            [t(lang, 'adminPanel.dashboard.conversion', 'Conversion'), f"{bot_analytics.get('conversion_rate', 0)}%"]
+            [t(lang, 'crm/dashboard:active_sessions', 'Active Sessions'), str(bot_analytics.get('total_sessions', 0))],
+            [t(lang, 'crm/dashboard:conversion', 'Conversion'), f"{bot_analytics.get('conversion_rate', 0)}%"]
         ]
         
         t_bot = Table(bot_data, colWidths=[300, 150])
@@ -1328,15 +1353,15 @@ def export_dashboard_report_pdf(stats, bot_analytics, bookings, lang='en'):
         
     # --- RECENT BOOKINGS SECTION ---
     # Page Break if needed? No, flowable is better.
-    elements.append(Paragraph(t(lang, 'adminPanel.dashboard.latest_bookings', 'Recent Bookings'), section_style))
+    elements.append(Paragraph(t(lang, 'crm/dashboard:latest_bookings', 'Recent Bookings'), section_style))
     
     # Headers
     booking_headers = [
-        t(lang, 'adminPanel.dashboard.client', 'Client'),
+        t(lang, 'crm/dashboard:client', 'Client'),
         t(lang, 'common.service', 'Service'),
-        t(lang, 'adminPanel.dashboard.datetime', 'Date'),
+        t(lang, 'crm/dashboard:datetime', 'Date'),
         t(lang, 'common.status', 'Status'),
-        t(lang, 'adminPanel.dashboard.revenue', 'Price')
+        t(lang, 'crm/dashboard:revenue', 'Price')
     ]
     
     data_bookings = [booking_headers]
@@ -1347,7 +1372,7 @@ def export_dashboard_report_pdf(stats, bot_analytics, bookings, lang='en'):
             date_str = date_obj.strftime('%d.%m %H:%M')
         except Exception:
             date_str = str(b[3])[:11]
-        status_text = t(lang, f'adminPanel.dashboard.status_{b[6]}', b[6])
+        status_text = t(lang, f'crm/dashboard:status_{b[6]}', b[6])
         
         data_bookings.append([
             (b[5] or '')[:20],

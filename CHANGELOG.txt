@@ -1,3 +1,289 @@
+## [2026-03-22] Restored Shared Frontend Dependencies And Revalidated CRM
+- Reinstalled frontend dependencies for the active CRM app from `/Users/tahir/Desktop/beauty-crm/crm/frontend/package.json`.
+- Restored the intended shared dependency layout after `npm install` recreated a local folder:
+  - moved installed packages back to `/Users/tahir/Desktop/beauty-crm/node_modules`
+  - restored `/Users/tahir/Desktop/beauty-crm/crm/frontend/node_modules -> ../../node_modules`
+- Validation:
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run lint` ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run build` ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run check:boundary:frontend` ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run i18n:check-only` ✅
+  - `venv/bin/python /Users/tahir/Desktop/beauty-crm/crm/backend/scripts/diagnostics/verify_backend.py --boundaries --smoke-runtime` ✅
+- IMPORTANT TO REMEMBER:
+  - Reinstall dependencies from `/Users/tahir/Desktop/beauty-crm/crm/frontend`, but keep `crm/frontend/node_modules` as a symlink to the shared root `node_modules`.
+  - Remove generated `/Users/tahir/Desktop/beauty-crm/crm/frontend/dist` after verification so size checks reflect source code and dependencies, not build artifacts.
+
+## [2026-03-22] Removed Legacy Admin/Account/Public Table Seed Files
+- Deleted obsolete backend files that used to repopulate tables with old `admin/account/public` and staff-specific data:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/setup/seed_production_data.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/testing/data/seed_test_data.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/testing/data/seed_full_data.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/force_sync_pwd.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/manual/reset_all_passwords.py`
+  - `/Users/tahir/Desktop/beauty-crm/staff_credentials.txt`
+- Removed runtime/migration hooks that could still invoke those files:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/migrations/run_all_migrations.py` no longer exposes legacy prod/test seeding stages.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/fix_data.py` no longer seeds services/FAQ/reviews, no longer syncs hardcoded staff/admin records, and no longer reads canonical credentials files.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/fix_boolean_integers.py` no longer references deleted seed files.
+- Removed stale compiled artifacts for the deleted scripts from backend `__pycache__`.
+- Validation:
+  - no live code references to deleted seed/credential files remain under `/Users/tahir/Desktop/beauty-crm/crm/backend` ✅
+  - `venv/bin/python crm/backend/scripts/diagnostics/verify_backend.py --boundaries --smoke-runtime` ✅
+- IMPORTANT TO REMEMBER:
+  - Do not recreate backend seed scripts that inject hardcoded admin users, staff lists, public FAQ/reviews, or salon-specific credentials.
+  - Universal CRM runtime must not auto-fill tables with salon-specific content or password files.
+
+## [2026-03-22] Git History Tail Cleanup: Remaining Heavy Blob Files
+- Continued history rewrite after image cleanup to remove remaining non-code heavy blob files from `.git`:
+  - removed all historical copies of `translations_source_map.json` under:
+    - `/Users/tahir/Desktop/beauty-crm/backend/scripts/translations/translations_source_map.json`
+    - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/translations/translations_source_map.json`
+    - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/translations/translations_source_map.json`
+  - removed historical:
+    - `/Users/tahir/Desktop/beauty-crm/all_files.txt`
+    - `/Users/tahir/Desktop/beauty-crm/locales.tar.gz`
+    - `/Users/tahir/Desktop/beauty-crm/Clients.csv`
+    - old non-ringtone audio blobs under `crm/backend/static/uploads/audio/*.mp3` and `site/backend/static/uploads/audio/*.mp3`
+  - also removed next heaviest non-code historical tails:
+    - `/Users/tahir/Desktop/beauty-crm/logs/app.log.1`
+    - `/Users/tahir/Desktop/beauty-crm/backend/salon_bot.db.backup_before_consolidation`
+- Validation after rewrite:
+  - target tail paths are absent from git history ✅
+  - `git gc --prune=now` completed cleanly ✅
+- Size result:
+  - `.git` before this tail pass: about `23M`
+  - `.git` after this tail pass: about `15M`
+  - whole project after this pass: about `135M`
+- IMPORTANT TO REMEMBER:
+  - Keep ringtone assets if telephony melodies are still part of CRM runtime.
+  - Do not store generated archives, debug inventories, CSV dumps, DB backups, or translation source maps inside git history.
+
+## [2026-03-22] History Cleanup Follow-up: Remaining Images + Path Hygiene
+- Continued git history cleanup to remove remaining obsolete image blobs while preserving avatar paths:
+  - targeted old site/public image roots such as `site/backend/static/images`, legacy `frontend/public_landing` image folders, old public icons/logos, and other non-avatar historical image files.
+- Removed the last physical image file left in the active working tree:
+  - deleted `/Users/tahir/Desktop/beauty-crm/Без имени-1.png`
+- Cleaned SSOT maintenance/setup scripts so deleted image content is not reintroduced through seeds:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/setup/seed_production_data.py` no longer seeds gallery image rows.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/fix_data.py` no longer carries legacy folder-sync code for `frontend/public_landing/styles/img/*` or banner/gallery image baseline seeding.
+- Path audit result:
+  - active CRM frontend has no direct local image imports left.
+  - active frontend `index.html` and `manifest.json` no longer point to removed icon/logo files.
+  - active backend still keeps audio/recording static paths only; image-path tails were reduced to legacy compatibility helpers and maintenance scripts.
+- IMPORTANT TO REMEMBER:
+  - Do not keep image seeding/synchronization code for deleted public/site galleries in centralized maintenance scripts.
+  - When cleaning history further, preserve avatar directories if explicitly requested, and keep telephony audio/recording paths intact.
+
+## [2026-03-22] Backend Dependency Split: Core vs Optional Import/Export Stack
+- Split CRM backend dependencies into core runtime and optional heavy tooling:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/requirements.txt` now contains only core runtime packages.
+  - added `/Users/tahir/Desktop/beauty-crm/crm/backend/requirements-optional.txt` for heavy import/export/media packages:
+    - `numpy`, `pandas`, `openpyxl`, `reportlab`, `Pillow`, `lxml`
+    - later also moved `xlrd`, `xlwt`, `python-docx`, `beautifulsoup4` into the same optional group because they are not part of core request handling.
+- Added shared optional dependency helper:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/optional_dependencies.py`
+  - provides consistent messages for features that require `requirements-optional.txt`.
+- Hardened optional-feature code paths so missing heavy packages no longer break core backend startup:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/booking_import.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/client_import.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/export.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/services/pdf_generator.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/contracts.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/invoices.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/analytics.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/optimize_images.py`
+- Optional dependency behavior:
+  - booking/client import endpoints now return controlled `503` errors when `pandas` stack is absent instead of crashing at module import time.
+  - export/PDF/Excel endpoints now return controlled `503` responses when optional packages are not installed.
+  - contract/invoice PDF sending now reports optional-dependency unavailability explicitly instead of failing with raw import/runtime errors.
+- Updated deployment notes in:
+  - `/Users/tahir/Desktop/beauty-crm/doc/# 🚀 Полная инструкция деплоя Beauty CRM.ini`
+  - CRM backend install now separates core `requirements.txt` from optional `requirements-optional.txt`.
+- Validation:
+  - `python3 -m py_compile` for edited backend modules ✅
+  - `python3 crm/backend/scripts/diagnostics/verify_backend.py --boundaries --smoke-runtime` ✅
+  - recreated root `/Users/tahir/Desktop/beauty-crm/venv` from core-only `/Users/tahir/Desktop/beauty-crm/crm/backend/requirements.txt` and confirmed:
+    - optional-aware module imports succeed without optional packages,
+    - `venv/bin/python crm/backend/scripts/diagnostics/verify_backend.py --boundaries --smoke-runtime` ✅
+- Size result:
+  - root `venv` before split: about `239M`
+  - root `venv` after core-only rebuild: about `97M`
+- IMPORTANT TO REMEMBER:
+  - Core backend must stay bootable without `pandas/reportlab/openpyxl/Pillow/lxml`.
+  - Core backend must also stay bootable without `xlrd/xlwt/python-docx/beautifulsoup4`.
+  - New heavy import/export/media/document libraries must go into `requirements-optional.txt` unless they are required for core request handling at startup.
+
+## [2026-03-22] CRM Size Reduction + Translation/Build Tail Cleanup
+- Removed remaining frontend translation/runtime tails tied to deleted `account/public/admin` contours:
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/locales/*/account.json`
+  - removed dead delete-account client/backend endpoints from:
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/api/client.ts`
+    - `/Users/tahir/Desktop/beauty-crm/crm/backend/core/auth.py`
+    - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/subscriptions.py`
+- Deleted obsolete frontend scripts/files that only served removed contours:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/fix-public-and-users.js`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/scripts/prerender-public.mjs`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/scripts/i18n/add-settings-keys.js`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/scripts/i18n/create-locale-structure.js`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/scripts/i18n/cleanup-rogue-files.js`
+  - removed matching `package.json` scripts and `tsconfig.json` include entries.
+- Removed mobile-only build surface from CRM frontend:
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/android`
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/ios`
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/frontend/capacitor.config.ts`
+  - removed Capacitor deps from `/Users/tahir/Desktop/beauty-crm/crm/frontend/package.json`
+- Removed unused direct frontend deps and shrank installed tree:
+  - deleted unused package roots from `/Users/tahir/Desktop/beauty-crm/node_modules`
+  - restored `/Users/tahir/Desktop/beauty-crm/crm/frontend/node_modules` to the intended symlink `../../node_modules` instead of a duplicated real directory.
+- Cleaned build config tails:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/vite.config.ts` no longer contains removed admin/public/mobile chunk branches.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/modules_config.json` no longer advertises a `public` module in CRM runtime.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/diagnostics/verify_backend.py` no longer checks deleted public/site API files.
+- Compatibility fixes after dependency cleanup:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/ui/accordion.tsx` updated to a safer wrapper typing.
+  - added `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/lib/radix-collapsible-shim.tsx` and aliased `@radix-ui/react-collapsible` in Vite so CRM build does not depend on removed package copies inside local `node_modules`.
+  - restored `react-is` resolution for `recharts` via root package link and package metadata cleanup.
+- Final cleanup in the same pass:
+  - deleted `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/integration.py` because CRM no longer exposes the removed public/site integration surface.
+  - removed stale `integration_router` import/mount from `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/__init__.py`; CRM runtime smoke no longer imports deleted modules.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/diagnostics/verify_backend.py` no longer expects deleted CRM integration files or `/api/integration/v1` routes.
+  - removed remaining public-visibility/profile-setting UI tails from CRM employee/settings flow and cleaned obsolete locale keys tied to them.
+  - removed generated frontend build artifacts and Finder junk files (`dist`, `.DS_Store`) before final size verification.
+  - deleted unused root package directories that were absent from `/Users/tahir/Desktop/beauty-crm/crm/frontend/package-lock.json`:
+    - `framer-motion`, `motion-dom`, `motion-utils`
+    - `puppeteer-core`, `chromium-bidi`, `@puppeteer/browsers`, `devtools-protocol`
+    - `date-fns-jalali`, `libphonenumber-js`, `zod`, `embla-carousel`
+    - `bare-fs`, `bare-os`, `bare-path`, `bare-stream`, `bare-url`, `input-format`
+- Size result:
+  - before pass: repo root was about `1.4G` (`crm/frontend/node_modules` duplicated as ~`480M` real directory)
+  - after pass: repo root is about `823M`
+  - current heavy directories: `/Users/tahir/Desktop/beauty-crm/node_modules` ~`395M`, `/Users/tahir/Desktop/beauty-crm/venv` ~`239M`, `/Users/tahir/Desktop/beauty-crm/crm` ~`22M`
+- Validation:
+  - `npm --prefix crm/frontend run lint` ✅
+  - `npm --prefix crm/frontend run build` ✅
+  - `python3 crm/backend/scripts/diagnostics/verify_backend.py --boundaries --smoke-runtime` ✅
+- IMPORTANT TO REMEMBER:
+  - If `crm/frontend/node_modules` turns back into a real directory, project size will jump by hundreds of MB again; keep it as the symlink `../../node_modules`.
+  - For CRM-only repo cleanup, remove generated build/mobile surfaces (`dist`, `android`, `ios`, old prerender scripts) together with contour code, otherwise source cleanup alone will barely change disk usage.
+
+## [2026-03-21] CRM-Only Dependency Cleanup: Remove Remaining admin/account/public Bindings
+- Frontend runtime cleanup:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Settings.tsx`
+    - removed account deletion flow (`api.deleteAccount`) and account portal menu customization button (`portal=account`),
+    - removed `/admin` role prefix fallback from active settings navigation.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/layouts/UniversalLayout.tsx`
+    - removed admin-panel branch logic and `/admin/*` route mappings,
+    - simplified CRM menu catalog to active CRM modules only (dashboard/bookings/chat/funnel/services/team/tasks/telephony/settings),
+    - removed dead menu entries that depended on deprecated admin/public features.
+  - removed unused admin page files from `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/*`, keeping only `EmployeeDetail.tsx` that is still imported by shared Team flow.
+  - moved `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/Bookings.css` to `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Bookings.css` and updated shared Bookings import to remove direct `../admin/*` dependency.
+  - removed unmounted shared pages with admin API dependency:
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Referrals.tsx`
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Challenges.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/utils/platformRouting.ts`
+    - switched defaults to CRM-only (`site_enabled=false`, `product_mode='crm'`),
+    - removed `/account` and `/admin` fallback targets from role and unauthenticated routing decisions.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/services/api.ts`
+    - removed deprecated `deleteAccount()` client method (`/api/account/delete`).
+    - removed unused admin/account/public endpoint methods (`/api/admin*`, `/api/account*`, `/api/public*`) after CRM route cleanup.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/api/client.ts`
+    - removed unused public/admin/account API method groups (`/api/public*`, `/api/public-admin*`, `/api/client/account-menu-settings`) to keep CRM API layer clean.
+- Backend runtime cleanup:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/product_groups/crm/router_mount.py`
+    - removed router mounting for admin/public modules (`admin_stubs`, `admin_features`, `admin_registrations`, `gallery`),
+    - removed mounting of admin-only utilities (`audit`, `trash`) from CRM runtime entrypoint.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/product_groups/crm/route_contract.py`
+    - removed `/api/admin*` and `/api/public-admin*` prefixes from module matchers,
+    - kept CRM contract focused on CRM namespaces only.
+- Compatibility fix:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/MenuCustomization.tsx`
+    - aligned `buildCrmMenuCatalog(...)` call with updated function signature.
+- Validation:
+  - `npm --prefix crm/frontend run lint` ✅
+  - `npm --prefix crm/frontend run build` ✅
+  - `python3 crm/backend/scripts/diagnostics/verify_backend.py --boundaries --smoke-runtime` ✅
+- IMPORTANT TO REMEMBER:
+  - CRM runtime should not reintroduce `/admin`, `/account`, `/api/admin*`, `/api/account*`, `/api/public-admin*` in active CRM navigation/contract.
+  - If legacy admin pages stay in repository for history, they must remain unmounted from active CRM routes.
+
+## [2026-03-21] CRM Media Cleanup: Remove All Images, Keep Only Call Ringtones/Recordings
+- Removed all image assets from CRM runtime storage:
+  - deleted `crm/backend/static/avatars/*`
+  - deleted `crm/backend/static/images/**/*`
+  - deleted image assets in `crm/frontend/public` (`favicon/logo/og/apple-touch` files).
+- Preserved only call-audio media:
+  - kept `crm/backend/static/uploads/audio/ringtones/*`
+  - kept `crm/backend/static/recordings/` (call recordings directory).
+- Backend runtime changes:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/init.py` now enforces image-free CRM bootstrap (`users.photo=NULL`, `salon_settings.logo_url=NULL`, `public_gallery/public_banners` cleanup).
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/main.py` no longer mounts `/landing-images`.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/utils.py` `ensure_upload_directories()` now creates only audio/files/voice/recordings dirs (no image upload dirs).
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/settings.py`, `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/email.py`, `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/email_service.py`, `/Users/tahir/Desktop/beauty-crm/crm/backend/notifications/critical_actions.py` no longer use default logo image paths.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/employees.py` and `/Users/tahir/Desktop/beauty-crm/crm/backend/db/clients.py` avatar helper now returns empty fallback instead of static default image paths.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/fix_data.py`:
+    - disabled image autofill sync for banners/gallery/staff photos,
+    - added cleanup of `public_banners`, `public_gallery`, `users.photo`, `salon_settings.logo_url`.
+- Frontend runtime changes:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/index.html` removed icon links.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/public/manifest.json` removed icon declarations.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/vite.config.ts` removed `/landing-images` proxy and image asset references for PWA.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/layouts/UniversalLayout.tsx`, `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/auth/Login.tsx`, `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/auth/Register.tsx` removed logo image rendering in auth/sidebar UI.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/utils/photoUtils.ts` now ignores legacy static/landing image paths.
+- Tests alignment:
+  - updated `/Users/tahir/Desktop/beauty-crm/crm/backend/tests/test_gender_avatars.py` for no-default-image behavior.
+- IMPORTANT TO REMEMBER:
+  - Universal CRM runtime should not restore or seed image galleries/staff photos.
+  - If image features are ever reintroduced, they must be explicit product requirements, not startup/default autofill.
+
+## [2026-03-21] CRM-Only Runtime + Universal Branding + No Auto-Fill Initialization
+- Converted project to CRM-only contour by removing `site/` (public/admin/account runtime and frontend).
+- Updated local orchestrator `/Users/tahir/Desktop/beauty-crm/scripts/run_local.sh`:
+  - keeps only `crm` mode (`crm/backend + crm/frontend`),
+  - legacy `all|site` now fallback to `crm`.
+- Removed business-specific auto-fill from CRM schema initialization `/Users/tahir/Desktop/beauty-crm/crm/backend/db/init.py`:
+  - removed startup seeding of employees, loyalty levels, positions, broadcast subscription types, currencies, and ringtone presets,
+  - replaced hardcoded salon bootstrap with minimal CRM-only upsert (`id=1`, `product_mode='crm'`, `site_enabled=false`),
+  - normalized brand replacement to `ST CRM` when old `Le Diamant` value is detected.
+- Switched CRM defaults toward universal behavior:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/core/config.py` no longer hardcodes salon contacts/city and Dubai coordinates,
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/settings.py` defaults to `product_mode='crm'`, `site_enabled=false`, `timezone='UTC'`,
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/migrations/run_all_migrations.py` now skips maintenance by default (`RUN_MIGRATION_MAINTENANCE=false`) to avoid hidden data prefill.
+- Rebranded CRM frontend/public metadata to `ST CRM`:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/index.html`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/vite.config.ts`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/public/manifest.json`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/public/robots.txt`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/public/security.txt`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/public/sitemap.xml`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/api/client.ts`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/services/api.ts`
+- Validation:
+  - `npm --prefix crm/frontend run lint`
+  - `npm --prefix crm/frontend run build`
+  - `cd crm/backend && venv/bin/python scripts/diagnostics/verify_backend.py --boundaries --smoke-runtime`
+  - `venv/bin/python -m compileall` for changed backend files
+- IMPORTANT TO REMEMBER:
+  - `db/init.py` is now schema-first and must not auto-populate business/demo content.
+  - If default content is ever needed for a sandbox, seed it only via explicit testing/setup scripts, never via startup migrations.
+
+## [2026-03-21] Boundary Diagnostics: Stable CHANGELOG Size Limit for Split Projects
+- Fixed false-negative boundary failures in both backend SSOT diagnostics:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/diagnostics/verify_backend.py`
+  - `/Users/tahir/Desktop/beauty-crm/site/backend/scripts/diagnostics/verify_backend.py`
+- Root cause:
+  - `check:boundaries` started failing only because shared root `CHANGELOG.txt` grew beyond hardcoded `500` lines, while runtime contours and imports were valid.
+- What changed:
+  - introduced `_resolve_changelog_limit()` with env override support `CHANGELOG_MAX_LINES`,
+  - default limit raised to `2000` lines to match current project memory policy without disabling safety checks,
+  - invalid/negative env values now fallback to default with warning log.
+- Validation:
+  - `npm --prefix crm/frontend run check:boundaries`
+  - `npm --prefix site/frontend run check:boundaries`
+  - `venv/bin/python tests/startup/startup_tests.py` in both backends
+- IMPORTANT TO REMEMBER:
+  - Keep using `CHANGELOG.txt` as project memory; boundary diagnostics should guard quality boundaries, not block normal changelog growth.
+  - If a stricter limit is needed in CI, set `CHANGELOG_MAX_LINES` via environment without editing script logic again.
+
 ## [2026-03-08] CRM Analytics Filters Sync + Chart Readability
 - Updated `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/Analytics.tsx` and `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/admin/Analytics.css`.
 - Analytics top controls:

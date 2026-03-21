@@ -47,7 +47,7 @@ def is_module_enabled(module_name: str) -> bool:
     Проверить, включен ли модуль
 
     Args:
-        module_name: Имя модуля (public, notifications, scheduler, instagram)
+        module_name: Имя модуля (notifications, scheduler, instagram)
 
     Returns:
         True если модуль включен, False иначе

@@ -12,6 +12,29 @@ from db.connection import get_db_connection
 
 router = APIRouter(tags=["Feedback"])
 
+
+async def save_rating(instagram_id: str, rating: int, comment: str = "") -> None:
+    """Сохранить рейтинг в таблицу ratings"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute(
+            """
+            INSERT INTO ratings (instagram_id, rating, comment, created_at)
+            VALUES (%s, %s, %s, NOW())
+            """,
+            (instagram_id, rating, comment),
+        )
+        conn.commit()
+        log_info(f"Rating {rating}/5 saved for {instagram_id}", "feedback")
+    except Exception as e:
+        conn.rollback()
+        log_error(f"Failed to save rating: {e}", "feedback")
+        raise
+    finally:
+        conn.close()
+
+
 @router.get("/feedback/stats")
 async def get_feedback_stats(session_token: Optional[str] = Cookie(None)):
     """Получить статистику отзывов"""

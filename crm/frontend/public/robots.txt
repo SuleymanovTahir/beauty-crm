@@ -1,17 +1,3 @@
-# robots.txt for M Le Diamant Beauty Salon
+# robots.txt for ST CRM (private CRM application)
 User-agent: *
-Allow: /
-Disallow: /crm/
-Disallow: /admin/
-Disallow: /employee/
-Disallow: /manager/
-Disallow: /sales/
-Disallow: /marketer/
-Disallow: /account/
-Disallow: /api/
-
-# Sitemap
-Sitemap: https://mlediamant.com/sitemap.xml
-
-# Crawl delay (optional, helpful for server load)
-Crawl-delay: 1
+Disallow: /

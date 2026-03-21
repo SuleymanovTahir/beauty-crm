@@ -3,7 +3,7 @@
 """
 
 # Типы подписок для клиентов
-# Frontend will translate these keys via admin/settings.json
+# Frontend will translate these keys via crm/settings.json
 CLIENT_SUBSCRIPTION_TYPES = {
     "promotions": {
         "name": "subscription_promotions",

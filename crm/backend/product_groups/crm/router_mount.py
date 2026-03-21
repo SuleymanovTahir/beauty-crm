@@ -14,7 +14,6 @@ from crm_api.recordings import router as recordings_router
 from crm_api.holidays import router as holidays_router
 from crm_api.automation import router as automation_router
 from crm_api.reports import router as reports_router
-from crm_api.audit import router as audit_router
 from crm_api.webrtc_signaling import router as webrtc_router
 from crm_api.notifications_ws import router as notifications_ws_router
 from crm_api.ringtones import router as ringtones_router
@@ -30,16 +29,11 @@ from crm_api.products import router as products_router
 from crm_api.promo_codes import router as promo_codes_router
 from crm_api.subscriptions import router as subscriptions_router
 from crm_api.broadcasts import router as broadcasts_router
-from crm_api.trash import router as trash_router
 from crm_api.messengers import router as messengers_router
 from crm_api.marketplace_integrations import router as marketplace_router
 from crm_api.payment_integrations import router as payment_integrations_router
-from crm_api.admin_stubs import router as admin_stubs_router
-from crm_api.admin_features import router as admin_features_router
 from crm_api.internal_chat import router as internal_chat_router
 from crm_api.statuses import router as statuses_router
-from crm_api.gallery import router as gallery_router
-from crm_api.admin_registrations import router as admin_registrations_router
 
 
 def mount_crm_routers(app: FastAPI) -> None:
@@ -69,7 +63,6 @@ def mount_crm_routers(app: FastAPI) -> None:
     app.include_router(automation_router, prefix="/api")
     app.include_router(reports_router, prefix="/api")
     app.include_router(holidays_router, prefix="/api/holidays")
-    app.include_router(audit_router, prefix="/api")
     app.include_router(db_explorer_router)
     app.include_router(push_tokens_router)
     app.include_router(menu_settings_router, prefix="/api")
@@ -79,13 +72,8 @@ def mount_crm_routers(app: FastAPI) -> None:
     app.include_router(promo_codes_router, prefix="/api")
     app.include_router(subscriptions_router, prefix="/api")
     app.include_router(broadcasts_router, prefix="/api")
-    app.include_router(trash_router, prefix="/api")
     app.include_router(messengers_router, prefix="/api")
     app.include_router(marketplace_router, prefix="/api")
     app.include_router(payment_integrations_router, prefix="/api")
-    app.include_router(admin_stubs_router, prefix="/api")
-    app.include_router(admin_features_router, prefix="/api")
     app.include_router(internal_chat_router)  # already has /api/internal-chat prefix
     app.include_router(statuses_router, prefix="/api")
-    app.include_router(gallery_router, prefix="/api")
-    app.include_router(admin_registrations_router, prefix="/api")

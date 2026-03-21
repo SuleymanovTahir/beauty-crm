@@ -1,5 +1,45 @@
 
 import re
+from datetime import datetime
+
+def normalize_phone(phone: str) -> str:
+    """
+    Нормализует номер телефона к формату +7XXXXXXXXXX.
+    Убирает пробелы, тире, скобки и приводит к стандартному виду.
+    """
+    if not phone:
+        return ""
+
+    # Убираем всё, кроме цифр и плюса
+    clean_phone = re.sub(r'[^\d\+]', '', str(phone))
+
+    # Если номер начинается на 8, заменяем на 7
+    if clean_phone.startswith('8'):
+        clean_phone = '7' + clean_phone[1:]
+
+    # Если номер не начинается на +7, добавляем
+    if not clean_phone.startswith('+'):
+        if not clean_phone.startswith('7'):
+            clean_phone = '7' + clean_phone
+        clean_phone = '+' + clean_phone
+    elif not clean_phone.startswith('+7'):
+        # Если уже есть +, но не +7
+        clean_phone = '+7' + clean_phone.lstrip('+')
+
+    return clean_phone
+
+def validate_date(date_str: str) -> bool:
+    """
+    Валидирует дату в формате YYYY-MM-DD.
+    """
+    if not date_str:
+        return False
+
+    try:
+        datetime.strptime(str(date_str).strip(), '%Y-%m-%d')
+        return True
+    except (ValueError, TypeError):
+        return False
 
 def validate_phone_number(phone: str) -> bool:
     """

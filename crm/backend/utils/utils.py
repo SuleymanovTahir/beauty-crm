@@ -54,13 +54,11 @@ def _add_v(url: str) -> str:
 def ensure_upload_directories():
     """Создать все необходимые директории для загрузок"""
     directories = [
-        os.path.join(UPLOAD_DIR, "images"),
-        os.path.join(UPLOAD_DIR, "images", "portfolio"),
-        os.path.join(UPLOAD_DIR, "images", "faces"),
-        os.path.join(UPLOAD_DIR, "images", "salon"),
-        os.path.join(UPLOAD_DIR, "images", "services"),
+        os.path.join(UPLOAD_DIR, "audio"),
+        os.path.join(UPLOAD_DIR, "audio", "ringtones"),
         os.path.join(UPLOAD_DIR, "files"),
         os.path.join(UPLOAD_DIR, "voice"),
+        os.path.join(BASE_DIR, "static", "recordings"),
         os.path.join(BASE_DIR, "logs")
     ]
     for directory in directories:
@@ -118,92 +116,29 @@ def sanitize_url(url: str) -> Optional[str]:
 
 def map_image_path(url: str) -> str:
     """
-    Преобразовать старые пути к изображениям на новые из frontend папки
+    Нормализовать image URL без возврата битых legacy-путей.
 
     Args:
         url: Исходный путь к изображению
 
     Returns:
-        Преобразованный путь или исходный если маппинг не найден
+        Корректный путь к существующему файлу или пустую строку для
+        удаленных legacy-изображений.
     """
     if not url:
         return url
 
-    original_url = url
+    if url.startswith('/landing-images/'):
+        return url if _landing_asset_exists(url) else ""
 
-    # Маппинг старых путей на унифицированный /landing-images/
-    path_mappings = {
-        '/static/images/salon/': '/landing-images/salon/',
-        '/static/uploads/images/salon/': '/landing-images/salon/',
-        '/static/images/portfolio/': '/landing-images/portfolio/',
-        '/static/uploads/images/portfolio/': '/landing-images/portfolio/',
-        '/static/images/banners/': '/landing-images/banners/',
-        '/static/uploads/images/banners/': '/landing-images/banners/',
-        '/static/uploads/images/services/': '/landing-images/services/',
-        '/static/uploads/images/faces/': '/landing-images/faces/',
-        '/static/uploads/images/employees/': '/landing-images/staff/',
-        '/static/images/employees/': '/landing-images/staff/',
-        '/static/uploads/images/staff/': '/landing-images/staff/',
-        '/static/images/staff/': '/landing-images/staff/',
-    }
-
-    for old_path, new_path in path_mappings.items():
-        if url.startswith(old_path):
-            url = url.replace(old_path, new_path, 1)
-            break
-
-    # Маппинг на реальные файлы в styles/img (английские имена)
-    file_mappings = {
-        # Banners
-        '/landing-images/banners/banner2.webp': '/landing-images/banners/banner.webp',
-        # Services -> portfolio
-        '/landing-images/services/Массаж лица.webp': '/landing-images/portfolio/Hair.webp',
-        '/landing-images/services/Face_massage.webp': '/landing-images/portfolio/Hair.webp',
-        '/landing-images/services/Стрижка .webp': '/landing-images/portfolio/Hair.webp',
-        '/landing-images/services/Haircut.webp': '/landing-images/portfolio/Hair.webp',
-        '/landing-images/services/Маникюр 4.webp': '/landing-images/portfolio/Manicure.webp',
-        '/landing-images/services/Manicure_4.webp': '/landing-images/portfolio/Manicure.webp',
-        '/landing-images/services/Перманент ресниц.webp': '/landing-images/portfolio/Permanent_lips.webp',
-        '/landing-images/services/Permanent_lashes.webp': '/landing-images/portfolio/Permanent_lips.webp',
-        '/landing-images/services/Спа.webp': '/landing-images/portfolio/Spa2.webp',
-        '/landing-images/services/Spa.webp': '/landing-images/portfolio/Spa2.webp',
-        '/landing-images/services/SPA.webp': '/landing-images/portfolio/Spa2.webp',
-        # Portfolio - русские -> английские файлы
-        '/landing-images/portfolio/Волосы.webp': '/landing-images/portfolio/Hair.webp',
-        '/landing-images/portfolio/волосы.webp': '/landing-images/portfolio/Hair.webp',
-        '/landing-images/portfolio/Волосы2.webp': '/landing-images/portfolio/Hair2.webp',
-        '/landing-images/portfolio/волосы2.webp': '/landing-images/portfolio/Hair2.webp',
-        '/landing-images/portfolio/Маникюр.webp': '/landing-images/portfolio/Manicure.webp',
-        '/landing-images/portfolio/маникюр.webp': '/landing-images/portfolio/Manicure.webp',
-        '/landing-images/portfolio/Перманент губ.webp': '/landing-images/portfolio/Permanent_lips.webp',
-        '/landing-images/portfolio/перманент_губ.webp': '/landing-images/portfolio/Permanent_lips.webp',
-        '/landing-images/portfolio/Волосы блондинка.webp': '/landing-images/portfolio/Hair_blonde.webp',
-        '/landing-images/portfolio/волосы_блондинка.webp': '/landing-images/portfolio/Hair_blonde.webp',
-        '/landing-images/portfolio/Кератин блондинка.webp': '/landing-images/portfolio/Keratin_blonde.webp',
-        '/landing-images/portfolio/кератин_блондинка.webp': '/landing-images/portfolio/Keratin_blonde.webp',
-        '/landing-images/portfolio/Ногти до после.webp': '/landing-images/portfolio/Nogti_do_posle.webp',
-        '/landing-images/portfolio/ногти_до_после.webp': '/landing-images/portfolio/Nogti_do_posle.webp',
-        '/landing-images/portfolio/СПА3.webp': '/landing-images/portfolio/SPA3.webp',
-        '/landing-images/portfolio/спа3.webp': '/landing-images/portfolio/SPA3.webp',
-        '/landing-images/portfolio/Спа2.webp': '/landing-images/portfolio/Spa2.webp',
-        '/landing-images/portfolio/спа2.webp': '/landing-images/portfolio/Spa2.webp',
-        '/landing-images/portfolio/воксинг.webp': '/landing-images/portfolio/Waxing.webp',
-        '/landing-images/portfolio/маникюр3.webp': '/landing-images/portfolio/Manikjur3.webp',
-        '/landing-images/portfolio/ногти2.webp': '/landing-images/portfolio/Nogti2.webp',
-        '/landing-images/portfolio/кератин_блондинка_2.webp': '/landing-images/portfolio/Keratin_blonde_2.webp',
-        '/landing-images/portfolio/Кератин блондинка 2.webp': '/landing-images/portfolio/Keratin_blonde_2.webp',
-    }
-
-    if url in file_mappings:
-        url = file_mappings[url]
-
-    # Keep /static path if mapped landing asset is absent in known frontend image directories.
-    if original_url != url and url.startswith('/landing-images/') and not _landing_asset_exists(url):
-        url = original_url
-
-    # Для landing-images НЕ транслитерируем - файлы имеют русские имена
-    if '/landing-images/' in url:
-        return url
+    image_like_static_prefixes = (
+        '/static/images/',
+        '/static/uploads/images/',
+        '/static/avatars/',
+    )
+    for prefix in image_like_static_prefixes:
+        if url.startswith(prefix):
+            return url if _static_asset_exists(url) else ""
 
     # Автоматическая транслитерация для кириллических имен, если маппинг не найден
     if any(ord(c) > 127 for c in url):
@@ -227,7 +162,7 @@ def map_image_path(url: str) -> str:
             if _static_asset_exists(transliterated_url):
                 return transliterated_url
 
-        return original_url
+        return ""
 
     return url
 

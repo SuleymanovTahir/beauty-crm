@@ -48,7 +48,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
 
 
 export function TasksDashboard({ tasks, stages }: TasksDashboardProps) {
-    const { t } = useTranslation(['admin/tasks', 'common']);
+    const { t } = useTranslation(['crm/tasks', 'common']);
     const { currency } = useSalonSettings();
 
     const stats = useMemo(() => {

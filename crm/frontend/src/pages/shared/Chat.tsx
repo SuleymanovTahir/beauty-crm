@@ -1843,47 +1843,6 @@ export default function Chat() {
           </div>
         )
       }
-      {/* Messenger Sidebar (Desktop) - COMMENTED OUT */}
-      {/* 
-      <div className="hidden md:flex flex-col gap-4 p-4 border-r border-gray-100 bg-gray-50/50">
-        {['instagram', 'telegram', 'whatsapp', 'tiktok'].map((m) => (
-          <motion.button
-            key={m}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setCurrentMessenger(m)}
-            className={`
-              relative group p-4 rounded-2xl transition-all duration-500 flex items-center justify-center
-              ${currentMessenger === m
-                ? 'bg-gradient-to-br from-gray-900 to-gray-800 shadow-xl shadow-black/20 scale-105'
-                : 'bg-white hover:bg-gray-50 shadow-sm border border-gray-100'
-              }
-            `}
-          >
-            <div className={`
-              absolute inset-0 bg-gradient-to-br rounded-2xl opacity-0 transition-opacity duration-500
-              ${m === 'instagram' ? 'from-purple-500/10 to-pink-500/10' :
-                m === 'telegram' ? 'from-blue-500/10 to-indigo-500/10' :
-                  m === 'whatsapp' ? 'from-green-500/10 to-emerald-500/10' :
-                    'from-gray-500/10 to-black/10'}
-              group-hover:opacity-100
-            `} />
-
-            {m === 'instagram' && <InstagramIcon size={24} colorful={currentMessenger === m} />}
-            {m === 'telegram' && <TelegramIcon size={24} colorful={currentMessenger === m} />}
-            {m === 'whatsapp' && <WhatsAppIcon size={24} colorful={currentMessenger === m} />}
-            {m === 'tiktok' && <TikTokIcon size={24} colorful={currentMessenger === m} />}
-
-            {currentMessenger === m && (
-              <motion.div
-                layoutId="messenger-active"
-                className="absolute -left-1 w-1 h-8 bg-pink-500 rounded-full"
-              />
-            )}
-          </motion.button>
-        ))}
-      </div>
-      */}
     </div >
   );
 }

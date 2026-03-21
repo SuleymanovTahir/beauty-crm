@@ -1,7 +1,9 @@
 // frontend/src/services/api.ts
 import i18n from '../i18n';
 import { buildApiUrl, resolveApiEndpoint } from '../api/client';
-const API_URL = import.meta.env.VITE_API_URL || window.location.origin
+
+const configuredApiUrl = String(import.meta.env.VITE_API_URL ?? '').trim();
+const API_URL = configuredApiUrl.length > 0 ? configuredApiUrl : window.location.origin;
 
 type PromoCodeApiItem = {
   id: number
@@ -235,8 +237,7 @@ export class ApiClient {
     position: string = '',
     privacy_accepted: boolean = false,
     newsletter_subscribed: boolean = true,
-    business_type: string = '',
-    product_mode: string = ''
+    business_type: string = ''
   ) {
     const formData = new URLSearchParams()
     formData.append('username', username)
@@ -249,7 +250,6 @@ export class ApiClient {
     formData.append('privacy_accepted', privacy_accepted.toString())
     formData.append('newsletter_subscribed', newsletter_subscribed.toString())
     formData.append('business_type', business_type)
-    formData.append('product_mode', product_mode)
 
     return this.request<any>('/api/register', {
       method: 'POST',
@@ -291,8 +291,7 @@ export class ApiClient {
     privacy_accepted: boolean,
     newsletter_subscribed: boolean = true,
     captcha_token?: string,
-    business_type: string = '',
-    product_mode: string = ''
+    business_type: string = ''
   ) {
     const formData = new URLSearchParams()
     formData.append('username', username)
@@ -304,7 +303,6 @@ export class ApiClient {
     formData.append('privacy_accepted', privacy_accepted.toString())
     formData.append('newsletter_subscribed', newsletter_subscribed.toString())
     formData.append('business_type', business_type)
-    formData.append('product_mode', product_mode)
     if (captcha_token) {
       formData.append('captcha_token', captcha_token)
     }
@@ -416,13 +414,6 @@ export class ApiClient {
     } finally {
       localStorage.removeItem('user')
     }
-  }
-
-  async deleteAccount(password: string, confirm: boolean) {
-    return this.request('/api/account/delete', {
-      method: 'POST',
-      body: JSON.stringify({ password, confirm }),
-    })
   }
 
   // ===== DASHBOARD =====
@@ -622,9 +613,9 @@ export class ApiClient {
 
     return {
       business_type: settings?.business_type,
-      product_mode: settings?.product_mode,
+      product_mode: 'crm',
       crm_enabled: typeof crmEnabled === 'boolean' ? crmEnabled : true,
-      site_enabled: typeof siteEnabled === 'boolean' ? siteEnabled : true,
+      site_enabled: typeof siteEnabled === 'boolean' ? siteEnabled : false,
     }
   }
 
@@ -641,10 +632,6 @@ export class ApiClient {
 
   async getSalonSettings() {
     return this.request<any>('/api/salon-settings')
-  }
-
-  async getPublicSalonSettings() {
-    return this.request<any>('/api/public/salon-settings')
   }
 
   async updateSalonSettings(data: any) {
@@ -810,13 +797,6 @@ export class ApiClient {
   async updateBooking(bookingId: number, data: any) {
     return this.request(`/api/bookings/${bookingId}`, {
       method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async createPublicBooking(data: any) {
-    return this.request('/api/public/bookings', {
-      method: 'POST',
       body: JSON.stringify(data),
     })
   }
@@ -1079,105 +1059,9 @@ export class ApiClient {
     return this.request('/api/menu-settings', { method: 'DELETE' })
   }
 
-  async getAccountMenuSettings() {
-    return this.request<{
-      hidden_items: string[]
-      apply_mode: 'all' | 'selected'
-      target_client_ids: string[]
-    }>('/api/account-menu-settings')
-  }
-
-  async saveAccountMenuSettings(data: {
-    hidden_items: string[]
-    apply_mode: 'all' | 'selected'
-    target_client_ids: string[]
-  }) {
-    return this.request('/api/account-menu-settings', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  // ===== КОРЗИНА (TRASH) =====
-  async getTrashItems(entityType?: string) {
-    const url = entityType ? `/api/admin/trash?entity_type=${entityType}` : '/api/admin/trash'
-    return this.request<{ items: any[] }>(url)
-  }
-
-  async restoreTrashItem(entityType: string, entityId: string | number) {
-    return this.request(`/api/admin/trash/restore/${entityType}/${entityId}`, {
-      method: 'POST'
-    })
-  }
-
-  async permanentDeleteTrashItem(entityType: string, entityId: string | number) {
-    return this.request(`/api/admin/trash/permanent/${entityType}/${entityId}`, {
-      method: 'DELETE'
-    })
-  }
-
-  async emptyTrash() {
-    return this.request('/api/admin/trash/empty', {
-      method: 'DELETE',
-    })
-  }
-
-  async restoreTrashItemsBatch(items: { type: string; id: string }[]) {
-    return this.request<{ success: boolean; count: number }>('/api/admin/trash/restore-batch', {
-      method: 'POST',
-      body: JSON.stringify({ items })
-    })
-  }
-
-  async deleteTrashItemsBatch(items: { type: string; id: string }[]) {
-    return this.request<{ success: boolean; count: number }>('/api/admin/trash/delete-batch', {
-      method: 'POST',
-      body: JSON.stringify({ items })
-    })
-  }
-
-  // ===== ЖУРНАЛ АУДИТА (AUDIT LOG) =====
-  async getAuditLog(filters: { entity_type?: string; entity_id?: string; user_id?: number; action?: string; limit?: number } = {}) {
-    const params = new URLSearchParams()
-    if (filters.entity_type) params.append('entity_type', filters.entity_type)
-    if (filters.entity_id) params.append('entity_id', filters.entity_id)
-    if (filters.user_id) params.append('user_id', filters.user_id.toString())
-    if (filters.action) params.append('action', filters.action)
-    if (filters.limit) params.append('limit', filters.limit.toString())
-
-    return this.request<{ history: any[] }>(`/api/admin/audit-log?${params.toString()}`)
-  }
-
-  async getAuditSummary() {
-    return this.request<{ summary: any }>('/api/admin/audit-log/summary')
-  }
-
-  async clearAuditLog() {
-    return this.request<{ success: boolean; message: string }>('/api/admin/audit-log/clear', {
-      method: 'DELETE'
-    })
-  }
-
-  async deleteAuditLog(logId: number) {
-    return this.request<{ success: boolean; message: string }>(`/api/admin/audit-log/${logId}`, {
-      method: 'DELETE'
-    })
-  }
-
-  async deleteAuditLogsBatch(ids: number[]) {
-    return this.request<{ success: boolean; count: number }>('/api/admin/audit-log/delete-batch', {
-      method: 'POST',
-      body: JSON.stringify({ ids })
-    })
-  }
-
   // ===== УСЛУГИ =====
   async getServices(activeOnly: boolean = true, language: string = 'ru') {
     return this.request<any>(`/api/services?active_only=${activeOnly}&language=${language}`)
-  }
-
-  async getPublicServices() {
-    return this.request<any>('/api/public/services')
   }
 
   async createService(data: any) {
@@ -1212,10 +1096,6 @@ export class ApiClient {
   // ===== ПОЛЬЗОВАТЕЛИ =====
   async getUsers(language: string = 'ru') {
     return this.request<any>(`/api/users?language=${language}&_t=${Date.now()}`)
-  }
-
-  async getPublicEmployees(language: string = 'ru') {
-    return this.request<any>(`/api/public/employees?language=${language}&_t=${Date.now()}`)
   }
 
   // После getUsers() (примерно строка 150)
@@ -1447,57 +1327,6 @@ export class ApiClient {
     })
   }
 
-  // ===== SPECIAL PACKAGES =====
-  async getSpecialPackages(activeOnly: boolean = true) {
-    const activeOnlyParam = activeOnly ? 'true' : 'false';
-    return this.request<any>(`/api/special-packages?active_only=${activeOnlyParam}`)
-  }
-
-  async createSpecialPackage(data: any) {
-    return this.request('/api/special-packages', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async updateSpecialPackage(packageId: number, data: any) {
-    return this.request(`/api/special-packages/${packageId}`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async deleteSpecialPackage(packageId: number) {
-    return this.request(`/api/special-packages/${packageId}`, {
-      method: 'DELETE',
-    })
-  }
-
-  // ===== CHALLENGES =====
-  async getChallenges() {
-    return this.request<any>('/api/challenges')
-  }
-
-  async createChallenge(data: any) {
-    return this.request('/api/challenges', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async updateChallenge(id: number, data: any) {
-    return this.request(`/api/challenges/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async deleteChallenge(id: number) {
-    return this.request(`/api/challenges/${id}`, {
-      method: 'DELETE',
-    })
-  }
-
   // ===== REFERRAL CAMPAIGNS =====
   async getReferralCampaigns() {
     return this.request<{ campaigns: any[] }>('/api/referral-campaigns')
@@ -1543,39 +1372,6 @@ export class ApiClient {
       ? `/api/referral-campaigns/${id}/analytics?${queryString}`
       : `/api/referral-campaigns/${id}/analytics`
     return this.request<any>(endpoint)
-  }
-
-  // ===== ADMIN CLIENT GALLERY =====
-  async getAdminClientGallery(clientId: string) {
-    return this.request<any>(`/api/admin/client-gallery/${clientId}`)
-  }
-
-  async uploadClientGalleryPhoto(clientId: string, photoType: string, file: File) {
-    const formData = new FormData()
-    formData.append('file', file)
-
-    // We use fetch directly for FormData to avoid complex handling in this.request if it's not set up for it
-    const response = await fetch(buildApiUrl(`/api/admin/client-gallery/upload?client_id=${clientId}&photo_type=${photoType}`, this.baseURL), {
-      method: 'POST',
-      body: formData,
-      credentials: 'include'
-    })
-
-    if (!response.ok) throw new Error('Upload failed')
-    return response.json()
-  }
-
-  async addClientGalleryEntry(data: any) {
-    return this.request('/api/admin/client-gallery', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async deleteClientGalleryEntry(id: number) {
-    return this.request(`/api/admin/client-gallery/${id}`, {
-      method: 'DELETE',
-    })
   }
 
   // ===== РОЛИ И ПРАВА =====
@@ -2373,187 +2169,6 @@ export class ApiClient {
     return this.get('/api/salon-settings/working-hours');
   }
 
-  // ===== PUBLIC BOOKING (CLIENT CABINET) =====
-  // Использует публичный endpoint, который просто проверяет наличие записей в базе
-  // и не зависит от настроек расписания мастеров.
-  async getPublicAvailableSlots(
-    date: string,
-    employeeId?: number,
-    serviceId?: number,
-    context?: {
-      serviceIds?: number[]
-      durationMinutes?: number
-    }
-  ) {
-    const params = new URLSearchParams({ date });
-    if (employeeId) params.append('employee_id', String(employeeId));
-    if (serviceId) params.append('service_id', String(serviceId));
-    if (Array.isArray(context?.serviceIds) && context.serviceIds.length > 0) {
-      const normalizedServiceIds = context.serviceIds
-        .map((serviceItem) => Number(serviceItem))
-        .filter((serviceItem) => Number.isFinite(serviceItem) && serviceItem > 0)
-        .map((serviceItem) => Math.trunc(serviceItem));
-      if (normalizedServiceIds.length > 0) {
-        params.append('service_ids', normalizedServiceIds.join(','));
-      }
-    }
-    if (
-      typeof context?.durationMinutes === 'number' &&
-      Number.isFinite(context.durationMinutes) &&
-      context.durationMinutes > 0
-    ) {
-      params.append('duration_minutes', String(Math.trunc(context.durationMinutes)));
-    }
-
-    return this.request<{
-      date: string;
-      slots: { time: string; available: boolean; isOptimal?: boolean; is_optimal?: boolean }[];
-    }>(`/api/public/available-slots?${params.toString()}`);
-  }
-
-  async getPublicBatchAvailability(
-    date: string,
-    context?: {
-      serviceId?: number
-      serviceIds?: number[]
-      durationMinutes?: number
-    }
-  ) {
-    const params = new URLSearchParams({ date });
-    if (
-      typeof context?.serviceId === 'number' &&
-      Number.isFinite(context.serviceId) &&
-      context.serviceId > 0
-    ) {
-      params.append('service_id', String(Math.trunc(context.serviceId)));
-    }
-    if (Array.isArray(context?.serviceIds) && context.serviceIds.length > 0) {
-      const normalizedServiceIds = context.serviceIds
-        .map((serviceItem) => Number(serviceItem))
-        .filter((serviceItem) => Number.isFinite(serviceItem) && serviceItem > 0)
-        .map((serviceItem) => Math.trunc(serviceItem));
-      if (normalizedServiceIds.length > 0) {
-        params.append('service_ids', normalizedServiceIds.join(','));
-      }
-    }
-    if (
-      typeof context?.durationMinutes === 'number' &&
-      Number.isFinite(context.durationMinutes) &&
-      context.durationMinutes > 0
-    ) {
-      params.append('duration_minutes', String(Math.trunc(context.durationMinutes)));
-    }
-
-    return this.request<{
-      date: string;
-      availability: Record<number, string[]>;
-    }>(`/api/public/available-slots/batch?${params.toString()}`);
-  }
-  // ===== ADMIN PANEL =====
-  async getAdminStats() {
-    return this.request<any>('/api/admin/stats')
-  }
-
-  async getLoyaltyTransactions(limit: number = 50) {
-    return this.request<any>(`/api/admin/loyalty/transactions?limit=${limit}`)
-  }
-
-  async adjustLoyaltyPoints(data: { client_email: string; points: number; reason: string }) {
-    return this.request('/api/admin/loyalty/adjust-points', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async getLoyaltyStats() {
-    return this.request<any>('/api/admin/loyalty/stats')
-  }
-
-  async getReferrals(params?: {
-    status?: 'pending' | 'completed' | 'cancelled';
-    sort_by?: 'date' | 'points' | 'status';
-    order?: 'asc' | 'desc';
-  }) {
-    const query = new URLSearchParams();
-    if (typeof params?.status === 'string' && params.status.length > 0) {
-      query.append('status', params.status);
-    }
-    if (typeof params?.sort_by === 'string' && params.sort_by.length > 0) {
-      query.append('sort_by', params.sort_by);
-    }
-    if (typeof params?.order === 'string' && params.order.length > 0) {
-      query.append('order', params.order);
-    }
-    const queryString = query.toString();
-    const endpoint = queryString.length > 0 ? `/api/admin/referrals?${queryString}` : '/api/admin/referrals';
-    return this.request<any>(endpoint)
-  }
-
-  async getReferralStats() {
-    return this.request<any>('/api/admin/referrals/stats')
-  }
-
-  async getReferralSettings() {
-    return this.request<any>('/api/admin/referrals/settings')
-  }
-
-  async updateReferralSettings(data: { referrer_bonus?: number; referred_bonus?: number; min_purchase_amount?: number }) {
-    return this.request('/api/admin/referrals/settings', {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async getAdminChallenges() {
-    return this.request<any>('/api/admin/challenges')
-  }
-
-  async createAdminChallenge(data: any) {
-    return this.request('/api/admin/challenges', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async deleteAdminChallenge(challengeId: number) {
-    return this.request(`/api/admin/challenges/${challengeId}`, {
-      method: 'DELETE',
-    })
-  }
-
-  async getChallengesStats() {
-    return this.request<any>('/api/admin/challenges/stats')
-  }
-
-  async getAdminNotifications(limit: number = 50) {
-    return this.request<any>(`/api/admin/notifications?limit=${limit}`)
-  }
-
-  async sendAdminNotification(data: any) {
-    return this.request('/api/admin/notifications', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async getGalleryPhotos(category?: string) {
-    const params = category ? `?category=${category}` : ''
-    return this.request<any>(`/api/admin/gallery${params}`)
-  }
-
-  async uploadGalleryPhoto(data: any) {
-    return this.request('/api/admin/gallery', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async deleteGalleryPhoto(photoId: string) {
-    return this.request(`/api/admin/gallery/${photoId}`, {
-      method: 'DELETE',
-    })
-  }
-
   // ===== ДОГОВОРЫ (CONTRACTS) =====
   async getContracts(clientId?: string, status?: string) {
     let url = '/api/contracts?'
@@ -2920,13 +2535,6 @@ export class ApiClient {
     })
   }
 
-  // ===== PENDING REGISTRATIONS EDIT =====
-  async updatePendingUser(userId: number, data: { full_name?: string; email?: string; role?: string; phone?: string }) {
-    return this.request(`/api/admin/registrations/${userId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
 }
 
 export const api = new ApiClient()

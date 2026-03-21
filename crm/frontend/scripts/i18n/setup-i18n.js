@@ -7,17 +7,16 @@ const languages = ['ru', 'en', 'es', 'ar', 'hi', 'kk', 'pt', 'fr', 'de'];
 const namespaces = [
   'common',          // Общие: кнопки, действия, статусы, ошибки
   'auth',            // Авторизация и вход
-  'dashboard',       // Все дашборды (admin, manager, employee)
-  'clients',         // Клиенты (Clients, ClientDetail)
-  'bookings',        // Записи (Bookings, BookingDetail, Calendar)
+  'dashboard',       // CRM dashboard
+  'clients',         // Клиенты CRM
+  'bookings',        // Записи CRM
   'chat',            // Чат, сообщения, шаблоны
   'analytics',       // Аналитика, воронка, отчёты
-  'services',        // Услуги и спецпакеты
-  'settings',        // Настройки (Settings, BotSettings)
-  'users',           // Управление пользователями (Users, CreateUser, EditUser)
+  'services',        // Услуги CRM
+  'settings',        // Настройки CRM
+  'users',           // Команда и роли CRM
   'employee',        // Страницы сотрудника
   'manager',         // Страницы менеджера
-  'public',          // Публичные страницы (Home, About, FAQ, etc)
   'layouts',         // Навигация, меню, футер
 ];
 
@@ -219,17 +218,9 @@ function getExampleTranslations(namespace) {
       "title": "Менеджер",
       "funnel": "Воронка продаж"
     },
-    public: {
-      "home": "Главная",
-      "about": "О нас",
-      "contacts": "Контакты",
-      "faq": "FAQ",
-      "price_list": "Прайс-лист",
-      "book_now": "Записаться"
-    },
     layouts: {
       "navigation": "Навигация",
-      "admin_panel": "Админ панель",
+      "crm_panel": "CRM",
       "manager_panel": "Панель менеджера",
       "employee_panel": "Панель сотрудника"
     }

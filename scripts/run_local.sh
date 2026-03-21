@@ -3,7 +3,7 @@
 set -uo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-MODE="${1:-all}"
+MODE="${1:-crm}"
 
 BACKEND_WORKERS="${BACKEND_WORKERS:-1}"
 BACKEND_THREAD_POOL_WORKERS="${BACKEND_THREAD_POOL_WORKERS:-8}"
@@ -15,11 +15,9 @@ declare -i CLEANUP_DONE=0
 print_usage() {
   cat <<EOF
 Usage:
-  bash ${ROOT_DIR}/scripts/run_local.sh [all|site|crm]
+  bash ${ROOT_DIR}/scripts/run_local.sh [crm]
 
 Modes:
-  all   Start site backend + site frontend + crm backend + crm frontend
-  site  Start only site backend + site frontend
   crm   Start only crm backend + crm frontend
 
 Optional env overrides:
@@ -90,25 +88,17 @@ start_frontend() {
   PIDS+=("$!")
 }
 
-start_site() {
-  start_backend "site-backend" "${ROOT_DIR}/site/backend"
-  start_frontend "site-frontend" "${ROOT_DIR}/site/frontend"
-}
-
 start_crm() {
   start_backend "crm-backend" "${ROOT_DIR}/crm/backend"
   start_frontend "crm-frontend" "${ROOT_DIR}/crm/frontend"
 }
 
 case "${MODE}" in
-  all)
-    start_site
-    start_crm
-    ;;
-  site)
-    start_site
-    ;;
-  crm)
+  all|site|crm)
+    if [[ "${MODE}" != "crm" ]]; then
+      echo "[run_local] mode '${MODE}' is deprecated, switching to 'crm'"
+    fi
+    MODE="crm"
     start_crm
     ;;
   help|--help|-h)

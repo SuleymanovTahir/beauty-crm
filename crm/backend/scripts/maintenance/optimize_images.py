@@ -2,13 +2,20 @@ import os
 import sys
 import json
 import hashlib
-from PIL import Image
 from pathlib import Path
+
+try:
+    from PIL import Image
+    PILLOW_AVAILABLE = True
+except ImportError:
+    Image = None
+    PILLOW_AVAILABLE = False
 
 # Add backend directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from core.config import UPLOAD_DIR
+from utils.optional_dependencies import build_optional_dependency_message
 
 OPTIMIZATION_TRACKING_FILE = ".optimized_images.json"
 
@@ -55,6 +62,10 @@ def optimize_images(directory: str, max_size_kb: int = 500, max_width: int = 192
     - Compress to reduce size below max_size_kb (target)
     - Track optimized content hash to prevent re-optimization
     """
+    if not PILLOW_AVAILABLE:
+        print(f"❌ {build_optional_dependency_message('Image optimization')}")
+        return
+
     print(f"🚀 Starting image optimization in {directory}...")
     print(f"Target: Convert to WebP, Max size: < {max_size_kb}KB, Max width: {max_width}px")
     

@@ -12,6 +12,78 @@ from db.connection import get_db_connection
 
 router = APIRouter(tags=["Dashboard"])
 
+
+@router.get("/dashboard/quick-stats")
+def get_quick_stats(session_token: Optional[str] = Cookie(None)):
+    """
+    Быстрая статистика для виджетов верхней панели:
+    выручка сегодня, записей сегодня, новых клиентов за неделю,
+    средний рейтинг, записей ожидают подтверждения.
+    Возвращается за один SQL-запрос — без AnalyticsService.
+    """
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    if user["role"] == "client":
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    try:
+        with get_db_connection() as conn:
+            c = conn.cursor()
+
+            # Выручка и записи сегодня
+            c.execute("""
+                SELECT
+                    COALESCE(SUM(CASE WHEN status = 'completed' THEN COALESCE(price, 0) ELSE 0 END), 0) AS revenue_today,
+                    COUNT(*) AS bookings_today,
+                    COUNT(*) FILTER (WHERE status = 'pending') AS pending_count
+                FROM bookings
+                WHERE datetime::date = CURRENT_DATE
+            """)
+            row = c.fetchone()
+            revenue_today = float(row[0])
+            bookings_today = int(row[1])
+            pending_count = int(row[2])
+
+            # Новые клиенты за 7 дней
+            c.execute("""
+                SELECT COUNT(*) FROM clients
+                WHERE created_at >= CURRENT_DATE - INTERVAL '7 days'
+            """)
+            new_clients_week = int(c.fetchone()[0])
+
+            # Средний рейтинг (за последние 30 дней)
+            c.execute("""
+                SELECT ROUND(AVG(rating)::numeric, 1) FROM ratings
+                WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'
+            """)
+            avg_rating = float(c.fetchone()[0] or 0)
+
+            # Предстоящие записи (ближайший час)
+            c.execute("""
+                SELECT COUNT(*) FROM bookings
+                WHERE datetime BETWEEN NOW() AND NOW() + INTERVAL '1 hour'
+                  AND status NOT IN ('cancelled', 'no_show')
+            """)
+            upcoming_hour = int(c.fetchone()[0])
+
+        return {
+            "success": True,
+            "stats": {
+                "revenue_today": revenue_today,
+                "bookings_today": bookings_today,
+                "pending_confirmations": pending_count,
+                "new_clients_week": new_clients_week,
+                "avg_rating_30d": avg_rating,
+                "upcoming_next_hour": upcoming_hour,
+            }
+        }
+
+    except Exception as e:
+        log_error(f"Error getting quick stats: {e}", "dashboard")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
 @router.post("/dashboard/migrate-payroll")
 def migrate_payroll_columns(
     current_user: dict = Depends(get_current_user)

@@ -25,7 +25,7 @@ interface StatusSelectProps {
 }
 
 export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, showAllOption, variant = 'default' }: StatusSelectProps) {
-  const { t } = useTranslation(['components', 'common', 'clients', 'admin/Clients']);
+  const { t } = useTranslation(['components', 'common', 'clients', 'crm/clients']);
 
   const normalizeStatusKey = (rawValue: string): string => {
     return String(rawValue).trim().toLowerCase().replace(/[\s-]+/g, '_');

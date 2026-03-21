@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Test gender-based avatar functionality
-"""
+"""Test avatar helper behavior without default static images."""
 import sys
 import os
 
@@ -22,16 +20,13 @@ def test_avatar_helper():
     assert get_employee_avatar('/uploads/profile.jpg', 'female') == '/uploads/profile.jpg'
     print("✅ Profile pic takes precedence")
     
-    #def test_get_employee_avatar_defaults():
-    assert get_employee_avatar(None, 'male') == '/static/avatars/default_male.webp'
-    
-    # Female default
-    assert get_employee_avatar(None, 'female') == '/static/avatars/default_female.webp'
-    
-    # Unknown/None default (female)
-    assert get_employee_avatar(None, 'unknown') == '/static/avatars/default_female.webp'
-    assert get_employee_avatar(None, None) == '/static/avatars/default_female.webp'
-    print("✅ Default fallback (None) works")
+    assert get_employee_avatar(None, 'male') == ''
+    assert get_employee_avatar(None, 'female') == ''
+    assert get_employee_avatar(None, 'unknown') == ''
+    assert get_employee_avatar(None, None) == ''
+    assert get_client_avatar(None, 'male') == ''
+    assert get_client_avatar(None, 'female') == ''
+    print("✅ Empty fallback without static avatars works")
     
     print()
 
@@ -87,31 +82,21 @@ def test_employee_genders():
     
     print()
 
-def test_avatar_files_exist():
-    """Test that avatar image files exist"""
+def test_avatar_files_absent():
+    """Static avatar images must be absent in universal CRM runtime."""
     print("="*60)
     print("🧪 TESTING AVATAR FILES")
     print("="*60)
     
     import os
     
-    # Проверяем наличие дефолтных аватарок
-    # Расчитываем путь относительно корня бэкенда
     backend_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     female_avatar = os.path.join(backend_root, 'static', 'avatars', 'default_female.webp')
     male_avatar = os.path.join(backend_root, 'static', 'avatars', 'default_male.webp')
-    
-    if os.path.exists(female_avatar):
-        size = os.path.getsize(female_avatar)
-        print(f"✅ Female avatar exists ({size} bytes)")
-    else:
-        print(f"❌ Female avatar NOT found at {female_avatar}")
-    
-    if os.path.exists(male_avatar):
-        size = os.path.getsize(male_avatar)
-        print(f"✅ Male avatar exists ({size} bytes)")
-    else:
-        print(f"❌ Male avatar NOT found at {male_avatar}")
+
+    assert not os.path.exists(female_avatar)
+    assert not os.path.exists(male_avatar)
+    print("✅ Default avatar image files are absent")
     
     print()
 
@@ -120,7 +105,7 @@ if __name__ == "__main__":
     
     test_avatar_helper()
     test_employee_genders()
-    test_avatar_files_exist()
+    test_avatar_files_absent()
     
     print("="*60)
     print("✅ ALL TESTS PASSED!")

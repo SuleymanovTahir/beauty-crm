@@ -1,0 +1,11 @@
+# Optional backend stack for import/export, PDF/Excel generation and media processing.
+numpy
+pandas
+openpyxl
+reportlab
+Pillow
+lxml
+xlrd
+xlwt
+python-docx
+beautifulsoup4

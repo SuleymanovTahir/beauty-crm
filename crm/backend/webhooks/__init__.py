@@ -519,7 +519,7 @@ async def process_message_background(messaging_event: dict):
                         title="CORPORATE SERVICE REQUEST",
                         message=f"Client @{username or sender_id[:8]} requested group/corporate service\nContext: {message_text[:100]}",
                         notification_type="urgent",
-                        action_url=f"/admin/chat?client_id={sender_id}"
+                        action_url=f"/crm/chat?client_id={sender_id}"
                     )
             
             if is_urgent:

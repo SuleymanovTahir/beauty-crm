@@ -100,7 +100,7 @@ def run_all_migrations():
         create_chat_history_table()
         
         # 2. Optional Data Maintenance
-        if _env_flag("RUN_MIGRATION_MAINTENANCE", default=True):
+        if _env_flag("RUN_MIGRATION_MAINTENANCE", default=False):
             print_header("DATA MAINTENANCE")
             try:
                 from scripts.maintenance.fix_data import run_all_fixes
@@ -111,29 +111,8 @@ def run_all_migrations():
         else:
             log_info("⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)", "migrations")
 
-        # 3. Optional Production Seeding
-        if _env_flag("RUN_MIGRATION_PROD_SEED", default=False):
-            print_header("PRODUCTION SEEDING")
-            try:
-                from scripts.setup.seed_production_data import seed_production_data
-                seed_production_data()
-                log_info("✅ Production data seeded", "migrations")
-            except Exception as e:
-                log_error(f"⚠️  Seeding skipped: {e}", "migrations")
-        else:
-            log_info("⏭️ Production seed skipped (RUN_MIGRATION_PROD_SEED=false)", "migrations")
-
-        # 4. Optional Test Seeding
-        if _env_flag("RUN_MIGRATION_TEST_SEED", default=False):
-            print_header("USER DATA SEEDING")
-            try:
-                from scripts.testing.data.seed_test_data import seed_data
-                seed_data()
-                log_info("✅ User data seeded (including admin)", "migrations")
-            except Exception as e:
-                log_error(f"⚠️  User seeding skipped: {e}", "migrations")
-        else:
-            log_info("⏭️ Test seed skipped (RUN_MIGRATION_TEST_SEED=false)", "migrations")
+        # 3. Legacy seeding scripts removed from universal CRM runtime.
+        log_info("⏭️ Legacy prod/test seeding removed from CRM migrations", "migrations")
 
         print_header("SYNC COMPLETED SUCCESSFULLY")
         # Release lock before returning (also in finally as backup)

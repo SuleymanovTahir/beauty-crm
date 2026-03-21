@@ -813,7 +813,7 @@ Google Maps: {self.salon.get('google_maps', '')}
             'price': self.bot_settings.get('objection_expensive') or "💰 'Дорого' - НЕ снижай цену! Подчеркни ценность и качество (премиум косметика, стерильность, опыт)",
             'think': self.bot_settings.get('objection_think_about_it') or "🤔 'Подумать' - Дай конкретную информацию, предложи свободное окно на выбор, спроси что смущает",
             'no_time': self.bot_settings.get('objection_no_time') or "⏰ 'Нет времени' - Покажи что процедура быстрая (есть экспресс), предложи вечернее время или выходной",
-            'far': self.bot_settings.get('objection_too_far') or "📍 'Далеко' - Подчеркни удобство локации (JBR, парковка), скажи что результат стоит поездки",
+            'far': self.bot_settings.get('objection_too_far') or "📍 'Далеко' - Предложи удобные временные слоты, уточни маршрут и доступные варианты визита",
             'pain': self.bot_settings.get('objection_pain') or "😣 'Больно' - Успокой, расскажи про стерильность и аккуратность мастеров",
             'result_doubt': self.bot_settings.get('objection_result_doubt') or "🧐 'Сомнения в результате' - Предложи посмотреть портфолио в Instagram, расскажи про гарантию",
             'cheaper_elsewhere': self.bot_settings.get('objection_cheaper_elsewhere') or "💸 'Где-то дешевле' - Объясни разницу в качестве материалов и сервиса (мы не экономим на здоровье)",

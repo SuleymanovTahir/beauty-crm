@@ -1,8 +1,6 @@
-// frontend/src/api/client.ts
-// Универсальный API клиент для всех endpoints
 import i18n from '../i18n';
-
-export const BASE_URL = import.meta.env.VITE_API_URL || window.location.origin;
+const configuredApiUrl = String(import.meta.env.VITE_API_URL ?? '').trim();
+export const BASE_URL = configuredApiUrl.length > 0 ? configuredApiUrl : window.location.origin;
 const API_PATH_PREFIX = String(import.meta.env.VITE_API_PATH_PREFIX || '')
   .trim()
   .replace(/\/+$/, '');
@@ -163,15 +161,12 @@ export const apiClient = {
   logout: () =>
     apiCall('/api/logout', { method: 'POST' }),
 
-  deleteAccount: (password: string, confirm: boolean) =>
-    apiCall('/api/delete-account', {
-      method: 'POST',
-      body: { password, confirm }
-    }),
-
   // ===== DASHBOARD =====
   getDashboard: () =>
     apiCall('/api/dashboard'),
+
+  getQuickStats: () =>
+    apiCall('/api/dashboard/quick-stats'),
 
   getStats: () =>
     apiCall('/api/stats'),
@@ -266,15 +261,15 @@ export const apiClient = {
       body: data,
     }),
 
-  updateService: (data: any) =>
-    apiCall(`/api/services/{id}/update`, {
+  updateService: (id: number, data: any) =>
+    apiCall(`/api/services/${id}/update`, {
       method: 'POST',
       body: data,
     }),
 
-  deleteService: () =>
-    apiCall(`/api/services/{id}/delete`, {
-      method: 'DELETE',
+  deleteService: (id: number) =>
+    apiCall(`/api/services/${id}/delete`, {
+      method: 'POST',
     }),
 
   // ===== USERS =====
@@ -356,27 +351,6 @@ export const apiClient = {
       body: data,
     }),
 
-  // ===== SPECIAL PACKAGES ===== (ДОБАВЛЕНО)
-  getSpecialPackages: (activeOnly: boolean = true) =>
-    apiCall(`/api/services/special-packages?active_only=${activeOnly}`),
-
-  createSpecialPackage: (data: any) =>
-    apiCall('/api/services/special-packages', {
-      method: 'POST',
-      body: data,
-    }),
-
-  updateSpecialPackage: (id: number, data: any) =>
-    apiCall(`/api/services/special-packages/${id}`, {
-      method: 'POST',
-      body: data,
-    }),
-
-  deleteSpecialPackage: (id: number) =>
-    apiCall(`/api/services/special-packages/${id}`, {
-      method: 'DELETE',
-    }),
-
   // ===== ROLES ===== (ДОБАВЛЕНО)
   getRoles: () =>
     apiCall('/api/roles'),
@@ -403,25 +377,6 @@ export const apiClient = {
 
   getAvailablePermissions: () =>
     apiCall('/api/roles/permissions/available'),
-  // ===== PUBLIC =====
-  getSalonInfo: (lang: string = 'ru') =>
-    apiCall(`/api/public/salon-info?language=${lang}`),
-
-  getPublicServices: (lang: string = 'ru') =>
-    apiCall(`/api/public/services?language=${lang}`),
-
-  getPublicEmployees: (lang: string) =>
-    apiCall(`/api/public/employees?language=${lang}&active_only=true`),
-
-  getPublicReviews: (lang: string) =>
-    apiCall(`/api/public/reviews?language=${lang}`),
-
-  getPublicFAQ: (lang: string) =>
-    apiCall(`/api/public/faq?language=${lang}`),
-
-  getPublicGallery: (category?: string) =>
-    apiCall(`/api/public/gallery${category ? `?category=${category}` : ''}`),
-
   // ===== USER PROFILE ===== (ДОБАВЛЕНО)
   getUserProfile: (userId: number) =>
     apiCall(`/api/users/${userId}/profile`),
@@ -470,75 +425,6 @@ export const apiClient = {
   getUnreadCount: () =>
     apiCall('/api/unread-count'),
 
-  // ===== PUBLIC CONTENT ADMIN =====
-  getPublicContentReviews: () =>
-    apiCall('/api/public-admin/reviews'),
-
-  createPublicReview: (data: any) =>
-    apiCall('/api/public-admin/reviews', {
-      method: 'POST',
-      body: data,
-    }),
-
-  updatePublicReview: (id: number, data: any) =>
-    apiCall(`/api/public-admin/reviews/${id}`, {
-      method: 'PUT',
-      body: data,
-    }),
-
-  deletePublicReview: (id: number) =>
-    apiCall(`/api/public-admin/reviews/${id}`, {
-      method: 'DELETE',
-    }),
-
-  togglePublicReview: (id: number) =>
-    apiCall(`/api/public-admin/reviews/${id}/toggle`, {
-      method: 'PATCH',
-    }),
-
-  // ===== PUBLIC CONTENT ADMIN FAQ =====
-  // Public Content - Banners
-  // Public Content - Banners
-  getPublicBanners: () =>
-    apiCall('/api/public-admin/banners'),
-
-  createPublicBanner: (data: any) =>
-    apiCall('/api/public-admin/banners', {
-      method: 'POST',
-      body: data,
-    }),
-
-  updatePublicBanner: (id: number, data: any) =>
-    apiCall(`/api/public-admin/banners/${id}`, {
-      method: 'PUT',
-      body: data,
-    }),
-
-  deletePublicBanner: (id: number) =>
-    apiCall(`/api/public-admin/banners/${id}`, {
-      method: 'DELETE',
-    }),
-
-  getPublicContentFAQ: () =>
-    apiCall('/api/public-admin/faq'),
-
-  createPublicFAQ: (data: any) =>
-    apiCall('/api/public-admin/faq', {
-      method: 'POST',
-      body: data,
-    }),
-
-  updatePublicFAQ: (id: number, data: any) =>
-    apiCall(`/api/public-admin/faq/${id}`, {
-      method: 'PUT',
-      body: data,
-    }),
-
-  deletePublicFAQ: (id: number) =>
-    apiCall(`/api/public-admin/faq/${id}`, {
-      method: 'DELETE',
-    }),
-
   // ===== UPLOADS =====
   uploadFile: (file: File, subfolder?: string) => {
     const formData = new FormData();
@@ -551,103 +437,13 @@ export const apiClient = {
     return fetch(url, {
       method: 'POST',
       body: formData,
-    }).then(r => r.json());
+    }).then(r => {
+      if (!r.ok) {
+        throw new Error(`Upload failed with status ${r.status}`);
+      }
+      return r.json();
+    });
   },
-
-  // ===== CLIENT DASHBOARD =====
-  getClientDashboard: () =>
-    apiCall('/api/client/dashboard'),
-
-  getClientBookings: (language?: string) => {
-    const normalizedLanguage = typeof language === 'string' && language.trim().length > 0
-      ? language.trim()
-      : i18n.language;
-    return apiCall(`/api/client/my-bookings?language=${encodeURIComponent(normalizedLanguage)}`);
-  },
-
-  getClientAchievements: () =>
-    apiCall('/api/client/achievements'),
-
-  getClientLoyalty: () =>
-    apiCall('/api/client/loyalty'),
-
-  getClientGallery: () =>
-    apiCall('/api/client/gallery'),
-
-  getClientNotifications: () =>
-    apiCall('/api/client/my-notifications'),
-
-  markNotificationRead: (notificationId: number) =>
-    apiCall(`/api/client/notifications/${notificationId}/read`, {
-      method: 'POST',
-    }),
-
-  getClientProfile: () =>
-    apiCall('/api/client/profile'),
-
-  cancelClientBooking: (bookingId: number) =>
-    apiCall(`/api/client/bookings/${bookingId}/cancel`, {
-      method: 'POST',
-    }),
-
-  getClientBeautyMetrics: () =>
-    apiCall('/api/client/beauty-metrics'),
-
-  getFavoriteMasters: (language: string = 'ru') =>
-    apiCall(`/api/client/favorite-masters?language=${language}`),
-
-  toggleFavoriteMaster: (data: { master_id: number; is_favorite: boolean }) =>
-    apiCall('/api/client/favorite-masters', {
-      method: 'POST',
-      body: data,
-    }),
-
-  // ===== CLIENT DASHBOARD - ADDITIONAL ENDPOINTS =====
-
-  markAllNotificationsRead: () =>
-    apiCall('/api/client/notifications/mark-all-read', {
-      method: 'POST',
-    }),
-
-  updateNotificationPreferences: (data: any) =>
-    apiCall('/api/client/notifications/preferences', {
-      method: 'POST',
-      body: data,
-    }),
-
-  updatePrivacyPreferences: (data: any) =>
-    apiCall('/api/client/privacy/preferences', {
-      method: 'POST',
-      body: data,
-    }),
-
-  // Profile management for clients
-  updateClientProfile: (data: any) =>
-    apiCall('/api/client/profile/update', {
-      method: 'POST',
-      body: data,
-    }),
-
-  changeClientPassword: (data: { old_password: string; new_password: string }) =>
-    apiCall('/api/client/profile/change-password', {
-      method: 'POST',
-      body: data,
-    }),
-
-  // Booking management
-  cancelBooking: (bookingId: number) =>
-    apiCall(`/api/client/bookings/${bookingId}/cancel`, {
-      method: 'POST',
-    }),
-
-  updateBooking: (bookingId: number, data: any) =>
-    apiCall(`/api/client/bookings/${bookingId}/update`, {
-      method: 'POST',
-      body: data,
-    }),
-
-  getClientAccountMenuSettings: () =>
-    apiCall('/api/client/account-menu-settings'),
 
   // ===== FEATURES =====
   getFeatures: () =>

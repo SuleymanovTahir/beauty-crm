@@ -23,7 +23,7 @@ export async function getSalonSettings(): Promise<SalonSettings> {
         return settingsPromise;
     }
 
-    settingsPromise = api.getPublicSalonSettings()
+    settingsPromise = api.getSalonSettings()
         .then((settings) => {
             cachedSettings = settings;
             return settings;

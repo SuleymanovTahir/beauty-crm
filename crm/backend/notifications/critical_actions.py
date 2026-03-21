@@ -15,18 +15,18 @@ def _get_salon_info():
         from db.settings import get_salon_settings
         from core.config import PUBLIC_URL
         salon_settings = get_salon_settings()
-        salon_name = salon_settings.get('name', 'Beauty CRM')
-        logo_url = salon_settings.get('logo_url', '/static/uploads/images/salon/logo.webp')
+        salon_name = salon_settings.get('name', 'ST CRM')
+        logo_url = (salon_settings.get('logo_url') or '').strip()
         base_url = salon_settings.get('base_url', PUBLIC_URL)
 
         # Формируем полный URL логотипа
-        if not logo_url.startswith('http'):
+        if logo_url and not logo_url.startswith('http'):
             logo_url = f"{base_url.rstrip('/')}{logo_url}"
 
         return salon_name, logo_url
     except Exception as e:
         log_error(f"Could not get salon info: {e}", "notifications")
-        return "Beauty CRM", ""
+        return "ST CRM", ""
 
 async def send_critical_action_notification(action_data: Dict[str, Any]):
     """

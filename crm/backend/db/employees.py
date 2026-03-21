@@ -10,23 +10,19 @@ from db.connection import get_db_connection
 
 def get_avatar_url(profile_pic: Optional[str], gender: Optional[str] = 'female') -> str:
     """
-    Get avatar URL with gender-based fallback
+    Get avatar URL without default image fallback
 
     Args:
         profile_pic: Profile picture path from database (can be None)
         gender: User gender ('male', 'female', or 'other')
 
     Returns:
-        Avatar URL (profile_pic or gender-based default)
+        Avatar URL (profile_pic or empty string)
     """
     if profile_pic:
         return profile_pic
 
-    # Gender-based fallback
-    if gender == 'male':
-        return '/static/avatars/default_male.webp'
-    else:  # female or other or None
-        return '/static/avatars/default_female.webp'
+    return ''
 
 def get_all_employees(active_only=True, service_providers_only=False):
     """

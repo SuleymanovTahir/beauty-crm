@@ -33,8 +33,7 @@
     }
   },
   "include": [
-    "src",
-    "create-locale-structure.js"
+    "src"
   ],
   "exclude": [
     "src/tests"

@@ -70,7 +70,7 @@ async def handle_feedback_response(sender_id: str, message_text: str) -> bool:
                             title="⚠️ НИЗКАЯ ОЦЕНКА",
                             message=f"Клиент оставил оценку {rating} к визиту #{booking_id}.\nКомментарий: {message_text}",
                             notification_type="urgent",
-                            action_url=f"/admin/bookings"
+                            action_url=f"/crm/bookings"
                         )
                 except Exception as e:
                     log_error(f"Failed to notify admins about low rating: {e}", "feedback")

@@ -20,7 +20,6 @@ from .employee_services import router as employee_services_router
 from crm_api.diagnostics import router as diagnostics_router
 from .templates import router as templates_router
 from .notes import router as notes_router
-from .integration import router as integration_router
 
 # Главный роутер API
 router = APIRouter(tags=["API"])
@@ -44,6 +43,5 @@ router.include_router(employee_services_router)
 router.include_router(diagnostics_router)
 router.include_router(salary_router)
 router.include_router(payroll_router)
-router.include_router(integration_router)
 
 __all__ = ["router"]

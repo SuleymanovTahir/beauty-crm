@@ -50,8 +50,11 @@ export const useChatWebSocket = ({
     const wsRef = useRef<WebSocket | null>(null);
     const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    // Prevents auto-reconnect when disconnect() is called intentionally
+    const shouldAutoReconnectRef = useRef(true);
 
     const connect = useCallback(() => {
+        shouldAutoReconnectRef.current = true;
         if (!userId || wsRef.current?.readyState === WebSocket.OPEN) {
             return;
         }
@@ -133,7 +136,7 @@ export const useChatWebSocket = ({
                 pingIntervalRef.current = null;
             }
 
-            if (autoReconnect && userId) {
+            if (autoReconnect && userId && shouldAutoReconnectRef.current) {
                 reconnectTimeoutRef.current = setTimeout(() => {
                     connect();
                 }, reconnectInterval);
@@ -144,6 +147,8 @@ export const useChatWebSocket = ({
     }, [userId, autoReconnect, reconnectInterval]);
 
     const disconnect = useCallback(() => {
+        shouldAutoReconnectRef.current = false;
+
         if (reconnectTimeoutRef.current) {
             clearTimeout(reconnectTimeoutRef.current);
             reconnectTimeoutRef.current = null;

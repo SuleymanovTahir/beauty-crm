@@ -264,7 +264,7 @@ async def get_my_change_requests(
 # ENDPOINTS ДЛЯ АДМИНОВ
 # ============================================================================
 
-@router.get("/admin/service-change-requests")
+@router.get("/service-change-requests")
 async def get_pending_requests(
     status: str = Query("pending"),
     current_user: dict = Depends(get_current_user)
@@ -329,7 +329,7 @@ async def get_pending_requests(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.post("/admin/service-change-requests/{request_id}/approve")
+@router.post("/service-change-requests/{request_id}/approve")
 async def approve_request(
     request_id: int,
     request: Request,
@@ -425,7 +425,7 @@ async def approve_request(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.post("/admin/service-change-requests/{request_id}/reject")
+@router.post("/service-change-requests/{request_id}/reject")
 async def reject_request(
     request_id: int,
     request: Request,
@@ -467,7 +467,7 @@ async def reject_request(
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
-@router.get("/admin/service-change-requests/count")
+@router.get("/service-change-requests/count")
 async def get_pending_count(
     current_user: dict = Depends(get_current_user)
 ):

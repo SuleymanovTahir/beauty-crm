@@ -14,7 +14,7 @@ interface TemperatureSelectProps {
 }
 
 export function TemperatureSelect({ value, onChange }: TemperatureSelectProps) {
-    const { t } = useTranslation(['clients', 'admin/Clients']);
+    const { t } = useTranslation(['clients', 'crm/clients']);
 
     const getTemperatureConfig = (temp: string) => {
         // Default to 'warm' if value is missing

@@ -1,33 +1,58 @@
 """
 Сервис для генерации PDF документов (договоры, счета)
 """
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import mm
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib import colors
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 from datetime import datetime
 import os
 from typing import Dict, Any
+from utils.optional_dependencies import OptionalDependencyError, build_optional_dependency_message
 
-# Регистрируем русский шрифт
+PDF_GENERATION_UNAVAILABLE_MESSAGE = build_optional_dependency_message("PDF document generation")
+
+REPORTLAB_AVAILABLE = False
+_REPORTLAB_IMPORT_ERROR = None
+_FONTS_REGISTERED = False
+
 try:
-    pdfmetrics.registerFont(TTFont('DejaVuSans', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'))
-    pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'))
-except:
-    # Fallback для других систем
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import mm
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+    from reportlab.lib import colors
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    REPORTLAB_AVAILABLE = True
+except ImportError as error:
+    _REPORTLAB_IMPORT_ERROR = error
+
+
+def _ensure_reportlab_available() -> None:
+    if REPORTLAB_AVAILABLE:
+        return
+    raise OptionalDependencyError(PDF_GENERATION_UNAVAILABLE_MESSAGE) from _REPORTLAB_IMPORT_ERROR
+
+
+def _register_fonts() -> None:
+    global _FONTS_REGISTERED
+    _ensure_reportlab_available()
+    if _FONTS_REGISTERED:
+        return
     try:
-        pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
-        pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', 'DejaVuSans-Bold.ttf'))
-    except:
-        print("Warning: DejaVu fonts not found, using default fonts")
+        pdfmetrics.registerFont(TTFont('DejaVuSans', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'))
+        pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'))
+    except Exception:
+        try:
+            pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
+            pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', 'DejaVuSans-Bold.ttf'))
+        except Exception:
+            print("Warning: DejaVu fonts not found, using default fonts")
+    _FONTS_REGISTERED = True
 
 class PDFGenerator:
     """Генератор PDF документов"""
     
     def __init__(self):
+        _ensure_reportlab_available()
+        _register_fonts()
         self.styles = getSampleStyleSheet()
         self._setup_styles()
     

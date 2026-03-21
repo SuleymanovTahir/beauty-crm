@@ -9,7 +9,7 @@ interface PeriodFilterSelectProps {
 }
 
 export function PeriodFilterSelect({ value, onChange }: PeriodFilterSelectProps) {
-    const { t } = useTranslation(['common', 'admin/clients']);
+    const { t } = useTranslation(['common', 'crm/clients']);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 

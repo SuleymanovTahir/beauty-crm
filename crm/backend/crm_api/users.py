@@ -872,12 +872,6 @@ async def update_user_profile(
         
         conn.commit()
 
-        # Invalidate Public Employees Cache
-        try:
-            cache.clear_by_pattern("public_employees_*")
-        except:
-            pass
-        
         duration = time.time() - start_time
         from utils.logger import log_info
         log_info(f"⏱️ Update profile took {duration:.4f}s for user_id={user_id} (Partial: {'username' not in data})", "api")
@@ -951,4 +945,3 @@ async def update_user_contact(
         conn.close()
         log_error(f"Error updating user contact: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
-

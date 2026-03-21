@@ -50,7 +50,7 @@ interface CreateTaskDialogProps {
 }
 
 export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaultStageId, taskToEdit, isEmployee = false }: CreateTaskDialogProps) {
-    const { t, i18n } = useTranslation(['admin/tasks', 'common']);
+    const { t, i18n } = useTranslation(['crm/tasks', 'common']);
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState<Array<{ id: number; username: string; full_name: string; role: string }>>([]);
     const resolvedInitialStageId = defaultStageId !== undefined

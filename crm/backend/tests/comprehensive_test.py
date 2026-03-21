@@ -773,10 +773,10 @@ class ComprehensiveTest:
                     ]
 
                     # Проверка booking_url
-                    if settings['booking_url'] == '/public/booking':
-                        details.append("  [OK] Booking URL правильный (/public/booking)")
+                    if settings['booking_url'] == '/crm/bookings':
+                        details.append("  [OK] Booking URL правильный (/crm/bookings)")
                     else:
-                        details.append(f"  [WARN] Booking URL: {settings['booking_url']} (ожидается: /public/booking)")
+                        details.append(f"  [WARN] Booking URL: {settings['booking_url']} (ожидается: /crm/bookings)")
 
                     result.success("Настройки салона корректны")
                     result.details.extend(details)

@@ -2,20 +2,10 @@
 Инициализация единой базы данных системы
 Единый источник истины (SSOT) для схемы CRM
 """
-from core.config import (
-    DATABASE_NAME, 
-    SALON_PHONE_DEFAULT, 
-    SALON_EMAIL_DEFAULT,
-    SALON_CITY,
-    SALON_CURRENCY_DEFAULT,
-    DEFAULT_HOURS_WEEKDAYS,
-    DEFAULT_HOURS_WEEKENDS
-)
+from core.config import SALON_CURRENCY_DEFAULT
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
-from utils.language_utils import SUPPORTED_LANGUAGES
 import os
-import json
 
 def init_database():
     """Создать всю схему системы с нуля или синхронизировать существующие таблицы."""
@@ -413,29 +403,7 @@ def init_database():
         add_column_if_not_exists('ringtones', 'start_time', 'FLOAT DEFAULT 0.0')
         add_column_if_not_exists('ringtones', 'end_time', 'FLOAT DEFAULT NULL')
         
-        # Seed default ringtones if empty
-        c.execute("SELECT COUNT(*) FROM ringtones")
-        if c.fetchone()[0] == 0:
-            default_ringtones = [
-                ('Apple iOS', '/audio/ringtones/apple_default.mp3'),
-                ('iPhone old', '/audio/ringtones/iphone_xylophone.mp3'),
-                ('Marimba', '/audio/ringtones/marimba.mp3'),
-                ('Samsung Galaxy', '/audio/ringtones/samsung_galaxy.mp3'),
-                ('Huawei Tune', '/audio/ringtones/huawei.mp3'),
-                ('MIUI 8', '/audio/ringtones/miui.mp3'),
-                ('Nokia Guitar', '/audio/ringtones/nokia_guitar.mp3'),
-                ('Motorola', '/audio/ringtones/motorola_c350.mp3'),
-                ('Sony Ericsson', '/audio/ringtones/sony_ericsson.mp3'),
-                ('LG Prada', '/audio/ringtones/lg_prada.mp3'),
-                ('Lumia Retro', '/audio/ringtones/lumia_retro.mp3'),
-                ('Viber', '/audio/ringtones/viber.mp3'),
-                ('Hangouts', '/audio/ringtones/hangouts.mp3'),
-                ('Xperia Breeze', '/audio/ringtones/xperia_breeze.mp3'),
-                ('Пульс', '/audio/ringtones/standard_7.mp3')
-            ]
-            for name, url in default_ringtones:
-                c.execute("INSERT INTO ringtones (name, url, is_system) VALUES (%s, %s, TRUE)", (name, url))
-            log_info("🎵 Ringtone defaults seeded.", "db")
+        # Startup must not auto-fill catalog data.
 
         # --- END BASE COLUMNS (MOVED TO END) ---
         
@@ -445,20 +413,20 @@ def init_database():
             name TEXT,
             address TEXT, 
             google_maps TEXT,
-            hours_weekdays TEXT DEFAULT '{DEFAULT_HOURS_WEEKDAYS}',
-            hours_weekends TEXT DEFAULT '{DEFAULT_HOURS_WEEKENDS}',
+            hours_weekdays TEXT,
+            hours_weekends TEXT,
             hours TEXT,
             lunch_start TEXT,
             lunch_end TEXT,
             phone TEXT, email TEXT,
             whatsapp TEXT, instagram TEXT,
-            booking_url TEXT, timezone TEXT DEFAULT 'Asia/Dubai',
-            timezone_offset INTEGER DEFAULT 4,
+            booking_url TEXT, timezone TEXT DEFAULT 'UTC',
+            timezone_offset INTEGER DEFAULT 0,
             currency TEXT DEFAULT '{SALON_CURRENCY_DEFAULT}',
-            business_type TEXT DEFAULT 'beauty',
-            product_mode TEXT DEFAULT 'both',
+            business_type TEXT DEFAULT 'other',
+            product_mode TEXT DEFAULT 'crm',
             crm_enabled BOOLEAN DEFAULT TRUE,
-            site_enabled BOOLEAN DEFAULT TRUE,
+            site_enabled BOOLEAN DEFAULT FALSE,
             city TEXT, country TEXT,
             latitude REAL, longitude REAL,
             logo_url TEXT, base_url TEXT,
@@ -472,20 +440,18 @@ def init_database():
             points_expiration_days INTEGER DEFAULT 365,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )'''
-        salon_settings_sql = salon_settings_sql.replace('{DEFAULT_HOURS_WEEKDAYS}', DEFAULT_HOURS_WEEKDAYS)
-        salon_settings_sql = salon_settings_sql.replace('{DEFAULT_HOURS_WEEKENDS}', DEFAULT_HOURS_WEEKENDS)
         salon_settings_sql = salon_settings_sql.replace('{SALON_CURRENCY_DEFAULT}', SALON_CURRENCY_DEFAULT)
         c.execute(salon_settings_sql)
         add_column_if_not_exists('salon_settings', 'lunch_start', 'TEXT')
         add_column_if_not_exists('salon_settings', 'lunch_end', 'TEXT')
-        add_column_if_not_exists('salon_settings', 'timezone_offset', 'INTEGER DEFAULT 4')
+        add_column_if_not_exists('salon_settings', 'timezone_offset', 'INTEGER DEFAULT 0')
         add_column_if_not_exists('salon_settings', 'main_location', 'TEXT')
         add_column_if_not_exists('salon_settings', 'loyalty_points_conversion_rate', 'REAL DEFAULT 0')
         add_column_if_not_exists('salon_settings', 'points_expiration_days', 'INTEGER DEFAULT 365')
-        add_column_if_not_exists('salon_settings', 'business_type', "TEXT DEFAULT 'beauty'")
-        add_column_if_not_exists('salon_settings', 'product_mode', "TEXT DEFAULT 'both'")
+        add_column_if_not_exists('salon_settings', 'business_type', "TEXT DEFAULT 'other'")
+        add_column_if_not_exists('salon_settings', 'product_mode', "TEXT DEFAULT 'crm'")
         add_column_if_not_exists('salon_settings', 'crm_enabled', 'BOOLEAN DEFAULT TRUE')
-        add_column_if_not_exists('salon_settings', 'site_enabled', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('salon_settings', 'site_enabled', 'BOOLEAN DEFAULT FALSE')
 
 
         # Registration Audit Log
@@ -694,6 +660,16 @@ def init_database():
         add_column_if_not_exists('bookings', 'master_user_id', 'INTEGER REFERENCES users(id)')
         add_column_if_not_exists('bookings', 'promo_code', 'TEXT')
         c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_master_user_id_datetime ON bookings (master_user_id, datetime)")
+        # Дополнительные индексы для ускорения частых запросов
+        c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_datetime ON bookings (datetime)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings (status)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_client_phone ON bookings (client_phone)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings (created_at)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_clients_phone ON clients (phone)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_clients_name ON clients (name)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_clients_created_at ON clients (created_at)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_ratings_created_at ON ratings (created_at)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_ratings_instagram_id ON ratings (instagram_id)")
 
         # Tasks and Project Management
         c.execute('''CREATE TABLE IF NOT EXISTS tasks (
@@ -1993,190 +1969,54 @@ def init_database():
                 (canonical_status, source_status)
             )
 
-        # Настройки салона (Архитектура v2.2 - REAL DATA)
-        salon_name = os.getenv('SALON_NAME', 'M.Le Diamant')
-        salon_google_maps = os.getenv('SALON_GOOGLE_MAPS', 'https://www.google.ru/maps/place/M+Le+Diamant+-+Best+Beauty+Salon+in+Jumeirah+Beach+Dubai/@25.0738739,55.1315886,17z')
-        salon_phone = os.getenv('SALON_PHONE', SALON_PHONE_DEFAULT)
-        salon_whatsapp = os.getenv('SALON_WHATSAPP', SALON_PHONE_DEFAULT)
-        salon_instagram = os.getenv('SALON_INSTAGRAM', 'mlediamant')
-        salon_email = os.getenv('SALON_EMAIL', SALON_EMAIL_DEFAULT)
-        salon_base_url = os.getenv('BASE_URL', 'https://mlediamant.com')
-        salon_address = os.getenv('SALON_ADDRESS', 'Shop 13, Amwaj 2, Plaza Level, JBR, Dubai')
-        salon_hours_weekdays = os.getenv('SALON_HOURS_WEEKDAYS', '10:30 - 21:00')
-        salon_hours_weekends = os.getenv('SALON_HOURS_WEEKENDS', '10:30 - 21:00')
-        salon_currency = os.getenv('SALON_CURRENCY', SALON_CURRENCY_DEFAULT)
-        
-        custom_settings = {
-            "stats": {
-                "years_experience": os.getenv('STAT_YEARS_EXP', "10+"),
-                "happy_clients": os.getenv('STAT_CLIENTS', "5000+"),
-                "quality_guarantee": os.getenv('STAT_QUALITY', "100%")
-            }
-        }
-        
-        bot_config = {
-            "enabled": True,
-            "bot_name": os.getenv('BOT_NAME', "M.Le Diamant Luxury Assistant"),
-            "personality_traits": os.getenv('BOT_PERSONALITY', "Professional expert assistant for a high-end luxury salon. Sophisticated, articulate, and dedicated to exceptional service quality. Focuses on premium materials, hygiene standards, and customer comfort."),
-            "greeting_message": os.getenv('BOT_GREETING', "Greetings from M.Le Diamant. How may I assist you today with our premium beauty and wellness services?"),
-            "farewell_message": os.getenv('BOT_FAREWELL', "Thank you for choosing M.Le Diamant. We look forward to your visit!"),
-            "booking_redirect_message": os.getenv('BOT_BOOKING_REDIRECT', "I am your virtual concierge for instant bookings. Please select your preferred time here: {BOOKING_URL}"),
-            "communication_style": os.getenv('BOT_COMM_STYLE', "Polite, expert-driven, and internationally professional."),
-            "emoji_usage": os.getenv('BOT_EMOJI_USAGE', "Minimal and professional (max 1 per message)."),
-            "languages_supported": os.getenv('BOT_LANGUAGES', "ru,en,ar"),
-            "voice_message_response": "I apologize, but I am currently unable to process voice messages. Could you please send your request as text? I am here to help. 😊",
-            "location_features": "We offer complimentary valet parking, premium beverages, and a quiet, luxurious atmosphere for our selected guests.",
-            "safety_guidelines": "Hygiene is our priority. We use medical-grade sterilization for all instruments and single-use supplies for every guest.",
-            "booking_availability_instructions": "Please strictly adhere to the 'AVAILABLE MASTERS' section. Do not suggest times not explicitly listed as available."
-        }
-
-        # Default messenger integrations configuration
-        messenger_config = [
-            {
-                "messenger_type": "instagram",
-                "display_name": "Instagram Direct",
-                "is_enabled": False,
-                "is_visible_in_chat": True,
-                "api_token": "",
-                "webhook_url": "",
-                "config_json": "{}"
-            },
-            {
-                "messenger_type": "whatsapp",
-                "display_name": "WhatsApp Business",
-                "is_enabled": False,
-                "is_visible_in_chat": True,
-                "api_token": "",
-                "webhook_url": "",
-                "config_json": "{}"
-            },
-            {
-                "messenger_type": "telegram",
-                "display_name": "Telegram",
-                "is_enabled": False,
-                "is_visible_in_chat": True,
-                "api_token": "",
-                "webhook_url": "",
-                "config_json": "{}"
-            },
-            {
-                "messenger_type": "tiktok",
-                "display_name": "TikTok",
-                "is_enabled": False,
-                "is_visible_in_chat": True,
-                "api_token": "",
-                "webhook_url": "",
-                "config_json": "{}"
-            }
-        ]
-
-        c.execute("""
-            INSERT INTO salon_settings (
-                id, name, address,
-                phone, whatsapp, instagram, email, booking_url, google_maps,
-                hours_weekdays, hours_weekends, hours, bot_name, base_url,
-                currency, city, bot_config, custom_settings, messenger_config
-            )
-            VALUES (
-                1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-            )
+        # CRM-only bootstrap without business/demo auto-fill.
+        requested_name = (os.getenv("SALON_NAME") or "").strip()
+        salon_name = requested_name if len(requested_name) > 0 else "ST CRM"
+        c.execute(
+            """
+            INSERT INTO salon_settings (id, name, product_mode, crm_enabled, site_enabled, custom_settings)
+            VALUES (1, %s, 'crm', TRUE, FALSE, '{}'::jsonb)
             ON CONFLICT (id) DO UPDATE SET
-                name = EXCLUDED.name,
-                address = EXCLUDED.address,
-                phone = EXCLUDED.phone,
-                whatsapp = EXCLUDED.whatsapp,
-                instagram = EXCLUDED.instagram,
-                email = EXCLUDED.email,
-                google_maps = EXCLUDED.google_maps,
-                hours_weekdays = EXCLUDED.hours_weekdays,
-                hours_weekends = EXCLUDED.hours_weekends,
-                hours = EXCLUDED.hours,
-                currency = EXCLUDED.currency,
-                city = EXCLUDED.city,
-                bot_config = EXCLUDED.bot_config,
-                custom_settings = EXCLUDED.custom_settings,
-                messenger_config = COALESCE(NULLIF(salon_settings.messenger_config::text, '[]'), EXCLUDED.messenger_config::text)::jsonb,
+                name = CASE
+                    WHEN salon_settings.name IS NULL
+                        OR TRIM(salon_settings.name) = ''
+                        OR LOWER(salon_settings.name) LIKE '%le diamant%'
+                    THEN EXCLUDED.name
+                    ELSE salon_settings.name
+                END,
+                product_mode = 'crm',
+                crm_enabled = TRUE,
+                site_enabled = FALSE,
                 updated_at = CURRENT_TIMESTAMP
-        """, (
-            salon_name, salon_address,
-            salon_phone, salon_phone, salon_instagram, salon_email, f"{salon_base_url}/booking",
-            salon_google_maps,
-            salon_hours_weekdays, salon_hours_weekends,
-            f"Ежедневно: {salon_hours_weekdays}",
-            bot_config['bot_name'], salon_base_url,
-            salon_currency, SALON_CITY, json.dumps(bot_config), json.dumps(custom_settings), json.dumps(messenger_config)
-        ))
+            """,
+            (salon_name,),
+        )
+        c.execute(
+            """
+            UPDATE salon_settings
+            SET bot_name = 'ST CRM Assistant'
+            WHERE id = 1
+                AND (
+                    bot_name IS NULL
+                    OR TRIM(bot_name) = ''
+                    OR LOWER(bot_name) LIKE '%le diamant%'
+                )
+            """
+        )
 
-        # Продуктовые сотрудники
-        default_employees = [
-            ('Kasymova Gulcehre', 'gulcehre', 'employee', 'Nail & Waxing Master', 'female', 'gulcehraautova@gmail.com', '+971525814262'),
-            ('Peradilla Jennifer', 'jennifer', 'employee', 'Universal Beauty Master', 'female', 'peradillajennifer47@gmail.com', '+971564208308'),
-            ('Amandurdyyeva Mestan', 'mestan', 'employee', 'Hair Stylist & Permanent Makeup Artist', 'female', 'amandurdyyeva80@gmail.com', '+971501800346'),
-            ('Mohamed Sabri', 'sabri', 'employee', 'Hair Stylist', 'male', 'sabrisimo363@gmail.com', '+971503477993'),
-            ('Kozhabay Lyazat', 'lyazat', 'employee', 'Nail Master', 'female', 'lazzat.kozhabaeva@mail.ru', '+971505303871'),
-            ('Турсунай', 'tursunay', 'director', 'Owner / Director', 'female', None, None),
-            ('Admin', 'admin', 'director', 'System Admin', 'female', None, None)
-        ]
-        for name, uname, role, pos, gender, email, phone in default_employees:
-            # Сначала проверяем существование пользователя
-            c.execute("SELECT id FROM users WHERE username = %s", (uname,))
-            user_exists = c.fetchone()
-            
-            if not user_exists:
-                # Создаем только если нет (пароль по умолчанию временный, будет обновлен в seed_test_data)
-                c.execute("""
-                    INSERT INTO users (full_name, username, password_hash, email, phone, role, position, gender, is_active, is_service_provider)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, TRUE, TRUE)
-                """, (name, uname, 'pbkdf2:sha256:260000$initial_setup_only', email, phone, role, pos, gender))
-            else:
-                # Обновляем профиль и контакты, НЕ трогая пароль
-                c.execute("""
-                    UPDATE users SET 
-                        full_name = %s,
-                        email = COALESCE(%s, email),
-                        phone = COALESCE(%s, phone),
-                        role = %s,
-                        position = %s,
-                        gender = %s
-                    WHERE username = %s
-                """, (name, email, phone, role, pos, gender, uname))
-
-        # Fix gender for Mohamed and Tahir specifically
-        c.execute("UPDATE users SET gender = 'male' WHERE full_name ILIKE '%Mohamed%' OR full_name ILIKE '%Tahir%' OR username ILIKE '%tahir%'")
-
-        # Уровни лояльности
-        default_loyalty = [
-            ('bronze', 0, 0, 1.0, 'Базовый уровень'),
-            ('silver', 1000, 0, 1.1, 'Серебряный уровень'),
-            ('gold', 5000, 0, 1.2, 'Золотой уровень'),
-            ('platinum', 10000, 0, 1.5, 'Платиновый уровень')
-        ]
-        for name, min_pts, disc, mult, ben in default_loyalty:
-            c.execute("""
-                INSERT INTO loyalty_levels (level_name, min_points, discount_percent, points_multiplier, benefits)
-                VALUES (%s, %s, %s, %s, %s)
-                ON CONFLICT (level_name) DO UPDATE SET
-                    min_points = EXCLUDED.min_points,
-                    discount_percent = EXCLUDED.discount_percent,
-                    points_multiplier = EXCLUDED.points_multiplier
-            """, (name, min_pts, disc, mult, ben))
-
-        # Дефолтные должности
-        default_positions = [
-            ('Owner', 'Владелец', 0),
-            ('Manager', 'Менеджер', 1),
-            ('Senior Stylist', 'Старший стилист', 2),
-            ('Stylist', 'Стилист', 3),
-            ('Junior Stylist', 'Младший стилист', 4),
-            ('Nail Master', 'Мастер маникюра', 5),
-            ('Receptionist', 'Администратор', 6)
-        ]
-        for en, ru, ord in default_positions:
-            c.execute("""
-                INSERT INTO positions (name, sort_order)
-                VALUES (%s, %s)
-                ON CONFLICT (name) DO NOTHING
-            """, (en, ord))
+        # Universal CRM runtime: remove image-based prefilled content and photo links.
+        c.execute("UPDATE users SET photo = NULL WHERE photo IS NOT NULL")
+        c.execute(
+            """
+            UPDATE salon_settings
+            SET logo_url = NULL
+            WHERE id = 1
+              AND logo_url IS NOT NULL
+              AND TRIM(logo_url) <> ''
+            """
+        )
+        c.execute("DELETE FROM public_gallery")
+        c.execute("DELETE FROM public_banners")
 
         # Fix FK for client_preferences to cascade delete
         client_dep_tables = [
@@ -2238,19 +2078,19 @@ def init_database():
         # Critical migrations for salon_settings
         add_column_if_not_exists('salon_settings', 'bot_config', "JSONB DEFAULT '{}'")
         add_column_if_not_exists('salon_settings', 'messenger_config', "JSONB DEFAULT '[]'")
-        add_column_if_not_exists('salon_settings', 'business_type', "TEXT DEFAULT 'beauty'")
-        add_column_if_not_exists('salon_settings', 'product_mode', "TEXT DEFAULT 'both'")
+        add_column_if_not_exists('salon_settings', 'business_type', "TEXT DEFAULT 'other'")
+        add_column_if_not_exists('salon_settings', 'product_mode', "TEXT DEFAULT 'crm'")
         add_column_if_not_exists('salon_settings', 'crm_enabled', 'BOOLEAN DEFAULT TRUE')
-        add_column_if_not_exists('salon_settings', 'site_enabled', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('salon_settings', 'site_enabled', 'BOOLEAN DEFAULT FALSE')
 
         c.execute("""
             UPDATE salon_settings
-            SET business_type = 'beauty'
+            SET business_type = 'other'
             WHERE business_type IS NULL OR TRIM(business_type) = ''
         """)
         c.execute("""
             UPDATE salon_settings
-            SET product_mode = 'both'
+            SET product_mode = 'crm'
             WHERE product_mode IS NULL OR TRIM(product_mode) = ''
         """)
         c.execute("""
@@ -2260,7 +2100,7 @@ def init_database():
         """)
         c.execute("""
             UPDATE salon_settings
-            SET site_enabled = TRUE
+            SET site_enabled = FALSE
             WHERE site_enabled IS NULL
         """)
         c.execute("""
@@ -2299,35 +2139,7 @@ def init_database():
             metadata JSONB DEFAULT '{}'
         )''')
 
-        # Default broadcast subscription types
-        default_sub_types = [
-            ('promotions', 'all', 'Акции и скидки', 'Информация о специальных предложениях'),
-            ('news', 'all', 'Новости', 'Новости салона и индустрии'),
-            ('appointments', 'all', 'Напоминания', 'Напоминания о записях'),
-            ('loyalty', 'client', 'Программа лояльности', 'Обновления бонусной программы')
-        ]
-        for key, role, name, desc in default_sub_types:
-            c.execute("""
-                INSERT INTO broadcast_subscription_types (key, target_role, name, description, is_active)
-                VALUES (%s, %s, %s, %s, TRUE)
-                ON CONFLICT (key) DO NOTHING
-            """, (key, role, name, desc))
-
-        # Seed default currencies
-        default_currencies = [
-            ('AED', 'UAE Dirham', 'AED'),
-            ('USD', 'US Dollar', '$'),
-            ('EUR', 'Euro', '€'),
-            ('RUB', 'Russian Ruble', '₽'),
-            ('KZT', 'Kazakhstani Tenge', '₸'),
-            ('GBP', 'British Pound', '£'),
-        ]
-        for code, name, symbol in default_currencies:
-            c.execute("""
-                INSERT INTO currencies (code, name, symbol, is_active)
-                VALUES (%s, %s, %s, TRUE)
-                ON CONFLICT (code) DO NOTHING
-            """, (code, name, symbol))
+        # Startup must not auto-fill reference catalogs.
 
         conn.commit()
         log_info("✅ Unified schema initialized successfully", "db")

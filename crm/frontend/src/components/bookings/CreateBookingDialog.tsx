@@ -21,7 +21,7 @@ export function CreateBookingDialog({
     initialClient,
     initialDate
 }: CreateBookingDialogProps) {
-    const { t, i18n } = useTranslation(['admin/bookings', 'admin/services', 'common']);
+    const { t, i18n } = useTranslation(['crm/bookings', 'crm/services', 'common']);
 
     // Form State
     const [addForm, setAddForm] = useState({

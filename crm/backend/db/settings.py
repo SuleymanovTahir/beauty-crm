@@ -67,7 +67,7 @@ _ALLOWED_BUSINESS_TYPES = {
     "delivery",
     "other",
 }
-_ALLOWED_PRODUCT_MODES = {"crm", "site", "both"}
+_ALLOWED_PRODUCT_MODES = {"crm"}
 _BUSINESS_CONFIG_SCHEMA_VERSION = 1
 _BUSINESS_CONFIG_KEY = "business_profile_config"
 
@@ -95,7 +95,6 @@ _CRM_MODULE_KEYS = [
     "promo_codes",
     "service_change_requests",
     "settings",
-    "public_content",
     "bot_settings",
     "notifications",
     "plans",
@@ -105,21 +104,7 @@ _CRM_MODULE_KEYS = [
     "audit_log",
 ]
 
-_SITE_MODULE_KEYS = [
-    "landing",
-    "service_catalog",
-    "public_booking",
-    "account_portal",
-    "account_booking",
-    "referral_landing",
-    "gallery",
-    "faq",
-    "reviews",
-    "terms_privacy",
-    "data_deletion",
-    "unsubscribe",
-    "lead_capture",
-]
+_SITE_MODULE_KEYS = []
 
 _BUSINESS_DISABLED_MODULES = {
     "beauty": {"crm": set(), "site": set()},
@@ -199,7 +184,6 @@ _MODULE_PERMISSION_KEYS = {
         "settings_edit_loyalty",
         "settings_edit_schedule",
     },
-    "public_content": {"settings_edit_branding"},
     "bot_settings": {"bot_settings_view", "bot_settings_edit"},
     "payment_integrations": {"settings_edit_integrations"},
     "marketplace_integrations": {"settings_edit_integrations"},
@@ -207,17 +191,12 @@ _MODULE_PERMISSION_KEYS = {
     "audit_log": {"roles_view"},
 }
 
-_SHARED_DOMAIN_MATRIX = {
-    "auth": "shared",
-    "bookings": "shared",
-    "services": "shared",
-    "clients": "shared",
-}
+_SHARED_DOMAIN_MATRIX = {}
 
 
 def _build_module_matrix_for_business_type(business_type: str) -> dict:
     normalized_business_type = _normalize_business_type(business_type)
-    disabled_map = _BUSINESS_DISABLED_MODULES.get(normalized_business_type, _BUSINESS_DISABLED_MODULES["beauty"])
+    disabled_map = _BUSINESS_DISABLED_MODULES.get(normalized_business_type, _BUSINESS_DISABLED_MODULES["other"])
 
     crm_modules = {module_key: True for module_key in _CRM_MODULE_KEYS}
     site_modules = {module_key: True for module_key in _SITE_MODULE_KEYS}
@@ -342,7 +321,6 @@ def _build_default_business_profile_config(business_type: str) -> dict:
         "business_type": normalized_business_type,
         "modules": module_matrix,
         "role_permissions": role_permissions,
-        "shared_domains": deepcopy(_SHARED_DOMAIN_MATRIX),
     }
 
 
@@ -363,15 +341,6 @@ def _normalize_business_profile_config(raw_config, business_type: str) -> dict:
         default_config["role_permissions"],
         modules,
     )
-
-    shared_domains = deepcopy(default_config["shared_domains"])
-    raw_shared_domains = raw_config.get("shared_domains")
-    if isinstance(raw_shared_domains, dict):
-        for domain_key in shared_domains.keys():
-            raw_domain_value = raw_shared_domains.get(domain_key)
-            if isinstance(raw_domain_value, str) and len(raw_domain_value.strip()) > 0:
-                shared_domains[domain_key] = raw_domain_value.strip()
-
     return {
         "schema_version": _BUSINESS_CONFIG_SCHEMA_VERSION,
         "business_type": normalized_business_type,
@@ -390,7 +359,7 @@ def get_business_profile_matrix() -> dict:
         "schema_version": _BUSINESS_CONFIG_SCHEMA_VERSION,
         "module_catalog": {
             "crm": list(_CRM_MODULE_KEYS),
-            "site": list(_SITE_MODULE_KEYS),
+            "site": [],
         },
         "role_catalog": sorted(list(ROLES.keys())),
         "profiles": profiles,
@@ -409,14 +378,11 @@ def _normalize_business_type(raw_value) -> str:
     value = str(raw_value or "").strip().lower()
     if value in _ALLOWED_BUSINESS_TYPES:
         return value
-    return "beauty"
+    return "other"
 
 
 def _normalize_product_mode(raw_value) -> str:
-    value = str(raw_value or "").strip().lower()
-    if value in _ALLOWED_PRODUCT_MODES:
-        return value
-    return "both"
+    return "crm"
 
 
 def _normalize_bool(raw_value):
@@ -434,11 +400,7 @@ def _normalize_bool(raw_value):
 
 
 def _product_mode_to_flags(product_mode: str):
-    if product_mode == "crm":
-        return True, False
-    if product_mode == "site":
-        return False, True
-    return True, True
+    return True, False
 
 # ===== НАСТРОЙКИ САЛОНА =====
 
@@ -481,19 +443,17 @@ def get_salon_settings() -> dict:
                 "instagram": row.get("instagram") or os.getenv('SALON_INSTAGRAM', ''),
                 "whatsapp": row.get("whatsapp"),
                 "booking_url": row.get("booking_url", ""),
-                "timezone": row.get("timezone", "Asia/Dubai"),
-                "timezone_offset": row.get("timezone_offset", 4),
+                "timezone": row.get("timezone", "UTC"),
+                "timezone_offset": row.get("timezone_offset", 0),
                 "currency": row.get("currency") or get_salon_currency(),
                 "business_type": normalized_business_type,
-                "product_mode": row.get("product_mode") or "both",
-                "crm_enabled": row.get("crm_enabled") if row.get("crm_enabled") is not None else True,
-                "site_enabled": row.get("site_enabled") if row.get("site_enabled") is not None else True,
+                "crm_enabled": True,
                 "city": row.get("city", ""),
                 "country": row.get("country", ""),
                 "latitude": row.get("latitude"),
                 "longitude": row.get("longitude"),
-                "logo_url": row.get("logo_url", "/static/uploads/images/salon/logo.webp"),
-                "base_url": row.get("base_url", "https://mlediamant.com"),
+                "logo_url": row.get("logo_url", ""),
+                "base_url": row.get("base_url") or os.getenv("BASE_URL", ""),
                 "bot_name": row.get("bot_name"),
                 # Display settings from custom_settings
                 "gallery_display_count": custom.get("gallery_display_count", 6),
@@ -516,10 +476,10 @@ def get_salon_settings() -> dict:
 def _get_default_salon_settings() -> dict:
     """Дефолтные настройки салона"""
     from utils.currency import get_salon_currency
-    default_business_type = "beauty"
+    default_business_type = "other"
     return {
         "id": 1,
-        "name": os.getenv('SALON_NAME', 'Beauty Salon'),
+        "name": os.getenv('SALON_NAME', 'ST CRM'),
         "hours_weekdays": DEFAULT_HOURS_WEEKDAYS,
         "hours_weekends": DEFAULT_HOURS_WEEKENDS,
         "lunch_start": "",
@@ -527,14 +487,12 @@ def _get_default_salon_settings() -> dict:
         "phone": os.getenv('SALON_PHONE', ''),
         "email": os.getenv('SALON_EMAIL', ''),
         "instagram": os.getenv('SALON_INSTAGRAM', ''),
-        "bot_name": os.getenv('BOT_NAME', 'Assistant'),
-        "timezone": "Asia/Dubai",
-        "timezone_offset": 4,
+        "bot_name": os.getenv('BOT_NAME', 'ST CRM Assistant'),
+        "timezone": "UTC",
+        "timezone_offset": 0,
         "currency": get_salon_currency(),
         "business_type": default_business_type,
-        "product_mode": "both",
         "crm_enabled": True,
-        "site_enabled": True,
         "gallery_display_count": 6,
         "portfolio_display_count": 6,
         "services_display_count": 6,
@@ -552,7 +510,7 @@ def update_salon_settings(data: dict) -> bool:
         c.execute("SELECT custom_settings, business_type FROM salon_settings WHERE id = 1")
         row = c.fetchone()
         custom = row[0] if row and row[0] else {}
-        current_business_type = _normalize_business_type(row[1] if row and len(row) > 1 else "beauty")
+        current_business_type = _normalize_business_type(row[1] if row and len(row) > 1 else "other")
         if isinstance(custom, str):
             try:
                 custom = json.loads(custom)
@@ -564,7 +522,7 @@ def update_salon_settings(data: dict) -> bool:
             'name', 'address', 'google_maps', 'hours_weekdays', 'hours_weekends',
             'lunch_start', 'lunch_end', 'phone', 'email', 'instagram', 'whatsapp',
             'booking_url', 'timezone', 'timezone_offset', 'currency', 'business_type',
-            'product_mode', 'crm_enabled', 'site_enabled', 'city', 'country',
+            'crm_enabled', 'city', 'country',
             'latitude', 'longitude', 'logo_url', 'base_url', 'bot_name'
         ]
         
@@ -575,7 +533,6 @@ def update_salon_settings(data: dict) -> bool:
 
         set_parts = []
         params = []
-        normalized_product_mode = None
         effective_business_type = current_business_type
 
         # Handle direct fields
@@ -594,7 +551,7 @@ def update_salon_settings(data: dict) -> bool:
                     params.append(normalized_product_mode)
                     continue
 
-                if field in {'crm_enabled', 'site_enabled'}:
+                if field == 'crm_enabled':
                     normalized_flag = _normalize_bool(data[field])
                     if normalized_flag is None:
                         log_warning(f"⚠️ Невалидный булев флаг пропущен для {field}: {data[field]}", "database")
@@ -624,15 +581,6 @@ def update_salon_settings(data: dict) -> bool:
 
                 set_parts.append(f"{field} = %s")
                 params.append(data[field])
-
-        if normalized_product_mode is not None:
-            crm_enabled, site_enabled = _product_mode_to_flags(normalized_product_mode)
-            if 'crm_enabled' not in data:
-                set_parts.append("crm_enabled = %s")
-                params.append(crm_enabled)
-            if 'site_enabled' not in data:
-                set_parts.append("site_enabled = %s")
-                params.append(site_enabled)
 
         custom_updated = False
 
@@ -726,9 +674,9 @@ def _replace_bot_placeholders(bot_settings: dict, salon_settings: dict) -> dict:
     """Заменить плейсхолдеры в настройках бота на реальные значения"""
     replacements = {
         '{SALON_NAME}': str(salon_settings.get('name') or 'Salon'),
-        '{CURRENCY}': str(salon_settings.get('currency') or 'AED'),
-        '{LOCATION}': f"{salon_settings.get('city') or 'Dubai'}, {salon_settings.get('address') or ''}".strip(', '),
-        '{CITY}': str(salon_settings.get('city') or 'Dubai'),
+        '{CURRENCY}': str(salon_settings.get('currency') or 'USD'),
+        '{LOCATION}': f"{salon_settings.get('city') or ''}, {salon_settings.get('address') or ''}".strip(', '),
+        '{CITY}': str(salon_settings.get('city') or ''),
         '{ADDRESS}': str(salon_settings.get('address') or ''),
         '{PHONE}': str(salon_settings.get('phone') or ''),
         '{BOOKING_URL}': str(salon_settings.get('booking_url') or ''),
@@ -747,7 +695,7 @@ def _get_default_bot_settings() -> dict:
     """Дефолтные настройки бота"""
     from bot.constants import SERVICE_SYNONYMS, OBJECTION_KEYWORDS, PROMPT_HEADERS
     
-    salon_name_env = os.getenv('SALON_NAME', 'Beauty Salon')
+    salon_name_env = os.getenv('SALON_NAME', 'ST CRM')
     bot_name_env = os.getenv('BOT_NAME', 'Assistant')
     
     try:
@@ -762,38 +710,38 @@ def _get_default_bot_settings() -> dict:
         "id": 1,
         "bot_name": bot_name,
         "personality_traits": "Professional expert with international experience. Confident, charismatic, and knowledgeable. Not intrusive, focusing on high-quality service and attention to detail.",
-        "greeting_message": f"Greetings! Welcome to {salon_name}. How may I assist you today with your beauty and care needs?",
+        "greeting_message": f"Greetings! Welcome to {salon_name}. How may I assist you with your request today?",
         "farewell_message": "Thank you for contacting us. We look forward to seeing you soon!",
-        "price_explanation": "Our pricing reflects the use of premium products, high standards of sterilization, and the expertise of our masters.",
+        "price_explanation": "Our pricing reflects service scope, quality standards, and specialist expertise.",
         "price_response_template": "{SERVICE}: {PRICE} {CURRENCY}\n{DESCRIPTION}\nTo book an appointment, please choose a convenient time.",
-        "premium_justification": "We prioritize your health and beauty, using only the finest international brands and maintaining strict medical-grade hygiene protocols.",
+        "premium_justification": "We prioritize service quality, operational reliability, and transparent processes.",
         "booking_redirect_message": "As your AI assistant, I can help you book instantly. Please select your time: {BOOKING_URL}",
-        "fomo_messages": "Our slots fill up quickly - we recommend booking in advance to ensure your preferred time.",
-        "upsell_techniques": "Would you like to complement your treatment with a SPA enhancement? It adds only a short time to your visit but offers a truly elevated experience.",
+        "fomo_messages": "Popular time slots fill up quickly - we recommend booking in advance.",
+        "upsell_techniques": "Would you like to add a related service to increase overall value from this visit?",
         "communication_style": "Concise, friendly, and expert-driven.",
         "emoji_usage": "Minimal and professional (e.g., # or > symbols, or 1 subtle emoji).",
         "languages_supported": "ru,en,ar",
         "objection_handling": "Always acknowledge the client's concern and offer value-based solutions.",
         "negative_handling": "We sincerely regret any inconvenience. Please share your contact details or contact our manager directly at {PHONE} so we can resolve this immediately.",
-        "safety_guidelines": "We use single-use files and craft-packets, opened in your presence for maximum safety.",
+        "safety_guidelines": "We follow strict quality and safety standards for all services.",
         "example_good_responses": "Excellent choice! I have reserved your slot for Saturday at 14:00. You will receive a confirmation shortly.",
         "algorithm_actions": "",
-        "location_features": "Complimentary valet parking and premium beverages are provided for all our guests.",
+        "location_features": "Please check location details, parking, and arrival instructions before your visit.",
         "seasonality": "We provide seasonal treatments tailored to your needs year-round.",
         "emergency_situations": "If you are running late, please notify us as soon as possible, and we will do our best to accommodate you.",
         "success_metrics": "",
-        "objection_expensive": "Focus on the quality of premium materials and absolute safety protocols. We do not compromise on your health.",
+        "objection_expensive": "Explain the value proposition: quality, reliability, and measurable outcomes.",
         "objection_think_about_it": "Provide additional details and offer a few available time slots to help make the decision easier.",
         "objection_no_time": "Highlight our express treatments or suggest evening/weekend availability.",
-        "objection_pain": "Assure the client of our masters' extreme gentleness and the use of the latest safe techniques.",
+        "objection_pain": "Acknowledge concern and explain safety, preparation, and expected comfort level.",
         "objection_result_doubt": "Suggest viewing our portfolio or testimonials to see the consistent quality of our results.",
-        "objection_cheaper_elsewhere": "Explain the difference in product quality and hygiene standards compared to standard salons.",
-        "objection_too_far": "Emphasize our convenient location and that the premium result is worth the journey.",
+        "objection_cheaper_elsewhere": "Explain differences in scope, quality control, and support compared with lower-cost options.",
+        "objection_too_far": "Offer remote alternatives where possible or suggest the most convenient visit slot.",
         "objection_consult_husband": "Offer a digital gift certificate or make a tentative reservation for them.",
         "objection_first_time": "Walk through the steps clearly, ensuring total comfort and providing a special welcome offer.",
         "objection_not_happy": "Express immediate regret and offer a senior specialist to review and compensate.",
-        "emotional_triggers": "Rediscover your radiance. Experience the luxury you deserve.",
-        "social_proof_phrases": "Our top specialists are highly rated for their precision and artistry.",
+        "emotional_triggers": "Achieve a better result with less friction and clearer planning.",
+        "social_proof_phrases": "Our clients consistently note reliability, professionalism, and predictable outcomes.",
         "personalization_rules": "Always address returning guests by name and remember their preferences.",
         "example_dialogues": "",
         "emotional_responses": "",

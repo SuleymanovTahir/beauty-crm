@@ -131,7 +131,7 @@ export default function InternalChat() {
 
       const processed = data.map(r => {
         let fullUrl = r.url;
-        // Default ringtones reside in frontend/public/audio, so keep them relative
+        // Default ringtones reside in the frontend static audio bundle, so keep them relative
         if (r.url.startsWith('/audio/')) {
           fullUrl = r.url;
         }
@@ -225,7 +225,7 @@ export default function InternalChat() {
 
 
 
-  const currentUserData = user ?? JSON.parse(localStorage.getItem('user') ?? '{}');
+  const currentUserData = user ?? (() => { try { return JSON.parse(localStorage.getItem('user') ?? '{}'); } catch { return {}; } })();
 
   const { search } = useLocation();
   const navigate = useNavigate();

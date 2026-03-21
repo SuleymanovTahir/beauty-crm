@@ -1,9 +1,5 @@
 {
     "modules": {
-        "public": {
-            "enabled": true,
-            "description": "Public entrance and landing page"
-        },
         "notifications": {
             "enabled": true,
             "description": "Notification service"

@@ -89,7 +89,7 @@ const analyticsStageColors = [
 ];
 
 export default function UniversalFunnel() {
-    const { t, i18n } = useTranslation(['admin/funnel', 'common']);
+    const { t, i18n } = useTranslation(['crm/funnel', 'common']);
     const { currency } = useCurrency();
 
     // View state

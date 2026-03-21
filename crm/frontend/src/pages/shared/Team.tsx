@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import {
   Users as UsersIcon,
   Search,
-  UserPlus,
   Edit,
   Trash2,
   Loader,
@@ -13,7 +12,7 @@ import {
   GripVertical as GripIcon,
   X
 } from 'lucide-react';
-import EmployeeDetail from '../admin/EmployeeDetail';
+import EmployeeDetail from './EmployeeDetail';
 import { Button } from '../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Input } from '../../components/ui/input';
@@ -24,8 +23,8 @@ import { api } from '../../services/api';
 import { PositionSelector } from '../../components/PositionSelector';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
-import { PermissionsTab } from '../../components/admin/PermissionsTab';
-import { ScheduleDialog } from '../../components/admin/ScheduleDialog';
+import { PermissionsTab } from '../../components/team/PermissionsTab';
+import { ScheduleDialog } from '../../components/team/ScheduleDialog';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { Switch } from '../../components/ui/switch';
 
@@ -222,12 +221,10 @@ function SortableUserRow({
 export default function UniversalTeam() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { t, i18n } = useTranslation(['admin/users', 'common']);
+  const { t, i18n } = useTranslation(['crm/users', 'common']);
   const { user: currentUser } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
-  const routePrefix = window.location.pathname.startsWith('/admin')
-    ? '/admin'
-    : window.location.pathname.startsWith('/manager')
+  const routePrefix = window.location.pathname.startsWith('/manager')
       ? '/manager'
       : '/crm';
 
@@ -498,26 +495,6 @@ export default function UniversalTeam() {
             />
           </div>
           {/* Кнопка создания только для тех, у кого есть право */}
-          {permissions.canCreateUsers && (
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Button
-                variant="outline"
-                className="w-full sm:w-auto text-gray-700 hover:text-gray-900 border-gray-300"
-                onClick={() => navigate(`${routePrefix}/team/pending`)}
-              >
-                <UsersIcon className="w-4 h-4 mr-2" />
-                {t('pending_registrations')}
-              </Button>
-
-              <Button
-                className="w-full sm:w-auto bg-pink-600 hover:bg-pink-700"
-                onClick={() => navigate(`${routePrefix}/team/create`)}
-              >
-                <UserPlus className="w-4 h-4 mr-2" />
-                {t('add_user')}
-              </Button>
-            </div>
-          )}
         </div>
       </div>
 
@@ -602,7 +579,7 @@ export default function UniversalTeam() {
                 {filteredUsers.map((emp) => (
                   <button
                     key={emp.id}
-                    onClick={() => navigate(`${routePrefix}/team?view=cards&id=${emp.id}`)}
+                    onClick={() => navigate(`${routePrefix}/team/${emp.id}/information?view=cards`)}
                     className={`w-full p-3 flex items-center gap-3 hover:bg-white hover:shadow-sm rounded-xl transition-all mb-1 group ${id === String(emp.id) ? 'bg-white shadow-sm ring-1 ring-gray-100' : ''}`}
                   >
                     <img

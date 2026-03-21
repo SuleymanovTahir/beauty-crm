@@ -3,6 +3,7 @@
 Использует UniversalMessenger и шаблоны из БД.
 """
 import asyncio
+import os
 from datetime import datetime
 from typing import List, Tuple, Optional
 
@@ -89,6 +90,7 @@ def get_client_birthdays(days_offset: int = 0) -> List[dict]:
 async def congratulate_clients():
     """Отправить поздравления клиентам (сегодня и за 7 дней) через UniversalMessenger"""
     from db.promo_codes import generate_birthday_promo
+    salon_name = (os.getenv("SALON_NAME") or "ST CRM").strip() or "ST CRM"
     
     # 1. СЕГОДНЯШНИЕ ДР
     today_clients = get_client_birthdays(0)
@@ -106,7 +108,7 @@ async def congratulate_clients():
                 context={
                     "name": client['name'] or "Клиент",
                     "promo_code": promo,
-                    "salon_name": "M. Le Diamant",
+                    "salon_name": salon_name,
                     "lang": client.get('detected_language') or 'ru'
                 },
                 platform="auto"
@@ -127,7 +129,7 @@ async def congratulate_clients():
                 context={
                     "name": client['name'] or "Клиент",
                     "promo_code": promo,
-                    "salon_name": "M. Le Diamant",
+                    "salon_name": salon_name,
                     "lang": client.get('detected_language') or 'ru'
                 },
                 platform="auto"

@@ -10,22 +10,22 @@ interface SourceSelectProps {
 }
 
 export function SourceSelect({ value, onChange }: SourceSelectProps) {
-    const { t } = useTranslation(['admin/bookings', 'common', 'components']);
+    const { t } = useTranslation(['crm/bookings', 'common', 'components']);
     const [isOpen, setIsOpen] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const [customValue, setCustomValue] = useState('');
 
     const sources = [
-        { id: 'manual', label: t('admin/bookings:source.manual'), icon: <User className="w-3.5 h-3.5" /> },
-        { id: 'public_landing', label: t('admin/bookings:source.public_landing', { defaultValue: 'Public Landing' }), icon: <Send className="w-3.5 h-3.5 text-orange-500" /> },
-        { id: 'instagram', label: t('admin/bookings:source.instagram'), icon: <Instagram className="w-3.5 h-3.5 text-pink-500" /> },
-        { id: 'telegram', label: t('admin/bookings:source.telegram'), icon: <Send className="w-3.5 h-3.5 text-blue-500" /> },
-        { id: 'whatsapp', label: t('admin/bookings:source.whatsapp'), icon: <MessageCircle className="w-3.5 h-3.5 text-green-500" /> },
-        { id: 'account', label: t('admin/bookings:source.account'), icon: <User className="w-3.5 h-3.5 text-indigo-500" /> },
-        { id: 'guest_link', label: t('admin/bookings:source.guest_link'), icon: <Link className="w-3.5 h-3.5 text-gray-500" /> },
+        { id: 'manual', label: t('crm/bookings:source.manual'), icon: <User className="w-3.5 h-3.5" /> },
+        { id: 'public_landing', label: t('crm/bookings:source.public_landing', { defaultValue: 'Public Landing' }), icon: <Send className="w-3.5 h-3.5 text-orange-500" /> },
+        { id: 'instagram', label: t('crm/bookings:source.instagram'), icon: <Instagram className="w-3.5 h-3.5 text-pink-500" /> },
+        { id: 'telegram', label: t('crm/bookings:source.telegram'), icon: <Send className="w-3.5 h-3.5 text-blue-500" /> },
+        { id: 'whatsapp', label: t('crm/bookings:source.whatsapp'), icon: <MessageCircle className="w-3.5 h-3.5 text-green-500" /> },
+        { id: 'account', label: t('crm/bookings:source.account'), icon: <User className="w-3.5 h-3.5 text-indigo-500" /> },
+        { id: 'guest_link', label: t('crm/bookings:source.guest_link'), icon: <Link className="w-3.5 h-3.5 text-gray-500" /> },
     ];
 
-    const currentSource = sources.find(s => s.id === value) || { id: value, label: value || t('admin/bookings:source.manual'), icon: <Send className="w-3.5 h-3.5 text-gray-400" /> };
+    const currentSource = sources.find(s => s.id === value) || { id: value, label: value || t('crm/bookings:source.manual'), icon: <Send className="w-3.5 h-3.5 text-gray-400" /> };
 
     const handleSelect = (id: string) => {
         onChange(id);
@@ -91,7 +91,7 @@ export function SourceSelect({ value, onChange }: SourceSelectProps) {
                                 value={customValue}
                                 onChange={(e) => setCustomValue(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleAddCustom()}
-                                placeholder={t('admin/bookings:source.custom_placeholder')}
+                                placeholder={t('crm/bookings:source.custom_placeholder')}
                                 className="flex-1 text-[10px] px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                             />
                             <button
@@ -107,7 +107,7 @@ export function SourceSelect({ value, onChange }: SourceSelectProps) {
                             className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 cursor-pointer rounded-lg text-blue-600 transition-colors"
                         >
                             <Plus className="w-3 h-3" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">{t('admin/bookings:source.custom')}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider">{t('crm/bookings:source.custom')}</span>
                         </div>
                     )}
                 </div>

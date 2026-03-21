@@ -5,6 +5,18 @@
  */
 export const getPhotoUrl = (path: string | null | undefined) => {
     if (!path) return undefined;
+    const normalizedPath = path.trim().toLowerCase();
+    if (
+        normalizedPath.startsWith('/landing-images/') ||
+        normalizedPath.startsWith('/static/images/') ||
+        normalizedPath.startsWith('/static/avatars/') ||
+        normalizedPath.startsWith('/static/uploads/images/') ||
+        normalizedPath.startsWith('/logo.') ||
+        normalizedPath.startsWith('/favicon') ||
+        normalizedPath.startsWith('/apple-touch-icon')
+    ) {
+        return undefined;
+    }
     if (path.startsWith('http')) return path;
     const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
     // Ensure path starts with / for proper URL concatenation
@@ -20,4 +32,3 @@ export const getPhotoUrl = (path: string | null | undefined) => {
         return `${baseUrl}${separator}${encodeURI(path)}`;
     }
 };
-

@@ -36,7 +36,7 @@ interface AddFunnelClientDialogProps {
 }
 
 export function AddFunnelClientDialog({ open, onOpenChange, onSuccess, stages }: AddFunnelClientDialogProps) {
-    const { t } = useTranslation(['admin/funnel', 'common']);
+    const { t } = useTranslation(['crm/funnel', 'common']);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',

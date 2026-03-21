@@ -10,6 +10,7 @@ import os
 
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
+from utils.optional_dependencies import OptionalDependencyError
 from utils.utils import get_current_user
 from db.contracts import get_contracts as db_get_contracts, create_contract as db_create_contract, \
     update_contract as db_update_contract
@@ -153,8 +154,11 @@ async def send_contract(
         
         # PDF logic
         if not con['pdf_path'] or not os.path.exists(con.get('pdf_path', '')):
-            from services.pdf_generator import generate_contract_pdf
-            pdf_path = generate_contract_pdf(con, "/tmp")
+            try:
+                from services.pdf_generator import generate_contract_pdf
+                pdf_path = generate_contract_pdf(con, "/tmp")
+            except OptionalDependencyError as error:
+                raise HTTPException(status_code=503, detail=str(error)) from error
             db_update_contract(contract_id, {'pdf_path': pdf_path})
         else:
             pdf_path = con['pdf_path']

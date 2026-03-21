@@ -23,7 +23,7 @@ interface ManageFunnelStagesDialogProps {
 }
 
 export function ManageFunnelStagesDialog({ open, onOpenChange, onSuccess }: ManageFunnelStagesDialogProps) {
-    const { t } = useTranslation(['admin/funnel', 'common']);
+    const { t } = useTranslation(['crm/funnel', 'common']);
     const [stages, setStages] = useState<Stage[]>([]);
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
 

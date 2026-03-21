@@ -117,7 +117,7 @@ async def alert_manager(instagram_id: str, rating: int, comment: str):
 📱 {client_phone}
 {platform_icon} <a href="{profile_link}">{platform_name} Профиль</a>
 
-<a href="https://beauty-crm.com/admin/chat?client_id={instagram_id}">👉 ОТВЕТИТЬ В CRM</a>
+<a href="https://beauty-crm.com/crm/chat?client_id={instagram_id}">👉 ОТВЕТИТЬ В CRM</a>
 """
         
         # 1. Send Telegram Alert
@@ -135,7 +135,7 @@ async def alert_manager(instagram_id: str, rating: int, comment: str):
                 title=f"💔 Плохой отзыв ({rating}/5)",
                 message=f"{client_name}: {comment or 'Без комментария'}",
                 notification_type="urgent",
-                action_url=f"/admin/chat?client_id={instagram_id}"
+                action_url=f"/crm/chat?client_id={instagram_id}"
             )
             
             # Email Notification
@@ -155,7 +155,7 @@ async def alert_manager(instagram_id: str, rating: int, comment: str):
                         Телефон: {client_phone}
                         Ссылка: {profile_link}
                         
-                        Перейти в CRM: https://beauty-crm.com/admin/chat?client_id={instagram_id}
+                        Перейти в CRM: https://beauty-crm.com/crm/chat?client_id={instagram_id}
                         """,
                         html=f"""
                         <h2>💔 Негативный отзыв</h2>
@@ -166,7 +166,7 @@ async def alert_manager(instagram_id: str, rating: int, comment: str):
                         </div>
                         <p><strong>Контакты:</strong> {client_phone} | <a href="{profile_link}">{platform_name}</a></p>
                         <br>
-                        <a href="https://beauty-crm.com/admin/chat?client_id={instagram_id}" style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Разрешить ситуацию</a>
+                        <a href="https://beauty-crm.com/crm/chat?client_id={instagram_id}" style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Разрешить ситуацию</a>
                         """
                     )
                     logger.info(f"📧 Feedback email sent to {manager_email}")

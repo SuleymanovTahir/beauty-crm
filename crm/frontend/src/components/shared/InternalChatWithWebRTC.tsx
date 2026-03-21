@@ -110,7 +110,7 @@ export default function InternalChat() {
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const headerMenuRef = useRef<HTMLDivElement>(null);
 
-  const currentUserData = JSON.parse(localStorage.getItem('user') || '{}');
+  const currentUserData = (() => { try { return JSON.parse(localStorage.getItem('user') || '{}'); } catch { return {}; } })();
 
   // Initialize WebRTC
   useEffect(() => {

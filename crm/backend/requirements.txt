@@ -1,3 +1,5 @@
+# Core backend runtime dependencies.
+# Optional import/export/PDF/image tooling lives in requirements-optional.txt.
 fastapi
 uvicorn
 h11
@@ -6,24 +8,15 @@ google-genai
 python-multipart
 jinja2
 gunicorn
-reportlab
-pandas
 slowapi
 python-dotenv
 email-validator
 cffi
-xlrd
-xlwt
-beautifulsoup4
-lxml
-openpyxl
-Pillow
 APScheduler
 idna
 charset-normalizer
 certifi
 urllib3
 psycopg2-binary
-python-docx
 aiosmtplib
 redis

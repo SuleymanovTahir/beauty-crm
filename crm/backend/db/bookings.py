@@ -195,9 +195,9 @@ def get_all_bookings(limit: int = 1000, offset: int = 0):
                      WHERE deleted_at IS NULL
                      ORDER BY created_at DESC"""
         if limit:
-            query += f" LIMIT {limit}"
+            query += f" LIMIT {int(limit)}"
         if offset:
-            query += f" OFFSET {offset}"
+            query += f" OFFSET {int(offset)}"
         c.execute(query)
     except psycopg2.OperationalError:
         # Fallback для старой схемы без master/user_id
@@ -206,14 +206,14 @@ def get_all_bookings(limit: int = 1000, offset: int = 0):
                          name, status, created_at, revenue, master, NULL as user_id, source
                          FROM bookings ORDER BY created_at DESC"""
             if limit:
-                query += f" LIMIT {limit}"
+                query += f" LIMIT {int(limit)}"
             c.execute(query)
         except:
             query = """SELECT id, instagram_id, service_name, datetime, phone,
                          name, status, created_at, 0 as revenue, NULL as master, NULL as user_id
                          FROM bookings ORDER BY created_at DESC"""
             if limit:
-                query += f" LIMIT {limit}"
+                query += f" LIMIT {int(limit)}"
             c.execute(query)
 
     bookings = c.fetchall()

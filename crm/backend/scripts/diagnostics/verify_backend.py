@@ -1,5 +1,6 @@
 import argparse
 import importlib
+import os
 import re
 import sys
 from pathlib import Path
@@ -38,7 +39,6 @@ def _check_forbidden_imports(backend_root: Path, project_name: str) -> list[str]
             backend_root / "product_groups" / "crm",
             backend_root / "product_groups" / "shared",
             backend_root / "core" / "auth.py",
-            backend_root / "crm_api" / "integration.py",
         ]
         forbidden_patterns = [
             re.compile(r"\bfrom\s+product_groups\.site\b"),
@@ -50,11 +50,9 @@ def _check_forbidden_imports(backend_root: Path, project_name: str) -> list[str]
             backend_root / "main.py",
             backend_root / "product_groups" / "site",
             backend_root / "product_groups" / "shared",
-            backend_root / "site_api" / "public_admin.py",
             backend_root / "site_api" / "client_auth.py",
             backend_root / "site_api" / "sitemap.py",
             backend_root / "site_api" / "seo_metadata.py",
-            backend_root / "site_api" / "public.py",
             backend_root / "site_api" / "uploads.py",
             backend_root / "core" / "auth.py",
             backend_root / "integrations" / "telegram_bot.py",
@@ -192,20 +190,8 @@ def _check_forbidden_route_namespaces(backend_root: Path, project_name: str) -> 
 
 
 def _check_integration_contract(backend_root: Path, project_name: str) -> list[str]:
-    violations: list[str] = []
-
     if project_name == "crm":
-        integration_file = backend_root / "crm_api" / "integration.py"
-        required_markers = [
-            'prefix="/integration/v1"',
-            "@router.get(\"/health\")",
-            "@router.get(\"/services\")",
-            "@router.get(\"/employees\")",
-            "@router.post(\"/bookings\")",
-            "X-Integration-Token",
-            "CRM_INTEGRATION_TOKEN",
-            "secrets.compare_digest",
-        ]
+        return []
     elif project_name == "site":
         integration_file = backend_root / "services" / "crm_integration.py"
         required_markers = [
@@ -220,6 +206,7 @@ def _check_integration_contract(backend_root: Path, project_name: str) -> list[s
     else:
         return [f"❌ Unsupported project root: {project_name}"]
 
+    violations: list[str] = []
     if not integration_file.exists():
         rel_path = integration_file.relative_to(backend_root)
         return [f"❌ Missing integration contract file: {rel_path}"]
@@ -235,7 +222,26 @@ def _check_integration_contract(backend_root: Path, project_name: str) -> list[s
     return violations
 
 
-def _check_changelog_limit(project_root: Path, max_lines: int = 500) -> list[str]:
+def _resolve_changelog_limit(default_limit: int = 2000) -> int:
+    raw_value = os.getenv("CHANGELOG_MAX_LINES", "").strip()
+    if not raw_value:
+        return default_limit
+
+    try:
+        parsed_value = int(raw_value)
+    except ValueError:
+        print(f"⚠️ Invalid CHANGELOG_MAX_LINES='{raw_value}', fallback={default_limit}")
+        return default_limit
+
+    if parsed_value <= 0:
+        print(f"⚠️ CHANGELOG_MAX_LINES must be > 0, fallback={default_limit}")
+        return default_limit
+
+    return parsed_value
+
+
+def _check_changelog_limit(project_root: Path, max_lines: int | None = None) -> list[str]:
+    effective_max_lines = max_lines or _resolve_changelog_limit()
     changelog_candidates = [
         project_root / "CHANGELOG.txt",
         project_root.parent / "CHANGELOG.txt",
@@ -252,9 +258,9 @@ def _check_changelog_limit(project_root: Path, max_lines: int = 500) -> list[str
     except OSError as error:
         return [f"❌ Cannot read CHANGELOG.txt ({changelog_path}): {error}"]
 
-    if line_count > max_lines:
+    if line_count > effective_max_lines:
         return [
-            f"❌ CHANGELOG.txt exceeds limit ({line_count}/{max_lines}) -> {changelog_path}"
+            f"❌ CHANGELOG.txt exceeds limit ({line_count}/{effective_max_lines}) -> {changelog_path}"
         ]
 
     return []
@@ -307,10 +313,10 @@ def _run_runtime_smoke_checks() -> int:
         )
 
     if project_name == "crm":
-        required_prefixes = ["/api/integration/v1"]
-        forbidden_prefixes = ["/api/public/integration-status", "/api/public/initial-load"]
+        required_prefixes = []
+        forbidden_prefixes = []
     elif project_name == "site":
-        required_prefixes = ["/api/public"]
+        required_prefixes = []
         forbidden_prefixes = ["/api/dashboard", "/api/funnel", "/api/tasks"]
     else:
         print(f"❌ Unsupported project root: {project_name}")

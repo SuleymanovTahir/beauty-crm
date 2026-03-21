@@ -33,7 +33,7 @@ interface ManageTaskStagesDialogProps {
 }
 
 export function ManageTaskStagesDialog({ open, onOpenChange, onSuccess }: ManageTaskStagesDialogProps) {
-    const { t } = useTranslation(['admin/tasks', 'common']);
+    const { t } = useTranslation(['crm/tasks', 'common']);
     const [stages, setStages] = useState<Stage[]>([]);
     const [draggedItem, setDraggedItem] = useState<number | null>(null);
 

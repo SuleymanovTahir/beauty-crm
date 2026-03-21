@@ -55,6 +55,7 @@ _feature_gate_cache = {
     "expires_at": 0.0,
     "crm_modules": {},
 }
+_feature_gate_lock = threading.Lock()
 
 _CRM_MODULE_ROUTE_MATCHERS = CRM_MODULE_ROUTE_MATCHERS
 _RUNTIME_CRM_ONLY_PREFIXES = RUNTIME_CRM_ONLY_PREFIXES
@@ -99,10 +100,11 @@ def _resolve_crm_module_by_path(path: str) -> Optional[str]:
 
 def _get_feature_gates_cached() -> dict:
     now = time.time()
-    if _feature_gate_cache["expires_at"] > now:
-        return {
-            "crm_modules": _feature_gate_cache["crm_modules"],
-        }
+    with _feature_gate_lock:
+        if _feature_gate_cache["expires_at"] > now:
+            return {
+                "crm_modules": _feature_gate_cache["crm_modules"],
+            }
 
     try:
         settings = get_salon_settings()
@@ -116,8 +118,9 @@ def _get_feature_gates_cached() -> dict:
         log_error(f"Feature-gate load failed: {error}", "feature-gates")
         crm_modules = {}
 
-    _feature_gate_cache["crm_modules"] = crm_modules
-    _feature_gate_cache["expires_at"] = now + 10
+    with _feature_gate_lock:
+        _feature_gate_cache["crm_modules"] = crm_modules
+        _feature_gate_cache["expires_at"] = now + 10
 
     return {
         "crm_modules": crm_modules,
@@ -125,11 +128,17 @@ def _get_feature_gates_cached() -> dict:
 
 
 class ModernStaticFiles(StaticFiles):
-    """Статические файлы с агрессивным кешированием"""
+    """Статические файлы с кешированием (приватные пути не кешируются публично)"""
+
+    _PRIVATE_DIRS = ("uploads", "recordings")
 
     def file_response(self, *args, **kwargs):
         response = super().file_response(*args, **kwargs)
-        response.headers["Cache-Control"] = "public, max-age=3600"
+        full_path = str(args[0]) if args else ""
+        if any(d in full_path for d in self._PRIVATE_DIRS):
+            response.headers["Cache-Control"] = "private, no-store"
+        else:
+            response.headers["Cache-Control"] = "public, max-age=3600"
         return response
 
 
@@ -228,7 +237,7 @@ def _build_server_run_kwargs() -> dict:
 
     run_kwargs = {
         "host": "0.0.0.0",
-        "port": int(os.getenv("PORT", "8000")),
+        "port": _read_int_env("PORT", 8000),
         "reload": reload_enabled,
         "backlog": _read_int_env("BACKEND_BACKLOG", 2048),
         "timeout_keep_alive": _read_int_env("BACKEND_KEEPALIVE_SECONDS", 10),
@@ -264,7 +273,16 @@ async def lifespan(app: FastAPI):
 
     # 3. Redis Pub/Sub (Sink for multi-worker synchronization)
     pubsub_ready = await redis_pubsub.connect()
-    app.state.redis_listener = asyncio.create_task(redis_pubsub.start_listening())
+
+    async def _pubsub_listener():
+        try:
+            await redis_pubsub.start_listening()
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            log_error(f"Pub/Sub listener crashed: {e}", "redis")
+
+    app.state.redis_listener = asyncio.create_task(_pubsub_listener())
     if pubsub_ready:
         log_info(f"✅ Cross-worker Pub/Sub ready ({redis_pubsub.transport_name})", "boot")
     else:
@@ -276,8 +294,8 @@ async def lifespan(app: FastAPI):
                 conn = get_db_connection()
                 conn.cursor().execute("SELECT 1")
                 conn.close()
-            except Exception:
-                pass
+            except Exception as e:
+                log_error(f"DB warmup connection failed (non-critical): {e}", "boot")
 
         w_threads = [threading.Thread(target=warmup, daemon=True) for _ in range(10)]
         for thread in w_threads:
@@ -352,7 +370,6 @@ async def lifespan(app: FastAPI):
 
 # Подключение ресурсов
 BASE_DIR = Path(__file__).resolve().parent
-FRONTEND_DIR = BASE_DIR.parent / "frontend"
 
 
 def _resolve_cors_policy() -> tuple[list[str], Optional[str]]:
@@ -361,7 +378,7 @@ def _resolve_cors_policy() -> tuple[list[str], Optional[str]]:
     cors_allow_origin_regex = None
 
     if os.getenv("ENVIRONMENT") == "development" or is_localhost():
-        cors_allow_origin_regex = r"https?://(localhost|127\.0\.0\.1)(:[0-9]+)?"
+        cors_allow_origin_regex = r"https?://(localhost|127\.0\.0\.1|\[::1\])(:[0-9]+)?"
         cors_origins = []
         return cors_origins, cors_allow_origin_regex
 
@@ -423,8 +440,8 @@ def _register_middlewares(app: FastAPI):
         allow_origins=cors_origins,
         allow_origin_regex=cors_allow_origin_regex,
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
     )
     app.add_middleware(GZipMiddleware, minimum_size=1000)
     app.add_middleware(TimingMiddleware)
@@ -434,15 +451,6 @@ def _register_middlewares(app: FastAPI):
 
 def _register_static_assets(app: FastAPI):
     app.mount("/static", ModernStaticFiles(directory=str(BASE_DIR / "static")), name="static")
-
-    frontend_img_candidates = [
-        FRONTEND_DIR / "dist" / "landing-images",
-        BASE_DIR / "static" / "images",
-    ]
-    for frontend_img_dir in frontend_img_candidates:
-        if frontend_img_dir.exists():
-            app.mount("/landing-images", ModernStaticFiles(directory=str(frontend_img_dir)), name="landing_images")
-            break
 
 
 def _register_product_routers(app: FastAPI):

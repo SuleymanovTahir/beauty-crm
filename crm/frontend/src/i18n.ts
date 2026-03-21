@@ -7,39 +7,18 @@ export const languages = supportedLanguages.map((language) => language.code)
 
 const namespaces = [
   'common',
-  'account',
-  'admin-components',
+  'crm-components',
   'components',
   'dynamic',
-  'admin/analytics',
-  'admin/audit-log',
-  'admin/bookingdetail',
-  'admin/bookings',
-  'admin/botsettings',
-  'admin/broadcasts',
-  'admin/calendar',
-  'admin/challenges',
-  'admin/clientdetail',
-  'admin/clients',
-  'admin/contracts',
-  'admin/createuser',
-  'admin/dashboard',
-  'admin/funnel',
-  'admin/integrations',
-  'admin/invoices',
-  'admin/menucustomization',
-  'admin/pending_registrations',
-  'admin/permissionmanagement',
-  'admin/plans',
-  'admin/products',
-  'admin/promocodes',
-  'admin/services',
-  'admin/settings',
-  'admin/specialpackages',
-  'admin/tasks',
-  'admin/telephony',
-  'admin/trash',
-  'admin/users',
+  'crm/bookings',
+  'crm/clients',
+  'crm/dashboard',
+  'crm/funnel',
+  'crm/services',
+  'crm/settings',
+  'crm/tasks',
+  'crm/users',
+  'telephony',
   'manager/chat',
   'employee/dashboard',
   'employee/profile',
@@ -50,32 +29,24 @@ const namespaces = [
   'auth/reset_password',
   'auth/verify_email',
   'layouts/mainlayout',
-  'layouts/adminpanellayout',
   'components/languageswitcher',
-  'adminpanel/loyaltymanagement',
-  'adminpanel/referralprogram',
-  'adminpanel/challenges',
 ]
 
 const localeFiles = (import.meta as any).glob(
   [
     './locales/*/common.json',
-    './locales/*/account.json',
-    './locales/*/admin-components.json',
+    './locales/*/crm-components.json',
     './locales/*/components.json',
     './locales/*/dynamic.json',
-    './locales/*/admin/*.json',
+    './locales/*/crm/*.json',
+    './locales/*/telephony.json',
     './locales/*/manager/chat.json',
     './locales/*/employee/dashboard.json',
     './locales/*/employee/profile.json',
     './locales/*/employee/services.json',
     './locales/*/auth/*.json',
     './locales/*/layouts/mainlayout.json',
-    './locales/*/layouts/adminpanellayout.json',
     './locales/*/components/languageswitcher.json',
-    './locales/*/adminPanel/LoyaltyManagement.json',
-    './locales/*/adminPanel/referralprogram.json',
-    './locales/*/adminPanel/challenges.json',
   ],
   { eager: true },
 )
@@ -99,16 +70,11 @@ for (const lang of languages) {
     }
   }
 
-  // Alias namespaces used in CRM UI.
-  resources[lang].analytics = resources[lang]['admin/analytics']
-  resources[lang].bookingDetail = resources[lang]['admin/bookingdetail']
-  resources[lang].bookingdetail = resources[lang]['admin/bookingdetail']
-  resources[lang].bookings = resources[lang]['admin/bookings']
-  resources[lang].calendar = resources[lang]['admin/calendar']
-  resources[lang].clients = resources[lang]['admin/clients']
-  resources[lang].settings = resources[lang]['admin/settings']
-  resources[lang].services = resources[lang]['admin/services']
-  resources[lang].telephony = resources[lang]['admin/telephony']
+  resources[lang].bookings = resources[lang]['crm/bookings']
+  resources[lang].clients = resources[lang]['crm/clients']
+  resources[lang].settings = resources[lang]['crm/settings']
+  resources[lang].services = resources[lang]['crm/services']
+  resources[lang].telephony = resources[lang].telephony
   resources[lang].chat = resources[lang]['manager/chat']
   resources[lang]['employee/Dashboard'] = resources[lang]['employee/dashboard']
   resources[lang]['components/LanguageSwitcher'] = resources[lang]['components/languageswitcher']

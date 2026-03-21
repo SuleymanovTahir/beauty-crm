@@ -11,6 +11,7 @@ from utils.utils import require_auth, get_total_unread
 from utils.utils import require_auth, get_total_unread
 from utils.logger import log_warning, log_info, log_error
 from utils.cache import cache
+from utils.optional_dependencies import OptionalDependencyError
 
 router = APIRouter(tags=["Analytics"])
 
@@ -295,7 +296,7 @@ async def get_bot_analytics(
     from db.bot_analytics import get_bot_analytics_summary
     return get_bot_analytics_summary(days)
 
-@router.post("/admin/export-report")
+@router.post("/export-report")
 async def export_report_api(
     request: Request,
     session_token: Optional[str] = Cookie(None)
@@ -361,6 +362,8 @@ async def export_report_api(
             media_type=media_type,
             headers={"Content-Disposition": f"attachment; filename={filename}"}
         )
+    except OptionalDependencyError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
     except Exception as e:
         log_error(f"Error in export-report: {e}", "export")
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,4 +1,5 @@
 import os
+import psycopg2
 from psycopg2 import pool
 from psycopg2.extras import DictCursor, RealDictCursor
 from utils.logger import log_info, log_error, log_warning
@@ -86,16 +87,17 @@ def init_connection_pool():
                     "db"
                 )
                 return  # Success
-            except Exception as e:
+            except psycopg2.OperationalError as e:
+                # Retryable: DB not ready yet (connection refused, database does not exist)
                 last_error = e
-                error_str = str(e).lower()
-                # Check if error is related to database not existing (being created by another worker)
-                if "does not exist" in error_str or "connection refused" in error_str:
-                    if attempt < max_retries - 1:
-                        log_warning(f"⏳ Database not ready, waiting... (attempt {attempt + 1}/{max_retries})", "db")
-                        time.sleep(retry_delay)
-                        continue
-                # For other errors, fail immediately
+                if attempt < max_retries - 1:
+                    log_warning(f"⏳ Database not ready, waiting... (attempt {attempt + 1}/{max_retries}): {e}", "db")
+                    time.sleep(retry_delay)
+                    continue
+                log_error(f"❌ Failed to initialize connection pool after {max_retries} attempts: {e}", "db")
+                raise
+            except Exception as e:
+                # Non-retryable error (auth failure, config error, etc.) — fail immediately
                 log_error(f"❌ Failed to initialize connection pool: {e}", "db")
                 raise
 
@@ -188,7 +190,23 @@ class ConnectionWrapper:
 
     def __del__(self):
         if self._conn:
-            self.close()
+            try:
+                self.close()
+            except Exception:
+                pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            try:
+                self.rollback()
+            except Exception:
+                pass
+        self.close()
+        return False
+
 
 def get_db_connection():
     """Get a database connection from the pool.

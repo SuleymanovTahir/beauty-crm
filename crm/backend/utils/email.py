@@ -31,12 +31,15 @@ def _get_logo_url() -> str:
         from db.settings import get_salon_settings
         from core.config import PUBLIC_URL
         salon_settings = get_salon_settings()
-        logo_url = salon_settings.get('logo_url', '/static/uploads/images/salon/logo.webp')
+        logo_url = (salon_settings.get('logo_url') or '').strip()
         base_url = salon_settings.get('base_url', PUBLIC_URL)
 
         # Если logo_url уже полный URL, возвращаем как есть
         if logo_url.startswith('http'):
             return logo_url
+
+        if not logo_url:
+            return ""
 
         # Иначе формируем полный URL
         return f"{base_url.rstrip('/')}{logo_url}"
@@ -520,16 +523,20 @@ def send_broadcast_email(to_email: str, subject: str, message: str, full_name: s
         if not salon_settings:
             salon_settings = {}
         
-        salon_name = salon_settings.get('name', os.getenv('SALON_BOT_NAME', 'M.Le Diamant')).replace(' Bot', '')
+        salon_name = (
+            salon_settings.get('name')
+            or os.getenv('SALON_BOT_NAME')
+            or 'ST CRM'
+        ).replace(' Bot', '')
         salon_address = salon_settings.get('address')
         salon_phone = salon_settings.get('phone')
         salon_email = salon_settings.get('email', smtp_user) # Fallback to sending email
-        salon_website = salon_settings.get('website', os.getenv('BASE_URL', 'https://mlediamant.com'))
+        salon_website = salon_settings.get('website') or os.getenv('BASE_URL', '')
         
         # Clean website URL for display
         display_website = salon_website.replace('https://', '').replace('http://', '').strip('/')
 
-        base_url = os.getenv('BASE_URL', 'https://mlediamant.com')
+        base_url = os.getenv('BASE_URL', '')
         
         # Подготовка HTML блоков для контактов (показываем только если есть данные)
         address_html = f'<div style="margin-bottom: 5px; color: #666666;">{salon_address}</div>' if salon_address else ""

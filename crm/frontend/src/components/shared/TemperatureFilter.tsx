@@ -9,7 +9,7 @@ interface TemperatureFilterProps {
 }
 
 export function TemperatureFilter({ value, onChange }: TemperatureFilterProps) {
-    const { t } = useTranslation(['admin/clients', 'common']);
+    const { t } = useTranslation(['crm/clients', 'common']);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 

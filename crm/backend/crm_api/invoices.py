@@ -10,6 +10,7 @@ import os
 
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
+from utils.optional_dependencies import OptionalDependencyError
 from utils.utils import get_current_user
 from crm_api.notifications import create_notification
 from db.invoices import get_invoices as db_get_invoices, create_invoice as db_create_invoice, \
@@ -267,8 +268,11 @@ async def send_invoice(
         
         # 2. PDF Generation
         if not inv['pdf_path'] or not os.path.exists(inv.get('pdf_path', '')):
-            from services.pdf_generator import generate_invoice_pdf
-            pdf_path = generate_invoice_pdf(inv, "/tmp")
+            try:
+                from services.pdf_generator import generate_invoice_pdf
+                pdf_path = generate_invoice_pdf(inv, "/tmp")
+            except OptionalDependencyError as error:
+                raise HTTPException(status_code=503, detail=str(error)) from error
             db_update_invoice(invoice_id, {'pdf_path': pdf_path})
         else:
             pdf_path = inv['pdf_path']

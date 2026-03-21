@@ -94,7 +94,7 @@ def start_crm_schedulers() -> bool:
 
     cron = AsyncIOScheduler(
         job_defaults={"misfire_grace_time": 3600},
-        timezone="Asia/Dubai",
+        timezone="UTC",
     )
 
     from services.reminder_service import check_and_send_reminders

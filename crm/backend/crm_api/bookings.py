@@ -508,111 +508,126 @@ def get_booking_detail(
     user = require_auth(session_token)
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
-    
-    conn = get_db_connection()
-    c = conn.cursor()
 
-    c.execute(
-        """
-        SELECT 1
-        FROM information_schema.columns
-        WHERE table_name = 'bookings'
-          AND column_name = 'master_user_id'
-        LIMIT 1
-        """
-    )
-    has_master_user_id = bool(c.fetchone())
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
 
-    c.execute(
-        """
-        SELECT 1
-        FROM information_schema.columns
-        WHERE table_name = 'bookings'
-          AND column_name = 'promo_code'
-        LIMIT 1
-        """
-    )
-    has_promo_code = bool(c.fetchone())
+        c.execute(
+            """
+            SELECT 1
+            FROM information_schema.columns
+            WHERE table_name = 'bookings'
+              AND column_name = 'master_user_id'
+            LIMIT 1
+            """
+        )
+        has_master_user_id = bool(c.fetchone())
 
-    c.execute(
-        """
-        SELECT 1
-        FROM information_schema.columns
-        WHERE table_name = 'bookings'
-          AND column_name = 'source'
-        LIMIT 1
-        """
-    )
-    has_source = bool(c.fetchone())
+        c.execute(
+            """
+            SELECT 1
+            FROM information_schema.columns
+            WHERE table_name = 'bookings'
+              AND column_name = 'promo_code'
+            LIMIT 1
+            """
+        )
+        has_promo_code = bool(c.fetchone())
 
-    promo_code_select = "promo_code" if has_promo_code else "NULL AS promo_code"
-    source_select = "source" if has_source else "'manual' AS source"
-    master_user_id_select = "master_user_id" if has_master_user_id else "NULL AS master_user_id"
+        c.execute(
+            """
+            SELECT 1
+            FROM information_schema.columns
+            WHERE table_name = 'bookings'
+              AND column_name = 'source'
+            LIMIT 1
+            """
+        )
+        has_source = bool(c.fetchone())
 
-    c.execute(f"""
-        SELECT id, instagram_id, service_name, datetime, phone,
-               name, status, created_at, revenue, master, user_id, notes,
-               {source_select}, {promo_code_select}, {master_user_id_select}
-        FROM bookings
-        WHERE id = %s
-    """, (booking_id,))
-    booking = c.fetchone()
-    
-    if not booking:
-        conn.close()
-        return JSONResponse({"error": "Booking not found"}, status_code=404)
+        # Построение безопасной выборки полей
+        select_fields = [
+            "id", "instagram_id", "service_name", "datetime", "phone",
+            "name", "status", "created_at", "revenue", "master", "user_id", "notes"
+        ]
+        if has_source:
+            select_fields.append("source")
+        else:
+            select_fields.append("'manual' AS source")
+        if has_promo_code:
+            select_fields.append("promo_code")
+        else:
+            select_fields.append("NULL AS promo_code")
+        if has_master_user_id:
+            select_fields.append("master_user_id")
+        else:
+            select_fields.append("NULL AS master_user_id")
 
-    language_code = validate_language(language)
-    localized_by_id, alias_to_user, normalized_language = _build_master_display_maps(c, [booking], language_code)
-    raw_master_name = booking[9] if len(booking) > 9 else None
-    master_user_id = booking[14] if len(booking) > 14 else None
-    localized_master = _get_localized_master_name(
-        raw_master=raw_master_name,
-        master_user_id=master_user_id,
-        localized_by_id=localized_by_id,
-        alias_to_user=alias_to_user,
-        language=normalized_language
-    )
-    source_value = booking[12] if len(booking) > 12 else "manual"
-    promo_code = booking[13] if len(booking) > 13 else None
-    discount_source = _resolve_discount_source(source_value, promo_code)
-    conn.close()
-        
-    # RBAC: Clients can only see their own bookings
-    if user["role"] == "client":
-        booking_client_id = booking[1]
-        booking_phone = booking[4]
-        
-        user_client_id = user.get("username")
-        user_phone = user.get("phone")
-        
-        # Check fuzzy match
-        is_owner = (user_client_id and str(user_client_id) == str(booking_client_id))
-        if not is_owner and user_phone and booking_phone:
-             # Basic phone normalization for comparison if needed, currently exact match
-             is_owner = (str(user_phone) == str(booking_phone))
-             
-        if not is_owner:
-            return JSONResponse({"error": "Forbidden"}, status_code=403)
-    
-    return {
-        "id": booking[0],
-        "client_id": booking[1],
-        "service": booking[2],
-        "datetime": booking[3],
-        "phone": booking[4],
-        "name": booking[5],
-        "status": booking[6],
-        "created_at": booking[7],
-        "revenue": booking[8] if booking[8] is not None else 0,
-        "master": localized_master,
-        "master_user_id": master_user_id,
-        "user_id": booking[10],
-        "notes": booking[11],
-        "source": source_value,
-        "promo_code": promo_code,
-        "discount_source": discount_source
-    }
+        fields_str = ", ".join(select_fields)
+        c.execute(f"""
+            SELECT {fields_str}
+            FROM bookings
+            WHERE id = %s
+        """, (booking_id,))
+        booking = c.fetchone()
+
+        if not booking:
+            return JSONResponse({"error": "Booking not found"}, status_code=404)
+
+        language_code = validate_language(language)
+        localized_by_id, alias_to_user, normalized_language = _build_master_display_maps(c, [booking], language_code)
+        raw_master_name = booking[9] if len(booking) > 9 else None
+        master_user_id = booking[14] if len(booking) > 14 else None
+        localized_master = _get_localized_master_name(
+            raw_master=raw_master_name,
+            master_user_id=master_user_id,
+            localized_by_id=localized_by_id,
+            alias_to_user=alias_to_user,
+            language=normalized_language
+        )
+        source_value = booking[12] if len(booking) > 12 else "manual"
+        promo_code = booking[13] if len(booking) > 13 else None
+        discount_source = _resolve_discount_source(source_value, promo_code)
+
+        # RBAC: Clients can only see their own bookings
+        if user["role"] == "client":
+            booking_client_id = booking[1]
+            booking_phone = booking[4]
+
+            user_client_id = user.get("username")
+            user_phone = user.get("phone")
+
+            # Check fuzzy match
+            is_owner = (user_client_id and str(user_client_id) == str(booking_client_id))
+            if not is_owner and user_phone and booking_phone:
+                 # Basic phone normalization for comparison if needed, currently exact match
+                 is_owner = (str(user_phone) == str(booking_phone))
+
+            if not is_owner:
+                return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+        return {
+            "id": booking[0],
+            "client_id": booking[1],
+            "service": booking[2],
+            "datetime": booking[3],
+            "phone": booking[4],
+            "name": booking[5],
+            "status": booking[6],
+            "created_at": booking[7],
+            "revenue": booking[8] if booking[8] is not None else 0,
+            "master": localized_master,
+            "master_user_id": master_user_id,
+            "user_id": booking[10],
+            "notes": booking[11],
+            "source": source_value,
+            "promo_code": promo_code,
+            "discount_source": discount_source
+        }
+    finally:
+        if 'conn' in locals():
+            conn.close()
 
 async def process_booking_background_tasks(
     booking_id: int,
@@ -1066,35 +1081,41 @@ def update_booking_status_api(
     if user["role"] == "client":
         if status != "cancelled":
             return JSONResponse({"error": "Forbidden: Clients can only cancel bookings"}, status_code=403)
-            
+
         # Verify ownership
-        conn = get_db_connection()
-        c = conn.cursor()
-        c.execute("SELECT instagram_id, phone FROM bookings WHERE id = %s", (booking_id,))
-        row = c.fetchone()
-        conn.close()
-        
-        if not row:
-             return JSONResponse({"error": "Booking not found"}, status_code=404)
-        
-        is_owner = (user.get("username") and str(user.get("username")) == str(row[0]))
-        if not is_owner and user.get("phone") and row[1]:
-             is_owner = (str(user.get("phone")) == str(row[1]))
-             
-        if not is_owner:
-            return JSONResponse({"error": "Forbidden"}, status_code=403)
+        try:
+            conn = get_db_connection()
+            c = conn.cursor()
+            c.execute("SELECT instagram_id, phone FROM bookings WHERE id = %s", (booking_id,))
+            row = c.fetchone()
+
+            if not row:
+                 return JSONResponse({"error": "Booking not found"}, status_code=404)
+
+            is_owner = (user.get("username") and str(user.get("username")) == str(row[0]))
+            if not is_owner and user.get("phone") and row[1]:
+                 is_owner = (str(user.get("phone")) == str(row[1]))
+
+            if not is_owner:
+                return JSONResponse({"error": "Forbidden"}, status_code=403)
+        finally:
+            if 'conn' in locals():
+                conn.close()
 
     if not status:
         return JSONResponse({"error": "Status required"}, status_code=400)
 
     # Get old status
-    conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("SELECT status FROM bookings WHERE id = %s", (booking_id,))
-    old_status_row = c.fetchone()
-    conn.close()
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT status FROM bookings WHERE id = %s", (booking_id,))
+        old_status_row = c.fetchone()
 
-    old_status = old_status_row[0] if old_status_row else None
+        old_status = old_status_row[0] if old_status_row else None
+    finally:
+        if 'conn' in locals():
+            conn.close()
 
     success = update_booking_status(booking_id, status)
     if success:
@@ -1251,7 +1272,6 @@ async def update_booking_api(
             )
 
         conn.commit()
-        conn.close()
 
         log_activity(user["id"], "update_booking", "booking", str(booking_id),
                     f"Updated booking: {new_service}")
@@ -1289,6 +1309,9 @@ async def update_booking_api(
     except Exception as e:
         log_error(f"Booking update error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
+    finally:
+        if 'conn' in locals():
+            conn.close()
 
 @router.delete("/bookings/{booking_id}")
 async def delete_booking_api(
@@ -1313,7 +1336,6 @@ async def delete_booking_api(
         booking = c.fetchone()
 
         if not booking:
-            conn.close()
             return JSONResponse({"error": "Booking not found"}, status_code=404)
 
         service, datetime_str, master, name, phone = booking
@@ -1375,3 +1397,6 @@ async def delete_booking_api(
     except Exception as e:
         log_error(f"Booking deletion error: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)
+    finally:
+        if 'conn' in locals():
+            conn.close()

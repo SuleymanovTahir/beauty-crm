@@ -88,7 +88,7 @@ _ALLOWED_BUSINESS_TYPES = {
     "delivery",
     "other",
 }
-_ALLOWED_PRODUCT_MODES = {"crm", "site", "both"}
+_ALLOWED_PRODUCT_MODES = {"crm"}
 
 
 def _normalize_business_type(raw_value: Optional[str]) -> str:
@@ -102,15 +102,11 @@ def _normalize_product_mode(raw_value: Optional[str]) -> str:
     value = (raw_value or "").strip().lower()
     if value in _ALLOWED_PRODUCT_MODES:
         return value
-    return "both"
+    return "crm"
 
 
 def _product_mode_to_flags(product_mode: str) -> tuple[bool, bool]:
-    if product_mode == "crm":
-        return True, False
-    if product_mode == "site":
-        return False, True
-    return True, True
+    return True, False
 
 # ===== MIDDLEWARE =====
 
@@ -461,7 +457,7 @@ async def register_employee_api(
     role: str = Form("employee"),
     phone: str = Form(""),
     business_type: str = Form("beauty"),
-    product_mode: str = Form("both"),
+    product_mode: str = Form("crm"),
     privacy_accepted: bool = Form(False),
     newsletter_subscribed: bool = Form(True),
     captcha_token: str = Form(None),
@@ -595,7 +591,7 @@ async def api_register(
     position: str = Form(""),
     phone: str = Form(""),
     business_type: str = Form("beauty"),
-    product_mode: str = Form("both"),
+    product_mode: str = Form("crm"),
     privacy_accepted: bool = Form(False),
     newsletter_subscribed: bool = Form(True),
     preferred_language: str = Form("en")
@@ -1227,40 +1223,4 @@ async def reset_password(
 
     except Exception as e:
         log_error(f"Error in reset_password: {e}", "auth")
-        return JSONResponse({"error": str(e)}, status_code=500)
-
-class DeleteAccountRequest(BaseModel):
-    password: str
-    confirm: bool
-
-@router.post("/delete-account")
-async def delete_account(
-    data: DeleteAccountRequest,
-    session_token: Optional[str] = Cookie(None)
-):
-    """API: Удаление собственного аккаунта"""
-    user = require_auth(session_token)
-    if not user:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
-
-    if not data.confirm:
-        return JSONResponse({"error": "Confirmation required"}, status_code=400)
-
-    # Verify password
-    verified_user = verify_user(user["username"], data.password)
-    if not verified_user:
-        return JSONResponse({"error": "Invalid password"}, status_code=403)
-
-    try:
-        # Delete user
-        success = delete_user(user["id"])
-        if success:
-            log_info(f"User {user['username']} deleted their own account", "auth")
-            response = JSONResponse({"success": True, "message": "Account deleted"})
-            response.delete_cookie("session_token")
-            return response
-        else:
-            return JSONResponse({"error": "Failed to delete account"}, status_code=500)
-    except Exception as e:
-        log_error(f"Error deleting account: {e}", "auth")
         return JSONResponse({"error": str(e)}, status_code=500)

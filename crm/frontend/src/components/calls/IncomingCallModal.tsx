@@ -45,7 +45,10 @@ export default function IncomingCallModal({
                 target.style.display = 'none';
                 const parent = target.parentElement;
                 if (parent) {
-                  parent.innerHTML = `<span class="text-3xl font-bold text-white">${callerName.charAt(0).toUpperCase()}</span>`;
+                  const span = document.createElement('span');
+                  span.className = 'text-3xl font-bold text-white';
+                  span.textContent = callerName.charAt(0).toUpperCase();
+                  parent.appendChild(span);
                 }
               }}
             />

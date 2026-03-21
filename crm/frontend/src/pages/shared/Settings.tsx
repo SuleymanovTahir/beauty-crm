@@ -1,4 +1,4 @@
-// /frontend/src/pages/admin/Settings.tsx
+// /frontend/src/pages/shared/Settings.tsx
 import { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
@@ -42,7 +42,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { InstagramIcon, TelegramIcon } from '../../components/icons/SocialIcons';
-import { ManageCurrenciesDialog } from '../../components/admin/ManageCurrenciesDialog';
+import { ManageCurrenciesDialog } from '../../components/settings/ManageCurrenciesDialog';
 import './Settings.css';
 
 function normalizeTimeValue(rawTime: string): string {
@@ -87,7 +87,6 @@ function normalizeTimezoneOffsetValue(rawTimezoneOffset: unknown): string {
 
 type BusinessModulesState = {
   crm: Record<string, boolean>;
-  site: Record<string, boolean>;
 };
 
 type BusinessProfilePreset = {
@@ -95,7 +94,6 @@ type BusinessProfilePreset = {
   business_type?: string;
   modules?: BusinessModulesState;
   role_permissions?: Record<string, string[] | '*'>;
-  shared_domains?: Record<string, string>;
 };
 
 const BUSINESS_TYPE_TRANSLATION_KEYS: Record<string, string> = {
@@ -106,12 +104,6 @@ const BUSINESS_TYPE_TRANSLATION_KEYS: Record<string, string> = {
   taxi: 'auth/register:business_type_taxi',
   delivery: 'auth/register:business_type_delivery',
   other: 'auth/register:business_type_other',
-};
-
-const PRODUCT_MODE_TRANSLATION_KEYS: Record<string, string> = {
-  crm: 'auth/register:product_mode_crm',
-  site: 'auth/register:product_mode_site',
-  both: 'auth/register:product_mode_both',
 };
 
 const MODULE_TRANSLATION_KEYS: Record<string, string> = {
@@ -133,12 +125,11 @@ const MODULE_TRANSLATION_KEYS: Record<string, string> = {
   internal_chat: 'layouts/mainlayout:menu.internal_chat',
   broadcasts: 'layouts/mainlayout:menu.broadcasts',
   referrals: 'layouts/mainlayout:menu.referrals',
-  loyalty: 'adminpanel/loyaltymanagement:title',
+  loyalty: 'layouts/mainlayout:menu.loyalty',
   challenges: 'layouts/mainlayout:menu.challenges',
   promo_codes: 'layouts/mainlayout:menu.promo_codes',
   service_change_requests: 'layouts/mainlayout:menu.service_requests',
   settings: 'layouts/mainlayout:menu.settings',
-  public_content: 'layouts/mainlayout:menu.public_content',
   bot_settings: 'layouts/mainlayout:menu.bot_settings',
   notifications: 'layouts/mainlayout:menu.notifications',
   payment_integrations: 'layouts/mainlayout:menu.payments',
@@ -150,25 +141,19 @@ const MODULE_TRANSLATION_KEYS: Record<string, string> = {
 function cloneBusinessModules(modules: BusinessModulesState): BusinessModulesState {
   return {
     crm: { ...modules.crm },
-    site: { ...modules.site },
   };
 }
 
 function normalizeBusinessModulesState(
   rawModules: unknown,
   crmCatalog: string[],
-  siteCatalog: string[],
 ): BusinessModulesState {
   const normalized: BusinessModulesState = {
     crm: {},
-    site: {},
   };
 
   for (const moduleKey of crmCatalog) {
     normalized.crm[moduleKey] = true;
-  }
-  for (const moduleKey of siteCatalog) {
-    normalized.site[moduleKey] = true;
   }
 
   if (typeof rawModules !== 'object') {
@@ -178,20 +163,12 @@ function normalizeBusinessModulesState(
     return normalized;
   }
 
-  const modules = rawModules as { crm?: Record<string, unknown>; site?: Record<string, unknown> };
+  const modules = rawModules as { crm?: Record<string, unknown> };
   if (typeof modules.crm === 'object' && modules.crm !== null) {
     for (const moduleKey of crmCatalog) {
       const rawValue = modules.crm[moduleKey];
       if (typeof rawValue === 'boolean') {
         normalized.crm[moduleKey] = rawValue;
-      }
-    }
-  }
-  if (typeof modules.site === 'object' && modules.site !== null) {
-    for (const moduleKey of siteCatalog) {
-      const rawValue = modules.site[moduleKey];
-      if (typeof rawValue === 'boolean') {
-        normalized.site[moduleKey] = rawValue;
       }
     }
   }
@@ -223,14 +200,6 @@ function resolveBusinessTypeLabel(t: (key: string, options?: any) => string, bus
   return businessType;
 }
 
-function resolveProductModeLabel(t: (key: string, options?: any) => string, productMode: string): string {
-  const translationKey = PRODUCT_MODE_TRANSLATION_KEYS[productMode];
-  if (typeof translationKey === 'string') {
-    return t(translationKey);
-  }
-  return productMode;
-}
-
 function resolveModuleLabel(t: (key: string, options?: any) => string, moduleKey: string): string {
   const translationKey = MODULE_TRANSLATION_KEYS[moduleKey];
   if (typeof translationKey === 'string') {
@@ -247,7 +216,7 @@ function resolveModuleLabel(t: (key: string, options?: any) => string, moduleKey
 }
 
 export default function AdminSettings() {
-  const { t, i18n } = useTranslation(['admin/settings', 'common', 'auth/register', 'layouts/mainlayout', 'adminpanel/loyaltymanagement']);
+  const { t, i18n } = useTranslation(['crm/settings', 'common', 'layouts/mainlayout']);
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
@@ -278,13 +247,10 @@ export default function AdminSettings() {
   const [businessProfileSaving, setBusinessProfileSaving] = useState(false);
   const [businessSchemaVersion, setBusinessSchemaVersion] = useState(1);
   const [businessType, setBusinessType] = useState('beauty');
-  const [productMode, setProductMode] = useState('both');
   const [businessProfiles, setBusinessProfiles] = useState<Record<string, BusinessProfilePreset>>({});
   const [crmModuleCatalog, setCrmModuleCatalog] = useState<string[]>([]);
-  const [siteModuleCatalog, setSiteModuleCatalog] = useState<string[]>([]);
-  const [businessModules, setBusinessModules] = useState<BusinessModulesState>({ crm: {}, site: {} });
+  const [businessModules, setBusinessModules] = useState<BusinessModulesState>({ crm: {} });
   const [businessRolePermissions, setBusinessRolePermissions] = useState<Record<string, string[] | '*'>>({});
-  const [businessSharedDomains, setBusinessSharedDomains] = useState<Record<string, string>>({});
 
   // ✅ ДОБАВЬ СОСТОЯНИЕ:
   const [botGloballyEnabled, setBotGloballyEnabled] = useState(false);
@@ -334,13 +300,6 @@ export default function AdminSettings() {
   }>>({});
   const [availableSubscriptions, setAvailableSubscriptions] = useState<Record<string, { name: string; description: string }>>({});
   const [loadingSubscriptions, setLoadingSubscriptions] = useState(false);
-
-  // Account deletion state
-  const [deletePassword, setDeletePassword] = useState('');
-  const [deleteConfirmText, setDeleteConfirmText] = useState('');
-  const [deletingAccount, setDeletingAccount] = useState(false);
-
-
 
   // Roles state
   const [roles, setRoles] = useState<Array<{ key: string; name: string; level: number }>>([]);
@@ -493,11 +452,7 @@ export default function AdminSettings() {
       const crmCatalog = Array.isArray((moduleCatalog as { crm?: unknown[] }).crm)
         ? (moduleCatalog as { crm: unknown[] }).crm.filter((item): item is string => typeof item === 'string')
         : [];
-      const siteCatalog = Array.isArray((moduleCatalog as { site?: unknown[] }).site)
-        ? (moduleCatalog as { site: unknown[] }).site.filter((item): item is string => typeof item === 'string')
-        : [];
       setCrmModuleCatalog(crmCatalog);
-      setSiteModuleCatalog(siteCatalog);
 
       const rawProfiles = typeof response?.profiles === 'object' && response.profiles !== null ? response.profiles : {};
       const normalizedProfiles: Record<string, BusinessProfilePreset> = {};
@@ -512,11 +467,7 @@ export default function AdminSettings() {
       const currentBusinessType = typeof (currentConfig as { business_type?: unknown }).business_type === 'string'
         ? (currentConfig as { business_type: string }).business_type
         : 'beauty';
-      const currentProductMode = typeof (currentConfig as { product_mode?: unknown }).product_mode === 'string'
-        ? (currentConfig as { product_mode: string }).product_mode
-        : 'both';
       setBusinessType(currentBusinessType);
-      setProductMode(currentProductMode);
 
       const currentProfile = typeof (currentConfig as { business_profile_config?: unknown }).business_profile_config === 'object'
         && (currentConfig as { business_profile_config?: unknown }).business_profile_config !== null
@@ -529,7 +480,7 @@ export default function AdminSettings() {
       const rawModules = typeof currentProfile.modules === 'object' && currentProfile.modules !== null
         ? currentProfile.modules
         : defaultProfile.modules;
-      setBusinessModules(normalizeBusinessModulesState(rawModules, crmCatalog, siteCatalog));
+      setBusinessModules(normalizeBusinessModulesState(rawModules, crmCatalog));
 
       const rawRolePermissions = typeof currentProfile.role_permissions === 'object' && currentProfile.role_permissions !== null
         ? currentProfile.role_permissions
@@ -538,15 +489,6 @@ export default function AdminSettings() {
         setBusinessRolePermissions(rawRolePermissions);
       } else {
         setBusinessRolePermissions({});
-      }
-
-      const rawSharedDomains = typeof currentProfile.shared_domains === 'object' && currentProfile.shared_domains !== null
-        ? currentProfile.shared_domains
-        : defaultProfile.shared_domains;
-      if (typeof rawSharedDomains === 'object' && rawSharedDomains !== null) {
-        setBusinessSharedDomains(rawSharedDomains as Record<string, string>);
-      } else {
-        setBusinessSharedDomains({});
       }
     } catch (err) {
       console.error('Failed to load business profile matrix:', err);
@@ -996,38 +938,6 @@ export default function AdminSettings() {
     }
   };
 
-  // Account deletion function
-  const handleDeleteAccount = async () => {
-    if (!deletePassword) {
-      toast.error(t('enter_password_to_delete'));
-      return;
-    }
-
-    if (deleteConfirmText !== 'DELETE') {
-      toast.error(t('type_delete_to_confirm'));
-      return;
-    }
-
-    if (!window.confirm(t('are_you_absolutely_sure'))) {
-      return;
-    }
-
-    try {
-      setDeletingAccount(true);
-      await api.deleteAccount(deletePassword, true);
-      toast.success(t('account_deleted_successfully'));
-      setTimeout(() => {
-        localStorage.removeItem('user');
-        window.location.href = '/';
-      }, 1500);
-    } catch (err: any) {
-      toast.error(err.message || t('error_deleting_account'));
-    } finally {
-      setDeletingAccount(false);
-    }
-  };
-
-
   const loadBookingReminderSettings = async () => {
     try {
       setLoadingReminderSettings(true);
@@ -1157,21 +1067,16 @@ export default function AdminSettings() {
   }, [businessProfiles, businessType]);
   const defaultBusinessModules = useMemo(() => {
     if (selectedBusinessProfilePreset === null) {
-      return normalizeBusinessModulesState({}, crmModuleCatalog, siteModuleCatalog);
+      return normalizeBusinessModulesState({}, crmModuleCatalog);
     }
     return normalizeBusinessModulesState(
       selectedBusinessProfilePreset.modules,
       crmModuleCatalog,
-      siteModuleCatalog,
     );
-  }, [selectedBusinessProfilePreset, crmModuleCatalog, siteModuleCatalog]);
+  }, [selectedBusinessProfilePreset, crmModuleCatalog]);
   const crmModuleDifferenceCount = useMemo(
     () => countModuleDifferences(crmModuleCatalog, businessModules.crm, defaultBusinessModules.crm),
     [crmModuleCatalog, businessModules.crm, defaultBusinessModules.crm],
-  );
-  const siteModuleDifferenceCount = useMemo(
-    () => countModuleDifferences(siteModuleCatalog, businessModules.site, defaultBusinessModules.site),
-    [siteModuleCatalog, businessModules.site, defaultBusinessModules.site],
   );
 
   const handleBusinessTypeChange = (nextBusinessType: string) => {
@@ -1185,32 +1090,26 @@ export default function AdminSettings() {
       return;
     }
 
-    setBusinessModules(normalizeBusinessModulesState(preset.modules, crmModuleCatalog, siteModuleCatalog));
+    setBusinessModules(normalizeBusinessModulesState(preset.modules, crmModuleCatalog));
 
     if (typeof preset.role_permissions === 'object' && preset.role_permissions !== null) {
       setBusinessRolePermissions(preset.role_permissions);
     } else {
       setBusinessRolePermissions({});
     }
-    if (typeof preset.shared_domains === 'object' && preset.shared_domains !== null) {
-      setBusinessSharedDomains(preset.shared_domains);
-    } else {
-      setBusinessSharedDomains({});
-    }
   };
 
-  const handleBusinessModuleToggle = (suite: 'crm' | 'site', moduleKey: string, enabled: boolean) => {
+  const handleBusinessModuleToggle = (moduleKey: string, enabled: boolean) => {
     setBusinessModules((previousState) => {
       const nextState = cloneBusinessModules(previousState);
-      nextState[suite][moduleKey] = enabled;
+      nextState.crm[moduleKey] = enabled;
       return nextState;
     });
   };
   const handleResetBusinessProfileToPreset = () => {
     if (selectedBusinessProfilePreset === null) {
-      setBusinessModules(normalizeBusinessModulesState({}, crmModuleCatalog, siteModuleCatalog));
+      setBusinessModules(normalizeBusinessModulesState({}, crmModuleCatalog));
       setBusinessRolePermissions({});
-      setBusinessSharedDomains({});
       return;
     }
 
@@ -1218,18 +1117,12 @@ export default function AdminSettings() {
       normalizeBusinessModulesState(
         selectedBusinessProfilePreset.modules,
         crmModuleCatalog,
-        siteModuleCatalog,
       ),
     );
     if (typeof selectedBusinessProfilePreset.role_permissions === 'object' && selectedBusinessProfilePreset.role_permissions !== null) {
       setBusinessRolePermissions(selectedBusinessProfilePreset.role_permissions);
     } else {
       setBusinessRolePermissions({});
-    }
-    if (typeof selectedBusinessProfilePreset.shared_domains === 'object' && selectedBusinessProfilePreset.shared_domains !== null) {
-      setBusinessSharedDomains(selectedBusinessProfilePreset.shared_domains);
-    } else {
-      setBusinessSharedDomains({});
     }
   };
 
@@ -1242,7 +1135,6 @@ export default function AdminSettings() {
       setBusinessProfileSaving(true);
       await api.updateSalonSettings({
         business_type: businessType,
-        product_mode: productMode,
       });
       await api.updateBusinessProfileConfig({
         business_type: businessType,
@@ -1251,7 +1143,6 @@ export default function AdminSettings() {
           business_type: businessType,
           modules: businessModules,
           role_permissions: businessRolePermissions,
-          shared_domains: businessSharedDomains,
         },
       });
       toast.success(t('settings:general_settings_saved'));
@@ -1288,7 +1179,6 @@ export default function AdminSettings() {
 
   // Определяем префикс путей
   const rolePrefix = useMemo(() => {
-    if (location.pathname.startsWith('/admin')) return '/admin';
     if (location.pathname.startsWith('/crm')) return '/crm';
     if (location.pathname.startsWith('/manager')) return '/manager';
     if (location.pathname.startsWith('/sales')) return '/sales';
@@ -1311,7 +1201,6 @@ export default function AdminSettings() {
     { id: 'holidays', icon: Calendar, label: t('settings:holidays'), show: userPermissions.canEditSchedule || userPermissions.canEditSettings },
     { id: 'roles', icon: Shield, label: t('settings:manage_roles'), show: userPermissions.canViewRoles || userPermissions.canEditRoles },
     { id: 'security', icon: Shield, label: t('settings:security'), show: userPermissions.roleLevel >= 80 || userPermissions.canEditSettings },
-    { id: 'danger', icon: Trash2, label: t('danger_zone'), show: userPermissions.role === 'director' || userPermissions.secondaryRole === 'director' },
   ], [userPermissions, t]);
 
   const visibleTabs = useMemo(() => allTabs.filter(t => t.show), [allTabs]);
@@ -1335,14 +1224,6 @@ export default function AdminSettings() {
           >
             <Menu className="w-4 h-4 mr-2" />
             {t('settings:customize_menu')}
-          </Button>
-          <Button
-            onClick={() => navigate(`${rolePrefix}/menu-customization?portal=account`)}
-            variant="outline"
-            className="bg-white"
-          >
-            <Menu className="w-4 h-4 mr-2" />
-            {t('settings:customize_account_menu', { defaultValue: 'Настроить меню клиента' })}
           </Button>
         </div>
       )}
@@ -1934,24 +1815,6 @@ export default function AdminSettings() {
                         </SelectContent>
                       </Select>
                     </div>
-
-                    <div>
-                      <Label className="settings-label-spacing">{t('auth/register:product_mode_label')}</Label>
-                      <Select
-                        value={productMode}
-                        onValueChange={setProductMode}
-                        disabled={!canEditBusinessProfile}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('auth/register:product_mode_label')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="crm">{resolveProductModeLabel(t, 'crm')}</SelectItem>
-                          <SelectItem value="site">{resolveProductModeLabel(t, 'site')}</SelectItem>
-                          <SelectItem value="both">{resolveProductModeLabel(t, 'both')}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
                   </div>
 
                   {businessProfileLoading ? (
@@ -1975,7 +1838,7 @@ export default function AdminSettings() {
                       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                         <div className="rounded-lg border border-gray-200 p-4">
                           <div className="settings-module-header-row">
-                            <h4 className="font-medium text-gray-900">{resolveProductModeLabel(t, 'crm')}</h4>
+                            <h4 className="font-medium text-gray-900">{t('settings:manage_crm_parameters')}</h4>
                             <span className="settings-module-difference-counter">
                               {crmModuleDifferenceCount}/{crmModuleCatalog.length}
                             </span>
@@ -1993,7 +1856,7 @@ export default function AdminSettings() {
                                 </span>
                                 <Switch
                                   checked={businessModules.crm[moduleKey] === true}
-                                  onCheckedChange={(enabled) => handleBusinessModuleToggle('crm', moduleKey, enabled)}
+                                  onCheckedChange={(enabled) => handleBusinessModuleToggle(moduleKey, enabled)}
                                   disabled={!canEditBusinessProfile}
                                 />
                               </div>
@@ -2002,34 +1865,6 @@ export default function AdminSettings() {
                         </div>
                         </div>
 
-                        <div className="rounded-lg border border-gray-200 p-4">
-                          <div className="settings-module-header-row">
-                            <h4 className="font-medium text-gray-900">{resolveProductModeLabel(t, 'site')}</h4>
-                            <span className="settings-module-difference-counter">
-                              {siteModuleDifferenceCount}/{siteModuleCatalog.length}
-                            </span>
-                          </div>
-                        <div className="space-y-3">
-                          {siteModuleCatalog.map((moduleKey) => (
-                            <div
-                              key={`site-${moduleKey}`}
-                              className={`settings-module-row ${businessModules.site[moduleKey] === defaultBusinessModules.site[moduleKey] ? 'settings-module-row-default' : 'settings-module-row-changed'}`}
-                            >
-                              <span className="text-sm text-gray-700">{resolveModuleLabel(t, moduleKey)}</span>
-                              <div className="settings-module-controls">
-                                <span className="settings-module-default-chip">
-                                  {defaultBusinessModules.site[moduleKey] === true ? t('common:on') : t('common:off')}
-                                </span>
-                                <Switch
-                                  checked={businessModules.site[moduleKey] === true}
-                                  onCheckedChange={(enabled) => handleBusinessModuleToggle('site', moduleKey, enabled)}
-                                  disabled={!canEditBusinessProfile}
-                                />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        </div>
                       </div>
                     </div>
                   )}
@@ -2757,70 +2592,6 @@ export default function AdminSettings() {
           }
         </TabsContent>
 
-        {/* Danger Zone */}
-        <TabsContent value="danger">
-          <div className="bg-white rounded-xl shadow-sm border settings-danger-zone p-8">
-            <div className="mb-6">
-              <h2 className="text-2xl text-gray-900 mb-2 flex items-center gap-3">
-                <Trash2 className="w-6 h-6 settings-text-red" />
-                {t('danger_zone')}
-              </h2>
-              <p className="text-gray-600">{t('irreversible_actions')}</p>
-            </div>
-
-            <div className="settings-bg-red-light border-2 settings-border-red rounded-lg p-6">
-              <h3 className="text-lg font-bold settings-text-red-dark mb-2">{t('delete_account')}</h3>
-              <p className="text-sm settings-text-red-dark opacity-90 mb-6">
-                {t('delete_account_warning')}
-              </p>
-
-              <div className="space-y-4 max-w-md">
-                <div>
-                  <Label htmlFor="deletePassword">{t('your_password')}*</Label>
-                  <Input
-                    id="deletePassword"
-                    type="password"
-                    value={deletePassword}
-                    onChange={(e) => setDeletePassword(e.target.value)}
-                    placeholder={t('enter_password')}
-                    className="px-3"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="deleteConfirm">
-                    {t('type_delete_to_confirm_label')}
-                  </Label>
-                  <Input
-                    id="deleteConfirm"
-                    value={deleteConfirmText}
-                    onChange={(e) => setDeleteConfirmText(e.target.value)}
-                    placeholder="DELETE"
-                    className="px-3"
-                  />
-                </div>
-
-                <Button
-                  onClick={handleDeleteAccount}
-                  disabled={deletingAccount || !deletePassword || deleteConfirmText !== 'DELETE'}
-                  className="w-full settings-danger-button text-white"
-                >
-                  {deletingAccount ? (
-                    <>
-                      <Loader className="w-4 h-4 mr-2 animate-spin" />
-                      {t('deleting')}...
-                    </>
-                  ) : (
-                    <>
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      {t('delete_my_account')}
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
       </Tabs>
 
       {/* Create Role Dialog */}

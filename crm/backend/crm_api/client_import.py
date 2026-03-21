@@ -3,17 +3,29 @@ API endpoint for importing clients from Excel/CSV files
 """
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
-import pandas as pd
 import io
 from datetime import datetime
 from typing import Dict, List, Any
 from utils.logger import log_info, log_error
+from utils.optional_dependencies import raise_optional_dependency_http
 from db.clients import get_or_create_client, update_client_info
+
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    pd = None
+    PANDAS_AVAILABLE = False
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
 
 router = APIRouter()
+
+
+def _ensure_pandas_available() -> None:
+    if not PANDAS_AVAILABLE:
+        raise_optional_dependency_http("Client import")
 
 def normalize_column_name(col: str) -> str:
     """Normalize column names to match database fields"""
@@ -372,6 +384,7 @@ def merge_or_create_client(client_data: Dict[str, Any]) -> Dict[str, Any]:
 async def import_clients(file: UploadFile = File(...)):
     """Import clients from CSV file"""
     try:
+        _ensure_pandas_available()
         log_info(f"📥 Starting import from file: {file.filename}", "import")
         
         contents = await file.read()

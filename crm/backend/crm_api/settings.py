@@ -381,10 +381,8 @@ def get_platform_gates():
     settings = get_salon_settings()
 
     return {
-        "business_type": settings.get("business_type") or "beauty",
-        "product_mode": settings.get("product_mode") or "both",
-        "crm_enabled": bool(settings.get("crm_enabled", True)),
-        "site_enabled": bool(settings.get("site_enabled", True)),
+        "business_type": settings.get("business_type") or "other",
+        "crm_enabled": True,
     }
 
 @router.get("/business-profile/matrix")
@@ -402,10 +400,8 @@ def get_business_profile_matrix_api(session_token: Optional[str] = Cookie(None))
         "role_catalog": matrix.get("role_catalog", []),
         "profiles": matrix.get("profiles", {}),
         "current": {
-            "business_type": settings.get("business_type", "beauty"),
-            "product_mode": settings.get("product_mode", "both"),
-            "crm_enabled": bool(settings.get("crm_enabled", True)),
-            "site_enabled": bool(settings.get("site_enabled", True)),
+            "business_type": settings.get("business_type", "other"),
+            "crm_enabled": True,
             "business_profile_config": settings.get("business_profile_config", {}),
         },
     }
@@ -433,8 +429,6 @@ async def update_business_profile_config_api(request: Request, session_token: Op
                 config_payload["modules"] = payload.get("modules")
             if "role_permissions" in payload:
                 config_payload["role_permissions"] = payload.get("role_permissions")
-            if "shared_domains" in payload:
-                config_payload["shared_domains"] = payload.get("shared_domains")
             if len(config_payload) > 0:
                 update_payload["business_profile_config"] = config_payload
 
@@ -502,15 +496,12 @@ def get_salon_settings_api(session_token: Optional[str] = Cookie(None)):
         'name', 'logo_url', 'city', 'address', 'phone', 'email', 
         'instagram', 'website', 'currency', 'timezone_offset',
         'hours_weekdays', 'hours_weekends', 'lunch_start', 'lunch_end',
-        'business_type', 'product_mode', 'crm_enabled', 'site_enabled'
+        'business_type', 'crm_enabled'
     ]
     
     public_settings = {k: v for k, v in settings.items() if k in public_fields}
     return public_settings
 
-@router.get("/public/salon-settings")
-def get_public_salon_settings_api(session_token: Optional[str] = Cookie(None)):
-    return get_salon_settings_api(session_token)
 
 @router.post("/salon-settings")
 @require_permission(["settings_edit", "settings_edit_branding", "settings_edit_finance", "settings_edit_integrations", "settings_edit_loyalty", "settings_edit_schedule"])
@@ -546,9 +537,7 @@ async def update_salon_settings_api(request: Request, session_token: Optional[st
                 'currency': 'settings_edit_finance',
                 'timezone_offset': 'settings_edit_finance',
                 'business_type': 'settings_edit_branding',
-                'product_mode': 'settings_edit_branding',
                 'crm_enabled': 'settings_edit_branding',
-                'site_enabled': 'settings_edit_branding',
                 'business_profile_config': 'settings_edit_branding',
                 
                 'birthday_discount': 'settings_edit_loyalty',
@@ -1296,268 +1285,6 @@ async def get_referral_campaign_analytics(
         raise
     except Exception as e:
         log_error(f"Error getting referral campaign analytics: {e}", "settings")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/public/referral-links/{share_token}")
-async def get_public_referral_link_profile(
-    share_token: str,
-    period: str = Query("30d"),
-    date_from: Optional[str] = Query(None),
-    date_to: Optional[str] = Query(None),
-):
-    """Публичный профиль персональной реферальной ссылки."""
-    try:
-        normalized_token = str(share_token or "").strip().lower()
-        if not normalized_token:
-            raise HTTPException(status_code=404, detail="Referral link not found")
-
-        start_date, end_date = _parse_referral_analytics_range(period, date_from, date_to)
-        conn = get_db_connection()
-        c = conn.cursor()
-
-        has_campaign_share_token = _table_has_column(c, "referral_campaigns", "share_token")
-        has_user_share_token = _table_has_column(c, "referral_campaign_users", "share_token")
-
-        campaign_id: Optional[int] = None
-        campaign_name = ""
-        campaign_description = ""
-        campaign_active = False
-        referrer_client_id = ""
-        referrer_name = ""
-        referrer_phone = ""
-        is_individual_link = False
-
-        if has_user_share_token:
-            c.execute(
-                """
-                SELECT rc.id, rc.name, rc.description, rc.is_active,
-                       rcu.client_id, c.name, c.phone
-                FROM referral_campaign_users rcu
-                JOIN referral_campaigns rc ON rc.id = rcu.campaign_id
-                LEFT JOIN clients c ON c.instagram_id = rcu.client_id
-                WHERE LOWER(COALESCE(rcu.share_token, '')) = %s
-                LIMIT 1
-                """,
-                (normalized_token,),
-            )
-            user_link_row = c.fetchone()
-            if user_link_row:
-                campaign_id = int(user_link_row[0])
-                campaign_name = str(user_link_row[1] or "")
-                campaign_description = str(user_link_row[2] or "")
-                campaign_active = bool(user_link_row[3])
-                referrer_client_id = str(user_link_row[4] or "")
-                referrer_name = str(user_link_row[5] or referrer_client_id or "-")
-                referrer_phone = str(user_link_row[6] or "")
-                is_individual_link = True
-
-        if campaign_id is None and has_campaign_share_token:
-            c.execute(
-                """
-                SELECT id, name, description, is_active
-                FROM referral_campaigns
-                WHERE LOWER(COALESCE(share_token, '')) = %s
-                LIMIT 1
-                """,
-                (normalized_token,),
-            )
-            campaign_row = c.fetchone()
-            if campaign_row:
-                campaign_id = int(campaign_row[0])
-                campaign_name = str(campaign_row[1] or "")
-                campaign_description = str(campaign_row[2] or "")
-                campaign_active = bool(campaign_row[3])
-                is_individual_link = False
-
-        if campaign_id is None:
-            fallback_campaign_id = _extract_fallback_campaign_id(normalized_token)
-            if fallback_campaign_id is not None:
-                c.execute(
-                    """
-                    SELECT id, name, description, is_active
-                    FROM referral_campaigns
-                    WHERE id = %s
-                    LIMIT 1
-                    """,
-                    (fallback_campaign_id,),
-                )
-                campaign_row = c.fetchone()
-                if campaign_row:
-                    campaign_id = int(campaign_row[0])
-                    campaign_name = str(campaign_row[1] or "")
-                    campaign_description = str(campaign_row[2] or "")
-                    campaign_active = bool(campaign_row[3])
-                    is_individual_link = False
-
-        if campaign_id is None:
-            conn.close()
-            raise HTTPException(status_code=404, detail="Referral link not found")
-
-        c.execute(
-            """
-            SELECT id, ip_hash, city, country, visited_at, page_url
-            FROM visitor_tracking
-            WHERE visited_at >= %s
-              AND visited_at <= %s
-              AND (
-                LOWER(COALESCE(page_url, '')) LIKE LOWER(%s)
-                OR LOWER(COALESCE(page_url, '')) LIKE LOWER(%s)
-              )
-            ORDER BY visited_at DESC
-            LIMIT 5000
-            """,
-            (start_date, end_date, f"%/ref/{normalized_token}%", f"%ref_share={normalized_token}%"),
-        )
-        visit_rows = c.fetchall() or []
-
-        if is_individual_link:
-            c.execute(
-                """
-                SELECT
-                    b.id,
-                    b.name,
-                    b.phone,
-                    b.instagram_id,
-                    b.status,
-                    b.created_at,
-                    c.user_id,
-                    c.password_hash
-                FROM bookings b
-                LEFT JOIN clients c ON c.instagram_id = b.instagram_id
-                WHERE b.created_at >= %s
-                  AND b.created_at <= %s
-                  AND LOWER(COALESCE(b.source, '')) LIKE LOWER(%s)
-                ORDER BY b.created_at DESC
-                LIMIT 5000
-                """,
-                (start_date, end_date, f"%ref_share_{normalized_token}%"),
-            )
-        else:
-            c.execute(
-                """
-                SELECT
-                    b.id,
-                    b.name,
-                    b.phone,
-                    b.instagram_id,
-                    b.status,
-                    b.created_at,
-                    c.user_id,
-                    c.password_hash
-                FROM bookings b
-                LEFT JOIN clients c ON c.instagram_id = b.instagram_id
-                WHERE b.created_at >= %s
-                  AND b.created_at <= %s
-                  AND (
-                    LOWER(COALESCE(b.source, '')) LIKE LOWER(%s)
-                    OR LOWER(COALESCE(b.source, '')) LIKE LOWER(%s)
-                    OR LOWER(COALESCE(b.source, '')) LIKE LOWER(%s)
-                  )
-                ORDER BY b.created_at DESC
-                LIMIT 5000
-                """,
-                (
-                    start_date,
-                    end_date,
-                    f"%ref_campaign_{campaign_id}%",
-                    f"%ref_campaign={campaign_id}%",
-                    f"%referral_campaign_{campaign_id}%",
-                ),
-            )
-        booking_rows = c.fetchall() or []
-        conn.close()
-
-        unique_click_keys: set[str] = set()
-        leads: List[Dict[str, Any]] = []
-        for visit_row in visit_rows:
-            visit_ip_hash = str(visit_row[1] or "").strip()
-            unique_key = visit_ip_hash if visit_ip_hash else f"visit_{visit_row[0]}"
-            unique_click_keys.add(unique_key)
-            visited_at = visit_row[4]
-            leads.append({
-                "id": f"visit_{visit_row[0]}",
-                "event_type": "visit",
-                "name": "-",
-                "phone": "-",
-                "location": _format_location(visit_row[2], visit_row[3]),
-                "registered": False,
-                "booked": False,
-                "status": "visited",
-                "timestamp": visited_at.isoformat() if visited_at else None,
-            })
-
-        total_bookings = 0
-        registered_client_keys: set[str] = set()
-        for booking_row in booking_rows:
-            booking_status = str(booking_row[4] or "pending")
-            is_booked = booking_status != "cancelled"
-            if is_booked:
-                total_bookings += 1
-
-            booking_instagram_id = str(booking_row[3] or "").strip()
-            booking_phone = str(booking_row[2] or "").strip()
-            has_registered_user = booking_row[6] is not None or booking_row[7] is not None
-            if has_registered_user:
-                registered_key = booking_instagram_id if booking_instagram_id else booking_phone
-                if registered_key:
-                    registered_client_keys.add(registered_key)
-
-            created_at = booking_row[5]
-            leads.append({
-                "id": f"booking_{booking_row[0]}",
-                "event_type": "booking",
-                "name": str(booking_row[1] or "-"),
-                "phone": booking_phone if booking_phone else "-",
-                "location": "-",
-                "registered": has_registered_user,
-                "booked": is_booked,
-                "status": booking_status,
-                "timestamp": created_at.isoformat() if created_at else None,
-                "booking_id": booking_row[0],
-            })
-
-        leads.sort(
-            key=lambda item: datetime.fromisoformat(item["timestamp"]) if item.get("timestamp") else datetime.min,
-            reverse=True,
-        )
-
-        unique_clicks = len(unique_click_keys)
-        conversion_rate = round((total_bookings / unique_clicks) * 100, 2) if unique_clicks > 0 else 0.0
-
-        referral_relative_link = _build_referral_link_by_token(normalized_token)
-        referral_base_url = os.getenv("PUBLIC_BASE_URL", "").strip()
-        referral_absolute_link = _build_absolute_referral_link(referral_base_url, referral_relative_link)
-
-        return {
-            "success": True,
-            "profile": {
-                "campaign_id": campaign_id,
-                "campaign_name": campaign_name,
-                "campaign_description": campaign_description,
-                "campaign_active": campaign_active,
-                "period": period,
-                "date_from": start_date.isoformat(),
-                "date_to": end_date.isoformat(),
-                "share_token": normalized_token,
-                "is_individual_link": is_individual_link,
-                "referrer_client_id": referrer_client_id,
-                "referrer_name": referrer_name,
-                "referrer_phone": referrer_phone,
-                "referral_link": referral_relative_link,
-                "referral_link_absolute": referral_absolute_link if referral_absolute_link else referral_relative_link,
-                "total_clicks": len(visit_rows),
-                "unique_clicks": unique_clicks,
-                "total_bookings": total_bookings,
-                "registered_clients": len(registered_client_keys),
-                "conversion_rate": conversion_rate,
-                "leads": leads[:250],
-            }
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        log_error(f"Error getting public referral link profile: {e}", "settings")
         raise HTTPException(status_code=500, detail=str(e))
 
 

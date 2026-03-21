@@ -10,15 +10,15 @@ def get_salon_timezone() -> str:
     Получить timezone салона из настроек
     
     Returns:
-        Строка timezone (например, 'Asia/Dubai')
+        Строка timezone (например, 'UTC')
     """
     try:
         from db.settings import get_salon_settings
         salon = get_salon_settings()
-        return salon.get('timezone', 'Asia/Dubai')
+        return salon.get('timezone', 'UTC')
     except Exception:
-        # Fallback на Dubai если не удалось получить настройки
-        return 'Asia/Dubai'
+        # Fallback на UTC если не удалось получить настройки
+        return 'UTC'
 
 def get_current_time(timezone: Optional[str] = None) -> datetime:
     """

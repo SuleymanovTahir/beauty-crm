@@ -11,7 +11,7 @@ interface DateFilterDropdownProps {
 }
 
 export function DateFilterDropdown({ value, onChange }: DateFilterDropdownProps) {
-    const { t } = useTranslation('admin/dashboard');
+    const { t } = useTranslation('crm/dashboard');
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 

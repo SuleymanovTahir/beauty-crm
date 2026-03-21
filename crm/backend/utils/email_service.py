@@ -151,14 +151,17 @@ def get_logo_url() -> str:
     """
     try:
         from db import get_salon_settings
-        from core.config import PUBLIC_URL, BASE_DIR
+        from core.config import PUBLIC_URL
         salon_settings = get_salon_settings()
-        logo_url = salon_settings.get('logo_url') or '/logo.webp'
+        logo_url = (salon_settings.get('logo_url') or '').strip()
         base_url = salon_settings.get('base_url', PUBLIC_URL)
 
         # Если logo_url уже полный URL, возвращаем как есть
         if str(logo_url).startswith('http'):
             return logo_url
+
+        if not logo_url:
+            return ""
 
         # Формируем полный URL
         return f"{base_url.rstrip('/')}/{str(logo_url).lstrip('/')}"
@@ -484,7 +487,7 @@ def send_admin_notification_email(admin_email: str, user_data: dict) -> bool:
     subject = f"Новая регистрация: {user_data.get('full_name', 'Unknown')}"
 
     from core.config import PUBLIC_URL
-    admin_panel_url = os.getenv('ADMIN_PANEL_URL', f'{PUBLIC_URL}/admin/registrations')
+    admin_panel_url = os.getenv('ADMIN_PANEL_URL', f'{PUBLIC_URL}/crm/team')
 
     html_body = f"""
     <!DOCTYPE html>

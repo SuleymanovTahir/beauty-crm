@@ -7,7 +7,7 @@ from typing import Optional
 
 
 # Карта единиц времени для всех поддерживаемых языков
-# Синхронизировано с frontend/public/locales/
+# Синхронизировано с frontend/locales/
 DURATION_FORMATS = {
     'ru': {'hour': 'ч', 'minute': 'мин'},
     'en': {'hour': 'h', 'minute': 'min'},
@@ -94,7 +94,7 @@ def parse_duration_to_minutes(duration_str: Optional[str]) -> Optional[int]:
 def format_duration_display(minutes: Optional[int], language: str = 'ru') -> str:
     """
     Форматирует длительность в минутах в читаемый формат
-    Поддерживает все языки из frontend/public/locales/
+    Поддерживает все языки из frontend/locales/
     
     Примеры (для ru):
         60 -> "1ч"

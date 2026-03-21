@@ -10,23 +10,19 @@ import psycopg2
 
 def get_avatar_url(profile_pic: Optional[str], gender: Optional[str] = 'female') -> str:
     """
-    Get avatar URL with gender-based fallback
+    Get avatar URL without default image fallback
     
     Args:
         profile_pic: Profile picture path from database (can be None)
         gender: User gender ('male', 'female', or 'other')
     
     Returns:
-        Avatar URL (profile_pic or gender-based default)
+        Avatar URL (profile_pic or empty string)
     """
     if profile_pic:
         return profile_pic
     
-    # Gender-based fallback
-    if gender == 'male':
-        return '/static/avatars/default_male.webp'
-    else:  # female or other or None
-        return '/static/avatars/default_female.webp'
+    return ''
 
 # Ensure the clients table has the new columns required for import
 def ensure_client_columns(conn=None):
@@ -79,17 +75,17 @@ def get_all_clients(limit: int = 2000):
                       WHERE deleted_at IS NULL
                       ORDER BY is_pinned DESC, last_contact DESC"""
         if limit:
-            query += f" LIMIT {limit}"
+            query += f" LIMIT {int(limit)}"
         c.execute(query)
     except psycopg2.OperationalError:
         # Fallback для старой версии БД
-        query = """SELECT instagram_id, username, phone, name, first_contact, 
-                     last_contact, total_messages, labels, 'new' as status, 
-                     0 as lifetime_value, NULL as profile_pic, NULL as notes, 
+        query = """SELECT instagram_id, username, phone, name, first_contact,
+                     last_contact, total_messages, labels, 'new' as status,
+                     0 as lifetime_value, NULL as profile_pic, NULL as notes,
                      0 as is_pinned
                      FROM clients ORDER BY last_contact DESC"""
         if limit:
-            query += f" LIMIT {limit}"
+            query += f" LIMIT {int(limit)}"
         c.execute(query)
     
     clients = c.fetchall()

@@ -65,7 +65,7 @@ describe('APIClient', () => {
         phone: '971526961100',
         email: 'test@salon.com',
         google_maps: 'https://maps.google.com/test',
-        booking_url: '/public/booking'
+        booking_url: '/crm/bookings'
       };
 
       (global.fetch as any).mockResolvedValueOnce({
@@ -76,7 +76,7 @@ describe('APIClient', () => {
       const result = await apiClient.getSalonInfo();
 
       expect(result).toEqual(mockSalonInfo);
-      expect(result.booking_url).toBe('/public/booking');
+      expect(result.booking_url).toBe('/crm/bookings');
       expect(result.google_maps).toBeTruthy();
     });
   });

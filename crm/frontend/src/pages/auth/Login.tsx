@@ -2,7 +2,7 @@
 // frontend/src/pages/auth/Login.tsx
 // Замените весь файл на этот код:
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Lock, User, Loader } from "lucide-react";
 import { Button } from "@crm/components/ui/button";
 import { Input } from "@crm/components/ui/input";
@@ -31,6 +31,13 @@ export default function Login() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const redirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimerRef.current) clearTimeout(redirectTimerRef.current);
+    };
+  }, []);
   const [salonSettings, setSalonSettings] = useState<any>(null);
   const normalizedPlatformGates = React.useMemo(() => normalizePlatformGates(salonSettings), [salonSettings]);
   const crmRegisterPath = React.useMemo(
@@ -93,7 +100,7 @@ export default function Login() {
         // Проверяем, не подтвержден ли email
         if (response.error_type === "email_not_verified" && response.email) {
           toast.error(t('email_not_verified_redirect', "Email не подтвержден. Перенаправление на страницу верификации..."));
-          setTimeout(() => {
+          redirectTimerRef.current = setTimeout(() => {
             navigate("/verify-email", { state: { email: response.email } });
           }, 1500);
           return;
@@ -158,17 +165,7 @@ export default function Login() {
         {/* Icon Circle or Logo - сверху над карточкой */}
         <div className="flex justify-center mb-6">
           <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg overflow-hidden p-0.5">
-            {salonSettings?.logo_url ? (
-              <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                <img
-                  src={salonSettings.logo_url}
-                  alt={salonSettings.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ) : (
-              <Lock className="w-10 h-10 text-white" />
-            )}
+            <Lock className="w-10 h-10 text-white" />
           </div>
         </div>
 

@@ -19,7 +19,7 @@ import { buildApiUrl } from '../../api/client';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { Pagination } from '../../components/shared/Pagination';
 import { CRMDatePicker } from '../../components/shared/CRMDatePicker';
-import '../admin/Bookings.css';
+import './Bookings.css';
 
 // Local API wrapper for consistency with original Bookings.tsx
 const api = {
@@ -371,7 +371,7 @@ export default function UniversalBookings() {
     const { currency } = useCurrency();
     const [bookings, setBookings] = useState<any[]>([]);
     const [clients, setClients] = useState<any[]>([]);
-    const { t, i18n } = useTranslation(['admin/bookings', 'admin/services', 'common']);
+    const { t, i18n } = useTranslation(['crm/bookings', 'crm/services', 'common']);
     const [services, setServices] = useState<any[]>([]);
     const [filteredBookings, setFilteredBookings] = useState<any[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -785,7 +785,7 @@ export default function UniversalBookings() {
     const getDiscountLabel = (booking: any): string => {
         const promoCode = String(booking?.promo_code ?? '').trim();
         if (promoCode.length > 0) {
-            return `${t('admin/services:promo_code')}: ${promoCode}`;
+            return `${t('crm/services:promo_code')}: ${promoCode}`;
         }
 
         const discountSource = String(booking?.discount_source ?? '').trim().toLowerCase();

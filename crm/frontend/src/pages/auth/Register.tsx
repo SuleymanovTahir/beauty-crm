@@ -28,7 +28,6 @@ interface FieldErrors {
   email?: string[];
   phone?: string[];
   business_type?: string[];
-  product_mode?: string[];
   password?: string[];
   confirmPassword?: string[];
   terms?: string[];
@@ -51,7 +50,6 @@ export default function Register() {
   const navigate = useNavigate();
   const { t } = useTranslation(['auth/register', 'common']);
   const allowedBusinessTypes = ['beauty', 'restaurant', 'construction', 'factory', 'taxi', 'delivery', 'other'] as const;
-  const allowedProductModes = ['crm', 'site', 'both'] as const;
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -61,7 +59,6 @@ export default function Register() {
     phone: "",
     role: "employee",
     business_type: "",
-    product_mode: "",
   });
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(true);
@@ -88,16 +85,11 @@ export default function Register() {
         const salonRes = await api.getSalonSettings();
         setSalonSettings(salonRes);
         const businessTypeFromSettings = typeof salonRes?.business_type === "string" ? salonRes.business_type : "";
-        const productModeFromSettings = typeof salonRes?.product_mode === "string" ? salonRes.product_mode : "";
-
         setFormData((prev) => ({
           ...prev,
           business_type: allowedBusinessTypes.includes(businessTypeFromSettings as typeof allowedBusinessTypes[number])
             ? businessTypeFromSettings
             : prev.business_type,
-          product_mode: allowedProductModes.includes(productModeFromSettings as typeof allowedProductModes[number])
-            ? productModeFromSettings
-            : prev.product_mode,
         }));
       } catch (err) {
         console.error("Error loading register data:", err);
@@ -219,11 +211,6 @@ export default function Register() {
       errors.business_type = [requiredFieldError];
     }
 
-    // Режим продукта
-    if (!(formData.product_mode && formData.product_mode.trim())) {
-      errors.product_mode = [requiredFieldError];
-    }
-
     // Пароль
     if (!formData.password) {
       errors.password = [requiredFieldError];
@@ -281,8 +268,7 @@ export default function Register() {
         privacyAccepted,
         newsletterSubscribed,
         captchaToken ?? undefined,
-        formData.business_type,
-        formData.product_mode
+        formData.business_type
       );
 
 
@@ -517,17 +503,7 @@ export default function Register() {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg overflow-hidden p-0.5">
-            {salonSettings?.logo_url ? (
-              <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                <img
-                  src={salonSettings.logo_url}
-                  alt={salonSettings.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ) : (
-              <UserPlus className="w-10 h-10 text-white" />
-            )}
+            <UserPlus className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl text-gray-900 mb-2">
             {t('register_staff_title', 'Регистрация сотрудника')}
@@ -680,28 +656,6 @@ export default function Register() {
               <FieldError errors={fieldErrors.business_type} />
               <p className="text-sm text-gray-500 mt-3">
                 {t('business_type_hint')}
-              </p>
-            </div>
-
-            <div>
-              <Label htmlFor="product_mode" className="mb-2 block">{t('product_mode_label')} *</Label>
-              <Select
-                value={formData.product_mode}
-                onValueChange={(value) => setFormData({ ...formData, product_mode: value })}
-                disabled={loading}
-              >
-                <SelectTrigger id="product_mode" className={`w-full ${fieldErrors.product_mode ? 'border-red-500' : ''}`}>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="crm">{t('product_mode_crm')}</SelectItem>
-                  <SelectItem value="site">{t('product_mode_site')}</SelectItem>
-                  <SelectItem value="both">{t('product_mode_both')}</SelectItem>
-                </SelectContent>
-              </Select>
-              <FieldError errors={fieldErrors.product_mode} />
-              <p className="text-sm text-gray-500 mt-3">
-                {t('product_mode_hint')}
               </p>
             </div>
 

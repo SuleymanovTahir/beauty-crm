@@ -351,7 +351,7 @@ async def notify_manager_urgent_booking(client_id: str, reason: str):
                 title="🚨 СРОЧНАЯ ЗАПИСЬ",
                 message=f"Клиент {client_name}: {reason}\nТребуется немедленная помощь!",
                 notification_type="urgent",
-                action_url=f"/admin/chat?client_id={client_id}"
+                action_url=f"/crm/chat?client_id={client_id}"
             )
         
         log_info(f"✅ Urgent booking notification sent to managers", "notifications")

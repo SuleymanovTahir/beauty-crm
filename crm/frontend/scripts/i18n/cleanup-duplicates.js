@@ -10,11 +10,8 @@ const LOCALES_DIR = path.resolve(__dirname, '../../src/locales');
 
 // Список файлов, которые являются дубликатами
 const DUPLICATE_FILES = [
-    'about', 'analytics', 'bookingdetail', 'bookings', 'calendar', 'chat',
-    'clientdetail', 'clients', 'contacts', 'cooperation', 'dashboard',
-    'datadeletion', 'edituser', 'faq', 'funnel', 'home', 'login',
-    'pricelist', 'profile', 'public', 'services', 'settings',
-    'specialpackages', 'success', 'terms', 'usercabinet', 'users'
+    'analytics', 'bookings', 'chat', 'clients', 'dashboard',
+    'funnel', 'login', 'profile', 'services', 'settings', 'tasks', 'users'
 ];
 
 console.log('🧹 Очистка дублирующих файлов переводов...');

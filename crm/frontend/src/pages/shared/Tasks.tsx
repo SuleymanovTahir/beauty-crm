@@ -68,7 +68,7 @@ interface TaskAnalytics {
 }
 
 export default function UniversalTasks() {
-    const { t } = useTranslation(['admin/tasks', 'common']);
+    const { t } = useTranslation(['crm/tasks', 'common']);
     const { user: currentUser } = useAuth();
 
     const isAdminLike = useMemo(() => {

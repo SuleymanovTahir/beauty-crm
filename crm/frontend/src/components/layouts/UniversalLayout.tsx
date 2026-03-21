@@ -7,8 +7,6 @@ import { useNotificationsWebSocket } from '../../hooks/useNotificationsWebSocket
 import {
     LayoutDashboard,
     Users,
-    FileText,
-    BarChart3,
     MessageSquare,
     Settings,
     LogOut,
@@ -19,27 +17,13 @@ import {
     X,
     Filter,
     MessageCircle,
-    Package,
-    Receipt,
     Briefcase,
     CheckSquare,
     Send,
     Phone,
-    Trash2,
-    ShieldCheck,
-    Bot,
-    CreditCard,
-    Store,
     Bell,
-    Ticket,
-    Gift,
-    Target,
     MoreHorizontal,
-    Link as LinkIcon,
-    LayoutGrid,
-    Share2,
-    Award,
-    Image as ImageIcon
+    LayoutGrid
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -48,7 +32,6 @@ import { webrtcService } from '../../services/webrtc';
 import { cn } from '../../lib/utils';
 import {
     getUnauthenticatedCrmPathByGates,
-    getUnauthenticatedSitePathByGates,
     normalizePlatformGates,
 } from '../../utils/platformRouting';
 import './MainLayout.css';
@@ -61,26 +44,18 @@ interface MainLayoutProps {
 export const CRM_MENU_DEFAULT_ORDER = [
     'dashboard',
     'bookings',
-    'clients',
     'chat-group',
-    'calendar',
     'funnel',
     'catalog-group',
-    'analytics-group',
-    'finance-group',
     'tools-group',
-    'integrations-group',
     'settings-group'
 ];
 
 export const CRM_MENU_GROUPS: Record<string, string[]> = {
     'chat-group': ['chat', 'internal-chat'],
-    'catalog-group': ['services', 'service-change-requests', 'products'],
-    'analytics-group': ['analytics'],
-    'finance-group': ['invoices', 'contracts'],
-    'tools-group': ['tasks', 'broadcasts', 'telephony', 'referrals', 'promo-codes', 'loyalty', 'challenges'],
-    'integrations-group': ['messengers', 'payment-integrations', 'marketplace-integrations'],
-    'settings-group': ['settings', 'team', 'bot-settings', 'audit-log', 'trash'],
+    'catalog-group': ['services', 'team'],
+    'tools-group': ['tasks', 'telephony'],
+    'settings-group': ['settings'],
 };
 
 type BusinessModuleBinding = {
@@ -91,34 +66,14 @@ type BusinessModuleBinding = {
 const MENU_MODULE_BINDINGS: Record<string, BusinessModuleBinding> = {
     dashboard: { suite: 'crm', module: 'dashboard' },
     bookings: { suite: 'crm', module: 'bookings' },
-    calendar: { suite: 'crm', module: 'calendar' },
-    clients: { suite: 'crm', module: 'clients' },
     team: { suite: 'crm', module: 'team' },
     services: { suite: 'crm', module: 'services' },
     tasks: { suite: 'crm', module: 'tasks' },
-    analytics: { suite: 'crm', module: 'analytics' },
     funnel: { suite: 'crm', module: 'funnel' },
-    products: { suite: 'crm', module: 'products' },
-    invoices: { suite: 'crm', module: 'invoices' },
-    contracts: { suite: 'crm', module: 'contracts' },
     telephony: { suite: 'crm', module: 'telephony' },
-    messengers: { suite: 'crm', module: 'messengers' },
     'internal-chat': { suite: 'crm', module: 'internal_chat' },
-    broadcasts: { suite: 'crm', module: 'broadcasts' },
-    referrals: { suite: 'crm', module: 'referrals' },
-    loyalty: { suite: 'crm', module: 'loyalty' },
-    challenges: { suite: 'crm', module: 'challenges' },
-    'promo-codes': { suite: 'crm', module: 'promo_codes' },
-    'service-change-requests': { suite: 'crm', module: 'service_change_requests' },
     settings: { suite: 'crm', module: 'settings' },
-    'bot-settings': { suite: 'crm', module: 'bot_settings' },
     notifications: { suite: 'crm', module: 'notifications' },
-    plans: { suite: 'crm', module: 'plans' },
-    'payment-integrations': { suite: 'crm', module: 'payment_integrations' },
-    'marketplace-integrations': { suite: 'crm', module: 'marketplace_integrations' },
-    trash: { suite: 'crm', module: 'trash' },
-    'audit-log': { suite: 'crm', module: 'audit_log' },
-    gallery: { suite: 'site', module: 'gallery' },
 };
 
 type LayoutSalonSettings = {
@@ -137,85 +92,36 @@ export const buildCrmMenuCatalog = ({
     rolePrefix,
     dashboardPath,
     permissions,
-    userRole,
 }: {
     t: (key: string, options?: any) => string;
     rolePrefix: string;
     dashboardPath: string;
     permissions: any;
-    userRole?: string;
 }) => {
     const items: Record<string, any> = {
         'dashboard': { icon: LayoutDashboard, label: t('menu.dashboard'), path: dashboardPath, req: () => true },
         'bookings': { icon: Calendar, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, req: () => permissions.canViewAllBookings },
-        'calendar': { icon: Calendar, label: t('menu.calendar'), path: `${rolePrefix}/calendar`, req: () => true },
-        'clients': { icon: Users, label: t('menu.clients'), path: `${rolePrefix}/clients`, req: () => true },
         'chat-group': { icon: MessageSquare, label: t('menu.chat'), req: () => true },
         'chat': { icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, req: () => true },
         'internal-chat': { icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, req: () => true },
         'funnel': { icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, req: () => true },
         'catalog-group': { icon: LayoutGrid, label: t('menu.catalog'), req: () => true },
         'services': { icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, req: () => permissions.canEditServices },
-        'service-change-requests': { icon: FileText, label: t('menu.service_requests'), path: `${rolePrefix}/service-change-requests`, req: () => permissions.canEditServices },
-        'products': { icon: Package, label: t('menu.products'), path: `${rolePrefix}/products`, req: () => permissions.roleLevel >= 70 },
-        'analytics-group': { icon: BarChart3, label: t('menu.analytics'), req: () => permissions.canViewAnalytics },
-        'analytics': { icon: BarChart3, label: t('menu.analytics'), path: `${rolePrefix}/analytics`, req: () => permissions.canViewAnalytics },
-        'finance-group': { icon: Receipt, label: t('menu.finance'), req: () => permissions.roleLevel >= 70 },
-        'invoices': { icon: Receipt, label: t('menu.invoices'), path: `${rolePrefix}/invoices`, req: () => permissions.roleLevel >= 70 },
-        'contracts': { icon: Briefcase, label: t('menu.contracts'), path: `${rolePrefix}/contracts`, req: () => permissions.roleLevel >= 70 },
+        'team': { icon: Users, label: t('menu.team', { defaultValue: 'Команда' }), path: `${rolePrefix}/team`, req: () => permissions.roleLevel >= 70 },
         'tools-group': { icon: Briefcase, label: t('menu.tools'), req: () => true },
         'tasks': { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, req: () => true },
-        'broadcasts': { icon: Send, label: t('menu.broadcasts'), path: `${rolePrefix}/broadcasts`, req: () => permissions.roleLevel >= 70 },
         'telephony': { icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, req: () => true },
-        'referrals': { icon: Share2, label: t('menu.referrals'), path: `${rolePrefix}/referrals`, req: () => permissions.roleLevel >= 70 },
-        'promo-codes': { icon: Ticket, label: t('menu.promo_codes'), path: `${rolePrefix}/promo-codes`, req: () => permissions.roleLevel >= 70 },
-        'loyalty': { icon: Gift, label: t('adminpanel/loyaltymanagement:title'), path: `${rolePrefix}/loyalty`, req: () => permissions.roleLevel >= 70 },
-        'challenges': { icon: Target, label: t('menu.challenges'), path: `${rolePrefix}/challenges`, req: () => permissions.roleLevel >= 70 },
-        'integrations-group': { icon: LinkIcon, label: t('menu.integrations'), req: () => true },
-        'messengers': { icon: MessageSquare, label: t('menu.messengers'), path: `${rolePrefix}/messengers`, req: () => true },
-        'payment-integrations': { icon: CreditCard, label: t('menu.payments'), path: `${rolePrefix}/payment-integrations`, req: () => true },
-        'marketplace-integrations': { icon: Store, label: t('menu.marketplaces'), path: `${rolePrefix}/marketplace-integrations`, req: () => true },
         'settings-group': { icon: Settings, label: t('menu.settings'), req: () => permissions.canEditSettings },
         'settings': { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, req: () => permissions.canEditSettings },
-        'team': { icon: Users, label: t('menu.team', { defaultValue: 'Команда' }), path: `${rolePrefix}/team`, req: () => permissions.roleLevel >= 70 },
-        'bot-settings': { icon: Bot, label: t('menu.bot_settings'), path: `${rolePrefix}/bot-settings`, req: () => permissions.canViewBotSettings },
-        'audit-log': { icon: ShieldCheck, label: t('menu.audit_log'), path: `${rolePrefix}/audit-log`, req: () => userRole === 'director' },
-        'trash': { icon: Trash2, label: t('menu.trash'), path: `${rolePrefix}/trash`, req: () => permissions.roleLevel >= 70 },
     };
 
     return { items, groups: CRM_MENU_GROUPS, defaultOrder: CRM_MENU_DEFAULT_ORDER };
 };
 
-export const buildAdminMenuCatalog = ({
-    t,
-}: {
-    t: (key: string, options?: any) => string;
-}) => {
-    const items: Record<string, any> = {
-        'dashboard': { icon: LayoutDashboard, label: t('layouts/adminpanellayout:menu.dashboard'), path: '/admin/dashboard', req: () => true },
-        'bookings': { icon: Calendar, label: t('menu.bookings'), path: '/admin/bookings', req: () => true },
-        'team': { icon: Users, label: t('layouts/adminpanellayout:menu.team', 'Команда'), path: '/admin/team', req: () => true },
-        'clients': { icon: Users, label: t('menu.clients'), path: '/admin/clients', req: () => true },
-        'loyalty': { icon: Gift, label: t('adminpanel/loyaltymanagement:title'), path: '/admin/loyalty', req: () => true },
-        'referrals': { icon: Award, label: t('layouts/adminpanellayout:menu.referral_program'), path: '/admin/referrals', req: () => true },
-        'challenges': { icon: Target, label: t('layouts/adminpanellayout:menu.challenges'), path: '/admin/challenges', req: () => true },
-        'promo-codes': { icon: Ticket, label: t('layouts/mainlayout:menu.promo_codes'), path: '/admin/promo-codes', req: () => true },
-        'gallery': { icon: ImageIcon, label: t('layouts/adminpanellayout:menu.photo_gallery'), path: '/admin/gallery', req: () => true },
-        'broadcasts': { icon: Send, label: t('menu.broadcasts'), path: '/admin/broadcasts', req: () => true },
-        'notifications': { icon: Bell, label: t('layouts/adminpanellayout:menu.notifications'), path: '/admin/notifications', req: () => true },
-        'settings': { icon: Settings, label: t('menu.settings'), path: '/admin/settings', req: () => true },
-    };
-
-    return { items };
-};
-
 export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     const navigate = useNavigate();
     const location = useLocation();
-    const { t } = useTranslation(['layouts/mainlayout', 'layouts/adminpanellayout', 'adminpanel/loyaltymanagement', 'common']);
-
-    // Detect if we are in Admin Panel
-    const isAdminPanel = location.pathname.startsWith('/admin');
+    const { t } = useTranslation(['layouts/mainlayout', 'common']);
 
     const [incomingCall, setIncomingCall] = useState<{
         from: number;
@@ -239,19 +145,13 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     const permissions = usePermissions(user?.role || 'employee', user?.secondary_role);
 
     const normalizedPlatformGates = useMemo(() => normalizePlatformGates(salonSettings), [salonSettings]);
-    const logoutPath = useMemo(() => {
-        if (isAdminPanel) {
-            return getUnauthenticatedSitePathByGates(
-                normalizedPlatformGates.site_enabled,
-                normalizedPlatformGates.crm_enabled,
-            );
-        }
-
-        return getUnauthenticatedCrmPathByGates(
+    const logoutPath = useMemo(
+        () => getUnauthenticatedCrmPathByGates(
             normalizedPlatformGates.site_enabled,
             normalizedPlatformGates.crm_enabled,
-        );
-    }, [isAdminPanel, normalizedPlatformGates.crm_enabled, normalizedPlatformGates.site_enabled]);
+        ),
+        [normalizedPlatformGates.crm_enabled, normalizedPlatformGates.site_enabled],
+    );
 
     const businessModules = useMemo(() => {
         const modules = salonSettings?.business_profile_config?.modules;
@@ -286,7 +186,6 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
     const rolePrefix = useMemo(() => {
         const path = location.pathname;
-        if (path.startsWith('/admin')) return '/admin';
         if (path.startsWith('/crm')) return '/crm';
         if (path.startsWith('/manager')) return '/manager';
         if (path.startsWith('/sales')) return '/sales';
@@ -297,11 +196,10 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     }, [location.pathname]);
 
     const dashboardPath = useMemo(() => {
-        if (isAdminPanel) return '/admin/dashboard';
-        if (['sales', 'saler'].includes(user?.role ?? '')) return `${rolePrefix}/clients`;
-        if (user?.role === 'marketer') return `${rolePrefix}/analytics`;
+        if (['sales', 'saler'].includes(user?.role ?? '')) return `${rolePrefix}/dashboard`;
+        if (user?.role === 'marketer') return `${rolePrefix}/dashboard`;
         return `${rolePrefix}/dashboard`;
-    }, [user?.role, rolePrefix, isAdminPanel]);
+    }, [user?.role, rolePrefix]);
 
     useNotificationsWebSocket({
         userId: user?.id || null,
@@ -380,7 +278,6 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     };
 
     const loadMenuSettings = async () => {
-        if (isAdminPanel) return; // Menu settings are only for CRM
         try {
             const settings = await api.getMenuSettings();
             setMenuSettings(settings);
@@ -404,7 +301,6 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     };
 
     const getRoleLabel = () => {
-        if (isAdminPanel) return t('layouts/adminpanellayout:admin_panel', 'Админ-панель');
         switch (user?.role) {
             case 'director': return t('roles.director');
             case 'admin': return t('roles.admin');
@@ -418,20 +314,11 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     };
 
     const allMenuItems: any[] = useMemo(() => {
-        if (isAdminPanel) {
-            const adminCatalog = buildAdminMenuCatalog({ t });
-
-            return Object.entries(adminCatalog.items)
-                .map(([id, item]) => ({ ...item, id }))
-                .filter((item) => item.req() && isModuleEnabled(item.id));
-        }
-
         const crmCatalog = buildCrmMenuCatalog({
             t,
             rolePrefix,
             dashboardPath,
             permissions,
-            userRole: user?.role,
         });
         const items: Record<string, any> = crmCatalog.items;
         const groups: Record<string, string[]> = crmCatalog.groups;
@@ -481,15 +368,14 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         });
 
         return finalItems;
-    }, [t, rolePrefix, dashboardPath, permissions, user?.role, menuSettings, isAdminPanel, isModuleEnabled]);
+    }, [t, rolePrefix, dashboardPath, permissions, user?.role, menuSettings, isModuleEnabled]);
 
     const menuItems = useMemo(() => {
         return allMenuItems.map((item: any) => {
             let badge = 0;
-            if (item.id === 'chat-group' || (isAdminPanel && item.id === 'notifications')) {
-                badge = item.id === 'notifications' ? notificationsUnreadCount : (chatUnreadCount + internalChatUnreadCount);
-            }
-            else if (item.id === 'messengers') badge = chatUnreadCount;
+            if (item.id === 'chat-group') {
+                badge = chatUnreadCount + internalChatUnreadCount;
+            } else if (item.id === 'messengers') badge = chatUnreadCount;
             else if (item.id === 'internal-chat') badge = internalChatUnreadCount;
 
             const subItems = item.items?.map((sub: any) => {
@@ -502,35 +388,14 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
             return { ...item, badge, items: subItems };
         });
-    }, [allMenuItems, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount, isAdminPanel]);
+    }, [allMenuItems, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount]);
 
     const routeAccessEntries = useMemo(() => {
-        if (isAdminPanel) {
-            const adminCatalog = buildAdminMenuCatalog({ t });
-            const adminItems: Record<string, any> = adminCatalog.items;
-
-            return Object.entries(adminItems)
-                .map(([id, item]) => {
-                    const path = typeof item.path === 'string' ? item.path : '';
-                    if (path.length === 0) {
-                        return null;
-                    }
-
-                    return {
-                        id,
-                        path,
-                        allowed: item.req() === true && isModuleEnabled(id),
-                    };
-                })
-                .filter((entry): entry is { id: string; path: string; allowed: boolean } => entry !== null);
-        }
-
         const crmCatalog = buildCrmMenuCatalog({
             t,
             rolePrefix,
             dashboardPath,
             permissions,
-            userRole: user?.role,
         });
         const catalogItems: Record<string, any> = crmCatalog.items;
 
@@ -552,7 +417,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                 };
             })
             .filter((entry): entry is { id: string; path: string; allowed: boolean } => entry !== null);
-    }, [dashboardPath, isAdminPanel, menuSettings?.hidden_items, permissions, rolePrefix, t, user?.role, isModuleEnabled]);
+    }, [dashboardPath, menuSettings?.hidden_items, permissions, rolePrefix, t, user?.role, isModuleEnabled]);
 
     const activeDesktopGroupId = useMemo(() => {
         const activeGroup = menuItems.find((item: any) => {
@@ -566,16 +431,6 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     }, [menuItems, location.pathname]);
 
     const mainTabs = useMemo(() => {
-        if (isAdminPanel) {
-            const adminTabs = [
-                { id: 'dashboard', icon: LayoutDashboard, label: t('layouts/adminpanellayout:menu.dashboard_short', 'Главная'), path: '/admin/dashboard' },
-                { id: 'loyalty', icon: Gift, label: t('adminpanel/loyaltymanagement:title'), path: '/admin/loyalty' },
-                { id: 'referrals', icon: Award, label: t('layouts/adminpanellayout:menu.referrals_short', 'Рефералы'), path: '/admin/referrals' },
-                { id: 'challenges', icon: Target, label: t('layouts/adminpanellayout:menu.challenges_short', 'Цели'), path: '/admin/challenges' },
-                { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
-            ];
-            return adminTabs.filter((tab) => tab.id === 'more' || isModuleEnabled(tab.id));
-        }
         return [
             { id: 'dashboard', icon: LayoutDashboard, label: t('menu.dashboard'), path: dashboardPath },
             { id: 'funnel', icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel` },
@@ -583,7 +438,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             { id: 'chat', icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: chatUnreadCount + internalChatUnreadCount },
             { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
         ];
-    }, [t, dashboardPath, rolePrefix, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount, isAdminPanel, isModuleEnabled]);
+    }, [t, dashboardPath, rolePrefix, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount]);
 
     const chatSubItems = useMemo(() => [
         { id: 'messengers', icon: Send, label: t('menu.messengers'), path: `${rolePrefix}/messengers`, badge: chatUnreadCount },
@@ -656,57 +511,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         };
 
         const getMappedTabLabel = (value: string): string => {
-            if (location.pathname.endsWith('/special-packages')) {
-                if (value === 'packages') {
-                    return t('admin/specialpackages:tab_packages');
-                }
-                if (value === 'referrals') {
-                    return t('admin/specialpackages:tab_referrals');
-                }
-                if (value === 'challenges') {
-                    return t('layouts/mainlayout:menu.challenges');
-                }
-                if (value === 'loyalty') {
-                    return t('adminpanel/loyaltymanagement:title');
-                }
-                if (value === 'promo-codes') {
-                    return t('layouts/mainlayout:menu.promo_codes');
-                }
-                if (value === 'history') {
-                    return t('admin/specialpackages:referrals_history_tab', 'История приглашений');
-                }
-                if (value === 'campaigns') {
-                    return t('admin/specialpackages:referrals_campaigns_tab', 'Кампании и бонусы');
-                }
-            }
-
-            if (location.pathname.endsWith('/referrals')) {
-                if (value === 'history') {
-                    return t('admin/specialpackages:referrals_history_tab', 'История приглашений');
-                }
-                if (value === 'campaigns') {
-                    return t('admin/specialpackages:referrals_campaigns_tab', 'Кампании и бонусы');
-                }
-                if (value === 'all') {
-                    return t('adminpanel/referralprogram:table.filters.all_statuses');
-                }
-                if (value === 'pending') {
-                    return t('adminpanel/referralprogram:table.statuses.pending');
-                }
-                if (value === 'completed') {
-                    return t('adminpanel/referralprogram:table.statuses.completed');
-                }
-                if (value === 'cancelled') {
-                    return t('adminpanel/referralprogram:table.statuses.cancelled');
-                }
-            }
-
             const tabKeyMap: Record<string, string> = {
-                compose: 'admin/broadcasts:create_broadcast',
-                history: 'admin/broadcasts:history',
-                templates: 'admin/broadcasts:templates_tab',
-                subscribers: 'admin/broadcasts:subscribers',
-                unsubscribed: 'admin/broadcasts:unsubscribed_tab',
                 profile: 'settings:profile',
                 general: 'settings:general',
                 notifications: 'settings:notifications',
@@ -715,24 +520,12 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                 roles: 'settings:manage_roles',
                 security: 'settings:security',
                 danger: 'settings:danger_zone',
-                information: 'admin/users:tab_information',
+                information: 'crm/users:tab_information',
                 services: 'menu.services',
-                online_booking: 'admin/users:tab_online_booking',
+                online_booking: 'crm/users:tab_online_booking',
                 settings: 'menu.settings',
-                schedule: 'admin/users:tab_schedule',
-                payroll: 'admin/users:tab_payroll',
-                analytics: 'admin/botsettings:tab_analytics',
-                personality: 'admin/botsettings:tabs.personality',
-                pricing: 'admin/botsettings:tabs.pricing',
-                objections: 'admin/botsettings:tabs.objections',
-                communication: 'admin/botsettings:tabs.communication',
-                advanced: 'admin/botsettings:tabs.advanced',
-                safety: 'admin/botsettings:tabs.safety',
-                examples: 'admin/botsettings:tabs.examples',
-                reviews: 'admin/publiccontent:tabs.reviews',
-                faq: 'admin/publiccontent:tabs.faq',
-                gallery: 'admin/publiccontent:tabs.gallery',
-                banners: 'admin/publiccontent:tabs.banners',
+                schedule: 'crm/users:tab_schedule',
+                payroll: 'crm/users:tab_payroll',
             };
 
             const translationKey = tabKeyMap[value];
@@ -900,21 +693,12 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                     {/* Logo Section */}
                     <div className="sidebar-header-premium flex items-center gap-3">
                         <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-gray-100 p-2 shrink-0">
-                            <img
-                                src={salonSettings?.logo_url || '/logo.webp'}
-                                alt="Logo"
-                                className="w-full h-full object-contain"
-                                onError={(e) => {
-                                    // Fallback to logo.png if webp fails, or hide if both fail
-                                    const target = e.target as HTMLImageElement;
-                                    if (target.src.endsWith('.webp')) {
-                                        target.src = '/logo.png';
-                                    }
-                                }}
-                            />
+                            <span className="text-lg font-semibold text-gray-700">
+                                {(salonSettings?.name?.trim()?.charAt(0) ?? 'S').toUpperCase()}
+                            </span>
                         </div>
                         <div className="min-w-0 flex-1">
-                            <h1 className="sidebar-brand-name">{salonSettings?.name || 'Beauty CRM'}</h1>
+                            <h1 className="sidebar-brand-name">{salonSettings?.name ?? 'ST CRM'}</h1>
                             <div className="sidebar-brand-role">{getRoleLabel()}</div>
                         </div>
                     </div>

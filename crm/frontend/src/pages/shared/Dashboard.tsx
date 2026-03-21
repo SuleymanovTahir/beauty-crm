@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { DateFilterDropdown } from '../../components/shared/DateFilterDropdown';
+import QuickStatsBar from '../../components/shared/QuickStatsBar';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { Badge } from '../../components/ui/badge';
@@ -57,7 +58,7 @@ export default function UniversalDashboard() {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
   const permissions = usePermissions(currentUser?.role || 'employee');
-  const { t, i18n } = useTranslation(['admin/dashboard', 'common', 'employee/Dashboard']);
+  const { t, i18n } = useTranslation(['crm/dashboard', 'common', 'employee/Dashboard']);
 
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentBookings, setRecentBookings] = useState<any[]>([]);
@@ -178,7 +179,7 @@ export default function UniversalDashboard() {
         api.getBookings(),
         api.getClients(),
         canRequestBotAnalytics ? api.get('/api/bot-analytics?days=30').catch(() => null) : Promise.resolve(null),
-        api.getPublicSalonSettings().catch(() => api.getSalonSettings().catch(() => ({ currency: '' }))),
+        api.getSalonSettings().catch(() => ({ currency: '' })),
       ]);
 
       // Transform kpiData to stats format for compatibility
@@ -251,7 +252,7 @@ export default function UniversalDashboard() {
     try {
       const dateRange = getDateRange();
       toast.info(`Generating ${format.toUpperCase()} report...`);
-      const response = await fetch(buildApiUrl('/api/admin/export-report'), {
+      const response = await fetch(buildApiUrl('/api/export-report'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -321,7 +322,7 @@ export default function UniversalDashboard() {
               {t('common:welcome')}, {currentUser.full_name || currentUser.username}!
             </h1>
             <p className="text-sm md:text-base text-gray-600">
-              {isSales ? t('admin/dashboard:sales_metrics') : t('employee/Dashboard:my_bookings')}
+              {isSales ? t('crm/dashboard:sales_metrics') : t('employee/Dashboard:my_bookings')}
             </p>
           </div>
         </div>
@@ -331,7 +332,7 @@ export default function UniversalDashboard() {
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <div className="flex items-center gap-2 text-gray-700">
               <Filter className="w-5 h-5" />
-              <span className="font-medium">{t('admin/dashboard:date_filter')}</span>
+              <span className="font-medium">{t('crm/dashboard:date_filter')}</span>
             </div>
             <DateFilterDropdown
               value={dateFilter}
@@ -344,11 +345,11 @@ export default function UniversalDashboard() {
           {showDatePicker && (
             <div className="mt-4 flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
               <div className="flex-1">
-                <label className="block text-xs text-gray-600 mb-1">{t('admin/dashboard:from')}</label>
+                <label className="block text-xs text-gray-600 mb-1">{t('crm/dashboard:from')}</label>
                 <input type="date" className="w-full px-3 py-2 border rounded-lg" value={customDateRange.start.split('T')[0]} onChange={(e) => setCustomDateRange({ ...customDateRange, start: new Date(e.target.value).toISOString() })} />
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-gray-600 mb-1">{t('admin/dashboard:to')}</label>
+                <label className="block text-xs text-gray-600 mb-1">{t('crm/dashboard:to')}</label>
                 <input type="date" className="w-full px-3 py-2 border rounded-lg" value={customDateRange.end.split('T')[0]} onChange={(e) => setCustomDateRange({ ...customDateRange, end: new Date(e.target.value).toISOString() })} />
               </div>
             </div>
@@ -357,25 +358,25 @@ export default function UniversalDashboard() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
           <div className="bg-gradient-to-br from-pink-500 to-blue-600 p-6 rounded-xl shadow-lg text-white">
-            <p className="text-sm opacity-80 mb-1">{isSales ? t('admin/dashboard:deal_revenue') : t('admin/dashboard:your_revenue')}</p>
+            <p className="text-sm opacity-80 mb-1">{isSales ? t('crm/dashboard:deal_revenue') : t('crm/dashboard:your_revenue')}</p>
             <h3 className="text-3xl font-bold">{stats?.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
             {stats?.growth?.revenue && (
               <div className="flex items-center gap-1 text-xs mt-1">
                 <TrendingUp className={`w-3 h-3 ${stats.growth.revenue.trend === 'down' ? 'rotate-180' : ''}`} />
-                <span>{stats.growth.revenue.percentage}% {t('admin/dashboard:vs_previous_period')}</span>
+                <span>{stats.growth.revenue.percentage}% {t('crm/dashboard:vs_previous_period')}</span>
               </div>
             )}
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p className="text-gray-500 text-sm mb-1">{isSales ? t('admin/dashboard:total_leads') : t('employee/Dashboard:today_bookings')}</p>
+            <p className="text-gray-500 text-sm mb-1">{isSales ? t('crm/dashboard:total_leads') : t('employee/Dashboard:today_bookings')}</p>
             <h3 className="text-3xl text-gray-900 font-bold">{stats?.total_bookings || 0}</h3>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p className="text-gray-500 text-sm mb-1">{isSales ? t('admin/dashboard:deal_conversion') : t('admin/dashboard:my_conversion')}</p>
+            <p className="text-gray-500 text-sm mb-1">{isSales ? t('crm/dashboard:deal_conversion') : t('crm/dashboard:my_conversion')}</p>
             <h3 className="text-3xl text-green-600 font-bold">{stats?.conversion_rate?.toFixed(1)}%</h3>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <p className="text-gray-500 text-sm mb-1">{t('admin/dashboard:new_clients')}</p>
+            <p className="text-gray-500 text-sm mb-1">{t('crm/dashboard:new_clients')}</p>
             <h3 className="text-3xl text-blue-600 font-bold">{stats?.new_clients || 0}</h3>
           </div>
         </div>
@@ -387,8 +388,8 @@ export default function UniversalDashboard() {
               {t('employee/Dashboard:schedule_for_today')}
             </h2>
             <span className="text-sm text-gray-500">
-              {recentBookings.filter(b => b.status === 'confirmed').length} {t('admin/dashboard:status_confirmed')},
-              {recentBookings.filter(b => b.status === 'pending').length} {t('admin/dashboard:status_pending')}
+              {recentBookings.filter(b => b.status === 'confirmed').length} {t('crm/dashboard:status_confirmed')},
+              {recentBookings.filter(b => b.status === 'pending').length} {t('crm/dashboard:status_pending')}
             </span>
           </div>
 
@@ -438,7 +439,7 @@ export default function UniversalDashboard() {
                                 ? 'bg-green-100 text-green-800'
                                 : 'bg-yellow-100 text-yellow-800'
                             }>
-                              {t(`admin/dashboard:status_${booking.status}`)}
+                              {t(`crm/dashboard:status_${booking.status}`)}
                             </Badge>
                           </div>
                           <p className="text-gray-700 text-sm mb-1">{booking.service}</p>
@@ -460,18 +461,18 @@ export default function UniversalDashboard() {
   if (!stats) return null;
 
   const stat_cards = [
-    { icon: Users, label: t('admin/dashboard:total_clients'), value: stats.total_clients || 0, color: 'text-blue-600', bg: 'bg-blue-50', growth: stats.growth?.total_clients },
-    { icon: Crown, label: t('admin/dashboard:vip_clients'), value: stats.vip_clients || 0, color: 'text-yellow-600', bg: 'bg-yellow-50', growth: stats.growth?.vip_clients },
-    { icon: UserPlus, label: t('admin/dashboard:new_clients'), value: stats.new_clients || 0, color: 'text-green-600', bg: 'bg-green-50', growth: stats.growth?.new_clients },
-    { icon: UserCheck, label: t('admin/dashboard:active_clients'), value: stats.active_clients || 0, color: 'text-blue-600', bg: 'bg-blue-50', growth: stats.growth?.active_clients },
+    { icon: Users, label: t('crm/dashboard:total_clients'), value: stats.total_clients || 0, color: 'text-blue-600', bg: 'bg-blue-50', growth: stats.growth?.total_clients },
+    { icon: Crown, label: t('crm/dashboard:vip_clients'), value: stats.vip_clients || 0, color: 'text-yellow-600', bg: 'bg-yellow-50', growth: stats.growth?.vip_clients },
+    { icon: UserPlus, label: t('crm/dashboard:new_clients'), value: stats.new_clients || 0, color: 'text-green-600', bg: 'bg-green-50', growth: stats.growth?.new_clients },
+    { icon: UserCheck, label: t('crm/dashboard:active_clients'), value: stats.active_clients || 0, color: 'text-blue-600', bg: 'bg-blue-50', growth: stats.growth?.active_clients },
   ];
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, { text: string; bg: string; color: string }> = {
-      pending: { text: t('admin/dashboard:status_pending'), bg: 'bg-yellow-100', color: 'text-yellow-800' },
-      confirmed: { text: t('admin/dashboard:status_confirmed'), bg: 'bg-green-100', color: 'text-green-800' },
-      completed: { text: t('admin/dashboard:status_completed'), bg: 'bg-blue-100', color: 'text-blue-800' },
-      cancelled: { text: t('admin/dashboard:status_cancelled'), bg: 'bg-red-100', color: 'text-red-800' },
+      pending: { text: t('crm/dashboard:status_pending'), bg: 'bg-yellow-100', color: 'text-yellow-800' },
+      confirmed: { text: t('crm/dashboard:status_confirmed'), bg: 'bg-green-100', color: 'text-green-800' },
+      completed: { text: t('crm/dashboard:status_completed'), bg: 'bg-blue-100', color: 'text-blue-800' },
+      cancelled: { text: t('crm/dashboard:status_cancelled'), bg: 'bg-red-100', color: 'text-red-800' },
     };
     return badges[status] || { text: status, bg: 'bg-gray-100', color: 'text-gray-800' };
   };
@@ -484,8 +485,8 @@ export default function UniversalDashboard() {
     <div className="p-4 md:p-8">
       <div className="mb-6 md:mb-8 flex justify-between items-start">
         <div>
-          <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 font-bold">{t('admin/dashboard:title')}</h1>
-          <p className="text-sm md:text-base text-gray-600">{t('admin/dashboard:welcome')}</p>
+          <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 font-bold">{t('crm/dashboard:title')}</h1>
+          <p className="text-sm md:text-base text-gray-600">{t('crm/dashboard:welcome')}</p>
         </div>
 
         {permissions.roleLevel >= 80 && (
@@ -503,12 +504,15 @@ export default function UniversalDashboard() {
         )}
       </div>
 
+      {/* Quick Stats Bar */}
+      <QuickStatsBar />
+
       {/* Date Filter */}
       <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <div className="flex items-center gap-2 text-gray-700">
             <Filter className="w-5 h-5" />
-            <span className="font-medium">{t('admin/dashboard:date_filter')}</span>
+            <span className="font-medium">{t('crm/dashboard:date_filter')}</span>
           </div>
           <DateFilterDropdown
             value={dateFilter}
@@ -521,11 +525,11 @@ export default function UniversalDashboard() {
         {showDatePicker && (
           <div className="mt-4 flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
             <div className="flex-1">
-              <label className="block text-xs text-gray-600 mb-1">{t('admin/dashboard:from')}</label>
+              <label className="block text-xs text-gray-600 mb-1">{t('crm/dashboard:from')}</label>
               <input type="date" className="w-full px-3 py-2 border rounded-lg" value={customDateRange.start.split('T')[0]} onChange={(e) => setCustomDateRange({ ...customDateRange, start: new Date(e.target.value).toISOString() })} />
             </div>
             <div className="flex-1">
-              <label className="block text-xs text-gray-600 mb-1">{t('admin/dashboard:to')}</label>
+              <label className="block text-xs text-gray-600 mb-1">{t('crm/dashboard:to')}</label>
               <input type="date" className="w-full px-3 py-2 border rounded-lg" value={customDateRange.end.split('T')[0]} onChange={(e) => setCustomDateRange({ ...customDateRange, end: new Date(e.target.value).toISOString() })} />
             </div>
           </div>
@@ -558,7 +562,7 @@ export default function UniversalDashboard() {
       {/* Revenue & Conv */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
         <div className="bg-gradient-to-br from-pink-500 to-blue-600 p-6 rounded-xl shadow-lg text-white">
-          <p className="text-sm opacity-80 mb-1">{t('admin/dashboard:revenue')}</p>
+          <p className="text-sm opacity-80 mb-1">{t('crm/dashboard:revenue')}</p>
           <h3 className="text-3xl font-bold mb-1">{stats.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
           {stats.growth?.revenue && (
             <div className="flex items-center gap-1 text-xs">
@@ -568,15 +572,15 @@ export default function UniversalDashboard() {
           )}
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-sm text-gray-500 mb-1">{t('admin/dashboard:average_check')}</p>
+          <p className="text-sm text-gray-500 mb-1">{t('crm/dashboard:average_check')}</p>
           <h3 className="text-3xl font-bold text-gray-900">{stats.avg_booking_value?.toLocaleString()} {salonSettings?.currency}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-sm text-gray-500 mb-1">{t('admin/dashboard:cancellations')}</p>
+          <p className="text-sm text-gray-500 mb-1">{t('crm/dashboard:cancellations')}</p>
           <h3 className="text-3xl font-bold text-red-600">{stats.cancellation_rate?.toFixed(1)}%</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <p className="text-sm text-gray-500 mb-1">{t('admin/dashboard:conversion')}</p>
+          <p className="text-sm text-gray-500 mb-1">{t('crm/dashboard:conversion')}</p>
           <h3 className="text-3xl font-bold text-blue-600">{stats.conversion_rate?.toFixed(1)}%</h3>
         </div>
       </div>
@@ -585,62 +589,69 @@ export default function UniversalDashboard() {
         {/* Recent Bookings */}
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold">{t('admin/dashboard:latest_bookings')}</h2>
+            <h2 className="text-xl font-bold">{t('crm/dashboard:latest_bookings')}</h2>
             {canOpenBookingsRoute && (
-              <Link to={bookingsPath} className="text-pink-600 text-sm font-medium hover:underline">{t('admin/dashboard:all_bookings')}</Link>
+              <Link to={bookingsPath} className="text-pink-600 text-sm font-medium hover:underline">{t('crm/dashboard:all_bookings')}</Link>
             )}
           </div>
           <div className="space-y-4">
-            {filteredRecentBookings.map((booking) => {
-              const badge = getStatusBadge(booking.status);
-              const bookingTargetPath = resolveBookingTargetPath(booking.id);
-              return (
-                <div
-                  key={booking.id}
-                  className={`flex items-center justify-between p-4 bg-gray-50 rounded-lg transition-colors ${bookingTargetPath !== null ? 'hover:bg-gray-100 cursor-pointer' : ''}`}
-                  onClick={() => {
-                    if (bookingTargetPath !== null) {
-                      navigate(bookingTargetPath);
-                    }
-                  }}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full overflow-hidden border">
-                      <img src={getDynamicAvatar(booking.name, 'cold', booking.gender)} alt="" className="w-full h-full object-cover" />
+            {filteredRecentBookings.length === 0 ? (
+              <div className="flex flex-col items-center py-12 text-center">
+                <Calendar className="w-12 h-12 text-gray-300 mb-4" />
+                <p className="text-gray-500">{t('crm/dashboard:no_recent_bookings')}</p>
+              </div>
+            ) : (
+              filteredRecentBookings.map((booking) => {
+                const badge = getStatusBadge(booking.status);
+                const bookingTargetPath = resolveBookingTargetPath(booking.id);
+                return (
+                  <div
+                    key={booking.id}
+                    className={`flex items-center justify-between p-4 bg-gray-50 rounded-lg transition-colors ${bookingTargetPath !== null ? 'hover:bg-gray-100 cursor-pointer' : ''}`}
+                    onClick={() => {
+                      if (bookingTargetPath !== null) {
+                        navigate(bookingTargetPath);
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full overflow-hidden border">
+                        <img src={getDynamicAvatar(booking.name, 'cold', booking.gender)} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{booking.name}</p>
+                        <p className="text-xs text-gray-500">{booking.service}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{booking.name}</p>
-                      <p className="text-xs text-gray-500">{booking.service}</p>
+                    <div className="text-right">
+                      <p className="text-sm font-bold">{new Date(booking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</p>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${badge.bg} ${badge.color}`}>{badge.text}</span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold">{new Date(booking.datetime).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</p>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${badge.bg} ${badge.color}`}>{badge.text}</span>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
         </div>
 
         {/* Quick Actions & Notifications */}
         <div className="space-y-6">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-bold mb-4">{t('admin/dashboard:quick_actions')}</h2>
+            <h2 className="text-lg font-bold mb-4">{t('crm/dashboard:quick_actions')}</h2>
             <div className="space-y-2">
               {canOpenBookingsRoute && (
                 <Button className="w-full justify-start gap-2 bg-pink-600 hover:bg-pink-700" onClick={() => navigate(bookingsPath)}>
-                  <Calendar className="w-4 h-4" /> {t('admin/dashboard:new_booking')}
+                  <Calendar className="w-4 h-4" /> {t('crm/dashboard:new_booking')}
                 </Button>
               )}
               {canOpenClientsRoute && (
                 <Button variant="outline" className="w-full justify-start gap-2" onClick={() => navigate(`${rolePrefix}/clients`)}>
-                  <Users className="w-4 h-4" /> {t('admin/dashboard:client_database')}
+                  <Users className="w-4 h-4" /> {t('crm/dashboard:client_database')}
                 </Button>
               )}
               {permissions.canViewAnalytics && (
                 <Button variant="outline" className="w-full justify-start gap-2" onClick={() => navigate(`${rolePrefix}/analytics`)}>
-                  <TrendingUp className="w-4 h-4" /> {t('admin/dashboard:analytics')}
+                  <TrendingUp className="w-4 h-4" /> {t('crm/dashboard:analytics')}
                 </Button>
               )}
             </div>
@@ -650,15 +661,15 @@ export default function UniversalDashboard() {
             <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-xl shadow-lg p-6 text-white">
               <h3 className="font-bold flex items-center gap-2 mb-4">
                 <Bot className="w-5 h-5 text-white" />
-                {t('admin/dashboard:bot_analytics')}
+                {t('crm/dashboard:bot_analytics')}
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-[10px] opacity-70">{t('admin/dashboard:conversion')}</p>
+                  <p className="text-[10px] opacity-70">{t('crm/dashboard:conversion')}</p>
                   <p className="text-xl font-bold">{botAnalytics.conversion_rate}%</p>
                 </div>
                 <div>
-                  <p className="text-[10px] opacity-70">{t('admin/dashboard:active_sessions')}</p>
+                  <p className="text-[10px] opacity-70">{t('crm/dashboard:active_sessions')}</p>
                   <p className="text-xl font-bold">{botAnalytics.total_sessions}</p>
                 </div>
               </div>
