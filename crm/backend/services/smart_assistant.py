@@ -76,6 +76,22 @@ class SmartAssistant:
         conn.close()
         return bookings
 
+    def _parse_booking_datetime(self, raw_value) -> Optional[datetime]:
+        if isinstance(raw_value, datetime):
+            return raw_value
+
+        if isinstance(raw_value, str):
+            normalized_value = raw_value.strip()
+            if len(normalized_value) == 0:
+                return None
+
+            try:
+                return datetime.fromisoformat(normalized_value.replace(' ', 'T'))
+            except ValueError:
+                return None
+
+        return None
+
     async def get_personalized_greeting(self, client_name: str) -> str:
         """Персонализированное приветствие через AI"""
         language = get_client_language(self.client_id)
@@ -87,7 +103,9 @@ class SmartAssistant:
         # Постоянный клиент
         last_booking = self.history[0]
         try:
-            last_date = datetime.fromisoformat(last_booking['datetime'].replace(' ', 'T'))
+            last_date = self._parse_booking_datetime(last_booking['datetime'])
+            if last_date is None:
+                raise ValueError("last booking datetime is empty")
             days_since = (datetime.now() - last_date).days
         except:
             days_since = 30 # Default
@@ -139,7 +157,9 @@ class SmartAssistant:
 
         for booking in self.history:
             try:
-                dt = datetime.fromisoformat(booking['datetime'].replace(' ', 'T'))
+                dt = self._parse_booking_datetime(booking['datetime'])
+                if dt is None:
+                    continue
                 hour = dt.hour
 
                 if hour < 12:
@@ -166,8 +186,10 @@ class SmartAssistant:
         intervals = []
         for i in range(len(self.history) - 1):
             try:
-                date1 = datetime.fromisoformat(self.history[i]['datetime'].replace(' ', 'T'))
-                date2 = datetime.fromisoformat(self.history[i + 1]['datetime'].replace(' ', 'T'))
+                date1 = self._parse_booking_datetime(self.history[i]['datetime'])
+                date2 = self._parse_booking_datetime(self.history[i + 1]['datetime'])
+                if date1 is None or date2 is None:
+                    continue
                 intervals.append(abs((date1 - date2).days))
             except:
                 continue
@@ -181,7 +203,9 @@ class SmartAssistant:
         if not self.history:
             return (datetime.now() + timedelta(days=3)).strftime('%Y-%m-%d')
 
-        last_date = datetime.fromisoformat(self.history[0]['datetime'].replace(' ', 'T'))
+        last_date = self._parse_booking_datetime(self.history[0]['datetime'])
+        if last_date is None:
+            return (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
         suggested_date = last_date + timedelta(days=interval_days)
 
         # Если дата в прошлом, предлагаем ближайший день

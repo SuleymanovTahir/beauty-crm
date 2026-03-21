@@ -13,9 +13,24 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from tests.config import get_test_config
 TEST_CONFIG = get_test_config()
 
-from utils.email import send_email_async
+from utils.email import send_email_async, _is_fake_email
 from db.settings import get_salon_settings
 from modules.notifications.email import format_new_booking_email
+
+
+def _email_test_ready(recipient: str) -> tuple[bool, str]:
+    """Check whether email delivery can be tested in this environment."""
+    if _is_fake_email(recipient):
+        return False, f"recipient '{recipient}' is a fake/test email"
+
+    smtp_user = os.getenv('SMTP_USERNAME') or os.getenv('SMTP_USER')
+    smtp_password = os.getenv('SMTP_PASSWORD')
+    smtp_from = os.getenv('FROM_EMAIL') or os.getenv('SMTP_FROM') or smtp_user
+
+    if not smtp_user or not smtp_password or not smtp_from:
+        return False, "SMTP credentials are not fully configured"
+
+    return True, ""
 
 
 def format_booking_reminder_email(booking_data: dict, salon_data: dict) -> tuple[str, str]:
@@ -93,6 +108,11 @@ async def test_new_booking_notification():
     print(f"   Услуга: {booking_data['service']}")
     print(f"   Дата/Время: {booking_data['datetime']}")
 
+    ready, reason = _email_test_ready(test_email)
+    if not ready:
+        print(f"\nSKIPPED ({reason})")
+        return True
+
     # Отправляем email
     success = await send_email_async(
         recipients=[test_email],
@@ -148,6 +168,11 @@ async def test_booking_reminder_notification():
     print(f"   Услуга: {booking_data['service_name']}")
     print(f"   Мастер: {booking_data['master']}")
     print(f"   Дата/Время: {tomorrow.strftime('%d.%m.%Y в %H:%M')}")
+
+    ready, reason = _email_test_ready(booking_data['email'])
+    if not ready:
+        print(f"\nSKIPPED ({reason})")
+        return True
 
     # Отправляем email
     success = await send_email_async(

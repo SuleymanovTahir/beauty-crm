@@ -50,9 +50,11 @@ backend/.env.production
 .venv
 venv/
 ENV/
+/crm/backend/venv
 
 #  Node
 node_modules/
+/crm/frontend/node_modules
 
 # Local npm cache (frontend)
 frontend/.npm-cache/

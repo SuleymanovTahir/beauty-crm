@@ -194,6 +194,27 @@ _MODULE_PERMISSION_KEYS = {
 _SHARED_DOMAIN_MATRIX = {}
 
 
+def _normalize_shared_domains(raw_domains) -> list[str]:
+    if not isinstance(raw_domains, list):
+        return []
+
+    normalized_domains: list[str] = []
+    seen_domains: set[str] = set()
+
+    for raw_domain in raw_domains:
+        if not isinstance(raw_domain, str):
+            continue
+
+        normalized_domain = raw_domain.strip().lower()
+        if len(normalized_domain) == 0 or normalized_domain in seen_domains:
+            continue
+
+        seen_domains.add(normalized_domain)
+        normalized_domains.append(normalized_domain)
+
+    return normalized_domains
+
+
 def _build_module_matrix_for_business_type(business_type: str) -> dict:
     normalized_business_type = _normalize_business_type(business_type)
     disabled_map = _BUSINESS_DISABLED_MODULES.get(normalized_business_type, _BUSINESS_DISABLED_MODULES["other"])
@@ -315,12 +336,14 @@ def _build_default_business_profile_config(business_type: str) -> dict:
     normalized_business_type = _normalize_business_type(business_type)
     module_matrix = _build_module_matrix_for_business_type(normalized_business_type)
     role_permissions = _build_role_permissions_from_modules(module_matrix)
+    shared_domains = _normalize_shared_domains(_SHARED_DOMAIN_MATRIX.get(normalized_business_type, []))
 
     return {
         "schema_version": _BUSINESS_CONFIG_SCHEMA_VERSION,
         "business_type": normalized_business_type,
         "modules": module_matrix,
         "role_permissions": role_permissions,
+        "shared_domains": shared_domains,
     }
 
 
@@ -341,6 +364,7 @@ def _normalize_business_profile_config(raw_config, business_type: str) -> dict:
         default_config["role_permissions"],
         modules,
     )
+    shared_domains = _normalize_shared_domains(raw_config.get("shared_domains", default_config.get("shared_domains", [])))
     return {
         "schema_version": _BUSINESS_CONFIG_SCHEMA_VERSION,
         "business_type": normalized_business_type,
@@ -428,14 +452,16 @@ def get_salon_settings() -> dict:
 
             normalized_business_type = _normalize_business_type(row.get("business_type"))
             business_profile_config = get_effective_business_profile_config(normalized_business_type, custom)
+            hours_weekdays = row.get("hours_weekdays") or DEFAULT_HOURS_WEEKDAYS
+            hours_weekends = row.get("hours_weekends") or DEFAULT_HOURS_WEEKENDS
 
             return {
                 "id": row.get("id", 1),
                 "name": row.get("name"),
                 "address": row.get("address", ""),
                 "google_maps": row.get("google_maps", ""),
-                "hours_weekdays": row.get("hours_weekdays", DEFAULT_HOURS_WEEKDAYS),
-                "hours_weekends": row.get("hours_weekends", DEFAULT_HOURS_WEEKENDS),
+                "hours_weekdays": hours_weekdays,
+                "hours_weekends": hours_weekends,
                 "lunch_start": row.get("lunch_start"),
                 "lunch_end": row.get("lunch_end"),
                 "phone": row.get("phone", ""),

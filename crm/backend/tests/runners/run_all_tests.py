@@ -94,10 +94,6 @@ def run_suite(suite_name, func=None, subprocess_path=None, description=""):
 def check_services_without_masters():
     """Проверка услуг без назначенных мастеров"""
     try:
-        from scripts.maintenance.assign_missing_services import assign_missing_services
-        print("🛠 Выполнение авто-назначения мастеров на пустые услуги...")
-        assign_missing_services()
-        
         from db.connection import get_db_connection
         conn = get_db_connection()
         c = conn.cursor()

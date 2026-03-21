@@ -107,4 +107,4 @@ languages.forEach(lang => {
 console.log(`\n📊 Итого:`);
 console.log(`  Обработано файлов: ${totalFiles}`);
 console.log(`  Очищено файлов: ${totalCleaned}`);
-console.log(`\n💡 Теперь запустите: cd .. && python3 scripts/i18n/translate_from_russian.py`);
+console.log(`\n💡 Теперь запустите: npm run db:i18n:auto`);

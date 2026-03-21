@@ -2,7 +2,7 @@
 Инициализация единой базы данных системы
 Единый источник истины (SSOT) для схемы CRM
 """
-from core.config import SALON_CURRENCY_DEFAULT
+from core.config import SALON_CURRENCY_DEFAULT, DEFAULT_HOURS_WEEKDAYS, DEFAULT_HOURS_WEEKENDS
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
 import os
@@ -660,10 +660,26 @@ def init_database():
         add_column_if_not_exists('bookings', 'master_user_id', 'INTEGER REFERENCES users(id)')
         add_column_if_not_exists('bookings', 'promo_code', 'TEXT')
         c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_master_user_id_datetime ON bookings (master_user_id, datetime)")
+
+        c.execute('''CREATE TABLE IF NOT EXISTS ratings (
+            id SERIAL PRIMARY KEY,
+            booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL,
+            instagram_id TEXT REFERENCES clients(instagram_id) ON DELETE SET NULL,
+            rating INTEGER NOT NULL,
+            comment TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        add_column_if_not_exists('ratings', 'booking_id', 'INTEGER REFERENCES bookings(id) ON DELETE SET NULL')
+        add_column_if_not_exists('ratings', 'instagram_id', 'TEXT REFERENCES clients(instagram_id) ON DELETE SET NULL')
+        add_column_if_not_exists('ratings', 'rating', 'INTEGER')
+        add_column_if_not_exists('ratings', 'comment', 'TEXT')
+        add_column_if_not_exists('ratings', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+
         # Дополнительные индексы для ускорения частых запросов
         c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_datetime ON bookings (datetime)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings (status)")
-        c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_client_phone ON bookings (client_phone)")
+        c.execute("DROP INDEX IF EXISTS idx_bookings_client_phone")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_phone ON bookings (phone)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings (created_at)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_clients_phone ON clients (phone)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_clients_name ON clients (name)")
@@ -1980,7 +1996,7 @@ def init_database():
                 name = CASE
                     WHEN salon_settings.name IS NULL
                         OR TRIM(salon_settings.name) = ''
-                        OR LOWER(salon_settings.name) LIKE '%le diamant%'
+                        OR LOWER(salon_settings.name) LIKE '%%le diamant%%'
                     THEN EXCLUDED.name
                     ELSE salon_settings.name
                 END,
@@ -1999,9 +2015,19 @@ def init_database():
                 AND (
                     bot_name IS NULL
                     OR TRIM(bot_name) = ''
-                    OR LOWER(bot_name) LIKE '%le diamant%'
+                    OR LOWER(bot_name) LIKE '%%le diamant%%'
                 )
             """
+        )
+        c.execute(
+            """
+            UPDATE salon_settings
+            SET
+                hours_weekdays = COALESCE(NULLIF(TRIM(hours_weekdays), ''), %s),
+                hours_weekends = COALESCE(NULLIF(TRIM(hours_weekends), ''), %s)
+            WHERE id = 1
+            """,
+            (DEFAULT_HOURS_WEEKDAYS, DEFAULT_HOURS_WEEKENDS),
         )
 
         # Universal CRM runtime: remove image-based prefilled content and photo links.

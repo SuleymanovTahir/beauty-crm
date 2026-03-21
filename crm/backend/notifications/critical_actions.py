@@ -169,7 +169,7 @@ async def send_critical_action_notification(action_data: Dict[str, Any]):
 """
         
         # Отправляем email всем директорам
-        from notifications.email_service import send_email
+        from utils.email_service import send_email
         
         for email, name in directors:
             try:

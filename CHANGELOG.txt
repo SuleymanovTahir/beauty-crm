@@ -1,3 +1,97 @@
+## [2026-03-22] Fresh CRM Bootstrap: Default Working Hours + Test Runner Alignment
+- Fixed `/Users/tahir/Desktop/beauty-crm/crm/backend/db/init.py` so clean `salon_settings` bootstrap always fills:
+  - `hours_weekdays`
+  - `hours_weekends`
+  using shared defaults from `core.config`.
+- Fixed `/Users/tahir/Desktop/beauty-crm/crm/backend/db/settings.py` so `get_salon_settings()` also normalizes `NULL` working-hours values from older databases instead of passing them through unchanged.
+- Updated fresh-DB test expectations to match the current CRM-only bootstrap without hidden demo seeding:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/tests/test_all.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/tests/test_employee_management.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/tests/comprehensive_test.py`
+- Updated `/Users/tahir/Desktop/beauty-crm/crm/backend/tests/api/test_booking_email_notification.py` so email delivery tests are skipped when:
+  - the configured recipient is a fake/test address like `test@example.com`,
+  - SMTP credentials are not fully configured.
+- Validation on a fully recreated PostgreSQL database:
+  - `venv/bin/python -c "from scripts.maintenance.recreate_database import clean_static_uploads, drop_database, recreate_database; clean_static_uploads(); drop_database(); recreate_database()"`
+  - `venv/bin/python db/migrations/run_all_migrations.py`
+  - `venv/bin/python scripts/maintenance/fix_data.py`
+  - `venv/bin/python tests/runners/run_all_tests.py`
+  - `venv/bin/python tests/runners/run_all_test2.py`
+  - `venv/bin/python tests/runners/run_all_test3.py`
+- IMPORTANT TO REMEMBER:
+  - clean CRM bootstrap must stay schema-first and must not silently recreate legacy seeded users/services/positions just to satisfy tests,
+  - test suites should treat empty fresh CRM content as a valid initial state until the user configures real data.
+
+## [2026-03-22] Restored `ratings` Table In CRM Schema SSOT
+- Fixed `/Users/tahir/Desktop/beauty-crm/crm/backend/db/init.py` so the SSOT schema again creates `ratings` before adding its indexes.
+- Added backward-safe column sync for:
+  - `booking_id`
+  - `instagram_id`
+  - `rating`
+  - `comment`
+  - `created_at`
+- WHY:
+  - CRM runtime still reads/writes `ratings` in dashboard/feedback/client cleanup flows,
+  - migrations were failing because the schema tried to index `ratings` without creating the table.
+
+## [2026-03-22] Fixed Migration Index Name And Removed Obsolete Employee Sync Test
+- Fixed `/Users/tahir/Desktop/beauty-crm/crm/backend/db/init.py`:
+  - removed stale index creation for nonexistent `bookings.client_phone`,
+  - replaced it with the correct bookings phone index on `bookings.phone`.
+- Updated `/Users/tahir/Desktop/beauty-crm/crm/backend/tests/test_employee_management.py`:
+  - legacy mock-CSV role-assignment scenario is now treated as skipped/pass,
+  - the old one-off sync flow it expected has already been removed from the CRM runtime.
+- Impact:
+  - `run_all_migrations.py` no longer fails on `column "client_phone" does not exist`,
+  - backend test runner no longer reports a false failure from the removed employee sync script.
+
+## [2026-03-22] Fixed Auto-Booking Datetime Parsing From PostgreSQL
+- Fixed `/Users/tahir/Desktop/beauty-crm/crm/backend/services/smart_assistant.py` so booking history datetimes are parsed safely whether PostgreSQL returns native `datetime` objects or strings.
+- Replaced brittle `.replace(' ', 'T')` calls on booking history values with a single helper parser used by:
+  - personalized greeting logic,
+  - preferred time detection,
+  - average interval calculation,
+  - next booking date suggestion.
+- Impact:
+  - auto-booking no longer logs `Error finding clients for slots: 'str' object cannot be interpreted as an integer` when history rows contain native `datetime` values.
+
+## [2026-03-22] Fixed `shared_domains` Runtime Error In Salon Settings
+- Fixed `/Users/tahir/Desktop/beauty-crm/crm/backend/db/settings.py` so business-profile normalization no longer references undefined `shared_domains`.
+- Added safe normalization for `shared_domains` in the same SSOT file and included it in default/normalized business profile config.
+- Impact:
+  - `get_salon_settings()` no longer falls back to defaults because of `NameError`,
+  - backend smoke/tests stop spamming `name 'shared_domains' is not defined` in logs.
+
+## [2026-03-22] Stopped Tracking Local Dependency Symlinks
+- Verified that the heavy local directories `/Users/tahir/Desktop/beauty-crm/node_modules` and `/Users/tahir/Desktop/beauty-crm/venv` are ignored by git.
+- Found two tracked symlink entries that would still be represented in git history/index:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/node_modules -> ../../node_modules`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/venv -> ../../venv`
+- Added explicit ignore rules for those local symlink paths in `/Users/tahir/Desktop/beauty-crm/.gitignore` so they stay local-only.
+- IMPORTANT TO REMEMBER:
+  - `node_modules` and `venv` must remain local runtime artifacts only and must not be re-added to git, even as symlink entries.
+
+## [2026-03-22] Removed Legacy Root Scripts And Remaining Helper Wrappers
+- Deleted obsolete root scripts under `/Users/tahir/Desktop/beauty-crm/scripts` that still targeted removed root-level `backend/` or `frontend/` paths, or duplicated current CRM automation with one-off fixes:
+  - root utility scripts in `/Users/tahir/Desktop/beauty-crm/scripts/*.py`,
+  - legacy i18n one-offs in `/Users/tahir/Desktop/beauty-crm/scripts/i18n/*.py`,
+  - legacy maintenance one-offs in `/Users/tahir/Desktop/beauty-crm/scripts/maintenance/*.py`.
+- Updated `/Users/tahir/Desktop/beauty-crm/scripts/i18n/README.md` to document the current SSOT-only flow:
+  - `npm run i18n:extract`,
+  - `npm run i18n:check-only`,
+  - `npm run db:i18n:auto`,
+  - no manual per-language root scripts.
+- Removed remaining duplicated or hardcoded CRM helper scripts that no longer match the current storage/runtime model:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/run_all_fixes.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/setup/quick_telegram_webhook.py`
+- WHY THIS WAS SAFE:
+  - the deleted root scripts still assumed old root `backend/` and `frontend/` paths or manual translation hotfixes,
+  - the current CRM i18n flow is already orchestrated from `/Users/tahir/Desktop/beauty-crm/crm/frontend/package.json`,
+  - Telegram runtime remains in code, but the deleted quick webhook helper was hardcoded to an old tunnel URL and was not a runtime dependency.
+- IMPORTANT TO REMEMBER:
+  - Do not reintroduce root-level one-off translation/fix scripts for CRM. Use orchestrated commands from `crm/frontend/package.json`.
+  - Keep schema and runtime changes inside current CRM orchestrators instead of reviving helper wrappers around stale manual scripts.
+
 ## [2026-03-22] Restored Shared Frontend Dependencies And Revalidated CRM
 - Reinstalled frontend dependencies for the active CRM app from `/Users/tahir/Desktop/beauty-crm/crm/frontend/package.json`.
 - Restored the intended shared dependency layout after `npm install` recreated a local folder:
