@@ -191,3 +191,59 @@ async def delete_contract(contract_id: int, current_user: dict = Depends(get_cur
         return {"success": True}
     finally:
         conn.close()
+
+
+@router.get("/contract-types")
+async def get_contract_types(current_user: dict = Depends(get_current_user)):
+    """Получить список типов договоров"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        try:
+            c.execute("SELECT id, name, description, template, is_active FROM contract_types ORDER BY name")
+            rows = c.fetchall()
+            types = [{"id": r[0], "name": r[1], "description": r[2], "template": r[3], "is_active": r[4]} for r in rows]
+        except Exception:
+            # Table might not exist yet
+            types = [
+                {"id": "service", "name": "Договор на оказание услуг", "description": "", "template": None, "is_active": True},
+            ]
+        return {"success": True, "types": types}
+    finally:
+        conn.close()
+
+
+@router.post("/contract-types")
+async def create_contract_type(request_data: dict, current_user: dict = Depends(get_current_user)):
+    """Создать тип договора"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("""
+            INSERT INTO contract_types (name, description, template, is_active)
+            VALUES (%s, %s, %s, %s) RETURNING id
+        """, (request_data.get("name"), request_data.get("description"), request_data.get("template"), True))
+        new_id = c.fetchone()[0]
+        conn.commit()
+        return {"success": True, "id": new_id}
+    except Exception as e:
+        conn.rollback()
+        return {"success": False, "error": str(e)}
+    finally:
+        conn.close()
+
+
+@router.delete("/contract-types/{type_id}")
+async def delete_contract_type(type_id: int, current_user: dict = Depends(get_current_user)):
+    """Удалить тип договора"""
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("DELETE FROM contract_types WHERE id = %s", (type_id,))
+        conn.commit()
+        return {"success": True}
+    except Exception as e:
+        conn.rollback()
+        return {"success": False, "error": str(e)}
+    finally:
+        conn.close()

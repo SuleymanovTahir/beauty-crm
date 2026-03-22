@@ -136,7 +136,7 @@ export default function UniversalChallenges({
     const loadChallenges = async () => {
         try {
             setLoading(true);
-            const response = await fetch(buildApiUrl('/api/admin/challenges'), { credentials: 'include' });
+            const response = await fetch(buildApiUrl('/api/challenges'), { credentials: 'include' });
             if (response.ok) {
                 const data = await response.json();
                 if (data.success && Array.isArray(data.challenges)) {
@@ -157,7 +157,7 @@ export default function UniversalChallenges({
 
     const loadStats = async () => {
         try {
-            const response = await fetch(buildApiUrl('/api/admin/challenges/stats'), { credentials: 'include' });
+            const response = await fetch(buildApiUrl('/api/challenges/stats'), { credentials: 'include' });
             if (response.ok) {
                 const data = await response.json();
                 if (data.success && data.stats) setStats(data.stats);
@@ -178,7 +178,7 @@ export default function UniversalChallenges({
                 return;
             }
 
-            const url = editingChallenge ? `/api/admin/challenges/${editingChallenge.id}` : '/api/admin/challenges';
+            const url = buildApiUrl(editingChallenge ? `/api/challenges/${editingChallenge.id}` : '/api/challenges');
             const method = editingChallenge ? 'PUT' : 'POST';
             const payload = {
                 ...formData,
@@ -211,7 +211,7 @@ export default function UniversalChallenges({
         if (!window.confirm(t('dialogs.delete.confirm', 'Вы уверены, что хотите удалить этот челлендж?'))) return;
 
         try {
-            const response = await fetch(buildApiUrl(`/api/admin/challenges/${id}`), {
+            const response = await fetch(buildApiUrl(`/api/challenges/${id}`), {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -231,7 +231,7 @@ export default function UniversalChallenges({
     const handleCheckProgress = async (id: string) => {
         try {
             setCheckingProgress(id);
-            const response = await fetch(buildApiUrl(`/api/admin/challenges/${id}/check-progress`), {
+            const response = await fetch(buildApiUrl(`/api/challenges/${id}/check-progress`), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

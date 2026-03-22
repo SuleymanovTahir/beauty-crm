@@ -380,3 +380,233 @@ async def delete_loyalty_category_api(
 
 
 # Admin endpoints with /admin prefix (for frontend compatibility)
+
+from db.connection import get_db_connection
+
+TIER_COLORS = {
+    "bronze": "#CD7F32",
+    "silver": "#C0C0C0",
+    "gold": "#FFD700",
+    "platinum": "#E5E4E2",
+}
+
+def _level_to_tier(level: dict) -> dict:
+    name = level.get("level_name", "")
+    return {
+        "id": name,
+        "name": name,
+        "min_points": level.get("min_points", 0),
+        "discount": level.get("discount_percent", 0),
+        "is_active": True,
+        "color": TIER_COLORS.get(name.lower(), "#8B5CF6"),
+    }
+
+
+@router.get("/loyalty/tiers")
+async def get_loyalty_tiers_api(session_token: Optional[str] = Cookie(None)):
+    """[Admin] Get loyalty tiers"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    try:
+        loyalty_service = LoyaltyService()
+        levels = loyalty_service.get_all_levels()
+        return {"success": True, "tiers": [_level_to_tier(l) for l in levels]}
+    except Exception as e:
+        log_error(f"Error getting tiers: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/loyalty/tiers")
+async def create_loyalty_tier_api(request: Request, session_token: Optional[str] = Cookie(None)):
+    """[Admin] Create loyalty tier"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    try:
+        data = await request.json()
+        name = data.get("name", "")
+        min_points = int(data.get("min_points", 0))
+        discount = float(data.get("discount", 0))
+        color = data.get("color", "#8B5CF6")
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("""
+                INSERT INTO loyalty_levels (level_name, min_points, discount_percent, points_multiplier, benefits)
+                VALUES (%s, %s, %s, 1.0, %s)
+                ON CONFLICT (level_name) DO UPDATE SET
+                    min_points = EXCLUDED.min_points,
+                    discount_percent = EXCLUDED.discount_percent
+            """, (name, min_points, discount, color))
+            conn.commit()
+        finally:
+            conn.close()
+        return {"success": True, "tier": {"id": name, "name": name, "min_points": min_points, "discount": discount, "is_active": True, "color": color}}
+    except Exception as e:
+        log_error(f"Error creating tier: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.put("/loyalty/tiers/{tier_id}")
+async def update_loyalty_tier_api(tier_id: str, request: Request, session_token: Optional[str] = Cookie(None)):
+    """[Admin] Update loyalty tier"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    try:
+        data = await request.json()
+        min_points = int(data.get("min_points", 0))
+        discount = float(data.get("discount", 0))
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("""
+                UPDATE loyalty_levels SET min_points=%s, discount_percent=%s WHERE level_name=%s
+            """, (min_points, discount, tier_id))
+            conn.commit()
+        finally:
+            conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error updating tier: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.delete("/loyalty/tiers/{tier_id}")
+async def delete_loyalty_tier_api(tier_id: str, session_token: Optional[str] = Cookie(None)):
+    """[Admin] Delete loyalty tier"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("DELETE FROM loyalty_levels WHERE level_name=%s", (tier_id,))
+            conn.commit()
+        finally:
+            conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error deleting tier: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/loyalty/stats")
+async def get_loyalty_stats_api(session_token: Optional[str] = Cookie(None)):
+    """[Admin] Get loyalty program statistics"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("SELECT COUNT(*), COALESCE(SUM(total_points),0), COALESCE(SUM(spent_points),0) FROM client_loyalty_points")
+            row = c.fetchone() or (0, 0, 0)
+            c.execute("SELECT COUNT(*) FROM loyalty_transactions WHERE transaction_type='earn' AND created_at > NOW() - INTERVAL '30 days'")
+            monthly_earn = (c.fetchone() or [0])[0]
+        finally:
+            conn.close()
+        return {
+            "success": True,
+            "stats": {
+                "total_clients": row[0],
+                "total_points_issued": row[1],
+                "total_points_spent": row[2],
+                "monthly_transactions": monthly_earn,
+            }
+        }
+    except Exception as e:
+        log_error(f"Error getting loyalty stats: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/loyalty/transactions")
+async def get_all_loyalty_transactions_api(
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+    session_token: Optional[str] = Cookie(None)
+):
+    """[Admin] Get all recent loyalty transactions"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("""
+                SELECT lt.id, lt.client_id, COALESCE(cl.name, lt.client_id::text) as client_name,
+                       COALESCE(cl.email, '') as client_email,
+                       lt.points_amount, lt.transaction_type, lt.reason, lt.created_at
+                FROM loyalty_transactions lt
+                LEFT JOIN clients cl ON cl.id::text = lt.client_id::text
+                ORDER BY lt.created_at DESC
+                LIMIT %s OFFSET %s
+            """, (limit, offset))
+            rows = c.fetchall()
+            transactions = [
+                {
+                    "id": str(r[0]),
+                    "client_id": str(r[1]),
+                    "client_name": r[2],
+                    "client_email": r[3],
+                    "points": r[4],
+                    "type": "earn" if r[5] == "earn" else "redeem",
+                    "reason": r[6] or "",
+                    "created_at": r[7].isoformat() if hasattr(r[7], "isoformat") else str(r[7]),
+                }
+                for r in rows
+            ]
+        finally:
+            conn.close()
+        return {"success": True, "transactions": transactions, "total": len(transactions)}
+    except Exception as e:
+        log_error(f"Error getting all transactions: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.delete("/loyalty/transactions/{transaction_id}")
+async def delete_loyalty_transaction_api(transaction_id: str, session_token: Optional[str] = Cookie(None)):
+    """[Admin] Delete loyalty transaction"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            c.execute("DELETE FROM loyalty_transactions WHERE id=%s", (transaction_id,))
+            conn.commit()
+        finally:
+            conn.close()
+        return {"success": True}
+    except Exception as e:
+        log_error(f"Error deleting transaction: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/loyalty/adjust-points")
+async def adjust_client_points_api(request: Request, session_token: Optional[str] = Cookie(None)):
+    """[Admin] Manually adjust client loyalty points"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "manager", "director"]:
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+    try:
+        data = await request.json()
+        client_id = str(data.get("client_id", ""))
+        points = int(data.get("points", 0))
+        reason = data.get("reason", "Admin adjustment")
+        if not client_id or points == 0:
+            return JSONResponse({"error": "Missing client_id or points"}, status_code=400)
+        loyalty_service = LoyaltyService()
+        if points > 0:
+            result = loyalty_service.earn_points(client_id, points, reason)
+        else:
+            result = loyalty_service.spend_points(client_id, abs(points), reason)
+        return {"success": result.get("success", False)}
+    except Exception as e:
+        log_error(f"Error adjusting points: {e}", "loyalty")
+        return JSONResponse({"error": str(e)}, status_code=500)

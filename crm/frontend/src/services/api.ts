@@ -2809,6 +2809,34 @@ export class ApiClient {
   async emptyTrash() {
     return this.request(`/api/trash/empty`, { method: 'POST' });
   }
+
+  async getAuditLog(params?: { action?: string; entity_type?: string; limit?: number }) {
+    const query = new URLSearchParams();
+    if (params?.action && params.action !== 'all') query.set('action', params.action);
+    if (params?.entity_type) query.set('entity_type', params.entity_type);
+    if (params?.limit) query.set('limit', String(params.limit));
+    const qs = query.toString();
+    return this.request(`/api/audit-log${qs ? `?${qs}` : ''}`);
+  }
+
+  async getAuditSummary() {
+    return this.request('/api/audit-log/summary');
+  }
+
+  async deleteAuditLog(id: number) {
+    return this.request(`/api/audit-log/${id}`, { method: 'DELETE' });
+  }
+
+  async deleteAuditLogsBatch(ids: number[]) {
+    return this.request('/api/audit-log/delete-batch', {
+      method: 'POST',
+      body: JSON.stringify({ ids }),
+    });
+  }
+
+  async clearAuditLog() {
+    return this.request('/api/audit-log', { method: 'DELETE' });
+  }
 }
 
 export const api = new ApiClient()

@@ -1,0 +1,22 @@
+{
+  "active": "Active",
+  "add": "Add Challenge",
+  "challenge": "Challenge",
+  "challenges": "Challenges",
+  "completed": "Completed",
+  "delete": "Delete",
+  "description": "Description",
+  "edit": "Edit",
+  "error_loading": "Error loading",
+  "error_saving": "Error saving",
+  "goal": "Goal",
+  "loading": "Loading...",
+  "name": "Name",
+  "noChallenges": "No challenges",
+  "progress": "Progress",
+  "save": "Save",
+  "search": "Search challenges",
+  "status": "Status",
+  "title": "Challenges",
+  "type": "Type"
+}

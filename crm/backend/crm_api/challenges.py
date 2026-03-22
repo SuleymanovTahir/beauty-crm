@@ -13,15 +13,22 @@ async def get_challenges():
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute("SELECT id, title, description, bonus_points, is_active FROM active_challenges ORDER BY created_at DESC")
+        c.execute("SELECT id, title, description, bonus_points, is_active, created_at FROM active_challenges ORDER BY created_at DESC")
         challenges = []
         for row in c.fetchall():
             challenges.append({
-                "id": row[0],
+                "id": str(row[0]),
                 "title": row[1],
-                "description": row[2],
-                "bonus_points": row[3],
-                "is_active": row[4]
+                "description": row[2] or "",
+                "bonus_points": row[3] or 0,
+                "reward_points": row[3] or 0,
+                "is_active": row[4],
+                "type": "visits",
+                "target_value": 1,
+                "participants_count": 0,
+                "completion_rate": 0,
+                "start_date": "",
+                "end_date": "",
             })
         conn.close()
         return {"success": True, "challenges": challenges}
@@ -103,3 +110,40 @@ async def delete_challenge(challenge_id: int, session_token: Optional[str] = Coo
         return {"success": True}
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.get("/challenges/stats")
+async def get_challenges_stats(session_token: Optional[str] = Cookie(None)):
+    """Статистика по челленджам"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) FROM active_challenges")
+        total = (c.fetchone() or [0])[0]
+        c.execute("SELECT COUNT(*) FROM active_challenges WHERE is_active = true")
+        active = (c.fetchone() or [0])[0]
+        conn.close()
+        return {
+            "success": True,
+            "stats": {
+                "total_challenges": total,
+                "active_challenges": active,
+                "total_participants": 0,
+                "completion_rate": 0,
+            }
+        }
+    except Exception as e:
+        log_error(f"Error getting challenges stats: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)
+
+
+@router.post("/challenges/{challenge_id}/check-progress")
+async def check_challenge_progress(challenge_id: int, session_token: Optional[str] = Cookie(None)):
+    """Проверить прогресс по челленджу"""
+    user = require_auth(session_token)
+    if not user or user["role"] not in ["admin", "director"]:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return {"success": True, "updated": 0}

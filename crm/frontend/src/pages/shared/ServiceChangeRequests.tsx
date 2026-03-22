@@ -44,7 +44,7 @@ export default function ServiceChangeRequests() {
 
   const loadRequests = async () => {
     try {
-      const response = await fetch(buildApiUrl('/api/admin/service-change-requests?status=pending'), {
+      const response = await fetch(buildApiUrl('/api/service-change-requests?status=pending'), {
         credentials: 'include'
       });
       if (response.ok) {
@@ -62,7 +62,7 @@ export default function ServiceChangeRequests() {
     if (!selectedRequest) return;
     setProcessing(true);
     try {
-      const response = await fetch(buildApiUrl(`/api/admin/service-change-requests/${selectedRequest.id}/approve`), {
+      const response = await fetch(buildApiUrl(`/api/service-change-requests/${selectedRequest.id}/approve`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -89,7 +89,7 @@ export default function ServiceChangeRequests() {
     if (!selectedRequest) return;
     setProcessing(true);
     try {
-      const response = await fetch(buildApiUrl(`/api/admin/service-change-requests/${selectedRequest.id}/reject`), {
+      const response = await fetch(buildApiUrl(`/api/service-change-requests/${selectedRequest.id}/reject`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -140,7 +140,8 @@ export default function ServiceChangeRequests() {
         </div>
       ) : (
         <div className="crm-calendar-panel bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[700px]">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">{t('change_requests.employee')}</th>
@@ -242,6 +243,7 @@ export default function ServiceChangeRequests() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

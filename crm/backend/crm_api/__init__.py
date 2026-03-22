@@ -1,51 +1,37 @@
 """
 API модуль - REST endpoints для CRM системы
 """
+import logging
 from fastapi import APIRouter
-from .clients import router as clients_router
-from .bookings import router as bookings_router
-from .services import router as services_router
-from .analytics import router as analytics_router
-from .salary import router as salary_router
-from .payroll import router as payroll_router
-from .users import router as users_router
-from .settings import router as settings_router
-from .export import router as export_router
-from .chat import router as chat_router
-from .roles import router as roles_router
-from .permissions import router as permissions_router
-from .uploads import router as uploads_router
-from .employees import router as employees_router
-from .employee_services import router as employee_services_router
-from crm_api.diagnostics import router as diagnostics_router
-from .templates import router as templates_router
-from .notes import router as notes_router
-from .platform_admin import router as platform_admin_router
-from .trash import router as trash_router
+
+logger = logging.getLogger(__name__)
+
+def _safe_import(module_name: str, alias: str):
+    try:
+        mod = __import__(f'crm_api.{module_name}', fromlist=['router'])
+        return mod.router
+    except Exception as e:
+        logger.warning(f"Skipping router {module_name}: {e}")
+        return None
 
 # Главный роутер API
 router = APIRouter(tags=["API"])
 
-# Подключаем все роутеры
-router.include_router(notes_router)
-router.include_router(templates_router)
-router.include_router(clients_router)
-router.include_router(bookings_router)
-router.include_router(services_router)
-router.include_router(analytics_router)
-router.include_router(users_router)
-router.include_router(settings_router)
-router.include_router(export_router)
-router.include_router(chat_router)
-router.include_router(roles_router)
-router.include_router(permissions_router)
-router.include_router(uploads_router)
-router.include_router(employees_router)
-router.include_router(employee_services_router)
-router.include_router(diagnostics_router)
-router.include_router(salary_router)
-router.include_router(payroll_router)
-router.include_router(platform_admin_router)
-router.include_router(trash_router)
+_modules = [
+    'notes', 'templates', 'clients', 'bookings', 'services', 'analytics',
+    'users', 'settings', 'export', 'chat', 'roles', 'permissions', 'uploads',
+    'employees', 'employee_services', 'diagnostics', 'salary', 'payroll',
+    'platform_admin', 'trash', 'loyalty', 'broadcasts', 'cashbox', 'challenges',
+    'contracts', 'funnel', 'gift_cards', 'holidays', 'inventory', 'invoices',
+    'kpi', 'marketplace_integrations', 'menu_settings', 'messengers',
+    'notifications', 'payment_integrations', 'plans', 'products', 'promo_codes',
+    'recordings', 'referral_links', 'service_bundles', 'service_change_requests',
+    'statuses', 'tasks', 'telephony', 'waitlist', 'audit_log',
+]
+
+for _mod in _modules:
+    _r = _safe_import(_mod, _mod)
+    if _r is not None:
+        router.include_router(_r)
 
 __all__ = ["router"]

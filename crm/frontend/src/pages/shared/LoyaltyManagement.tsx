@@ -153,7 +153,7 @@ export default function LoyaltyManagement({
 
   const loadConfig = async () => {
     try {
-      const response = await fetch(buildApiUrl('/api/admin/loyalty/config'), { credentials: 'include' });
+      const response = await fetch(buildApiUrl('/api/loyalty/config'), { credentials: 'include' });
       if (response.status === 404) {
         setApiAvailable(false);
         return;
@@ -169,7 +169,7 @@ export default function LoyaltyManagement({
 
   const loadCategoryRules = async () => {
     try {
-      const response = await fetch(buildApiUrl('/api/admin/loyalty/categories'), { credentials: 'include' });
+      const response = await fetch(buildApiUrl('/api/loyalty/categories'), { credentials: 'include' });
       if (response.status === 404) {
         setApiAvailable(false);
         return;
@@ -191,7 +191,7 @@ export default function LoyaltyManagement({
 
   const handleUpdateConfig = async () => {
     try {
-      const response = await fetch(buildApiUrl('/api/admin/loyalty/config'), {
+      const response = await fetch(buildApiUrl('/api/loyalty/config'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -209,7 +209,7 @@ export default function LoyaltyManagement({
 
   const handleSaveRule = async () => {
     try {
-      const response = await fetch(buildApiUrl('/api/admin/loyalty/categories'), {
+      const response = await fetch(buildApiUrl('/api/loyalty/categories'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -229,7 +229,7 @@ export default function LoyaltyManagement({
 
   const handleToggleRuleStatus = async (rule: CategoryRule) => {
     try {
-      const response = await fetch(buildApiUrl('/api/admin/loyalty/categories'), {
+      const response = await fetch(buildApiUrl('/api/loyalty/categories'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -254,7 +254,7 @@ export default function LoyaltyManagement({
   const handleDeleteRule = async (category: string) => {
     if (!confirm(t('confirm_delete_rule'))) return;
     try {
-      const response = await fetch(buildApiUrl(`/api/admin/loyalty/categories?category=${encodeURIComponent(category)}`), {
+      const response = await fetch(buildApiUrl(`/api/loyalty/categories?category=${encodeURIComponent(category)}`), {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -269,7 +269,7 @@ export default function LoyaltyManagement({
 
   const loadTiers = async () => {
     try {
-      const response = await fetch(buildApiUrl('/api/admin/loyalty/tiers'), {
+      const response = await fetch(buildApiUrl('/api/loyalty/tiers'), {
         credentials: 'include',
       });
 
@@ -295,7 +295,7 @@ export default function LoyaltyManagement({
 
   const loadStats = async () => {
     try {
-      const response = await fetch(buildApiUrl('/api/admin/loyalty/stats'), {
+      const response = await fetch(buildApiUrl('/api/loyalty/stats'), {
         credentials: 'include',
       });
 
@@ -317,7 +317,7 @@ export default function LoyaltyManagement({
 
   const loadTransactions = async () => {
     try {
-      const response = await fetch(buildApiUrl('/api/admin/loyalty/transactions'), {
+      const response = await fetch(buildApiUrl('/api/loyalty/transactions'), {
         credentials: 'include',
       });
 
@@ -347,7 +347,7 @@ export default function LoyaltyManagement({
 
     try {
       const isEditMode = editingTier.id.length > 0;
-      const endpoint = isEditMode ? `/api/admin/loyalty/tiers/${editingTier.id}` : '/api/admin/loyalty/tiers';
+      const endpoint = isEditMode ? `/api/loyalty/tiers/${editingTier.id}` : '/api/loyalty/tiers';
       const method = isEditMode ? 'PUT' : 'POST';
 
       const response = await fetch(buildApiUrl(endpoint), {
@@ -376,7 +376,7 @@ export default function LoyaltyManagement({
     }
 
     try {
-      const response = await fetch(buildApiUrl(`/api/admin/loyalty/tiers/${tierId}`), {
+      const response = await fetch(buildApiUrl(`/api/loyalty/tiers/${tierId}`), {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -394,7 +394,7 @@ export default function LoyaltyManagement({
 
   const handleToggleTierStatus = async (tier: LoyaltyTier) => {
     try {
-      const response = await fetch(buildApiUrl(`/api/admin/loyalty/tiers/${tier.id}`), {
+      const response = await fetch(buildApiUrl(`/api/loyalty/tiers/${tier.id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -421,7 +421,7 @@ export default function LoyaltyManagement({
     }
 
     try {
-      const response = await fetch(buildApiUrl(`/api/admin/loyalty/transactions/${transactionId}`), {
+      const response = await fetch(buildApiUrl(`/api/loyalty/transactions/${transactionId}`), {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -440,7 +440,7 @@ export default function LoyaltyManagement({
 
   const handleAdjustPoints = async () => {
     try {
-      const response = await fetch(buildApiUrl('/api/admin/loyalty/adjust-points'), {
+      const response = await fetch(buildApiUrl('/api/loyalty/adjust-points'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

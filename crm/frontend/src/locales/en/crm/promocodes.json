@@ -1,0 +1,23 @@
+{
+  "active": "Active",
+  "add": "Add Code",
+  "amount": "Amount",
+  "code": "Code",
+  "delete": "Delete",
+  "description": "Description",
+  "discount": "Discount",
+  "edit": "Edit",
+  "error_loading": "Error loading",
+  "error_saving": "Error saving",
+  "expiration": "Expiration",
+  "name": "Name",
+  "noPromoCodes": "No promo codes",
+  "percent": "Percent",
+  "save": "Save",
+  "search": "Search codes",
+  "status": "Status",
+  "title": "Promo Codes",
+  "type": "Type",
+  "usageLimit": "Usage Limit",
+  "usageCount": "Usage Count"
+}
