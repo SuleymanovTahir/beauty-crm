@@ -5,8 +5,16 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from typing import List, Optional
+from core.config import APP_NAME
 from modules import get_module_config
 from utils.logger import log_info, log_error
+
+
+def _notification_brand_name(salon_data: dict) -> str:
+    """Return tenant business name or the neutral product fallback."""
+    if not isinstance(salon_data, dict):
+        return APP_NAME
+    return (salon_data.get('name') or APP_NAME).strip() or APP_NAME
 
 def get_smtp_config() -> dict:
     """Получить SMTP конфигурацию"""
@@ -89,6 +97,7 @@ def format_new_booking_email(booking_data: dict, salon_data: dict) -> tuple[str,
     datetime_str = booking_data.get('datetime', '')
     phone = booking_data.get('phone', '')
     notes = booking_data.get('notes', '')
+    brand_name = _notification_brand_name(salon_data)
 
     # Plain text версия
     plain = f"""
@@ -101,7 +110,7 @@ def format_new_booking_email(booking_data: dict, salon_data: dict) -> tuple[str,
 Примечания: {notes if notes else 'Нет'}
 
 ---
-{salon_data.get('name', 'Салон красоты')}
+{brand_name}
 """
 
     # HTML версия
@@ -146,7 +155,7 @@ def format_new_booking_email(booking_data: dict, salon_data: dict) -> tuple[str,
             {f'<div class="info-row"><span class="label">📝 Примечания:</span><span class="value">{notes}</span></div>' if notes else ''}
         </div>
         <div class="footer">
-            {salon_data.get('name', 'Салон красоты')}
+            {brand_name}
         </div>
     </div>
 </body>

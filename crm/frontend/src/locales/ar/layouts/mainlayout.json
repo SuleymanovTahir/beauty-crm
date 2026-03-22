@@ -51,6 +51,7 @@
     "notifications": "الإشعارات",
     "payment_integrations": "أنظمة الدفع",
     "payments": "أنظمة الدفع",
+    "platform_control": "المنصة",
     "products": "المنتجات",
     "promo_codes": "الرموز الترويجية",
     "referrals": "الإحالات",
@@ -76,7 +77,7 @@
     "manager": "",
     "marketer": "المسوق",
     "saler": "مدير المبيعات",
-    "sales": "المبيعات"
+    "super_admin": "مالك المنصة"
   },
   "user": "المستخدم",
   "view_all": "عرض الكل"

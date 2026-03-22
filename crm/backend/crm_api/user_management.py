@@ -10,6 +10,7 @@ import hashlib
 import secrets
 from datetime import datetime, timedelta
 from core.config import DATABASE_NAME
+from db.companies import QuotaExceededError, ensure_company_quota
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.permissions import (
@@ -20,6 +21,10 @@ from utils.permissions import (
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["User Management"])
+
+
+def _quota_error_response(error: QuotaExceededError) -> JSONResponse:
+    return JSONResponse(error.detail, status_code=409)
 
 # ===== REQUEST MODELS =====
 
@@ -326,14 +331,21 @@ async def approve_user(
         c = conn.cursor()
 
         # Получаем email, имя и язык пользователя
-        c.execute("SELECT email, full_name, email_verified, COALESCE(preferred_language, 'en') FROM users WHERE id = %s", (user_id,))
+        c.execute(
+            """
+            SELECT email, full_name, email_verified, COALESCE(preferred_language, 'en'), role, company_id
+            FROM users
+            WHERE id = %s
+            """,
+            (user_id,),
+        )
         result = c.fetchone()
 
         if not result:
             conn.close()
             return JSONResponse({"error": "User not found"}, status_code=404)
 
-        email, full_name, email_verified, preferred_language = result
+        email, full_name, email_verified, preferred_language, target_role, target_company_id = result
 
         # Проверяем что email подтвержден
         if not email_verified:
@@ -342,6 +354,9 @@ async def approve_user(
                 {"error": "Нельзя одобрить пользователя без подтверждения email"},
                 status_code=400
             )
+
+        if target_company_id and target_role != "client":
+            ensure_company_quota(int(target_company_id), "employees", 1)
 
         # Одобряем пользователя (is_active = TRUE) и обновляем должность если указана
         if position:
@@ -374,6 +389,9 @@ async def approve_user(
 
         log_info(f"User {user['id']} approved user {user_id}", "api")
         return {"success": True, "message": "Пользователь одобрен"}
+    except QuotaExceededError as quota_error:
+        conn.close()
+        return _quota_error_response(quota_error)
 
     except Exception as e:
         log_error(f"Error approving user: {e}", "api")
@@ -555,18 +573,21 @@ async def activate_user(
         c = conn.cursor()
 
         # Проверяем существование пользователя
-        c.execute("SELECT full_name, is_active, approved FROM users WHERE id = %s", (user_id,))
+        c.execute("SELECT full_name, is_active, approved, role, company_id FROM users WHERE id = %s", (user_id,))
         result = c.fetchone()
 
         if not result:
             conn.close()
             return JSONResponse({"error": "User not found"}, status_code=404)
 
-        full_name, is_active, approved = result
+        full_name, is_active, approved, target_role, target_company_id = result
 
         if is_active:
             conn.close()
             return JSONResponse({"error": "User is already active"}, status_code=400)
+
+        if target_company_id and target_role != "client":
+            ensure_company_quota(int(target_company_id), "employees", 1)
 
         # Активируем пользователя
         c.execute("""
@@ -580,6 +601,9 @@ async def activate_user(
 
         log_info(f"User {user['id']} activated user {user_id} ({full_name})", "api")
         return {"success": True, "message": f"User {full_name} activated"}
+    except QuotaExceededError as quota_error:
+        conn.close()
+        return _quota_error_response(quota_error)
 
     except Exception as e:
         log_error(f"Error activating user: {e}", "api")

@@ -1,6 +1,7 @@
 {
   "account_pending": "Ваш аккаунт ожидает одобрения администратора",
   "authorization_error": "Авторизация не удалась",
+  "company_inactive": "Компания временно недоступна",
   "crm_system_management": "Система управления",
   "email_not_verified_redirect": "Email не подтвержден. Перенаправление на страницу верификации...",
   "enter_login": "Введите логин",

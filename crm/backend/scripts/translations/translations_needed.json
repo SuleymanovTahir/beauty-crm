@@ -1,0 +1,114 @@
+{
+  "workflow_stages": [
+    {
+      "id": 1,
+      "stable_key": "1",
+      "fields": {
+        "name": {
+          "ru": "new",
+          "key": "workflow_stages.1.name"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "stable_key": "2",
+      "fields": {
+        "name": {
+          "ru": "negotiation",
+          "key": "workflow_stages.2.name"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "stable_key": "3",
+      "fields": {
+        "name": {
+          "ru": "sent_offer",
+          "key": "workflow_stages.3.name"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "stable_key": "4",
+      "fields": {
+        "name": {
+          "ru": "closed_won",
+          "key": "workflow_stages.4.name"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "stable_key": "5",
+      "fields": {
+        "name": {
+          "ru": "closed_lost",
+          "key": "workflow_stages.5.name"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "stable_key": "6",
+      "fields": {
+        "name": {
+          "ru": "draft",
+          "key": "workflow_stages.6.name"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "stable_key": "7",
+      "fields": {
+        "name": {
+          "ru": "sent",
+          "key": "workflow_stages.7.name"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "stable_key": "8",
+      "fields": {
+        "name": {
+          "ru": "paid",
+          "key": "workflow_stages.8.name"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "stable_key": "9",
+      "fields": {
+        "name": {
+          "ru": "todo",
+          "key": "workflow_stages.9.name"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "stable_key": "10",
+      "fields": {
+        "name": {
+          "ru": "in_progress",
+          "key": "workflow_stages.10.name"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "stable_key": "11",
+      "fields": {
+        "name": {
+          "ru": "done",
+          "key": "workflow_stages.11.name"
+        }
+      }
+    }
+  ]
+}

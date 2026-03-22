@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Переводчик для Beauty CRM с использованием LibreTranslate
-Контекст: Салон красоты
+Переводчик для CRM с использованием LibreTranslate
+Контекст: бизнес и услуги
 """
 import requests
 import time
@@ -236,7 +236,7 @@ BEAUTY_SALON_TERMS = {
 }
 
 class BeautySalonTranslator:
-    """Переводчик с контекстом салона красоты"""
+    """Переводчик с нейтральным бизнес-контекстом"""
     
     def __init__(self):
         self.cache = {}
@@ -244,7 +244,7 @@ class BeautySalonTranslator:
         
     def translate(self, text: str, source: str = 'en', target: str = 'ru') -> Optional[str]:
         """
-        Переводит текст с учетом контекста салона красоты
+        Переводит текст с учетом нейтрального сервисного контекста
         
         Args:
             text: Текст для перевода
@@ -286,15 +286,15 @@ class BeautySalonTranslator:
         # Универсальный контекст для всех языков
         # Определяем контекстный префикс в зависимости от исходного языка
         context_prefixes = {
-            'ru': '[Салон красоты]',
-            'en': '[Beauty salon]',
-            'ar': '[صالون تجميل]',
-            'es': '[Salón de belleza]',
-            'de': '[Schönheitssalon]',
-            'fr': '[Salon de beauté]',
-            'pt': '[Salão de beleza]',
-            'hi': '[सौंदर्य सैलून]',
-            'kk': '[Сұлулық салоны]',
+            'ru': '[Услуга]',
+            'en': '[Service]',
+            'ar': '[خدمة]',
+            'es': '[Servicio]',
+            'de': '[Service]',
+            'fr': '[Service]',
+            'pt': '[Serviço]',
+            'hi': '[सेवा]',
+            'kk': '[Қызмет]',
         }
         
         # Переводим через API с контекстом

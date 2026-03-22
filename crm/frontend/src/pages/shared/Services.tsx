@@ -457,7 +457,7 @@ export default function UniversalServices() {
                     <span>{isEmployee ? t('employee/services:my_services') : t('crm/services:services_and_packages')}</span>
                 </h1>
                 <p className="crm-services-subtitle">
-                    {isEmployee ? t('employee/services:edit_services_description') : t('crm/services:management_of_price_list_and_salon_promotions')}
+                    {isEmployee ? t('employee/services:edit_services_description') : t('crm/services:management_of_price_list_and_business_promotions', { defaultValue: 'Управление прайс-листом, пакетами и акциями компании' })}
                 </p>
             </div>
 

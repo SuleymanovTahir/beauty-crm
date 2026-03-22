@@ -940,8 +940,8 @@ class Translator:
                 is_proper_noun = capital_words_count > 1
                 is_service_term = len(words) <= 3 and not text.endswith('.') and not is_proper_noun
                 if is_service_term:
-                    if source == 'en': context_prefix = "[Beauty salon service] "
-                    elif source == 'ru': context_prefix = "[Услуга салона красоты] "
+                    if source == 'en': context_prefix = "[Service] "
+                    elif source == 'ru': context_prefix = "[Услуга] "
             text_with_context = context_prefix + text
             encoded_text = urllib.parse.quote(text_with_context)
             url = f"https://translate.googleapis.com/translate_a/single?client=gtx&sl={source}&tl={target}&dt=t&q={encoded_text}"
@@ -958,7 +958,7 @@ class Translator:
                 if parsed and parsed[0]:
                     translated = "".join([segment[0] for segment in parsed[0] if segment and segment[0]])
                     if context_prefix:
-                        prefixes = ["[Beauty salon service]", "[Услуга салона красоты]", "[خدمة صالون التجميل]", "[Servicio de salón de belleza]", "[Service de salon de beauté]", "[Schönheitssalon-Service]", "[सौंदर्य सैलून सेवा]", "[Сұлулық салоны қызметі]", "[Serviço de salão de beleza]"]
+                        prefixes = ["[Service]", "[Услуга]", "[خدمة]", "[Servicio]", "[Service]", "[Service]", "[सेवा]", "[Қызмет]", "[Serviço]"]
                         for prefix in prefixes: translated = translated.replace(prefix, "").strip()
                         translated = translated.replace("[", "").replace("]", "").strip()
                     return translated

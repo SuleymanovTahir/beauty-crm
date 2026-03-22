@@ -9,7 +9,7 @@ export const DEFAULT_PLATFORM_GATES: PlatformGates = {
   site_enabled: false,
   crm_enabled: true,
   product_mode: 'crm',
-  business_type: 'beauty',
+  business_type: 'other',
 };
 
 export const toBooleanFlag = (value: unknown, fallback: boolean): boolean => {

@@ -51,6 +51,7 @@
     "notifications": "Уведомления",
     "payment_integrations": "Платежные системы",
     "payments": "Платежные системы",
+    "platform_control": "Платформа",
     "products": "Товары",
     "promo_codes": "Промокоды",
     "referrals": "Рефералы",
@@ -75,7 +76,8 @@
     "employee": "",
     "manager": "",
     "marketer": "Маркетолог",
-    "saler": "Менеджер по продажам"
+    "saler": "Менеджер по продажам",
+    "super_admin": "Платформа Владелец"
   },
   "user": "Пользователь",
   "view_all": "Посмотреть все"

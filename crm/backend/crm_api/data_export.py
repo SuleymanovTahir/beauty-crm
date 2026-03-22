@@ -11,12 +11,17 @@ import csv
 import io
 import json
 from core.config import DATABASE_NAME
+from db.companies import QuotaExceededError, ensure_company_quota
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.permissions import can_export_data, can_import_data, can_access_resource, filter_data_by_permissions
 from utils.logger import log_info, log_error
 
 router = APIRouter(tags=["Data Export/Import"])
+
+
+def _quota_error_response(error: QuotaExceededError) -> JSONResponse:
+    return JSONResponse(error.detail, status_code=409)
 
 # ===== ЭКСПОРТ =====
 
@@ -126,6 +131,9 @@ async def import_clients(
             phone = row.get('phone') if can_import_contacts else None
             email = row.get('email') if can_import_contacts else None
             telegram = row.get('telegram') if can_import_contacts else None
+            company_id = user.get("company_id")
+            if company_id:
+                ensure_company_quota(int(company_id), "clients", 1)
 
             c.execute("""
                 INSERT INTO clients (instagram_id, name, phone, email, telegram_username, status, created_at)
@@ -145,7 +153,8 @@ async def import_clients(
             "skipped": skipped_count,
             "message": f"Импортировано: {imported_count}, Пропущено: {skipped_count}"
         }
-
+    except QuotaExceededError as quota_error:
+        return _quota_error_response(quota_error)
     except Exception as e:
         log_error(f"Error importing clients: {e}", "import")
         return JSONResponse({"error": str(e)}, status_code=500)

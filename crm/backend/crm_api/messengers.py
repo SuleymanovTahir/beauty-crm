@@ -9,7 +9,7 @@ import json
 import httpx
 
 from core.config import DATABASE_NAME
-from db.companies import get_current_company, update_company
+from db.companies import QuotaExceededError, ensure_company_quota, get_current_company, update_company
 from db.connection import get_db_connection
 from utils.utils import require_auth
 from utils.logger import log_error, log_info
@@ -20,6 +20,10 @@ GREEN_API_BASE = "https://api.green-api.com"
 FACEBOOK_GRAPH_API_BASE = "https://graph.facebook.com"
 
 router = APIRouter(tags=["Messengers"])
+
+
+def _quota_error_response(error: QuotaExceededError) -> JSONResponse:
+    return JSONResponse(error.detail, status_code=409)
 
 
 def _load_current_company_messenger_config() -> list[dict]:
@@ -299,6 +303,10 @@ async def send_messenger_message(
         if not row or not row[0]:
             return JSONResponse({"error": f"{messenger_type} is not enabled"}, status_code=400)
 
+        company_id = user.get("company_id")
+        if company_id:
+            ensure_company_quota(int(company_id), "messages", 1)
+
         # Сохраняем сообщение в БД
         c.execute("""
             INSERT INTO messenger_messages
@@ -429,7 +437,8 @@ async def send_messenger_message(
             "message_id": message_id,
             "sent_to_api": sent_successfully
         }
-
+    except QuotaExceededError as quota_error:
+        return _quota_error_response(quota_error)
     except Exception as e:
         log_error(f"Error sending message via {messenger_type}: {e}", "messengers")
         return JSONResponse({"error": str(e)}, status_code=500)

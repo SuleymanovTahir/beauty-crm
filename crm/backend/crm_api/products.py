@@ -2,16 +2,22 @@
 API для управления товарами (Products)
 """
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
 import json
 
+from db.companies import QuotaExceededError, ensure_company_quota
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
 from utils.utils import get_current_user
 
 router = APIRouter()
+
+
+def _quota_error_response(error: QuotaExceededError) -> JSONResponse:
+    return JSONResponse(error.detail, status_code=409)
 
 
 class ProductCreate(BaseModel):
@@ -223,6 +229,13 @@ async def create_product(
     current_user: dict = Depends(get_current_user)
 ):
     """Создать новый товар"""
+    company_id = current_user.get("company_id")
+    if company_id:
+        try:
+            ensure_company_quota(int(company_id), "products", 1)
+        except QuotaExceededError as quota_error:
+            return _quota_error_response(quota_error)
+
     conn = get_db_connection()
     c = conn.cursor()
     

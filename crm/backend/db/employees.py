@@ -6,7 +6,9 @@ All employee data is now stored in users table with is_service_provider = TRUE.
 from datetime import datetime
 from typing import Optional, List
 from core.config import DATABASE_NAME
+from db.companies import ensure_company_quota
 from db.connection import get_db_connection
+from utils.tenant_context import get_current_company_id
 
 def get_avatar_url(profile_pic: Optional[str], gender: Optional[str] = 'female') -> str:
     """
@@ -85,29 +87,34 @@ def get_employee(employee_id: int):
 
 def create_employee(full_name: str, position: str = None, experience: str = None,
                    photo: str = None, bio: str = None, phone: str = None,
-                   email: str = None, instagram: str = None):
+                   email: str = None, instagram: str = None, company_id: int | None = None):
     """Создать сотрудника (в users таблице)"""
     conn = get_db_connection()
     c = conn.cursor()
     
     now = datetime.now().isoformat()
-    
+    resolved_company_id = company_id or get_current_company_id()
+
     # Не создаем дубликат сотрудника с тем же ФИО (SSOT по users.id)
-    c.execute(
-        """
-        SELECT id
+    duplicate_query = """
+        SELECT id, is_active
         FROM users
         WHERE LOWER(COALESCE(full_name, '')) = LOWER(%s)
           AND is_service_provider = TRUE
           AND deleted_at IS NULL
-        ORDER BY id ASC
-        LIMIT 1
-        """,
-        (full_name,),
-    )
+    """
+    duplicate_params = [full_name]
+    if resolved_company_id:
+        duplicate_query += " AND company_id = %s"
+        duplicate_params.append(resolved_company_id)
+    duplicate_query += " ORDER BY id ASC LIMIT 1"
+    c.execute(duplicate_query, duplicate_params)
     existing = c.fetchone()
     if existing:
         employee_id = int(existing[0])
+        is_active = bool(existing[1])
+        if resolved_company_id and not is_active:
+            ensure_company_quota(int(resolved_company_id), "employees", 1)
         c.execute(
             """
             UPDATE users
@@ -118,16 +125,20 @@ def create_employee(full_name: str, position: str = None, experience: str = None
                 bio = COALESCE(%s, bio),
                 phone = COALESCE(%s, phone),
                 email = COALESCE(%s, email),
-                instagram_employee = COALESCE(%s, instagram_employee),
+                instagram_username = COALESCE(%s, instagram_username),
                 is_active = TRUE,
-                role = 'employee'
+                role = 'employee',
+                company_id = COALESCE(%s, company_id)
             WHERE id = %s
             """,
-            (position, experience, photo, bio, phone, email, instagram, employee_id),
+            (position, experience, photo, bio, phone, email, instagram, resolved_company_id, employee_id),
         )
         conn.commit()
         conn.close()
         return employee_id
+
+    if resolved_company_id:
+        ensure_company_quota(int(resolved_company_id), "employees", 1)
 
     # Generate username from full_name
     username = full_name.lower().replace(" ", "_")
@@ -140,8 +151,8 @@ def create_employee(full_name: str, position: str = None, experience: str = None
     c.execute(
         """INSERT INTO users
              (username, password_hash, full_name, position, experience, photo, bio,
-              phone, email, instagram_employee, is_service_provider, role, created_at)
-             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, TRUE, 'employee', %s)
+              phone, email, instagram_username, is_service_provider, role, company_id, created_at)
+             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, TRUE, 'employee', %s, %s)
              RETURNING id""",
         (
             username,
@@ -154,6 +165,7 @@ def create_employee(full_name: str, position: str = None, experience: str = None
             phone,
             email,
             instagram,
+            resolved_company_id,
             now,
         ),
     )
@@ -174,7 +186,7 @@ def update_employee(employee_id: int, **kwargs):
     
     # Map old field names to new ones
     field_mapping = {
-        'instagram': 'instagram_employee'
+        'instagram': 'instagram_username'
     }
     
     for key, value in kwargs.items():

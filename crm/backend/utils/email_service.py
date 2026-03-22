@@ -420,7 +420,7 @@ def wrap_email_html(title: str, content: str, unsubscribe_link: Optional[str] = 
                         <tr>
                             <td style="background: #f9f9f9; padding: 30px; text-align: center; color: #999999; font-size: 12px; border-top: 1px solid #eeeeee;">
                                 <p style="margin: 0 0 10px 0; color: #666666; font-weight: bold;">{salon_name}</p>
-                                <p style="margin: 0 0 20px 0;">Professional Beauty Management System</p>
+                                <p style="margin: 0 0 20px 0;">Professional Business CRM Platform</p>
                                 
                                 {"<div style='margin-bottom: 20px;'><a href='" + final_unsubscribe + "' style='color: " + brand_color + "; text-decoration: none;'>Отписаться от рассылки</a></div>"}
                                 
@@ -741,7 +741,7 @@ def send_newsletter_welcome_email(email: str) -> bool:
             </div>
             <div class="content">
                 <p>Thank you for subscribing to {salon_name} newsletter.</p>
-                <p>You will now receive updates about our latest features, beauty trends, and special offers.</p>
+                <p>You will now receive updates about product features, automation tips, and special offers.</p>
                 <p>Stay tuned!</p>
             </div>
         </div>
@@ -753,7 +753,7 @@ def send_newsletter_welcome_email(email: str) -> bool:
     Welcome to {salon_name}!
     
     Thank you for subscribing to our newsletter.
-    You will now receive updates about our latest features, beauty trends, and special offers.
+    You will now receive updates about product features, automation tips, and special offers.
     """
     
     return send_email(email, subject, html_body, text_body)

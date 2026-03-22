@@ -15,8 +15,10 @@ from core.config import DATABASE_NAME, PUBLIC_URL, normalize_role_key
 from db.connection import get_db_connection
 from db.users import verify_user, create_session, delete_session
 from db.companies import (
+    QuotaExceededError,
     can_add_company_employee,
     create_company,
+    ensure_company_quota,
     get_company_by_access_code,
     update_company,
 )
@@ -102,7 +104,7 @@ def _normalize_business_type(raw_value: Optional[str]) -> str:
     value = (raw_value or "").strip().lower()
     if value in _ALLOWED_BUSINESS_TYPES:
         return value
-    return "beauty"
+    return "other"
 
 
 def _normalize_product_mode(raw_value: Optional[str]) -> str:
@@ -457,7 +459,7 @@ async def register_employee_api(
     email: str = Form(...),
     role: str = Form("employee"),
     phone: str = Form(""),
-    business_type: str = Form("beauty"),
+    business_type: str = Form("other"),
     product_mode: str = Form("crm"),
     company_name: str = Form(""),
     company_code: str = Form(""),
@@ -531,11 +533,7 @@ async def notify_admin_registration(user_data: dict, success: bool = True, error
     """
     from integrations.telegram_bot import send_telegram_alert
     from utils.email_service import send_admin_notification_email
-    from db.settings import get_salon_settings
     import os
-
-    salon_settings = get_salon_settings()
-    salon_name = salon_settings.get('name', 'Beauty CRM')
     
     status_emoji = "✅" if success else "❌"
     title = "Новая регистрация" if success else "Ошибка при регистрации"
@@ -582,7 +580,7 @@ async def api_register(
     role: str = Form("employee"),
     position: str = Form(""),
     phone: str = Form(""),
-    business_type: str = Form("beauty"),
+    business_type: str = Form("other"),
     product_mode: str = Form("crm"),
     company_name: str = Form(""),
     company_code: str = Form(""),
@@ -719,6 +717,11 @@ async def api_register(
                 company_status = str(target_company.get("status") or "").strip().lower()
                 if company_status not in {"active", "trial"}:
                     validation_errors.append("error_company_inactive")
+                elif normalized_role == "client":
+                    try:
+                        ensure_company_quota(target_company_id, "clients", 1)
+                    except QuotaExceededError:
+                        validation_errors.append("error_company_client_limit_reached")
                 elif normalized_role != "client" and not can_add_company_employee(target_company_id):
                     validation_errors.append("error_company_staff_limit_reached")
 
@@ -779,6 +782,8 @@ async def api_register(
         # Если это клиент - создаем запись в clients
         if normalized_role == 'client':
             current_stage = "Создание записи клиента"
+            if target_company_id:
+                ensure_company_quota(int(target_company_id), "clients", 1)
             # Используем user_{id} как instagram_id для зарегистрированных клиентов
             client_id = f"user_{user_id}"
             c.execute("""INSERT INTO clients
@@ -836,6 +841,9 @@ async def api_register(
         import asyncio
         asyncio.create_task(notify_admin_registration(user_info, success=False, error_msg=error_msg, stage=current_stage))
         return JSONResponse({"error": error_msg}, status_code=400)
+    except QuotaExceededError as quota_error:
+        log_warning(f"Registration quota error: {quota_error.detail} (Stage: {current_stage})", "auth")
+        return JSONResponse(quota_error.detail, status_code=409)
     except Exception as e:
         error_msg = str(e)
         log_error(f"Error in api_register: {error_msg} (Stage: {current_stage})", "auth")

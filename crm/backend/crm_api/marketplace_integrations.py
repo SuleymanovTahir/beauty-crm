@@ -9,8 +9,10 @@ from datetime import datetime, timedelta
 import json
 import httpx
 
+from db.companies import ensure_company_quota
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error, log_warning
+from utils.tenant_context import get_current_company_id
 from utils.utils import get_current_user
 
 router = APIRouter()
@@ -424,6 +426,9 @@ async def create_order_from_marketplace(provider: str, order_data: dict, cursor,
         
         if not client:
             now = datetime.now().isoformat()
+            company_id = get_current_company_id()
+            if company_id:
+                ensure_company_quota(int(company_id), "clients", 1)
             cursor.execute("""
                 INSERT INTO clients
                 (instagram_id, name, phone, email, source, created_at)
@@ -556,6 +561,9 @@ async def create_booking_from_marketplace(
         if not client:
             # Создаем нового клиента
             now = datetime.now().isoformat()
+            company_id = get_current_company_id()
+            if company_id:
+                ensure_company_quota(int(company_id), "clients", 1)
             cursor.execute("""
                 INSERT INTO clients
                 (instagram_id, name, phone, email, source, created_at)

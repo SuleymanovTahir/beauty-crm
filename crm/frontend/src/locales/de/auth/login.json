@@ -1,6 +1,7 @@
 {
   "account_pending": "Ihr Konto wartet auf die Genehmigung durch den Administrator",
   "authorization_error": "Authorization failed",
+  "company_inactive": "Unternehmen ist vorübergehend nicht verfügbar",
   "crm_system_management": "Verwaltungssystem",
   "email_not_verified_redirect": "E-Mail wurde nicht bestätigt. Weiterleitung zur Bestätigungsseite...",
   "enter_login": "Enter username",

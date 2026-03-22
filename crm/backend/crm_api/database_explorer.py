@@ -145,7 +145,7 @@ async def get_explorer_ui(user: dict = Depends(check_director_access)):
             </div>
             
             <div class="p-5 border-t border-white/10 text-[10px] text-white/50 flex justify-between font-black uppercase tracking-widest bg-black/20">
-                <span>Ядро Beauty CRM</span>
+                <span>CRM Core</span>
                 <span class="text-emerald-500 flex items-center gap-1.5"><div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div> Authorized</span>
             </div>
         </aside>

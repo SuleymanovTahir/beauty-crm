@@ -97,7 +97,7 @@ type BusinessProfilePreset = {
 };
 
 const BUSINESS_TYPE_TRANSLATION_KEYS: Record<string, string> = {
-  beauty: 'auth/register:business_type_beauty',
+  beauty: 'auth/register:business_type_beauty_wellness',
   restaurant: 'auth/register:business_type_restaurant',
   construction: 'auth/register:business_type_construction',
   factory: 'auth/register:business_type_factory',
@@ -246,7 +246,7 @@ export default function AdminSettings() {
   const [businessProfileLoading, setBusinessProfileLoading] = useState(false);
   const [businessProfileSaving, setBusinessProfileSaving] = useState(false);
   const [businessSchemaVersion, setBusinessSchemaVersion] = useState(1);
-  const [businessType, setBusinessType] = useState('beauty');
+  const [businessType, setBusinessType] = useState('other');
   const [businessProfiles, setBusinessProfiles] = useState<Record<string, BusinessProfilePreset>>({});
   const [crmModuleCatalog, setCrmModuleCatalog] = useState<string[]>([]);
   const [businessModules, setBusinessModules] = useState<BusinessModulesState>({ crm: {} });
@@ -466,7 +466,7 @@ export default function AdminSettings() {
       const currentConfig = typeof response?.current === 'object' && response.current !== null ? response.current : {};
       const currentBusinessType = typeof (currentConfig as { business_type?: unknown }).business_type === 'string'
         ? (currentConfig as { business_type: string }).business_type
-        : 'beauty';
+        : 'other';
       setBusinessType(currentBusinessType);
 
       const currentProfile = typeof (currentConfig as { business_profile_config?: unknown }).business_profile_config === 'object'
@@ -711,7 +711,7 @@ export default function AdminSettings() {
 
     // Validation
     if (!generalSettings.salonName.trim()) {
-      toast.error(t('settings:error_salon_name_required'));
+      toast.error(t('settings:error_business_name_required', { defaultValue: 'Укажите название компании' }));
       return;
     }
     if (!generalSettings.phone.trim()) {
@@ -1518,7 +1518,7 @@ export default function AdminSettings() {
               <form onSubmit={handleSaveGeneral} className="settings-general-form space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <Label htmlFor="salonName" className="settings-label-spacing">{t('settings:salon_name')}*</Label>
+                    <Label htmlFor="salonName" className="settings-label-spacing">{t('settings:business_name', { defaultValue: 'Название компании' })}*</Label>
                     <Input
                       id="salonName"
                       value={generalSettings.salonName}
@@ -2509,7 +2509,7 @@ export default function AdminSettings() {
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
-                        <Label>{t('settings:salon_closed')}</Label>
+                        <Label>{t('settings:company_closed', { defaultValue: 'Компания закрыта' })}</Label>
                         <p className="text-xs text-gray-500">{t('settings:block_all_bookings')}</p>
                       </div>
                       <Switch

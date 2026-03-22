@@ -31,7 +31,7 @@ def humanize_key(key: str) -> str:
     # Replace underscores and hyphens with spaces
     human = name.replace('_', ' ').replace('-', ' ')
     
-    # Special cases for beauty salon context
+    # Special cases for service and business context
     replacements = {
         'master': 'Specialist',
         'streak': 'Visit sequence',

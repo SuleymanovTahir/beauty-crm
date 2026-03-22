@@ -1,5 +1,5 @@
 """
-Beauty CRM - Основное приложение FastAPI (CRM runtime)
+Business CRM - Основное приложение FastAPI (CRM runtime)
 """
 import os
 import sys
@@ -28,7 +28,7 @@ from slowapi.errors import RateLimitExceeded
 
 # Основные утилиты
 from utils.logger import log_info, log_error
-from core.config import is_localhost
+from core.config import APP_NAME, is_localhost
 from db.connection import init_connection_pool, get_db_connection
 from scripts.maintenance.recreate_database import drop_database, recreate_database  # Uncomment only for manual DB reset
 from db.settings import get_salon_settings
@@ -495,7 +495,7 @@ def _register_runtime_endpoints(app: FastAPI):
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="Beauty CRM", lifespan=lifespan)
+    app = FastAPI(title=APP_NAME, lifespan=lifespan)
     app.state.backend_product_group = "crm"
 
     _register_middlewares(app)

@@ -4,9 +4,11 @@
 from datetime import datetime
 from typing import Optional
 import re
+from db.companies import ensure_company_quota
 from utils.logger import log_info,log_error
 from db.connection import get_db_connection
 import psycopg2
+from utils.tenant_context import get_current_company_id
 
 def get_avatar_url(profile_pic: Optional[str], gender: Optional[str] = 'female') -> str:
     """
@@ -114,34 +116,63 @@ def get_or_create_client(instagram_id: str, username: str = None, phone: str = N
     """Получить или создать клиента с защитой от дублей"""
     conn = get_db_connection()
     c = conn.cursor()
+    company_id = get_current_company_id()
     
     try:
         # 1. Сначала ищем по точному instagram_id
-        c.execute("SELECT instagram_id FROM clients WHERE instagram_id = %s", (instagram_id,))
+        if company_id:
+            c.execute(
+                "SELECT instagram_id FROM clients WHERE instagram_id = %s AND company_id = %s",
+                (instagram_id, company_id),
+            )
+        else:
+            c.execute("SELECT instagram_id FROM clients WHERE instagram_id = %s", (instagram_id,))
         client = c.fetchone()
         
         if not client:
             # 2. Если не нашли, ищем по телефону или email (защита от дублей при смене ID)
             if phone or email:
-                c.execute("""
-                    SELECT instagram_id FROM clients 
-                    WHERE (phone = %s AND phone IS NOT NULL AND phone != '') 
-                    OR (email = %s AND email IS NOT NULL AND email != '')
-                    LIMIT 1
-                """, (phone, email))
+                if company_id:
+                    c.execute("""
+                        SELECT instagram_id FROM clients 
+                        WHERE company_id = %s
+                          AND (
+                              (phone = %s AND phone IS NOT NULL AND phone != '') 
+                              OR (email = %s AND email IS NOT NULL AND email != '')
+                          )
+                        LIMIT 1
+                    """, (company_id, phone, email))
+                else:
+                    c.execute("""
+                        SELECT instagram_id FROM clients 
+                        WHERE (phone = %s AND phone IS NOT NULL AND phone != '') 
+                           OR (email = %s AND email IS NOT NULL AND email != '')
+                        LIMIT 1
+                    """, (phone, email))
                 existing = c.fetchone()
                 
                 if existing:
                     # Если нашли по телефону/email - привязываем новый instagram_id к существующей записи
                     existing_id = existing[0]
-                    c.execute("UPDATE clients SET instagram_id = %s, username = %s WHERE instagram_id = %s", 
-                             (instagram_id, username, existing_id))
+                    if company_id:
+                        c.execute(
+                            "UPDATE clients SET instagram_id = %s, username = %s WHERE instagram_id = %s AND company_id = %s",
+                            (instagram_id, username, existing_id, company_id),
+                        )
+                    else:
+                        c.execute(
+                            "UPDATE clients SET instagram_id = %s, username = %s WHERE instagram_id = %s",
+                            (instagram_id, username, existing_id),
+                        )
                     conn.commit()
                     print(f"🔗 Связан новый ID {instagram_id} с существующим клиентом {existing_id}")
                     return instagram_id
         
         # 3. Если клиента всё еще нет - создаем нового
         if not client:
+            if company_id:
+                ensure_company_quota(int(company_id), "clients", 1)
+
             now = datetime.now().isoformat()
             
             # Fetch default pipeline stage (usually 'new' or first order)
@@ -151,18 +182,24 @@ def get_or_create_client(instagram_id: str, username: str = None, phone: str = N
             
             c.execute("""INSERT INTO clients 
                          (instagram_id, username, phone, email, first_contact, last_contact, 
-                          total_messages, labels, status, detected_language, pipeline_stage_id)
-                         VALUES (%s, %s, %s, %s, %s, %s, 0, %s, %s, %s, %s)""",
-                      (instagram_id, username, phone, email, now, now, "Новый клиент", "new", "ru", default_stage_id))
+                          total_messages, labels, status, detected_language, pipeline_stage_id, company_id)
+                         VALUES (%s, %s, %s, %s, %s, %s, 0, %s, %s, %s, %s, %s)""",
+                      (instagram_id, username, phone, email, now, now, "Новый клиент", "new", "ru", default_stage_id, company_id))
             conn.commit()
             print(f"✨ Создан новый клиент: {instagram_id} ({username or ''}) в стадии {default_stage_id}")
         else:
             # Обновляем время контакта
             now = datetime.now().isoformat()
-            c.execute("""UPDATE clients 
-                         SET last_contact = %s, total_messages = total_messages + 1 
-                         WHERE instagram_id = %s""",
-                      (now, instagram_id))
+            if company_id:
+                c.execute("""UPDATE clients 
+                             SET last_contact = %s, total_messages = total_messages + 1 
+                             WHERE instagram_id = %s AND company_id = %s""",
+                          (now, instagram_id, company_id))
+            else:
+                c.execute("""UPDATE clients 
+                             SET last_contact = %s, total_messages = total_messages + 1 
+                             WHERE instagram_id = %s""",
+                          (now, instagram_id))
             conn.commit()
             
         return instagram_id

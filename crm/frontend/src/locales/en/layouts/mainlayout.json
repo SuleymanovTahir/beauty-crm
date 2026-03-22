@@ -51,6 +51,7 @@
     "notifications": "Notifications",
     "payment_integrations": "Payment systems",
     "payments": "Payment systems",
+    "platform_control": "Platform",
     "products": "Goods",
     "promo_codes": "Promotional codes",
     "referrals": "Referrals",
@@ -76,7 +77,8 @@
     "manager": "",
     "marketer": "Marketer",
     "saler": "Sales Manager",
-    "sales": "Sales"
+    "sales": "Sales",
+    "super_admin": "Platform Owner"
   },
   "user": "User",
   "view_all": "View all"

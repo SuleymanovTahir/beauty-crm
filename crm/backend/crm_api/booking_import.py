@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 import io
 from datetime import datetime
 from typing import Dict, List, Any
+from db.companies import QuotaExceededError, ensure_company_quota
 from utils.logger import log_info, log_error
 from utils.optional_dependencies import raise_optional_dependency_http
 
@@ -18,6 +19,7 @@ except ImportError:
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
+from utils.tenant_context import get_current_company_id
 
 router = APIRouter()
 
@@ -171,6 +173,9 @@ def find_or_create_client(name: str, phone: str = None) -> str:
         import json
         instagram_id = f"import_booking_{int(datetime.now().timestamp())}_{name.replace(' ', '_')}"
         phone_json = json.dumps([phone]) if phone else '[]'
+        company_id = get_current_company_id()
+        if company_id:
+            ensure_company_quota(int(company_id), "clients", 1)
         
         c.execute("""
             INSERT INTO clients 
@@ -339,6 +344,8 @@ async def import_bookings(file: UploadFile = File(...)):
             'message': f"Import completed: {results['imported']} bookings imported, {results['skipped']} skipped"
         })
         
+    except QuotaExceededError as quota_error:
+        raise HTTPException(status_code=409, detail=quota_error.detail)
     except Exception as e:
         log_error(f"❌ Booking import failed: {e}", "import", exc_info=True)
         raise HTTPException(

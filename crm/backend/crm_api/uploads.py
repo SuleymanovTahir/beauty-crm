@@ -1,10 +1,15 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Cookie
 from fastapi.responses import JSONResponse
 import os
 from pathlib import Path
 from typing import Optional
 from datetime import datetime
 import re
+import json
+
+from db.companies import QuotaExceededError, ensure_company_storage
+from db.connection import get_db_connection
+from utils.utils import require_auth
 
 router = APIRouter(tags=["Upload"])
 
@@ -33,13 +38,16 @@ def get_file_category(content_type: str) -> str:
 @router.post("/upload")
 async def upload_file(
     file: UploadFile = File(...),
-    subfolder: Optional[str] = None
+    subfolder: Optional[str] = None,
+    session_token: Optional[str] = Cookie(None)
 ):
     """
     Загрузить файл и получить публичный URL
     subfolder: Опциональная подпапка внутри категории (например 'faces' для 'images')
     """
     try:
+        user = require_auth(session_token) if session_token else None
+
         # Проверка размера (максимум 25MB)
         contents = await file.read()
         file_size = len(contents)
@@ -49,6 +57,10 @@ async def upload_file(
                 status_code=413,
                 detail="File too large. Maximum size is 25MB"
             )
+
+        company_id = user.get("company_id") if isinstance(user, dict) else None
+        if company_id:
+            ensure_company_storage(int(company_id), file_size)
         
         # Определяем категорию
         category = get_file_category(file.content_type or 'application/octet-stream')
@@ -84,6 +96,42 @@ async def upload_file(
         # Формируем публичный URL (относительный по умолчанию для DB)
         # Мы также возвращаем полный URL для фронтенда если нужно
         full_url = f"{PUBLIC_URL}{public_path}"
+
+        if company_id:
+            conn = get_db_connection()
+            c = conn.cursor()
+            try:
+                c.execute(
+                    """
+                    INSERT INTO media_library (url, context, title, category, user_id, company_id, is_public, metadata)
+                    VALUES (%s, %s, %s, %s, %s, %s, TRUE, %s)
+                    """,
+                    (
+                        public_path,
+                        "upload",
+                        original_filename,
+                        category,
+                        user.get("id") if isinstance(user, dict) else None,
+                        int(company_id),
+                        json.dumps(
+                            {
+                                "size_bytes": file_size,
+                                "content_type": file.content_type,
+                                "filename": filename,
+                                "subfolder": subfolder,
+                            },
+                            ensure_ascii=False,
+                        ),
+                    ),
+                )
+                conn.commit()
+            except Exception:
+                conn.rollback()
+                if file_path.exists():
+                    file_path.unlink()
+                raise
+            finally:
+                conn.close()
         
         print(f"✅ File uploaded: {filename} to {public_path}")
         
@@ -96,7 +144,8 @@ async def upload_file(
             "category": category,
             "subfolder": subfolder
         }
-        
+    except QuotaExceededError as quota_error:
+        raise HTTPException(status_code=409, detail=quota_error.detail)
     except HTTPException:
         raise
     except Exception as e:

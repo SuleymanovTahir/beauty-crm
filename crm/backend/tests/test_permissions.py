@@ -261,13 +261,19 @@ def test_role_hierarchy():
             name = role_data.get('name', role_key)
             print(f"      {level:3d} - {name}")
 
-        # Проверяем что директор на вершине
-        assert sorted_roles[0][0] == 'director'
-        print("\n   ✅ Директор на вершине иерархии")
+        # Проверяем что platform owner выше tenant-ролей, а director остаётся высшей tenant-ролью
+        highest_role = sorted_roles[0][0]
+        assert highest_role in {'super_admin', 'director'}
+        if highest_role == 'super_admin':
+            print("\n   ✅ Platform owner на вершине общей иерархии")
+            assert len(sorted_roles) > 1 and sorted_roles[1][0] == 'director'
+            print("   ✅ Директор остаётся высшей tenant-ролью")
+        else:
+            print("\n   ✅ Директор на вершине tenant-иерархии")
 
-        # Проверяем что сотрудник внизу
-        assert sorted_roles[-1][0] == 'employee'
-        print("   ✅ Сотрудник внизу иерархии")
+        # Проверяем что внизу остаются прикладные низшие роли
+        assert sorted_roles[-1][0] in {'employee', 'client'}
+        print("   ✅ Нижняя граница иерархии корректна")
 
         print("\n   ✅ Иерархия ролей корректна")
         return True

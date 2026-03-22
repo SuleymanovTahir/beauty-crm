@@ -7,6 +7,7 @@ from typing import Optional
 import time
 
 from core.config import DATABASE_NAME
+from db.companies import QuotaExceededError
 from db.connection import get_db_connection
 from db import (
     get_all_clients, get_client_by_id, get_or_create_client,
@@ -19,6 +20,10 @@ from utils.logger import log_error,log_info
 from services.smart_assistant import SmartAssistant, get_smart_greeting, get_smart_suggestion
 
 router = APIRouter(tags=["Clients"])
+
+
+def _quota_error_response(error: QuotaExceededError) -> JSONResponse:
+    return JSONResponse(error.detail, status_code=409)
 
 def _to_int(value: object, default: int = 0) -> int:
     try:
@@ -682,6 +687,8 @@ async def create_client_api(
             log_error(f"Failed to send admin client notification: {e}", "api")
 
         return {"success": True, "message": "Client created", "id": instagram_id}
+    except QuotaExceededError as quota_error:
+        return _quota_error_response(quota_error)
     except Exception as e:
         log_error(f"Error creating client: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=400)

@@ -694,7 +694,7 @@ export default function Register() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="beauty">{t('business_type_beauty')}</SelectItem>
+                      <SelectItem value="beauty">{t('business_type_beauty_wellness', { defaultValue: 'Бьюти и wellness' })}</SelectItem>
                       <SelectItem value="restaurant">{t('business_type_restaurant')}</SelectItem>
                       <SelectItem value="construction">{t('business_type_construction')}</SelectItem>
                       <SelectItem value="factory">{t('business_type_factory')}</SelectItem>

@@ -11,7 +11,7 @@ from db import (
     get_unread_messages_count, log_activity,get_client_language,
     update_client_bot_mode
 )
-from integrations import send_message
+from services.universal_messenger import send_universal_message
 from utils.utils import require_auth, get_total_unread
 from utils.logger import log_error,log_info,log_warning
 from services.conversation_context import ConversationContext
@@ -154,7 +154,16 @@ async def send_chat_message(
     try:
         log_info(f"📤 {user['role']} {user['username']} sending message to {instagram_id}", "chat")
         
-        result = await send_message(instagram_id, message)
+        result = await send_universal_message(
+            instagram_id,
+            text=message,
+            platform='instagram',
+            user_id=user["id"],
+            context={"company_id": user.get("company_id")},
+        )
+
+        if result.get("error") == "quota_exceeded":
+            return JSONResponse(result.get("quota") or {"error": "quota_exceeded"}, status_code=409)
         
         if "error" not in result:
             save_message(instagram_id, message, "bot")

@@ -1,3 +1,25 @@
+## [2026-03-22] Removed Generic “Beauty Salon” Wording From CRM Runtime Copy
+- Replaced remaining generic `beauty salon` / `Салон красоты` wording in active CRM runtime paths with neutral company/business wording.
+- Updated backend notification and translation runtime:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/modules/notifications/email.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/modules/notifications/telegram.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/utils/beauty_translator.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/translations/translator.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/translations/rescue_ru_empty.py`
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/maintenance/fix_data.py`
+- Updated frontend source locale content so public/dynamic sample copy uses neutral wording:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/locales/ru/dynamic.json`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/locales/ru/auth/register.json`
+- Re-ran `npm --prefix crm/frontend run db:i18n:auto` so the neutral RU source propagated to all frontend locales and refreshed `translations_source_map.json`.
+- Validation:
+  - `venv/bin/python -m py_compile` for the changed backend files
+  - `npm --prefix crm/frontend run db:i18n:auto`
+  - `npm --prefix crm/frontend run build`
+  - `rg -n -i "beauty salon|салон красоты" crm/backend crm/frontend`
+- IMPORTANT TO REMEMBER:
+  - generalized CRM must not describe every tenant as a beauty salon in default/public-facing copy,
+  - keep product wording neutral (`company`, `business`, `service`) unless the tenant explicitly configures industry-specific text.
+
 ## [2026-03-22] Separated Product Brand From Tenant Business Settings
 - Clarified the runtime model for generalized CRM:
   - `ST CRM` is the product/app name fallback,

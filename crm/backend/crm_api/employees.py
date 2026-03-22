@@ -5,6 +5,7 @@ from fastapi import APIRouter, Request, Cookie
 from fastapi.responses import JSONResponse
 from typing import Optional
 
+from db.companies import QuotaExceededError
 from db.employees import (
     get_all_employees, get_employee, create_employee, update_employee,
     delete_employee, get_employee_services, add_employee_service,
@@ -20,6 +21,10 @@ from utils.logger import log_info, log_error
 from utils.language_utils import get_localized_name
 
 router = APIRouter(tags=["Employees"])
+
+
+def _quota_error_response(error: QuotaExceededError) -> JSONResponse:
+    return JSONResponse(error.detail, status_code=409)
 
 @router.get("/employees")
 async def list_employees(
@@ -237,18 +242,22 @@ async def create_employee_api(
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     
     data = await request.json()
-    
-    employee_id = create_employee(
-        full_name=data.get("full_name"),
-        position=data.get("position"),
-        experience=data.get("experience"),
-        photo=data.get("photo"),
-        bio=data.get("bio"),
-        phone=data.get("phone"),
-        email=data.get("email"),
-        instagram=data.get("instagram")
-    )
-    
+
+    try:
+        employee_id = create_employee(
+            full_name=data.get("full_name"),
+            position=data.get("position"),
+            experience=data.get("experience"),
+            photo=data.get("photo"),
+            bio=data.get("bio"),
+            phone=data.get("phone"),
+            email=data.get("email"),
+            instagram=data.get("instagram"),
+            company_id=user.get("company_id"),
+        )
+    except QuotaExceededError as quota_error:
+        return _quota_error_response(quota_error)
+
     return {"success": True, "employee_id": employee_id}
 
 @router.post("/employees/{employee_id}/update")

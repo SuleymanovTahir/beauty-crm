@@ -11,6 +11,7 @@ from fastapi import APIRouter, Cookie, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from db.companies import (
+    QuotaExceededError,
     archive_company,
     assign_company_subscription,
     create_company,
@@ -172,6 +173,10 @@ def _resolve_tariff_plan_id(tariff_plan_id: Optional[int], tariff_key: Optional[
     if not tariff:
         raise HTTPException(status_code=404, detail="tariff_not_found")
     return int(tariff["id"])
+
+
+def _raise_quota_http_error(error: QuotaExceededError) -> None:
+    raise HTTPException(status_code=409, detail=error.detail)
 
 
 def _load_platform_broadcasts() -> list[dict]:
@@ -552,7 +557,10 @@ async def create_platform_ad_api(
     current_user: dict = Depends(_require_super_admin),
 ):
     with platform_access():
-        ad_id = create_platform_ad({**payload.model_dump(), "created_by_user_id": current_user.get("id")})
+        try:
+            ad_id = create_platform_ad({**payload.model_dump(), "created_by_user_id": current_user.get("id")})
+        except QuotaExceededError as quota_error:
+            _raise_quota_http_error(quota_error)
         ads = list_platform_ads()
     return {"success": True, "ad_id": ad_id, "ads": ads}
 
@@ -565,7 +573,10 @@ async def update_platform_ad_api(
 ):
     del current_user
     with platform_access():
-        success = update_platform_ad(ad_id, payload.model_dump())
+        try:
+            success = update_platform_ad(ad_id, payload.model_dump())
+        except QuotaExceededError as quota_error:
+            _raise_quota_http_error(quota_error)
         ads = list_platform_ads()
     return {"success": success, "ads": ads}
 

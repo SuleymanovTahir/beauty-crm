@@ -11,6 +11,7 @@ import os
 import base64
 
 from core.config import DATABASE_NAME
+from db.companies import QuotaExceededError, ensure_company_storage
 from db.connection import get_db_connection
 from db.settings import get_salon_settings
 from utils.utils import require_auth
@@ -718,11 +719,13 @@ async def stop_recording(
 
         # Декодируем и сохраняем файл
         audio_data = base64.b64decode(audio_blob.split(',')[1] if ',' in audio_blob else audio_blob)
+        file_size = len(audio_data)
+        company_id = user.get("company_id")
+        if company_id:
+            ensure_company_storage(int(company_id), file_size)
+
         with open(file_path, 'wb') as f:
             f.write(audio_data)
-
-        # Получить размер файла
-        file_size = os.path.getsize(file_path)
 
         # Получить ID папки "Внутренний чат"
         folder_id = None
@@ -761,9 +764,14 @@ async def stop_recording(
             "url": f"/static/recordings/{filename}",
             "custom_name": custom_name
         }
-
+    except QuotaExceededError as quota_error:
+        if 'file_path' in locals() and os.path.exists(file_path):
+            os.remove(file_path)
+        return JSONResponse(quota_error.detail, status_code=409)
     except Exception as e:
         conn.rollback()
+        if 'file_path' in locals() and os.path.exists(file_path):
+            os.remove(file_path)
         log_error(f"Error stopping recording: {e}", "internal_chat")
         return JSONResponse({"error": str(e)}, status_code=500)
     finally:

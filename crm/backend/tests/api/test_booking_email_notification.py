@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from tests.config import get_test_config
 TEST_CONFIG = get_test_config()
 
+from core.config import APP_NAME
 from utils.email import send_email_async, _is_fake_email
 from db.settings import get_salon_settings
 from modules.notifications.email import format_new_booking_email
@@ -43,6 +44,7 @@ def format_booking_reminder_email(booking_data: dict, salon_data: dict) -> tuple
     master_name = booking_data.get('master') or ''
     booking_dt = booking_data.get('datetime') or ''
     phone = booking_data.get('phone') or ''
+    brand_name = (salon_data.get('name') or APP_NAME).strip() or APP_NAME
 
     plain = f"""
 Напоминание о записи
@@ -54,7 +56,7 @@ def format_booking_reminder_email(booking_data: dict, salon_data: dict) -> tuple
 Дата и время: {booking_dt}
 
 ---
-{salon_data.get('name', 'Салон красоты')}
+{brand_name}
 """
 
     html = f"""
@@ -71,7 +73,7 @@ def format_booking_reminder_email(booking_data: dict, salon_data: dict) -> tuple
     <p><b>Мастер:</b> {master_name}</p>
     <p><b>Дата и время:</b> {booking_dt}</p>
     <hr/>
-    <p>{salon_data.get('name', 'Салон красоты')}</p>
+    <p>{brand_name}</p>
 </body>
 </html>
 """
@@ -116,7 +118,7 @@ async def test_new_booking_notification():
     # Отправляем email
     success = await send_email_async(
         recipients=[test_email],
-        subject=f"🎉 Новая запись онлайн! - {salon_data.get('name', 'Салон')}",
+        subject=f"🎉 Новая запись онлайн! - {(salon_data.get('name') or APP_NAME).strip() or APP_NAME}",
         message=plain_text,
         html=html_text
     )
@@ -177,7 +179,7 @@ async def test_booking_reminder_notification():
     # Отправляем email
     success = await send_email_async(
         recipients=[booking_data['email']],
-        subject=f"💅 Напоминание о записи - {salon_settings.get('name', 'Салон')}",
+        subject=f"💅 Напоминание о записи - {(salon_settings.get('name') or APP_NAME).strip() or APP_NAME}",
         message=plain_text,
         html=html_text
     )

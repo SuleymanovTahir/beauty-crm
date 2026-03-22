@@ -84,6 +84,31 @@ _QUOTA_LIMIT_MAPPING = {
     "ads": "ad_slot_limit",
 }
 
+_QUOTA_USED_FIELD_MAPPING = {
+    "employees": "employees_used",
+    "clients": "clients_used",
+    "products": "products_used",
+    "messages": "messages_used",
+    "storage_mb": "storage_used_mb",
+    "ads": "ads_used",
+}
+
+_QUOTA_LABELS = {
+    "employees": "employees",
+    "clients": "clients",
+    "products": "products",
+    "messages": "messages",
+    "storage_mb": "storage",
+    "ads": "ads",
+}
+
+
+class QuotaExceededError(Exception):
+    def __init__(self, detail: dict[str, Any]):
+        message = str(detail.get("message") or "quota_exceeded")
+        super().__init__(message)
+        self.detail = detail
+
 
 def _slugify_company_name(raw_name: str) -> str:
     normalized = re.sub(r"[^a-z0-9]+", "-", str(raw_name or "").strip().lower()).strip("-")
@@ -137,6 +162,59 @@ def _safe_float(value: Any, default: Optional[float] = None) -> Optional[float]:
         return float(value)
     except (TypeError, ValueError):
         return default
+
+
+def _table_has_column(cursor, table_name: str, column_name: str) -> bool:
+    cursor.execute(
+        """
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = %s
+          AND column_name = %s
+        LIMIT 1
+        """,
+        (table_name, column_name),
+    )
+    return cursor.fetchone() is not None
+
+
+def _build_quota_error_detail(
+    company_id: int,
+    quota_key: str,
+    *,
+    limit: Optional[int],
+    used: int,
+    requested: int,
+    remaining: int,
+    extra: Optional[dict[str, Any]] = None,
+) -> dict[str, Any]:
+    detail = {
+        "error": "quota_exceeded",
+        "message": f"{_QUOTA_LABELS.get(quota_key, quota_key)}_limit_reached",
+        "company_id": company_id,
+        "quota_key": quota_key,
+        "limit": limit,
+        "used": used,
+        "requested": requested,
+        "remaining": max(0, remaining),
+    }
+    if isinstance(extra, dict):
+        detail.update(extra)
+    return detail
+
+
+def _ad_is_active_now(status: Any, starts_at: Any, ends_at: Any) -> bool:
+    now = datetime.utcnow()
+    normalized_status = str(status or "").strip().lower()
+    start_value = _parse_datetime(starts_at)
+    end_value = _parse_datetime(ends_at)
+    if normalized_status != "active":
+        return False
+    if start_value and start_value > now:
+        return False
+    if end_value and end_value < now:
+        return False
+    return True
 
 
 def _parse_datetime(value: Any) -> Optional[datetime]:
@@ -980,6 +1058,7 @@ def get_company_usage(company_id: int) -> dict[str, Any]:
                     SELECT COUNT(*)
                     FROM unified_communication_log
                     WHERE company_id = %s
+                      AND status = 'sent'
                       AND created_at >= date_trunc('month', CURRENT_TIMESTAMP)
                 ), 0)
                 +
@@ -995,30 +1074,45 @@ def get_company_usage(company_id: int) -> dict[str, Any]:
         )
         messages_used = _safe_int(c.fetchone()[0], 0) or 0
 
+        storage_bytes = 0
+
         c.execute(
             """
-            SELECT
-                COALESCE((
-                    SELECT SUM(COALESCE(file_size, 0))
-                    FROM chat_recordings
-                    WHERE company_id = %s
-                ), 0)
-                +
-                COALESCE((
-                    SELECT SUM(
-                        CASE
-                            WHEN COALESCE(metadata->>'size_bytes', '') ~ '^[0-9]+$'
-                                THEN (metadata->>'size_bytes')::BIGINT
-                            ELSE 0
-                        END
-                    )
-                    FROM media_library
-                    WHERE company_id = %s
-                ), 0)
+            SELECT COALESCE(SUM(COALESCE(file_size, 0)), 0)
+            FROM chat_recordings
+            WHERE company_id = %s
             """,
-            (company_id, company_id),
+            (company_id,),
         )
-        storage_bytes = _safe_int(c.fetchone()[0], 0) or 0
+        storage_bytes += _safe_int(c.fetchone()[0], 0) or 0
+
+        c.execute(
+            """
+            SELECT COALESCE(SUM(
+                CASE
+                    WHEN COALESCE(metadata->>'size_bytes', '') ~ '^[0-9]+$'
+                        THEN (metadata->>'size_bytes')::BIGINT
+                    ELSE 0
+                END
+            ), 0)
+            FROM media_library
+            WHERE company_id = %s
+            """,
+            (company_id,),
+        )
+        storage_bytes += _safe_int(c.fetchone()[0], 0) or 0
+
+        if _table_has_column(c, "call_logs", "file_size"):
+            c.execute(
+                """
+                SELECT COALESCE(SUM(COALESCE(file_size, 0)), 0)
+                FROM call_logs
+                WHERE company_id = %s
+                """,
+                (company_id,),
+            )
+            storage_bytes += _safe_int(c.fetchone()[0], 0) or 0
+
         storage_used_mb = int((storage_bytes + 1024 * 1024 - 1) / (1024 * 1024)) if storage_bytes > 0 else 0
 
         c.execute(
@@ -1066,6 +1160,11 @@ def get_company_usage(company_id: int) -> dict[str, Any]:
         "ads_used": ads_used,
         "calls_used": calls_used,
         "internal_messages_used": internal_messages_used,
+        "employee_limit": limits["employees"],
+        "client_limit": limits["clients"],
+        "product_limit": limits["products"],
+        "monthly_message_limit": limits["messages"],
+        "ad_slot_limit": limits["ads"],
         "employees_limit": limits["employees"],
         "clients_limit": limits["clients"],
         "products_limit": limits["products"],
@@ -1075,24 +1174,131 @@ def get_company_usage(company_id: int) -> dict[str, Any]:
     }
 
 
-def can_use_company_quota(company_id: int, quota_key: str, amount: int = 1) -> bool:
-    usage = get_company_usage(company_id)
+def get_company_quota_status(company_id: int, quota_key: str, amount: int = 1) -> dict[str, Any]:
     limit_field = _QUOTA_LIMIT_MAPPING.get(quota_key)
     if not limit_field:
-        return True
-    used_field = {
-        "employee_limit": "employees_used",
-        "client_limit": "clients_used",
-        "product_limit": "products_used",
-        "monthly_message_limit": "messages_used",
-        "storage_limit_mb": "storage_used_mb",
-        "ad_slot_limit": "ads_used",
-    }[limit_field]
+        return {
+            "allowed": True,
+            "company_id": company_id,
+            "quota_key": quota_key,
+            "limit": None,
+            "used": 0,
+            "requested": max(1, int(amount or 1)),
+            "remaining": None,
+        }
+
+    usage = get_company_usage(company_id)
+    requested = max(1, int(amount or 1))
     limit_value = _safe_int(usage.get(limit_field))
+    used_value = _safe_int(usage.get(_QUOTA_USED_FIELD_MAPPING[quota_key]), 0) or 0
+
     if limit_value is None or limit_value <= 0:
-        return True
-    used_value = _safe_int(usage.get(used_field), 0) or 0
-    return used_value + max(1, int(amount or 1)) <= limit_value
+        return {
+            "allowed": True,
+            "company_id": company_id,
+            "quota_key": quota_key,
+            "limit": None,
+            "used": used_value,
+            "requested": requested,
+            "remaining": None,
+        }
+
+    remaining = max(0, limit_value - used_value)
+    return {
+        "allowed": used_value + requested <= limit_value,
+        "company_id": company_id,
+        "quota_key": quota_key,
+        "limit": limit_value,
+        "used": used_value,
+        "requested": requested,
+        "remaining": remaining,
+    }
+
+
+def get_company_storage_status(company_id: int, additional_bytes: int = 0) -> dict[str, Any]:
+    usage = get_company_usage(company_id)
+    limit_mb = _safe_int(usage.get("storage_limit_mb"))
+    used_bytes = _safe_int(usage.get("storage_used_bytes"), 0) or 0
+    requested_bytes = max(0, int(additional_bytes or 0))
+
+    if limit_mb is None or limit_mb <= 0:
+        return {
+            "allowed": True,
+            "company_id": company_id,
+            "quota_key": "storage_mb",
+            "limit_mb": None,
+            "limit_bytes": None,
+            "used_bytes": used_bytes,
+            "used_mb": _safe_int(usage.get("storage_used_mb"), 0) or 0,
+            "requested_bytes": requested_bytes,
+            "remaining_bytes": None,
+            "remaining_mb": None,
+        }
+
+    limit_bytes = int(limit_mb) * 1024 * 1024
+    remaining_bytes = max(0, limit_bytes - used_bytes)
+    total_bytes = used_bytes + requested_bytes
+    used_mb = int((used_bytes + 1024 * 1024 - 1) / (1024 * 1024)) if used_bytes > 0 else 0
+    remaining_mb = int(remaining_bytes / (1024 * 1024))
+    return {
+        "allowed": total_bytes <= limit_bytes,
+        "company_id": company_id,
+        "quota_key": "storage_mb",
+        "limit_mb": int(limit_mb),
+        "limit_bytes": limit_bytes,
+        "used_bytes": used_bytes,
+        "used_mb": used_mb,
+        "requested_bytes": requested_bytes,
+        "remaining_bytes": remaining_bytes,
+        "remaining_mb": remaining_mb,
+    }
+
+
+def can_use_company_quota(company_id: int, quota_key: str, amount: int = 1) -> bool:
+    if quota_key == "storage_mb":
+        return bool(get_company_storage_status(company_id, amount).get("allowed"))
+    return bool(get_company_quota_status(company_id, quota_key, amount).get("allowed"))
+
+
+def ensure_company_quota(company_id: int, quota_key: str, amount: int = 1) -> dict[str, Any]:
+    status = get_company_quota_status(company_id, quota_key, amount)
+    if status["allowed"]:
+        return status
+
+    raise QuotaExceededError(
+        _build_quota_error_detail(
+            company_id,
+            quota_key,
+            limit=status["limit"],
+            used=status["used"],
+            requested=status["requested"],
+            remaining=status["remaining"],
+        )
+    )
+
+
+def ensure_company_storage(company_id: int, additional_bytes: int = 0) -> dict[str, Any]:
+    status = get_company_storage_status(company_id, additional_bytes)
+    if status["allowed"]:
+        return status
+
+    raise QuotaExceededError(
+        _build_quota_error_detail(
+            company_id,
+            "storage_mb",
+            limit=status["limit_mb"],
+            used=status["used_mb"],
+            requested=status["requested_bytes"],
+            remaining=status["remaining_mb"] or 0,
+            extra={
+                "limit_mb": status["limit_mb"],
+                "limit_bytes": status["limit_bytes"],
+                "used_bytes": status["used_bytes"],
+                "requested_bytes": status["requested_bytes"],
+                "remaining_bytes": status["remaining_bytes"],
+            },
+        )
+    )
 
 
 def create_company(
@@ -1797,6 +2003,13 @@ def list_platform_ads(company_id: int | None = None, status: str | None = None) 
 
 
 def create_platform_ad(data: dict[str, Any]) -> int:
+    company_id = _safe_int(data.get("company_id"))
+    status = data.get("status") or "draft"
+    starts_at = _parse_datetime(data.get("starts_at"))
+    ends_at = _parse_datetime(data.get("ends_at"))
+    if company_id and _ad_is_active_now(status, starts_at, ends_at):
+        ensure_company_quota(company_id, "ads", 1)
+
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -1811,7 +2024,7 @@ def create_platform_ad(data: dict[str, Any]) -> int:
             RETURNING id
             """,
             (
-                data.get("company_id"),
+                company_id,
                 data.get("title"),
                 data.get("description"),
                 data.get("image_url"),
@@ -1820,9 +2033,9 @@ def create_platform_ad(data: dict[str, Any]) -> int:
                 data.get("size_label"),
                 _safe_int(data.get("width_px")),
                 _safe_int(data.get("height_px")),
-                data.get("status") or "draft",
-                _parse_datetime(data.get("starts_at")),
-                _parse_datetime(data.get("ends_at")),
+                status,
+                starts_at,
+                ends_at,
                 data.get("notes"),
                 data.get("created_by_user_id"),
             ),
@@ -1841,6 +2054,38 @@ def update_platform_ad(ad_id: int, data: dict[str, Any]) -> bool:
     conn = get_db_connection()
     c = conn.cursor()
     try:
+        c.execute(
+            """
+            SELECT company_id, status, starts_at, ends_at
+            FROM platform_ads
+            WHERE id = %s
+            """,
+            (ad_id,),
+        )
+        existing_row = c.fetchone()
+        if not existing_row:
+            return False
+
+        existing_company_id = _safe_int(existing_row[0])
+        existing_status = existing_row[1]
+        existing_starts_at = existing_row[2]
+        existing_ends_at = existing_row[3]
+
+        if "company_id" in data and data.get("company_id") is None:
+            final_company_id = None
+        else:
+            final_company_id = _safe_int(data.get("company_id"), existing_company_id)
+        final_status = data.get("status", existing_status)
+        final_starts_at = _parse_datetime(data.get("starts_at")) if "starts_at" in data else _parse_datetime(existing_starts_at)
+        final_ends_at = _parse_datetime(data.get("ends_at")) if "ends_at" in data else _parse_datetime(existing_ends_at)
+        was_active_now = bool(existing_company_id and _ad_is_active_now(existing_status, existing_starts_at, existing_ends_at))
+        will_be_active_now = bool(final_company_id and _ad_is_active_now(final_status, final_starts_at, final_ends_at))
+
+        if final_company_id and will_be_active_now:
+            requires_additional_slot = not (was_active_now and existing_company_id == final_company_id)
+            if requires_additional_slot:
+                ensure_company_quota(final_company_id, "ads", 1)
+
         updates: list[str] = []
         params: list[Any] = []
         mapping = {

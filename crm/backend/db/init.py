@@ -531,7 +531,7 @@ def init_database():
             invoice_number TEXT,
             notes TEXT,
             metadata JSONB DEFAULT '{}',
-            created_by_user_id INTEGER REFERENCES users(id),
+            created_by_user_id INTEGER,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
         add_column_if_not_exists('company_payments', 'status', "TEXT DEFAULT 'paid'")
@@ -548,7 +548,7 @@ def init_database():
         add_column_if_not_exists('company_payments', 'invoice_number', 'TEXT')
         add_column_if_not_exists('company_payments', 'notes', 'TEXT')
         add_column_if_not_exists('company_payments', 'metadata', "JSONB DEFAULT '{}'")
-        add_column_if_not_exists('company_payments', 'created_by_user_id', 'INTEGER REFERENCES users(id)')
+        add_column_if_not_exists('company_payments', 'created_by_user_id', 'INTEGER')
         c.execute("CREATE INDEX IF NOT EXISTS idx_company_payments_company_id ON company_payments(company_id)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_company_payments_status ON company_payments(status)")
 
@@ -585,7 +585,7 @@ def init_database():
             starts_at TIMESTAMP,
             ends_at TIMESTAMP,
             notes TEXT,
-            created_by_user_id INTEGER REFERENCES users(id),
+            created_by_user_id INTEGER,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
@@ -601,7 +601,7 @@ def init_database():
         add_column_if_not_exists('platform_ads', 'starts_at', 'TIMESTAMP')
         add_column_if_not_exists('platform_ads', 'ends_at', 'TIMESTAMP')
         add_column_if_not_exists('platform_ads', 'notes', 'TEXT')
-        add_column_if_not_exists('platform_ads', 'created_by_user_id', 'INTEGER REFERENCES users(id)')
+        add_column_if_not_exists('platform_ads', 'created_by_user_id', 'INTEGER')
         add_column_if_not_exists('platform_ads', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
         c.execute("CREATE INDEX IF NOT EXISTS idx_platform_ads_company_id ON platform_ads(company_id)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_platform_ads_status ON platform_ads(status)")
@@ -2120,6 +2120,8 @@ def init_database():
             manual_service_name TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('call_logs', 'file_size', 'INTEGER')
+        add_column_if_not_exists('call_logs', 'file_format', 'TEXT')
 
         # Currencies
         c.execute('''CREATE TABLE IF NOT EXISTS currencies (

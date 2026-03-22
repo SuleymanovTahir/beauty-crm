@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 import io
 from datetime import datetime
 from typing import Dict, List, Any
+from db.companies import QuotaExceededError, ensure_company_quota
 from utils.logger import log_info, log_error
 from utils.optional_dependencies import raise_optional_dependency_http
 from db.clients import get_or_create_client, update_client_info
@@ -19,6 +20,7 @@ except ImportError:
 
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
+from utils.tenant_context import get_current_company_id
 
 router = APIRouter()
 
@@ -333,6 +335,9 @@ def merge_or_create_client(client_data: Dict[str, Any]) -> Dict[str, Any]:
             # Convert single phone to JSON array
             import json
             phone_json = json.dumps([client_data['phone']]) if client_data.get('phone') else '[]'
+            company_id = get_current_company_id()
+            if company_id:
+                ensure_company_quota(int(company_id), "clients", 1)
             
             c.execute("""
                 INSERT INTO clients 
@@ -532,6 +537,8 @@ async def import_clients(file: UploadFile = File(...)):
             'message': f"Import completed: {results['created']} created, {results['updated']} updated, {results['unchanged']} skipped (duplicates)"
         })
         
+    except QuotaExceededError as quota_error:
+        raise HTTPException(status_code=409, detail=quota_error.detail)
     except Exception as e:
         log_error(f"❌ Import failed: {e}", "import", exc_info=True)
         raise HTTPException(

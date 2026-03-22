@@ -9,9 +9,11 @@ import os
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, List, Literal, Set
 
+from db.companies import QuotaExceededError, ensure_company_quota
 from utils.logger import log_info, log_error, log_warning
 from db.connection import get_db_connection
 from utils.datetime_utils import get_current_time
+from utils.tenant_context import get_current_company_id
 
 Platform = Literal['instagram', 'telegram', 'whatsapp', 'email', 'in_app', 'auto']
 _clients_columns_cache: Optional[Set[str]] = None
@@ -53,6 +55,66 @@ def _is_valid_instagram_recipient_id(recipient_id: str) -> bool:
         return False
     return normalized.isdigit()
 
+
+def _resolve_message_company_id(
+    recipient_id: str,
+    *,
+    user_id: Optional[int] = None,
+    booking_id: Optional[int] = None,
+    context: Optional[Dict[str, Any]] = None,
+) -> Optional[int]:
+    if isinstance(context, dict):
+        raw_company_id = context.get("company_id")
+        if raw_company_id not in {None, ""}:
+            try:
+                resolved = int(raw_company_id)
+                if resolved > 0:
+                    return resolved
+            except (TypeError, ValueError):
+                pass
+
+    current_company_id = get_current_company_id()
+    if current_company_id:
+        return int(current_company_id)
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        if user_id:
+            c.execute("SELECT company_id FROM users WHERE id = %s LIMIT 1", (user_id,))
+            row = c.fetchone()
+            if row and row[0]:
+                return int(row[0])
+
+        if booking_id:
+            c.execute("SELECT company_id FROM bookings WHERE id = %s LIMIT 1", (booking_id,))
+            row = c.fetchone()
+            if row and row[0]:
+                return int(row[0])
+
+        if recipient_id:
+            c.execute(
+                """
+                SELECT company_id
+                FROM clients
+                WHERE instagram_id = %s
+                   OR username = %s
+                   OR telegram_id = %s
+                   OR email = %s
+                LIMIT 1
+                """,
+                (recipient_id, recipient_id, recipient_id, recipient_id),
+            )
+            row = c.fetchone()
+            if row and row[0]:
+                return int(row[0])
+    except Exception as e:
+        log_warning(f"Failed to resolve company for message recipient '{recipient_id}': {e}", "messenger")
+    finally:
+        conn.close()
+
+    return None
+
 async def send_universal_message(
     recipient_id: str,
     text: Optional[str] = None,
@@ -81,6 +143,13 @@ async def send_universal_message(
     Returns:
         Dict с результатом: {"success": bool, "error": str, "log_id": int}
     """
+    resolved_context = dict(context or {})
+    company_id = _resolve_message_company_id(
+        recipient_id,
+        user_id=user_id,
+        booking_id=booking_id,
+        context=resolved_context,
+    )
     
     # 1. Если запланировано на потом - просто сохраняем в базу со статусом 'scheduled'
     if scheduled_at and scheduled_at > get_current_time():
@@ -88,6 +157,7 @@ async def send_universal_message(
             recipient_id=recipient_id,
             user_id=user_id,
             booking_id=booking_id,
+            company_id=company_id,
             medium=platform,
             title=subject or template_name,
             content=text,
@@ -114,16 +184,16 @@ async def send_universal_message(
             final_subject = subject or template.get('subject')
             
             # Подстановка переменных
-            if context and final_text:
+            if resolved_context and final_text:
                 try:
                     # Добавляем стандартные переменные
-                    if 'salon_name' not in context:
+                    if 'salon_name' not in resolved_context:
                         from utils.email_service import get_salon_name
-                        context['salon_name'] = get_salon_name()
+                        resolved_context['salon_name'] = get_salon_name()
                     
-                    final_text = final_text.format(**context)
+                    final_text = final_text.format(**resolved_context)
                     if final_subject:
-                        final_subject = final_subject.format(**context)
+                        final_subject = final_subject.format(**resolved_context)
                 except Exception as e:
                     log_warning(f"Error rendering template {template_name}: {e}", "messenger")
 
@@ -135,6 +205,9 @@ async def send_universal_message(
     error_msg = None
     
     try:
+        if company_id:
+            ensure_company_quota(int(company_id), "messages", 1)
+
         if platform == 'instagram':
             if not _is_valid_instagram_recipient_id(recipient_id):
                 error_msg = "invalid_instagram_recipient_id"
@@ -183,7 +256,30 @@ async def send_universal_message(
         else:
             log_error(f"Unknown platform: {platform}", "messenger")
             error_msg = f"Unknown platform: {platform}"
-            
+    except QuotaExceededError as quota_error:
+        log_warning(
+            f"Message quota reached for company {company_id}: {quota_error.detail}",
+            "messenger",
+        )
+        log_id = save_to_log(
+            recipient_id=recipient_id,
+            user_id=user_id,
+            booking_id=booking_id,
+            company_id=company_id,
+            medium=platform,
+            title=final_subject,
+            content=final_text,
+            template_name=template_name,
+            status='failed',
+            error_message='quota_exceeded',
+        )
+        return {
+            "success": False,
+            "error": "quota_exceeded",
+            "quota": quota_error.detail,
+            "log_id": log_id,
+            "platform": platform,
+        }
     except Exception as e:
         log_error(f"❌ Failed to send via {platform}: {e}", "messenger")
         error_msg = str(e)
@@ -194,6 +290,7 @@ async def send_universal_message(
         recipient_id=recipient_id,
         user_id=user_id,
         booking_id=booking_id,
+        company_id=company_id,
         medium=platform,
         title=final_subject,
         content=final_text,
@@ -321,13 +418,14 @@ def save_to_log(**kwargs) -> int:
     try:
         c.execute("""
             INSERT INTO unified_communication_log 
-            (client_id, user_id, booking_id, medium, template_name, title, content, status, error_message, scheduled_at, sent_at)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            (client_id, user_id, booking_id, company_id, medium, template_name, title, content, status, error_message, scheduled_at, sent_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
             kwargs.get('recipient_id'),
             kwargs.get('user_id'),
             kwargs.get('booking_id'),
+            kwargs.get('company_id'),
             kwargs.get('medium'),
             kwargs.get('template_name'),
             kwargs.get('title'),

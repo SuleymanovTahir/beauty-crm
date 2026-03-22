@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 
 import time
+from db.companies import QuotaExceededError, ensure_company_quota
 from db import get_all_users, delete_user, log_activity, get_all_roles
 from core.config import DATABASE_NAME
 from db.connection import get_db_connection
@@ -18,6 +19,10 @@ from utils.cache import cache
 from utils.language_utils import get_localized_name, translate_position, get_dynamic_translation
 
 router = APIRouter(tags=["Users"])
+
+
+def _quota_error_response(error: QuotaExceededError) -> JSONResponse:
+    return JSONResponse(error.detail, status_code=409)
 
 
 def _get_localized_position(user_id: int, username: Optional[str], raw_position: Optional[str], language: str) -> str:
@@ -135,6 +140,10 @@ async def create_user_api(
             conn.close()
             return JSONResponse({"error": "Пользователь с таким логином уже существует"}, status_code=400)
 
+        company_id = user.get("company_id")
+        if company_id and role != "client":
+            ensure_company_quota(int(company_id), "employees", 1)
+
         # Создаем пользователя
         password_hash = hash_password(password)
         from datetime import datetime
@@ -157,6 +166,9 @@ async def create_user_api(
             "message": "Пользователь успешно создан",
             "user_id": user_id
         }
+    except QuotaExceededError as quota_error:
+        conn.close()
+        return _quota_error_response(quota_error)
         
     except psycopg2.IntegrityError as e:
         conn.close()
@@ -344,6 +356,16 @@ async def approve_user(
     c = conn.cursor()
     
     try:
+        c.execute("SELECT role, company_id FROM users WHERE id = %s", (user_id,))
+        row = c.fetchone()
+        if not row:
+            conn.close()
+            return JSONResponse({"error": "User not found"}, status_code=404)
+
+        target_role, target_company_id = row
+        if target_company_id and target_role != "client":
+            ensure_company_quota(int(target_company_id), "employees", 1)
+
         c.execute("UPDATE users SET is_active = TRUE WHERE id = %s", (user_id,))
         conn.commit()
         
@@ -355,6 +377,9 @@ async def approve_user(
         else:
             conn.close()
             return JSONResponse({"error": "User not found"}, status_code=404)
+    except QuotaExceededError as quota_error:
+        conn.close()
+        return _quota_error_response(quota_error)
     except Exception as e:
         conn.rollback()
         conn.close()
@@ -411,15 +436,18 @@ async def toggle_user_active(
     
     try:
         # Получаем текущий статус
-        c.execute("SELECT is_active, username, full_name FROM users WHERE id = %s", (user_id,))
+        c.execute("SELECT is_active, username, full_name, role, company_id FROM users WHERE id = %s", (user_id,))
         result = c.fetchone()
         
         if not result:
             conn.close()
             return JSONResponse({"error": "Пользователь не найден"}, status_code=404)
         
-        current_status, username, full_name = result
+        current_status, username, full_name, target_role, target_company_id = result
         new_status = not current_status
+
+        if new_status and target_company_id and target_role != "client":
+            ensure_company_quota(int(target_company_id), "employees", 1)
         
         # Обновляем статус
         c.execute("UPDATE users SET is_active = %s WHERE id = %s", (new_status, user_id))
@@ -437,6 +465,9 @@ async def toggle_user_active(
             "message": f"Пользователь {full_name} успешно {status_text}",
             "is_active": new_status
         }
+    except QuotaExceededError as quota_error:
+        conn.close()
+        return _quota_error_response(quota_error)
         
     except Exception as e:
         conn.rollback()

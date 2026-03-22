@@ -434,7 +434,7 @@ async def update_business_profile_config_api(request: Request, session_token: Op
         settings = get_salon_settings()
         return {
             "success": True,
-            "business_type": settings.get("business_type", "beauty"),
+            "business_type": settings.get("business_type", "other"),
             "business_profile_config": settings.get("business_profile_config", {}),
         }
     except HTTPException:

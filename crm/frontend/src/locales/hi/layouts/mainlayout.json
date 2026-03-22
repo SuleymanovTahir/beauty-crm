@@ -51,6 +51,7 @@
     "notifications": "सूचनाएं",
     "payment_integrations": "भुगतान प्रणाली",
     "payments": "भुगतान प्रणाली",
+    "platform_control": "प्लेटफ़ॉर्म",
     "products": "उत्पाद",
     "promo_codes": "प्रचार कोड",
     "referrals": "रेफ़रल",
@@ -76,7 +77,7 @@
     "manager": "",
     "marketer": "विपणक",
     "saler": "बिक्री प्रबंधक",
-    "sales": "बिक्री"
+    "super_admin": "प्लेटफ़ॉर्म मालिक"
   },
   "user": "उपयोगकर्ता",
   "view_all": "सभी देखें"

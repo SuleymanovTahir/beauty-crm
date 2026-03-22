@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks, UploadFile, File, Query
 from typing import List, Optional, Dict, Any, Set
 from pydantic import BaseModel
-from db.companies import get_current_company, update_company
+from db.companies import QuotaExceededError, ensure_company_storage, get_current_company, update_company
 from db.connection import get_db_connection
 from utils.utils import get_current_user
 from datetime import datetime, timedelta
@@ -1242,6 +1242,10 @@ async def upload_recording(
         # Get file size
         file_size = os.path.getsize(file_path)
 
+        company_id = current_user.get("company_id")
+        if company_id:
+            ensure_company_storage(int(company_id), file_size)
+
         # Update database
         conn = get_db_connection()
         c = conn.cursor()
@@ -1274,9 +1278,15 @@ async def upload_recording(
             "file_size": file_size,
             "file_format": file_ext.lstrip('.')
         }
+    except QuotaExceededError as quota_error:
+        if 'file_path' in locals() and os.path.exists(file_path):
+            os.remove(file_path)
+        raise HTTPException(status_code=409, detail=quota_error.detail)
     except HTTPException:
         raise
     except Exception as e:
+        if 'file_path' in locals() and os.path.exists(file_path):
+            os.remove(file_path)
         logger.error(f"Error uploading recording: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 

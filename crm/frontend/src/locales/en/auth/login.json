@@ -1,6 +1,7 @@
 {
   "account_pending": "Your account is pending administrator approval",
   "authorization_error": "Authorization failed",
+  "company_inactive": "Company temporarily unavailable",
   "crm_system_management": "Management system",
   "email_not_verified_redirect": "Email not verified. Redirecting to verification page...",
   "enter_login": "Enter your login",

@@ -3,8 +3,16 @@ Telegram уведомления
 """
 import httpx
 from typing import List, Optional
+from core.config import APP_NAME
 from modules import get_module_config
 from utils.logger import log_info, log_error
+
+
+def _notification_brand_name(salon_data: dict) -> str:
+    """Return tenant business name or the neutral product fallback."""
+    if not isinstance(salon_data, dict):
+        return APP_NAME
+    return (salon_data.get('name') or APP_NAME).strip() or APP_NAME
 
 def get_telegram_config() -> dict:
     """Получить Telegram конфигурацию"""
@@ -86,6 +94,7 @@ def format_new_booking_telegram(booking_data: dict, salon_data: dict) -> str:
     phone = booking_data.get('phone', '')
     notes = booking_data.get('notes', '')
     employee_name = booking_data.get('employee_name', 'Не указан')
+    brand_name = _notification_brand_name(salon_data)
 
     message = f"""
 🎉 <b>Новая запись онлайн!</b>
@@ -100,7 +109,7 @@ def format_new_booking_telegram(booking_data: dict, salon_data: dict) -> str:
     if notes:
         message += f"📝 <b>Примечания:</b> {notes}\n"
 
-    message += f"\n---\n{salon_data.get('name', 'Салон красоты')}"
+    message += f"\n---\n{brand_name}"
 
     return message
 
@@ -109,6 +118,7 @@ def format_booking_cancelled_telegram(booking_data: dict, salon_data: dict) -> s
     client_name = booking_data.get('client_name', 'Клиент')
     service = booking_data.get('service', 'Услуга')
     datetime_str = booking_data.get('datetime', '')
+    brand_name = _notification_brand_name(salon_data)
 
     message = f"""
 ❌ <b>Запись отменена</b>
@@ -118,7 +128,7 @@ def format_booking_cancelled_telegram(booking_data: dict, salon_data: dict) -> s
 📅 <b>Дата и время:</b> {datetime_str}
 
 ---
-{salon_data.get('name', 'Салон красоты')}
+{brand_name}
 """
 
     return message

@@ -42,7 +42,7 @@ async def generate_and_send_weekly_report():
     
     settings = get_salon_settings()
     admin_email = settings.get('email')
-    salon_name = settings.get('name', 'Beauty CRM')
+    salon_name = settings.get('name') or 'ST CRM'
     currency = settings.get('currency', '₽')
     
     # Определяем язык для отчета (приоритет: настройки салона, затем системный default)

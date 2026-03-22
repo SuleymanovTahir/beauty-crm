@@ -1,6 +1,7 @@
 {
   "account_pending": "حسابك في انتظار موافقة المسؤول",
   "authorization_error": "التفويض فشل",
+  "company_inactive": "الشركة غير متاحة مؤقتًا",
   "crm_system_management": "نظام إدارة علاقات العملاء",
   "email_not_verified_redirect": "لم يتم التحقق من البريد الإلكتروني. جارٍ إعادة التوجيه إلى صفحة التحقق...",
   "enter_login": "أدخل معلومات تسجيل الدخول الخاصة بك",
