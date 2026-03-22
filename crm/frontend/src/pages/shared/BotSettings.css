@@ -59,6 +59,11 @@
   font-weight: 600;
 }
 
+.bot-settings-tab-button-active svg {
+  stroke: var(--brand-primary);
+  color: var(--brand-primary);
+}
+
 .bot-settings-content {
   background-color: #fff;
   border-radius: 0.75rem;

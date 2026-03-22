@@ -1,6 +1,5 @@
 // /frontend/src/contexts/ThemeContext.tsx
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import i18n from '../i18n'; // Assuming i18n is initialized in src/i18n.ts
 
 const hexToHsl = (hex: string): [number, number, number] => {
   let r = 0, g = 0, b = 0;
@@ -144,9 +143,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         };
 
         const faviconMainColor = determineFaviconColor();
-        const [hue] = hexToHsl(faviconMainColor);
-        const hueDiff = hue - 330; // 330 is approx hue of original pink logo
-        root.style.setProperty('--logo-filter', `hue-rotate(${hueDiff}deg)`);
+        const [hue, , lightness] = hexToHsl(faviconMainColor);
+        // sepia(1) converts entire logo to warm-gold, then hue-rotate to target hue
+        // This ensures ALL logo colors (pink top AND blue bottom) shift uniformly
+        const sepiaDeg = hue - 50; // sepia base is ~50deg golden hue
+        const brightness = lightness > 50 ? 1.1 : 0.95;
+        root.style.setProperty('--logo-filter', `sepia(1) saturate(3) hue-rotate(${sepiaDeg}deg) brightness(${brightness})`);
 
         const updateFavicon = () => {
             const canvas = document.createElement('canvas');
@@ -168,7 +170,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
                 const x = (128 - w) / 2;
                 const y = (128 - h) / 2;
 
-                ctx.filter = `hue-rotate(${hueDiff}deg)`;
+                ctx.filter = `sepia(1) saturate(3) hue-rotate(${sepiaDeg}deg) brightness(${brightness})`;
                 ctx.drawImage(img, x, y, w, h);
                 
                 const dataUrl = canvas.toDataURL('image/png');
@@ -222,6 +224,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (gradientData.angle.includes('90')) { x2 = '100%'; y2 = '0%'; }
     else if (gradientData.angle.includes('180')) { x2 = '0%'; y2 = '100%'; }
     else if (gradientData.angle.includes('45')) { y1 = '100%'; x2 = '100%'; y2 = '0%'; }
+    void x1; void y1; void x2; void y2;
 
     return (
         <ThemeContext.Provider value={{ theme, colorTheme, customColors, toggleTheme, setColorTheme, setCustomColors }}>

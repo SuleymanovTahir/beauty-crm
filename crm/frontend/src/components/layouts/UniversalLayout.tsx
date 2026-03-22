@@ -818,12 +818,18 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                 <div className="flex flex-col h-full overflow-hidden">
                     {/* Logo Section */}
                     <div className="sidebar-header-premium flex items-center gap-3">
-                        <div className="shrink-0">
+                        <div className="shrink-0 flex items-center">
+                            <img
+                                src={`${logoBasePath}/logo-icon-pink.svg`}
+                                alt="Logo icon"
+                                className="sidebar-logo-icon"
+                                style={{ filter: 'var(--logo-filter, none)', height: '36px', width: '36px', objectFit: 'contain' }}
+                            />
                             <img
                                 src={horizontalLogoPath}
                                 alt="Logo"
                                 className="sidebar-logo-img"
-                                style={{ filter: 'var(--logo-filter, none)' }}
+                                style={{ display: 'none' }}
                             />
                         </div>
                         <div className="min-w-0 flex-1">

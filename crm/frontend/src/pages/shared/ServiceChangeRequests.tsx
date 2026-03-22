@@ -204,7 +204,7 @@ export default function ServiceChangeRequests() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-1 text-sm text-gray-500">
-                      <Clock className="w-4 h-4" />
+                      <Clock className="w-4 h-4 settings-text-primary" />
                       {new Date(req.created_at).toLocaleDateString('ru-RU')}
                     </div>
                   </td>
