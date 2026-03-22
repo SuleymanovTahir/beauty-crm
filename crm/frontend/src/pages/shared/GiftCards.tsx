@@ -4,7 +4,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { toast } from 'sonner';
-import { buildApiUrl } from '../../api/client';
+import { buildApiUrl } from '@crm/api/client';
 
 interface Card { id:number; code:string; amount:number; balance:number; issued_to?:string; valid_until?:string; is_active:boolean; created_at:string; purchased_by_client?:string; notes?:string; }
 

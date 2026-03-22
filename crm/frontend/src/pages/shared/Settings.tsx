@@ -35,7 +35,7 @@ import { Textarea } from '../../components/ui/textarea';
 import { Switch } from '../../components/ui/switch';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../services/api';
-import { buildApiUrl } from '../../api/client';
+import { buildApiUrl } from '@crm/api/client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { toast } from 'sonner';
@@ -1204,6 +1204,162 @@ export default function AdminSettings() {
   ], [userPermissions, t, activeTab]);
 
   const visibleTabs = useMemo(() => allTabs.filter(t => t.show), [allTabs]);
+
+  if (activeTab === 'profile') {
+    return (
+      <div className="p-4 md:p-8 max-w-5xl mx-auto">
+        <div className="flex items-center gap-3 mb-6">
+          <Button variant="ghost" size="icon" onClick={() => navigate(`${rolePrefix}/settings`)}>
+            <ArrowRight className="w-5 h-5 rotate-180" />
+          </Button>
+          <h1 className="text-2xl text-[var(--heading)] flex items-center gap-3">
+            <User className="w-6 h-6 settings-text-primary" />
+            {t('settings:personal_information')}
+          </h1>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+          <div className="flex items-center justify-end mb-8">
+            <Button
+              onClick={() => handleSaveProfile()}
+              disabled={savingProfile}
+              className="settings-bg-primary settings-bg-primary-hover settings-text-primary-foreground"
+            >
+              {savingProfile ? (
+                <>
+                  <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  {t('common:saving')}
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  {t('common:save')}
+                </>
+              )}
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Photo Upload Section */}
+            <div className="flex flex-col items-center p-6 bg-muted/30 rounded-xl border border-border/50 h-fit">
+              <div className="relative group mb-4">
+                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-background shadow-lg">
+                  {profileForm.photo ? (
+                    <img src={profileForm.photo} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full settings-bg-primary-light flex items-center justify-center">
+                      <User className="w-16 h-16 settings-text-primary-muted" />
+                    </div>
+                  )}
+                </div>
+                <label className="absolute bottom-1 right-1 p-2 settings-bg-primary settings-text-primary-foreground rounded-full cursor-pointer shadow-lg settings-bg-primary-hover transition-all scale-90 hover:scale-100">
+                  <Camera className="w-4 h-4" />
+                  <input type="file" className="hidden" accept="image/*" onChange={handlePhotoUpload} disabled={uploadingPhoto} />
+                </label>
+              </div>
+              <h4 className="text-sm font-medium text-gray-900 mb-1">{profileForm.full_name || 'User'}</h4>
+              <p className="text-xs text-muted-foreground mb-4 uppercase tracking-wider">{profileForm.position || t('settings:no_position')}</p>
+              {uploadingPhoto && (
+                <div className="flex items-center gap-2 text-xs settings-text-primary animate-pulse">
+                  <Loader className="w-3 h-3 animate-spin" />
+                  {t('common:uploading')}
+                </div>
+              )}
+            </div>
+            {/* Main Info Form */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="p_full_name" className="flex items-center gap-2 settings-label-spacing">
+                    <User className="w-3.5 h-3.5 text-muted-foreground" />
+                    {t('settings:full_name')}*
+                  </Label>
+                  <Input id="p_full_name" value={profileForm.full_name} onChange={(e) => setProfileForm({ ...profileForm, full_name: e.target.value })} placeholder={t('settings:placeholder_full_name')} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="p_username" className="flex items-center gap-2 settings-label-spacing">
+                    <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
+                    {t('settings:username')}*
+                  </Label>
+                  <Input id="p_username" value={profileForm.username} onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })} placeholder="username" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="p_email" className="flex items-center gap-2 settings-label-spacing">
+                    <Mail className="w-3.5 h-3.5 text-muted-foreground" />
+                    Email *
+                  </Label>
+                  <Input id="p_email" type="email" value={profileForm.email} onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })} placeholder="email@example.com" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="p_phone" className="flex items-center gap-2 settings-label-spacing">
+                    <Smartphone className="w-3.5 h-3.5 text-muted-foreground" />
+                    {t('settings:phone_number')}
+                  </Label>
+                  <Input id="p_phone" value={profileForm.phone_number} onChange={(e) => setProfileForm({ ...profileForm, phone_number: e.target.value })} placeholder="+7 (___) ___-__-__" />
+                </div>
+              </div>
+              <div className="border-t border-border/50 pt-6">
+                <h3 className="text-lg font-medium text-[var(--heading)] mb-4 flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 settings-text-primary" />
+                  {t('settings:professional_profile')}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="p_position" className="flex items-center gap-2">
+                      <Award className="w-3.5 h-3.5 text-muted-foreground" />
+                      {t('settings:position')}
+                    </Label>
+                    <Input id="p_position" value={profileForm.position} onChange={(e) => setProfileForm({ ...profileForm, position: e.target.value })} placeholder={t('settings:placeholder_position')} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="p_exp" className="flex items-center gap-2">
+                      <Star className="w-3.5 h-3.5 text-muted-foreground" />
+                      {t('settings:years_of_experience')}
+                    </Label>
+                    <Input id="p_exp" type="number" min="0" value={profileForm.years_of_experience} onChange={(e) => setProfileForm({ ...profileForm, years_of_experience: e.target.value })} placeholder="0" />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="p_spec" className="flex items-center gap-2">
+                      <BookOpen className="w-3.5 h-3.5 text-muted-foreground" />
+                      {t('settings:specialization')}
+                    </Label>
+                    <Input id="p_spec" value={profileForm.specialization} onChange={(e) => setProfileForm({ ...profileForm, specialization: e.target.value })} placeholder={t('settings:placeholder_specialization')} />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="p_about" className="flex items-center gap-2">
+                      <FileText className="w-3.5 h-3.5 text-muted-foreground" />
+                      {t('settings:about_me')}
+                    </Label>
+                    <Textarea id="p_about" rows={4} value={profileForm.about_me} onChange={(e) => setProfileForm({ ...profileForm, about_me: e.target.value })} placeholder={t('settings:placeholder_about_me')} />
+                  </div>
+                </div>
+              </div>
+              <div className="border-t border-border/50 pt-6">
+                <h3 className="text-lg font-medium text-[var(--heading)] mb-4 flex items-center gap-2">
+                  <Globe className="w-5 h-5 settings-text-primary" />
+                  {t('settings:social_links')}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="p_instagram" className="flex items-center gap-2">
+                      <InstagramIcon className="w-4 h-4" colorful={true} />
+                      Instagram
+                    </Label>
+                    <Input id="p_instagram" value={profileForm.instagram_link} onChange={(e) => setProfileForm({ ...profileForm, instagram_link: e.target.value })} placeholder="@username" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="p_telegram" className="flex items-center gap-2">
+                      <TelegramIcon className="w-3.5 h-3.5" colorful={true} />
+                      Telegram
+                    </Label>
+                    <Input id="p_telegram" value={profileForm.telegram} onChange={(e) => setProfileForm({ ...profileForm, telegram: e.target.value })} placeholder="@username" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8">

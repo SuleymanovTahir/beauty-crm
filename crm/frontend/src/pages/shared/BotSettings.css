@@ -1,0 +1,267 @@
+/* /frontend/src/pages/admin/BotSettings.css */
+
+.bot-settings-container {
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+.bot-settings-header {
+  margin-bottom: 1.5rem;
+}
+
+.bot-settings-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bot-settings-subtitle {
+  color: var(--grey-500);
+  font-size: 0.875rem;
+}
+
+.bot-settings-tabs {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+}
+
+.bot-settings-tab-button {
+  padding: 0.625rem 1rem;
+  background-color: transparent;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  color: var(--grey-500);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.bot-settings-tab-button-active {
+  background-color: #ede9fe;
+  border: 2px solid #a78bfa;
+  color: #6b21a8;
+  font-weight: 600;
+}
+
+.bot-settings-content {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  padding: 2rem;
+  margin-bottom: 5rem; /* Space for fixed save button */
+}
+
+.bot-settings-section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bot-settings-label {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.bot-settings-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.bot-settings-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.bot-settings-style-card {
+  padding: 1.25rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  background-color: #fff;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.bot-settings-style-card-active {
+  border: 2px solid #8b5cf6;
+  background-color: #f5f3ff;
+}
+
+.bot-settings-helper-text {
+  font-size: 0.75rem;
+  color: var(--grey-500);
+  margin-top: 0.75rem;
+  white-space: pre-line;
+}
+
+.bot-settings-save-bar {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 50;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.bot-settings-save-button {
+  background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  font-size: 1rem;
+}
+
+.bot-settings-save-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.3);
+}
+
+.bot-settings-save-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--grey-500);
+}
+
+.access-denied-container {
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.access-denied-card {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 3rem;
+  max-width: 28rem;
+  text-align: center;
+}
+
+.access-denied-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.access-denied-message {
+  color: var(--grey-500);
+}
+
+.loading-container {
+  padding: 2rem;
+  text-align: center;
+}
+
+.loading-text {
+  margin-top: 1rem;
+  color: var(--grey-500);
+}
+
+.bot-settings-textarea-mono {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  resize: vertical;
+  font-family: var(--font-mono, monospace);
+  background-color: #f8fafc;
+}
+
+.bot-settings-card {
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background-color: #f9fafb;
+  transition: all 0.2s;
+}
+
+.bot-settings-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.bot-settings-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bot-settings-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.5rem;
+}
+
+.bot-settings-small-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.bot-settings-small-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.9rem;
+}
+
+.bot-settings-beta-tag {
+  font-size: 0.7rem;
+  background-color: #e5e7eb;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 500;
+  color: #4b5563;
+}

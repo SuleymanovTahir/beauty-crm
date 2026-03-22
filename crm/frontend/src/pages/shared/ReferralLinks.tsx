@@ -21,7 +21,7 @@ import {
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { buildApiUrl } from '../../api/client';
+import { buildApiUrl } from '@crm/api/client';
 import { useAuth } from '../../contexts/AuthContext';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';

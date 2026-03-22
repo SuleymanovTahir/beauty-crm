@@ -31,7 +31,19 @@ import {
     BarChart2,
     Gift,
     Layers,
-    User
+    User,
+    FileText,
+    BarChart3,
+    Receipt,
+    Trash2,
+    ShieldCheck,
+    Bot,
+    CreditCard,
+    Store,
+    Ticket,
+    Target,
+    Link as LinkIcon,
+    Share2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -52,21 +64,27 @@ interface MainLayoutProps {
 export const CRM_MENU_DEFAULT_ORDER = [
     'platform',
     'dashboard',
-    'bookings',
+    'bookings-group',
+    'clients',
     'chat-group',
     'funnel',
     'catalog-group',
+    'analytics-group',
     'finance-group',
     'tools-group',
-    'settings-group'
+    'integrations-group',
+    'settings-group',
 ];
 
 export const CRM_MENU_GROUPS: Record<string, string[]> = {
+    'bookings-group': ['bookings', 'calendar', 'waitlist'],
     'chat-group': ['chat', 'internal-chat'],
-    'catalog-group': ['services', 'team'],
-    'finance-group': ['cashbox', 'inventory', 'gift-cards', 'service-bundles'],
-    'tools-group': ['tasks', 'telephony', 'referral-links', 'kpi', 'waitlist'],
-    'settings-group': ['settings', 'profile-link'],
+    'catalog-group': ['services', 'service-change-requests', 'products'],
+    'analytics-group': ['analytics'],
+    'finance-group': ['cashbox', 'inventory', 'gift-cards', 'service-bundles', 'invoices', 'contracts'],
+    'tools-group': ['tasks', 'broadcasts', 'telephony', 'referral-links', 'kpi', 'promo-codes', 'loyalty', 'challenges'],
+    'integrations-group': ['messengers', 'payment-integrations', 'marketplace-integrations'],
+    'settings-group': ['settings', 'team', 'bot-settings', 'profile-link', 'audit-log', 'trash'],
 };
 
 type BusinessModuleBinding = {
@@ -78,14 +96,32 @@ const MENU_MODULE_BINDINGS: Record<string, BusinessModuleBinding> = {
     platform: { suite: 'crm', module: 'settings' },
     dashboard: { suite: 'crm', module: 'dashboard' },
     bookings: { suite: 'crm', module: 'bookings' },
+    calendar: { suite: 'crm', module: 'calendar' },
+    clients: { suite: 'crm', module: 'clients' },
     team: { suite: 'crm', module: 'team' },
     services: { suite: 'crm', module: 'services' },
     tasks: { suite: 'crm', module: 'tasks' },
+    analytics: { suite: 'crm', module: 'analytics' },
     funnel: { suite: 'crm', module: 'funnel' },
+    products: { suite: 'crm', module: 'products' },
+    invoices: { suite: 'crm', module: 'invoices' },
+    contracts: { suite: 'crm', module: 'contracts' },
     telephony: { suite: 'crm', module: 'telephony' },
+    messengers: { suite: 'crm', module: 'messengers' },
     'internal-chat': { suite: 'crm', module: 'internal_chat' },
+    broadcasts: { suite: 'crm', module: 'broadcasts' },
+    'referral-links': { suite: 'crm', module: 'referrals' },
+    loyalty: { suite: 'crm', module: 'loyalty' },
+    challenges: { suite: 'crm', module: 'challenges' },
+    'promo-codes': { suite: 'crm', module: 'promo_codes' },
+    'service-change-requests': { suite: 'crm', module: 'service_change_requests' },
     settings: { suite: 'crm', module: 'settings' },
+    'bot-settings': { suite: 'crm', module: 'bot_settings' },
     notifications: { suite: 'crm', module: 'notifications' },
+    'payment-integrations': { suite: 'crm', module: 'payment_integrations' },
+    'marketplace-integrations': { suite: 'crm', module: 'marketplace_integrations' },
+    trash: { suite: 'crm', module: 'trash' },
+    'audit-log': { suite: 'crm', module: 'audit_log' },
 };
 
 type LayoutSalonSettings = {
@@ -104,37 +140,59 @@ export const buildCrmMenuCatalog = ({
     rolePrefix,
     dashboardPath,
     permissions,
+    userRole,
 }: {
     t: (key: string, options?: any) => string;
     rolePrefix: string;
     dashboardPath: string;
     permissions: any;
+    userRole?: string;
 }) => {
     const items: Record<string, any> = {
         'platform': { icon: Briefcase, label: t('menu.platform_control', { defaultValue: 'Платформа' }), path: `${rolePrefix}/platform`, req: () => permissions.roleLevel >= 1000 },
         'dashboard': { icon: LayoutDashboard, label: t('menu.dashboard'), path: dashboardPath, req: () => true },
+        'bookings-group': { icon: Calendar, label: t('menu.bookings'), req: () => true },
         'bookings': { icon: Calendar, label: t('menu.bookings'), path: `${rolePrefix}/bookings`, req: () => permissions.canViewAllBookings },
+        'calendar': { icon: Calendar, label: t('menu.calendar', { defaultValue: 'Календарь' }), path: `${rolePrefix}/calendar`, req: () => true },
+        'waitlist': { icon: Clock, label: t('menu.waitlist', { defaultValue: 'Очередь' }), path: `${rolePrefix}/waitlist`, req: () => true },
+        'clients': { icon: Users, label: t('menu.clients', { defaultValue: 'Клиенты' }), path: `${rolePrefix}/clients`, req: () => true },
         'chat-group': { icon: MessageSquare, label: t('menu.chat'), req: () => true },
         'chat': { icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, req: () => true },
         'internal-chat': { icon: MessageCircle, label: t('menu.internal_chat'), path: `${rolePrefix}/internal-chat`, req: () => true },
         'funnel': { icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel`, req: () => true },
         'catalog-group': { icon: LayoutGrid, label: t('menu.catalog'), req: () => true },
         'services': { icon: Scissors, label: t('menu.services'), path: `${rolePrefix}/services`, req: () => permissions.canEditServices },
-        'team': { icon: Users, label: t('menu.team', { defaultValue: 'Команда' }), path: `${rolePrefix}/team`, req: () => permissions.roleLevel >= 70 },
-        'tools-group': { icon: Briefcase, label: t('menu.tools'), req: () => true },
-        'tasks': { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, req: () => true },
-        'telephony': { icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, req: () => true },
-        'referral-links': { icon: Link2, label: t('menu.referral_links', { defaultValue: 'Реклама' }), path: `${rolePrefix}/referral-links`, req: () => permissions.roleLevel >= 50 },
-        'kpi': { icon: BarChart2, label: t('menu.kpi', { defaultValue: 'KPI' }), path: `${rolePrefix}/kpi`, req: () => permissions.roleLevel >= 50 },
-        'waitlist': { icon: Clock, label: t('menu.waitlist', { defaultValue: 'Очередь' }), path: `${rolePrefix}/waitlist`, req: () => true },
+        'service-change-requests': { icon: FileText, label: t('menu.service_requests', { defaultValue: 'Запросы услуг' }), path: `${rolePrefix}/service-change-requests`, req: () => permissions.canEditServices },
+        'products': { icon: Package, label: t('menu.products', { defaultValue: 'Товары' }), path: `${rolePrefix}/products`, req: () => permissions.roleLevel >= 70 },
+        'analytics-group': { icon: BarChart3, label: t('menu.analytics', { defaultValue: 'Аналитика' }), req: () => permissions.canViewAnalytics },
+        'analytics': { icon: BarChart3, label: t('menu.analytics', { defaultValue: 'Аналитика' }), path: `${rolePrefix}/analytics`, req: () => permissions.canViewAnalytics },
         'finance-group': { icon: Wallet, label: t('menu.finance', { defaultValue: 'Финансы' }), req: () => permissions.roleLevel >= 50 },
         'cashbox': { icon: Wallet, label: t('menu.cashbox', { defaultValue: 'Касса' }), path: `${rolePrefix}/cashbox`, req: () => permissions.roleLevel >= 50 },
         'inventory': { icon: Package, label: t('menu.inventory', { defaultValue: 'Склад' }), path: `${rolePrefix}/inventory`, req: () => permissions.roleLevel >= 50 },
         'gift-cards': { icon: Gift, label: t('menu.gift_cards', { defaultValue: 'Сертификаты' }), path: `${rolePrefix}/gift-cards`, req: () => true },
         'service-bundles': { icon: Layers, label: t('menu.service_bundles', { defaultValue: 'Абонементы' }), path: `${rolePrefix}/service-bundles`, req: () => true },
+        'invoices': { icon: Receipt, label: t('menu.invoices', { defaultValue: 'Счета' }), path: `${rolePrefix}/invoices`, req: () => permissions.roleLevel >= 70 },
+        'contracts': { icon: Briefcase, label: t('menu.contracts', { defaultValue: 'Договоры' }), path: `${rolePrefix}/contracts`, req: () => permissions.roleLevel >= 70 },
+        'tools-group': { icon: Briefcase, label: t('menu.tools'), req: () => true },
+        'tasks': { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, req: () => true },
+        'broadcasts': { icon: Send, label: t('menu.broadcasts', { defaultValue: 'Рассылки' }), path: `${rolePrefix}/broadcasts`, req: () => permissions.roleLevel >= 70 },
+        'telephony': { icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, req: () => true },
+        'referral-links': { icon: Share2, label: t('menu.referrals', { defaultValue: 'Реферальные ссылки' }), path: `${rolePrefix}/referral-links`, req: () => permissions.roleLevel >= 50 },
+        'kpi': { icon: BarChart2, label: t('menu.kpi', { defaultValue: 'KPI' }), path: `${rolePrefix}/kpi`, req: () => permissions.roleLevel >= 50 },
+        'promo-codes': { icon: Ticket, label: t('menu.promo_codes', { defaultValue: 'Промокоды' }), path: `${rolePrefix}/promo-codes`, req: () => permissions.roleLevel >= 70 },
+        'loyalty': { icon: Gift, label: t('menu.loyalty', { defaultValue: 'Бонусная программа' }), path: `${rolePrefix}/loyalty`, req: () => permissions.roleLevel >= 70 },
+        'challenges': { icon: Target, label: t('menu.challenges', { defaultValue: 'Челленджи' }), path: `${rolePrefix}/challenges`, req: () => permissions.roleLevel >= 70 },
+        'integrations-group': { icon: LinkIcon, label: t('menu.integrations', { defaultValue: 'Интеграции' }), req: () => true },
+        'messengers': { icon: MessageSquare, label: t('menu.messengers', { defaultValue: 'Мессенджеры' }), path: `${rolePrefix}/messengers`, req: () => true },
+        'payment-integrations': { icon: CreditCard, label: t('menu.payments', { defaultValue: 'Платёжные системы' }), path: `${rolePrefix}/payment-integrations`, req: () => true },
+        'marketplace-integrations': { icon: Store, label: t('menu.marketplaces', { defaultValue: 'Маркетплейсы' }), path: `${rolePrefix}/marketplace-integrations`, req: () => true },
         'settings-group': { icon: Settings, label: t('menu.settings'), req: () => permissions.canEditSettings || permissions.roleLevel >= 1 },
         'settings': { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, req: () => permissions.canEditSettings },
+        'team': { icon: Users, label: t('menu.team', { defaultValue: 'Команда' }), path: `${rolePrefix}/team`, req: () => permissions.roleLevel >= 70 },
+        'bot-settings': { icon: Bot, label: t('menu.bot_settings', { defaultValue: 'Настройки бота' }), path: `${rolePrefix}/bot-settings`, req: () => permissions.canViewBotSettings },
         'profile-link': { icon: User, label: t('menu.profile', { defaultValue: 'Профиль' }), path: `${rolePrefix}/settings/profile`, req: () => true },
+        'audit-log': { icon: ShieldCheck, label: t('menu.audit_log', { defaultValue: 'Журнал аудита' }), path: `${rolePrefix}/audit-log`, req: () => userRole === 'director' },
+        'trash': { icon: Trash2, label: t('menu.trash', { defaultValue: 'Корзина' }), path: `${rolePrefix}/trash`, req: () => permissions.roleLevel >= 70 },
     };
 
     return { items, groups: CRM_MENU_GROUPS, defaultOrder: CRM_MENU_DEFAULT_ORDER };
@@ -342,6 +400,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             rolePrefix,
             dashboardPath,
             permissions,
+            userRole: user?.role,
         });
         const items: Record<string, any> = crmCatalog.items;
         const groups: Record<string, string[]> = crmCatalog.groups;
@@ -419,6 +478,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             rolePrefix,
             dashboardPath,
             permissions,
+            userRole: user?.role,
         });
         const catalogItems: Record<string, any> = crmCatalog.items;
 

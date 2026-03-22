@@ -23,7 +23,7 @@ import { toast } from 'sonner';
 import { api } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCurrency } from '../../hooks/useSalonSettings';
-import { buildApiUrl } from '../../api/client';
+import { buildApiUrl } from '@crm/api/client';
 import '../../styles/crm-pages.css';
 
 interface Service {

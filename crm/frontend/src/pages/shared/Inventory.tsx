@@ -3,7 +3,7 @@ import { Package, Plus, AlertTriangle, TrendingUp, TrendingDown, History, Refres
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { toast } from 'sonner';
-import { buildApiUrl } from '../../api/client';
+import { buildApiUrl } from '@crm/api/client';
 
 interface Item {
   id: number; name: string; sku?: string; category: string; unit: string;

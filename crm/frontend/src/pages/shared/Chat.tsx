@@ -39,7 +39,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { useChatWebSocket } from '../../hooks/useChatWebSocket';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { buildApiUrl } from '../../api/client';
+import { buildApiUrl } from '@crm/api/client';
 
 interface Client {
   id: string;

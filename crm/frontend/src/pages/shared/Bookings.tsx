@@ -14,7 +14,7 @@ import { Button } from '../../components/ui/button';
 import { useBookingStatuses } from '../../hooks/useStatuses';
 import { useCurrency } from '../../hooks/useSalonSettings';
 import { useAuth } from '../../contexts/AuthContext';
-import { buildApiUrl } from '../../api/client';
+import { buildApiUrl } from '@crm/api/client';
 
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import { Pagination } from '../../components/shared/Pagination';

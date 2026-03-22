@@ -15,7 +15,7 @@ import QuickStatsBar from '../../components/shared/QuickStatsBar';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { Badge } from '../../components/ui/badge';
-import { buildApiUrl } from '../../api/client';
+import { buildApiUrl } from '@crm/api/client';
 
 interface Stats {
   total_clients: number;

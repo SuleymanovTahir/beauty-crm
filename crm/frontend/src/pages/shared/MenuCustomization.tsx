@@ -52,6 +52,7 @@ const buildAllItems = (t: (k: string, o?: any) => string): MenuItem[] => {
   const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
     platform: Briefcase,
     dashboard: LayoutDashboard,
+    'bookings-group': Calendar,
     bookings: Calendar,
     'chat-group': MessageSquare,
     chat: MessageSquare,
@@ -101,11 +102,15 @@ const buildAllItems = (t: (k: string, o?: any) => string): MenuItem[] => {
     settings: t('menu.settings', { defaultValue: 'Настройки' }),
   };
 
+  const labelOverrides: Record<string, string> = {
+    'bookings-group': t('menu.bookings', { defaultValue: 'Записи' }),
+  };
+
   return CRM_MENU_DEFAULT_ORDER.map((id) => {
     const childIds = CRM_MENU_GROUPS[id];
     const item: MenuItem = {
       id,
-      label: labelMap[id] || id,
+      label: labelOverrides[id] || labelMap[id] || id,
       icon: iconMap[id] || Briefcase,
     };
     if (childIds && childIds.length > 0) {

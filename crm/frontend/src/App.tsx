@@ -27,6 +27,23 @@ const KPI = React.lazy(() => import('@crm/pages/shared/KPI'));
 const GiftCards = React.lazy(() => import('@crm/pages/shared/GiftCards'));
 const ServiceBundles = React.lazy(() => import('@crm/pages/shared/ServiceBundles'));
 const MenuCustomization = React.lazy(() => import('@crm/pages/shared/MenuCustomization'));
+const Calendar = React.lazy(() => import('@crm/pages/shared/Calendar'));
+const Clients = React.lazy(() => import('@crm/pages/shared/Clients'));
+const Analytics = React.lazy(() => import('@crm/pages/shared/Analytics'));
+const BotSettings = React.lazy(() => import('@crm/pages/shared/BotSettings'));
+const Broadcasts = React.lazy(() => import('@crm/pages/shared/Broadcasts'));
+const PromoCodes = React.lazy(() => import('@crm/pages/shared/PromoCodes'));
+const LoyaltyManagement = React.lazy(() => import('@crm/pages/shared/LoyaltyManagement'));
+const Challenges = React.lazy(() => import('@crm/pages/shared/Challenges'));
+const Messengers = React.lazy(() => import('@crm/pages/shared/Messengers'));
+const PaymentIntegrations = React.lazy(() => import('@crm/pages/shared/PaymentIntegrations'));
+const MarketplaceIntegrations = React.lazy(() => import('@crm/pages/shared/MarketplaceIntegrations'));
+const Products = React.lazy(() => import('@crm/pages/shared/Products'));
+const Invoices = React.lazy(() => import('@crm/pages/shared/Invoices'));
+const Contracts = React.lazy(() => import('@crm/pages/shared/Contracts'));
+const ServiceChangeRequests = React.lazy(() => import('@crm/pages/shared/ServiceChangeRequests'));
+const AuditLog = React.lazy(() => import('@crm/pages/shared/AuditLog'));
+const TrashBin = React.lazy(() => import('@crm/pages/shared/TrashBin'));
 
 const InternalChat = React.lazy(() => import('@crm/components/shared/InternalChat'));
 const NotificationsPage = React.lazy(() => import('@crm/pages/common/Notifications'));
@@ -237,21 +254,21 @@ export default function App() {
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="internal-chat" element={<InternalChat />} />
 
-                <Route path="clients" element={<Navigate to="../bookings" replace />} />
-                <Route path="calendar" element={<Navigate to="../bookings" replace />} />
-                <Route path="analytics" element={<Navigate to="../dashboard" replace />} />
-                <Route path="bot-settings" element={<Navigate to="../settings" replace />} />
+                <Route path="clients" element={<Clients />} />
+                <Route path="calendar" element={<Calendar />} />
+                <Route path="analytics" element={<Analytics />} />
+                <Route path="bot-settings" element={<BotSettings />} />
                 <Route path="menu-customization" element={<MenuCustomization />} />
-                <Route path="broadcasts" element={<Navigate to="../dashboard" replace />} />
-                <Route path="promo-codes" element={<Navigate to="../dashboard" replace />} />
-                <Route path="loyalty" element={<Navigate to="../dashboard" replace />} />
-                <Route path="challenges" element={<Navigate to="../dashboard" replace />} />
-                <Route path="contracts" element={<Navigate to="../dashboard" replace />} />
-                <Route path="products" element={<Navigate to="../dashboard" replace />} />
-                <Route path="invoices" element={<Navigate to="../dashboard" replace />} />
-                <Route path="messengers" element={<Navigate to="../chat" replace />} />
-                <Route path="payment-integrations" element={<Navigate to="../settings" replace />} />
-                <Route path="marketplace-integrations" element={<Navigate to="../settings" replace />} />
+                <Route path="broadcasts" element={<Broadcasts />} />
+                <Route path="promo-codes" element={<PromoCodes />} />
+                <Route path="loyalty" element={<LoyaltyManagement />} />
+                <Route path="challenges" element={<Challenges />} />
+                <Route path="contracts" element={<Contracts />} />
+                <Route path="products" element={<Products />} />
+                <Route path="invoices" element={<Invoices />} />
+                <Route path="messengers" element={<Messengers />} />
+                <Route path="payment-integrations" element={<PaymentIntegrations />} />
+                <Route path="marketplace-integrations" element={<MarketplaceIntegrations />} />
                 <Route path="referral-links" element={<ReferralLinks />} />
                 <Route path="referrals" element={<Navigate to="../referral-links" replace />} />
                 <Route path="waitlist" element={<Waitlist />} />
@@ -260,10 +277,10 @@ export default function App() {
                 <Route path="kpi" element={<KPI />} />
                 <Route path="gift-cards" element={<GiftCards />} />
                 <Route path="service-bundles" element={<ServiceBundles />} />
-                <Route path="service-change-requests" element={<Navigate to="../services" replace />} />
+                <Route path="service-change-requests" element={<ServiceChangeRequests />} />
                 <Route path="plans" element={<Navigate to="../dashboard" replace />} />
-                <Route path="trash" element={<Navigate to="../dashboard" replace />} />
-                <Route path="audit-log" element={<Navigate to="../dashboard" replace />} />
+                <Route path="trash" element={<TrashBin />} />
+                <Route path="audit-log" element={<AuditLog />} />
                                                                 <Route path="team/:id/:tab?" element={<Team />} />
                 <Route path="bookings/:id" element={<Navigate to="../bookings" replace />} />
                 <Route path="" element={<Navigate to={currentUser?.role === 'super_admin' ? 'platform' : 'dashboard'} replace />} />

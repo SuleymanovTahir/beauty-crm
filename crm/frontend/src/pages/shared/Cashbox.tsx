@@ -3,7 +3,7 @@ import { TrendingUp, TrendingDown, Plus, Download, RefreshCw, Wallet } from 'luc
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { toast } from 'sonner';
-import { buildApiUrl } from '../../api/client';
+import { buildApiUrl } from '@crm/api/client';
 
 interface Operation { id:number; type:string; category:string; amount:number; description?:string; payment_method:string; employee_name?:string; operation_date:string; document_number?:string; }
 interface Totals { income:number; expense:number; profit:number; }

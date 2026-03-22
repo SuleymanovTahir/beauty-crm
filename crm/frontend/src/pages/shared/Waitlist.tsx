@@ -3,7 +3,7 @@ import { Clock, Plus, Trash2, CheckCircle, Bell, RefreshCw, Phone, Scissors } fr
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { toast } from 'sonner';
-import { buildApiUrl } from '../../api/client';
+import { buildApiUrl } from '@crm/api/client';
 
 interface WaitEntry {
   id: number; client_name?: string; client_phone?: string;
