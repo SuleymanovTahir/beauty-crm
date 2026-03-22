@@ -626,6 +626,14 @@ img.logo,
   backface-visibility: hidden;
 }
 
+.login-logo-img {
+  height: 90px;
+  width: auto;
+  max-width: 240px;
+  object-fit: contain;
+  display: block;
+}
+
 /* Skeleton Shimmer Animation */
 @keyframes shimmer {
   0% {

@@ -24,7 +24,6 @@ import {
     Bell,
     MoreHorizontal,
     LayoutGrid,
-    Link2,
     Clock,
     Package,
     Wallet,
@@ -784,13 +783,14 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                 <div className="flex flex-col h-full overflow-hidden">
                     {/* Logo Section */}
                     <div className="sidebar-header-premium flex items-center gap-3">
-                        <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-gray-100 p-2 shrink-0">
-                            <span className="text-lg font-semibold text-gray-700">
-                                {(salonSettings?.name?.trim()?.charAt(0) ?? 'S').toUpperCase()}
-                            </span>
+                        <div className="shrink-0">
+                            <img
+                                src="/vertical-logo.png"
+                                alt="Logo"
+                                className="sidebar-logo-img"
+                            />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <h1 className="sidebar-brand-name">{salonSettings?.name ?? 'ST CRM'}</h1>
                             <div className="sidebar-brand-role">{getRoleLabel()}</div>
                         </div>
                     </div>

@@ -42,8 +42,8 @@ export default function MessengerSidebar({ selectedMessenger, onSelectMessenger 
     return (
         <div className="w-10 bg-gray-900 flex flex-col items-center py-6 gap-6 flex-shrink-0 border-r border-white/5">
             {/* Logo */}
-            <div className="size-8 rounded-lg bg-gradient-to-br from-blue-500 to-pink-600 flex items-center justify-center mb-4 shadow-lg">
-                <span className="text-white font-bold text-base">B</span>
+            <div className="size-8 rounded-lg overflow-hidden mb-4 shadow-lg shrink-0">
+                <img src="/logo-icon.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
 
             {/* Messenger Icons */}

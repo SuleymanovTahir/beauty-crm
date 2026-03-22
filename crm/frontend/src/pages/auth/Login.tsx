@@ -175,11 +175,13 @@ export default function Login() {
       </div>
 
       <div className="w-full max-w-md">
-        {/* Icon Circle or Logo - сверху над карточкой */}
+        {/* Logo - сверху над карточкой */}
         <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg overflow-hidden p-0.5">
-            <Lock className="w-10 h-10 text-white" />
-          </div>
+          <img
+            src="/vertical-logo.png"
+            alt="Logo"
+            className="login-logo-img"
+          />
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">

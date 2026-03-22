@@ -27,6 +27,22 @@
   text-overflow: ellipsis;
 }
 
+.sidebar-logo-img {
+  height: 44px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
+}
+
+.login-logo-img {
+  height: 90px;
+  width: auto;
+  max-width: 240px;
+  object-fit: contain;
+  display: block;
+}
+
 .sidebar-brand-role {
   margin-top: 4px;
   font-size: 0.74rem;
