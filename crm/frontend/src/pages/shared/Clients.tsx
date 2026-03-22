@@ -676,7 +676,7 @@ export default function Clients() {
                 {periodLabel}
               </p>
             </div>
-            <div className="clients-stat-icon-wrapper bg-stat-blue w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="clients-stat-icon-wrapper bg-stat-blue w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full min-[450px]:flex hidden items-center justify-center flex-shrink-0">
               <Users className="text-stat-blue w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
             </div>
           </div>
@@ -690,7 +690,7 @@ export default function Clients() {
                 {periodLabel}
               </p>
             </div>
-            <div className="clients-stat-icon-wrapper bg-stat-yellow w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="clients-stat-icon-wrapper bg-stat-yellow w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full min-[450px]:flex hidden items-center justify-center flex-shrink-0">
               <Crown className="text-stat-yellow w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
             </div>
           </div>
@@ -704,7 +704,7 @@ export default function Clients() {
                 {periodLabel}
               </p>
             </div>
-            <div className="clients-stat-icon-wrapper bg-stat-green w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="clients-stat-icon-wrapper bg-stat-green w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full min-[450px]:flex hidden items-center justify-center flex-shrink-0">
               <UserPlus className="text-stat-green w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
             </div>
           </div>
@@ -718,7 +718,7 @@ export default function Clients() {
                 {periodLabel}
               </p>
             </div>
-            <div className="clients-stat-icon-wrapper bg-stat-blue w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="clients-stat-icon-wrapper bg-stat-blue w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full min-[450px]:flex hidden items-center justify-center flex-shrink-0">
               <UserCheck className="text-stat-blue w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
             </div>
           </div>
@@ -761,7 +761,7 @@ export default function Clients() {
                 }`}
             >
               <Users className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
-              <span className="truncate">{t('filters')}</span>
+              <span className="truncate hidden min-[350px]:inline">{t('filters')}</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 shrink-0 ${showFilters ? 'rotate-180' : ''}`} />
             </button>
 
@@ -777,7 +777,7 @@ export default function Clients() {
                   }`}
               >
                 <Upload className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
-                <span className="truncate">{t('options')}</span>
+                <span className="truncate hidden min-[350px]:inline">{t('options')}</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 shrink-0 ${showActions ? 'rotate-180' : ''}`} />
               </button>
             )}

@@ -148,7 +148,7 @@ const Products = () => {
                             ))}
                         </select>
 
-                        <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg border border-gray-200">
+                        <div className="flex flex-wrap items-center gap-2 bg-gray-100 p-1 rounded-lg border border-gray-200">
                             <button
                                 onClick={() => handleSort('price')}
                                 className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center transition-all ${sortConfig?.key === 'price' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}

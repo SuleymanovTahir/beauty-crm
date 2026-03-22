@@ -344,7 +344,7 @@ export default function BotSettings() {
               <label className="bot-settings-label flex items-center gap-[0.5rem]">
                 <Flag size={18} className="text-pink-500" /> {t('response_style') || 'Стиль ответов бота'}
               </label>
-              <div className="grid grid-cols-3 gap-[1rem]">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-[1rem]">
                 {/* Concise / Деловой */}
                 <div
                   onClick={() => setSettings({ ...settings, response_style: 'concise' })}

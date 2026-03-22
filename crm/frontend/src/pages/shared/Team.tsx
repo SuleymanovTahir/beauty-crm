@@ -652,7 +652,7 @@ export default function UniversalTeam() {
         ) : (
           <div className="flex h-[700px] bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
             {/* Master: Sidebar */}
-            <div className="w-72 border-r border-gray-100 flex flex-col bg-gray-50/50">
+            <div className={`border-r border-gray-100 flex-col bg-gray-50/50 ${id ? 'hidden md:flex w-72 shrink-0' : 'flex w-full md:w-72 shrink-0'}`}>
               <div className="p-4 border-b border-gray-100 bg-white">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -692,7 +692,7 @@ export default function UniversalTeam() {
             </div>
 
             {/* Detail: Content */}
-            <div className="flex-1 bg-white overflow-hidden flex flex-col">
+            <div className={`flex-1 bg-white overflow-hidden flex-col ${id ? 'flex' : 'hidden md:flex'}`}>
               {id ? (
                 <div className="h-full overflow-y-auto bg-gray-50/30">
                   <EmployeeDetail />

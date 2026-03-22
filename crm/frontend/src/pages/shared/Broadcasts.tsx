@@ -1248,8 +1248,8 @@ export default function Broadcasts() {
                       </>
                     ) : (
                       <>
-                        <Eye className="w-5 h-5 mr-2" />
-                        {t('preview')}
+                        <Eye className="w-5 h-5 sm:mr-2" />
+                        <span className="hidden sm:inline">{t('preview')}</span>
                       </>
                     )}
                   </Button>

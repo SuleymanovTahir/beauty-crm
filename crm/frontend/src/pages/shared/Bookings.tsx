@@ -1141,7 +1141,7 @@ export default function UniversalBookings() {
                         />
                     </div>
 
-                    <div className="bookings-controls">
+                    <div className="bookings-controls flex flex-wrap items-center gap-2 justify-between">
                         {!isEmployee && (
                             <button onClick={() => setShowAddDialog(true)} className="bookings-control-button bookings-add-button">
                                 <Plus className="w-4 h-4" />

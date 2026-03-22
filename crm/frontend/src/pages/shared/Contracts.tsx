@@ -222,7 +222,7 @@ const Contracts = () => {
                         <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
                         <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap gap-2 sm:gap-3">
                         <div className="bg-gray-100 p-1 rounded-lg flex items-center border border-gray-200">
                             <button
                                 onClick={() => setViewMode('board')}

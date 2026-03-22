@@ -177,6 +177,9 @@ const TrashBin: React.FC = () => {
     };
 
     const getEntityName = (type: string) => {
+        if (type === 'booking') return t('entity.booking', 'Запись');
+        if (type === 'client') return t('entity.client', 'Клиент');
+        if (type === 'user') return t('entity.user', 'Сотрудник');
         return t(`entity.${type}`);
     };
 
@@ -285,15 +288,15 @@ const TrashBin: React.FC = () => {
                     )}
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     {['all', 'booking', 'client', 'user'].map((type) => (
                         <Button
                             key={type}
                             onClick={() => setFilterType(type)}
                             variant={filterType === type ? 'default' : 'outline'}
-                            className="capitalize h-10 px-6"
+                            className="capitalize h-10 px-6 sm:flex-1 md:flex-none"
                         >
-                            {type === 'all' ? t('filter_all') : getEntityName(type)}
+                            {type === 'all' ? t('filter_all', 'Фильтровать все') : getEntityName(type)}
                         </Button>
                     ))}
                 </div>

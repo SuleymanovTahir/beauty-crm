@@ -191,7 +191,7 @@ export default function Inventory() {
                 t('inventory_column_cost', { defaultValue: 'Себест.' }),
                 t('inventory_column_sale', { defaultValue: 'Продажа' }),
                 '',
-              ].map((heading) => <th key={heading} className="px-4 py-3 text-left font-medium">{heading}</th>)}</tr>
+              ].map((heading, i) => <th key={i} className="px-4 py-3 text-left font-medium whitespace-nowrap">{heading}</th>)}</tr>
             </thead>
             <tbody>
               {filtered.map(item => {

@@ -489,7 +489,7 @@ export default function LoyaltyManagement({
       {showHeader && (
         <div className={embedded ? 'flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between' : 'flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4'}>
           <div className={embedded ? 'min-w-0 lg:flex-1' : 'min-w-0'}>
-            <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-3xl font-bold text-gray-900'}>
+            <h1 className={embedded ? 'text-xl sm:text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-xl sm:text-2xl md:text-3xl font-bold text-gray-900'}>
               {embedded && <Gift className="w-8 h-8 text-blue-600" />}
               {t('title')}
             </h1>
@@ -519,7 +519,7 @@ export default function LoyaltyManagement({
                 <div className="flex items-center justify-between">
                   <div className="min-w-0">
                     <p className="text-sm text-gray-500 font-medium">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-2">{stat.value}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-2">{stat.value}</p>
                   </div>
                   <div className={`w-12 h-12 ${stat.bgColor} rounded-lg flex items-center justify-center`}>
                     <Icon className={`w-6 h-6 ${stat.color}`} />
@@ -587,37 +587,41 @@ export default function LoyaltyManagement({
               </div>
             </div>
           ) : (
-            <div className="flex items-end gap-4 max-w-md">
-              <div className="space-y-2">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-4 max-w-2xl">
+              <div className="space-y-2 flex-1">
                 <Label>{t('config.cashback_rate', 'Кэшбэк (%)')}</Label>
-                <Input
-                  type="number"
-                  step="0.1"
-                  value={cashbackPercent}
-                  onChange={(e) => setConfig({ ...config, loyalty_points_conversion_rate: parseNumberOrFallback(e.target.value, cashbackPercent) / 100 })}
-                  className="w-24"
-                />
-                <p className="text-sm text-gray-500">{t('config.cashback_hint', {
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    step="0.1"
+                    value={cashbackPercent}
+                    onChange={(e) => setConfig({ ...config, loyalty_points_conversion_rate: parseNumberOrFallback(e.target.value, cashbackPercent) / 100 })}
+                    className="w-full sm:w-24"
+                  />
+                  <span className="text-gray-500">%</span>
+                </div>
+                <p className="text-xs text-gray-500 leading-relaxed">{t('config.cashback_hint', {
                   percent: cashbackPercent,
                   points: pointsPerHundredCurrencyUnits,
                   unit: 100,
                   defaultValue: 'Пример: 10% кэшбэк (10 баллов за каждые 100 потраченных)'
                 })}</p>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 flex-1">
                 <Label>{t('config.expiration_days', 'Срок действия баллов (дней)')}</Label>
                 <Input
                   type="number"
                   value={config.points_expiration_days}
                   onChange={(e) => setConfig({ ...config, points_expiration_days: parseIntegerOrFallback(e.target.value, config.points_expiration_days) })}
                   placeholder="365"
+                  className="w-full"
                 />
-                <p className="text-sm text-gray-500">
+                <p className="text-xs text-gray-500 leading-relaxed">
                   {t('config.expiration_hint', 'Начисленные баллы сгорят через указанное количество дней.')}
                 </p>
               </div>
               {canManageLoyalty && (
-                <Button onClick={handleUpdateConfig}>
+                <Button onClick={handleUpdateConfig} className="w-full sm:w-auto h-9">
                   {t('buttons.save', 'Сохранить')}
                 </Button>
               )}

@@ -318,7 +318,7 @@ export default function UniversalDashboard() {
       <div className="p-4 md:p-8">
         <div className="mb-6 md:mb-8 flex justify-between items-start">
           <div>
-            <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 font-bold">
+            <h1 className="text-xl sm:text-2xl md:text-3xl text-gray-900 mb-2 font-bold">
               {t('common:welcome')}, {currentUser.full_name || currentUser.username}!
             </h1>
             <p className="text-sm md:text-base text-gray-600">
@@ -359,7 +359,7 @@ export default function UniversalDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
           <div className="settings-button-gradient p-6 rounded-xl shadow-lg text-white">
             <p className="text-sm opacity-80 mb-1">{isSales ? t('crm/dashboard:deal_revenue') : t('crm/dashboard:your_revenue')}</p>
-            <h3 className="text-3xl font-bold">{stats?.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
+            <h3 className="text-2xl md:text-3xl font-bold">{stats?.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
             {stats?.growth?.revenue && (
               <div className="flex items-center gap-1 text-xs mt-1">
                 <TrendingUp className={`w-3 h-3 ${stats.growth.revenue.trend === 'down' ? 'rotate-180' : ''}`} />
@@ -369,15 +369,15 @@ export default function UniversalDashboard() {
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <p className="text-gray-500 text-sm mb-1">{isSales ? t('crm/dashboard:total_leads') : t('employee/Dashboard:today_bookings')}</p>
-            <h3 className="text-3xl text-gray-900 font-bold">{stats?.total_bookings || 0}</h3>
+            <h3 className="text-2xl md:text-3xl text-gray-900 font-bold">{stats?.total_bookings || 0}</h3>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <p className="text-gray-500 text-sm mb-1">{isSales ? t('crm/dashboard:deal_conversion') : t('crm/dashboard:my_conversion')}</p>
-            <h3 className="text-3xl text-green-600 font-bold">{stats?.conversion_rate?.toFixed(1)}%</h3>
+            <h3 className="text-2xl md:text-3xl text-green-600 font-bold">{stats?.conversion_rate?.toFixed(1)}%</h3>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <p className="text-gray-500 text-sm mb-1">{t('crm/dashboard:new_clients')}</p>
-            <h3 className="text-3xl text-blue-600 font-bold">{stats?.new_clients || 0}</h3>
+            <h3 className="text-2xl md:text-3xl text-blue-600 font-bold">{stats?.new_clients || 0}</h3>
           </div>
         </div>
 
@@ -485,7 +485,7 @@ export default function UniversalDashboard() {
     <div className="p-4 md:p-8">
       <div className="mb-6 md:mb-8 flex justify-between items-start">
         <div>
-          <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 font-bold">{t('crm/dashboard:title')}</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl text-gray-900 mb-2 font-bold">{t('crm/dashboard:title')}</h1>
           <p className="text-sm md:text-base text-gray-600">{t('crm/dashboard:welcome')}</p>
         </div>
 
@@ -543,7 +543,7 @@ export default function UniversalDashboard() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-500 mb-1">{stat.label}</p>
-                <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-900">{stat.value}</h3>
                 {stat.growth && (
                   <div className={`flex items-center gap-1 text-xs mt-1 ${stat.growth.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
                     <TrendingUp className={`w-3 h-3 ${stat.growth.trend === 'down' ? 'rotate-180' : ''}`} />
@@ -563,7 +563,7 @@ export default function UniversalDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
         <div className="settings-button-gradient p-6 rounded-xl shadow-lg text-white">
           <p className="text-sm opacity-80 mb-1">{t('crm/dashboard:revenue')}</p>
-          <h3 className="text-3xl font-bold mb-1">{stats.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
+          <h3 className="text-2xl md:text-3xl font-bold mb-1">{stats.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
           {stats.growth?.revenue && (
             <div className="flex items-center gap-1 text-xs">
               <TrendingUp className={`w-3 h-3 ${stats.growth.revenue.trend === 'down' ? 'rotate-180' : ''}`} />
@@ -573,15 +573,15 @@ export default function UniversalDashboard() {
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <p className="text-sm text-gray-500 mb-1">{t('crm/dashboard:average_check')}</p>
-          <h3 className="text-3xl font-bold text-gray-900">{stats.avg_booking_value?.toLocaleString()} {salonSettings?.currency}</h3>
+          <h3 className="text-2xl md:text-3xl font-bold text-gray-900">{stats.avg_booking_value?.toLocaleString()} {salonSettings?.currency}</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <p className="text-sm text-gray-500 mb-1">{t('crm/dashboard:cancellations')}</p>
-          <h3 className="text-3xl font-bold text-red-600">{stats.cancellation_rate?.toFixed(1)}%</h3>
+          <h3 className="text-2xl md:text-3xl font-bold text-red-600">{stats.cancellation_rate?.toFixed(1)}%</h3>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <p className="text-sm text-gray-500 mb-1">{t('crm/dashboard:conversion')}</p>
-          <h3 className="text-3xl font-bold text-blue-600">{stats.conversion_rate?.toFixed(1)}%</h3>
+          <h3 className="text-2xl md:text-3xl font-bold text-blue-600">{stats.conversion_rate?.toFixed(1)}%</h3>
         </div>
       </div>
 

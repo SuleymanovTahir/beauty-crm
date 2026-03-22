@@ -2777,6 +2777,38 @@ export class ApiClient {
     })
   }
 
+  // ===== TRASH =====
+  async getTrashItems(type?: string) {
+    let url = '/api/trash';
+    if (type) url += `?type=${type}`;
+    return this.request<any>(url);
+  }
+
+  async restoreTrashItem(type: string, id: string) {
+    return this.request(`/api/trash/${type}/${id}/restore`, { method: 'POST' });
+  }
+
+  async permanentDeleteTrashItem(type: string, id: string) {
+    return this.request(`/api/trash/${type}/${id}`, { method: 'DELETE' });
+  }
+
+  async restoreTrashItemsBatch(items: Array<{ type: string; id: string }>) {
+    return this.request<any>(`/api/trash/restore-batch`, {
+      method: 'POST',
+      body: JSON.stringify({ items }),
+    });
+  }
+
+  async deleteTrashItemsBatch(items: Array<{ type: string; id: string }>) {
+    return this.request(`/api/trash/delete-batch`, {
+      method: 'POST',
+      body: JSON.stringify({ items }),
+    });
+  }
+
+  async emptyTrash() {
+    return this.request(`/api/trash/empty`, { method: 'POST' });
+  }
 }
 
 export const api = new ApiClient()

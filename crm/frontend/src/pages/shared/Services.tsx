@@ -548,39 +548,39 @@ export default function UniversalServices() {
                         </colgroup>
                         <thead>
                             <tr>
-                                <th>
+                                <th className="whitespace-nowrap">
                                     <button type="button" className="crm-services-sort-button" onClick={() => handleSort('name')}>
                                         <span>{t('crm/services:name')}</span>
                                         <ArrowUpDown className="crm-services-sort-icon" />
                                     </button>
                                 </th>
-                                <th>
+                                <th className="whitespace-nowrap">
                                     <button type="button" className="crm-services-sort-button" onClick={() => handleSort('price')}>
                                         <span>{t('crm/services:price')}</span>
                                         <ArrowUpDown className="crm-services-sort-icon" />
                                     </button>
                                 </th>
-                                <th>
+                                <th className="whitespace-nowrap">
                                     <button type="button" className="crm-services-sort-button" onClick={() => handleSort('duration')}>
                                         <span>{t('crm/services:duration')}</span>
                                         <ArrowUpDown className="crm-services-sort-icon" />
                                     </button>
                                 </th>
                                 {!isEmployee && (
-                                    <th>
+                                    <th className="whitespace-nowrap">
                                         <button type="button" className="crm-services-sort-button" onClick={() => handleSort('category')}>
                                             <span>{t('crm/services:category')}</span>
                                             <ArrowUpDown className="crm-services-sort-icon" />
                                         </button>
                                     </th>
                                 )}
-                                <th>
+                                <th className="whitespace-nowrap">
                                     <button type="button" className="crm-services-sort-button" onClick={() => handleSort('status')}>
                                         <span>{t('common:status')}</span>
                                         <ArrowUpDown className="crm-services-sort-icon" />
                                     </button>
                                 </th>
-                                <th className="crm-services-actions-header">{t('common:actions')}</th>
+                                <th className="crm-services-actions-header whitespace-nowrap">{t('common:actions')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -591,20 +591,20 @@ export default function UniversalServices() {
 
                                 return (
                                     <tr key={service.id}>
-                                        <td className="crm-services-service-cell">{getServiceDisplayName(service)}</td>
-                                        <td>{formatCurrency(service.price)}</td>
-                                        <td>
+                                        <td className="crm-services-service-cell whitespace-nowrap">{getServiceDisplayName(service)}</td>
+                                        <td className="whitespace-nowrap">{formatCurrency(service.price)}</td>
+                                        <td className="whitespace-nowrap">
                                             <span className="crm-services-duration-badge">
                                                 <Clock3 className="crm-services-duration-icon" />
                                                 <span>{formatDurationLabel(service.duration)}</span>
                                             </span>
                                         </td>
                                         {!isEmployee && (
-                                            <td>
+                                            <td className="whitespace-nowrap">
                                                 <span className="crm-services-category-badge">{categoryLabel}</span>
                                             </td>
                                         )}
-                                        <td>
+                                        <td className="whitespace-nowrap">
                                             {hasPendingRequest ? (
                                                 <span className="crm-services-status-badge crm-services-status-badge-pending">
                                                     <Loader2 className="crm-services-pending-icon" />

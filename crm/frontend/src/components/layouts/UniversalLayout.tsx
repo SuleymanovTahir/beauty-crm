@@ -784,11 +784,28 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         }
 
         if (activeDesktopGroupId === null) {
+            // If no group is active, we still want to scroll to the active lone item
+            window.requestAnimationFrame(() => {
+                const activeElement = document.querySelector('.more-menu-content .menu-item-link.active');
+                if (activeElement instanceof HTMLElement) {
+                    activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
             return;
         }
 
         setMobileExpandedGroups(new Set([activeDesktopGroupId]));
-    }, [showMoreModal, activeDesktopGroupId, location.pathname]);
+        
+        // Scroll to the expanded group
+        const frameId = window.requestAnimationFrame(() => {
+            const groupElement = mobileMenuGroupRefs.current[activeDesktopGroupId];
+            if (groupElement instanceof HTMLElement) {
+                groupElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+        
+        return () => window.cancelAnimationFrame(frameId);
+    }, [showMoreModal, activeDesktopGroupId]);
 
     const toggleMobileGroup = (id: string) => {
         const newGroups = new Set(mobileExpandedGroups);
@@ -1001,7 +1018,20 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
             </aside>
 
             {/* Mobile Bottom Navigation - Visible ONLY on small screens */}
-            <div className="mobile-bottom-nav min-[1100px]:hidden">
+            <div className="mobile-bottom-nav min-[1100px]:hidden flex items-center shadow-lg border-t border-gray-100">
+                <button
+                    onClick={() => navigate(dashboardPath)}
+                    className="flex shrink-0 items-center justify-center w-[50px] relative ml-1"
+                >
+                    <div className="relative inline-flex items-center justify-center w-8 h-8 rounded-lg outline outline-1 outline-gray-200/50 shadow-sm bg-white overflow-hidden" style={{ filter: 'var(--logo-filter, none)' }}>
+                        <img
+                            src={`${logoBasePath}/logo-icon-pink.svg`}
+                            alt="Logo"
+                            className="w-full h-full object-cover"
+                            style={{ filter: 'var(--logo-icon-filter, none)' }}
+                        />
+                    </div>
+                </button>
                 {mainTabs.map((tab) => (
                     <button
                         key={tab.id}

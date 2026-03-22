@@ -443,7 +443,7 @@ export default function PromoCodes({
             {showHeader && (
                 <div className={embedded ? 'flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between mb-8' : 'crm-calendar-toolbar flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8'}>
                     <div className={embedded ? 'min-w-0 lg:flex-1' : ''}>
-                        <h1 className={embedded ? 'text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3'}>
+                        <h1 className={embedded ? 'text-xl sm:text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-3' : 'text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3'}>
                             {embedded ? (
                                 <Ticket size={32} className="text-blue-600" />
                             ) : (
@@ -462,7 +462,7 @@ export default function PromoCodes({
                         onClick={handleOpenCreateDialog}
                         className={embedded
                             ? 'w-full sm:w-auto lg:self-start shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm flex items-center gap-2 transition-all'
-                            : 'settings-bg-primary settings-bg-primary-hover text-white shadow-lg shadow-pink-100 px-6 py-6 rounded-2xl flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-95'}
+                            : 'settings-bg-primary settings-bg-primary-hover text-white shadow-lg shadow-pink-100 px-6 py-4 sm:py-6 rounded-2xl flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-95'}
                     >
                         <Plus size={embedded ? 16 : 20} />
                         {t('create_btn', 'Создать промокод')}
@@ -477,7 +477,7 @@ export default function PromoCodes({
                     </div>
                     <div>
                         <p className="text-sm font-medium text-gray-500">{t('total_active', 'Всего активных')}</p>
-                        <p className="text-2xl font-bold text-gray-900">{promoCodes.filter((promo) => promo.is_active).length}</p>
+                        <p className="text-xl sm:text-2xl font-bold text-gray-900">{promoCodes.filter((promo) => promo.is_active).length}</p>
                     </div>
                 </div>
 
@@ -487,7 +487,7 @@ export default function PromoCodes({
                     </div>
                     <div>
                         <p className="text-sm font-medium text-gray-500">{t('total_usage', 'Использований всего')}</p>
-                        <p className="text-2xl font-bold text-gray-900">{promoCodes.reduce((sum, promo) => sum + promo.times_used, 0)}</p>
+                        <p className="text-xl sm:text-2xl font-bold text-gray-900">{promoCodes.reduce((sum, promo) => sum + promo.times_used, 0)}</p>
                     </div>
                 </div>
 
@@ -497,7 +497,7 @@ export default function PromoCodes({
                     </div>
                     <div>
                         <p className="text-sm font-medium text-gray-500">{t('personalized_count', 'Персональных')}</p>
-                        <p className="text-2xl font-bold text-gray-900">{promoCodes.filter((promo) => promo.target_scope === 'clients').length}</p>
+                        <p className="text-xl sm:text-2xl font-bold text-gray-900">{promoCodes.filter((promo) => promo.target_scope === 'clients').length}</p>
                     </div>
                 </div>
             </div>
@@ -604,12 +604,12 @@ export default function PromoCodes({
 
                             <div className="flex items-start gap-4 sm:gap-6">
                                 <div className={`p-4 sm:p-5 rounded-3xl shrink-0 ${promo.discount_type === 'percent' ? 'settings-bg-primary-light settings-text-primary' : 'bg-blue-50 text-blue-600'}`}>
-                                    {promo.discount_type === 'percent' ? <Percent size={32} /> : <Gift size={32} />}
+                                    {promo.discount_type === 'percent' ? <Percent className="w-6 h-6 sm:w-7 sm:h-7" /> : <Gift className="w-6 h-6 sm:w-7 sm:h-7" />}
                                 </div>
 
                                 <div className="flex-1 min-w-0 w-full md:pr-40">
                                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                                        <span className="text-xl sm:text-2xl font-black text-gray-900 uppercase tracking-wider break-all">{promo.code}</span>
+                                        <span className="text-lg sm:text-xl md:text-2xl font-black text-gray-900 uppercase tracking-wider break-all">{promo.code}</span>
                                         {promo.target_scope === 'clients' && (
                                             <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
                                                 {t('personal', 'Personal')}
