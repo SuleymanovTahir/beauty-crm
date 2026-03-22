@@ -123,9 +123,9 @@ export default function ServiceChangeRequests() {
   return (
     <div className="crm-calendar-theme crm-calendar-page crm-calendar-service-requests p-8">
       <div className="crm-calendar-toolbar mb-8">
-        <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-          <Scissors className="w-8 h-8 settings-text-primary" />
-          {t('change_requests.title')}
+        <h1 className="text-xl sm:text-2xl lg:text-3xl text-gray-900 mb-2 flex items-center gap-2 sm:gap-3">
+          <Scissors className="w-6 h-6 sm:w-8 sm:h-8 settings-text-primary shrink-0" />
+          <span className="truncate">{t('change_requests.title')}</span>
         </h1>
         <p className="text-gray-600">
           {t('change_requests.description')}

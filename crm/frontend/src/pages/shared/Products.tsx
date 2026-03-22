@@ -169,7 +169,7 @@ const Products = () => {
                         <input
                             type="text"
                             placeholder={t('search_placeholder')}
-                            className="pl-9 pr-4 h-10 w-72 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all"
+                            className="pl-9 pr-4 h-10 w-full sm:w-72 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />

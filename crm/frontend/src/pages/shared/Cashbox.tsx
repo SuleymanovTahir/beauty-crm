@@ -109,14 +109,16 @@ export default function Cashbox() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-2 items-center">
-        <Input type="date" className="w-36 h-8 text-sm" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
+        <Input type="date" className="w-[120px] sm:w-36 h-8 text-xs sm:text-sm" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
         <span className="text-gray-400">-</span>
-        <Input type="date" className="w-36 h-8 text-sm" value={dateTo} onChange={e => setDateTo(e.target.value)} />
-        {typeFilterOptions.map((option) => (
-          <Button key={option.value} variant={typeFilter===option.value?'default':'outline'} size="sm" onClick={() => setTypeFilter(option.value)}>
-            {option.label}
-          </Button>
-        ))}
+        <Input type="date" className="w-[120px] sm:w-36 h-8 text-xs sm:text-sm" value={dateTo} onChange={e => setDateTo(e.target.value)} />
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+          {typeFilterOptions.map((option) => (
+            <Button key={option.value} className="flex-1 sm:flex-none" variant={typeFilter===option.value?'default':'outline'} size="sm" onClick={() => setTypeFilter(option.value)}>
+              {option.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {/* Form */}
@@ -162,8 +164,8 @@ export default function Cashbox() {
 
       {/* Table */}
       {loading ? <div className="flex justify-center py-12"><RefreshCw size={22} className="animate-spin text-gray-400" /></div> : (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-x-auto">
+          <table className="w-full text-sm whitespace-normal min-w-[700px]">
             <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs text-gray-500">
               <tr>{[
                 t('crm/settings:date'),

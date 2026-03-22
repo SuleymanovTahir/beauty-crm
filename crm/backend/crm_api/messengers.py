@@ -26,19 +26,37 @@ def _quota_error_response(error: QuotaExceededError) -> JSONResponse:
     return JSONResponse(error.detail, status_code=409)
 
 
+DEFAULT_MESSENGERS = [
+    {"messenger_type": "instagram", "display_name": "Instagram", "is_enabled": False, "api_token": "", "webhook_url": ""},
+    {"messenger_type": "whatsapp", "display_name": "WhatsApp Business", "is_enabled": False, "api_token": "", "webhook_url": ""},
+    {"messenger_type": "telegram", "display_name": "Telegram Bot", "is_enabled": False, "api_token": "", "webhook_url": ""},
+    {"messenger_type": "tiktok", "display_name": "TikTok Lead Gen", "is_enabled": False, "api_token": "", "webhook_url": ""},
+]
+
 def _load_current_company_messenger_config() -> list[dict]:
     company = get_current_company()
     if not company:
-        return []
+        return [dict(dm) for dm in DEFAULT_MESSENGERS]
 
     messenger_data = company.get("messenger_config") or []
     if isinstance(messenger_data, str):
         try:
             messenger_data = json.loads(messenger_data)
         except json.JSONDecodeError:
-            return []
+            messenger_data = []
 
-    return messenger_data if isinstance(messenger_data, list) else []
+    parsed = messenger_data if isinstance(messenger_data, list) else []
+    
+    result = []
+    for dm in DEFAULT_MESSENGERS:
+        # Check if messenger type already exists in company data
+        found = next((p for p in parsed if p.get('messenger_type') == dm['messenger_type']), None)
+        if found:
+            result.append(found)
+        else:
+            result.append(dict(dm))
+            
+    return result
 
 
 def _save_current_company_messenger_config(messenger_config: list[dict]) -> None:

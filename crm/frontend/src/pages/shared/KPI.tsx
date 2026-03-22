@@ -83,16 +83,18 @@ export default function KPI() {
       </div>
 
       {/* Period */}
-      <div className="flex items-center gap-2">
-        <Input type="date" className="w-36 h-8 text-sm" value={periodFrom} onChange={e => setPeriodFrom(e.target.value)} />
-        <span className="text-gray-400">-</span>
-        <Input type="date" className="w-36 h-8 text-sm" value={periodTo} onChange={e => setPeriodTo(e.target.value)} />
-        <div className="flex gap-1 ml-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
+          <Input type="date" className="w-[130px] sm:w-36 h-8 text-sm" value={periodFrom} onChange={e => setPeriodFrom(e.target.value)} />
+          <span className="text-gray-400">-</span>
+          <Input type="date" className="w-[130px] sm:w-36 h-8 text-sm" value={periodTo} onChange={e => setPeriodTo(e.target.value)} />
+        </div>
+        <div className="flex flex-wrap gap-1 sm:ml-2 mt-2 sm:mt-0 w-full sm:w-auto">
           {(['leaderboard','targets'] as const).map((tabKey) => (
-            <Button key={tabKey} size="sm" variant={tab===tabKey?'default':'outline'} onClick={() => setTab(tabKey)}>
+            <Button key={tabKey} size="sm" variant={tab===tabKey?'default':'outline'} onClick={() => setTab(tabKey)} className="flex-1 sm:flex-none">
               {tabKey==='leaderboard'
-                ? <><Trophy size={13}/> {t('kpi_tab_leaderboard', { defaultValue: 'Рейтинг' })}</>
-                : <><Target size={13}/> {t('kpi_tab_targets', { defaultValue: 'Цели' })}</>}
+                ? <><Trophy size={13} className="mr-1.5"/> {t('kpi_tab_leaderboard', { defaultValue: 'Рейтинг' })}</>
+                : <><Target size={13} className="mr-1.5"/> {t('kpi_tab_targets', { defaultValue: 'Цели' })}</>}
             </Button>
           ))}
         </div>

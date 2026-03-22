@@ -191,41 +191,41 @@ const Invoices = () => {
                         <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
                         <p className="text-sm text-gray-500 mt-1">{t('subtitle')}</p>
                     </div>
-                    <div className="flex gap-3">
-                        <div className="bg-gray-100 p-1 rounded-lg flex items-center border border-gray-200">
+                    <div className="flex flex-wrap gap-2 md:gap-3 w-full md:w-auto">
+                        <div className="bg-gray-100 p-1 rounded-lg flex items-center border border-gray-200 flex-1 md:flex-none">
                             <button
                                 onClick={() => setViewMode('board')}
-                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center ${viewMode === 'board'
+                                className={`flex-1 md:flex-none px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center justify-center ${viewMode === 'board'
                                     ? 'bg-white text-gray-900 shadow-sm'
                                     : 'text-gray-500 hover:text-gray-900'
                                     }`}
                             >
-                                <Layout className="w-4 h-4 mr-2" />
-                                {t('board')}
+                                <Layout className="w-4 h-4 mr-1 sm:mr-2" />
+                                <span className="hidden sm:inline">{t('board')}</span>
                             </button>
                             <button
                                 onClick={() => setViewMode('list')}
-                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center ${viewMode === 'list'
+                                className={`flex-1 md:flex-none px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center justify-center ${viewMode === 'list'
                                     ? 'bg-white text-gray-900 shadow-sm'
                                     : 'text-gray-500 hover:text-gray-900'
                                     }`}
                             >
-                                <LayoutDashboard className="w-4 h-4 mr-2" />
-                                {t('allInvoices')}
+                                <LayoutDashboard className="w-4 h-4 mr-1 sm:mr-2" />
+                                <span className="hidden sm:inline">{t('allInvoices')}</span>
                             </button>
                         </div>
 
                         <button
                             onClick={() => setShowStagesDialog(true)}
-                            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
                             title={t('manage_stages')}
                         >
                             <LayoutDashboard size={16} />
                             <span className="hidden sm:inline">{t('manage_stages')}</span>
                         </button>
-                        <button className="crm-btn-primary h-10" onClick={() => setShowAddDialog(true)}>
-                            <Plus size={18} />
-                            {t('addInvoice')}
+                        <button className="crm-btn-primary h-10 flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 min-w-[120px]" onClick={() => setShowAddDialog(true)}>
+                            <Plus size={16} className="shrink-0" />
+                            <span className="truncate">{t('addInvoice')}</span>
                         </button>
                     </div>
                 </div>
@@ -275,7 +275,7 @@ const Invoices = () => {
                         </div>
                     </div>
 
-                    <div className="relative">
+                    <div className="relative w-full md:w-auto shrink-0">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
                             type="text"
@@ -298,7 +298,7 @@ const Invoices = () => {
                         {invoiceStages.map(stage => (
                             <div
                                 key={stage.id}
-                                className="crm-calendar-column w-80 flex flex-col h-full bg-gray-100/50 rounded-xl border border-gray-200/60"
+                                className="crm-calendar-column w-80 shrink-0 flex flex-col h-full bg-gray-100/50 rounded-xl border border-gray-200/60"
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, stage.id)}
                             >

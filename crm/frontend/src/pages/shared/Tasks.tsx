@@ -297,11 +297,11 @@ export default function UniversalTasks() {
                                 </Button>
                             )}
                             <Button
-                                className="settings-button-gradient text-white shadow-lg shadow-blue-500/20 whitespace-nowrap"
+                                className="settings-button-gradient text-white shadow-lg shadow-blue-500/20 whitespace-nowrap px-3 sm:px-4"
                                 onClick={() => setCreateDialogOpen(true)}
                             >
-                                <Plus className="w-4 h-4 mr-2" />
-                                {t('create_task')}
+                                <Plus className="w-4 h-4 sm:mr-2" />
+                                <span className="hidden sm:inline">{t('create_task')}</span>
                             </Button>
                         </div>
                     </div>
@@ -443,7 +443,7 @@ export default function UniversalTasks() {
                         {stages.map(stage => (
                             <div
                                 key={stage.id}
-                                className="w-96 shrink-0 flex flex-col min-h-[300px] bg-gray-100/50 rounded-xl border border-gray-200/60"
+                                className="w-[85vw] sm:w-80 md:w-96 shrink-0 flex flex-col min-h-[300px] bg-gray-100/50 rounded-xl border border-gray-200/60"
                                 onDragOver={handleDragOver}
                                 onDrop={(e) => handleDrop(e, stage.id)}
                             >

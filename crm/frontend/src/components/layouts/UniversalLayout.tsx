@@ -55,8 +55,6 @@ import {
 } from '../../utils/platformRouting';
 import './MainLayout.css';
 
-import { useTheme } from '../../contexts/ThemeContext';
-
 interface MainLayoutProps {
     user: { id: number; role: string; secondary_role?: string; full_name: string; username?: string } | null;
     onLogout: () => void;

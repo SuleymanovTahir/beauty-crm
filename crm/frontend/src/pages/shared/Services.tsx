@@ -536,8 +536,8 @@ export default function UniversalServices() {
                     )}
                 </div>
             ) : (
-                <div className="crm-services-table-card">
-                    <table className="crm-services-table">
+                <div className="crm-services-table-card overflow-x-auto">
+                    <table className="crm-services-table min-w-[900px]">
                         <colgroup>
                             <col className="crm-services-col-name" />
                             <col className="crm-services-col-price" />

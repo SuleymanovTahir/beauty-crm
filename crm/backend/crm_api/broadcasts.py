@@ -249,6 +249,7 @@ async def preview_broadcast(
         users_sample = []
 
         # 1. FETCH FROM USERS (Staff)
+        company_id = current_user.get('company_id')
         if not broadcast.target_role or broadcast.target_role != 'client':
             query_users = """
                 SELECT DISTINCT u.id, u.username, u.full_name, u.email, u.telegram_id, u.instagram_username as instagram_link, u.role
@@ -258,6 +259,10 @@ async def preview_broadcast(
             """
             params = [broadcast.subscription_type]
             
+            if company_id:
+                query_users += " AND u.company_id = %s"
+                params.append(company_id)
+
             if broadcast.user_ids:
                 if staff_ids:
                     placeholders = ','.join(['%s'] * len(staff_ids))
@@ -304,6 +309,11 @@ async def preview_broadcast(
                 WHERE s.id IS NULL
             """
             params = [broadcast.subscription_type]
+            
+            if company_id:
+                query_clients += " AND c.company_id = %s"
+                params.append(company_id)
+
             if broadcast.user_ids:
                 if client_ids:
                     placeholders = ','.join(['%s'] * len(client_ids))
@@ -397,6 +407,11 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int,
                     WHERE u.is_active = TRUE AND s.id IS NULL
                 """
                 params = [broadcast.subscription_type]
+                
+                if company_id:
+                    query_users += " AND u.company_id = %s"
+                    params.append(company_id)
+
                 if broadcast.user_ids:
                     if staff_ids:
                         query_users += " AND u.id IN ({})".format(','.join(['%s'] * len(staff_ids)))
@@ -413,7 +428,7 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int,
             # 2. Clients
             if not broadcast.target_role or broadcast.target_role in ['all', 'client']:
                 query_clients = """
-                    SELECT instagram_id, name, email, telegram_id, instagram_id
+                    SELECT c.instagram_id, c.name, c.email, c.telegram_id, c.instagram_id
                     FROM clients c
                     LEFT JOIN marketing_unsubscriptions s ON (
                         c.instagram_id = s.client_id OR 
@@ -423,6 +438,10 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int,
                     WHERE s.id IS NULL
                 """
                 params = [broadcast.subscription_type]
+
+                if company_id:
+                    query_clients += " AND c.company_id = %s"
+                    params.append(company_id)
 
                 if broadcast.user_ids:
                     if client_ids:
@@ -552,6 +571,7 @@ async def get_broadcast_users(
         conn = get_db_connection()
         c = conn.cursor()
         users = []
+        company_id = current_user.get('company_id')
 
         # 1. Fetch Staff (Users) - UNLESS target_role is 'client'
         if target_role != 'client':
@@ -570,6 +590,10 @@ async def get_broadcast_users(
                 WHERE u.is_active = TRUE AND u.role != 'client' AND u.deleted_at IS NULL
             """
             params = [sub_type_param] # Param must be present even if empty
+
+            if company_id:
+                query += " AND u.company_id = %s"
+                params.append(company_id)
 
             if target_role and target_role != 'all':
                 query += " AND u.role = %s"
@@ -612,8 +636,13 @@ async def get_broadcast_users(
             """
             # Handle empty subscription_type for clients query too if needed, but usually strictly needed here
             client_sub_type = subscription_type if subscription_type else ''
+            params_clients = [client_sub_type]
             
-            c.execute(query_clients, (client_sub_type,))
+            if company_id:
+                query_clients += " AND c.company_id = %s"
+                params_clients.append(company_id)
+            
+            c.execute(query_clients, params_clients)
             for row in c.fetchall():
                 # For clients, we use instagram_id instead of integer ID
                 # get_localized_name expects an ID, but for clients we can pass 0 or their unique hash if needed

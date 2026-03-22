@@ -1058,30 +1058,30 @@ export default function Broadcasts() {
 
                 {/* Добавление контактов вручную */}
                 <div>
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                     <Label className="text-sm font-semibold text-gray-700">
                       {t('manual_contacts', 'Добавить контакты вручную')}
                     </Label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => setShowImportContactsFile(true)}
-                        className="text-xs"
+                        className="text-xs flex-1 sm:flex-none"
                       >
-                        <Plus className="w-3 h-3 mr-1" />
-                        {t('import_file', 'Загрузить файл')}
+                        <Plus className="w-3 h-3 mr-1 shrink-0" />
+                        <span className="truncate">{t('import_file', 'Загрузить файл')}</span>
                       </Button>
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => setShowAddManualContacts(true)}
-                        className="text-xs"
+                        className="text-xs flex-1 sm:flex-none"
                       >
-                        <Plus className="w-3 h-3 mr-1" />
-                        {t('add_contact', 'Добавить контакт')}
+                        <Plus className="w-3 h-3 mr-1 shrink-0" />
+                        <span className="truncate">{t('add_contact', 'Добавить контакт')}</span>
                       </Button>
                     </div>
                   </div>

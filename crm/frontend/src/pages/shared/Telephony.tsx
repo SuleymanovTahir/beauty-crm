@@ -738,23 +738,23 @@ export default function Telephony() {
                 </div>
 
                 <Tabs defaultValue="list" className="w-full">
-                    <TabsList className="mb-6 bg-gray-100/50 p-1 rounded-xl w-fit">
-                        <TabsTrigger value="list" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:settings-text-primary data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                    <TabsList className="mb-6 bg-gray-100/50 p-1 rounded-xl w-full sm:w-fit flex-wrap sm:flex-nowrap h-auto min-h-[44px]">
+                        <TabsTrigger value="list" className="px-4 py-2 flex-grow sm:flex-grow-0">
                             {t('telephony:call_list_tab', 'Список звонков')}
                         </TabsTrigger>
-                        <TabsTrigger value="recordings" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:settings-text-primary data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                        <TabsTrigger value="recordings" className="px-4 py-2 flex-grow sm:flex-grow-0">
                             {t('telephony:recordings_tab', 'Записи')}
                         </TabsTrigger>
-                        <TabsTrigger value="analytics" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:settings-text-primary data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                        <TabsTrigger value="analytics" className="px-4 py-2 flex-grow sm:flex-grow-0">
                             {t('telephony:analytics_tab', 'Аналитика')}
                         </TabsTrigger>
-                        <TabsTrigger value="integrations" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:settings-text-primary data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                        <TabsTrigger value="integrations" className="px-4 py-2 flex-grow sm:flex-grow-0">
                             {t('telephony:integrations_tab', 'Интеграции')}
                         </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="list" className="space-y-6 focus-visible:outline-none">
-                        <div className="grid grid-cols-4 gap-4 mb-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                             <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center gap-4">
                                 <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
                                     <Phone className="w-6 h-6" />

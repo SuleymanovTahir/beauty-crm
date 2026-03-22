@@ -179,8 +179,8 @@ export default function Inventory() {
 
       {/* Table */}
       {loading ? <div className="flex justify-center py-12"><RefreshCw size={22} className="animate-spin text-gray-400" /></div> : (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-x-auto">
+          <table className="w-full text-sm whitespace-normal min-w-[800px]">
             <thead className="bg-gray-50 dark:bg-gray-900/50 text-xs text-gray-500">
               <tr>{[
                 t('name'),

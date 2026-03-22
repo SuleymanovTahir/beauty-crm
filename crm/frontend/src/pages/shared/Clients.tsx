@@ -653,12 +653,12 @@ export default function Clients() {
   return (
     <div className="clients-container p-4 md:p-8">
       <div className="clients-header mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="clients-title text-3xl text-gray-900 mb-2 flex items-center gap-3">
-            <Users className="clients-title-icon w-8 h-8" />
-            {t('title')}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <h1 className="clients-title text-2xl sm:text-3xl text-gray-900 mb-0 flex items-center gap-2 sm:gap-3">
+            <Users className="clients-title-icon w-6 h-6 sm:w-8 sm:h-8" />
+            <span className="truncate">{t('title')}</span>
           </h1>
-          <p className="clients-count-text text-gray-600">{filteredClients.length} {t('total_clients')}</p>
+          <p className="clients-count-text text-sm sm:text-base text-gray-600">{filteredClients.length} {t('total_clients')}</p>
         </div>
         <Button onClick={handleRefresh} disabled={refreshing} variant="outline" className="clients-refresh-button">
           <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
@@ -741,13 +741,13 @@ export default function Clients() {
           </div>
 
           {/* Row 2: Control Bar */}
-          <div className="clients-controls flex items-center gap-2">
+          <div className="clients-controls flex flex-wrap items-center gap-2">
             <button
               onClick={() => setShowCreateDialog(true)}
-              className="clients-add-button flex-[2] min-w-[100px] h-[42px] px-3 text-white rounded-xl text-xs sm:text-sm font-bold active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md"
+              className="clients-add-button flex-1 min-w-[100px] h-[42px] px-3 w-full sm:w-auto text-white rounded-xl text-xs sm:text-sm font-bold active:scale-95 flex items-center justify-center gap-1.5 transition-all shadow-md"
             >
-              <Plus className="w-4 h-4" />
-              <span>{t('add')}</span>
+              <Plus className="w-4 h-4 shrink-0" />
+              <span className="truncate">{t('add')}</span>
             </button>
 
             <button
@@ -755,14 +755,14 @@ export default function Clients() {
                 setShowFilters(!showFilters);
                 if (!showFilters) setShowActions(false);
               }}
-              className={`clients-filter-button flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showFilters
+              className={`clients-filter-button flex-1 min-w-[100px] h-[42px] px-2 w-full sm:w-auto rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showFilters
                 ? 'clients-filter-button-active'
                 : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
                 }`}
             >
-              <Users className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
+              <Users className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${showFilters ? 'text-pink-500' : 'text-gray-400'}`} />
               <span className="truncate">{t('filters')}</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 shrink-0 ${showFilters ? 'rotate-180' : ''}`} />
             </button>
 
             {!isSales && (
@@ -771,14 +771,14 @@ export default function Clients() {
                   setShowActions(!showActions);
                   if (!showActions) setShowFilters(false);
                 }}
-                className={`clients-options-button flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showActions
+                className={`clients-options-button flex-1 min-w-[100px] h-[42px] px-2 w-full sm:w-auto rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showActions
                   ? 'clients-options-button-active'
                   : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
                   }`}
               >
-                <Upload className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
+                <Upload className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${showActions ? 'text-blue-500' : 'text-gray-400'}`} />
                 <span className="truncate">{t('options')}</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showActions ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 shrink-0 ${showActions ? 'rotate-180' : ''}`} />
               </button>
             )}
 
