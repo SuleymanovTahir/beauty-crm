@@ -1,3 +1,28 @@
+## [2026-03-22] Full Frontend I18n Recheck With RU Source Guardrails
+- Rechecked the whole frontend i18n contour after the previous fixes and found that the standard translation checker still allowed empty source values inside the reference `ru` locale, which later turned into blank UI on many CRM pages.
+- Fixed this at the pipeline level instead of patching frontend locale JSON by hand:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/scripts/check-translations.js`
+    - now fails not only on missing target translations, but also on empty source values in `ru`,
+    - the recommended recovery path now points to `npm run db:i18n:auto`, because empty source must be restored before other languages can be trustworthy.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/translations/frontend_translate.py`
+    - now restores empty `ru` source strings before mass translation,
+    - added central source-correction rules for the most user-visible bad rescue phrases so the next extraction does not regress titles/placeholders/toasts on pages like `audit-log`, `bot-settings`, `broadcasts`, `contracts`, `invoices`, `products`, `trash`, `loyalty`, `clients`, `tasks`, `manager/chat`, and the shared layout role labels.
+- Why this mattered:
+  - the old checker reported `0` problems even when `ru` still contained empty strings,
+  - after source recovery the raw auto-translation could still produce technically non-empty but user-hostile phrases like `Заполнитель поиска` or `Заголовок`, so visible correction rules were added to the central translation pipeline.
+- Validation:
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run db:i18n:auto` rescued `740` empty `ru` source values and propagated them to other languages ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run frontend:i18n:auto` then reapplied the central source-corrections and synced updated wording across locales ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run i18n:check-only` now reports:
+    - `0` empty source values in `ru`
+    - `0` missing keys
+    - `0` empty target values ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run build` passes ✅
+- IMPORTANT TO REMEMBER:
+  - a clean target-language check is not enough; always verify that `ru` itself is non-empty,
+  - when extraction invents bad fallback text, fix it in the central source-correction rules or glossary, not inside `src/locales/*/*.json`,
+  - if a translation looks wrong on one page, assume the underlying source-recovery rule may be wrong and correct it centrally before the next auto-translation run.
+
 ## [2026-03-22] Settings And Analytics Translation Recovery Via Source Glossary
 - Fixed missing translations on `/crm/settings` and `/crm/analytics` by repairing the translation source pipeline instead of manually editing frontend locale JSON files.
 - Core changes:

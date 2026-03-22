@@ -10,7 +10,7 @@
     "changes": "Өзгерістер",
     "comment": "Түсініктеме",
     "comment_optional": "Түсініктеме міндетті емес",
-    "comment_placeholder": "Түсініктеме толтырғышы",
+    "comment_placeholder": "Қызметкерге түсініктеме",
     "date": "Күні",
     "description": "Өзгерту сұрауларының сипаттамасы",
     "duration": "Ұзақтық",
@@ -24,10 +24,10 @@
     "reject_confirm": "Растауды қабылдамау",
     "reject_placeholder": "Толтырғышты қабылдамау",
     "reject_reason": "Қабылдамау себебі",
-    "reject_title": "Тақырыпты қабылдамау",
+    "reject_title": "Сұрауды қабылдамау",
     "request_approved": "Сұраныс мақұлданды",
     "request_rejected": "Сұрау қабылданбады",
     "service": "Қызмет",
-    "title": "Сұраныс тақырыбын өзгерту"
+    "title": "Қызметті өзгерту сұраулары"
   }
 }

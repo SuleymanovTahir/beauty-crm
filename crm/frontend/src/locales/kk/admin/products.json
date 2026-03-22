@@ -14,8 +14,8 @@
   "delete": "Жою",
   "detail": {
     "costPriceLabel": "Шығын белгісі",
-    "inStock_few": "Қоймада",
-    "inStock_many": "Қоймада",
+    "inStock_few": "Қойымда бар",
+    "inStock_many": "Қойымда бар",
     "inStock_one": "Қойымда бар",
     "inStock_other": "Қойымда бар",
     "loadingData": "Деректерді жүктеу",
@@ -59,13 +59,13 @@
     }
   },
   "noProducts": "Өнім жоқ",
-  "search_placeholder": "Іздеу толтырғышы",
+  "search_placeholder": "Аты немесе санат бойынша іздеу",
   "stock_status": {
     "in_stock": "Қойымда бар",
     "low_stock": "Аз қор",
     "out_of_stock": "Тауып кетті"
   },
-  "subtitle": "Субтитрлер",
-  "title": "Айдар",
+  "subtitle": "Тауарлар мен баланстарды басқару",
+  "title": "Өнімдер",
   "unit_pcs": "Бірлік дана"
 }

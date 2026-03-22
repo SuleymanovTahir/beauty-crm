@@ -32,12 +32,12 @@
   "dialogs": {
     "adjust_points": {
       "client_email": "Тұтынушы электрондық поштасы",
-      "client_email_placeholder": "Тұтынушы электрондық поштасының толтырғышы",
+      "client_email_placeholder": "Клиенттің электрондық поштасын енгізіңіз",
       "description": "Орнату нүктелерінің сипаттамасы",
       "points": "Ұпайлар",
-      "points_placeholder": "Орын толтырғыш ұпайлары",
+      "points_placeholder": "Ұпайлар санын енгізіңіз",
       "reason": "Себебі",
-      "reason_placeholder": "Себеп толтырғышы",
+      "reason_placeholder": "Себепті көрсетіңіз",
       "title": "Нүкте атауын өзгерту"
     },
     "edit_tier": {
@@ -64,7 +64,7 @@
   "statuses": {
     "inactive": "Белсенді емес"
   },
-  "subtitle": "Субтитрлер",
+  "subtitle": "Бонустар мен транзакциялар тарихын басқару",
   "tiers": {
     "description": "Деңгейлердің сипаттамасы",
     "discount": "Жеңілдік",
@@ -72,7 +72,7 @@
     "starting_level": "Кіру деңгейі",
     "title": "Деңгей атауы"
   },
-  "title": "Айдар",
+  "title": "Адалдық",
   "toasts": {
     "config_updated": "Конфигурация жаңартылды",
     "failed_adjust": "Конфигурацияланбады",
@@ -94,7 +94,7 @@
   },
   "transactions": {
     "description": "Транзакция сипаттамалары",
-    "search_placeholder": "Толтырғышты іздеу",
+    "search_placeholder": "Клиент немесе транзакция бойынша іздеу",
     "table": {
       "client": "Клиент",
       "date": "Күні",

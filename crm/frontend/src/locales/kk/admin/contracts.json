@@ -33,7 +33,7 @@
     "contractUpdated": "Келісімшарт жаңартылды"
   },
   "noContracts": "Келісім-шарттар жоқ",
-  "search_placeholder": "Іздеу толтырғышы",
+  "search_placeholder": "Аты немесе түрі бойынша іздеңіз",
   "sendDialog": {
     "email": "Электрондық пошта",
     "instagram": "Instagram",
@@ -45,8 +45,8 @@
     "whatsapp": "Whatsapp"
   },
   "status": "Күй",
-  "subtitle": "Субтитрлер",
-  "title": "Айдар",
+  "subtitle": "Үлгілер мен келісім-шарт түрлерін басқару",
+  "title": "Келісімшарттар",
   "type": "Түрі",
   "typeManagement": {
     "add": "Қосу",
@@ -54,7 +54,7 @@
     "confirmDelete": "Жоюды растау",
     "createType": "Түр жасау",
     "deletePrompt": "Құрал кеңесін алып тастаңыз",
-    "deleteTitle": "Тақырыпты жою",
+    "deleteTitle": "“{{name}}” түрін жою керек пе?",
     "deleteWithDocs": "Құжаттар арқылы жою",
     "deleteWithDocsSub": "Docs Sub көмегімен жою",
     "description": "Басқару түрі сипаттамасы",
