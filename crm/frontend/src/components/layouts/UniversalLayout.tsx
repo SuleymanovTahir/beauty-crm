@@ -818,12 +818,28 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                 <div className="flex flex-col h-full overflow-hidden">
                     {/* Logo Section */}
                     <div className="sidebar-header-premium flex items-center gap-3">
-                        <div className="shrink-0">
+                        <div className="shrink-0 relative inline-flex items-center">
+                            {/* Horizontal logo for the text portion with gradient hue-rotate */}
                             <img
                                 src={horizontalLogoPath}
                                 alt="Logo"
                                 className="sidebar-logo-img"
                                 style={{ filter: 'var(--logo-filter, none)' }}
+                            />
+                            {/* Icon overlay with sepia filter for uniform single color */}
+                            <img
+                                src={`${logoBasePath}/logo-icon-pink.svg`}
+                                alt=""
+                                aria-hidden="true"
+                                style={{
+                                    filter: 'var(--logo-icon-filter, none)',
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    height: '100%',
+                                    width: 'auto',
+                                    pointerEvents: 'none',
+                                }}
                             />
                         </div>
                         <div className="min-w-0 flex-1">

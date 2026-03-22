@@ -143,12 +143,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         };
 
         const faviconMainColor = determineFaviconColor();
-        const [hue, , lightness] = hexToHsl(faviconMainColor);
-        // sepia(1) converts entire logo to warm-gold, then hue-rotate to target hue
-        // This ensures ALL logo colors (pink top AND blue bottom) shift uniformly
-        const sepiaDeg = hue - 50; // sepia base is ~50deg golden hue
-        const brightness = lightness > 50 ? 1.1 : 0.95;
-        root.style.setProperty('--logo-filter', `sepia(1) saturate(3) hue-rotate(${sepiaDeg}deg) brightness(${brightness})`);
+        const [hue] = hexToHsl(faviconMainColor);
+        const hueDiff = hue - 330; // 330 is approx hue of original pink logo
+        root.style.setProperty('--logo-filter', `hue-rotate(${hueDiff}deg)`);
+        // For the icon: sepia converts all colors to one base, then hue-rotate for uniform single color
+        const iconSepiaDeg = hue - 50;
+        root.style.setProperty('--logo-icon-filter', `sepia(1) saturate(2.5) hue-rotate(${iconSepiaDeg}deg) brightness(0.9)`);
 
         const updateFavicon = () => {
             const canvas = document.createElement('canvas');
@@ -170,7 +170,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
                 const x = (128 - w) / 2;
                 const y = (128 - h) / 2;
 
-                ctx.filter = `sepia(1) saturate(3) hue-rotate(${sepiaDeg}deg) brightness(${brightness})`;
+                ctx.filter = `hue-rotate(${hueDiff}deg)`;
                 ctx.drawImage(img, x, y, w, h);
                 
                 const dataUrl = canvas.toDataURL('image/png');
