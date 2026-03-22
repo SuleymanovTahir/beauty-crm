@@ -85,9 +85,9 @@ export default function Cashbox() {
           <Wallet size={22} className="text-green-500" /> {t('layouts/mainlayout:menu.cashbox')}
         </h1>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={downloadCSV}><Download size={14} /></Button>
-          <Button variant="outline" size="sm" onClick={load}><RefreshCw size={14} className={loading ? 'animate-spin' : ''} /></Button>
-          <Button size="sm" onClick={() => setShowForm(!showForm)}><Plus size={14} /> {t('cashbox_add_operation_button', { defaultValue: 'Операция' })}</Button>
+          <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary/10" onClick={downloadCSV}><Download size={14} /></Button>
+          <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary/10" onClick={load}><RefreshCw size={14} className={loading ? 'animate-spin' : ''} /></Button>
+          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => setShowForm(!showForm)}><Plus size={14} /> {t('cashbox_add_operation_button', { defaultValue: 'Операция' })}</Button>
         </div>
       </div>
 

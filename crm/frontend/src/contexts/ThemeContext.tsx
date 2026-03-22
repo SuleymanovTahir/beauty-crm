@@ -87,20 +87,40 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         const root = document.documentElement;
         root.classList.remove('light', 'dark', 'theme-pink', 'theme-blue', 'theme-purple', 'theme-emerald', 'theme-orange', 'theme-amber', 'theme-custom');
         root.classList.add(theme);
-        root.classList.add(`theme-${colorTheme}`);
+        // root.classList.add(`theme-${colorTheme}`); // This line is now handled inside the if/else for clarity
 
         if (colorTheme === 'custom') {
-            const gradientColorsStr = customColors.colors.join(', ');
+            root.classList.add('theme-custom');
             const mainColor = customColors.colors[customColors.colors.length - 1] || '#3b82f6';
             
+            // Set standard Shadcn primary values natively for Tailwind V4
+            root.style.setProperty('--primary', mainColor);
             root.style.setProperty('--brand-primary', mainColor);
+
+            const gradientColorsStr = customColors.colors.join(', ');
             root.style.setProperty('--brand-gradient', `linear-gradient(${customColors.angle}, ${gradientColorsStr})`);
             
-            // Hex color + 4D for approx 30% opacity
-            const hexDropAlpha = mainColor.length === 7 ? mainColor + '4D' : mainColor;
-            root.style.setProperty('--brand-shadow', `0 10px 15px -3px ${hexDropAlpha}`);
-            root.style.setProperty('--brand-light', `color-mix(in srgb, ${mainColor} 12%, transparent)`);
+            const shadowColor = `${mainColor}40`; // 25% opacity for shadow
+            root.style.setProperty('--brand-shadow', `0 10px 15px -3px ${shadowColor}`);
+            
+            const lightColor = `${mainColor}1a`; // 10% opacity for light background
+            root.style.setProperty('--brand-light', lightColor);
         } else {
+            root.classList.add(`theme-${colorTheme}`);
+            
+            // Set primary Shadcn injection for standard themes to ensure bg-primary works correctly
+            const defaultColors: Record<string, string> = {
+                pink: '#ec4899',
+                blue: '#0ea5e9',
+                purple: '#a855f7',
+                emerald: '#10b981',
+                orange: '#f97316',
+                amber: '#f59e0b',
+            };
+            const themeHex = defaultColors[colorTheme] || defaultColors.pink;
+            root.style.setProperty('--primary', themeHex);
+            
+            // Standard CSS classes will handle the rest via tracking .theme-* 
             root.style.removeProperty('--brand-primary');
             root.style.removeProperty('--brand-gradient');
             root.style.removeProperty('--brand-shadow');
@@ -180,6 +200,28 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const setCustomColors = (colors: CustomThemeColors) => {
         setCustomColorsState(colors);
     }
+
+    const getSvgGradient = () => {
+        if (colorTheme === 'custom') {
+            const colors = customColors.colors || ['#3b82f6', '#d946ef'];
+            return { colors, angle: customColors.angle || '135deg' };
+        }
+        const defaultGradients: Record<string, string[]> = {
+            pink: ['#3b82f6', '#d946ef', '#f43f5e'],
+            blue: ['#1e40af', '#0ea5e9', '#38bdf8'],
+            purple: ['#9333ea', '#a855f7', '#c084fc'],
+            emerald: ['#059669', '#10b981', '#34d399'],
+            orange: ['#ea580c', '#f97316', '#fb923c'],
+            amber: ['#d97706', '#f59e0b', '#fbbf24'],
+        };
+        return { colors: defaultGradients[colorTheme] || defaultGradients.pink, angle: '135deg' };
+    };
+
+    const gradientData = getSvgGradient();
+    let x1 = '0%', y1 = '0%', x2 = '100%', y2 = '100%';
+    if (gradientData.angle.includes('90')) { x2 = '100%'; y2 = '0%'; }
+    else if (gradientData.angle.includes('180')) { x2 = '0%'; y2 = '100%'; }
+    else if (gradientData.angle.includes('45')) { y1 = '100%'; x2 = '100%'; y2 = '0%'; }
 
     return (
         <ThemeContext.Provider value={{ theme, colorTheme, customColors, toggleTheme, setColorTheme, setCustomColors }}>

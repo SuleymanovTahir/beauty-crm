@@ -1381,7 +1381,7 @@ export default function AdminSettings() {
             variant="outline"
             className="bg-white"
           >
-            <Menu className="w-4 h-4 mr-2" />
+            <Menu className="w-4 h-4 mr-2 brand-icon" />
             {t('settings:customize_menu')}
           </Button>
         </div>
@@ -1646,9 +1646,9 @@ export default function AdminSettings() {
         <TabsContent value="general">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6">{t('settings:general_settings')}</h2>
-            <div className="mb-8 p-6 border-2 rounded-xl">
+            <div className="mb-8 p-6 border-2 rounded-xl brand-border">
               <div className="flex items-center gap-3 mb-4">
-                <Bot className="w-6 h-6 settings-bot-icon" />
+                <Bot className="w-6 h-6 settings-bot-icon brand-icon" />
                 <h3 className="text-lg font-bold text-gray-900">{t('settings:bot_management')}</h3>
               </div>
               <div className="flex items-center justify-between p-4 bg-white/50 rounded-lg">
@@ -2040,6 +2040,7 @@ export default function AdminSettings() {
                           type="button"
                           variant="outline"
                           size="icon"
+                          className="border-primary text-primary hover:bg-primary/10"
                           onClick={() => setShowCurrencyDialog(true)}
                           title={t('settings:manage_currencies')}
                           disabled={!userPermissions.canEditFinancialSettings && !userPermissions.canEditSettings}

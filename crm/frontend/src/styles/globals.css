@@ -156,6 +156,11 @@
   border-color: var(--brand-primary) !important;
 }
 
+.brand-icon {
+  stroke: var(--brand-primary) !important;
+  color: var(--brand-primary) !important;
+}
+
 /* Settings Page Styled Classes */
 .settings-card-gradient {
   background: var(--brand-gradient);
@@ -204,7 +209,7 @@
 }
 
 .settings-bot-icon {
-  color: white;
+  /* color: white; - no longer overriding so the brand-icon works */
 }
 
 .settings-label-spacing {
@@ -509,6 +514,11 @@ html {
 
 .client-info-edit-button:hover {
   filter: brightness(0.95);
+}
+
+/* Sidebar transition */
+.sidebar-transition {
+  transition: width 0.3s ease-in-out;
 }
 
 /* Smooth animations */

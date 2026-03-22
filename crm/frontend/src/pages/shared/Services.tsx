@@ -443,7 +443,7 @@ export default function UniversalServices() {
                     <Button
                         type="button"
                         variant="default"
-                        className="bg-blue-600 text-white hover:bg-blue-700"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 border-0"
                     >
                         <Scissors className="w-4 h-4 mr-2" />
                         <span>{t('crm/services:services')} ({services.length})</span>
