@@ -146,9 +146,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         const [hue] = hexToHsl(faviconMainColor);
         const hueDiff = hue - 330; // 330 is approx hue of original pink logo
         root.style.setProperty('--logo-filter', `hue-rotate(${hueDiff}deg)`);
-        // For the icon: sepia converts all colors to one base, then hue-rotate for uniform single color
+        // For the icon: grayscale(1) removes ALL hue differences (pink+blue → grey),
+        // then sepia+hue-rotate applies a uniform theme color while PRESERVING luminance gradients
         const iconSepiaDeg = hue - 50;
-        root.style.setProperty('--logo-icon-filter', `sepia(1) saturate(2.5) hue-rotate(${iconSepiaDeg}deg) brightness(0.9)`);
+        root.style.setProperty('--logo-icon-filter', `grayscale(1) sepia(1) saturate(3) hue-rotate(${iconSepiaDeg}deg) brightness(0.95)`);
 
         const updateFavicon = () => {
             const canvas = document.createElement('canvas');
