@@ -74,7 +74,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
       orange: 'bg-orange-100 text-orange-800',
       red: 'bg-red-100 text-red-800',
       purple: 'bg-blue-100 text-blue-800',
-      pink: 'bg-pink-100 text-pink-800',
+      pink: 'settings-bg-primary-light text-pink-800',
       gray: 'bg-gray-100 text-gray-800',
     };
     const mappedColor = colors[color];
@@ -97,7 +97,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
       blue: 'bg-blue-500',
       yellow: 'bg-yellow-500',
       purple: 'bg-blue-500',
-      pink: 'bg-pink-500',
+      pink: 'settings-bg-primary',
       orange: 'bg-orange-500',
       gray: 'bg-gray-500',
       indigo: 'bg-indigo-500',
@@ -163,7 +163,7 @@ export function StatusSelect({ value, onChange, options, allowAdd, onAddStatus, 
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => onAddStatus?.('', '', '')}
-              className="gap-2 text-pink-600 focus:text-pink-700 cursor-pointer"
+              className="gap-2 settings-text-primary focus:text-pink-700 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               {t('add_status')}

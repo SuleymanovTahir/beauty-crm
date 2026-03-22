@@ -159,7 +159,7 @@ export default function NotificationsPage() {
                             {unreadCount > 0 && (
                                 <button
                                     onClick={handleMarkAllRead}
-                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#db2777] bg-[#fdf2f8] hover:bg-[#fce7f3] rounded-lg transition-colors border border-[#fbcfe8]"
+                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#db2777] bg-[var(--brand-light)] hover:bg-[#fce7f3] rounded-lg transition-colors border border-[#fbcfe8]"
                                 >
                                     <CheckCheck size={16} />
                                     {t('mark_all_read')}

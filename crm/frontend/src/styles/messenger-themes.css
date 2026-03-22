@@ -121,7 +121,7 @@
   background: #e3f2fd !important;
 }
 
-.messenger-telegram .empty-chat-area .text-pink-600 {
+.messenger-telegram .empty-chat-area .settings-text-primary {
   color: #0088cc !important;
 }
 
@@ -191,7 +191,7 @@
   background: #d9fdd3 !important;
 }
 
-.messenger-whatsapp .empty-chat-area .text-pink-600 {
+.messenger-whatsapp .empty-chat-area .settings-text-primary {
   color: #00a884 !important;
 }
 
@@ -255,7 +255,7 @@
   background: #1a1a1a !important;
 }
 
-.messenger-tiktok .empty-chat-area .text-pink-600 {
+.messenger-tiktok .empty-chat-area .settings-text-primary {
   color: #fe2c55 !important;
 }
 

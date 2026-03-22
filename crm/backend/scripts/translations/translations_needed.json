@@ -6,11 +6,27 @@
       "fields": {
         "full_name": {
           "ru": "Мастер Салон",
-          "key": "users.c1_master.full_name"
+          "key": "users.c1_master.full_name",
+          "en": "Master Salon",
+          "ar": "صالون ماستر",
+          "es": "Master Salon",
+          "de": "Master Salon",
+          "fr": "Master Salon",
+          "hi": "मास्टर सैलून",
+          "kk": "Мастер Салон",
+          "pt": "Master Salon"
         },
         "position": {
           "ru": "Мастер",
-          "key": "users.c1_master.position"
+          "key": "users.c1_master.position",
+          "en": "Master",
+          "ar": "الرئيسي",
+          "es": "Maestro",
+          "de": "Meister",
+          "fr": "Maître",
+          "hi": "मास्टर",
+          "kk": "Мастер",
+          "pt": "Mestre"
         }
       }
     },
@@ -20,11 +36,27 @@
       "fields": {
         "full_name": {
           "ru": "Мастер МедЦентр",
-          "key": "users.c2_master.full_name"
+          "key": "users.c2_master.full_name",
+          "en": "Master Medtsentr",
+          "ar": "مركز ماستر الطبي",
+          "es": "Master Medtsentr",
+          "de": "Master Medtsentr",
+          "fr": "Master Medtsentr",
+          "hi": "मास्टर मेडिकल सेंटर",
+          "kk": "Мастер Медициналық Орталығы",
+          "pt": "Master Medtsentr"
         },
         "position": {
           "ru": "Мастер",
-          "key": "users.c2_master.position"
+          "key": "users.c2_master.position",
+          "en": "Master",
+          "ar": "الرئيسي",
+          "es": "Maestro",
+          "de": "Meister",
+          "fr": "Maître",
+          "hi": "मास्टर",
+          "kk": "Мастер",
+          "pt": "Mestre"
         }
       }
     },
@@ -33,12 +65,28 @@
       "stable_key": "c3_master",
       "fields": {
         "full_name": {
-          "ru": "Мастер FitLife",
-          "key": "users.c3_master.full_name"
+          "ru": "Мастер Fitlife",
+          "key": "users.c3_master.full_name",
+          "en": "Master Of Fitlife",
+          "ar": "ماجستير في الحياة",
+          "es": "Maestro De Fitlife",
+          "de": "Meister Des Fitlife",
+          "fr": "Maître De Fitlife",
+          "hi": "फिटलाइफ़ के मास्टर",
+          "kk": "Fitlife Шебері",
+          "pt": "Mestre Da Fitlife"
         },
         "position": {
           "ru": "Мастер",
-          "key": "users.c3_master.position"
+          "key": "users.c3_master.position",
+          "en": "Master",
+          "ar": "الرئيسي",
+          "es": "Maestro",
+          "de": "Meister",
+          "fr": "Maître",
+          "hi": "मास्टर",
+          "kk": "Мастер",
+          "pt": "Mestre"
         }
       }
     },
@@ -48,11 +96,27 @@
       "fields": {
         "full_name": {
           "ru": "Мастер Ресторан",
-          "key": "users.c4_master.full_name"
+          "key": "users.c4_master.full_name",
+          "en": "Master Restoran",
+          "ar": "مطعم ماستر",
+          "es": "Master Restoran",
+          "de": "Master Restoran",
+          "fr": "Master Restoran",
+          "hi": "मास्टर रेस्तरां",
+          "kk": "Мастер Мейрамханасы",
+          "pt": "Master Restoran"
         },
         "position": {
           "ru": "Мастер",
-          "key": "users.c4_master.position"
+          "key": "users.c4_master.position",
+          "en": "Master",
+          "ar": "الرئيسي",
+          "es": "Maestro",
+          "de": "Meister",
+          "fr": "Maître",
+          "hi": "मास्टर",
+          "kk": "Мастер",
+          "pt": "Mestre"
         }
       }
     }
@@ -77,96 +141,6 @@
       }
     },
     {
-      "id": 67,
-      "stable_key": "67",
-      "fields": {
-        "name": {
-          "ru": "new",
-          "key": "workflow_stages.67.name"
-        }
-      }
-    },
-    {
-      "id": 68,
-      "stable_key": "68",
-      "fields": {
-        "name": {
-          "ru": "negotiation",
-          "key": "workflow_stages.68.name"
-        }
-      }
-    },
-    {
-      "id": 69,
-      "stable_key": "69",
-      "fields": {
-        "name": {
-          "ru": "sent_offer",
-          "key": "workflow_stages.69.name"
-        }
-      }
-    },
-    {
-      "id": 70,
-      "stable_key": "70",
-      "fields": {
-        "name": {
-          "ru": "closed_won",
-          "key": "workflow_stages.70.name"
-        }
-      }
-    },
-    {
-      "id": 71,
-      "stable_key": "71",
-      "fields": {
-        "name": {
-          "ru": "closed_lost",
-          "key": "workflow_stages.71.name"
-        }
-      }
-    },
-    {
-      "id": 72,
-      "stable_key": "72",
-      "fields": {
-        "name": {
-          "ru": "draft",
-          "key": "workflow_stages.72.name"
-        }
-      }
-    },
-    {
-      "id": 73,
-      "stable_key": "73",
-      "fields": {
-        "name": {
-          "ru": "sent",
-          "key": "workflow_stages.73.name"
-        }
-      }
-    },
-    {
-      "id": 74,
-      "stable_key": "74",
-      "fields": {
-        "name": {
-          "ru": "paid",
-          "key": "workflow_stages.74.name"
-        }
-      }
-    },
-    {
-      "id": 75,
-      "stable_key": "75",
-      "fields": {
-        "name": {
-          "ru": "todo",
-          "key": "workflow_stages.75.name"
-        }
-      }
-    },
-    {
       "id": 76,
       "stable_key": "76",
       "fields": {
@@ -177,12 +151,182 @@
       }
     },
     {
-      "id": 77,
-      "stable_key": "77",
+      "id": 265,
+      "stable_key": "265",
       "fields": {
         "name": {
-          "ru": "done",
-          "key": "workflow_stages.77.name"
+          "ru": "новое",
+          "key": "workflow_stages.265.name",
+          "en": "new",
+          "ar": "جديد",
+          "es": "nueva",
+          "de": "neu",
+          "fr": "nouvelle",
+          "hi": "नया",
+          "kk": "жаңа",
+          "pt": "nova"
+        }
+      }
+    },
+    {
+      "id": 266,
+      "stable_key": "266",
+      "fields": {
+        "name": {
+          "ru": "переговоры",
+          "key": "workflow_stages.266.name",
+          "en": "negotiation",
+          "ar": "تفاوض",
+          "es": "negociación",
+          "de": "Verhandlung",
+          "fr": "négociation",
+          "hi": "बातचीत",
+          "kk": "келіссөз",
+          "pt": "negociação"
+        }
+      }
+    },
+    {
+      "id": 267,
+      "stable_key": "267",
+      "fields": {
+        "name": {
+          "ru": "отправленное_предложение",
+          "key": "workflow_stages.267.name",
+          "en": "sent_offer",
+          "ar": "sent_offer",
+          "es": "oferta_enviada",
+          "de": "gesendetes_Angebot",
+          "fr": "offre_envoyée",
+          "hi": "भेजा_प्रस्ताव",
+          "kk": "sent_offer",
+          "pt": "oferta_enviada"
+        }
+      }
+    },
+    {
+      "id": 268,
+      "stable_key": "268",
+      "fields": {
+        "name": {
+          "ru": "закрыто_выиграно",
+          "key": "workflow_stages.268.name",
+          "en": "closed_won",
+          "ar": "Closed_won",
+          "es": "ganada_cerrada",
+          "de": "geschlossen_gewonnen",
+          "fr": "fermée_gagnée",
+          "hi": "बंद_वोन",
+          "kk": "closed_won",
+          "pt": "fechada_ganha"
+        }
+      }
+    },
+    {
+      "id": 269,
+      "stable_key": "269",
+      "fields": {
+        "name": {
+          "ru": "закрыто_проиграно",
+          "key": "workflow_stages.269.name",
+          "en": "closed_lost",
+          "ar": "Closed_lost",
+          "es": "perdida_cerrada",
+          "de": "geschlossen_verloren",
+          "fr": "fermée_perdue",
+          "hi": "बंद_खोया",
+          "kk": "closed_lost",
+          "pt": "fechada_perdida"
+        }
+      }
+    },
+    {
+      "id": 270,
+      "stable_key": "270",
+      "fields": {
+        "name": {
+          "ru": "черновик",
+          "key": "workflow_stages.270.name",
+          "en": "draft",
+          "ar": "مسودة",
+          "es": "borrador",
+          "de": "Entwurf",
+          "fr": "projet",
+          "hi": "ड्राफ्ट",
+          "kk": "жобай",
+          "pt": "rascunho"
+        }
+      }
+    },
+    {
+      "id": 271,
+      "stable_key": "271",
+      "fields": {
+        "name": {
+          "ru": "отправлено",
+          "key": "workflow_stages.271.name",
+          "en": "sent",
+          "ar": "تم إرسالها",
+          "es": "enviado",
+          "de": "gesendet",
+          "fr": "envoyé",
+          "hi": "भेजा गया",
+          "kk": "жіберілген",
+          "pt": "enviado"
+        }
+      }
+    },
+    {
+      "id": 272,
+      "stable_key": "272",
+      "fields": {
+        "name": {
+          "ru": "оплачено",
+          "key": "workflow_stages.272.name",
+          "en": "paid",
+          "ar": "مدفوعة",
+          "es": "pagado",
+          "de": "bezahlt",
+          "fr": "payé",
+          "hi": "भुगतान किया गया",
+          "kk": "төленді",
+          "pt": "pago"
+        }
+      }
+    },
+    {
+      "id": 273,
+      "stable_key": "273",
+      "fields": {
+        "name": {
+          "ru": "все",
+          "key": "workflow_stages.273.name",
+          "en": "all",
+          "ar": "الكل",
+          "es": "todos",
+          "de": "alle",
+          "fr": "tous",
+          "hi": "सभी",
+          "kk": "барлығы",
+          "pt": "todo"
+        }
+      }
+    },
+    {
+      "id": 275,
+      "stable_key": "275",
+      "fields": {
+        "name": {
+          "ru": "готово",
+          "key": "workflow_stages.275.name",
+          "en": "done",
+          "ar": "done",
+          "es": "hecho",
+          "de": "erledigt",
+          "fr": "fait",
+          "hi": "किया गया",
+          "kk": "орындалды",
+          "pt": "concluído"
         }
       }
     }

@@ -1,0 +1,61 @@
+{
+  "buttons": {
+    "add_challenge": "Создать задание",
+    "create_challenge": "Запустить челлендж"
+  },
+  "card": {
+    "check_progress": "Обновить",
+    "participants": "Участники",
+    "progress": "Прогресс"
+  },
+  "dialogs": {
+    "add_title": "Новый челлендж",
+    "delete": {
+      "confirm": "Вы уверены, что хотите удалить этот челлендж?"
+    },
+    "edit_title": "Правка челленджа"
+  },
+  "empty": {
+    "subtitle": "Создайте первое игровое задание, чтобы стимулировать клиентов записываться чаще.",
+    "title": "Челленджи не настроены"
+  },
+  "fields": {
+    "dates": "Временной лимит",
+    "description": "Публичное описание",
+    "reward": "Награда",
+    "target_value": "План (цель)",
+    "title": "Название задания",
+    "type": "Методика цели"
+  },
+  "placeholders": {
+    "description": "Как клиент увидит это задание?",
+    "title": "Например: Золотой статус"
+  },
+  "stats": {
+    "active_challenges": "Активные задания",
+    "completed_today": "Выполнено сегодня",
+    "total_participants": "Участников всего"
+  },
+  "status": {
+    "active": "Активно",
+    "inactive": "Пауза"
+  },
+  "subtitle": "Повышайте лояльность клиентов с помощью игровых механик и автоматических наград.",
+  "title": "Челленджи",
+  "toasts": {
+    "created": "Задание создано",
+    "deleted": "Челлендж удален",
+    "failed_check_progress": "Ошибка проверки прогресса",
+    "failed_delete": "Ошибка при удалении",
+    "progress_checked_one": "",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_other": "",
+    "updated": "Задание обновлено"
+  },
+  "types": {
+    "referrals": "Рекомендации",
+    "spend": "Общая сумма трат",
+    "visits": "Количество визитов"
+  }
+}

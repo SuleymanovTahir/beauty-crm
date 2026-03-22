@@ -231,7 +231,7 @@ export default function VerifyEmail() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
+              className="w-full settings-button-gradient"
               size="lg"
             >
               {loading ? (

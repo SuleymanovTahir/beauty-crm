@@ -46,7 +46,7 @@ export function DropdownButton({
 
   const baseStyles = 'relative inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all text-sm';
   const variantStyles = {
-    default: 'bg-pink-600 text-white hover:bg-pink-700',
+    default: 'settings-bg-primary text-white hover:settings-bg-primary',
     outline: 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50',
     ghost: 'bg-transparent text-gray-700 hover:bg-gray-100'
   };

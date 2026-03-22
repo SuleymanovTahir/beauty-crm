@@ -14,6 +14,7 @@ import { api } from "@crm/services/api";
 import LanguageSwitcher from "@crm/components/LanguageSwitcher";
 import { useAuth } from "@crm/contexts/AuthContext";
 import GoogleLoginButton from "@crm/components/GoogleLoginButton";
+import { useTheme } from "@crm/contexts/ThemeContext";
 import {
   DEFAULT_PLATFORM_GATES,
   getUnauthenticatedCrmPathByGates,
@@ -25,6 +26,11 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(['auth/login', 'common']);
+  const { colorTheme } = useTheme();
+  const hasSpecificLogoTheme = ['pink', 'blue'].includes(colorTheme);
+  const loginLogoPath = hasSpecificLogoTheme
+    ? `/logo/vertical-logo-${colorTheme}.png`
+    : '/logo/vertical-logo.png';
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
@@ -178,7 +184,7 @@ export default function Login() {
         {/* Logo - сверху над карточкой */}
         <div className="flex justify-center mb-6">
           <img
-            src="/vertical-logo.png"
+            src={loginLogoPath}
             alt="Logo"
             className="login-logo-img"
           />
@@ -259,7 +265,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => navigate("/forgot-password")}
-                className="text-sm text-gray-600 hover:text-pink-600 font-medium transition-colors"
+                className="text-sm text-gray-600 hover:settings-text-primary font-medium transition-colors"
               >
                 {t('forgot_password')}
               </button>
@@ -270,7 +276,7 @@ export default function Login() {
               disabled={
                 loading || !credentials.username || !credentials.password
               }
-              className="w-full h-11 bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700 text-white font-medium"
+              className="w-full h-11 settings-button-gradient text-white font-medium"
             >
               {loading ? (
                 <div className="flex items-center justify-center gap-2">

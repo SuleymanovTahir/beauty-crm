@@ -113,7 +113,7 @@
 }
 
 .bot-settings-style-card-active {
-  border: 2px solid #8b5cf6;
+  border: 2px solid var(--brand-primary);
   background-color: #f5f3ff;
 }
 
@@ -134,7 +134,7 @@
 }
 
 .bot-settings-save-button {
-  background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary) 100%);
   color: white;
   padding: 1rem 2.5rem;
   border-radius: 9999px;

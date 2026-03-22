@@ -100,7 +100,7 @@ export function AudioPlayer({ url, className = '', autoPlay = false, initialExpa
                 <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-full w-8 h-8 bg-pink-50 text-pink-600 border-pink-100 hover:bg-pink-100 hover:scale-105 transition-all shadow-sm"
+                    className="rounded-full w-8 h-8 settings-bg-primary-light settings-text-primary border-pink-100 hover:settings-bg-primary-light hover:scale-105 transition-all shadow-sm"
                     onClick={() => { setIsExpanded(true); togglePlay(); }}
                 >
                     <Play className="w-3.5 h-3.5 ml-0.5" />
@@ -110,7 +110,7 @@ export function AudioPlayer({ url, className = '', autoPlay = false, initialExpa
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 rounded-full bg-pink-50 text-pink-600 hover:bg-pink-100 flex-shrink-0"
+                        className="h-8 w-8 rounded-full settings-bg-primary-light settings-text-primary hover:settings-bg-primary-light flex-shrink-0"
                         onClick={togglePlay}
                     >
                         {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
@@ -154,7 +154,7 @@ export function AudioPlayer({ url, className = '', autoPlay = false, initialExpa
                                     className="h-8 w-8 rounded-full hover:bg-gray-100 shrink-0"
                                     onClick={toggleMute}
                                 >
-                                    {isMuted ? <VolumeX className="w-4 h-4 text-pink-600" /> : <Volume2 className="w-4 h-4" />}
+                                    {isMuted ? <VolumeX className="w-4 h-4 settings-text-primary" /> : <Volume2 className="w-4 h-4" />}
                                 </Button>
                             </PopoverContent>
                         </Popover>

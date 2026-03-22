@@ -40,7 +40,7 @@ export function AddStageDialog({ open, onOpenChange, onSuccess }: AddStageDialog
         { name: 'Yellow', value: 'bg-yellow-500' },
         { name: 'Red', value: 'bg-red-500' },
         { name: 'Purple', value: 'bg-blue-500' },
-        { name: 'Pink', value: 'bg-pink-500' },
+        { name: 'Pink', value: 'settings-bg-primary' },
         { name: 'Orange', value: 'bg-orange-500' },
     ];
 
@@ -107,7 +107,7 @@ export function AddStageDialog({ open, onOpenChange, onSuccess }: AddStageDialog
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                             {t('cancel')}
                         </Button>
-                        <Button type="submit" disabled={loading} className="bg-gradient-to-r from-pink-500 to-blue-600 text-white">
+                        <Button type="submit" disabled={loading} className="settings-button-gradient text-white">
                             {loading ? t('creating') : t('create')}
                         </Button>
                     </DialogFooter>

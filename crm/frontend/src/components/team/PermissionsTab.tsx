@@ -127,7 +127,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+        <Loader className="w-8 h-8 settings-text-primary animate-spin" />
       </div>
     );
   }
@@ -157,14 +157,14 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
       {/* Текущая роль и изменение */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
         <h2 className="text-xl text-gray-900 mb-6 font-semibold flex items-center gap-2">
-          <Shield className="w-5 h-5 text-pink-600" />
+          <Shield className="w-5 h-5 settings-text-primary" />
           {t('crm-components:user_role')}
         </h2>
 
         <div className="space-y-6">
           <div>
             <Label>{t('crm-components:current_role')}</Label>
-                <div className="mt-2 p-4 bg-pink-50 border border-pink-200 rounded-lg">
+                <div className="mt-2 p-4 settings-bg-primary-light border brand-border rounded-lg">
                   <p className="text-lg font-semibold text-gray-900">
                     {getRoleLabel(userPermissions.user.role, userPermissions.role_info.name)}
                   </p>
@@ -221,7 +221,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
             <Button
               onClick={handleUpdateRole}
               disabled={saving}
-              className="w-full bg-pink-600 hover:bg-pink-700"
+              className="w-full settings-bg-primary settings-bg-primary-hover"
             >
               {saving ? (
                 <>
@@ -249,7 +249,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
             <Button
               onClick={handleSaveCustomPermissions}
               disabled={savingPermissions}
-              className="bg-pink-600 hover:bg-pink-700"
+              className="settings-bg-primary settings-bg-primary-hover"
             >
               {savingPermissions ? (
                 <>
@@ -336,7 +336,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
                           <div className="pt-1">
                             {canEdit ? (
                               <div
-                                className={`w-6 h-6 rounded-md border-2 flex items-center justify-center cursor-pointer transition-colors ${finalPermission ? 'bg-pink-600 border-pink-600' : 'bg-white border-gray-300'
+                                className={`w-6 h-6 rounded-md border-2 flex items-center justify-center cursor-pointer transition-colors ${finalPermission ? 'settings-bg-primary brand-border' : 'bg-white border-gray-300'
                                   }`}
                                 onClick={() => togglePermission(permKey)}
                               >
@@ -359,7 +359,7 @@ export function PermissionsTab({ userId }: PermissionsTabProps) {
                                 {t(`common:perm_${permKey}`) || permDescription}
                               </span>
                               {isCustomized && (
-                                <span className="px-2 py-0.5 bg-pink-100 text-pink-700 text-[10px] uppercase font-bold tracking-wider rounded-full">
+                                <span className="px-2 py-0.5 settings-bg-primary-light text-pink-700 text-[10px] uppercase font-bold tracking-wider rounded-full">
                                   {t('common:modified')}
                                 </span>
                               )}

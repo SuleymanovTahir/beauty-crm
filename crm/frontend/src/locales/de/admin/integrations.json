@@ -1,0 +1,108 @@
+{
+  "errors": {
+    "createLinkFailed": "Fehler beim Erstellen des Links",
+    "loadFailed": "",
+    "loadServicesFailed": "Fehler beim Laden der Dienste",
+    "saveFailed": "",
+    "syncFailed": ""
+  },
+  "marketplace": {
+    "active": "Aktiv",
+    "activeSources": "Aktive Quellen",
+    "apiKey": "API-Schlüssel",
+    "apiSecret": "API-Geheimnis",
+    "bookings": "Buchungen",
+    "configSuccess": "Einstellungen gespeichert",
+    "configure": "Konfigurieren",
+    "configureProvider": "Einstellungen",
+    "daysAgo_few": "Vor {{count}} Tagen",
+    "daysAgo_many": "Vor {{count}} Tagen",
+    "daysAgo_one": "Vor {{count}} Tagen",
+    "daysAgo_other": "Vor {{count}} Tagen",
+    "enableProvider": "Integration aktivieren",
+    "hoursAgo_few": "Vor {{count}} Stunden",
+    "hoursAgo_many": "Vor {{count}} Stunden",
+    "hoursAgo_one": "Vor {{count}} Stunden",
+    "hoursAgo_other": "Vor {{count}} Stunden",
+    "inactive": "Nicht konfiguriert",
+    "justNow": "Gerade jetzt",
+    "lastSync": "Synchronisierung",
+    "mappingHint": "Geben Sie die Service-ID vom Marktplatz an für Synchronisierung.",
+    "minutesAgo_few": "Vor {{count}} Min.",
+    "minutesAgo_many": "Vor {{count}} Min.",
+    "minutesAgo_one": "Vor {{count}} Min.",
+    "minutesAgo_other": "{{count}} Min.",
+    "neverSynced": "Nie",
+    "providers": {
+      "2gis": {
+        "description": "Online-Aufzeichnungen über 2GIS",
+        "name": "2GIS"
+      },
+      "amazon": {
+        "description": "Amazon Marketplace",
+        "name": "Amazon"
+      },
+      "booksy": {
+        "description": "Online-Aufzeichnungsplattform",
+        "name": "Booksy"
+      },
+      "google_business": {
+        "description": "Aufzeichnungen und Bewertungen auf Google",
+        "name": "Google Business"
+      },
+      "ozon": {
+        "description": "Ozon Marketplace",
+        "name": "Ozon"
+      },
+      "wildberries": {
+        "description": "WB Marketplace",
+        "name": "Wildberry"
+      },
+      "yandex_maps": {
+        "description": "Aufzeichnungen und Bewertungen von Yandex.Maps",
+        "name": "Yandex.Maps"
+      },
+      "yclients": {
+        "description": "Online-Aufzeichnungsplattform",
+        "name": "YCLIENTS"
+      }
+    },
+    "reviews": "Bewertungen",
+    "serviceMapping": "Dienstzuordnung",
+    "settings": "Einstellungen",
+    "status": "Status",
+    "subtitle": "Integration mit Online-Aufzeichnungsdiensten und Bewertungen",
+    "sync": "Synchronisieren",
+    "syncStarted": "Synchronisierung gestartet",
+    "syncing": "Synchronisieren...",
+    "title": "Buchungsplattformen",
+    "totalBookings": "Gesamtzahl der buchungen",
+    "urlCopied": "URL kopiert",
+    "viewBookings": "Gehe zu Einträgen",
+    "webhookHint": "Geben Sie diese URL in den Webhook-Einstellungen auf der Plattform an",
+    "webhookUrl": "URL für Webhook"
+  },
+  "payment": {
+    "active": "Aktiv",
+    "amount": "Anzahl",
+    "apiKey": "API-Schlüssel",
+    "configSuccess": "Einstellungen gespeichert",
+    "configure": "Konfigurieren",
+    "configureProvider": "Einstellungen",
+    "createLink": "Link erstellen",
+    "createLinkTitle": "Zahlungslink erstellen",
+    "currency": "Währung",
+    "descriptionPlaceholder": "Wofür ist die Zahlung...",
+    "enableProvider": "Anbieter aktivieren",
+    "inactive": "Nicht konfiguriert",
+    "linkCreated": "Link erfolgreich erstellt",
+    "secretKey": "Geheim Schlüssel",
+    "setup": "Verbinden",
+    "status": "Status",
+    "subtitle": "Integrationen mit Zahlungssystemen einrichten",
+    "title": "Zahlungssysteme",
+    "viewTransactions": "Transaktionsverlauf",
+    "webhookSecret": "Webhook-Geheimnis",
+    "webhookUrl": "URL für Webhook"
+  }
+}

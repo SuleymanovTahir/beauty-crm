@@ -166,7 +166,7 @@ export default function App() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="inline-block animate-spin">
-            <div className="w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
+            <div className="w-8 h-8 border-4 border-[var(--brand-primary)] border-t-transparent rounded-full"></div>
           </div>
           <p className="mt-4 text-gray-600">{t('loading')}</p>
         </div>
@@ -183,7 +183,7 @@ export default function App() {
               <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="text-center">
                   <div className="inline-block animate-spin">
-                    <div className="w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
+                    <div className="w-8 h-8 border-4 border-[var(--brand-primary)] border-t-transparent rounded-full"></div>
                   </div>
                   <p className="mt-4 text-gray-600">{t('loading')}</p>
                 </div>

@@ -1,0 +1,33 @@
+{
+  "all_categories": "",
+  "category": "Categoría",
+  "change_requests": {
+    "actions": "",
+    "all_processed": "",
+    "approve": "",
+    "approve_confirm": "",
+    "approve_title": "",
+    "changes": "",
+    "comment": "",
+    "comment_optional": "",
+    "comment_placeholder": "",
+    "date": "",
+    "description": "",
+    "duration": "",
+    "employee": "",
+    "error_approving": "",
+    "error_rejecting": "",
+    "no_pending": "",
+    "online_booking": "",
+    "price": "",
+    "reject": "",
+    "reject_confirm": "",
+    "reject_placeholder": "",
+    "reject_reason": "",
+    "reject_title": "",
+    "request_approved": "",
+    "request_rejected": "",
+    "service": "",
+    "title": ""
+  }
+}

@@ -73,7 +73,7 @@ export function DateFilterDropdown({ value, onChange }: DateFilterDropdownProps)
                         <div
                             key={period}
                             onClick={() => handleSelect(period)}
-                            className={`flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm ${value === period ? 'bg-pink-50 text-pink-600 font-medium' : 'text-gray-900'
+                            className={`flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm ${value === period ? 'settings-bg-primary-light settings-text-primary font-medium' : 'text-gray-900'
                                 }`}
                         >
                             <span>{getPeriodLabel(period)}</span>

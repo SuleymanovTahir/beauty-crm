@@ -100,7 +100,7 @@ export function CallHistorySection({ bookingId, clientId }: CallHistorySectionPr
                 {calls.map((call) => (
                     <div
                         key={call.id}
-                        className="border border-gray-200 rounded-lg p-4 hover:border-pink-200 transition-colors"
+                        className="border border-gray-200 rounded-lg p-4 hover:brand-border transition-colors"
                     >
                         <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-3">

@@ -440,7 +440,7 @@ export default function Register() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
+                className="w-full settings-button-gradient"
                 size="lg"
               >
                 {loading ? (
@@ -502,7 +502,7 @@ export default function Register() {
             </p>
 
             <Button
-              className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
+              className="w-full settings-button-gradient"
               onClick={() => navigate(crmLoginPath)}
             >
               {t('back_to_login')}
@@ -522,7 +522,7 @@ export default function Register() {
 
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg overflow-hidden p-0.5">
+          <div className="w-20 h-20 settings-button-gradient rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg overflow-hidden p-0.5">
             <UserPlus className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl text-gray-900 mb-2">
@@ -803,11 +803,11 @@ export default function Register() {
                   />
                   <label htmlFor="privacy" className="text-sm text-gray-700 cursor-pointer">
                     {t('i_accept')}{' '}
-                    <Link to="/privacy-policy" className="text-pink-600 hover:underline" target="_blank">
+                    <Link to="/privacy-policy" className="settings-text-primary hover:underline" target="_blank">
                       {t('privacy_policy')}
                     </Link>{' '}
                     {t('and')}{' '}
-                    <Link to="/terms" className="text-pink-600 hover:underline" target="_blank">
+                    <Link to="/terms" className="settings-text-primary hover:underline" target="_blank">
                       {t('terms_of_service')}
                     </Link>
                     {' *'}
@@ -849,7 +849,7 @@ export default function Register() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700 flex items-center justify-center gap-2"
+              className="w-full settings-button-gradient flex items-center justify-center gap-2"
               size="lg"
             >
               {loading ? (

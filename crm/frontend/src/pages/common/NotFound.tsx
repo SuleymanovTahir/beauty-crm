@@ -16,7 +16,7 @@ export default function NotFound() {
         </p>
         <Link
           to="/crm/dashboard"
-          className="inline-flex items-center justify-center rounded-md bg-pink-600 px-4 py-2 text-sm font-medium text-white hover:bg-pink-700"
+          className="inline-flex items-center justify-center rounded-md settings-bg-primary px-4 py-2 text-sm font-medium text-white hover:settings-bg-primary"
         >
           {t('back_to_dashboard', { defaultValue: 'Вернуться в CRM' })}
         </Link>

@@ -45,7 +45,7 @@ export function SourceSelect({ value, onChange }: SourceSelectProps) {
         const colors: Record<string, string> = {
             manual: 'bg-gray-100 text-gray-800 hover:bg-gray-200',
             public_landing: 'bg-orange-100 text-orange-800 hover:bg-orange-200',
-            instagram: 'bg-pink-100 text-pink-800 hover:bg-pink-200',
+            instagram: 'settings-bg-primary-light text-pink-800 hover:settings-bg-primary-light',
             telegram: 'bg-blue-100 text-blue-800 hover:bg-blue-200',
             whatsapp: 'bg-green-100 text-green-800 hover:bg-green-200',
             account: 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200',

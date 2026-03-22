@@ -1044,7 +1044,7 @@ export default function UniversalBookings() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
-                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                <Loader className="w-8 h-8 settings-text-primary animate-spin" />
             </div>
         );
     }
@@ -1221,7 +1221,7 @@ export default function UniversalBookings() {
                                                 <button
                                                     key={id}
                                                     onClick={() => setPeriod(id)}
-                                                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold transition-all ${period === id ? 'bg-pink-500 text-white' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                                                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold transition-all ${period === id ? 'settings-bg-primary text-white' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
                                                 >
                                                     <span>{getPeriodLabel(id)}</span>
                                                 </button>
@@ -1341,7 +1341,7 @@ export default function UniversalBookings() {
                                     className="input-field"
                                 />
                                 {selectedClient && (
-                                    <div className="mt-2 flex items-center justify-between p-2 bg-pink-50 border border-pink-200 rounded-lg">
+                                    <div className="mt-2 flex items-center justify-between p-2 settings-bg-primary-light border brand-border rounded-lg">
                                         <span className="text-sm font-medium">{selectedClient.display_name || selectedClient.name} {selectedClient.phone && `(${selectedClient.phone})`}</span>
                                         <button onClick={() => { setSelectedClient(null); setClientSearch(''); }}><X size={14} /></button>
                                     </div>
@@ -1450,8 +1450,8 @@ export default function UniversalBookings() {
                                 </div>
                             </div>
                             <div className="flex gap-2">
-                                <button onClick={() => handleDownloadTemplate('csv')} className="text-sm text-pink-600 hover:underline">{t('bookings:csv_template')}</button>
-                                <button onClick={() => handleDownloadTemplate('excel')} className="text-sm text-pink-600 hover:underline">{t('bookings:excel_template')}</button>
+                                <button onClick={() => handleDownloadTemplate('csv')} className="text-sm settings-text-primary hover:underline">{t('bookings:csv_template')}</button>
+                                <button onClick={() => handleDownloadTemplate('excel')} className="text-sm settings-text-primary hover:underline">{t('bookings:excel_template')}</button>
                             </div>
                             <input type="file" accept=".csv,.xlsx,.xls" onChange={handleImportFileSelect} className="w-full p-4 border-2 border-dashed rounded-xl" />
                             {importResult && (

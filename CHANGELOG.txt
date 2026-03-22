@@ -1,3 +1,73 @@
+## [2026-03-22] Audit Log Build Fix And Messenger Title Translation Reused
+- Removed the unresolved `framer-motion` dependency from the existing shared CRM pages instead of installing a new package or creating wrappers:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/AuditLog.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/TrashBin.tsx`
+- What changed:
+  - replaced `motion.div` / `AnimatePresence` wrappers with regular React markup so Vite no longer fails route import analysis on these pages,
+  - kept the existing page structure and interactions intact without adding a new dependency,
+  - fixed the messenger page title in `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Messengers.tsx` by reusing the existing translation key `settings:messengers` instead of the missing duplicate key `settings:messengers_settings`.
+- Validation:
+  - `rg -n "framer-motion|AnimatePresence|motion\\." crm/frontend/src` returned no remaining usages ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run build` now passes ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run lint` still reports pre-existing TypeScript API typing gaps for `AuditLog.tsx` / `TrashBin.tsx` methods on `ApiClient`, but these do not block Vite runtime/build for the current fix ⚠️
+- IMPORTANT TO REMEMBER:
+  - if a translation key already exists, reuse it in TSX instead of introducing a near-duplicate variant,
+  - do not solve missing frontend packages by asking for install if the screen can be implemented with existing primitives.
+
+## [2026-03-22] Sidebar Group Auto-Scroll And Logo Assets Moved Into Frontend
+- Updated the existing sidebar orchestrator in `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/layouts/UniversalLayout.tsx` so opening a menu group now scrolls that group into view instead of leaving the expanded block off-screen.
+- Navigation behavior changes:
+  - desktop sidebar groups now keep refs per menu item and call `scrollIntoView(...)` when a group is expanded,
+  - mobile "More" groups now do the same inside the modal list when a section is opened,
+  - the logo source was centralized through `/logo/...` paths so the sidebar no longer depends on assets outside frontend,
+  - sidebar/login logos now fall back to generic frontend assets when the active color theme has no dedicated branded PNG.
+- Moved logo assets into a logical frontend public location and removed the old external root folder usage:
+  - new canonical asset directory: `/Users/tahir/Desktop/beauty-crm/crm/frontend/public/logo`
+  - updated runtime references in:
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/index.html`
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/contexts/ThemeContext.tsx`
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/auth/Login.tsx`
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/components/chat/MessengerSidebar.tsx`
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/utils/photoUtils.ts`
+  - removed the old tracked root logo folder contents and duplicate loose logo PNGs from the root of `/Users/tahir/Desktop/beauty-crm/crm/frontend/public`.
+- Validation:
+  - `npm run lint -- --pretty false 2>&1 | rg "UniversalLayout|ThemeContext|Login|MessengerSidebar|photoUtils"` returned no errors for the touched files ✅
+  - `npm run build` still fails because of the pre-existing unresolved `framer-motion` import in `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/AuditLog.tsx` ❌
+- IMPORTANT TO REMEMBER:
+  - keep brand assets inside frontend public storage, not in a separate repository-root `logo` folder,
+  - when adding collapsible sidebar sections, preserve auto-scroll on expand so deep groups stay reachable immediately after opening.
+
+## [2026-03-22] Filled Missing CRM Translations On Shared Pages
+- Localized remaining hardcoded runtime copy on active CRM shared pages by updating source TSX instead of manually editing locale JSON:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Inventory.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Waitlist.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Cashbox.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/GiftCards.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/ServiceBundles.tsx`
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/KPI.tsx`
+- What changed in the source:
+  - connected `useTranslation(...)` on these pages,
+  - wrapped visible titles, buttons, form labels, placeholders, status labels, tooltips and toast messages in `t(...)`,
+  - reused existing keys from `common`, `crm/settings`, `crm/users` and `layouts/mainlayout` where they already existed,
+  - replaced the waitlist calendar emoji with a Lucide icon so runtime UI text stays icon-safe and translatable.
+- Translation sync:
+  - ran `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run db:i18n:auto`,
+  - then ran `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run i18n:sync`,
+  - locale files and backend translation maps were refreshed automatically, including:
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/locales/*`
+    - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/translations/translations_needed.json`
+    - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/translations/translations_completed.json`
+    - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/translations/translations_source_map.json`
+- Validation:
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run i18n:check-only` ✅
+  - targeted `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run type-check` grep for touched pages (`Inventory|Waitlist|Cashbox|GiftCards|ServiceBundles|KPI`) returned no errors ✅
+  - full `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run build` still fails because of a pre-existing unresolved `framer-motion` import in `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/TrashBin.tsx` ❌
+  - full `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run type-check` is still blocked by pre-existing `AuditLog.tsx` / `TrashBin.tsx` issues unrelated to this translation pass ❌
+- IMPORTANT TO REMEMBER:
+  - for missing translations, fix the TSX source first and let the orchestrated i18n pipeline regenerate locale files,
+  - after `db:i18n:auto`, re-run `i18n:sync` if `i18n:check-only` surfaces missing keys inside auto-generated admin namespaces,
+  - do not reintroduce raw UI strings on shared CRM pages; new runtime text must be wrapped in `t(...)` immediately.
+
 ## [2026-03-22] Advertising Analytics And Advertiser Reports Expanded
 - Extended the existing CRM advertising/referral module so one campaign now stores both traffic-tracking and commercial metadata in the same SSOT flow instead of separate one-off scripts/files.
 - Backend runtime/schema changes:

@@ -85,7 +85,7 @@ const analyticsStageColors = [
     'bg-cyan-500',
     'bg-green-500',
     'bg-amber-500',
-    'bg-pink-500'
+    'settings-bg-primary'
 ];
 
 export default function UniversalFunnel() {
@@ -299,7 +299,7 @@ export default function UniversalFunnel() {
         return (
             <div className="p-8 flex items-center justify-center h-screen">
                 <div className="flex flex-col items-center gap-4">
-                    <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                    <Loader className="w-8 h-8 settings-text-primary animate-spin" />
                     <p className="text-gray-600">{t('common:loading')}...</p>
                 </div>
             </div>
@@ -379,7 +379,7 @@ export default function UniversalFunnel() {
                                     )}
 
                                     <Button
-                                        className="h-10 flex-initial bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20 shrink-0 whitespace-nowrap px-6"
+                                        className="h-10 flex-initial settings-button-gradient text-white shadow-lg shadow-blue-500/20 shrink-0 whitespace-nowrap px-6"
                                         onClick={() => setCreateDialogOpen(true)}
                                     >
                                         <Plus className="w-4 h-4 mr-2" />
@@ -510,7 +510,7 @@ export default function UniversalFunnel() {
                                                     <div className={`absolute top-3 right-3 w-2 h-2 rounded-full ${getTemperatureColor(client.temperature)} ring-2 ring-white shadow-sm opacity-100 group-hover:opacity-0 transition-opacity`} />
 
                                                     <div className="mb-3">
-                                                        <div className="font-semibold text-gray-900 text-sm line-clamp-1 hover:text-pink-600 transition-colors cursor-pointer">
+                                                        <div className="font-semibold text-gray-900 text-sm line-clamp-1 hover:settings-text-primary transition-colors cursor-pointer">
                                                             {client.name || client.username}
                                                         </div>
                                                         <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
@@ -669,7 +669,7 @@ export default function UniversalFunnel() {
                     <div className="p-8 h-full overflow-y-auto">
                         {loadingAnalytics ? (
                             <div className="flex flex-col items-center justify-center py-20 gap-4">
-                                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                                <Loader className="w-8 h-8 settings-text-primary animate-spin" />
                                 <p className="text-gray-500">{t('common:loading')}...</p>
                             </div>
                         ) : funnelAnalytics ? (
@@ -695,7 +695,7 @@ export default function UniversalFunnel() {
                                 {/* Funnel Chart */}
                                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                                     <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2">
-                                        <Filter className="w-6 h-6 text-pink-600" />
+                                        <Filter className="w-6 h-6 settings-text-primary" />
                                         {t('funnel_chart')}
                                     </h2>
 

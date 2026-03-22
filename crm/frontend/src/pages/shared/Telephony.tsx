@@ -718,8 +718,8 @@ export default function Telephony() {
                 <div className="mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div>
                         <h1 className="text-3xl font-extrabold text-gray-900 mb-2 flex items-center gap-3">
-                            <div className="p-2 bg-pink-50 rounded-lg">
-                                <Phone className="w-8 h-8 text-pink-600" />
+                            <div className="p-2 settings-bg-primary-light rounded-lg">
+                                <Phone className="w-8 h-8 settings-text-primary" />
                             </div>
                             {t('telephony', 'Телефония')}
                         </h1>
@@ -732,23 +732,23 @@ export default function Telephony() {
                         onClick={handleRefresh}
                         className="w-full md:w-auto px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95"
                     >
-                        <RefreshCw className={`w-4 h-4 ${processing ? 'animate-spin' : ''} text-pink-600`} />
+                        <RefreshCw className={`w-4 h-4 ${processing ? 'animate-spin' : ''} settings-text-primary`} />
                         {t('common:refresh', 'Обновить')}
                     </button>
                 </div>
 
                 <Tabs defaultValue="list" className="w-full">
                     <TabsList className="mb-6 bg-gray-100/50 p-1 rounded-xl w-fit">
-                        <TabsTrigger value="list" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                        <TabsTrigger value="list" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:settings-text-primary data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
                             {t('telephony:call_list_tab', 'Список звонков')}
                         </TabsTrigger>
-                        <TabsTrigger value="recordings" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                        <TabsTrigger value="recordings" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:settings-text-primary data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
                             {t('telephony:recordings_tab', 'Записи')}
                         </TabsTrigger>
-                        <TabsTrigger value="analytics" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                        <TabsTrigger value="analytics" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:settings-text-primary data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
                             {t('telephony:analytics_tab', 'Аналитика')}
                         </TabsTrigger>
-                        <TabsTrigger value="integrations" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
+                        <TabsTrigger value="integrations" className="rounded-lg px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:settings-text-primary data-[state=active]:shadow-sm transition-all focus-visible:outline-none">
                             {t('telephony:integrations_tab', 'Интеграции')}
                         </TabsTrigger>
                     </TabsList>
@@ -819,7 +819,7 @@ export default function Telephony() {
                                     <button
                                         onClick={() => setShowFilters(!showFilters)}
                                         className={`flex-1 h-[42px] px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 transition-all border shadow-sm ${showFilters
-                                            ? 'bg-pink-50 border-pink-200 text-pink-600'
+                                            ? 'settings-bg-primary-light brand-border settings-text-primary'
                                             : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
                                             }`}
                                     >
@@ -1047,7 +1047,7 @@ export default function Telephony() {
                                                                 key={`weekday-${weekdayItem.day}`}
                                                                 type="button"
                                                                 onClick={() => toggleWeekdayFilter(weekdayItem.day)}
-                                                                className={`h-8 min-w-[42px] rounded-lg border px-2 text-xs font-semibold transition-all ${isActive ? 'border-pink-300 bg-pink-50 text-pink-700' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}
+                                                                className={`h-8 min-w-[42px] rounded-lg border px-2 text-xs font-semibold transition-all ${isActive ? 'brand-border settings-bg-primary-light text-pink-700' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}
                                                             >
                                                                 {weekdayItem.label}
                                                             </button>
@@ -1065,7 +1065,7 @@ export default function Telephony() {
                                                         type="date"
                                                         value={dateFrom}
                                                         onChange={e => setDateFrom(e.target.value)}
-                                                        className="w-full h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all shadow-sm"
+                                                        className="w-full h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:brand-border/50 transition-all shadow-sm"
                                                     />
                                                 </div>
                                                 <div className="flex flex-col gap-1.5">
@@ -1074,7 +1074,7 @@ export default function Telephony() {
                                                         type="date"
                                                         value={dateTo}
                                                         onChange={e => setDateTo(e.target.value)}
-                                                        className="w-full h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500/50 transition-all shadow-sm"
+                                                        className="w-full h-[42px] px-3 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:brand-border/50 transition-all shadow-sm"
                                                     />
                                                 </div>
                                             </div>
@@ -1202,15 +1202,15 @@ export default function Telephony() {
                                                         <div className="flex justify-end">
                                                             <Popover>
                                                                 <PopoverTrigger asChild>
-                                                                    <Button variant="ghost" size="icon" className="h-8 w-8 bg-pink-50 text-pink-600 border border-pink-100 hover:bg-pink-100 rounded-full shadow-sm">
+                                                                    <Button variant="ghost" size="icon" className="h-8 w-8 settings-bg-primary-light settings-text-primary border border-pink-100 hover:settings-bg-primary-light rounded-full shadow-sm">
                                                                         <Play className="w-4 h-4 fill-current ml-0.5" />
                                                                     </Button>
                                                                 </PopoverTrigger>
                                                                 <PopoverContent className="w-[450px] p-0 border-none shadow-2xl bg-transparent" side="left">
                                                                         <div className="bg-white rounded-2xl shadow-2xl border p-4">
                                                                         <div className="flex items-center gap-3 mb-3 px-1">
-                                                                            <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
-                                                                                <Headphones className="w-6 h-6 text-pink-600" />
+                                                                            <div className="w-10 h-10 settings-bg-primary-light rounded-xl flex items-center justify-center">
+                                                                                <Headphones className="w-6 h-6 settings-text-primary" />
                                                                             </div>
                                                                             <div>
                                                                                 <p className="text-xs font-semibold text-gray-900 leading-none mb-1">{call.client_name || call.phone}</p>
@@ -1539,7 +1539,7 @@ export default function Telephony() {
                     <TabsContent value="integrations" className="space-y-6 focus-visible:outline-none">
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                             <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                                <Plus className="w-5 h-5 text-pink-600" />
+                                <Plus className="w-5 h-5 settings-text-primary" />
                                 {t('telephony:add_integration')}
                             </h3>
 
@@ -1609,7 +1609,7 @@ export default function Telephony() {
                                     <Button
                                         onClick={handleSaveSettings}
                                         disabled={processing}
-                                        className="h-[45px] rounded-xl font-bold flex-1 bg-pink-600 hover:bg-pink-700 shadow-md shadow-pink-100"
+                                        className="h-[45px] rounded-xl font-bold flex-1 settings-bg-primary settings-bg-primary-hover shadow-md shadow-pink-100"
                                     >
                                         {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : t('telephony:save_settings')}
                                     </Button>
@@ -1637,7 +1637,7 @@ export default function Telephony() {
 
                         <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-gray-300 text-sm shadow-xl">
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <div className="w-12 h-12 settings-bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
                                     <Phone className="w-6 h-6 text-pink-400" />
                                 </div>
                                 <div className="flex-1">

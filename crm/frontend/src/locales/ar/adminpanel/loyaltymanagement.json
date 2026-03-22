@@ -1,0 +1,111 @@
+{
+  "actions": {
+    "activate": "تمكين",
+    "deactivate": "تعطيل"
+  },
+  "adjust_points": "",
+  "buttons": {
+    "add_rule": "إضافة قاعدة",
+    "adjust_points": "",
+    "cancel": "",
+    "save": "حفظ",
+    "save_changes": ""
+  },
+  "categories": {
+    "category": "الفئة",
+    "category_placeholder": "على سبيل المثال. الأظافر",
+    "description": "تخصيص معامل النقطة لكل فئة من الخدمات",
+    "hint": "ينطبق المعامل على الفئة المحددة فقط. بالنسبة للقواعد المعطلة، يتم استخدام الاستحقاق المعتاد x1.",
+    "multiplier": "المضاعف",
+    "title": "قواعد الاستحقاق حسب الفئة"
+  },
+  "config": {
+    "cashback_hint": "مثال: استرداد نقدي بنسبة 10% (10 نقاط لكل 100 إنفاق)",
+    "cashback_rate": "استرداد نقدي (%)",
+    "description": "إدارة إعدادات الولاء العالمية",
+    "expiration_days": "مدة صلاحية النقاط (أيام)",
+    "expiration_hint": "تنتهي صلاحية النقاط المتراكمة بعد عدد الأيام المحدد.",
+    "points_per_unit": "النقاط مقابل وحدة واحدة. العملات",
+    "title": "الإعدادات"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "",
+      "client_email_placeholder": "",
+      "description": "",
+      "points": "",
+      "points_placeholder": "",
+      "reason": "",
+      "reason_placeholder": "",
+      "title": ""
+    },
+    "edit_tier": {
+      "description": "",
+      "discount_percent": "",
+      "min_points": "",
+      "status_hint": "لا يشارك المستوى غير النشط في الحساب التلقائي للامتيازات",
+      "status_label": "حالة المستوى",
+      "tier_name": "",
+      "title": ""
+    },
+    "rule": {
+      "description": "تعيين مضاعف النقاط لفئة الخدمة",
+      "status_hint": "إذا تم تعطيل القاعدة، فسيتم منح الفئات بالسعر الأساسي",
+      "status_label": "حالة القاعدة",
+      "title": "تحرير قاعدة الفئة"
+    }
+  },
+  "stats": {
+    "active_members": "",
+    "points_redeemed": "",
+    "total_points_issued": ""
+  },
+  "statuses": {
+    "inactive": "غير نشطة"
+  },
+  "subtitle": "",
+  "tiers": {
+    "description": "",
+    "discount": "",
+    "from_points": "",
+    "starting_level": "",
+    "title": ""
+  },
+  "title": "",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "",
+    "failed_delete": "",
+    "failed_load": "",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add_zero": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_two": "",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_other": "",
+    "points_adjusted_deduct_zero": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_two": "",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_other": "",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": ""
+  },
+  "transactions": {
+    "description": "",
+    "search_placeholder": "",
+    "table": {
+      "client": "",
+      "date": "",
+      "points": "",
+      "reason": "",
+      "type": ""
+    },
+    "title": ""
+  }
+}

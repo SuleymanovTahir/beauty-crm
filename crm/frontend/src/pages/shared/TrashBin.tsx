@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
     Trash2,
     RefreshCcw,
@@ -184,11 +183,7 @@ const TrashBin: React.FC = () => {
     return (
         <div className="p-6 space-y-6">
             {/* Header section */}
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10"
-            >
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">
                         {t('title')}
@@ -262,15 +257,10 @@ const TrashBin: React.FC = () => {
                         </span>
                     </div>
                 </div>
-            </motion.div>
+            </div>
 
             {/* Control Bar */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.1 }}
-                className="flex flex-col lg:flex-row gap-4 mb-8"
-            >
+            <div className="flex flex-col lg:flex-row gap-4 mb-8">
                 <div className="flex-1 flex gap-4">
                     <div className="relative group flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
@@ -307,7 +297,7 @@ const TrashBin: React.FC = () => {
                         </Button>
                     ))}
                 </div>
-            </motion.div>
+            </div>
 
             {/* Items Grid/List */}
             {loading ? (
@@ -316,28 +306,18 @@ const TrashBin: React.FC = () => {
                     <p className="text-muted-foreground font-medium">{t('loading')}</p>
                 </div>
             ) : filteredItems.length === 0 ? (
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="flex flex-col items-center justify-center py-20 rounded-xl border bg-card shadow-sm"
-                >
+                <div className="flex flex-col items-center justify-center py-20 rounded-xl border bg-card shadow-sm">
                     <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
                         <Trash2 className="w-10 h-10 text-muted-foreground" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2">{t('empty_title')}</h3>
                     <p className="text-muted-foreground">{t('empty_desc')}</p>
-                </motion.div>
+                </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3">
-                    <AnimatePresence mode="popLayout">
-                        {filteredItems.map((item, idx) => (
-                            <motion.div
-                                layout
+                    {filteredItems.map((item) => (
+                            <div
                                 key={`${item.entity_type}-${item.entity_id}`}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ delay: idx * 0.05 }}
                                 className={`bg-card border p-3 rounded-xl hover:border-primary/30 hover:bg-muted/30 transition-all group relative overflow-hidden shadow-sm hover:shadow-md ${selectedIds.includes(`${item.entity_type}:${item.entity_id}`) ? 'border-primary/50 bg-primary/5' : ''}`}
                             >
                                 <div className={`absolute top-3 left-3 z-10 transition-opacity flex items-center gap-2 ${selectedIds.includes(`${item.entity_type}:${item.entity_id}`) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
@@ -412,19 +392,13 @@ const TrashBin: React.FC = () => {
                                         </span>
                                     )}
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
-                    </AnimatePresence>
                 </div>
             )}
 
             {/* Info Warning Footer */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mt-12 p-5 rounded-xl border flex items-start gap-4 trash-info-warning"
-            >
+            <div className="mt-12 p-5 rounded-xl border flex items-start gap-4 trash-info-warning">
                 <AlertTriangle className="w-6 h-6 flex-shrink-0 trash-info-warning-icon" />
                 <div>
                     <h5 className="font-semibold mb-1 trash-info-warning-title">{t('important_info')}</h5>
@@ -433,7 +407,7 @@ const TrashBin: React.FC = () => {
                         {t('info_desc')}
                     </p>
                 </div>
-            </motion.div>
+            </div>
 
         </div>
     );

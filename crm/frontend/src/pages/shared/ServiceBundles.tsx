@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Layers, Plus, Tag, Clock, RefreshCw, Check, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
@@ -9,6 +10,7 @@ import { buildApiUrl } from '@crm/api/client';
 interface Bundle { id:number; name:string; description?:string; price:number; original_price?:number; sessions_count:number; valid_days:number; category:string; is_active:boolean; services:any[]; }
 
 export default function ServiceBundles() {
+  const { t } = useTranslation(['common', 'layouts/mainlayout']);
   const [bundles, setBundles] = useState<Bundle[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,8 +24,8 @@ export default function ServiceBundles() {
         fetch(buildApiUrl('/api/service-bundles?active_only=false'), { credentials:'include' }),
         fetch(buildApiUrl('/api/services'), { credentials:'include' }),
       ]);
-      const d1 = await r1.json(); setBundles(d1.bundles || []);
-      const d2 = await r2.json(); setServices(d2.services || d2 || []);
+      const d1 = await r1.json(); setBundles(d1.bundles ?? []);
+      const d2 = await r2.json(); setServices(Array.isArray(d2) ? d2 : (d2.services ?? []));
     } finally { setLoading(false); }
   };
   useEffect(() => { load(); }, []);
@@ -34,7 +36,7 @@ export default function ServiceBundles() {
   };
 
   const save = async () => {
-    if (!form.name || !form.price) { toast.error('Заполните название и цену'); return; }
+    if (!form.name || !form.price) { toast.error(t('service_bundles_name_price_required', { defaultValue: 'Заполните название и цену' })); return; }
     const res = await fetch(buildApiUrl('/api/service-bundles'), {
       method:'POST', credentials:'include',
       headers:{'Content-Type':'application/json'},
@@ -46,7 +48,7 @@ export default function ServiceBundles() {
       }),
     });
     const d = await res.json();
-    if (d.success) { toast.success('Пакет создан'); setShowForm(false); load(); }
+    if (d.success) { toast.success(t('service_bundles_created', { defaultValue: 'Пакет создан' })); setShowForm(false); load(); }
     else toast.error(d.error);
   };
 
@@ -61,34 +63,34 @@ export default function ServiceBundles() {
     <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-5">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <Layers size={22} className="text-teal-500" /> Пакеты услуг
+          <Layers size={22} className="text-teal-500" /> {t('layouts/mainlayout:menu.service_bundles')}
         </h1>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={load}><RefreshCw size={14} /></Button>
-          <Button size="sm" onClick={() => setShowForm(!showForm)}><Plus size={14} /> Пакет</Button>
+          <Button size="sm" onClick={() => setShowForm(!showForm)}><Plus size={14} /> {t('service_bundles_add_button', { defaultValue: 'Пакет' })}</Button>
         </div>
       </div>
 
       {showForm && (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 space-y-4">
-          <h3 className="font-semibold">Новый пакет</h3>
+          <h3 className="font-semibold">{t('service_bundles_new_bundle', { defaultValue: 'Новый пакет' })}</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <div className="col-span-2"><label className="text-xs text-gray-500 mb-1 block">Название *</label><Input value={form.name} onChange={e => setForm(p => ({...p,name:e.target.value}))} /></div>
-            <div><label className="text-xs text-gray-500 mb-1 block">Категория</label><Input value={form.category} onChange={e => setForm(p => ({...p,category:e.target.value}))} /></div>
-            <div><label className="text-xs text-gray-500 mb-1 block">Цена (₽) *</label><Input type="number" value={form.price} onChange={e => setForm(p => ({...p,price:e.target.value}))} /></div>
-            <div><label className="text-xs text-gray-500 mb-1 block">Цена до скидки</label><Input type="number" value={form.original_price} onChange={e => setForm(p => ({...p,original_price:e.target.value}))} /></div>
-            <div><label className="text-xs text-gray-500 mb-1 block">Кол-во сеансов</label><Input type="number" value={form.sessions_count} onChange={e => setForm(p => ({...p,sessions_count:e.target.value}))} /></div>
-            <div><label className="text-xs text-gray-500 mb-1 block">Срок (дней)</label><Input type="number" value={form.valid_days} onChange={e => setForm(p => ({...p,valid_days:e.target.value}))} /></div>
-            <div className="col-span-2 md:col-span-3"><label className="text-xs text-gray-500 mb-1 block">Описание</label><Input value={form.description} onChange={e => setForm(p => ({...p,description:e.target.value}))} /></div>
+            <div className="col-span-2"><label className="text-xs text-gray-500 mb-1 block">{t('name')} *</label><Input value={form.name} onChange={e => setForm(p => ({...p,name:e.target.value}))} /></div>
+            <div><label className="text-xs text-gray-500 mb-1 block">{t('service_bundles_category', { defaultValue: 'Категория' })}</label><Input value={form.category} onChange={e => setForm(p => ({...p,category:e.target.value}))} /></div>
+            <div><label className="text-xs text-gray-500 mb-1 block">{t('service_bundles_price', { defaultValue: 'Цена (₽)' })} *</label><Input type="number" value={form.price} onChange={e => setForm(p => ({...p,price:e.target.value}))} /></div>
+            <div><label className="text-xs text-gray-500 mb-1 block">{t('service_bundles_original_price', { defaultValue: 'Цена до скидки' })}</label><Input type="number" value={form.original_price} onChange={e => setForm(p => ({...p,original_price:e.target.value}))} /></div>
+            <div><label className="text-xs text-gray-500 mb-1 block">{t('service_bundles_sessions_count', { defaultValue: 'Кол-во сеансов' })}</label><Input type="number" value={form.sessions_count} onChange={e => setForm(p => ({...p,sessions_count:e.target.value}))} /></div>
+            <div><label className="text-xs text-gray-500 mb-1 block">{t('service_bundles_valid_days', { defaultValue: 'Срок (дней)' })}</label><Input type="number" value={form.valid_days} onChange={e => setForm(p => ({...p,valid_days:e.target.value}))} /></div>
+            <div className="col-span-2 md:col-span-3"><label className="text-xs text-gray-500 mb-1 block">{t('description')}</label><Input value={form.description} onChange={e => setForm(p => ({...p,description:e.target.value}))} /></div>
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-2 block">Услуги в пакете</label>
+            <label className="text-xs text-gray-500 mb-2 block">{t('service_bundles_included_services', { defaultValue: 'Услуги в пакете' })}</label>
             <div className="flex flex-wrap gap-2 mb-2">
               {form.selectedServices.map(s => {
                 const svc = services.find((x:any) => x.id === s.service_id);
                 return (
                   <div key={s.service_id} className="flex items-center gap-1 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full px-3 py-1 text-xs">
-                    {svc?.name || s.service_id}
+                    {svc?.name ?? String(s.service_id)}
                     <button onClick={() => removeService(s.service_id)}><X size={11} /></button>
                   </div>
                 );
@@ -96,15 +98,15 @@ export default function ServiceBundles() {
             </div>
             <select className="border rounded-md px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600"
               onChange={e => { if(e.target.value) addService(+e.target.value); e.target.value=''; }}>
-              <option value="">Добавить услугу...</option>
+              <option value="">{t('service_bundles_add_service_placeholder', { defaultValue: 'Добавить услугу...' })}</option>
               {services.filter((s:any) => !form.selectedServices.find(x => x.service_id===s.id)).map((s:any) => (
                 <option key={s.id} value={s.id}>{s.name}</option>
               ))}
             </select>
           </div>
           <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => setShowForm(false)}>Отмена</Button>
-            <Button onClick={save}>Создать</Button>
+            <Button variant="outline" onClick={() => setShowForm(false)}>{t('cancel')}</Button>
+            <Button onClick={save}>{t('create')}</Button>
           </div>
         </div>
       )}
@@ -117,7 +119,9 @@ export default function ServiceBundles() {
                 <h3 className="font-semibold text-gray-900 dark:text-white">{b.name}</h3>
                 <button onClick={() => toggle(b.id)}>
                   <Badge className={b.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}>
-                    {b.is_active ? 'Активен' : 'Скрыт'}
+                    {b.is_active
+                      ? t('service_bundles_status_active', { defaultValue: 'Активен' })
+                      : t('service_bundles_status_hidden', { defaultValue: 'Скрыт' })}
                   </Badge>
                 </button>
               </div>
@@ -132,8 +136,8 @@ export default function ServiceBundles() {
                 )}
               </div>
               <div className="flex gap-3 text-xs text-gray-500 mb-2">
-                <span className="flex items-center gap-1"><Check size={11} className="text-teal-500" />{b.sessions_count} сеансов</span>
-                <span className="flex items-center gap-1"><Clock size={11} className="text-teal-500" />{b.valid_days} дней</span>
+                <span className="flex items-center gap-1"><Check size={11} className="text-teal-500" />{t('service_bundles_sessions_value', { defaultValue: '{{count}} сеансов', count: b.sessions_count })}</span>
+                <span className="flex items-center gap-1"><Clock size={11} className="text-teal-500" />{t('service_bundles_valid_days_value', { defaultValue: '{{count}} дней', count: b.valid_days })}</span>
                 <span className="flex items-center gap-1"><Tag size={11} />{b.category}</span>
               </div>
               {b.services?.length > 0 && (
@@ -147,7 +151,7 @@ export default function ServiceBundles() {
               )}
             </div>
           ))}
-          {bundles.length === 0 && <div className="col-span-2 text-center py-8 text-gray-400">Пакеты услуг не созданы</div>}
+          {bundles.length === 0 && <div className="col-span-2 text-center py-8 text-gray-400">{t('service_bundles_empty', { defaultValue: 'Пакеты услуг не созданы' })}</div>}
         </div>
       )}
     </div>

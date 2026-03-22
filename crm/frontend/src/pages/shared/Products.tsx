@@ -169,7 +169,7 @@ const Products = () => {
                         <input
                             type="text"
                             placeholder={t('search_placeholder')}
-                            className="pl-9 pr-4 h-10 w-72 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
+                            className="pl-9 pr-4 h-10 w-72 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -180,7 +180,7 @@ const Products = () => {
             <div className="flex-1 overflow-y-auto p-6">
                 {loading ? (
                     <div className="flex items-center justify-center h-64">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 brand-border"></div>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -216,7 +216,7 @@ const Products = () => {
 
                                 <div className="p-4 flex-1 flex flex-col">
                                     <h3
-                                        className="font-bold text-gray-900 mb-2 line-clamp-2 cursor-pointer hover:text-pink-600 transition-colors"
+                                        className="font-bold text-gray-900 mb-2 line-clamp-2 cursor-pointer hover:settings-text-primary transition-colors"
                                         onClick={() => {
                                             setSelectedProduct(product);
                                             setShowDetailDialog(true);
@@ -228,7 +228,7 @@ const Products = () => {
                                     <div className="mt-auto flex items-end justify-between">
                                         <div>
                                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{t('form.price')}</p>
-                                            <p className="text-xl font-black text-pink-600 leading-tight">
+                                            <p className="text-xl font-black settings-text-primary leading-tight">
                                                 {product.price} <span className="text-xs font-bold">{currency}</span>
                                             </p>
                                         </div>
@@ -248,7 +248,7 @@ const Products = () => {
 
                                 <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all">
                                     <button
-                                        className="p-2 hover:bg-white text-gray-400 hover:text-pink-600 rounded-xl transition-all shadow-sm hover:shadow border border-transparent hover:border-pink-100"
+                                        className="p-2 hover:bg-white text-gray-400 hover:settings-text-primary rounded-xl transition-all shadow-sm hover:shadow border border-transparent hover:border-pink-100"
                                         onClick={() => {
                                             setSelectedProduct(product);
                                             setShowMovementDialog(true);
@@ -484,7 +484,7 @@ const ProductDialog = ({ product, onClose, onSuccess }: any) => {
                                             </button>
                                         </div>
                                     ))}
-                                    <div className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:border-pink-500 hover:text-pink-500 transition-colors cursor-pointer relative">
+                                    <div className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:brand-border hover:text-pink-500 transition-colors cursor-pointer relative">
                                         <ImageIcon size={24} />
                                         <span className="text-[10px] mt-1">{t('form.upload')}</span>
                                         <input
@@ -691,7 +691,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                                     <button
                                         key={idx}
                                         onClick={() => setActivePhoto(photo)}
-                                        className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${activePhoto === photo ? 'border-pink-500 scale-95' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                                        className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${activePhoto === photo ? 'brand-border scale-95' : 'border-transparent opacity-70 hover:opacity-100'}`}
                                     >
                                         <img src={photo} alt="" className="w-full h-full object-cover" />
                                     </button>
@@ -699,9 +699,9 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                             </div>
                         )}
 
-                        <div className="bg-pink-50 rounded-2xl p-6 border border-pink-100">
+                        <div className="settings-bg-primary-light rounded-2xl p-6 border border-pink-100">
                             <h3 className="font-bold text-pink-900 mb-2">{t('form.price')}</h3>
-                            <p className="text-3xl font-black text-pink-600">{product.price} {currency}</p>
+                            <p className="text-3xl font-black settings-text-primary">{product.price} {currency}</p>
                             {product.cost_price > 0 && (
                                 <p className="text-sm text-pink-400 mt-1">{t('detail.costPriceLabel', { price: product.cost_price, currency })}</p>
                             )}
@@ -731,7 +731,7 @@ const ProductDetailDialog = ({ product, onClose }: any) => {
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.revenue')}</p>
-                                    <p className="text-xl font-black text-pink-600">{stats.total_revenue} {currency}</p>
+                                    <p className="text-xl font-black settings-text-primary">{stats.total_revenue} {currency}</p>
                                 </div>
                                 <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('analytics.last30Days', { count: 30 })}</p>

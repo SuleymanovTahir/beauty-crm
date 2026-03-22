@@ -15,8 +15,8 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #030213;
-  --primary-foreground: oklch(1 0 0);
+  --primary: var(--brand-primary);
+  --primary-foreground: #ffffff;
   --secondary: oklch(0.95 0.0058 264.53);
   --secondary-foreground: #030213;
   --muted: #ececf0;
@@ -54,6 +54,11 @@
   --telephony-rejected: #94a3b8;
   --telephony-avg-duration: #db2777;
 
+  /* System UI */
+  --system-border: #e2e8f0;
+  --system-bg: #f8fafc;
+  
+  --brand-light: color-mix(in srgb, var(--brand-primary) 12%, transparent);
   /* Temperature Colors */
   --temp-hot: #ef4444;
   --temp-warm: #f97316;
@@ -74,8 +79,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: var(--brand-primary);
+  --primary-foreground: #ffffff;
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -102,6 +107,116 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
+
+  /* Brand Theme Variables */
+  --brand-gradient: linear-gradient(135deg, #3b82f6 0%, #d946ef 50%, #f43f5e 100%);
+  --brand-shadow: 0 10px 15px -3px rgba(217, 70, 239, 0.3);
+  --brand-pink-600: #db2777;
+}
+
+/* Color Themes */
+.theme-pink {
+  --brand-gradient: linear-gradient(135deg, #3b82f6 0%, #d946ef 50%, #f43f5e 100%);
+  --brand-shadow: 0 10px 15px -3px rgba(217, 70, 239, 0.26);
+  --brand-primary: #ec4899;
+}
+
+.theme-blue {
+  --brand-gradient: linear-gradient(135deg, #1e40af 0%, #0ea5e9 50%, #38bdf8 100%);
+  --brand-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3);
+  --brand-primary: #0ea5e9;
+}
+
+.theme-purple {
+  --brand-gradient: linear-gradient(135deg, #9333ea 0%, #a855f7 50%, #c084fc 100%);
+  --brand-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.3);
+  --brand-primary: #a855f7;
+}
+
+.theme-emerald {
+  --brand-gradient: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+  --brand-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+  --brand-primary: #10b981;
+}
+
+.theme-orange {
+  --brand-gradient: linear-gradient(135deg, #ea580c 0%, #f97316 50%, #fb923c 100%);
+  --brand-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3);
+  --brand-primary: #f97316;
+}
+
+.theme-amber {
+  --brand-gradient: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%);
+  --brand-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.3);
+  --brand-primary: #f59e0b;
+}
+
+
+.brand-border {
+  border-color: var(--brand-primary) !important;
+}
+
+/* Settings Page Styled Classes */
+.settings-card-gradient {
+  background: var(--brand-gradient);
+  box-shadow: var(--brand-shadow);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.settings-button-gradient {
+  background: var(--brand-gradient);
+  box-shadow: var(--brand-shadow);
+  color: white;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.settings-button-gradient:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.2);
+}
+
+.settings-text-primary {
+  color: var(--brand-primary);
+}
+
+.settings-icon-primary {
+  color: var(--brand-primary);
+}
+
+.settings-bg-primary {
+  background-color: var(--brand-primary);
+}
+
+.settings-bg-primary-hover:hover {
+  filter: brightness(0.95);
+}
+
+.settings-tab-trigger-active {
+  color: var(--brand-primary) !important;
+
+}
+
+.settings-bg-primary-light {
+  background-color: var(--brand-light) !important;
+}
+
+.settings-bot-icon {
+  color: white;
+}
+
+.settings-label-spacing {
+  margin-bottom: 0.5rem;
+}
+
+.settings-loader {
+  color: var(--brand-primary);
+}
+
+.settings-accent-pink {
+  accent-color: var(--brand-primary);
 }
 
 @theme inline {
@@ -389,11 +504,11 @@ html {
    ================================= */
 
 .client-info-edit-button {
-  background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+  background: var(--brand-gradient);
 }
 
 .client-info-edit-button:hover {
-  background: linear-gradient(135deg, #db2777 0%, #7c3aed 100%);
+  filter: brightness(0.95);
 }
 
 /* Smooth animations */

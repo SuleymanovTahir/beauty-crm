@@ -55,6 +55,8 @@ import {
 } from '../../utils/platformRouting';
 import './MainLayout.css';
 
+import { useTheme } from '../../contexts/ThemeContext';
+
 interface MainLayoutProps {
     user: { id: number; role: string; secondary_role?: string; full_name: string; username?: string } | null;
     onLogout: () => void;
@@ -201,6 +203,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     const navigate = useNavigate();
     const location = useLocation();
     const { t } = useTranslation(['layouts/mainlayout', 'common']);
+    const logoBasePath = '/logo';
 
     const [incomingCall, setIncomingCall] = useState<{
         from: number;
@@ -214,12 +217,19 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     const [chatUnreadCount, setChatUnreadCount] = useState(0);
     const [internalChatUnreadCount, setInternalChatUnreadCount] = useState(0);
     const [notificationsUnreadCount, setNotificationsUnreadCount] = useState(0);
+    const { colorTheme } = useTheme();
     const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
     const [mobileExpandedGroups, setMobileExpandedGroups] = useState<Set<string>>(new Set());
     const [menuSettings, setMenuSettings] = useState<{ menu_order: any[] | null; hidden_items: string[] | null } | null>(null);
     const [salonSettings, setSalonSettings] = useState<LayoutSalonSettings | null>(null);
     const sidebarNavRef = useRef<HTMLElement | null>(null);
+    const desktopMenuItemRefs = useRef<Record<string, HTMLLIElement | null>>({});
+    const mobileMenuGroupRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const lastDeniedPathRef = useRef<string>('');
+    const hasSpecificLogoTheme = ['pink', 'blue'].includes(colorTheme);
+    const horizontalLogoPath = hasSpecificLogoTheme
+        ? `${logoBasePath}/horizontal-logo-${colorTheme}.png`
+        : `${logoBasePath}/horizontal-logo.png`;
 
     const permissions = usePermissions(user?.role || 'employee', user?.secondary_role);
 
@@ -681,6 +691,29 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
         }
     }, [location.pathname, activeDesktopGroupId]);
 
+    const scrollMenuSectionIntoView = (element: HTMLElement | null) => {
+        if (element === null) {
+            return;
+        }
+
+        window.requestAnimationFrame(() => {
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+                inline: 'nearest',
+            });
+        });
+    };
+
+    const handleDesktopGroupToggle = (id: string, isExpanded: boolean) => {
+        const nextExpandedMenu = isExpanded ? null : id;
+        setExpandedMenu(nextExpandedMenu);
+
+        if (nextExpandedMenu !== null) {
+            scrollMenuSectionIntoView(desktopMenuItemRefs.current[id]);
+        }
+    };
+
     useEffect(() => {
         const matchedRoute = routeAccessEntries
             .filter((entry) => {
@@ -764,9 +797,14 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
     const toggleMobileGroup = (id: string) => {
         const newGroups = new Set(mobileExpandedGroups);
+        const isExpanding = !newGroups.has(id);
         if (newGroups.has(id)) newGroups.delete(id);
         else newGroups.add(id);
         setMobileExpandedGroups(newGroups);
+
+        if (isExpanding) {
+            scrollMenuSectionIntoView(mobileMenuGroupRefs.current[id]);
+        }
     };
 
     const handleCallAction = (action: 'accept' | 'reject') => {
@@ -785,7 +823,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                     <div className="sidebar-header-premium flex items-center gap-3">
                         <div className="shrink-0">
                             <img
-                                src="/vertical-logo.png"
+                                src={horizontalLogoPath}
                                 alt="Logo"
                                 className="sidebar-logo-img"
                             />
@@ -807,7 +845,13 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                             const singleChild = isSingleChildGroup ? item.items[0] : null;
 
                             return (
-                                <li key={item.id} className="list-none mb-1">
+                                <li
+                                    key={item.id}
+                                    className="list-none mb-1"
+                                    ref={(element) => {
+                                        desktopMenuItemRefs.current[item.id] = element;
+                                    }}
+                                >
                                     {isSingleChildGroup ? (
                                         <button
                                             onClick={() => navigate(singleChild.path)}
@@ -827,7 +871,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                     ) : isGroup ? (
                                         <div>
                                             <button
-                                                onClick={() => setExpandedMenu(isExpanded ? null : item.id)}
+                                                onClick={() => handleDesktopGroupToggle(item.id, isExpanded)}
                                                 className={cn(
                                                     "w-full flex items-center gap-3 menu-item-premium",
                                                     isActive && !isExpanded && "active",
@@ -914,8 +958,8 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                     className={cn(
                                         "p-2.5 rounded-xl transition-all relative",
                                         location.pathname.includes('/notifications')
-                                            ? "bg-pink-50 text-pink-600 shadow-sm"
-                                            : "text-gray-400 hover:bg-gray-50 hover:text-gray-600"
+                                            ? "settings-bg-primary-light settings-text-primary shadow-sm"
+                                            : "settings-text-primary hover:settings-bg-primary-light"
                                     )}
                                     title={t('menu.notifications')}
                                 >
@@ -1001,7 +1045,13 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                 const mobileSingleChild = isMobileSingleChild ? item.items[0] : null;
 
                                 return (
-                                    <div key={item.id} className="menu-group">
+                                    <div
+                                        key={item.id}
+                                        className="menu-group"
+                                        ref={(element) => {
+                                            mobileMenuGroupRefs.current[item.id] = element;
+                                        }}
+                                    >
                                         {isMobileSingleChild ? (
                                             <button
                                                 onClick={() => { navigate(mobileSingleChild.path); setShowMoreModal(false); }}
@@ -1095,7 +1145,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                         <span className="quick-action-label">{t('menu.notifications')}</span>
                                     </div>
                                     <div className="quick-action-icon-wrapper">
-                                        <Bell size={20} strokeWidth={2} className="text-gray-700" />
+                                        <Bell size={20} strokeWidth={2} className="settings-text-primary" />
                                         {notificationsUnreadCount > 0 && (
                                             <span className="quick-action-badge">
                                                 {notificationsUnreadCount > 99 ? '99+' : notificationsUnreadCount}
@@ -1157,7 +1207,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                     className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
                                 >
                                     <div className="flex items-center gap-4">
-                                        <chat.icon size={24} className="text-gray-700" />
+                                        <chat.icon size={24} className="settings-text-primary" />
                                         <span className="font-semibold text-gray-800">{chat.label}</span>
                                     </div>
                                     {chat.badge > 0 && (
@@ -1190,7 +1240,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                     alt="Caller"
                                 />
                             </div>
-                            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-white border-4 border-white">
+                            <div className="absolute -bottom-2 -right-2 w-8 h-8 settings-bg-primary rounded-full flex items-center justify-center text-white border-4 border-white">
                                 <Phone size={16} />
                             </div>
                         </div>
@@ -1205,7 +1255,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                             </button>
                             <button
                                 onClick={() => handleCallAction('accept')}
-                                className="flex-1 py-4 bg-pink-500 text-white rounded-2xl font-bold hover:bg-pink-600 shadow-lg shadow-pink-200 transition-all active:scale-95"
+                                className="flex-1 py-4 settings-bg-primary text-white rounded-2xl font-bold hover:settings-bg-primary shadow-lg shadow-pink-200 transition-all active:scale-95"
                             >
                                 Accept
                             </button>

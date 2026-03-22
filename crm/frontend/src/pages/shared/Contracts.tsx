@@ -227,7 +227,7 @@ const Contracts = () => {
                             <button
                                 onClick={() => setViewMode('board')}
                                 className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center ${viewMode === 'board'
-                                    ? 'bg-white text-gray-900 shadow-sm'
+                                    ? 'bg-white settings-text-primary shadow-sm'
                                     : 'text-gray-500 hover:text-gray-900'
                                     }`}
                             >
@@ -237,7 +237,7 @@ const Contracts = () => {
                             <button
                                 onClick={() => setViewMode('list')}
                                 className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center ${viewMode === 'list'
-                                    ? 'bg-white text-gray-900 shadow-sm'
+                                    ? 'bg-white settings-text-primary shadow-sm'
                                     : 'text-gray-500 hover:text-gray-900'
                                     }`}
                             >
@@ -275,7 +275,7 @@ const Contracts = () => {
                                 <button
                                     onClick={() => setSubTab('all')}
                                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${subTab === 'all'
-                                        ? 'bg-pink-50 text-pink-600 border-pink-200'
+                                        ? 'settings-bg-primary-light settings-text-primary brand-border'
                                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                                         }`}
                                 >
@@ -284,7 +284,7 @@ const Contracts = () => {
                                 <button
                                     onClick={() => setSubTab('client')}
                                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${subTab === 'client'
-                                        ? 'bg-pink-50 text-pink-600 border-pink-200'
+                                        ? 'settings-bg-primary-light settings-text-primary brand-border'
                                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                                         }`}
                                 >
@@ -293,7 +293,7 @@ const Contracts = () => {
                                 <button
                                     onClick={() => setSubTab('internal')}
                                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${subTab === 'internal'
-                                        ? 'bg-pink-50 text-pink-600 border-pink-200'
+                                        ? 'settings-bg-primary-light settings-text-primary brand-border'
                                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                                         }`}
                                 >
@@ -322,7 +322,7 @@ const Contracts = () => {
                         <input
                             type="text"
                             placeholder={t('search_placeholder')}
-                            className="pl-9 pr-4 h-9 w-full md:w-64 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
+                            className="pl-9 pr-4 h-9 w-full md:w-64 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -333,7 +333,7 @@ const Contracts = () => {
             <div className="flex-1 overflow-hidden p-6">
                 {loading ? (
                     <div className="flex items-center justify-center h-full">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 brand-border"></div>
                     </div>
                 ) : viewMode === 'board' ? (
                     <div className="h-full overflow-x-auto flex gap-6 pb-4">
@@ -373,7 +373,7 @@ const Contracts = () => {
                                             className="crm-calendar-panel bg-white p-4 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing group relative"
                                         >
                                             <div className="flex items-start justify-between mb-2">
-                                                <div className="flex items-center gap-1.5 text-xs font-medium text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full">
+                                                <div className="flex items-center gap-1.5 text-xs font-medium settings-text-primary settings-bg-primary-light px-2 py-0.5 rounded-full">
                                                     <FileText size={12} />
                                                     {contract.contract_number}
                                                 </div>
@@ -452,7 +452,7 @@ const Contracts = () => {
                                     {filteredAndSortedContracts.map((contract) => (
                                         <tr key={contract.id} className="hover:bg-gray-50 transition-colors">
                                             <td>
-                                                <div className="flex items-center gap-2 font-medium text-pink-600">
+                                                <div className="flex items-center gap-2 font-medium settings-text-primary">
                                                     <FileText size={16} />
                                                     {contract.contract_number}
                                                 </div>
@@ -864,7 +864,7 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                     <p className="text-gray-600 mb-6">{t('typeManagement.deletePrompt')}</p>
 
                     <div className="space-y-4 mb-8">
-                        <label className={`flex items-start p-4 rounded-xl border-2 transition-all cursor-pointer ${!deleteWithDocs ? 'border-pink-500 bg-pink-50' : 'border-gray-100 hover:border-pink-200'}`}>
+                        <label className={`flex items-start p-4 rounded-xl border-2 transition-all cursor-pointer ${!deleteWithDocs ? 'brand-border settings-bg-primary-light' : 'border-gray-100 hover:brand-border'}`}>
                             <input type="radio" name="deleteMode" checked={!deleteWithDocs} onChange={() => setDeleteWithDocs(false)} className="mt-1 mr-3" />
                             <div>
                                 <div className="font-bold text-gray-900">{t('typeManagement.keepDocs')}</div>
@@ -922,7 +922,7 @@ const ContractTypesDialog = ({ onClose, onUpdate }: any) => {
                             {types.map((type) => (
                                 <tr key={type.id}>
                                     <td className="font-medium text-gray-900">{type.name}</td>
-                                    <td><code className="bg-gray-100 px-1.5 py-0.5 rounded text-pink-600">{type.code}</code></td>
+                                    <td><code className="bg-gray-100 px-1.5 py-0.5 rounded settings-text-primary">{type.code}</code></td>
                                     <td className="text-gray-500">{type.description}</td>
                                     <td>
                                         <div className="flex justify-end items-center gap-1">

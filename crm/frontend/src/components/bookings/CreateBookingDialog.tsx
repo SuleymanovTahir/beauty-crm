@@ -269,7 +269,7 @@ export function CreateBookingDialog({
                                     value={clientSearch}
                                     onChange={(e) => { setClientSearch(e.target.value); setShowClientDropdown(true); }}
                                     onFocus={() => setShowClientDropdown(true)}
-                                    className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
+                                    className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all"
                                 />
                                 {showClientDropdown && clientSearch && (
                                     <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
@@ -317,7 +317,7 @@ export function CreateBookingDialog({
                                     value={serviceSearch}
                                     onChange={(e) => { setServiceSearch(e.target.value); setShowServiceDropdown(true); }}
                                     onFocus={() => setShowServiceDropdown(true)}
-                                    className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
+                                    className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all"
                                 />
                                 {showServiceDropdown && serviceSearch && (
                                     <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
@@ -351,7 +351,7 @@ export function CreateBookingDialog({
                             type="number"
                             value={addForm.revenue || ''}
                             onChange={(e) => setAddForm({ ...addForm, revenue: parseFloat(e.target.value) || 0 })}
-                            className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
+                            className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all"
                         />
                     </div>
 
@@ -363,7 +363,7 @@ export function CreateBookingDialog({
                                 type="date"
                                 value={addForm.date}
                                 onChange={(e) => setAddForm({ ...addForm, date: e.target.value })}
-                                className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
+                                className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all"
                             />
                         </div>
                         <div>
@@ -372,7 +372,7 @@ export function CreateBookingDialog({
                                 type="time"
                                 value={addForm.time}
                                 onChange={(e) => setAddForm({ ...addForm, time: e.target.value })}
-                                className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
+                                className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all"
                             />
                         </div>
                     </div>
@@ -386,7 +386,7 @@ export function CreateBookingDialog({
                         <select
                             value={addForm.master}
                             onChange={(e) => setAddForm({ ...addForm, master: e.target.value })}
-                            className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all bg-white"
+                            className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all bg-white"
                             disabled={loadingMasters}
                         >
                             <option value="">{t('common:any_master')}</option>
@@ -415,7 +415,7 @@ export function CreateBookingDialog({
                         <select
                             value={addForm.status}
                             onChange={(e) => setAddForm({ ...addForm, status: e.target.value })}
-                            className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all bg-white"
+                            className="w-full h-10 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all bg-white"
                         >
                             <option value="confirmed">{t('bookings:confirmed')}</option>
                             <option value="pending">{t('bookings:pending')}</option>
@@ -437,7 +437,7 @@ export function CreateBookingDialog({
                     <button
                         onClick={handleSubmit}
                         disabled={submitting}
-                        className="flex-1 h-11 rounded-lg bg-pink-600 font-medium text-white hover:bg-pink-700 shadow-lg shadow-pink-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-1 h-11 rounded-lg settings-bg-primary font-medium text-white hover:settings-bg-primary shadow-lg shadow-pink-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {submitting ? t('bookings:creating') : t('bookings:create_booking')}
                     </button>

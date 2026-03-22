@@ -43,6 +43,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePermissions } from '../../utils/permissions';
 import { InstagramIcon, TelegramIcon } from '../../components/icons/SocialIcons';
 import { ManageCurrenciesDialog } from '../../components/settings/ManageCurrenciesDialog';
+import { useTheme } from '../../contexts/ThemeContext';
+import { cn } from '../../lib/utils';
 import './Settings.css';
 
 function normalizeTimeValue(rawTime: string): string {
@@ -218,6 +220,7 @@ function resolveModuleLabel(t: (key: string, options?: any) => string, moduleKey
 export default function AdminSettings() {
   const { t, i18n } = useTranslation(['crm/settings', 'common', 'layouts/mainlayout']);
   const { user: currentUser } = useAuth();
+  const { colorTheme, setColorTheme } = useTheme();
 
   // Используем централизованную систему прав
   const userPermissions = usePermissions(currentUser?.role || 'employee', currentUser?.secondary_role);
@@ -711,7 +714,7 @@ export default function AdminSettings() {
 
     // Validation
     if (!generalSettings.salonName.trim()) {
-      toast.error(t('settings:error_business_name_required', { defaultValue: 'Укажите название компании' }));
+      toast.error(t('settings:error_business_name_required'));
       return;
     }
     if (!generalSettings.phone.trim()) {
@@ -1643,26 +1646,58 @@ export default function AdminSettings() {
         <TabsContent value="general">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <h2 className="text-2xl text-gray-900 mb-6">{t('settings:general_settings')}</h2>
-            <div className="mb-8 p-6 settings-card-gradient border-2 rounded-xl">
+            <div className="mb-8 p-6 border-2 rounded-xl">
               <div className="flex items-center gap-3 mb-4">
                 <Bot className="w-6 h-6 settings-bot-icon" />
                 <h3 className="text-lg font-bold text-gray-900">{t('settings:bot_management')}</h3>
               </div>
-
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 mb-1">
-                    {t('settings:bot_enabled_for_all_clients')}
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    {t('settings:disable_to_stop_auto_replies')}
-                  </p>
+              <div className="flex items-center justify-between p-4 bg-white/50 rounded-lg">
+                <div className="space-y-1">
+                  <p className="font-semibold text-gray-900">{t('settings:ai_bot_status_active')}</p>
+                  <p className="text-sm text-gray-500">{t('settings:ai_bot_description')}</p>
                 </div>
-                <Switch
-                  checked={botGloballyEnabled}
+                <Switch 
+                  checked={botGloballyEnabled} 
                   onCheckedChange={handleUpdateBotEnabled}
-                  disabled={!userPermissions.canViewBotSettings && !userPermissions.canEditSettings}
                 />
+              </div>
+            </div>
+
+            {/* Theme Selection */}
+            <div className="border-t border-gray-100 pt-8 mt-8">
+              <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <Globe className="w-5 h-5 settings-text-primary" />
+                {t('settings:appearance')}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <Label className="text-base font-semibold text-gray-900">{t('settings:color_theme')}</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {[
+                      { id: 'pink', label: t('settings:pink_theme'), preview: 'from-blue-400 via-pink-400 to-red-400', active: 'brand-border settings-bg-primary-light text-pink-700', hover: 'hover:brand-border' },
+                      { id: 'blue', label: t('settings:blue_theme'), preview: 'from-blue-700 via-blue-500 to-blue-300', active: 'border-blue-500 bg-blue-50 text-blue-700', hover: 'hover:border-blue-200' },
+                      { id: 'purple', label: t('settings:purple_theme'), preview: 'from-purple-700 via-purple-500 to-fuchsia-400', active: 'border-purple-500 bg-purple-50 text-purple-700', hover: 'hover:border-purple-200' },
+                      { id: 'emerald', label: t('settings:emerald_theme'), preview: 'from-emerald-700 via-emerald-500 to-teal-400', active: 'border-emerald-500 bg-emerald-50 text-emerald-700', hover: 'hover:border-emerald-200' },
+                      { id: 'orange', label: t('settings:orange_theme'), preview: 'from-orange-700 via-orange-500 to-amber-400', active: 'border-orange-500 bg-orange-50 text-orange-700', hover: 'hover:border-orange-200' },
+                      { id: 'amber', label: t('settings:amber_theme'), preview: 'from-amber-700 via-amber-500 to-yellow-400', active: 'border-amber-500 bg-amber-50 text-amber-700', hover: 'hover:border-amber-200' }
+                    ].map((tTheme) => (
+                      <button
+                        key={tTheme.id}
+                        type="button"
+                        onClick={() => setColorTheme(tTheme.id as any)}
+                        className={cn(
+                          "flex-1 p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2",
+                          colorTheme === tTheme.id 
+                            ? `${tTheme.active} shadow-md` 
+                            : `border-gray-200 ${tTheme.hover}`
+                        )}
+                      >
+                        <div className={`w-full h-8 rounded-md bg-gradient-to-r ${tTheme.preview} border border-white/20`} />
+                        <span className="font-medium text-sm">{tTheme.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1674,7 +1709,7 @@ export default function AdminSettings() {
               <form onSubmit={handleSaveGeneral} className="settings-general-form space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <Label htmlFor="salonName" className="settings-label-spacing">{t('settings:business_name', { defaultValue: 'Название компании' })}*</Label>
+                    <Label htmlFor="salonName" className="settings-label-spacing">{t('settings:business_name')}*</Label>
                     <Input
                       id="salonName"
                       value={generalSettings.salonName}
@@ -2364,7 +2399,7 @@ export default function AdminSettings() {
                     )}
 
                     <div className="mb-4">
-                      <div className="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mb-4">
+                      <div className="w-12 h-12 settings-bg-primary-light rounded-lg flex items-center justify-center mb-4">
                         <Shield className="w-6 h-6 settings-text-pink" />
                       </div>
                       <h3 className="text-lg font-bold text-gray-900 mb-2">{role.name}</h3>
@@ -2665,7 +2700,7 @@ export default function AdminSettings() {
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
-                        <Label>{t('settings:company_closed', { defaultValue: 'Компания закрыта' })}</Label>
+                        <Label>{t('settings:company_closed')}</Label>
                         <p className="text-xs text-gray-500">{t('settings:block_all_bookings')}</p>
                       </div>
                       <Switch

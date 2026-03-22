@@ -281,7 +281,7 @@ export function CreateTaskDialog({ open, onOpenChange, onSuccess, stages, defaul
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                             {t('cancel')}
                         </Button>
-                        <Button type="submit" disabled={loading} className="bg-pink-600 hover:bg-pink-700 text-white">
+                        <Button type="submit" disabled={loading} className="settings-bg-primary settings-bg-primary-hover text-white">
                             {loading ? (taskToEdit ? t('saving') : t('creating')) : (taskToEdit ? t('save') : t('create'))}
                         </Button>
                     </DialogFooter>

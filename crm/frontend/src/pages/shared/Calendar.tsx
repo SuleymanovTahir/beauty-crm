@@ -687,7 +687,7 @@ export default function Calendar({
               {canEdit && (
                 <Button
                   onClick={() => openCreateModal()}
-                  className="bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700 text-white rounded-xl h-9 md:h-10 px-3 md:px-4 text-sm shadow-lg hover:shadow-xl transition-all whitespace-nowrap ml-auto sm:ml-0"
+                  className="settings-button-gradient text-white rounded-xl h-9 md:h-10 px-3 md:px-4 text-sm shadow-lg hover:shadow-xl transition-all whitespace-nowrap ml-auto sm:ml-0"
                 >
                   <Plus className="w-4 h-4 md:mr-2" />
                   <span className="hidden md:inline">{t('calendar:add')}</span>
@@ -860,7 +860,7 @@ export default function Calendar({
                           <div
                             key={idx}
                             onClick={() => setSelectedBooking(booking)}
-                            className="bg-gradient-to-r from-pink-500 to-blue-600 rounded-lg p-1.5 md:p-2 text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
+                            className="settings-button-gradient rounded-lg p-1.5 md:p-2 text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
                           >
                             <p className="font-semibold text-xs md:text-sm truncate">
                               {booking.name}

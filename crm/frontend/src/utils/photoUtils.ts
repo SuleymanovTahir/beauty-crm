@@ -11,6 +11,7 @@ export const getPhotoUrl = (path: string | null | undefined) => {
         normalizedPath.startsWith('/static/images/') ||
         normalizedPath.startsWith('/static/avatars/') ||
         normalizedPath.startsWith('/static/uploads/images/') ||
+        normalizedPath.startsWith('/logo/') ||
         normalizedPath.startsWith('/logo.') ||
         normalizedPath.startsWith('/favicon') ||
         normalizedPath.startsWith('/apple-touch-icon')

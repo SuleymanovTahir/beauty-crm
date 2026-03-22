@@ -284,7 +284,7 @@ export default function UniversalDashboard() {
     return (
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
-          <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+          <Loader className="w-8 h-8 settings-text-primary animate-spin" />
           <p className="text-gray-600">{t('common:loading')}...</p>
         </div>
       </div>
@@ -357,7 +357,7 @@ export default function UniversalDashboard() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-          <div className="bg-gradient-to-br from-pink-500 to-blue-600 p-6 rounded-xl shadow-lg text-white">
+          <div className="settings-button-gradient p-6 rounded-xl shadow-lg text-white">
             <p className="text-sm opacity-80 mb-1">{isSales ? t('crm/dashboard:deal_revenue') : t('crm/dashboard:your_revenue')}</p>
             <h3 className="text-3xl font-bold">{stats?.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
             {stats?.growth?.revenue && (
@@ -384,7 +384,7 @@ export default function UniversalDashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl text-gray-900 font-bold flex items-center gap-2">
-              <Clock className="w-6 h-6 text-pink-600" />
+              <Clock className="w-6 h-6 settings-text-primary" />
               {t('employee/Dashboard:schedule_for_today')}
             </h2>
             <span className="text-sm text-gray-500">
@@ -409,7 +409,7 @@ export default function UniversalDashboard() {
                 return (
                   <div
                     key={booking.id}
-                    className={`border-l-4 rounded-lg p-4 transition-all cursor-pointer ${isNow ? 'border-pink-500 bg-pink-50' :
+                    className={`border-l-4 rounded-lg p-4 transition-all cursor-pointer ${isNow ? 'brand-border settings-bg-primary-light' :
                       isPast ? 'border-gray-300 bg-gray-50 opacity-60' :
                         'border-blue-300 bg-white hover:bg-blue-50'
                       }`}
@@ -423,11 +423,11 @@ export default function UniversalDashboard() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4 flex-1">
                         <div className="text-center min-w-[60px]">
-                          <div className={`text-2xl font-bold ${isNow ? 'text-pink-600' : 'text-gray-900'}`}>
+                          <div className={`text-2xl font-bold ${isNow ? 'settings-text-primary' : 'text-gray-900'}`}>
                             {bookingTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </div>
                           {isNow && (
-                            <span className="text-xs text-pink-600 font-semibold animate-pulse">{t('employee/Dashboard:now', 'СЕЙЧАС')}</span>
+                            <span className="text-xs settings-text-primary font-semibold animate-pulse">{t('employee/Dashboard:now', 'СЕЙЧАС')}</span>
                           )}
                         </div>
 
@@ -561,7 +561,7 @@ export default function UniversalDashboard() {
 
       {/* Revenue & Conv */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-        <div className="bg-gradient-to-br from-pink-500 to-blue-600 p-6 rounded-xl shadow-lg text-white">
+        <div className="settings-button-gradient p-6 rounded-xl shadow-lg text-white">
           <p className="text-sm opacity-80 mb-1">{t('crm/dashboard:revenue')}</p>
           <h3 className="text-3xl font-bold mb-1">{stats.total_revenue?.toLocaleString()} {salonSettings?.currency}</h3>
           {stats.growth?.revenue && (
@@ -591,7 +591,7 @@ export default function UniversalDashboard() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold">{t('crm/dashboard:latest_bookings')}</h2>
             {canOpenBookingsRoute && (
-              <Link to={bookingsPath} className="text-pink-600 text-sm font-medium hover:underline">{t('crm/dashboard:all_bookings')}</Link>
+              <Link to={bookingsPath} className="settings-text-primary text-sm font-medium hover:underline">{t('crm/dashboard:all_bookings')}</Link>
             )}
           </div>
           <div className="space-y-4">
@@ -640,7 +640,7 @@ export default function UniversalDashboard() {
             <h2 className="text-lg font-bold mb-4">{t('crm/dashboard:quick_actions')}</h2>
             <div className="space-y-2">
               {canOpenBookingsRoute && (
-                <Button className="w-full justify-start gap-2 bg-pink-600 hover:bg-pink-700" onClick={() => navigate(bookingsPath)}>
+                <Button className="w-full justify-start gap-2 settings-bg-primary settings-bg-primary-hover" onClick={() => navigate(bookingsPath)}>
                   <Calendar className="w-4 h-4" /> {t('crm/dashboard:new_booking')}
                 </Button>
               )}
@@ -658,7 +658,7 @@ export default function UniversalDashboard() {
           </div>
 
           {botAnalytics && (
-            <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-xl shadow-lg p-6 text-white">
+            <div className="settings-button-gradient rounded-xl shadow-lg p-6 text-white">
               <h3 className="font-bold flex items-center gap-2 mb-4">
                 <Bot className="w-5 h-5 text-white" />
                 {t('crm/dashboard:bot_analytics')}

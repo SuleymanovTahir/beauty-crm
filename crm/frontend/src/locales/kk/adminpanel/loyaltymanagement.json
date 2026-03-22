@@ -1,0 +1,107 @@
+{
+  "actions": {
+    "activate": "Қосу",
+    "deactivate": "Өшіру"
+  },
+  "adjust_points": "",
+  "buttons": {
+    "add_rule": "Ереже қосу",
+    "adjust_points": "",
+    "cancel": "",
+    "save": "Сақтау",
+    "save_changes": ""
+  },
+  "categories": {
+    "category": "Санат",
+    "category_placeholder": "Мыс. Тырнақтар",
+    "description": "Қызметтердің әрбір санаты үшін ұпай коэффициентін теңшеу",
+    "hint": "Коэффицент тек таңдалған санатқа қолданылады. Өшірілген ережелер үшін әдеттегі x1 есептеуі пайдаланылады.",
+    "multiplier": "Мультипликатор",
+    "title": "Санат бойынша есептеу ережелері"
+  },
+  "config": {
+    "cashback_hint": "Мысалы: 10% кешбэк (әрбір жұмсалған 100 үшін 10 ұпай)",
+    "cashback_rate": "Кэшбэк (%)",
+    "description": "Жаһандық адалдық параметрлерін басқару",
+    "expiration_days": "Ұпайлардың жарамдылық мерзімі (күндер)",
+    "expiration_hint": "Жинақталған ұпайлар көрсетілген күндер санынан кейін аяқталады.",
+    "points_per_unit": "1 бірлік үшін ұпайлар. валюталар",
+    "title": "Параметрлер"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "",
+      "client_email_placeholder": "",
+      "description": "",
+      "points": "",
+      "points_placeholder": "",
+      "reason": "",
+      "reason_placeholder": "",
+      "title": ""
+    },
+    "edit_tier": {
+      "description": "",
+      "discount_percent": "",
+      "min_points": "",
+      "status_hint": "Белсенді емес деңгей артықшылықтарды автоматты түрде есептеуге қатыспайды",
+      "status_label": "Деңгей күйі",
+      "tier_name": "",
+      "title": ""
+    },
+    "rule": {
+      "description": "Қызмет санаты үшін ұпай көбейткішін орнату",
+      "status_hint": "Ереже өшірілсе, санаттар негізгі мөлшерлеме бойынша беріледі",
+      "status_label": "Ереже күйі",
+      "title": "Ереже санаттарын өңдеу"
+    }
+  },
+  "stats": {
+    "active_members": "",
+    "points_redeemed": "",
+    "total_points_issued": ""
+  },
+  "statuses": {
+    "inactive": "Белсенді емес"
+  },
+  "subtitle": "",
+  "tiers": {
+    "description": "",
+    "discount": "",
+    "from_points": "",
+    "starting_level": "",
+    "title": ""
+  },
+  "title": "",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "",
+    "failed_delete": "",
+    "failed_load": "",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_other": "",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_other": "",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": ""
+  },
+  "transactions": {
+    "description": "",
+    "search_placeholder": "",
+    "table": {
+      "client": "",
+      "date": "",
+      "points": "",
+      "reason": "",
+      "type": ""
+    },
+    "title": ""
+  }
+}

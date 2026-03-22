@@ -15,7 +15,7 @@
 }
 
 .analytics-title-icon {
-  color: #ec4899;
+  color: var(--brand-primary);
 }
 
 .analytics-stat-card {
@@ -58,7 +58,7 @@
 .analytics-filter-section-icon {
   width: 1.125rem;
   height: 1.125rem;
-  color: #2563eb;
+  color: var(--brand-primary);
   flex-shrink: 0;
   margin-top: 0.125rem;
 }
@@ -123,8 +123,8 @@
 
 /* Chart Colors */
 :root {
-  --chart-pink: #ec4899;
-  --chart-purple: #8b5cf6;
+  --chart-pink: var(--brand-primary);
+  --chart-purple: var(--brand-primary);
   --chart-cyan: #06b6d4;
   --chart-green: #10b981;
   --chart-amber: #f59e0b;
@@ -152,7 +152,7 @@
 }
 
 .funnel-stage-visitors {
-  background-color: #3b82f6;
+  background-color: var(--brand-primary);
 }
 .funnel-stage-engaged {
   background-color: #06b6d4;
@@ -164,7 +164,7 @@
   background-color: #f59e0b;
 }
 .funnel-stage-completed {
-  background-color: #ec4899;
+  background-color: var(--brand-primary);
 }
 
 /* Modern Funnel Styles */
@@ -222,7 +222,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .analytics-funnel-bar-shape.funnel-stage-completed {
-  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary) 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 

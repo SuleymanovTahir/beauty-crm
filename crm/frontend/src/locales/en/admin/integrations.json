@@ -1,0 +1,108 @@
+{
+  "errors": {
+    "createLinkFailed": "Error creating link",
+    "loadFailed": "",
+    "loadServicesFailed": "Error loading services",
+    "saveFailed": "",
+    "syncFailed": ""
+  },
+  "marketplace": {
+    "active": "Active",
+    "activeSources": "Active sources",
+    "apiKey": "API key",
+    "apiSecret": "API Secret",
+    "bookings": "Bookings",
+    "configSuccess": "Settings saved",
+    "configure": "Configure",
+    "configureProvider": "Setting",
+    "daysAgo_few": "{{count}} days ago",
+    "daysAgo_many": "{{count}} days ago",
+    "daysAgo_one": "{{count}} days ago",
+    "daysAgo_other": "{{count}} days ago",
+    "enableProvider": "Enable integration",
+    "hoursAgo_few": "{{count}} h ago",
+    "hoursAgo_many": "{{count}} h ago",
+    "hoursAgo_one": "{{count}} h ago",
+    "hoursAgo_other": "{{count}} h ago",
+    "inactive": "Not configured",
+    "justNow": "Just now",
+    "lastSync": "Synchronization",
+    "mappingHint": "Specify the service ID from the marketplace for synchronization.",
+    "minutesAgo_few": "{{count}} min ago",
+    "minutesAgo_many": "{{count}} min ago",
+    "minutesAgo_one": "{{count}} min ago",
+    "minutesAgo_other": "{{count}} min ago",
+    "neverSynced": "Never",
+    "providers": {
+      "2gis": {
+        "description": "Online recordings through 2GIS",
+        "name": "2GIS"
+      },
+      "amazon": {
+        "description": "Amazon Marketplace",
+        "name": "Amazon"
+      },
+      "booksy": {
+        "description": "Online booking platform",
+        "name": "Booksy"
+      },
+      "google_business": {
+        "description": "Recordings and reviews on Google",
+        "name": "Google Business"
+      },
+      "ozon": {
+        "description": "Ozon Marketplace",
+        "name": "Ozon"
+      },
+      "wildberries": {
+        "description": "WB Marketplace",
+        "name": "Wildberry"
+      },
+      "yandex_maps": {
+        "description": "Bookings and reviews from Yandex.Maps",
+        "name": "Yandex.Maps"
+      },
+      "yclients": {
+        "description": "Online booking platform",
+        "name": "YCLIENTS"
+      }
+    },
+    "reviews": "Reviews",
+    "serviceMapping": "Service mapping",
+    "settings": "Settings",
+    "status": "Status",
+    "subtitle": "Integration with online booking services and reviews",
+    "sync": "Synchronize",
+    "syncStarted": "Synchronization started",
+    "syncing": "Synchronizing...",
+    "title": "Booking platforms",
+    "totalBookings": "Total bookings",
+    "urlCopied": "URL copied",
+    "viewBookings": "Go to bookings",
+    "webhookHint": "Specify this URL in the webhook settings on the platform",
+    "webhookUrl": "URL for webhook"
+  },
+  "payment": {
+    "active": "Active",
+    "amount": "Amount",
+    "apiKey": "API key",
+    "configSuccess": "Settings saved",
+    "configure": "Configure",
+    "configureProvider": "Settings",
+    "createLink": "Create link",
+    "createLinkTitle": "Create payment link",
+    "currency": "Currency",
+    "descriptionPlaceholder": "What is the payment for...",
+    "enableProvider": "Enable provider",
+    "inactive": "Not configured",
+    "linkCreated": "Link successfully created",
+    "secretKey": "Secret key",
+    "setup": "Connect",
+    "status": "Status",
+    "subtitle": "Setting up integrations with payment systems",
+    "title": "Payment systems",
+    "viewTransactions": "Transaction history",
+    "webhookSecret": "Webhook Secret",
+    "webhookUrl": "URL for webhook"
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "actions": {
+    "activate": "सक्षम करें",
+    "deactivate": "अक्षम करें"
+  },
+  "adjust_points": "",
+  "buttons": {
+    "add_rule": "नियम जोड़ें",
+    "adjust_points": "",
+    "cancel": "",
+    "save": "सहेजें",
+    "save_changes": ""
+  },
+  "categories": {
+    "category": "श्रेणी",
+    "category_placeholder": "उदा. नेल्स",
+    "description": "प्रत्येक श्रेणी की सेवाओं के लिए बिंदु गुणांक को अनुकूलित करें",
+    "hint": "गुणांक केवल चयनित श्रेणी पर लागू होता है। अक्षम नियमों के लिए, X1 के सामान्य संचय का उपयोग किया जाता है।",
+    "multiplier": "गुणक",
+    "title": "श्रेणी के अनुसार संचय नियम"
+  },
+  "config": {
+    "cashback_hint": "उदाहरण: 10% कैशबैक (प्रत्येक 100 खर्च के लिए 10 अंक)",
+    "cashback_rate": "कैशबैक (%)",
+    "description": "वैश्विक वफादारी सेटिंग्स का प्रबंधन",
+    "expiration_days": "वैधता अंकों की अवधि (दिन)",
+    "expiration_hint": "उपार्जित अंक निर्दिष्ट दिनों के बाद समाप्त हो जाएंगे।",
+    "points_per_unit": "1 इकाई के लिए अंक। मुद्राएं",
+    "title": "सेटिंग्स"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "",
+      "client_email_placeholder": "",
+      "description": "",
+      "points": "",
+      "points_placeholder": "",
+      "reason": "",
+      "reason_placeholder": "",
+      "title": ""
+    },
+    "edit_tier": {
+      "description": "",
+      "discount_percent": "",
+      "min_points": "",
+      "status_hint": "एक निष्क्रिय स्तर विशेषाधिकारों की स्वचालित गणना में भाग नहीं लेता है",
+      "status_label": "स्तर की स्थिति",
+      "tier_name": "",
+      "title": ""
+    },
+    "rule": {
+      "description": "सेवा श्रेणी के लिए बिंदु गुणक सेट करें",
+      "status_hint": "यदि नियम अक्षम है, तो श्रेणियां आधार दर पर प्रदान की जाती हैं",
+      "status_label": "नियम स्थिति",
+      "title": "श्रेणी नियम संपादित करें"
+    }
+  },
+  "stats": {
+    "active_members": "",
+    "points_redeemed": "",
+    "total_points_issued": ""
+  },
+  "statuses": {
+    "inactive": "निष्क्रिय"
+  },
+  "subtitle": "",
+  "tiers": {
+    "description": "",
+    "discount": "",
+    "from_points": "",
+    "starting_level": "",
+    "title": ""
+  },
+  "title": "",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "",
+    "failed_delete": "",
+    "failed_load": "",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_other": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_other": "",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": ""
+  },
+  "transactions": {
+    "description": "",
+    "search_placeholder": "",
+    "table": {
+      "client": "",
+      "date": "",
+      "points": "",
+      "reason": "",
+      "type": ""
+    },
+    "title": ""
+  }
+}

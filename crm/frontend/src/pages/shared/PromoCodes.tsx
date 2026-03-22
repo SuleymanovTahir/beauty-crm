@@ -447,7 +447,7 @@ export default function PromoCodes({
                             {embedded ? (
                                 <Ticket size={32} className="text-blue-600" />
                             ) : (
-                                <div className="p-2 bg-pink-100 rounded-xl text-pink-600">
+                                <div className="p-2 settings-bg-primary-light rounded-xl settings-text-primary">
                                     <Ticket size={28} />
                                 </div>
                             )}
@@ -462,7 +462,7 @@ export default function PromoCodes({
                         onClick={handleOpenCreateDialog}
                         className={embedded
                             ? 'w-full sm:w-auto lg:self-start shrink-0 bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11 px-6 font-semibold shadow-sm flex items-center gap-2 transition-all'
-                            : 'bg-pink-600 hover:bg-pink-700 text-white shadow-lg shadow-pink-100 px-6 py-6 rounded-2xl flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-95'}
+                            : 'settings-bg-primary settings-bg-primary-hover text-white shadow-lg shadow-pink-100 px-6 py-6 rounded-2xl flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-95'}
                     >
                         <Plus size={embedded ? 16 : 20} />
                         {t('create_btn', 'Создать промокод')}
@@ -492,7 +492,7 @@ export default function PromoCodes({
                 </div>
 
                 <div className={embedded ? 'crm-calendar-panel bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4' : 'crm-calendar-panel bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4'}>
-                    <div className="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-2xl settings-bg-primary-light settings-text-primary flex items-center justify-center">
                         <Gift size={24} />
                     </div>
                     <div>
@@ -509,7 +509,7 @@ export default function PromoCodes({
                         placeholder={t('search_placeholder', 'Поиск по коду...')}
                         className={embedded
                             ? 'pl-12 h-10 bg-white border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm'
-                            : 'pl-12 h-14 bg-white border-gray-100 rounded-2xl focus:ring-pink-500 focus:border-pink-500 shadow-sm'}
+                            : 'pl-12 h-14 bg-white border-gray-100 rounded-2xl focus:ring-pink-500 focus:brand-border shadow-sm'}
                         value={searchQuery}
                         onChange={(event) => setSearchQuery(event.target.value)}
                     />
@@ -562,7 +562,7 @@ export default function PromoCodes({
 
             {loading ? (
                 <div className={embedded ? 'crm-calendar-panel flex flex-col items-center justify-center py-16 bg-white rounded-xl border border-gray-200' : 'crm-calendar-panel flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-gray-100'}>
-                    <Loader className="w-10 h-10 text-pink-600 animate-spin mb-4" />
+                    <Loader className="w-10 h-10 settings-text-primary animate-spin mb-4" />
                     <p className="text-gray-500 font-medium">{t('loading', 'Загружаем промокоды...')}</p>
                 </div>
             ) : filteredCodes.length === 0 ? (
@@ -603,7 +603,7 @@ export default function PromoCodes({
                             </div>
 
                             <div className="flex items-start gap-4 sm:gap-6">
-                                <div className={`p-4 sm:p-5 rounded-3xl shrink-0 ${promo.discount_type === 'percent' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'}`}>
+                                <div className={`p-4 sm:p-5 rounded-3xl shrink-0 ${promo.discount_type === 'percent' ? 'settings-bg-primary-light settings-text-primary' : 'bg-blue-50 text-blue-600'}`}>
                                     {promo.discount_type === 'percent' ? <Percent size={32} /> : <Gift size={32} />}
                                 </div>
 
@@ -854,7 +854,7 @@ export default function PromoCodes({
 
                     <DialogFooter className="mt-10 sm:justify-start gap-3">
                         <Button
-                            className="flex-1 h-14 bg-pink-600 hover:bg-pink-700 text-white rounded-2xl font-bold shadow-lg shadow-pink-100 transition-all"
+                            className="flex-1 h-14 settings-bg-primary settings-bg-primary-hover text-white rounded-2xl font-bold shadow-lg shadow-pink-100 transition-all"
                             onClick={handleCreate}
                         >
                             {editingPromo === null

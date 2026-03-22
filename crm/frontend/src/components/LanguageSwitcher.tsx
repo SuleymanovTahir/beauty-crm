@@ -118,7 +118,7 @@ export default function LanguageSwitcher({ variant = 'default' }: LanguageSwitch
           onClick={() => handleLanguageChange(lang.code)}
           type="button"
           className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center justify-between gap-3 transition-all ${i18n.language === lang.code
-            ? 'bg-blue-50 text-blue-700 font-medium'
+            ? 'settings-bg-primary-light settings-text-primary font-medium'
             : ''
             }`}
         >
@@ -127,7 +127,7 @@ export default function LanguageSwitcher({ variant = 'default' }: LanguageSwitch
             <span className="text-sm truncate">{lang.name}</span>
           </div>
           {i18n.language === lang.code && (
-            <Check className="w-4 h-4 text-blue-600 flex-shrink-0" />
+            <Check className="w-4 h-4 settings-text-primary flex-shrink-0" />
           )}
         </button>
       ))}
@@ -146,9 +146,9 @@ export default function LanguageSwitcher({ variant = 'default' }: LanguageSwitch
           : "bg-transparent border-none shadow-none hover:bg-black/5 rounded-xl w-full justify-center py-2"
           }`}
       >
-        <Globe className={`${variant === 'default' ? "w-4 h-4 text-gray-600" : "w-[18px] h-[18px] text-gray-400"}`} />
+        <Globe className={`${variant === 'default' ? "w-4 h-4 settings-text-primary" : "w-[18px] h-[18px] settings-text-primary"}`} />
         <span className={variant === 'default' ? "text-lg" : "text-lg leading-none"}>{currentLang.flag}</span>
-        <ChevronUp className={`w-3.5 h-3.5 text-gray-400 transition-transform ${open ? '' : 'rotate-180'}`} />
+        <ChevronUp className={`w-3.5 h-3.5 settings-text-primary transition-transform ${open ? '' : 'rotate-180'}`} />
       </button>
 
       {dropdown}

@@ -101,7 +101,7 @@ export default function ForgotPassword() {
 
             <div className="space-y-3">
               <Button
-                className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
+                className="w-full settings-button-gradient"
                 onClick={() => navigate(loginPath)}
               >
                 {t('back_to_login')}
@@ -133,7 +133,7 @@ export default function ForgotPassword() {
 
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 settings-button-gradient rounded-full flex items-center justify-center mx-auto mb-6">
             <Mail className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl text-gray-900 mb-2">{t('title')}</h1>
@@ -171,7 +171,7 @@ export default function ForgotPassword() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
+              className="w-full settings-button-gradient"
               size="lg"
             >
               {loading ? (

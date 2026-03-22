@@ -1,0 +1,79 @@
+{
+  "actions": "",
+  "addInvoice": "",
+  "addPayment": "",
+  "allInvoices": "",
+  "allStatuses": "",
+  "board": "",
+  "client": "",
+  "delete": "",
+  "dueDate": "",
+  "errors": {
+    "createError": "",
+    "deleteError": "",
+    "paymentError": "",
+    "sendError": "",
+    "updateError": ""
+  },
+  "form": {
+    "addItem": "",
+    "cancel": "",
+    "dueDate": "",
+    "itemName": "",
+    "itemPrice": "",
+    "itemQuantity": "",
+    "items": "",
+    "notes": "",
+    "save": "",
+    "selectClient": ""
+  },
+  "invoiceNumber": "",
+  "manage_stages": "",
+  "messages": {
+    "confirmDelete": "",
+    "invoiceCreated": "",
+    "invoiceDeleted": "",
+    "invoiceSent": "",
+    "invoiceUpdated": "",
+    "paymentAdded": ""
+  },
+  "noInvoices": "",
+  "paidAmount": "",
+  "payment": {
+    "add": "",
+    "amount": "",
+    "method": "",
+    "methods": {
+      "card": "",
+      "cash": "",
+      "online": "",
+      "transfer": ""
+    },
+    "notes": "",
+    "title": ""
+  },
+  "search_placeholder": "",
+  "sendButton": "",
+  "sendDialog": {
+    "email": "",
+    "method": "",
+    "recipient": "",
+    "sendButton": "",
+    "telegram": "",
+    "title": "",
+    "whatsapp": ""
+  },
+  "status": "",
+  "statuses": {
+    "cancelled": "Cancelado",
+    "draft": "Saque",
+    "overdue": "Atrasado",
+    "paid": "Pago",
+    "partial": "Parcialmente",
+    "partially_paid": "Parcialmente pago",
+    "sent": "Enviado"
+  },
+  "subtitle": "",
+  "title": "",
+  "totalAmount": ""
+}

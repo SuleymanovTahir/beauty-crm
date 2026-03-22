@@ -98,7 +98,7 @@ export default function Messengers() {
                 <div>
                     <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-3">
                         <MessageCircle className="w-6 h-6 md:w-8 md:h-8 settings-icon-primary" />
-                        {t('settings:messengers_settings')}
+                        {t('settings:messengers')}
                     </h1>
                     <p className="text-gray-600">
                         {t('settings:manage_messengers', 'Настройка интеграций с мессенджерами для автоматизации и уведомлений')}
@@ -195,7 +195,7 @@ export default function Messengers() {
                                                             ? '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz'
                                                             : t('settings:placeholder_enter_api_token', 'Введите API токен...')
                                                     }
-                                                    className="bg-white/50 border-gray-200 focus:border-pink-300 transition-all"
+                                                    className="bg-white/50 border-gray-200 focus:brand-border transition-all"
                                                 />
                                             </div>
 
@@ -210,7 +210,7 @@ export default function Messengers() {
                                                         setMessengerForm({ ...messengerForm, webhook_url: e.target.value })
                                                     }
                                                     placeholder="https://your-domain.com/webhook"
-                                                    className="bg-white/50 border-gray-200 focus:border-pink-300 transition-all"
+                                                    className="bg-white/50 border-gray-200 focus:brand-border transition-all"
                                                 />
                                             </div>
 
@@ -254,7 +254,7 @@ export default function Messengers() {
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={() => handleStartEditMessenger(messenger.messenger_type)}
-                                                className="text-pink-600 hover:text-pink-700 hover:bg-pink-50 font-semibold"
+                                                className="settings-text-primary hover:text-pink-700 hover:settings-bg-primary-light font-semibold"
                                             >
                                                 <Edit className="w-4 h-4 mr-2" />
                                                 {messenger.has_token ? t('settings:change_settings', 'Настроить') : t('settings:configure', 'Настроить')}

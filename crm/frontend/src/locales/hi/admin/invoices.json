@@ -1,0 +1,79 @@
+{
+  "actions": "",
+  "addInvoice": "",
+  "addPayment": "",
+  "allInvoices": "",
+  "allStatuses": "",
+  "board": "",
+  "client": "",
+  "delete": "",
+  "dueDate": "",
+  "errors": {
+    "createError": "",
+    "deleteError": "",
+    "paymentError": "",
+    "sendError": "",
+    "updateError": ""
+  },
+  "form": {
+    "addItem": "",
+    "cancel": "",
+    "dueDate": "",
+    "itemName": "",
+    "itemPrice": "",
+    "itemQuantity": "",
+    "items": "",
+    "notes": "",
+    "save": "",
+    "selectClient": ""
+  },
+  "invoiceNumber": "",
+  "manage_stages": "",
+  "messages": {
+    "confirmDelete": "",
+    "invoiceCreated": "",
+    "invoiceDeleted": "",
+    "invoiceSent": "",
+    "invoiceUpdated": "",
+    "paymentAdded": ""
+  },
+  "noInvoices": "",
+  "paidAmount": "",
+  "payment": {
+    "add": "",
+    "amount": "",
+    "method": "",
+    "methods": {
+      "card": "",
+      "cash": "",
+      "online": "",
+      "transfer": ""
+    },
+    "notes": "",
+    "title": ""
+  },
+  "search_placeholder": "",
+  "sendButton": "",
+  "sendDialog": {
+    "email": "",
+    "method": "",
+    "recipient": "",
+    "sendButton": "",
+    "telegram": "",
+    "title": "",
+    "whatsapp": ""
+  },
+  "status": "",
+  "statuses": {
+    "cancelled": "रद्द",
+    "draft": "ड्राफ्ट",
+    "overdue": "अतिदेय",
+    "paid": "भुगतान",
+    "partial": "आंशिक रूप से",
+    "partially_paid": "आंशिक रूप से भुगतान किया गया",
+    "sent": "भेजा गया"
+  },
+  "subtitle": "",
+  "title": "",
+  "totalAmount": ""
+}

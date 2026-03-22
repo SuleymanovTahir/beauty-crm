@@ -624,7 +624,7 @@ export default function Clients() {
     return (
       <div className="clients-loader-container p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
-          <Loader className="clients-loader-icon w-8 h-8 text-pink-600 animate-spin" />
+          <Loader className="clients-loader-icon w-8 h-8 settings-text-primary animate-spin" />
           <p className="clients-loader-text text-gray-600">{t('loading_clients')}</p>
         </div>
       </div>
@@ -967,7 +967,7 @@ export default function Clients() {
                     <td className="px-6 py-4 text-center">
                       <div className="flex items-center justify-center gap-3">
                         {client.is_pinned === 1 && (
-                          <Pin className="clients-pin-icon w-4 h-4 text-pink-600 fill-pink-600" />
+                          <Pin className="clients-pin-icon w-4 h-4 settings-text-primary fill-pink-600" />
                         )}
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
@@ -1273,7 +1273,7 @@ export default function Clients() {
             <Button variant="outline" onClick={() => setShowCreateDialog(false)} disabled={creatingClient}>
               {t('cancel')}
             </Button>
-            <Button onClick={handleCreateClient} className="bg-pink-600 hover:bg-pink-700" disabled={creatingClient}>
+            <Button onClick={handleCreateClient} className="settings-bg-primary settings-bg-primary-hover" disabled={creatingClient}>
               {creatingClient ? t('creating') : t('create')}
             </Button>
           </DialogFooter>

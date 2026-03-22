@@ -495,7 +495,7 @@ export default function UniversalTeam() {
     return (
       <div className="p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
-          <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+          <Loader className="w-8 h-8 settings-text-primary animate-spin" />
           <p className="text-gray-600">{t('loading')}</p>
         </div>
       </div>
@@ -526,7 +526,7 @@ export default function UniversalTeam() {
       <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl text-gray-900 mb-2 flex items-center gap-3">
-            <UsersIcon className="w-6 h-6 md:w-8 md:h-8 text-pink-600" />
+            <UsersIcon className="w-6 h-6 md:w-8 md:h-8 settings-text-primary" />
             {t('title')}
           </h1>
           <p className="text-sm md:text-base text-gray-600">{filteredUsers.length} {t('user_count')}</p>
@@ -561,7 +561,7 @@ export default function UniversalTeam() {
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <p className="text-gray-600 text-sm mb-2">{t('stats_service_providers')}</p>
-          <h3 className="text-3xl text-pink-600">{users.filter(u => u.is_service_provider).length}</h3>
+          <h3 className="text-3xl settings-text-primary">{users.filter(u => u.is_service_provider).length}</h3>
         </div>
       </div>
 
@@ -578,7 +578,7 @@ export default function UniversalTeam() {
             />
           </div>
           {canManageStaff && (
-            <Button onClick={() => setShowCreateForm(true)} className="bg-pink-600 hover:bg-pink-700 text-white flex items-center gap-2">
+            <Button onClick={() => setShowCreateForm(true)} className="settings-bg-primary settings-bg-primary-hover text-white flex items-center gap-2">
               <UserPlus className="w-4 h-4" /> Создать сотрудника
             </Button>
           )}
@@ -679,7 +679,7 @@ export default function UniversalTeam() {
                       className="w-10 h-10 rounded-full bg-gray-100 object-cover shadow-sm group-hover:scale-105 transition-transform"
                     />
                     <div className="flex-1 text-left min-w-0">
-                      <p className={`text-sm font-semibold truncate ${id === String(emp.id) ? 'text-pink-600' : 'text-gray-900'}`}>
+                      <p className={`text-sm font-semibold truncate ${id === String(emp.id) ? 'settings-text-primary' : 'text-gray-900'}`}>
                         {emp.full_name}
                       </p>
                       <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold truncate">
@@ -804,7 +804,7 @@ export default function UniversalTeam() {
                 </Button>
                 <Button
                   onClick={handleEditUser}
-                  className="flex-1 bg-pink-600 hover:bg-pink-700 text-white"
+                  className="flex-1 settings-bg-primary settings-bg-primary-hover text-white"
                   disabled={savingEdit}
                 >
                   {savingEdit ? t('edit_saving') : t('edit_save')}
@@ -895,7 +895,7 @@ export default function UniversalTeam() {
           <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 space-y-4" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-pink-50 rounded-lg"><ShieldCheck className="w-5 h-5 text-pink-600" /></div>
+                <div className="p-2 settings-bg-primary-light rounded-lg"><ShieldCheck className="w-5 h-5 settings-text-primary" /></div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">Новый сотрудник</h3>
               </div>
               <Button variant="ghost" size="icon" onClick={() => setShowCreateForm(false)} className="rounded-full"><X className="w-5 h-5 text-gray-400" /></Button>
@@ -940,7 +940,7 @@ export default function UniversalTeam() {
 
             <div className="flex gap-3 justify-end pt-2 border-t border-gray-100">
               <Button variant="outline" onClick={() => setShowCreateForm(false)} disabled={savingCreate}>Отмена</Button>
-              <Button onClick={handleCreateStaff} disabled={savingCreate} className="bg-pink-600 hover:bg-pink-700 text-white">
+              <Button onClick={handleCreateStaff} disabled={savingCreate} className="settings-bg-primary settings-bg-primary-hover text-white">
                 {savingCreate ? 'Создание...' : 'Создать сотрудника'}
               </Button>
             </div>

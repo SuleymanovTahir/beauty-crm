@@ -206,7 +206,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                         className="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg"
                                     />
                                 ) : (
-                                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-pink-500 via-blue-600 to-blue-600 flex items-center justify-center border-4 border-white shadow-lg">
+                                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br settings-bg-primary via-blue-600 to-blue-600 flex items-center justify-center border-4 border-white shadow-lg">
                                         <User className="w-16 h-16 text-white" />
                                     </div>
                                 );
@@ -261,7 +261,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
             {/* Personal Information Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
                 <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-blue-600 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-lg settings-button-gradient flex items-center justify-center">
                         <User className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900">{t('personal_information', 'Personal Information')}</h3>
@@ -397,14 +397,14 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                         </Label>
                         <div className="flex flex-wrap gap-3">
                             {/* Instagram */}
-                            <div className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-50 to-blue-50 rounded-lg border border-pink-200 group">
-                                <Instagram className="w-5 h-5 text-pink-600" />
+                            <div className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-50 to-blue-50 rounded-lg border brand-border group">
+                                <Instagram className="w-5 h-5 settings-text-primary" />
                                 {form.instagram_link ? (
                                     <a
                                         href={`https://instagram.com/${form.instagram_link.replace('@', '')}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-sm font-medium text-gray-700 hover:text-pink-600 transition-colors"
+                                        className="text-sm font-medium text-gray-700 hover:settings-text-primary transition-colors"
                                     >
                                         {form.instagram_link}
                                     </a>
@@ -422,7 +422,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                         const newValue = prompt(t('enter_instagram', 'Enter Instagram username'), form.instagram_link);
                                         if (newValue !== null) setForm({ ...form, instagram_link: newValue });
                                     }}
-                                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-pink-100 rounded"
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:settings-bg-primary-light rounded"
                                 >
                                     <Pencil className="w-3.5 h-3.5 text-pink-500" />
                                 </button>
@@ -565,7 +565,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                                 id="about_me"
                                 value={form.about_me}
                                 onChange={(e) => setForm({ ...form, about_me: e.target.value })}
-                                className="w-full min-h-[120px] px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition-colors resize-none"
+                                className="w-full min-h-[120px] px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:brand-border focus:ring-2 focus:ring-pink-200 transition-colors resize-none"
                                 placeholder={t('about_me_placeholder', 'Tell us about yourself...')}
                             />
                         </div>
@@ -641,7 +641,7 @@ export function EmployeeInformation({ employee, onUpdate }: EmployeeInformationP
                 <Button
                     onClick={handleSave}
                     disabled={saving}
-                    className="bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700 text-white px-8 py-3 text-lg"
+                    className="settings-button-gradient text-white px-8 py-3 text-lg"
                 >
                     {saving ? (
                         <>

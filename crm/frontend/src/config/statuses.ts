@@ -11,7 +11,7 @@ export const DEFAULT_CLIENT_STATUSES: Record<string, StatusConfig> = {
   interested: { label: "status_interested", color: "bg-yellow-100 text-yellow-800" },
   lead: { label: "status_lead", color: "bg-orange-100 text-orange-800" },
   customer: { label: "status_customer", color: "bg-blue-100 text-blue-800" },
-  vip: { label: "status_vip", color: "bg-pink-100 text-pink-800" },
+  vip: { label: "status_vip", color: "settings-bg-primary-light text-pink-800" },
   inactive: { label: "status_inactive", color: "bg-gray-100 text-gray-800" },
   blocked: { label: "status_blocked", color: "bg-red-100 text-red-800" },
 };

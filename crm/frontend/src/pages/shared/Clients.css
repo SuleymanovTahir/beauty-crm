@@ -23,7 +23,7 @@
 .clients-title-icon {
   width: 2rem;
   height: 2rem;
-  color: #db2777;
+  color: var(--brand-primary);
 }
 
 .clients-subtitle {
@@ -71,7 +71,7 @@
   background-color: #eff6ff;
 }
 .text-stat-blue {
-  color: #2563eb;
+  color: var(--brand-primary);
 }
 
 .bg-stat-yellow {
@@ -106,7 +106,7 @@
 }
 
 .clients-search-input:focus {
-  border-color: #ec4899;
+  border-color: var(--brand-primary);
   box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.2);
 }
 
@@ -130,9 +130,9 @@
 }
 
 .clients-filter-button-active {
-  background-color: #fdf2f8;
+  background-color: var(--brand-light);
   border-color: #fbcfe8;
-  color: #db2777;
+  color: var(--brand-primary);
 }
 
 .clients-options-button {
@@ -145,24 +145,24 @@
 .clients-options-button-active {
   background-color: #eff6ff;
   border-color: #bfdbfe;
-  color: #2563eb;
+  color: var(--brand-primary);
 }
 
 .clients-pin-icon {
-  color: #db2777;
-  fill: #db2777;
+  color: var(--brand-primary);
+  fill: var(--brand-primary);
 }
 
 .clients-tr-selected {
-  background-color: #fdf2f8 !important;
+  background-color: var(--brand-light) !important;
 }
 
 .clients-link-blue {
-  color: #2563eb;
+  color: var(--brand-primary);
 }
 
 .clients-link-blue:hover {
-  color: #1d4ed8;
+  color: var(--brand-primary);
   text-decoration: underline;
 }
 
@@ -175,6 +175,6 @@
 }
 
 .clients-date-input:focus {
-  border-color: #ec4899;
+  border-color: var(--brand-primary);
   box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.2);
 }

@@ -1,0 +1,107 @@
+{
+  "actions": {
+    "activate": "Включить",
+    "deactivate": "Отключить"
+  },
+  "adjust_points": "",
+  "buttons": {
+    "add_rule": "Добавить правило",
+    "adjust_points": "",
+    "cancel": "",
+    "save": "Сохранить",
+    "save_changes": ""
+  },
+  "categories": {
+    "category": "Категория",
+    "category_placeholder": "Напр. Ногти",
+    "description": "Настройте коэффициент начисления баллов для каждой категории услуг",
+    "hint": "Коэффициент применяется только к выбранной категории. Для выключенных правил используется обычное начисление x1.",
+    "multiplier": "Множитель",
+    "title": "Правила начисления по категориям"
+  },
+  "config": {
+    "cashback_hint": "Пример: 10% кэшбэк (10 баллов за каждые 100 потраченных)",
+    "cashback_rate": "Кэшбэк (%)",
+    "description": "Управление глобальными настройками лояльности",
+    "expiration_days": "Срок действия баллов (дней)",
+    "expiration_hint": "Начисленные баллы сгорят через указанное количество дней.",
+    "points_per_unit": "баллов за 1 ед. валюты",
+    "title": "Настройки"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "",
+      "client_email_placeholder": "",
+      "description": "",
+      "points": "",
+      "points_placeholder": "",
+      "reason": "",
+      "reason_placeholder": "",
+      "title": ""
+    },
+    "edit_tier": {
+      "description": "",
+      "discount_percent": "",
+      "min_points": "",
+      "status_hint": "Неактивный уровень не участвует в авторасчете привилегий",
+      "status_label": "Статус уровня",
+      "tier_name": "",
+      "title": ""
+    },
+    "rule": {
+      "description": "Установите множитель баллов для категории услуг",
+      "status_hint": "Если правило отключено, категории начисляются по базовой ставке",
+      "status_label": "Статус правила",
+      "title": "Редактировать правило категории"
+    }
+  },
+  "stats": {
+    "active_members": "",
+    "points_redeemed": "",
+    "total_points_issued": ""
+  },
+  "statuses": {
+    "inactive": "Неактивно"
+  },
+  "subtitle": "",
+  "tiers": {
+    "description": "",
+    "discount": "",
+    "from_points": "",
+    "starting_level": "",
+    "title": ""
+  },
+  "title": "",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "",
+    "failed_delete": "",
+    "failed_load": "",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_other": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_other": "",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": ""
+  },
+  "transactions": {
+    "description": "",
+    "search_placeholder": "",
+    "table": {
+      "client": "",
+      "date": "",
+      "points": "",
+      "reason": "",
+      "type": ""
+    },
+    "title": ""
+  }
+}

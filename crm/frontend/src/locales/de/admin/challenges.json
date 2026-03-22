@@ -1,0 +1,61 @@
+{
+  "buttons": {
+    "add_challenge": "Aufgabe erstellen",
+    "create_challenge": "Herausforderung starten"
+  },
+  "card": {
+    "check_progress": "Aktualisierung",
+    "participants": "Teilnehmer",
+    "progress": "Fortschritt"
+  },
+  "dialogs": {
+    "add_title": "Neu Herausforderung",
+    "delete": {
+      "confirm": "Möchten Sie diese Herausforderung wirklich löschen?"
+    },
+    "edit_title": "Herausforderung bearbeiten"
+  },
+  "empty": {
+    "subtitle": "Erstellen Sie die erste Spielherausforderung, um Kunden zu ermutigen, sich häufiger anzumelden.",
+    "title": "Herausforderungen sind nicht konfiguriert"
+  },
+  "fields": {
+    "dates": "Zeitlimit",
+    "description": "Öffentliche Beschreibung",
+    "reward": "Belohnung",
+    "target_value": "Plan (Ziel)",
+    "title": "Aufgabenname",
+    "type": "Zielmethode"
+  },
+  "placeholders": {
+    "description": "Wie wird ein Kunde diese Aufgabe sehen?",
+    "title": "Zum Beispiel: Gold-Status"
+  },
+  "stats": {
+    "active_challenges": "Aktive Aufgaben",
+    "completed_today": "Heute abgeschlossen",
+    "total_participants": "Teilnehmer insgesamt"
+  },
+  "status": {
+    "active": "Aktiv",
+    "inactive": "Pause"
+  },
+  "subtitle": "Erhöhen Sie die Kundenbindung mit Spielmechaniken und automatischen Belohnungen.",
+  "title": "Herausforderungen",
+  "toasts": {
+    "created": "Aufgabe erstellt",
+    "deleted": "Herausforderung gelöscht",
+    "failed_check_progress": "Fehler beim Überprüfen des Fortschritts",
+    "failed_delete": "Fehler beim Löschen",
+    "progress_checked_one": "",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_other": "",
+    "updated": "Herausforderung aktualisiert"
+  },
+  "types": {
+    "referrals": "Empfehlungen",
+    "spend": "Gesamtausgaben",
+    "visits": "Anzahl der Besuche"
+  }
+}

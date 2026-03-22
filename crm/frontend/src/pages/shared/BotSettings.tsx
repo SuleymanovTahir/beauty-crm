@@ -274,7 +274,7 @@ export default function BotSettings() {
   if (loading) {
     return (
       <div className="loading-container">
-        <div className="inline-block animate-spin w-8 h-8 border-4 border-pink-600 border-t-transparent rounded-full"></div>
+        <div className="inline-block animate-spin w-8 h-8 border-4 brand-border border-t-transparent rounded-full"></div>
         <p className="loading-text">{t('loading')}</p>
       </div>
     );
@@ -300,7 +300,7 @@ export default function BotSettings() {
       {/* Header */}
       <div className="bot-settings-header">
         <h1 className="bot-settings-title">
-          <Bot size={32} className="text-pink-600" /> {t('title')}
+          <Bot size={32} className="settings-text-primary" /> {t('title')}
         </h1>
         <p className="bot-settings-subtitle">
           {t('full_configuration_of_ai_assistant')}
@@ -515,7 +515,7 @@ export default function BotSettings() {
 
             <div>
               <label className="bot-settings-label flex items-center gap-[0.5rem]">
-                <Shield size={18} className="text-pink-600" /> {t('high_price_justification')}
+                <Shield size={18} className="settings-text-primary" /> {t('high_price_justification')}
               </label>
               <textarea
                 value={settings.premium_justification}
@@ -1062,7 +1062,7 @@ export default function BotSettings() {
         {activeTab === 'notifications' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <h2 className="bot-settings-section-title">
-              <Bell size={20} className="text-pink-600" /> {t('notifications_and_reminders_settings')}
+              <Bell size={20} className="settings-text-primary" /> {t('notifications_and_reminders_settings')}
             </h2>
 
             {/* 1. Abandoned Cart */}

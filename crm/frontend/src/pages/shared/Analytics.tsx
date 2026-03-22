@@ -599,7 +599,7 @@ export default function Analytics() {
     return (
       <div className="p-4 md:p-8 flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-4">
-          <Loader className="w-6 h-6 md:w-8 md:h-8 text-pink-600 animate-spin" />
+          <Loader className="w-6 h-6 md:w-8 md:h-8 settings-text-primary animate-spin" />
           <p className="text-sm md:text-base text-gray-600">{t('analytics:detailed_analysis')}</p>
         </div>
       </div>
@@ -988,7 +988,7 @@ export default function Analytics() {
                 showAllOption={false}
               />
               {period === 'custom' && (
-                <Button onClick={handleApplyCustomDates} className="analytics-apply-button bg-pink-600 hover:bg-pink-700 w-full sm:w-auto text-sm md:text-base">
+                <Button onClick={handleApplyCustomDates} className="analytics-apply-button settings-bg-primary settings-bg-primary-hover w-full sm:w-auto text-sm md:text-base">
                   {t('analytics:apply')}
                 </Button>
               )}
@@ -1058,7 +1058,7 @@ export default function Analytics() {
           <Button
             onClick={handleExportCSV}
             disabled={exporting}
-            className="analytics-export-button bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 gap-2"
+            className="analytics-export-button settings-button-gradient gap-2"
           >
             <Download className="w-4 h-4" />
             {exporting ? t('analytics:exporting') : t('analytics:export')}
@@ -2265,7 +2265,7 @@ export default function Analytics() {
 
           <div className="analytics-funnel-card bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
             <h2 className="analytics-funnel-title text-2xl text-gray-900 mb-6 flex items-center gap-2">
-              <Filter className="analytics-funnel-icon w-6 h-6 text-pink-600" />
+              <Filter className="analytics-funnel-icon w-6 h-6 settings-text-primary" />
               {t('analytics:funnel_chart')}
             </h2>
 

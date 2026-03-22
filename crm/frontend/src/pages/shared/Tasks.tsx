@@ -244,7 +244,7 @@ export default function UniversalTasks() {
     if (loading && tasks.length === 0) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 brand-border"></div>
             </div>
         );
     }
@@ -297,7 +297,7 @@ export default function UniversalTasks() {
                                 </Button>
                             )}
                             <Button
-                                className="bg-gradient-to-r from-pink-500 to-blue-600 text-white shadow-lg shadow-blue-500/20 whitespace-nowrap"
+                                className="settings-button-gradient text-white shadow-lg shadow-blue-500/20 whitespace-nowrap"
                                 onClick={() => setCreateDialogOpen(true)}
                             >
                                 <Plus className="w-4 h-4 mr-2" />
@@ -525,7 +525,7 @@ export default function UniversalTasks() {
                                                                 <div className="flex -space-x-2">
                                                                     {task.assignee_names.slice(0, 3).map((name, idx) => (
                                                                         <Avatar key={idx} className="w-6 h-6 border-2 border-white">
-                                                                            <AvatarFallback className="text-[9px] bg-pink-50 text-pink-600">
+                                                                            <AvatarFallback className="text-[9px] settings-bg-primary-light settings-text-primary">
                                                                                 {name[0]}
                                                                             </AvatarFallback>
                                                                         </Avatar>

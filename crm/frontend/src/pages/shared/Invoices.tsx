@@ -237,7 +237,7 @@ const Invoices = () => {
                                 <button
                                     onClick={() => setFilterStatus('')}
                                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${filterStatus === ''
-                                        ? 'bg-pink-50 text-pink-600 border-pink-200'
+                                        ? 'settings-bg-primary-light settings-text-primary brand-border'
                                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                                         }`}
                                 >
@@ -248,7 +248,7 @@ const Invoices = () => {
                                         key={stage.id}
                                         onClick={() => setFilterStatus(stage.key)}
                                         className={`px-4 py-2 rounded-full text-sm font-medium transition-all border whitespace-nowrap ${filterStatus === stage.key
-                                            ? 'bg-pink-50 text-pink-600 border-pink-200'
+                                            ? 'settings-bg-primary-light settings-text-primary brand-border'
                                             : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                                             }`}
                                     >
@@ -280,7 +280,7 @@ const Invoices = () => {
                         <input
                             type="text"
                             placeholder={t('search_placeholder')}
-                            className="pl-9 pr-4 h-9 w-full md:w-64 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 outline-none transition-all"
+                            className="pl-9 pr-4 h-9 w-full md:w-64 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-pink-500/20 focus:brand-border outline-none transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -291,7 +291,7 @@ const Invoices = () => {
             <div className="flex-1 overflow-hidden p-6">
                 {loading ? (
                     <div className="flex items-center justify-center h-full">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 brand-border"></div>
                     </div>
                 ) : viewMode === 'board' ? (
                     <div className="h-full overflow-x-auto flex gap-6 pb-4">
@@ -331,7 +331,7 @@ const Invoices = () => {
                                             className="crm-calendar-panel bg-white p-4 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing group relative"
                                         >
                                             <div className="flex items-start justify-between mb-2">
-                                                <div className="flex items-center gap-1.5 text-xs font-medium text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full">
+                                                <div className="flex items-center gap-1.5 text-xs font-medium settings-text-primary settings-bg-primary-light px-2 py-0.5 rounded-full">
                                                     <FileText size={12} />
                                                     {invoice.invoice_number}
                                                 </div>
@@ -425,7 +425,7 @@ const Invoices = () => {
                                     {filteredAndSortedInvoices.map((invoice) => (
                                         <tr key={invoice.id} className="hover:bg-gray-50 transition-colors">
                                             <td>
-                                                <div className="flex items-center gap-2 font-medium text-pink-600">
+                                                <div className="flex items-center gap-2 font-medium settings-text-primary">
                                                     <FileText size={16} />
                                                     {invoice.invoice_number}
                                                 </div>

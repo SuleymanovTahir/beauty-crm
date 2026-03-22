@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
     ShieldCheck,
     Search,
@@ -165,11 +164,7 @@ const AuditLog: React.FC = () => {
 
     return (
         <div className="p-6 space-y-6">
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10"
-            >
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">
                         {t('title')}
@@ -210,7 +205,7 @@ const AuditLog: React.FC = () => {
                         <RefreshCcw className="w-5 h-5" />
                     </Button>
                 </div>
-            </motion.div>
+            </div>
 
             {/* Summary Chips */}
             {summary && (
@@ -221,11 +216,8 @@ const AuditLog: React.FC = () => {
                         { label: t('stat_active_users'), value: summary.active_users_24h, icon: User, color: 'text-blue-400' },
                         { label: t('stat_created'), value: summary.actions_breakdown?.create || 0, icon: Plus, color: 'text-green-400' },
                     ].map((stat, i) => (
-                        <motion.div
+                        <div
                             key={i}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: i * 0.1 }}
                             className="bg-card border p-4 rounded-xl flex items-center gap-4 shadow-sm"
                         >
                             <div className={`w-10 h-10 rounded-xl bg-muted flex items-center justify-center ${stat.color}`}>
@@ -235,7 +227,7 @@ const AuditLog: React.FC = () => {
                                 <p className="text-xs text-muted-foreground uppercase tracking-widest">{stat.label}</p>
                                 <p className="text-xl font-bold">{stat.value}</p>
                             </div>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
             )}
@@ -382,15 +374,9 @@ const AuditLog: React.FC = () => {
             </div>
 
             {/* Details Modal */}
-            <AnimatePresence>
-                {selectedEntry && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="bg-card border w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl relative"
-                        >
+            {selectedEntry && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+                    <div className="bg-card border w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl relative">
                             <Button
                                 onClick={() => setSelectedEntry(null)}
                                 variant="ghost"
@@ -415,7 +401,7 @@ const AuditLog: React.FC = () => {
                                     <div className="space-y-4">
                                         <h3 className="text-sm font-bold uppercase tracking-widest text-primary">{t('details.old_data')}</h3>
                                         <div className="p-6 rounded-2xl bg-muted border text-xs font-mono overflow-auto max-h-[40vh]">
-                                            <pre className="text-pink-600/80">
+                                            <pre className="settings-text-primary/80">
                                                 {JSON.stringify(selectedEntry.old_value, null, 2) || t('details.no_data')}
                                             </pre>
                                         </div>
@@ -441,10 +427,9 @@ const AuditLog: React.FC = () => {
                                     )}
                                 </div>
                             </div>
-                        </motion.div>
                     </div>
-                )}
-            </AnimatePresence>
+                </div>
+            )}
         </div>
     );
 };

@@ -1,0 +1,107 @@
+{
+  "actions": {
+    "activate": "Activer",
+    "deactivate": "Désactiver"
+  },
+  "adjust_points": "",
+  "buttons": {
+    "add_rule": "Ajouter une règle",
+    "adjust_points": "",
+    "cancel": "",
+    "save": "Enregistrer",
+    "save_changes": ""
+  },
+  "categories": {
+    "category": "Catégorie",
+    "category_placeholder": "Par ex. Ongles",
+    "description": "Personnaliser le coefficient de points pour chaque catégorie de services",
+    "hint": "Le coefficient s'applique uniquement à la catégorie sélectionnée. Pour les règles désactivées, l'accumulation habituelle de x1 est utilisée.",
+    "multiplier": "Multiplicateur",
+    "title": "Règles d'accumulation par catégorie"
+  },
+  "config": {
+    "cashback_hint": "Exemple\u00a0: 10\u00a0% de cashback (10 points pour 100 dépensés)",
+    "cashback_rate": "Cashback (%)",
+    "description": "Gestion des paramètres de fidélité globaux",
+    "expiration_days": "Période de validité de points (jours)",
+    "expiration_hint": "Les points accumulés expireront après le nombre de jours spécifié.",
+    "points_per_unit": "points pour 1 unité. devises",
+    "title": "Paramètres"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "",
+      "client_email_placeholder": "",
+      "description": "",
+      "points": "",
+      "points_placeholder": "",
+      "reason": "",
+      "reason_placeholder": "",
+      "title": ""
+    },
+    "edit_tier": {
+      "description": "",
+      "discount_percent": "",
+      "min_points": "",
+      "status_hint": "Un niveau inactif ne participe pas au calcul automatique des privilèges",
+      "status_label": "Statut du niveau",
+      "tier_name": "",
+      "title": ""
+    },
+    "rule": {
+      "description": "Définir le multiplicateur de points pour la catégorie de service",
+      "status_hint": "Si la règle est désactivée, les catégories sont attribuées au tarif de base",
+      "status_label": "Statut de la règle",
+      "title": "Modifier la catégorie règle"
+    }
+  },
+  "stats": {
+    "active_members": "",
+    "points_redeemed": "",
+    "total_points_issued": ""
+  },
+  "statuses": {
+    "inactive": "Inactif"
+  },
+  "subtitle": "",
+  "tiers": {
+    "description": "",
+    "discount": "",
+    "from_points": "",
+    "starting_level": "",
+    "title": ""
+  },
+  "title": "",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "",
+    "failed_delete": "",
+    "failed_load": "",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_other": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_other": "",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": ""
+  },
+  "transactions": {
+    "description": "",
+    "search_placeholder": "",
+    "table": {
+      "client": "",
+      "date": "",
+      "points": "",
+      "reason": "",
+      "type": ""
+    },
+    "title": ""
+  }
+}

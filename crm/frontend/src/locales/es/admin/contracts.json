@@ -1,0 +1,74 @@
+{
+  "actions": "",
+  "addContract": "",
+  "all": "",
+  "allContracts": "",
+  "allStatuses": "",
+  "board": "",
+  "client": "",
+  "clientContracts": "",
+  "contractNumber": "",
+  "createdAt": "",
+  "editContract": "",
+  "errors": {
+    "deleteError": "",
+    "saveError": "",
+    "sendError": "",
+    "updateError": ""
+  },
+  "form": {
+    "cancel": "",
+    "contractType": "",
+    "save": "",
+    "selectClient": ""
+  },
+  "internalContracts": "",
+  "manage_stages": "",
+  "manageTypes": "",
+  "messages": {
+    "confirmDelete": "",
+    "contractCreated": "",
+    "contractDeleted": "",
+    "contractSent": "",
+    "contractUpdated": ""
+  },
+  "noContracts": "",
+  "search_placeholder": "",
+  "sendDialog": {
+    "email": "",
+    "instagram": "",
+    "method": "",
+    "recipient": "",
+    "sendButton": "",
+    "telegram": "",
+    "title": "",
+    "whatsapp": ""
+  },
+  "status": "",
+  "subtitle": "",
+  "title": "",
+  "type": "",
+  "typeManagement": {
+    "add": "",
+    "code": "",
+    "confirmDelete": "",
+    "createType": "",
+    "deletePrompt": "",
+    "deleteTitle": "",
+    "deleteWithDocs": "",
+    "deleteWithDocsSub": "",
+    "description": "",
+    "editType": "",
+    "keepDocs": "",
+    "keepDocsSub": "",
+    "messages": {
+      "created": "",
+      "deleted": "",
+      "updated": ""
+    },
+    "name": "",
+    "system": "",
+    "systemProtected": "",
+    "title": ""
+  }
+}

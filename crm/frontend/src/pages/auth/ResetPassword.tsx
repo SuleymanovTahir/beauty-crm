@@ -130,7 +130,7 @@ export default function ResetPassword() {
 
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 settings-button-gradient rounded-full flex items-center justify-center mx-auto mb-6">
             <Lock className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl text-gray-900 mb-2">{t('new_password_title', "Новый пароль")}</h1>
@@ -184,7 +184,7 @@ export default function ResetPassword() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
+              className="w-full settings-button-gradient"
               size="lg"
             >
               {loading ? (
@@ -201,7 +201,7 @@ export default function ResetPassword() {
           <div className="mt-6 text-center">
             <Button
               variant="link"
-              className="text-pink-600"
+              className="settings-text-primary"
               onClick={() => navigate(loginPath)}
               disabled={loading}
             >

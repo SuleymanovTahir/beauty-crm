@@ -41,7 +41,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.625rem 1.25rem;
-  background: #3b82f6;
+  background: var(--brand-primary);
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -53,7 +53,7 @@
 }
 
 .crm-btn-primary:hover {
-  background: #2563eb;
+  background: var(--brand-primary);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
@@ -170,7 +170,7 @@
   left: 0;
   right: 0;
   height: 5px;
-  background: linear-gradient(to right, #ec4899, #8b5cf6);
+  background: linear-gradient(to right, var(--brand-primary), var(--brand-primary));
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -200,7 +200,7 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #fce7f3 0%, #fef2f2 100%);
-  color: #db2777;
+  color: var(--brand-primary);
   flex-shrink: 0;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
@@ -266,7 +266,7 @@
 }
 
 .crm-stat-icon.blue {
-  background: #3b82f6;
+  background: var(--brand-primary);
   color: white;
 }
 
@@ -276,7 +276,7 @@
 }
 
 .crm-stat-icon.purple {
-  background: #8b5cf6;
+  background: var(--brand-primary);
   color: white;
 }
 
@@ -764,18 +764,18 @@
   --crm-calendar-bg-start: #f8fafc;
   --crm-calendar-bg-mid: #ffffff;
   --crm-calendar-bg-end: #eff6ff;
-  --crm-calendar-pink-50: #fdf2f8;
+  --crm-calendar-pink-50: var(--brand-light);
   --crm-calendar-pink-100: #fce7f3;
   --crm-calendar-pink-200: #fbcfe8;
-  --crm-calendar-pink-500: #ec4899;
-  --crm-calendar-pink-600: #db2777;
+  --crm-calendar-pink-500: var(--brand-primary);
+  --crm-calendar-pink-600: var(--brand-primary);
   --crm-calendar-pink-700: #be185d;
   --crm-calendar-blue-50: #eff6ff;
   --crm-calendar-blue-100: #dbeafe;
   --crm-calendar-blue-200: #bfdbfe;
-  --crm-calendar-blue-500: #3b82f6;
-  --crm-calendar-blue-600: #2563eb;
-  --crm-calendar-blue-700: #1d4ed8;
+  --crm-calendar-blue-500: var(--brand-primary);
+  --crm-calendar-blue-600: var(--brand-primary);
+  --crm-calendar-blue-700: var(--brand-primary);
   --crm-calendar-accent-shadow: rgba(37, 99, 235, 0.18);
   --crm-calendar-success-50: #ecfdf3;
   --crm-calendar-success-100: #bbf7d0;
@@ -803,7 +803,7 @@
 .crm-calendar-products .crm-calendar-toolbar,
 .crm-calendar-contracts .crm-calendar-toolbar,
 .crm-calendar-invoices .crm-calendar-toolbar {
-  background: linear-gradient(90deg, #f8fbff 0%, #eff6ff 48%, #fdf2f8 100%);
+  background: linear-gradient(90deg, #f8fbff 0%, #eff6ff 48%, var(--brand-light) 100%);
   border-bottom-color: #c9daf4;
   box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12);
 }
@@ -848,7 +848,7 @@
 .crm-calendar-page .crm-calendar-panel thead,
 .crm-calendar-page thead.bg-gray-50,
 .crm-calendar-page .bg-gray-50\/50 {
-  background: linear-gradient(90deg, #eff6ff 0%, #fdf2f8 100%);
+  background: linear-gradient(90deg, #eff6ff 0%, var(--brand-light) 100%);
 }
 
 .crm-calendar-page .crm-calendar-panel tr.hover\:bg-gray-50:hover,
@@ -915,7 +915,7 @@
 }
 
 .crm-calendar-theme .text-pink-500,
-.crm-calendar-theme .text-pink-600,
+.crm-calendar-theme .settings-text-primary,
 .crm-calendar-theme .text-pink-700 {
   color: var(--crm-calendar-pink-600);
 }
@@ -928,21 +928,21 @@
   color: var(--crm-calendar-pink-700);
 }
 
-.crm-calendar-theme .bg-pink-50 {
+.crm-calendar-theme .settings-bg-primary-light {
   background-color: var(--crm-calendar-pink-50);
 }
 
-.crm-calendar-theme .bg-pink-100 {
+.crm-calendar-theme .settings-bg-primary-light {
   background-color: var(--crm-calendar-pink-100);
 }
 
-.crm-calendar-theme .bg-pink-500,
-.crm-calendar-theme .bg-pink-600,
-.crm-calendar-theme .bg-pink-700 {
+.crm-calendar-theme .settings-bg-primary,
+.crm-calendar-theme .settings-bg-primary,
+.crm-calendar-theme .settings-bg-primary {
   background-color: var(--crm-calendar-pink-600);
 }
 
-.crm-calendar-theme .border-pink-500 {
+.crm-calendar-theme .brand-border {
   border-color: var(--crm-calendar-pink-500);
 }
 
@@ -950,7 +950,7 @@
   border-color: var(--crm-calendar-pink-100);
 }
 
-.crm-calendar-theme .border-pink-200 {
+.crm-calendar-theme .brand-border {
   border-color: var(--crm-calendar-pink-200);
 }
 
@@ -989,29 +989,29 @@
   border-color: var(--crm-calendar-warning-100);
 }
 
-.crm-calendar-theme .hover\:bg-pink-50:hover {
+.crm-calendar-theme .hover\:settings-bg-primary-light:hover {
   background-color: var(--crm-calendar-pink-50);
 }
 
-.crm-calendar-theme .hover\:bg-pink-100:hover {
+.crm-calendar-theme .hover\:settings-bg-primary-light:hover {
   background-color: var(--crm-calendar-pink-100);
 }
 
-.crm-calendar-theme .hover\:bg-pink-600:hover,
-.crm-calendar-theme .hover\:bg-pink-700:hover {
+.crm-calendar-theme .hover\:settings-bg-primary:hover,
+.crm-calendar-theme .hover\:settings-bg-primary:hover {
   background-color: var(--crm-calendar-pink-700);
 }
 
 .crm-calendar-theme .hover\:text-pink-500:hover,
-.crm-calendar-theme .hover\:text-pink-600:hover {
+.crm-calendar-theme .hover\:settings-text-primary:hover {
   color: var(--crm-calendar-pink-600);
 }
 
-.crm-calendar-theme .hover\:border-pink-200:hover {
+.crm-calendar-theme .hover\:brand-border:hover {
   border-color: var(--crm-calendar-pink-200);
 }
 
-.crm-calendar-theme .hover\:border-pink-500:hover {
+.crm-calendar-theme .hover\:brand-border:hover {
   border-color: var(--crm-calendar-pink-500);
 }
 
@@ -1032,7 +1032,7 @@
   background-color: var(--crm-calendar-blue-700);
 }
 
-.crm-calendar-theme .focus\:border-pink-500:focus {
+.crm-calendar-theme .focus\:brand-border:focus {
   border-color: var(--crm-calendar-pink-500);
 }
 
@@ -1194,7 +1194,7 @@
 }
 
 .crm-calendar-theme .crm-btn-primary,
-.crm-calendar-theme button.bg-pink-600,
+.crm-calendar-theme button.settings-bg-primary,
 .crm-calendar-theme button.bg-blue-600,
 .crm-calendar-theme button.bg-gray-900 {
   background-image: linear-gradient(90deg, var(--crm-calendar-pink-500) 0%, var(--crm-calendar-blue-600) 100%);
@@ -1205,7 +1205,7 @@
 }
 
 .crm-calendar-theme .crm-btn-primary:hover,
-.crm-calendar-theme button.hover\:bg-pink-700:hover,
+.crm-calendar-theme button.hover\:settings-bg-primary:hover,
 .crm-calendar-theme button.hover\:bg-blue-700:hover,
 .crm-calendar-theme button.hover\:bg-black:hover,
 .crm-calendar-theme button.bg-gray-900:hover {
@@ -1231,7 +1231,7 @@
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
-.crm-calendar-theme .from-pink-500 {
+.crm-calendar-theme .settings-bg-primary {
   --tw-gradient-from: var(--crm-calendar-pink-500) var(--tw-gradient-from-position);
   --tw-gradient-to: rgba(236, 72, 153, 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
@@ -1366,7 +1366,7 @@
 .crm-services-loading-icon {
   width: 2rem;
   height: 2rem;
-  color: #ec008c;
+  color: var(--brand-primary);
   animation: spin 1s linear infinite;
 }
 
@@ -1390,7 +1390,7 @@
 .crm-services-title-icon {
   width: 1.8rem;
   height: 1.8rem;
-  color: #ec008c;
+  color: var(--brand-primary);
 }
 
 .crm-services-subtitle {
@@ -1442,15 +1442,15 @@
 }
 
 .crm-services-tab-active {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
   color: #ffffff;
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
 }
 
 .crm-services-tab-active:hover {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
 }
 
 .crm-services-tab-icon {
@@ -1535,7 +1535,7 @@
   border: 0;
   border-radius: 0.75rem;
   padding: 0 1.02rem;
-  background: #ec008c;
+  background: var(--brand-primary);
   color: #ffffff;
   font-size: 0.91rem;
   font-weight: 700;
@@ -1638,6 +1638,11 @@
   color: inherit;
   font: inherit;
   cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.crm-services-sort-button:hover {
+  color: var(--brand-primary);
 }
 
 .crm-services-header-inline {
@@ -1650,6 +1655,11 @@
   width: 0.9rem;
   height: 0.9rem;
   color: #98a2b3;
+  transition: color 0.2s ease;
+}
+
+.crm-services-sort-button:hover .crm-services-sort-icon {
+  color: var(--brand-primary);
 }
 
 .crm-services-actions-header {
@@ -1678,7 +1688,7 @@
 .crm-services-duration-badge {
   border: 1px solid #bdd4fb;
   background: #e8f1ff;
-  color: #2563eb;
+  color: var(--brand-primary);
 }
 
 .crm-services-duration-icon {
@@ -1689,7 +1699,7 @@
 .crm-services-category-badge {
   border: 1px solid #bdd4fb;
   background: #e8f1ff;
-  color: #2563eb;
+  color: var(--brand-primary);
 }
 
 .crm-services-status-badge-active {
@@ -1732,7 +1742,7 @@
   border: 1px solid #d4ddf7;
   border-radius: 0.6rem;
   background: #eff4ff;
-  color: #2563eb;
+  color: var(--brand-primary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1767,7 +1777,7 @@
 .crm-services-history-loader {
   width: 1.5rem;
   height: 1.5rem;
-  color: #ec008c;
+  color: var(--brand-primary);
   animation: spin 1s linear infinite;
 }
 

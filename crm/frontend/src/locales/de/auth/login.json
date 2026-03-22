@@ -21,6 +21,7 @@
   "password": "Password",
   "registration_pending_toast": "Ihre Registrierung wartet auf die Genehmigung durch den Administrator. Sie erhalten eine E-Mail, wenn Ihr Konto aktiviert ist.",
   "return_to_home": "← Nach Hause zurückkehren",
+  "server_unavailable": "Der Server ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.",
   "submit": "Anmelden",
   "username": "Benutzername",
   "welcome": "Welcome"

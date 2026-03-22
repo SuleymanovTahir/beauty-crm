@@ -1,0 +1,107 @@
+{
+  "actions": {
+    "activate": "Activar",
+    "deactivate": "Desactivar"
+  },
+  "adjust_points": "",
+  "buttons": {
+    "add_rule": "Agregar regla",
+    "adjust_points": "",
+    "cancel": "",
+    "save": "Guardar",
+    "save_changes": ""
+  },
+  "categories": {
+    "category": "Categoría",
+    "category_placeholder": "P. Uñas",
+    "description": "Personaliza el coeficiente de puntos para cada categoría de servicios",
+    "hint": "El coeficiente se aplica solo a la categoría seleccionada. Para las reglas deshabilitadas, se utiliza la acumulación habitual de x1.",
+    "multiplier": "Multiplicador",
+    "title": "Reglas de acumulación por categoría"
+  },
+  "config": {
+    "cashback_hint": "Ejemplo: reembolso del 10\u00a0% (10 puntos por cada 100 gastados)",
+    "cashback_rate": "Reembolso (%)",
+    "description": "Gestión de la configuración de fidelidad global",
+    "expiration_days": "Periodo de validez de puntos (días)",
+    "expiration_hint": "Los puntos acumulados vencerán después del número de días especificado.",
+    "points_per_unit": "puntos por 1 unidad. monedas",
+    "title": "Configuración"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "",
+      "client_email_placeholder": "",
+      "description": "",
+      "points": "",
+      "points_placeholder": "",
+      "reason": "",
+      "reason_placeholder": "",
+      "title": ""
+    },
+    "edit_tier": {
+      "description": "",
+      "discount_percent": "",
+      "min_points": "",
+      "status_hint": "Un nivel inactivo no participa en el cálculo automático de privilegios",
+      "status_label": "Estado del nivel",
+      "tier_name": "",
+      "title": ""
+    },
+    "rule": {
+      "description": "Establezca el multiplicador de puntos para la categoría de servicio",
+      "status_hint": "Si la regla está deshabilitada, las categorías se otorgan a la tarifa base",
+      "status_label": "Estado de la regla",
+      "title": "Editar regla de categoría"
+    }
+  },
+  "stats": {
+    "active_members": "",
+    "points_redeemed": "",
+    "total_points_issued": ""
+  },
+  "statuses": {
+    "inactive": "Inactivo"
+  },
+  "subtitle": "",
+  "tiers": {
+    "description": "",
+    "discount": "",
+    "from_points": "",
+    "starting_level": "",
+    "title": ""
+  },
+  "title": "",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "",
+    "failed_delete": "",
+    "failed_load": "",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_other": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_other": "",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": ""
+  },
+  "transactions": {
+    "description": "",
+    "search_placeholder": "",
+    "table": {
+      "client": "",
+      "date": "",
+      "points": "",
+      "reason": "",
+      "type": ""
+    },
+    "title": ""
+  }
+}

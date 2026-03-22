@@ -1,0 +1,75 @@
+{
+  "addProduct": "",
+  "allCategories": "",
+  "analytics": {
+    "avgPrice": "",
+    "last30Days_zero": "",
+    "last30Days_one": "",
+    "last30Days_two": "",
+    "last30Days_few": "",
+    "last30Days_many": "",
+    "last30Days_other": "",
+    "revenue": "",
+    "totalSold": ""
+  },
+  "createFirst": "",
+  "delete": "",
+  "detail": {
+    "costPriceLabel": "",
+    "inStock_zero": "",
+    "inStock_one": "",
+    "inStock_two": "",
+    "inStock_few": "",
+    "inStock_many": "",
+    "inStock_other": "",
+    "loadingData": "",
+    "movementAdjustment": "",
+    "movementHistory": "",
+    "movementIn": "",
+    "movementOut": "",
+    "noCategory": "",
+    "noMovements": ""
+  },
+  "edit": "",
+  "form": {
+    "cancel": "",
+    "category": "",
+    "costPrice": "",
+    "isActive": "",
+    "minStockLevel": "",
+    "name": "",
+    "notes": "",
+    "photos": "",
+    "price": "",
+    "save": "",
+    "sku": "",
+    "stockQuantity": "",
+    "upload": "",
+    "uploadError": ""
+  },
+  "messages": {
+    "confirmDelete": "",
+    "noResults": ""
+  },
+  "movement": {
+    "quantity": "",
+    "reason": "",
+    "title": "",
+    "type": "",
+    "types": {
+      "adjustment": "",
+      "in": "",
+      "out": ""
+    }
+  },
+  "noProducts": "",
+  "search_placeholder": "",
+  "stock_status": {
+    "in_stock": "",
+    "low_stock": "",
+    "out_of_stock": ""
+  },
+  "subtitle": "",
+  "title": "",
+  "unit_pcs": ""
+}

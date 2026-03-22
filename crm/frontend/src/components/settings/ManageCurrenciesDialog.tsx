@@ -157,7 +157,7 @@ export function ManageCurrenciesDialog({ open, onOpenChange, onSuccess }: Manage
                                     <X className="w-4 h-4" />
                                 </Button>
                             )}
-                            <Button type="submit" className="flex-1 bg-pink-600 hover:bg-pink-700" disabled={adding}>
+                            <Button type="submit" className="flex-1 settings-bg-primary settings-bg-primary-hover" disabled={adding}>
                                 {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : (editingCurrencyCode ? <Edit className="w-4 h-4 mr-2" /> : <Plus className="w-4 h-4 mr-2" />)}
                                 {editingCurrencyCode ? t('save_changes') : t('add_currency')}
                             </Button>
@@ -174,9 +174,9 @@ export function ManageCurrenciesDialog({ open, onOpenChange, onSuccess }: Manage
                         ) : (
                             <div className="space-y-2">
                                 {currencies.map((currency) => (
-                                    <div key={currency.code} className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:border-pink-200 transition-colors">
+                                    <div key={currency.code} className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:brand-border transition-colors">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-pink-700 font-bold text-xs">
+                                            <div className="w-8 h-8 rounded-full settings-bg-primary-light flex items-center justify-center text-pink-700 font-bold text-xs">
                                                 {currency.symbol}
                                             </div>
                                             <div>

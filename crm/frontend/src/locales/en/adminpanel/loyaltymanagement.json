@@ -1,0 +1,107 @@
+{
+  "actions": {
+    "activate": "Enable",
+    "deactivate": "Disable"
+  },
+  "adjust_points": "",
+  "buttons": {
+    "add_rule": "Add rule",
+    "adjust_points": "",
+    "cancel": "",
+    "save": "Save",
+    "save_changes": ""
+  },
+  "categories": {
+    "category": "Category",
+    "category_placeholder": "E.g. Nails",
+    "description": "Customize the point coefficient for each category of services",
+    "hint": "The coefficient applies only to the selected category. For disabled rules, the usual accrual of x1 is used.",
+    "multiplier": "Multiplier",
+    "title": "Accrual rules by category"
+  },
+  "config": {
+    "cashback_hint": "Example: 10% cashback (10 points for every 100 spent)",
+    "cashback_rate": "Cashback (%)",
+    "description": "Managing global loyalty settings",
+    "expiration_days": "Validity period of points (days)",
+    "expiration_hint": "Accrued points will expire after the specified number of days.",
+    "points_per_unit": "points for 1 unit. currencies",
+    "title": "Settings"
+  },
+  "confirm_delete_rule": "",
+  "dialogs": {
+    "adjust_points": {
+      "client_email": "",
+      "client_email_placeholder": "",
+      "description": "",
+      "points": "",
+      "points_placeholder": "",
+      "reason": "",
+      "reason_placeholder": "",
+      "title": ""
+    },
+    "edit_tier": {
+      "description": "",
+      "discount_percent": "",
+      "min_points": "",
+      "status_hint": "An inactive level does not participate in the automatic calculation of privileges",
+      "status_label": "Level status",
+      "tier_name": "",
+      "title": ""
+    },
+    "rule": {
+      "description": "Set the point multiplier for the service category",
+      "status_hint": "If the rule is disabled, categories are awarded at the base rate",
+      "status_label": "Rule status",
+      "title": "Edit category rule"
+    }
+  },
+  "stats": {
+    "active_members": "",
+    "points_redeemed": "",
+    "total_points_issued": ""
+  },
+  "statuses": {
+    "inactive": "Inactive"
+  },
+  "subtitle": "",
+  "tiers": {
+    "description": "",
+    "discount": "",
+    "from_points": "",
+    "starting_level": "",
+    "title": ""
+  },
+  "title": "",
+  "toasts": {
+    "config_updated": "",
+    "failed_adjust": "",
+    "failed_delete": "",
+    "failed_load": "",
+    "failed_save": "",
+    "failed_update": "",
+    "points_adjusted_add_one": "",
+    "points_adjusted_add_few": "",
+    "points_adjusted_add_many": "",
+    "points_adjusted_add_other": "",
+    "points_adjusted_deduct_one": "",
+    "points_adjusted_deduct_few": "",
+    "points_adjusted_deduct_many": "",
+    "points_adjusted_deduct_other": "",
+    "rule_deleted": "",
+    "rule_saved": "",
+    "tier_updated": ""
+  },
+  "transactions": {
+    "description": "",
+    "search_placeholder": "",
+    "table": {
+      "client": "",
+      "date": "",
+      "points": "",
+      "reason": "",
+      "type": ""
+    },
+    "title": ""
+  }
+}

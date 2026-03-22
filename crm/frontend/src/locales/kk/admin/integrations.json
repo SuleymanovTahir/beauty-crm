@@ -1,0 +1,108 @@
+{
+  "errors": {
+    "createLinkFailed": "Сілтеме жасау қатесі",
+    "loadFailed": "",
+    "loadServicesFailed": "Қызметтерді жүктеу қатесі",
+    "saveFailed": "",
+    "syncFailed": ""
+  },
+  "marketplace": {
+    "active": "Белсенді",
+    "activeSources": "Белсенді көздер",
+    "apiKey": "API кілті",
+    "apiSecret": "API құпиясы",
+    "bookings": "Жазбалар",
+    "configSuccess": "Параметрлер сақталды",
+    "configure": "Баптау",
+    "configureProvider": "Параметрлер",
+    "daysAgo_few": "{{count}} күн бұрын",
+    "daysAgo_many": "{{count}} күн бұрын",
+    "daysAgo_one": "{{count}} күн бұрын",
+    "daysAgo_other": "{{count}} күн бұрын",
+    "enableProvider": "Интеграцияны қосу",
+    "hoursAgo_few": "{{count}} сағ бұрын",
+    "hoursAgo_many": "{{count}} сағ бұрын",
+    "hoursAgo_one": "{{count}} сағ бұрын",
+    "hoursAgo_other": "{{count}} сағ бұрын",
+    "inactive": "Конфигурацияланбады",
+    "justNow": "Тек не",
+    "lastSync": "Синхрондау",
+    "mappingHint": "Синхрондау үшін нарықтан қызмет идентификаторын көрсетіңіз.",
+    "minutesAgo_few": "{{count}} мин артқа",
+    "minutesAgo_many": "{{count}} мин артқа",
+    "minutesAgo_one": "{{count}} мин артқа",
+    "minutesAgo_other": "{{count}} мин артқа",
+    "neverSynced": "Ешқашан",
+    "providers": {
+      "2gis": {
+        "description": "2GIS арқылы онлайн жазбалар",
+        "name": "2GIS"
+      },
+      "amazon": {
+        "description": "Amazon Marketplace",
+        "name": "Amazon"
+      },
+      "booksy": {
+        "description": "Онлайн жазу платформасы",
+        "name": "Booksy"
+      },
+      "google_business": {
+        "description": "Google-дағы жазбалар мен пікірлер",
+        "name": "Google Business"
+      },
+      "ozon": {
+        "description": "Ozon Marketplace",
+        "name": "Ozon"
+      },
+      "wildberries": {
+        "description": "Marketplace WB",
+        "name": "Wildberry"
+      },
+      "yandex_maps": {
+        "description": "Yandex.Maps жазбалары мен шолулары",
+        "name": "Yandex.Maps"
+      },
+      "yclients": {
+        "description": "Онлайн жазу платформасы",
+        "name": "КЛИЕНТТЕР"
+      }
+    },
+    "reviews": "Пікірлер",
+    "serviceMapping": "Қызметті картаға түсіру",
+    "settings": "Параметрлер",
+    "status": "Күй",
+    "subtitle": "Онлайн брондау және шолу қызметтерімен интеграция",
+    "sync": "Синхрондау",
+    "syncStarted": "Синхрондау басталды",
+    "syncing": "Синхрондау...",
+    "title": "Брондау платформалары",
+    "totalBookings": "Жалпы жазбалар",
+    "urlCopied": "URL көшірілді",
+    "viewBookings": "Жазбаларға өту",
+    "webhookHint": "Платформадағы веб-хук параметрлерінде осы URL мекенжайын көрсетіңіз",
+    "webhookUrl": "Вебхукқа арналған URL"
+  },
+  "payment": {
+    "active": "Белсенді",
+    "amount": "Сома",
+    "apiKey": "API кілті",
+    "configSuccess": "Параметрлер сақталды",
+    "configure": "Баптау",
+    "configureProvider": "Параметрлер",
+    "createLink": "Сілтеме жасау",
+    "createLinkTitle": "Төлем сілтемесін жасаңыз",
+    "currency": "Валюта",
+    "descriptionPlaceholder": "Төлем не үшін қажет...",
+    "enableProvider": "Провайдерді қосу",
+    "inactive": "Конфигурацияланбады",
+    "linkCreated": "Сілтеме сәтті жасалды",
+    "secretKey": "Құпия кілт",
+    "setup": "Қосылу",
+    "status": "Күй",
+    "subtitle": "Төлем жүйелерімен интеграцияны орнату",
+    "title": "Төлем жүйелері",
+    "viewTransactions": "Транзакция тарихы",
+    "webhookSecret": "Webhook құпиясы",
+    "webhookUrl": "Вебхукқа арналған URL"
+  }
+}

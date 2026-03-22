@@ -80,9 +80,9 @@
 }
 
 .menu-item-premium.active {
-  background: linear-gradient(135deg, #3b82f6 0%, #d946ef 50%, #f43f5e 100%);
+  background: var(--brand-gradient);
   color: white !important;
-  box-shadow: 0 10px 15px -3px rgba(217, 70, 239, 0.3);
+  box-shadow: var(--brand-shadow);
 }
 
 .menu-item-premium.active svg {
@@ -91,17 +91,17 @@
 
 .menu-item-premium.expanded {
   background: #eaf1ff;
-  color: #2563eb;
+  color: var(--brand-primary);
   font-weight: 700;
 }
 
 .menu-item-premium.expanded svg {
-  color: #2563eb;
+  color: var(--brand-primary);
 }
 
 .menu-item-premium.expanded:hover {
   background: #e2ebff;
-  color: #1d4ed8;
+  color: var(--brand-primary);
   transform: none;
 }
 
@@ -129,8 +129,8 @@
 .submenu-item-premium.active {
   color: #ffffff;
   font-weight: 700;
-  background: linear-gradient(135deg, #3b82f6 0%, #d946ef 50%, #f43f5e 100%);
-  box-shadow: 0 10px 15px -3px rgba(217, 70, 239, 0.26);
+  background: var(--brand-gradient);
+  box-shadow: var(--brand-shadow);
 }
 
 .submenu-item-premium.active svg {
@@ -197,7 +197,7 @@
 }
 
 .mobile-nav-btn.active {
-  color: #2563eb;
+  color: var(--brand-primary);
 }
 
 /* Sidebar & Header Premium Badges */
@@ -355,7 +355,7 @@
 .menu-group-btn.expanded .menu-item-icon,
 .menu-group-btn.expanded .menu-item-label,
 .menu-group-btn.expanded .menu-group-chevron {
-  color: #2563eb;
+  color: var(--brand-primary);
 }
 
 .menu-sub-items {
@@ -383,8 +383,8 @@
 
 .menu-sub-item.active {
   color: #ffffff;
-  background: linear-gradient(135deg, #3b82f6 0%, #d946ef 50%, #f43f5e 100%);
-  box-shadow: 0 8px 14px -8px rgba(217, 70, 239, 0.35);
+  background: var(--brand-gradient);
+  box-shadow: var(--brand-shadow);
 }
 
 .menu-item-link {
@@ -404,8 +404,8 @@
 .menu-item-link.active {
   color: #ffffff;
   border-color: transparent;
-  background: linear-gradient(135deg, #3b82f6 0%, #d946ef 50%, #f43f5e 100%);
-  box-shadow: 0 8px 14px -8px rgba(217, 70, 239, 0.35);
+  background: var(--brand-gradient);
+  box-shadow: var(--brand-shadow);
 }
 
 .menu-item-icon {

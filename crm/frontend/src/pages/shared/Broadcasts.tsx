@@ -782,7 +782,7 @@ export default function Broadcasts() {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-          <Send className="w-8 h-8 text-pink-600" />
+          <Send className="w-8 h-8 settings-text-primary" />
           {t('title')}
         </h1>
         <p className="text-gray-600">{t('subtitle')}</p>
@@ -828,7 +828,7 @@ export default function Broadcasts() {
                       type="button"
                       onClick={() => handleChannelToggle('email')}
                       className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl border-2 font-medium transition-all ${form.channels.includes('email')
-                        ? 'border-pink-500 bg-white text-pink-600 shadow-sm'
+                        ? 'brand-border bg-white settings-text-primary shadow-sm'
                         : 'border-white bg-white text-gray-500 hover:border-gray-200 shadow-sm'
                         }`}
                     >
@@ -864,7 +864,7 @@ export default function Broadcasts() {
                       type="button"
                       onClick={() => handleChannelToggle('notification')}
                       className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl border-2 font-medium transition-all ${form.channels.includes('notification')
-                        ? 'border-pink-500 bg-white text-pink-600 shadow-sm'
+                        ? 'brand-border bg-white settings-text-primary shadow-sm'
                         : 'border-white bg-white text-gray-500 hover:border-gray-200 shadow-sm'
                         }`}
                     >
@@ -883,7 +883,7 @@ export default function Broadcasts() {
                         e.preventDefault();
                         setShowManageTypes(true);
                       }}
-                      className="text-pink-600 hover:text-pink-700 flex items-center gap-1 text-sm font-medium relative z-10"
+                      className="settings-text-primary hover:text-pink-700 flex items-center gap-1 text-sm font-medium relative z-10"
                     >
                       <Settings className="w-4 h-4" />
                       {t('configure_types')}
@@ -943,7 +943,7 @@ export default function Broadcasts() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t('all_users')}</SelectItem>
-                      <SelectItem value="client" className="font-semibold text-pink-600">{t('role_client', 'Клиент')}</SelectItem>
+                      <SelectItem value="client" className="font-semibold settings-text-primary">{t('role_client', 'Клиент')}</SelectItem>
                       {roles.map((role) => (
                         <SelectItem key={role.key} value={role.key}>
                           {getRoleLabel(t, role.key, role.name)}
@@ -979,7 +979,7 @@ export default function Broadcasts() {
                               users.length > 0 && users.every(u => (form.user_ids || []).includes(u.id))
                             }
                             onChange={handleSelectAllUsers}
-                            className="w-4 h-4 text-pink-600 rounded"
+                            className="w-4 h-4 settings-text-primary rounded"
                           />
                           <span className="text-sm font-medium text-gray-700">
                             {t('select_all', { count: users.length })}
@@ -988,7 +988,7 @@ export default function Broadcasts() {
                       </div>
                       {loadingUsers ? (
                         <div className="flex justify-center py-4">
-                          <Loader className="w-5 h-5 animate-spin text-pink-600" />
+                          <Loader className="w-5 h-5 animate-spin settings-text-primary" />
                         </div>
                       ) : (
                         <div className="space-y-2">
@@ -1007,7 +1007,7 @@ export default function Broadcasts() {
                                   type="checkbox"
                                   checked={(form.user_ids || []).includes(user.id)}
                                   onChange={() => handleUserToggle(user.id)}
-                                  className="w-4 h-4 text-pink-600 rounded"
+                                  className="w-4 h-4 settings-text-primary rounded"
                                 />
                                 <div className="flex-1">
                                   <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
@@ -1024,7 +1024,7 @@ export default function Broadcasts() {
                               <input
                                 type="checkbox"
                                 checked={true}
-                                className="w-4 h-4 text-pink-600 rounded"
+                                className="w-4 h-4 settings-text-primary rounded"
                                 readOnly
                               />
                               <div className="flex-1">
@@ -1239,7 +1239,7 @@ export default function Broadcasts() {
                     onClick={handlePreview}
                     disabled={loadingPreview}
                     variant="outline"
-                    className="flex-1 h-12 rounded-xl border-2 border-gray-200 hover:border-pink-500 transition-all font-semibold"
+                    className="flex-1 h-12 rounded-xl border-2 border-gray-200 hover:brand-border transition-all font-semibold"
                   >
                     {loadingPreview ? (
                       <>
@@ -1257,7 +1257,7 @@ export default function Broadcasts() {
                   <Button
                     onClick={handleSendClick}
                     disabled={sending}
-                    className="flex-1 h-12 rounded-xl bg-gradient-to-r from-pink-500 to-blue-600 hover:shadow-lg hover:opacity-90 transition-all font-semibold text-white border-0"
+                    className="flex-1 h-12 rounded-xl settings-button-gradient hover:shadow-lg hover:opacity-90 transition-all font-semibold text-white border-0"
                   >
                     {sending ? (
                       <>
@@ -1278,7 +1278,7 @@ export default function Broadcasts() {
             {/* Preview Panel */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Users className="w-5 h-5 text-pink-600" />
+                <Users className="w-5 h-5 settings-text-primary" />
                 {t('recipients')}
               </h2>
 
@@ -1292,9 +1292,9 @@ export default function Broadcasts() {
               ) : (
                 <div className="space-y-4">
                   {/* Total */}
-                  <div className="bg-gradient-to-r from-pink-50 to-blue-50 border border-pink-200 rounded-lg p-4">
+                  <div className="bg-gradient-to-r from-pink-50 to-blue-50 border brand-border rounded-lg p-4">
                     <p className="text-sm text-gray-600 mb-1">{t('total_recipients')}</p>
-                    <p className="text-3xl font-bold text-pink-600">{preview.total_users}</p>
+                    <p className="text-3xl font-bold settings-text-primary">{preview.total_users}</p>
                   </div>
 
                   {/* By Channel */}
@@ -1332,12 +1332,12 @@ export default function Broadcasts() {
                     )}
 
                     {preview.by_channel.notification > 0 && (
-                      <div className="flex items-center justify-between p-2 bg-pink-50 rounded">
+                      <div className="flex items-center justify-between p-2 settings-bg-primary-light rounded">
                         <div className="flex items-center gap-2">
-                          <Bell className="w-4 h-4 text-pink-600" />
+                          <Bell className="w-4 h-4 settings-text-primary" />
                           <span className="text-sm text-gray-700">{t('channels_notification', 'Уведомления')}</span>
                         </div>
-                        <span className="font-bold text-pink-600">{preview.by_channel.notification}</span>
+                        <span className="font-bold settings-text-primary">{preview.by_channel.notification}</span>
                       </div>
                     )}
                   </div>
@@ -1387,7 +1387,7 @@ export default function Broadcasts() {
                       type="checkbox"
                       checked={history.length > 0 && history.every((item) => selectedHistoryIds.includes(item.id))}
                       onChange={toggleSelectAllHistory}
-                      className="w-4 h-4 text-pink-600 rounded"
+                      className="w-4 h-4 settings-text-primary rounded"
                     />
                     <span>{t('history_select_all', { defaultValue: 'Выбрать все' })}</span>
                   </label>
@@ -1431,7 +1431,7 @@ export default function Broadcasts() {
 
             {loadingHistory ? (
               <div className="flex items-center justify-center py-12">
-                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                <Loader className="w-8 h-8 settings-text-primary animate-spin" />
               </div>
             ) : history.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
@@ -1445,8 +1445,8 @@ export default function Broadcasts() {
                     key={item.id}
                     className={`border rounded-lg p-4 transition-colors ${
                       selectedHistoryIds.includes(item.id)
-                        ? 'border-pink-300 bg-pink-50/40'
-                        : 'border-gray-200 hover:border-pink-300'
+                        ? 'brand-border settings-bg-primary-light/40'
+                        : 'border-gray-200 hover:brand-border'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-3 gap-3">
@@ -1456,7 +1456,7 @@ export default function Broadcasts() {
                             type="checkbox"
                             checked={selectedHistoryIds.includes(item.id)}
                             onChange={() => toggleHistorySelection(item.id)}
-                            className="w-4 h-4 text-pink-600 rounded"
+                            className="w-4 h-4 settings-text-primary rounded"
                           />
                         </label>
                         <div className="min-w-0">
@@ -1521,7 +1521,7 @@ export default function Broadcasts() {
                   {loadingTemplates ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <History className="w-4 h-4 mr-2" />}
                   {t('refresh', { defaultValue: 'Обновить' })}
                 </Button>
-                <Button size="sm" className="bg-pink-600 hover:bg-pink-700 text-white" onClick={openCreateTemplateEditor}>
+                <Button size="sm" className="settings-bg-primary settings-bg-primary-hover text-white" onClick={openCreateTemplateEditor}>
                   <Plus className="w-4 h-4 mr-2" />
                   {t('create_template', { defaultValue: 'Создать шаблон' })}
                 </Button>
@@ -1530,7 +1530,7 @@ export default function Broadcasts() {
 
             {loadingTemplates ? (
               <div className="flex items-center justify-center py-12">
-                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                <Loader className="w-8 h-8 settings-text-primary animate-spin" />
               </div>
             ) : notificationTemplates.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
@@ -1602,7 +1602,7 @@ export default function Broadcasts() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                  <Newspaper className="w-5 h-5 text-pink-600" />
+                  <Newspaper className="w-5 h-5 settings-text-primary" />
                   {t('newsletter_subscribers', 'Подписчики рассылки')}
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
@@ -1618,7 +1618,7 @@ export default function Broadcasts() {
                       setShowInactive(e.target.checked);
                       loadSubscribers(e.target.checked);
                     }}
-                    className="w-4 h-4 text-pink-600 rounded"
+                    className="w-4 h-4 settings-text-primary rounded"
                   />
                   {t('show_inactive', 'Показать неактивных')}
                 </label>
@@ -1641,7 +1641,7 @@ export default function Broadcasts() {
 
             {loadingSubscribers ? (
               <div className="flex items-center justify-center py-12">
-                <Loader className="w-8 h-8 text-pink-600 animate-spin" />
+                <Loader className="w-8 h-8 settings-text-primary animate-spin" />
               </div>
             ) : subscribers.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
@@ -1775,7 +1775,7 @@ export default function Broadcasts() {
 
             {loadingUnsubscribed ? (
               <div className="flex justify-center py-20">
-                <Loader className="w-10 h-10 animate-spin text-pink-600" />
+                <Loader className="w-10 h-10 animate-spin settings-text-primary" />
               </div>
             ) : filteredUnsubscribed.length === 0 ? (
               <div className="text-center py-20 border-2 border-dashed border-gray-100 rounded-2xl">
@@ -1802,7 +1802,7 @@ export default function Broadcasts() {
                       <tr key={unsub.id} className="hover:bg-gray-50 transition-colors group">
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-pink-600 font-bold text-xs">
+                            <div className="w-8 h-8 rounded-full settings-bg-primary-light flex items-center justify-center settings-text-primary font-bold text-xs">
                               {unsub.full_name?.charAt(0) || '?'}
                             </div>
                             <div>
@@ -1929,7 +1929,7 @@ export default function Broadcasts() {
             <Button
               onClick={performSend}
               disabled={sending || (preview?.total_users === 0)}
-              className="bg-gradient-to-r from-pink-500 to-blue-600 text-white border-0"
+              className="settings-button-gradient text-white border-0"
             >
               {sending ? (
                 <>
@@ -1960,7 +1960,7 @@ export default function Broadcasts() {
           <div className="py-2">
             {loadingTemplates ? (
               <div className="flex items-center justify-center py-8">
-                <Loader className="w-6 h-6 text-pink-600 animate-spin" />
+                <Loader className="w-6 h-6 settings-text-primary animate-spin" />
               </div>
             ) : notificationTemplates.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
@@ -2017,7 +2017,7 @@ export default function Broadcasts() {
                 setShowTemplatePicker(false);
                 openCreateTemplateEditor();
               }}
-              className="bg-pink-600 hover:bg-pink-700 text-white"
+              className="settings-bg-primary settings-bg-primary-hover text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
               {t('create_template', { defaultValue: 'Создать шаблон' })}
@@ -2096,7 +2096,7 @@ export default function Broadcasts() {
               type="button"
               onClick={handleSaveTemplate}
               disabled={savingTemplate}
-              className="bg-pink-600 hover:bg-pink-700 text-white"
+              className="settings-bg-primary settings-bg-primary-hover text-white"
             >
               {savingTemplate ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
               {t('save_template', { defaultValue: 'Сохранить шаблон' })}
@@ -2246,7 +2246,7 @@ export default function Broadcasts() {
             <Button
               onClick={editingSubscriber ? handleUpdateSubscriberData : handleAddSubscriber}
               disabled={sending}
-              className="bg-pink-600 hover:bg-pink-700 text-white"
+              className="settings-bg-primary settings-bg-primary-hover text-white"
             >
               {sending ? <Loader className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
               {editingSubscriber ? t('save') : t('add')}
@@ -2387,7 +2387,7 @@ export default function Broadcasts() {
                 setShowAddManualContacts(false);
                 toast.success(t('contact_added', 'Контакт добавлен'));
               }}
-              className="bg-pink-600 hover:bg-pink-700 text-white"
+              className="settings-bg-primary settings-bg-primary-hover text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
               {t('add')}

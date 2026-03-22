@@ -170,7 +170,7 @@ export function PositionSelector({ value, onChange, disabled, placeholder = 'В�
                       )}
                     </div>
                     {value === position.name && (
-                      <Check className="w-4 h-4 text-pink-600 flex-shrink-0" />
+                      <Check className="w-4 h-4 settings-text-primary flex-shrink-0" />
                     )}
                   </button>
                 ))}
@@ -207,7 +207,7 @@ export function PositionSelector({ value, onChange, disabled, placeholder = 'В�
                   size="sm"
                   onClick={handleCreatePosition}
                   disabled={creating || !newPositionName.trim()}
-                  className="bg-pink-600 hover:bg-pink-700"
+                  className="settings-bg-primary settings-bg-primary-hover"
                 >
                   {creating ? 'Создание...' : 'Создать'}
                 </Button>
@@ -232,7 +232,7 @@ export function PositionSelector({ value, onChange, disabled, placeholder = 'В�
                 }
                 setShowCreateForm(true);
               }}
-              className="w-full px-4 py-3 text-left border-t border-gray-200 hover:bg-gray-50 transition-colors flex items-center gap-2 text-pink-600 hover:text-pink-700"
+              className="w-full px-4 py-3 text-left border-t border-gray-200 hover:bg-gray-50 transition-colors flex items-center gap-2 settings-text-primary hover:text-pink-700"
             >
               <Plus className="w-4 h-4" />
               <span className="text-sm font-medium">

@@ -44,7 +44,7 @@
 }
 
 .settings-text-blue {
-  color: #1d4ed8;
+  color: var(--brand-primary);
 }
 
 .settings-text-blue-dark {
@@ -56,7 +56,7 @@
 }
 
 .settings-icon-email {
-  color: #2563eb;
+  color: var(--brand-primary);
 }
 
 .settings-icon-telegram {
@@ -64,20 +64,20 @@
 }
 
 .settings-icon-instagram {
-  color: #2563eb;
+  color: var(--brand-primary);
 }
 .settings-text-primary {
-  color: #ec4899; /* pink-500 */
+  color: var(--brand-primary); /* pink-500 */
 }
 
 .settings-icon-primary {
-  color: #db2777; /* pink-600 */
+  color: var(--brand-primary); /* pink-600 */
 }
 
 .settings-tab-trigger-active[data-state="active"] {
-  border-color: #ec4899;
-  background-color: #fdf2f8;
-  color: #db2777;
+  border-color: var(--brand-primary);
+  background-color: var(--brand-light);
+  color: var(--brand-primary);
 }
 
 .settings-label-spacing {
@@ -104,7 +104,7 @@
 }
 
 .settings-loader {
-  color: #ec4899;
+  color: var(--brand-primary);
 }
 
 .settings-modules-legend {

@@ -10,6 +10,9 @@ const namespaces = [
   'crm-components',
   'components',
   'dynamic',
+  'analytics',
+  'booking',
+  'calendar',
   'crm/bookings',
   'crm/clients',
   'crm/dashboard',
@@ -19,6 +22,21 @@ const namespaces = [
   'crm/tasks',
   'crm/users',
   'telephony',
+  'admin/audit-log',
+  'admin/botsettings',
+  'admin/broadcasts',
+  'admin/calendar',
+  'admin/challenges',
+  'admin/clients',
+  'admin/contracts',
+  'admin/integrations',
+  'admin/invoices',
+  'admin/products',
+  'admin/promocodes',
+  'admin/services',
+  'admin/trash',
+  'adminpanel/challenges',
+  'adminpanel/loyaltymanagement',
   'manager/chat',
   'employee/dashboard',
   'employee/profile',
@@ -38,7 +56,12 @@ const localeFiles = (import.meta as any).glob(
     './locales/*/crm-components.json',
     './locales/*/components.json',
     './locales/*/dynamic.json',
+    './locales/*/analytics.json',
+    './locales/*/booking.json',
+    './locales/*/calendar.json',
     './locales/*/crm/*.json',
+    './locales/*/admin/*.json',
+    './locales/*/adminpanel/*.json',
     './locales/*/telephony.json',
     './locales/*/manager/chat.json',
     './locales/*/employee/dashboard.json',
@@ -70,12 +93,27 @@ for (const lang of languages) {
     }
   }
 
-  resources[lang].bookings = resources[lang]['crm/bookings']
-  resources[lang].clients = resources[lang]['crm/clients']
-  resources[lang].settings = resources[lang]['crm/settings']
-  resources[lang].services = resources[lang]['crm/services']
+  resources[lang].bookings = {
+    ...(resources[lang]['crm/bookings'] || {}),
+    ...(resources[lang].bookings || {}),
+  }
+  resources[lang].clients = {
+    ...(resources[lang]['crm/clients'] || {}),
+    ...(resources[lang].clients || {}),
+  }
+  resources[lang].settings = {
+    ...(resources[lang]['crm/settings'] || {}),
+    ...(resources[lang].settings || {}),
+  }
+  resources[lang].services = {
+    ...(resources[lang]['crm/services'] || {}),
+    ...(resources[lang].services || {}),
+  }
   resources[lang].telephony = resources[lang].telephony
-  resources[lang].chat = resources[lang]['manager/chat']
+  resources[lang].chat = {
+    ...(resources[lang]['manager/chat'] || {}),
+    ...(resources[lang].chat || {}),
+  }
   resources[lang]['employee/Dashboard'] = resources[lang]['employee/dashboard']
   resources[lang]['components/LanguageSwitcher'] = resources[lang]['components/languageswitcher']
 }

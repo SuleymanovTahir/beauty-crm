@@ -484,7 +484,7 @@ export default function LoyaltyManagement({
   }, [embedded, canManageLoyalty, handleOpenAdjustDialog, onEmbeddedPrimaryActionReady]);
 
   return (
-    <div className="space-y-6">
+    <div className={embedded ? "space-y-6" : "mx-auto max-w-7xl space-y-6 p-4 md:p-6"}>
       {/* Header */}
       {showHeader && (
         <div className={embedded ? 'flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between' : 'flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4'}>

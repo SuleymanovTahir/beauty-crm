@@ -1,0 +1,108 @@
+{
+  "errors": {
+    "createLinkFailed": "حدث خطأ أثناء إنشاء الرابط",
+    "loadFailed": "",
+    "loadServicesFailed": "حدث خطأ أثناء تحميل الخدمات",
+    "saveFailed": "",
+    "syncFailed": ""
+  },
+  "marketplace": {
+    "active": "نشط",
+    "activeSources": "المصادر النشطة",
+    "apiKey": "مفتاح واجهة برمجة التطبيقات",
+    "apiSecret": "سر API",
+    "bookings": "السجلات",
+    "configSuccess": "تم حفظ الإعدادات",
+    "configure": "تهيئة",
+    "configureProvider": "الإعدادات",
+    "daysAgo_few": "{{count}} قبل أيام",
+    "daysAgo_many": "{{count}} قبل أيام",
+    "daysAgo_one": "{{count}} قبل أيام",
+    "daysAgo_other": "{{count}} قبل أيام",
+    "enableProvider": "تمكين التكامل",
+    "hoursAgo_few": "{{count}} قبل ساعات",
+    "hoursAgo_many": "{{count}} قبل ساعات",
+    "hoursAgo_one": "{{count}} قبل ساعات",
+    "hoursAgo_other": "{{count}} قبل ساعات",
+    "inactive": "لم تتم التهيئة",
+    "justNow": "الآن",
+    "lastSync": "المزامنة",
+    "mappingHint": "حدد معرف الخدمة من السوق لـ المزامنة.",
+    "minutesAgo_few": "{{count}} قبل دقيقة",
+    "minutesAgo_many": "{{count}} قبل دقيقة",
+    "minutesAgo_one": "{{count}} قبل دقيقة",
+    "minutesAgo_other": "{{count}} قبل دقيقة",
+    "neverSynced": "أبدًا",
+    "providers": {
+      "2gis": {
+        "description": "التسجيلات عبر الإنترنت من خلال 2GIS",
+        "name": "2GIS"
+      },
+      "amazon": {
+        "description": "Amazon Marketplace",
+        "name": "Amazon"
+      },
+      "booksy": {
+        "description": "منصة التسجيل عبر الإنترنت",
+        "name": "Booksy"
+      },
+      "google_business": {
+        "description": "التسجيلات والمراجعات على Google",
+        "name": "Google Business"
+      },
+      "ozon": {
+        "description": "Ozon Marketplace",
+        "name": "Ozon"
+      },
+      "wildberries": {
+        "description": "WB Marketplace",
+        "name": "Wildberry"
+      },
+      "yandex_maps": {
+        "description": "السجلات والمراجعات من Yandex.Maps",
+        "name": "Yandex.Maps"
+      },
+      "yclients": {
+        "description": "منصة التسجيل عبر الإنترنت",
+        "name": "YCLIENTS"
+      }
+    },
+    "reviews": "المراجعات",
+    "serviceMapping": "تخطيط الخدمة",
+    "settings": "الإعدادات",
+    "status": "الحالة",
+    "subtitle": "التكامل مع خدمات التسجيل والمراجعات عبر الإنترنت",
+    "sync": "المزامنة",
+    "syncStarted": "بدأت المزامنة",
+    "syncing": "المزامنة...",
+    "title": "منصات الحجز",
+    "totalBookings": "إجمالي الإدخالات",
+    "urlCopied": "عنوان URL المنسوخ",
+    "viewBookings": "انتقل إلى الإدخالات",
+    "webhookHint": "حدد عنوان URL هذا في إعدادات خطاف الويب على النظام الأساسي",
+    "webhookUrl": "عنوان URL لخطاف الويب"
+  },
+  "payment": {
+    "active": "نشط",
+    "amount": "المبلغ",
+    "apiKey": "مفتاح واجهة برمجة التطبيقات",
+    "configSuccess": "تم حفظ الإعدادات",
+    "configure": "تهيئة",
+    "configureProvider": "الإعدادات",
+    "createLink": "إنشاء رابط",
+    "createLinkTitle": "إنشاء رابط دفع",
+    "currency": "العملة",
+    "descriptionPlaceholder": "ما هو الدفع مقابل...",
+    "enableProvider": "تمكين الموفر",
+    "inactive": "لم تتم التهيئة",
+    "linkCreated": "الربط بنجاح تم إنشاؤه",
+    "secretKey": "المفتاح السري",
+    "setup": "الاتصال",
+    "status": "الحالة",
+    "subtitle": "إعداد عمليات التكامل مع أنظمة الدفع",
+    "title": "أنظمة الدفع",
+    "viewTransactions": "حجز المعاملات",
+    "webhookSecret": "سري Webhook",
+    "webhookUrl": "عنوان URL للخطاف على الويب"
+  }
+}

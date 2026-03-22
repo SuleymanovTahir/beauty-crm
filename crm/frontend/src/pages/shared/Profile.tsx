@@ -269,7 +269,7 @@ export default function UniversalProfile() {
         return (
             <div className="p-8 flex items-center justify-center h-screen">
                 <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-8 h-8 text-pink-600 animate-spin" />
+                    <Loader2 className="w-8 h-8 settings-text-primary animate-spin" />
                     <p className="text-gray-600">{t('loading_profile')}</p>
                 </div>
             </div>
@@ -295,7 +295,7 @@ export default function UniversalProfile() {
             <div className="max-w-5xl mx-auto">
                 <div className="mb-8">
                     <h1 className="text-3xl text-gray-900 mb-2 flex items-center gap-3">
-                        <UserIcon className="w-8 h-8 text-pink-600" />
+                        <UserIcon className="w-8 h-8 settings-text-primary" />
                         {t('my_profile')}
                     </h1>
                     <p className="text-gray-600">{t('manage_personal_data_and_security_settings')}</p>
@@ -303,7 +303,7 @@ export default function UniversalProfile() {
 
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                     <div className="flex items-start gap-6">
-                        <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 overflow-hidden relative">
+                        <div className="w-20 h-20 settings-button-gradient rounded-full flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 overflow-hidden relative">
                             {user.photo ? (
                                 <img
                                     src={getPhotoUrl(user.photo) || undefined}
@@ -311,7 +311,7 @@ export default function UniversalProfile() {
                                     className="w-full h-full object-cover"
                                 />
                             ) : null}
-                            <span className={`${user.photo ? 'hidden' : 'flex'} w-full h-full items-center justify-center absolute top-0 left-0 bg-gradient-to-br from-pink-500 to-blue-600`}>
+                            <span className={`${user.photo ? 'hidden' : 'flex'} w-full h-full items-center justify-center absolute top-0 left-0 settings-button-gradient`}>
                                 {user.full_name.charAt(0).toUpperCase()}
                             </span>
                         </div>
@@ -391,7 +391,7 @@ export default function UniversalProfile() {
                                 <Button
                                     type="submit"
                                     disabled={saving}
-                                    className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
+                                    className="w-full settings-button-gradient"
                                 >
                                     {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                                     {t('save_changes')}
@@ -442,7 +442,7 @@ export default function UniversalProfile() {
                                 <Button
                                     type="submit"
                                     disabled={saving}
-                                    className="w-full bg-gradient-to-r from-pink-500 to-blue-600 hover:from-pink-600 hover:to-blue-700"
+                                    className="w-full settings-button-gradient"
                                 >
                                     {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Key className="w-4 h-4 mr-2" />}
                                     {t('change_password')}
@@ -467,11 +467,11 @@ export default function UniversalProfile() {
                                                             className="w-full h-full object-cover"
                                                         />
                                                     ) : null}
-                                                    <div className={`${photoPreview ? 'hidden' : 'flex'} w-full h-full absolute top-0 left-0 bg-gradient-to-br from-pink-500 to-blue-600 items-center justify-center text-white text-5xl font-bold`}>
+                                                    <div className={`${photoPreview ? 'hidden' : 'flex'} w-full h-full absolute top-0 left-0 settings-button-gradient items-center justify-center text-white text-5xl font-bold`}>
                                                         {employeeData.full_name.charAt(0).toUpperCase()}
                                                     </div>
                                                 </div>
-                                                <label className="absolute bottom-2 right-2 bg-pink-600 text-white p-2 rounded-full cursor-pointer hover:bg-pink-700 transition-colors shadow-lg">
+                                                <label className="absolute bottom-2 right-2 settings-bg-primary text-white p-2 rounded-full cursor-pointer hover:settings-bg-primary transition-colors shadow-lg">
                                                     {uploadingPhoto ? <Loader2 className="w-5 h-5 animate-spin" /> : <Camera className="w-5 h-5" />}
                                                     <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" disabled={uploadingPhoto} />
                                                 </label>
@@ -502,7 +502,7 @@ export default function UniversalProfile() {
                                                 <Label>{t('bio')}</Label>
                                                 <Textarea value={employeeData.bio} onChange={(e) => setEmployeeData({ ...employeeData, bio: e.target.value })} rows={4} />
                                             </div>
-                                            <Button type="submit" disabled={saving} className="w-full bg-gradient-to-r from-pink-500 to-blue-600">
+                                            <Button type="submit" disabled={saving} className="w-full settings-button-gradient">
                                                 {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
                                                 {t('save_changes')}
                                             </Button>

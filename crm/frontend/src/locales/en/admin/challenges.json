@@ -1,0 +1,61 @@
+{
+  "buttons": {
+    "add_challenge": "Create task",
+    "create_challenge": "Run challenge"
+  },
+  "card": {
+    "check_progress": "Update",
+    "participants": "Participants",
+    "progress": "Progress"
+  },
+  "dialogs": {
+    "add_title": "New challenge",
+    "delete": {
+      "confirm": "Are you sure you want to delete this challenge?"
+    },
+    "edit_title": "Edit challenge"
+  },
+  "empty": {
+    "subtitle": "Create the first game task to encourage customers to sign up more often.",
+    "title": "Challenges are not configured"
+  },
+  "fields": {
+    "dates": "Time limit",
+    "description": "Public description",
+    "reward": "Reward",
+    "target_value": "Plan (goal)",
+    "title": "Challenge name",
+    "type": "Goal Methodology"
+  },
+  "placeholders": {
+    "description": "How will the client see this task?",
+    "title": "For example: Gold status"
+  },
+  "stats": {
+    "active_challenges": "Active tasks",
+    "completed_today": "Completed today",
+    "total_participants": "Total participants"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Pause"
+  },
+  "subtitle": "Increase customer loyalty using game mechanics and automatic rewards.",
+  "title": "Challenges",
+  "toasts": {
+    "created": "Task created",
+    "deleted": "Challenge deleted",
+    "failed_check_progress": "Error checking progress",
+    "failed_delete": "Error when deleting",
+    "progress_checked_one": "",
+    "progress_checked_few": "",
+    "progress_checked_many": "",
+    "progress_checked_other": "",
+    "updated": "Task updated"
+  },
+  "types": {
+    "referrals": "Recommendations",
+    "spend": "Total amount spent",
+    "visits": "Number of visits"
+  }
+}

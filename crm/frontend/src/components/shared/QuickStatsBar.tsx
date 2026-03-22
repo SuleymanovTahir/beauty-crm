@@ -30,7 +30,7 @@ const ACCENT_CLASSES: Record<string, string> = {
   orange: 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800',
   purple: 'bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800',
   yellow: 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800',
-  pink:   'bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-800',
+  pink:   'settings-bg-primary-light dark:bg-pink-950/30 brand-border dark:border-pink-800',
 };
 
 const ICON_ACCENT: Record<string, string> = {
@@ -39,7 +39,7 @@ const ICON_ACCENT: Record<string, string> = {
   orange: 'text-orange-600 dark:text-orange-400',
   purple: 'text-purple-600 dark:text-purple-400',
   yellow: 'text-yellow-600 dark:text-yellow-400',
-  pink:   'text-pink-600 dark:text-pink-400',
+  pink:   'settings-text-primary dark:text-pink-400',
 };
 
 function StatCard({ label, value, icon, accent = 'blue', badge }: StatCardProps) {

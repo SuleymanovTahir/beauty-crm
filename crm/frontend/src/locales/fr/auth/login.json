@@ -21,6 +21,7 @@
   "password": "Password",
   "registration_pending_toast": "Votre inscription est en attente de l'approbation de l'administrateur. Vous recevrez un e-mail lorsque votre compte sera activé.",
   "return_to_home": "← Retour à l'accueil",
+  "server_unavailable": "Le serveur est temporairement indisponible. Veuillez réessayer plus tard.",
   "submit": "Se connecter",
   "username": "Nom d'utilisateur",
   "welcome": "Welcome"
