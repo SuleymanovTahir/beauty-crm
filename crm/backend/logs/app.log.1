@@ -1,178 +1,171 @@
-2026-03-22 09:32:14 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-03-22 09:32:14 - crm - INFO - [subscriptions] Получены подписки пользователя 32
-2026-03-22 09:32:14 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
-2026-03-22 09:32:14 - crm - INFO - [api] ⏱️ get_users took 0.0027s returning 5 users
-2026-03-22 09:32:14 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.65ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:32:14 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.92ms (DB: 2.65ms)
-2026-03-22 09:32:14 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.77ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:32:14 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.90ms (DB: 0.77ms)
-2026-03-22 09:35:36 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 09:35:37 - crm - WARNING - [export] PDF export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
-2026-03-22 09:35:37 - crm - WARNING - [export] Excel import/export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
-2026-03-22 09:35:37 - crm - INFO - [boot] ============================================================
-2026-03-22 09:35:37 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
-2026-03-22 09:35:37 - crm - INFO - [boot] 🧭 Runtime backend group: crm
-2026-03-22 09:35:37 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/audio, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/audio/ringtones, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/crm/backend/static/recordings, /Users/tahir/Desktop/beauty-crm/crm/backend/logs
-2026-03-22 09:35:37 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 09:35:37 - crm - INFO - [boot] ✅ Thread runtime tuned (20 threads per worker)
-2026-03-22 09:35:37 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable, trying PostgreSQL fallback: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
-2026-03-22 09:35:37 - crm - INFO - [pubsub] ✅ PostgreSQL Pub/Sub reconnected
-2026-03-22 09:35:37 - crm - INFO - [pubsub] 📡 PostgreSQL Pub/Sub connected on channel crm_pubsub
-2026-03-22 09:35:37 - crm - INFO - [boot] ✅ Cross-worker Pub/Sub ready (postgres)
-2026-03-22 09:35:37 - crm - INFO - [boot] ✅ Пул соединений прогрет
-2026-03-22 09:35:37 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
-2026-03-22 09:35:38 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-03-22 09:35:38 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-03-22 09:35:38 - crm - INFO - [migrations] ⏭️ Legacy chat_history helper skipped; schema comes from db.init
-2026-03-22 09:35:38 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
-2026-03-22 09:35:38 - crm - INFO - [migrations] ⏭️ Legacy prod/test seeding removed from CRM migrations
-2026-03-22 09:35:38 - crm - INFO - [migrations] ⏭️ Test staff seeding skipped (SEED_TEST_DATA=false)
-2026-03-22 09:35:38 - crm - INFO - [boot] ✅ Конфигурация салона: 
-2026-03-22 09:35:38 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
-2026-03-22 09:35:38 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/crm/backend/modules_config.json
-2026-03-22 09:35:38 - crm - INFO - [modules] ======================================================================
-2026-03-22 09:35:38 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
-2026-03-22 09:35:38 - crm - INFO - [modules] ======================================================================
-2026-03-22 09:35:38 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
-2026-03-22 09:35:38 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
-2026-03-22 09:35:38 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
-2026-03-22 09:35:38 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
-2026-03-22 09:35:38 - crm - INFO - [modules] ======================================================================
-2026-03-22 09:35:38 - crm - INFO - [boot] ✅ CRM scheduler leadership acquired by current worker
-2026-03-22 09:35:38 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
-2026-03-22 09:35:38 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
-2026-03-22 09:35:38 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
-2026-03-22 09:35:38 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
-2026-03-22 09:35:38 - crm - INFO - [pubsub] 📡 Pub/Sub listener started
-2026-03-22 09:35:38 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
-2026-03-22 09:35:38 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
-2026-03-22 09:35:38 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
-2026-03-22 09:35:38 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
-2026-03-22 09:35:39 - crm - INFO - [api] ⏱️ get_users took 0.0047s returning 5 users
-2026-03-22 09:35:39 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 3.05ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:35:39 - crm - INFO - [chat] ✅ [unread-count] Total request took 3.31ms (DB: 3.05ms)
-2026-03-22 09:35:39 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
-2026-03-22 09:35:39 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
-2026-03-22 09:35:39 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
-2026-03-22 09:35:39 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
-2026-03-22 09:35:39 - crm - INFO - [subscriptions] Получены подписки пользователя 32
-2026-03-22 09:35:39 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-03-22 09:35:39 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
-2026-03-22 09:35:39 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.41ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:35:39 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.65ms (DB: 1.41ms)
-2026-03-22 09:36:25 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
-2026-03-22 09:36:25 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
-2026-03-22 09:36:25 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
-2026-03-22 09:36:25 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
-2026-03-22 09:36:25 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
-2026-03-22 09:36:25 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-03-22 09:36:25 - crm - INFO - [subscriptions] Получены подписки пользователя 32
-2026-03-22 09:36:25 - crm - INFO - [api] ⏱️ get_users took 0.0016s returning 5 users
-2026-03-22 09:36:25 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
-2026-03-22 09:36:25 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.03ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:36:25 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.11ms (DB: 1.03ms)
-2026-03-22 09:36:25 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.81ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:36:25 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.98ms (DB: 0.81ms)
-2026-03-22 09:36:47 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
-2026-03-22 09:36:47 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
-2026-03-22 09:36:47 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
-2026-03-22 09:36:47 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
-2026-03-22 09:36:47 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
-2026-03-22 09:36:47 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-03-22 09:36:47 - crm - INFO - [subscriptions] Получены подписки пользователя 32
-2026-03-22 09:36:47 - crm - INFO - [api] ⏱️ get_users took 0.0006s returning 5 users
-2026-03-22 09:36:47 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.25ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:36:47 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.36ms (DB: 2.25ms)
-2026-03-22 09:36:47 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
-2026-03-22 09:36:47 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.12ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:36:47 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.33ms (DB: 1.12ms)
-2026-03-22 09:37:40 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
-2026-03-22 09:37:40 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
-2026-03-22 09:37:40 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
-2026-03-22 09:37:40 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
-2026-03-22 09:37:40 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
-2026-03-22 09:37:40 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-03-22 09:37:40 - crm - INFO - [subscriptions] Получены подписки пользователя 32
-2026-03-22 09:37:40 - crm - INFO - [api] ⏱️ get_users took 0.0009s returning 5 users
-2026-03-22 09:37:40 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
-2026-03-22 09:37:40 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.49ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:37:40 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.65ms (DB: 1.49ms)
-2026-03-22 09:37:41 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.78ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:37:41 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.94ms (DB: 0.78ms)
-2026-03-22 09:38:11 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
-2026-03-22 09:38:11 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
-2026-03-22 09:38:11 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
-2026-03-22 09:38:11 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
-2026-03-22 09:38:11 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
-2026-03-22 09:38:11 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-03-22 09:38:11 - crm - INFO - [subscriptions] Получены подписки пользователя 32
-2026-03-22 09:38:11 - crm - INFO - [api] ⏱️ get_users took 0.0008s returning 5 users
-2026-03-22 09:38:11 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
-2026-03-22 09:38:11 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.11ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:38:11 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.23ms (DB: 1.11ms)
-2026-03-22 09:38:11 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.75ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:38:11 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.92ms (DB: 0.75ms)
-2026-03-22 09:39:43 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
-2026-03-22 09:39:43 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
-2026-03-22 09:39:43 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
-2026-03-22 09:39:43 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
-2026-03-22 09:39:43 - crm - INFO - [subscriptions] Получены подписки пользователя 32
-2026-03-22 09:39:43 - crm - INFO - [api] ⏱️ get_users took 0.0005s returning 5 users
-2026-03-22 09:39:55 - crm - INFO - [perf] ⏱️ get_all_services took 0.0005s returning 0 items
-2026-03-22 09:40:16 - crm - INFO - [perf] ⏱️ get_all_services took 0.0024s returning 0 items
-2026-03-22 09:40:16 - crm - INFO - [perf] ⏱️ get_funnel_data took 0.0069s
-2026-03-22 09:40:31 - crm - ERROR - [performance] ❌ REQ FAILED (2.45ms): GET /api/kpi - column u.profile_pic does not exist
-LINE 2: ...        SELECT k.*, u.full_name AS employee_name, u.profile_...
-                                                             ^
-
-2026-03-22 09:40:31 - crm - ERROR - [performance] ❌ REQ FAILED (1.22ms): GET /api/kpi/leaderboard - column b.employee_id does not exist
-LINE 9:             LEFT JOIN bookings b ON b.employee_id=u.id
-                                            ^
-HINT:  Perhaps you meant to reference the column "u.employee_id".
-
-2026-03-22 09:40:32 - crm - INFO - [perf] ⏱️ get_all_services took 0.0003s returning 0 items
-2026-03-22 09:40:43 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
-2026-03-22 09:40:43 - crm - INFO - [notifications] 🔔 New WS connection accepted
-2026-03-22 09:40:43 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.50ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:40:43 - crm - INFO - [chat] ✅ [unread-count] Total request took 4.37ms (DB: 2.50ms)
-2026-03-22 09:40:43 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
-2026-03-22 09:40:43 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.89ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
-2026-03-22 09:40:43 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.05ms (DB: 0.89ms)
-2026-03-22 09:40:45 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
-2026-03-22 09:40:45 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
-2026-03-22 09:40:45 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
-2026-03-22 09:40:45 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
-2026-03-22 09:40:45 - crm - INFO - [subscriptions] Получены подписки пользователя 32
-2026-03-22 09:40:45 - crm - INFO - [api] ⏱️ get_users took 0.0011s returning 5 users
-2026-03-22 09:40:45 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
-2026-03-22 09:40:45 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
-2026-03-22 09:40:45 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
-2026-03-22 09:40:45 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
-2026-03-22 09:40:45 - crm - INFO - [subscriptions] Получены подписки пользователя 32
-2026-03-22 09:40:45 - crm - INFO - [api] ⏱️ get_users took 0.0008s returning 5 users
-2026-03-22 09:40:46 - crm - INFO - [api] ⏱️ get_users took 0.0009s returning 5 users
-2026-03-22 09:40:57 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
-2026-03-22 09:40:57 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
-2026-03-22 09:40:57 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
-2026-03-22 09:40:57 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
-2026-03-22 09:40:57 - crm - INFO - [subscriptions] Получены подписки пользователя 32
-2026-03-22 09:40:57 - crm - INFO - [api] ⏱️ get_users took 0.0005s returning 5 users
-2026-03-22 09:41:11 - crm - INFO - [api] ⏱️ get_users took 0.0011s returning 5 users
-2026-03-22 09:41:11 - crm - INFO - [perf] ⏱️ get_all_services took 0.0008s returning 0 items
-2026-03-22 09:41:11 - crm - INFO - [perf] ⏱️ get_filtered_bookings took 0.0057s for 20 items
-2026-03-22 09:41:11 - crm - INFO - [perf] ⏱️ get_booking_stats took 0.0020s
-2026-03-22 09:41:11 - crm - INFO - [perf] ⏱️ get_all_client_messengers took 0.0000s for 0 clients
-2026-03-22 09:41:11 - crm - INFO - [perf] ⏱️ fetching_client_phones took 0.0000s
-2026-03-22 09:41:11 - crm - INFO - [perf] ⏱️ formatting_response took 0.0000s
-2026-03-22 09:41:11 - crm - INFO - [perf] ⏱️ TOTAL list_bookings took 0.0080s
-2026-03-22 09:41:45 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
-2026-03-22 09:41:45 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
-2026-03-22 09:41:45 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
-2026-03-22 09:41:45 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
-2026-03-22 09:41:45 - crm - INFO - [subscriptions] Получены подписки пользователя 32
-2026-03-22 09:41:45 - crm - INFO - [api] ⏱️ get_users took 0.0006s returning 5 users
-2026-03-22 09:42:19 - crm - INFO - [perf] ⏱️ get_all_services took 0.0005s returning 0 items
-2026-03-22 09:43:45 - crm - INFO - [perf] ⏱️ get_all_services took 0.0007s returning 0 items
-2026-03-22 09:43:58 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
-2026-03-22 09:43:58 - crm - INFO - [perf] ⏱️ get_all_services took 0.0005s returning 0 items
-2026-03-22 09:43:58 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:43:58 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 4.06ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:43:58 - crm - INFO - [chat] ✅ [unread-count] Total request took 5.86ms (DB: 4.06ms)
+2026-03-22 09:43:59 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:43:59 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.78ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:43:59 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.92ms (DB: 0.78ms)
+2026-03-22 09:45:27 - crm - INFO - [perf] ⏱️ get_all_services took 0.0006s returning 0 items
+2026-03-22 09:45:33 - crm - INFO - [perf] ⏱️ get_all_services took 0.0006s returning 0 items
+2026-03-22 09:45:33 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:45:33 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.64ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:45:33 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.27ms (DB: 1.64ms)
+2026-03-22 09:45:33 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:45:33 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.68ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:45:33 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.78ms (DB: 0.68ms)
+2026-03-22 09:45:35 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.78ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:45:35 - crm - INFO - [chat] ✅ [unread-count] Total request took 4.01ms (DB: 2.78ms)
+2026-03-22 09:45:35 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:45:35 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:45:35 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.67ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:45:35 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.81ms (DB: 0.67ms)
+2026-03-22 09:45:38 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-03-22 09:45:44 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:45:44 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 3.50ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:45:44 - crm - INFO - [chat] ✅ [unread-count] Total request took 3.65ms (DB: 3.50ms)
+2026-03-22 09:45:44 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:45:44 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.68ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:45:44 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.80ms (DB: 0.68ms)
+2026-03-22 09:45:46 - crm - INFO - [perf] ⏱️ get_all_services took 0.0006s returning 0 items
+2026-03-22 09:45:46 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:45:46 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.82ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:45:46 - crm - INFO - [chat] ✅ [unread-count] Total request took 3.02ms (DB: 2.82ms)
+2026-03-22 09:45:46 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:45:46 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.91ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:45:46 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.17ms (DB: 0.91ms)
+2026-03-22 09:45:55 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-03-22 09:45:55 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
+2026-03-22 09:45:55 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
+2026-03-22 09:45:55 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
+2026-03-22 09:45:55 - crm - INFO - [subscriptions] Получены подписки пользователя 32
+2026-03-22 09:45:55 - crm - INFO - [api] ⏱️ get_users took 0.0008s returning 5 users
+2026-03-22 09:46:47 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 09:46:47 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-03-22 09:46:47 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
+2026-03-22 09:46:47 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
+2026-03-22 09:46:47 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
+2026-03-22 09:46:47 - crm - INFO - [subscriptions] Получены подписки пользователя 32
+2026-03-22 09:46:47 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:46:47 - crm - INFO - [api] ⏱️ get_users took 0.0010s returning 5 users
+2026-03-22 09:46:47 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.34ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:46:47 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.56ms (DB: 1.34ms)
+2026-03-22 09:46:47 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:46:47 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.74ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:46:47 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.91ms (DB: 0.74ms)
+2026-03-22 09:46:55 - crm - INFO - [api] ⏱️ get_users took 0.0009s returning 5 users
+2026-03-22 09:47:00 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-03-22 09:47:00 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
+2026-03-22 09:47:00 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
+2026-03-22 09:47:00 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
+2026-03-22 09:47:00 - crm - INFO - [subscriptions] Получены подписки пользователя 32
+2026-03-22 09:47:00 - crm - INFO - [api] ⏱️ get_users took 0.0008s returning 5 users
+2026-03-22 09:47:32 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-03-22 09:47:32 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
+2026-03-22 09:47:32 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
+2026-03-22 09:47:32 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
+2026-03-22 09:47:32 - crm - INFO - [subscriptions] Получены подписки пользователя 32
+2026-03-22 09:47:32 - crm - INFO - [api] ⏱️ get_users took 0.0006s returning 5 users
+2026-03-22 09:51:02 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 09:51:03 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 3.61ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:51:03 - crm - INFO - [chat] ✅ [unread-count] Total request took 4.31ms (DB: 3.61ms)
+2026-03-22 09:51:03 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:51:03 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:51:03 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.62ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:51:03 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.77ms (DB: 0.62ms)
+2026-03-22 09:53:45 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 09:53:45 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:53:45 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.74ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:53:45 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.91ms (DB: 2.74ms)
+2026-03-22 09:53:45 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:53:45 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.72ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:53:45 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.89ms (DB: 0.72ms)
+2026-03-22 09:54:05 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 09:54:05 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:54:05 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.74ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:54:05 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.01ms (DB: 0.74ms)
+2026-03-22 09:54:05 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:54:05 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.68ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:54:05 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.79ms (DB: 0.68ms)
+2026-03-22 09:55:16 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-03-22 09:55:16 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
+2026-03-22 09:55:16 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
+2026-03-22 09:55:16 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
+2026-03-22 09:55:16 - crm - INFO - [subscriptions] Получены подписки пользователя 32
+2026-03-22 09:55:16 - crm - INFO - [api] ⏱️ get_users took 0.0007s returning 5 users
+2026-03-22 09:55:38 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-03-22 09:56:34 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 09:56:34 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.34ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:56:34 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:56:34 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.52ms (DB: 2.34ms)
+2026-03-22 09:56:35 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:56:35 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.89ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:56:35 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.08ms (DB: 0.89ms)
+2026-03-22 09:56:50 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 09:56:50 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:56:50 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.12ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:56:50 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.69ms (DB: 2.12ms)
+2026-03-22 09:56:50 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:56:50 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.90ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:56:50 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.13ms (DB: 0.90ms)
+2026-03-22 09:57:02 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 09:57:02 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:57:02 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.87ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:57:02 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.09ms (DB: 1.87ms)
+2026-03-22 09:57:02 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:57:02 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.73ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:57:02 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.83ms (DB: 0.73ms)
+2026-03-22 09:57:42 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 09:57:42 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:57:42 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 2.23ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:57:42 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.36ms (DB: 2.23ms)
+2026-03-22 09:57:42 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:57:42 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.12ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:57:42 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.23ms (DB: 1.12ms)
+2026-03-22 09:57:45 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 09:57:45 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.89ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:57:45 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:57:45 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.58ms (DB: 1.89ms)
+2026-03-22 09:57:45 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:57:45 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.11ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:57:45 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.36ms (DB: 1.11ms)
+2026-03-22 09:58:27 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 09:58:28 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-03-22 09:58:28 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
+2026-03-22 09:58:28 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
+2026-03-22 09:58:28 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
+2026-03-22 09:58:28 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:58:28 - crm - INFO - [subscriptions] Получены подписки пользователя 32
+2026-03-22 09:58:28 - crm - INFO - [api] ⏱️ get_users took 0.0006s returning 5 users
+2026-03-22 09:58:28 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.99ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:58:28 - crm - INFO - [chat] ✅ [unread-count] Total request took 2.07ms (DB: 1.99ms)
+2026-03-22 09:58:28 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:58:28 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.91ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:58:28 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.09ms (DB: 0.91ms)
+2026-03-22 09:58:30 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 09:58:30 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-03-22 09:58:30 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
+2026-03-22 09:58:30 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
+2026-03-22 09:58:30 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
+2026-03-22 09:58:30 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 09:58:30 - crm - INFO - [subscriptions] Получены подписки пользователя 32
+2026-03-22 09:58:30 - crm - INFO - [api] ⏱️ get_users took 0.0009s returning 5 users
+2026-03-22 09:58:30 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.52ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:58:30 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.85ms (DB: 1.52ms)
+2026-03-22 09:58:30 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 09:58:31 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.91ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 09:58:31 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.07ms (DB: 0.91ms)
+2026-03-22 10:00:03 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 10:00:03 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
+2026-03-22 10:00:03 - crm - INFO - [api] ✅ [Profile] Пользователь авторизован: user_id=32, username=c1_director, role=director
+2026-03-22 10:00:03 - crm - INFO - [api] 🔍 [Profile] Загрузка данных пользователя с id=32
+2026-03-22 10:00:03 - crm - INFO - [api] ✅ [Profile] Профиль успешно загружен: Директор Салон (Директор)
+2026-03-22 10:00:03 - crm - INFO - [notifications] 🔔 New WS connection accepted
+2026-03-22 10:00:03 - crm - INFO - [subscriptions] Получены подписки пользователя 32
+2026-03-22 10:00:03 - crm - INFO - [api] ⏱️ get_users took 0.0009s returning 5 users
+2026-03-22 10:00:03 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 1.21ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 10:00:03 - crm - INFO - [chat] ✅ [unread-count] Total request took 1.30ms (DB: 1.21ms)
+2026-03-22 10:00:03 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 connected locally. Local users: 1
+2026-03-22 10:00:03 - crm - INFO - [chat] ⏱️ [unread-count] DB query took 0.68ms, data: {'total': 0, 'chat': 0, 'notifications': 0, 'internal_chat': 0}
+2026-03-22 10:00:03 - crm - INFO - [chat] ✅ [unread-count] Total request took 0.82ms (DB: 0.68ms)
+2026-03-22 10:00:18 - crm - INFO - [birthday_checker] ⏰ Running daily birthday checks...
+2026-03-22 10:00:18 - crm - ERROR - [birthday_checker] Error in birthday_checker_loop: name 'timedelta' is not defined
+2026-03-22 10:00:21 - crm - INFO - [notifications] 🔔 Notifications WS: User 32 disconnected locally. Local users: 0
+2026-03-22 10:00:22 - crm - INFO - [api] 🔍 [Profile] Запрос на получение профиля сотрудника
