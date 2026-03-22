@@ -171,7 +171,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
                 const x = (128 - w) / 2;
                 const y = (128 - h) / 2;
 
-                ctx.filter = `hue-rotate(${hueDiff}deg)`;
+                ctx.filter = `grayscale(1) sepia(1) saturate(3) hue-rotate(${iconSepiaDeg}deg) brightness(0.95)`;
                 ctx.drawImage(img, x, y, w, h);
                 
                 const dataUrl = canvas.toDataURL('image/png');

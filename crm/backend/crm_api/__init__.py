@@ -14,6 +14,13 @@ def _safe_import(module_name: str, alias: str):
         logger.warning(f"Skipping router {module_name}: {e}")
         return None
 
+
+def _safe_include(parent_router: APIRouter, child_router: APIRouter, module_name: str) -> None:
+    try:
+        parent_router.include_router(child_router)
+    except Exception as e:
+        logger.warning(f"Skipping router {module_name} during include: {e}")
+
 # Главный роутер API
 router = APIRouter(tags=["API"])
 
@@ -32,6 +39,6 @@ _modules = [
 for _mod in _modules:
     _r = _safe_import(_mod, _mod)
     if _r is not None:
-        router.include_router(_r)
+        _safe_include(router, _r, _mod)
 
 __all__ = ["router"]

@@ -1,3 +1,27 @@
+## [2026-03-22] Fixed Backend Reload Stall Caused By Empty Holidays Route Prefix
+- Fixed the CRM backend reload failure that surfaced in the frontend as `TypeError: Failed to fetch` on settings requests such as `/api/booking-reminder-settings`.
+- Root cause:
+  - the holidays router declared handlers on `""`,
+  - the same router was also mounted manually under `/api/holidays`,
+  - during API aggregator assembly in `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/__init__.py`, FastAPI raised `Prefix and path cannot be both empty (path operation: list_holidays)`,
+  - after that failure, the reload parent still held port `8000`, so browser requests got an empty reply instead of a normal JSON error/response.
+- What changed:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/holidays.py`
+    - moved the holidays SSOT to `APIRouter(prefix="/holidays", tags=["Holidays"])` so the router can be safely aggregated under `/api`.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/product_groups/crm/router_mount.py`
+    - removed the duplicate explicit holidays mount and now relies on the aggregated CRM API router.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/__init__.py`
+    - added guarded router inclusion logging so a bad router include no longer crashes API assembly without a warning line.
+- Validation:
+  - `cd /Users/tahir/Desktop/beauty-crm/crm/backend && python3 -c "import main; print('imported'); print(type(main.app).__name__)"` ✅
+  - `curl -i http://localhost:8000/health` returns `200 OK` ✅
+  - `curl -i http://localhost:8000/api/booking-reminder-settings` now returns JSON `401 Unauthorized` instead of hanging ✅
+  - `curl -i http://localhost:5173/api/booking-reminder-settings` through Vite proxy also returns JSON `401 Unauthorized` ✅
+- IMPORTANT TO REMEMBER:
+  - if a router is meant to live under `/api/<feature>`, put that feature prefix on the router itself or on exactly one include site, not both,
+  - do not mix `@router.get("")` with aggregator includes that can produce an empty effective path,
+  - when frontend shows `Failed to fetch` after a backend reload, always verify that the worker actually booted and that `import main` succeeds.
+
 ## [2026-03-22] Full Frontend I18n Recheck With RU Source Guardrails
 - Rechecked the whole frontend i18n contour after the previous fixes and found that the standard translation checker still allowed empty source values inside the reference `ru` locale, which later turned into blank UI on many CRM pages.
 - Fixed this at the pipeline level instead of patching frontend locale JSON by hand:

@@ -538,6 +538,37 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                 id: 'logo-home',
                 isLogo: true,
                 icon: () => (
+                    <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'flex-start' }}>
+                        <img
+                            src="/logo/vertical-logo-pink.svg"
+                            alt=""
+                            style={{ filter: 'var(--logo-filter, none)', height: '38px', width: 'auto' }}
+                        />
+                        <img
+                            src="/logo/logo-icon-pink.svg"
+                            aria-hidden="true"
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                height: '65%',
+                                width: 'auto',
+                                pointerEvents: 'none',
+                                filter: 'var(--logo-icon-filter, none)',
+                            }}
+                        />
+                    </div>
+                ),
+                label: '',
+                path: dashboardPath,
+                badge: 0
+            };
+            /* старый вариант с icon-only лого:
+            const logoTab: any = {
+                id: 'logo-home',
+                isLogo: true,
+                icon: () => (
                     <div className="relative flex items-center justify-center w-7 h-7" style={{ filter: 'var(--logo-icon-filter, none)' }}>
                         <img src="/logo/logo-icon-pink.svg" className="w-full h-full object-contain" alt="" />
                     </div>
@@ -545,8 +576,8 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                 label: 'CRM',
                 path: dashboardPath,
                 badge: 0
-            };
-            tabs.splice(2, 0, logoTab);
+            }; */
+            tabs.splice(0, 0, logoTab);
         }
 
         return tabs;
@@ -1076,6 +1107,27 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                     <div className="more-menu-content animate-in slide-in-from-bottom" onClick={e => e.stopPropagation()}>
                         <div className="more-menu-header">
                             <span className="more-menu-title">{t('menu.more', 'Ещё')}</span>
+                            <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'flex-start' }}>
+                                <img
+                                    src="/logo/vertical-logo-pink.svg"
+                                    alt=""
+                                    style={{ filter: 'var(--logo-filter, none)', height: '32px', width: 'auto', opacity: 0.8 }}
+                                />
+                                <img
+                                    src="/logo/logo-icon-pink.svg"
+                                    aria-hidden="true"
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: '50%',
+                                        transform: 'translateX(-50%)',
+                                        height: '65%',
+                                        width: 'auto',
+                                        pointerEvents: 'none',
+                                        filter: 'var(--logo-icon-filter, none)',
+                                    }}
+                                />
+                            </div>
                             <button onClick={() => setShowMoreModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                                 <X size={18} />
                             </button>

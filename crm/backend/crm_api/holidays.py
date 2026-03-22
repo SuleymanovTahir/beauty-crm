@@ -4,7 +4,7 @@ from typing import List, Optional
 from db.holidays import add_holiday, get_holidays, delete_holiday
 from utils.permissions import require_permission
 
-router = APIRouter()
+router = APIRouter(prefix="/holidays", tags=["Holidays"])
 
 class HolidayRequest(BaseModel):
     date: str
