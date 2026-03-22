@@ -142,6 +142,36 @@ def _json_load(value: Any, fallback: Any) -> Any:
     return fallback
 
 
+def _normalize_company_metadata(value: Any) -> dict[str, Any]:
+    raw = _json_load(value, {})
+    if not isinstance(raw, dict):
+        raw = {}
+
+    tags_value = raw.get("tags")
+    tags: list[str] = []
+    if isinstance(tags_value, list):
+        tags = [str(item).strip() for item in tags_value if str(item).strip()]
+    elif isinstance(tags_value, str):
+        tags = [item.strip() for item in tags_value.split(",") if item.strip()]
+
+    deduplicated_tags: list[str] = []
+    seen_tags: set[str] = set()
+    for tag in tags:
+        lowered = tag.lower()
+        if lowered in seen_tags:
+            continue
+        seen_tags.add(lowered)
+        deduplicated_tags.append(tag)
+
+    normalized = dict(raw)
+    normalized["tags"] = deduplicated_tags
+    normalized["segment"] = str(raw.get("segment") or "").strip()
+    normalized["account_manager"] = str(raw.get("account_manager") or "").strip()
+    normalized["billing_contact_name"] = str(raw.get("billing_contact_name") or "").strip()
+    normalized["billing_contact_email"] = str(raw.get("billing_contact_email") or "").strip()
+    return normalized
+
+
 def _safe_int(value: Any, default: Optional[int] = None) -> Optional[int]:
     if value is None or value == "":
         return default
@@ -1468,6 +1498,8 @@ def list_companies(
     search: str | None = None,
     status: str | None = None,
     include_deleted: bool = False,
+    segment: str | None = None,
+    account_manager: str | None = None,
 ) -> list[dict[str, Any]]:
     conn = get_db_connection()
     c = conn.cursor()
@@ -1475,19 +1507,34 @@ def list_companies(
         where_parts = ["1=1"] if include_deleted else ["c.deleted_at IS NULL"]
         params: list[Any] = []
         if search:
-            where_parts.append("(LOWER(COALESCE(c.name, '')) LIKE LOWER(%s) OR LOWER(c.access_code) LIKE LOWER(%s) OR LOWER(COALESCE(c.email, '')) LIKE LOWER(%s))")
+            where_parts.append(
+                """
+                (
+                    LOWER(COALESCE(c.name, '')) LIKE LOWER(%s)
+                    OR LOWER(c.access_code) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(c.email, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(c.metadata::text, '')) LIKE LOWER(%s)
+                )
+                """
+            )
             search_term = f"%{search.strip()}%"
-            params.extend([search_term, search_term, search_term])
+            params.extend([search_term, search_term, search_term, search_term])
         if status:
             where_parts.append("c.status = %s")
             params.append(status)
+        if segment:
+            where_parts.append("LOWER(COALESCE(c.metadata->>'segment', '')) = LOWER(%s)")
+            params.append(segment.strip())
+        if account_manager:
+            where_parts.append("LOWER(COALESCE(c.metadata->>'account_manager', '')) = LOWER(%s)")
+            params.append(account_manager.strip())
 
         c.execute(
             f"""
             SELECT
                 c.id, c.slug, c.access_code, c.name, c.status, c.email, c.phone,
                 c.business_type, c.product_mode, c.currency, c.timezone,
-                c.employee_limit, c.owner_user_id, c.created_at, c.updated_at, c.deleted_at,
+                c.employee_limit, c.owner_user_id, c.metadata, c.created_at, c.updated_at, c.deleted_at,
                 COUNT(u.id) FILTER (WHERE u.deleted_at IS NULL AND u.is_active = TRUE AND u.role NOT IN ('client', 'super_admin')) AS active_staff_count,
                 cs.id AS subscription_id,
                 cs.tariff_plan_id,
@@ -1508,8 +1555,11 @@ def list_companies(
                 cs.scheduled_change,
                 cs.discount_config,
                 cs.price_override,
+                cs.auto_renew,
                 cs.last_payment_at,
                 cs.next_payment_due_at,
+                cs.assigned_by_user_id,
+                cs.notes,
                 tp.id AS tariff_id,
                 tp.key AS tariff_key,
                 tp.name AS tariff_name,
@@ -1533,13 +1583,13 @@ def list_companies(
             GROUP BY
                 c.id, c.slug, c.access_code, c.name, c.status, c.email, c.phone,
                 c.business_type, c.product_mode, c.currency, c.timezone,
-                c.employee_limit, c.owner_user_id, c.created_at, c.updated_at, c.deleted_at,
+                c.employee_limit, c.owner_user_id, c.metadata, c.created_at, c.updated_at, c.deleted_at,
                 cs.id, cs.tariff_plan_id, cs.status, cs.is_trial, cs.billing_cycle_months,
                 cs.employee_limit_override, cs.client_limit_override, cs.product_limit_override,
                 cs.monthly_message_limit_override, cs.storage_limit_mb_override, cs.ad_slot_limit_override,
                 cs.current_period_started_at, cs.current_period_ends_at, cs.trial_ends_at, cs.ends_at,
                 cs.current_snapshot, cs.scheduled_change, cs.discount_config, cs.price_override,
-                cs.last_payment_at, cs.next_payment_due_at,
+                cs.auto_renew, cs.last_payment_at, cs.next_payment_due_at, cs.assigned_by_user_id, cs.notes,
                 tp.id, tp.key, tp.name, tp.description, tp.employee_limit, tp.client_limit,
                 tp.product_limit, tp.monthly_message_limit, tp.storage_limit_mb, tp.ad_slot_limit,
                 tp.monthly_price, tp.yearly_price, tp.currency, tp.trial_days, tp.feature_flags
@@ -1551,6 +1601,7 @@ def list_companies(
         result = []
         for row in c.fetchall():
             payload = dict(zip(columns, row))
+            company_metadata = _normalize_company_metadata(payload.get("metadata"))
             current_snapshot = _json_load(payload.get("current_snapshot"), {})
             if not isinstance(current_snapshot, dict) or not current_snapshot:
                 current_snapshot = _build_tariff_snapshot(
@@ -1598,6 +1649,7 @@ def list_companies(
                     "timezone": payload["timezone"],
                     "employee_limit": _safe_int(payload["employee_limit"], 0) or 0,
                     "owner_user_id": _safe_int(payload["owner_user_id"]),
+                    "metadata": company_metadata,
                     "created_at": payload["created_at"],
                     "updated_at": payload["updated_at"],
                     "deleted_at": payload.get("deleted_at"),
@@ -1615,8 +1667,11 @@ def list_companies(
                         "scheduled_change": _json_load(payload.get("scheduled_change"), {}),
                         "discount_config": _normalize_discount_config(payload.get("discount_config")),
                         "price_override": _normalize_price_override(payload.get("price_override")),
+                        "auto_renew": bool(payload.get("auto_renew")) if payload.get("auto_renew") is not None else True,
                         "last_payment_at": payload.get("last_payment_at"),
                         "next_payment_due_at": payload.get("next_payment_due_at"),
+                        "assigned_by_user_id": _safe_int(payload.get("assigned_by_user_id")),
+                        "notes": payload.get("notes"),
                         "effective_employee_limit": _safe_int(current_snapshot.get("employee_limit"), 0) or 0,
                         "effective_client_limit": _safe_int(current_snapshot.get("client_limit"), 0) or 0,
                         "effective_product_limit": _safe_int(current_snapshot.get("product_limit"), 0) or 0,
@@ -2049,6 +2104,504 @@ def list_company_payments(
                     "metadata": _json_load(row[20], {}),
                     "created_by_user_id": _safe_int(row[21]),
                     "created_at": row[22],
+                }
+            )
+        return rows
+    finally:
+        conn.close()
+
+
+def get_company_payment_by_id(payment_id: int) -> dict[str, Any] | None:
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute(
+            """
+            SELECT
+                cp.id, cp.company_id, c.name AS company_name, cp.subscription_id, cp.tariff_plan_id,
+                tp.key AS tariff_key, tp.name AS tariff_name, cp.status, cp.amount, cp.base_amount,
+                cp.discount_amount, cp.discount_percent, cp.currency, cp.period_months,
+                cp.period_started_at, cp.period_ends_at, cp.due_at, cp.paid_at, cp.invoice_number,
+                cp.notes, cp.metadata, cp.created_by_user_id, cp.created_at
+            FROM company_payments cp
+            LEFT JOIN companies c ON c.id = cp.company_id
+            LEFT JOIN tariff_plans tp ON tp.id = cp.tariff_plan_id
+            WHERE cp.id = %s
+            LIMIT 1
+            """,
+            (payment_id,),
+        )
+        row = c.fetchone()
+        if not row:
+            return None
+        return {
+            "id": int(row[0]),
+            "company_id": _safe_int(row[1]),
+            "company_name": row[2],
+            "subscription_id": _safe_int(row[3]),
+            "tariff_plan_id": _safe_int(row[4]),
+            "tariff_key": row[5],
+            "tariff_name": row[6],
+            "status": row[7],
+            "amount": _safe_float(row[8], 0.0) or 0.0,
+            "base_amount": _safe_float(row[9], 0.0) or 0.0,
+            "discount_amount": _safe_float(row[10], 0.0) or 0.0,
+            "discount_percent": _safe_float(row[11], 0.0) or 0.0,
+            "currency": row[12],
+            "period_months": _safe_int(row[13], 1) or 1,
+            "period_started_at": row[14],
+            "period_ends_at": row[15],
+            "due_at": row[16],
+            "paid_at": row[17],
+            "invoice_number": row[18],
+            "notes": row[19],
+            "metadata": _json_load(row[20], {}),
+            "created_by_user_id": _safe_int(row[21]),
+            "created_at": row[22],
+        }
+    finally:
+        conn.close()
+
+
+def update_company_payment(
+    payment_id: int,
+    *,
+    status: str | None = None,
+    due_at: str | datetime | None = None,
+    paid_at: str | datetime | None = None,
+    invoice_number: str | None = None,
+    notes: str | None = None,
+    metadata: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute(
+            """
+            SELECT metadata
+            FROM company_payments
+            WHERE id = %s
+            LIMIT 1
+            """,
+            (payment_id,),
+        )
+        existing_row = c.fetchone()
+        if not existing_row:
+            return None
+
+        updates: list[str] = []
+        params: list[Any] = []
+
+        if status is not None:
+            updates.append("status = %s")
+            params.append(str(status).strip())
+        if due_at is not None:
+            updates.append("due_at = %s")
+            params.append(_parse_datetime(due_at))
+        if paid_at is not None:
+            updates.append("paid_at = %s")
+            params.append(_parse_datetime(paid_at))
+        if invoice_number is not None:
+            updates.append("invoice_number = %s")
+            params.append(str(invoice_number or "").strip())
+        if notes is not None:
+            updates.append("notes = %s")
+            params.append(str(notes or "").strip())
+        if metadata is not None:
+            merged_metadata = _json_load(existing_row[0], {})
+            if not isinstance(merged_metadata, dict):
+                merged_metadata = {}
+            merged_metadata.update(metadata)
+            updates.append("metadata = %s")
+            params.append(json.dumps(merged_metadata, ensure_ascii=False))
+
+        if not updates:
+            return get_company_payment_by_id(payment_id)
+
+        params.append(payment_id)
+        c.execute(
+            f"""
+            UPDATE company_payments
+            SET {', '.join(updates)}
+            WHERE id = %s
+            """,
+            params,
+        )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+    return get_company_payment_by_id(payment_id)
+
+
+def update_company_subscription_runtime(
+    company_id: int,
+    *,
+    auto_renew: bool | None = None,
+    trial_ends_at: str | datetime | None = None,
+    next_payment_due_at: str | datetime | None = None,
+    notes: str | None = None,
+) -> dict[str, Any] | None:
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        updates: list[str] = []
+        params: list[Any] = []
+
+        if auto_renew is not None:
+            updates.append("auto_renew = %s")
+            params.append(bool(auto_renew))
+        if trial_ends_at is not None:
+            updates.append("trial_ends_at = %s")
+            params.append(_parse_datetime(trial_ends_at))
+        if next_payment_due_at is not None:
+            updates.append("next_payment_due_at = %s")
+            params.append(_parse_datetime(next_payment_due_at))
+        if notes is not None:
+            updates.append("notes = %s")
+            params.append(str(notes or "").strip())
+
+        if not updates:
+            return get_company_subscription(company_id)
+
+        updates.append("updated_at = CURRENT_TIMESTAMP")
+        params.append(company_id)
+        c.execute(
+            f"""
+            UPDATE company_subscriptions
+            SET {', '.join(updates)}
+            WHERE company_id = %s
+            """,
+            params,
+        )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+    return get_company_subscription(company_id)
+
+
+def list_platform_audit_log(
+    company_id: int | None = None,
+    action: str | None = None,
+    entity_type: str | None = None,
+    user_id: int | None = None,
+    search: str | None = None,
+    limit: int = 100,
+) -> list[dict[str, Any]]:
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        where_parts = ["1=1"]
+        params: list[Any] = []
+        if company_id is not None:
+            where_parts.append("al.company_id = %s")
+            params.append(company_id)
+        if action:
+            where_parts.append("al.action = %s")
+            params.append(action)
+        if entity_type:
+            where_parts.append("al.entity_type = %s")
+            params.append(entity_type)
+        if user_id is not None:
+            where_parts.append("al.user_id = %s")
+            params.append(user_id)
+        if search:
+            search_term = f"%{search.strip()}%"
+            where_parts.append(
+                """
+                (
+                    LOWER(COALESCE(c.name, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(al.username, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(al.entity_type, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(al.entity_id, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(al.action, '')) LIKE LOWER(%s)
+                )
+                """
+            )
+            params.extend([search_term, search_term, search_term, search_term, search_term])
+        params.append(max(1, int(limit or 100)))
+
+        c.execute(
+            f"""
+            SELECT
+                al.id, al.company_id, c.name AS company_name, al.user_id, al.user_role,
+                al.username, al.action, al.entity_type, al.entity_id, al.old_value,
+                al.new_value, al.ip_address, al.user_agent, al.success, al.error_message,
+                al.created_at
+            FROM audit_log al
+            LEFT JOIN companies c ON c.id = al.company_id
+            WHERE {' AND '.join(where_parts)}
+            ORDER BY al.created_at DESC, al.id DESC
+            LIMIT %s
+            """,
+            params,
+        )
+        rows = []
+        for row in c.fetchall():
+            rows.append(
+                {
+                    "id": int(row[0]),
+                    "company_id": _safe_int(row[1]),
+                    "company_name": row[2],
+                    "user_id": _safe_int(row[3]),
+                    "user_role": row[4],
+                    "username": row[5],
+                    "action": row[6],
+                    "entity_type": row[7],
+                    "entity_id": row[8],
+                    "old_value": _json_load(row[9], row[9]),
+                    "new_value": _json_load(row[10], row[10]),
+                    "ip_address": row[11],
+                    "user_agent": row[12],
+                    "success": bool(row[13]) if row[13] is not None else True,
+                    "error_message": row[14],
+                    "created_at": row[15],
+                }
+            )
+        return rows
+    finally:
+        conn.close()
+
+
+def list_platform_webhooks(
+    company_id: int | None = None,
+    is_active: bool | None = None,
+    search: str | None = None,
+    limit: int = 100,
+) -> list[dict[str, Any]]:
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        where_parts = ["1=1"]
+        params: list[Any] = []
+        if company_id is not None:
+            where_parts.append("w.company_id = %s")
+            params.append(company_id)
+        if is_active is not None:
+            where_parts.append("w.is_active = %s")
+            params.append(is_active)
+        if search:
+            search_term = f"%{search.strip()}%"
+            where_parts.append(
+                """
+                (
+                    LOWER(COALESCE(c.name, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(w.name, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(w.url, '')) LIKE LOWER(%s)
+                )
+                """
+            )
+            params.extend([search_term, search_term, search_term])
+        params.append(max(1, int(limit or 100)))
+
+        c.execute(
+            f"""
+            SELECT
+                w.id, w.company_id, c.name AS company_name, w.name, w.url, w.events,
+                w.is_active, w.last_triggered_at, w.last_status_code, w.fail_count, w.created_at
+            FROM webhooks w
+            LEFT JOIN companies c ON c.id = w.company_id
+            WHERE {' AND '.join(where_parts)}
+            ORDER BY COALESCE(w.last_triggered_at, w.created_at) DESC, w.id DESC
+            LIMIT %s
+            """,
+            params,
+        )
+        rows = []
+        for row in c.fetchall():
+            rows.append(
+                {
+                    "id": int(row[0]),
+                    "company_id": _safe_int(row[1]),
+                    "company_name": row[2],
+                    "name": row[3],
+                    "url": row[4],
+                    "events": row[5] if isinstance(row[5], list) else [],
+                    "is_active": bool(row[6]),
+                    "last_triggered_at": row[7],
+                    "last_status_code": _safe_int(row[8]),
+                    "fail_count": _safe_int(row[9], 0) or 0,
+                    "created_at": row[10],
+                }
+            )
+        return rows
+    finally:
+        conn.close()
+
+
+def list_platform_chat_history(
+    company_id: int | None = None,
+    sender: str | None = None,
+    search: str | None = None,
+    limit: int = 100,
+) -> list[dict[str, Any]]:
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        where_parts = ["1=1"]
+        params: list[Any] = []
+        if company_id is not None:
+            where_parts.append("ch.company_id = %s")
+            params.append(company_id)
+        if sender:
+            where_parts.append("ch.sender = %s")
+            params.append(sender)
+        if search:
+            search_term = f"%{search.strip()}%"
+            where_parts.append(
+                """
+                (
+                    LOWER(COALESCE(companies.name, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(clients.name, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(clients.username, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(ch.instagram_id, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(ch.message, '')) LIKE LOWER(%s)
+                )
+                """
+            )
+            params.extend([search_term, search_term, search_term, search_term, search_term])
+        params.append(max(1, int(limit or 100)))
+
+        c.execute(
+            f"""
+            SELECT
+                ch.id,
+                ch.company_id,
+                companies.name AS company_name,
+                ch.instagram_id,
+                COALESCE(NULLIF(clients.name, ''), NULLIF(clients.username, ''), ch.instagram_id) AS client_name,
+                ch.sender,
+                ch.message,
+                ch.message_type,
+                ch.is_read,
+                ch.timestamp
+            FROM chat_history ch
+            LEFT JOIN companies ON companies.id = ch.company_id
+            LEFT JOIN clients
+                ON clients.instagram_id = ch.instagram_id
+               AND clients.company_id = ch.company_id
+            WHERE {' AND '.join(where_parts)}
+            ORDER BY ch.timestamp DESC, ch.id DESC
+            LIMIT %s
+            """,
+            params,
+        )
+        rows = []
+        for row in c.fetchall():
+            rows.append(
+                {
+                    "id": int(row[0]),
+                    "company_id": _safe_int(row[1]),
+                    "company_name": row[2],
+                    "instagram_id": row[3],
+                    "client_name": row[4],
+                    "sender": row[5],
+                    "message": row[6],
+                    "message_type": row[7],
+                    "is_read": bool(row[8]) if row[8] is not None else False,
+                    "timestamp": row[9],
+                }
+            )
+        return rows
+    finally:
+        conn.close()
+
+
+def list_platform_call_logs(
+    company_id: int | None = None,
+    status: str | None = None,
+    direction: str | None = None,
+    search: str | None = None,
+    limit: int = 100,
+) -> list[dict[str, Any]]:
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        where_parts = ["1=1"]
+        params: list[Any] = []
+        if company_id is not None:
+            where_parts.append("cl.company_id = %s")
+            params.append(company_id)
+        if status:
+            where_parts.append("cl.status = %s")
+            params.append(status)
+        if direction:
+            where_parts.append("cl.direction = %s")
+            params.append(direction)
+        if search:
+            search_term = f"%{search.strip()}%"
+            where_parts.append(
+                """
+                (
+                    LOWER(COALESCE(companies.name, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(clients.name, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(clients.username, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(cl.phone, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(cl.manual_client_name, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(cl.manual_manager_name, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(cl.notes, '')) LIKE LOWER(%s)
+                )
+                """
+            )
+            params.extend([search_term, search_term, search_term, search_term, search_term, search_term, search_term])
+        params.append(max(1, int(limit or 100)))
+
+        c.execute(
+            f"""
+            SELECT
+                cl.id,
+                cl.company_id,
+                companies.name AS company_name,
+                cl.client_id,
+                COALESCE(NULLIF(clients.name, ''), NULLIF(clients.username, ''), NULLIF(cl.manual_client_name, ''), cl.phone) AS client_name,
+                cl.phone,
+                cl.direction,
+                cl.status,
+                cl.duration,
+                cl.manual_manager_name,
+                cl.manual_service_name,
+                cl.notes,
+                cl.recording_url,
+                cl.recording_file,
+                cl.created_at
+            FROM call_logs cl
+            LEFT JOIN companies ON companies.id = cl.company_id
+            LEFT JOIN clients
+                ON clients.instagram_id = cl.client_id
+               AND clients.company_id = cl.company_id
+            WHERE {' AND '.join(where_parts)}
+            ORDER BY cl.created_at DESC, cl.id DESC
+            LIMIT %s
+            """,
+            params,
+        )
+        rows = []
+        for row in c.fetchall():
+            rows.append(
+                {
+                    "id": int(row[0]),
+                    "company_id": _safe_int(row[1]),
+                    "company_name": row[2],
+                    "client_id": row[3],
+                    "client_name": row[4],
+                    "phone": row[5],
+                    "direction": row[6],
+                    "status": row[7],
+                    "duration": _safe_int(row[8], 0) or 0,
+                    "manager_name": row[9],
+                    "service_name": row[10],
+                    "notes": row[11],
+                    "recording_url": row[12],
+                    "recording_file": row[13],
+                    "has_recording": bool(row[12] or row[13]),
+                    "created_at": row[14],
                 }
             )
         return rows

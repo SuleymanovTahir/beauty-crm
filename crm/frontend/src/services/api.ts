@@ -326,10 +326,18 @@ export class ApiClient {
     return this.request<any>('/api/platform-admin/overview')
   }
 
-  async getPlatformCompanies(search?: string, status?: string, includeDeleted: boolean = false) {
+  async getPlatformCompanies(
+    search?: string,
+    status?: string,
+    includeDeleted: boolean = false,
+    segment?: string,
+    accountManager?: string,
+  ) {
     const params = new URLSearchParams()
     if (search) params.append('search', search)
     if (status) params.append('status', status)
+    if (segment) params.append('segment', segment)
+    if (accountManager) params.append('account_manager', accountManager)
     params.append('include_usage', 'true')
     if (includeDeleted) params.append('include_deleted', 'true')
     const query = params.toString()
@@ -420,6 +428,13 @@ export class ApiClient {
     })
   }
 
+  async updatePlatformSubscriptionRuntime(companyId: number, data: any) {
+    return this.request<any>(`/api/platform-admin/companies/${companyId}/subscription/runtime`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
   async cancelPlatformScheduledChange(companyId: number) {
     return this.request<any>(`/api/platform-admin/companies/${companyId}/subscription/cancel-scheduled`, {
       method: 'POST',
@@ -440,6 +455,51 @@ export class ApiClient {
     if (onlyOverdue) params.append('only_overdue', 'true')
     params.append('limit', String(limit))
     return this.request<any>(`/api/platform-admin/payments?${params.toString()}`)
+  }
+
+  async updatePlatformPayment(paymentId: number, data: any) {
+    return this.request<any>(`/api/platform-admin/payments/${paymentId}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getPlatformAuditLog(companyId?: number, action?: string, entityType?: string, search?: string, limit: number = 100) {
+    const params = new URLSearchParams()
+    if (typeof companyId === 'number') params.append('company_id', String(companyId))
+    if (action) params.append('action', action)
+    if (entityType) params.append('entity_type', entityType)
+    if (search) params.append('search', search)
+    params.append('limit', String(limit))
+    return this.request<any>(`/api/platform-admin/audit-log?${params.toString()}`)
+  }
+
+  async getPlatformWebhooks(companyId?: number, isActive?: boolean, search?: string, limit: number = 100) {
+    const params = new URLSearchParams()
+    if (typeof companyId === 'number') params.append('company_id', String(companyId))
+    if (typeof isActive === 'boolean') params.append('is_active', isActive ? 'true' : 'false')
+    if (search) params.append('search', search)
+    params.append('limit', String(limit))
+    return this.request<any>(`/api/platform-admin/webhooks?${params.toString()}`)
+  }
+
+  async getPlatformChatHistory(companyId?: number, sender?: string, search?: string, limit: number = 100) {
+    const params = new URLSearchParams()
+    if (typeof companyId === 'number') params.append('company_id', String(companyId))
+    if (sender) params.append('sender', sender)
+    if (search) params.append('search', search)
+    params.append('limit', String(limit))
+    return this.request<any>(`/api/platform-admin/chat-history?${params.toString()}`)
+  }
+
+  async getPlatformCallLogs(companyId?: number, status?: string, direction?: string, search?: string, limit: number = 100) {
+    const params = new URLSearchParams()
+    if (typeof companyId === 'number') params.append('company_id', String(companyId))
+    if (status) params.append('status', status)
+    if (direction) params.append('direction', direction)
+    if (search) params.append('search', search)
+    params.append('limit', String(limit))
+    return this.request<any>(`/api/platform-admin/call-logs?${params.toString()}`)
   }
 
   async createPlatformPayment(companyId: number, data: any) {

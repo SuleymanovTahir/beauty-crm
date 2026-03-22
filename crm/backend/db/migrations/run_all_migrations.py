@@ -51,29 +51,6 @@ def create_sessions_table():
     finally:
         conn.close()
 
-def create_chat_history_table():
-    """Create chat_history table for messenger conversations."""
-    conn = get_db_connection()
-    c = conn.cursor()
-    try:
-        c.execute('''CREATE TABLE IF NOT EXISTS chat_history (
-            id SERIAL PRIMARY KEY,
-            instagram_id TEXT REFERENCES clients(instagram_id) ON DELETE CASCADE,
-            message TEXT,
-            sender TEXT,
-            message_type TEXT DEFAULT 'text',
-            is_read BOOLEAN DEFAULT FALSE,
-            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )''')
-        conn.commit()
-        log_info("✅ Chat history table created/verified", "migrations")
-    except Exception as e:
-        conn.rollback()
-        log_error(f"❌ Failed to create chat_history table: {e}", "migrations")
-        raise
-    finally:
-        conn.close()
-
 def run_all_migrations():
     """Main entry point for database health and setup."""
     # Advisory lock to prevent multiple workers from running migrations simultaneously
@@ -99,8 +76,8 @@ def run_all_migrations():
         # 1.5 Create sessions table (auth)
         create_sessions_table()
 
-        # 1.6 Create chat_history table (messaging)
-        create_chat_history_table()
+        # 1.6 chat_history/message_reactions/password_reset_tokens now live in db.init SSOT
+        log_info("⏭️ Legacy chat_history helper skipped; schema comes from db.init", "migrations")
         
         # 2. Optional Data Maintenance
         if _env_flag("RUN_MIGRATION_MAINTENANCE", default=False):
@@ -116,6 +93,17 @@ def run_all_migrations():
 
         # 3. Legacy seeding scripts removed from universal CRM runtime.
         log_info("⏭️ Legacy prod/test seeding removed from CRM migrations", "migrations")
+
+        # 4. Test staff & companies seeding (dev only, SEED_TEST_DATA=true)
+        if _env_flag("SEED_TEST_DATA", default=False):
+            try:
+                from seed_test_data import main as seed_test_staff
+                seed_test_staff()
+                log_info("✅ Test staff seeded successfully", "migrations")
+            except Exception as e:
+                log_error(f"⚠️ Test data seeding skipped: {e}", "migrations")
+        else:
+            log_info("⏭️ Test staff seeding skipped (SEED_TEST_DATA=false)", "migrations")
 
         print_header("SYNC COMPLETED SUCCESSFULLY")
         # Release lock before returning (also in finally as backup)

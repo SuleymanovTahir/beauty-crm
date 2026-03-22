@@ -433,7 +433,6 @@ def get_salon_settings() -> dict:
     try:
         row = get_current_company()
         if not row:
-            log_warning("⚠️ Настройки салона пусты, используются дефолты", "database")
             return _get_default_salon_settings()
 
         custom = row.get("custom_settings") or {}
@@ -645,7 +644,6 @@ def get_bot_settings() -> dict:
             salon_settings = get_salon_settings()
             return _replace_bot_placeholders(result_dict, salon_settings)
 
-        log_warning("⚠️ Настройки бота компании пусты, используются дефолты", "database")
         return _get_default_bot_settings()
 
     except Exception as e:

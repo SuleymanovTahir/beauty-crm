@@ -479,7 +479,7 @@ async def get_client_detail(client_id: str, session_token: Optional[str] = Cooki
     if not user:
         return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    # Decode URL-encoded client_id (e.g., www.instagram.com%2Fmlediamant%2F -> www.instagram.com/mlediamant/)
+    # Decode URL-encoded client_id (e.g., www.instagram.com%2Faccount%2F -> www.instagram.com/account/)
     decoded_client_id = unquote(client_id)
     
     client = get_client_by_id(decoded_client_id)

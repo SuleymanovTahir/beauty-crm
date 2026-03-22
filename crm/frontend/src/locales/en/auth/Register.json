@@ -19,7 +19,7 @@
   "company_code_placeholder": "For example, NOVACRM",
   "company_created_with_code": "The company has been created. Company code: {{code}}",
   "company_name_label": "Company name",
-  "company_name_placeholder": "For example, Nova Clinic",
+  "company_name_placeholder": "For example, Sunrise",
   "company_owner_hint": "The creator of the company receives the role of director and access to employee management.",
   "confirm_password": "Password confirmation",
   "confirm_password_placeholder": "Repeat password",

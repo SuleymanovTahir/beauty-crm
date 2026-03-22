@@ -573,7 +573,7 @@ export default function Register() {
                   onChange={(e) =>
                     setFormData({ ...formData, company_name: e.target.value })
                   }
-                  placeholder={t('company_name_placeholder', { defaultValue: 'Например, Nova Clinic' })}
+                  placeholder={t('company_name_placeholder', { defaultValue: 'Например, Прима' })}
                   className={fieldErrors.company_name ? 'border-red-500' : ''}
                 />
                 <FieldError errors={fieldErrors.company_name} />

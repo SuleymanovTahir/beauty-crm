@@ -109,17 +109,23 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           ws: true, // Enable WebSocket for /api/* endpoints (like /api/ws/notifications)
           configure: (proxy, _options) => {
-            proxy.on('error', (err, _req, _res) => {
-              // Ignore noisy dev-time WS proxy errors (backend restart, dropped sockets)
-              // ECONNRESET/EPIPE are expected when backend restarts while Vite is proxying WS.
-              const anyErr = err as any;
-              if (anyErr?.code === 'ECONNRESET' || anyErr?.code === 'EPIPE') {
-                return;
-              }
-              if (err.message && err.message.includes('socket')) {
-                return;
-              }
-              console.error('Proxy error:', err);
+            // Vite adds its own 'error' listener AFTER configure() returns,
+            // so we defer with setImmediate to remove it only after it's been registered.
+            setImmediate(() => {
+              proxy.removeAllListeners('error');
+              proxy.on('error', (err, _req, res) => {
+                const anyErr = err as any;
+                const DEV_CODES = ['ECONNRESET', 'EPIPE', 'ECONNREFUSED'];
+                if (DEV_CODES.includes(anyErr?.code)) return;
+                // AggregateError: each inner error has its own .code
+                if (anyErr?.errors?.some((e: any) => DEV_CODES.includes(e.code))) return;
+                if (err.message?.includes('socket')) return;
+                console.error('Proxy error:', err);
+                if (res && !(res as any).headersSent) {
+                  (res as any).writeHead?.(503, { 'Content-Type': 'text/plain' });
+                  (res as any).end?.('Backend unavailable');
+                }
+              });
             });
           },
         },

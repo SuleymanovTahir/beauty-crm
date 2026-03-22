@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Optional, Dict, Any
 from db.connection import get_db_connection
 from utils.logger import log_info, log_error
+from utils.tenant_context import get_current_company_id
 
 def log_audit(
     user: Dict[str, Any],
@@ -37,14 +38,18 @@ def log_audit(
     try:
         conn = get_db_connection()
         c = conn.cursor()
+        resolved_company_id = user.get("company_id")
+        if resolved_company_id in {None, ""}:
+            resolved_company_id = get_current_company_id()
         
         c.execute("""
             INSERT INTO audit_log 
-            (user_id, user_role, username, action, entity_type, entity_id, 
+            (company_id, user_id, user_role, username, action, entity_type, entity_id, 
              old_value, new_value, ip_address, user_agent, success, error_message)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
+            resolved_company_id,
             user.get("id"),
             user.get("role"),
             user.get("username"),
@@ -168,12 +173,22 @@ def get_audit_history(
                     item['old_value'] = json.loads(item['old_value'])
                 except:
                     pass
+            elif item.get('old_data'):
+                try:
+                    item['old_value'] = json.loads(item['old_data'])
+                except:
+                    item['old_value'] = item.get('old_data')
             
             if item.get('new_value'):
                 try:
                     item['new_value'] = json.loads(item['new_value'])
                 except:
                     pass
+            elif item.get('new_data'):
+                try:
+                    item['new_value'] = json.loads(item['new_data'])
+                except:
+                    item['new_value'] = item.get('new_data')
             
             results.append(item)
         

@@ -383,7 +383,12 @@ class RedisPubSubManager:
                 except asyncio.CancelledError:
                     break
                 except Exception as error:
-                    log_warning(f"⚠️ Pub/Sub loop interrupted, reconnecting: {error}", "pubsub")
+                    # EBADF (errno 9) = Bad file descriptor — нормально при shutdown/reload
+                    is_shutdown_error = (
+                        isinstance(error, OSError) and getattr(error, 'errno', None) == 9
+                    ) or "Bad file descriptor" in str(error)
+                    if not is_shutdown_error:
+                        log_warning(f"⚠️ Pub/Sub loop interrupted, reconnecting: {error}", "pubsub")
                     await self._disconnect_all()
                     await asyncio.sleep(1)
         finally:

@@ -53,6 +53,67 @@ type PaymentEditor = {
   due_at: string;
 };
 
+type AuditEntry = {
+  id: number;
+  company_id?: number | null;
+  company_name?: string | null;
+  user_id?: number | null;
+  user_role?: string | null;
+  username?: string | null;
+  action?: string | null;
+  entity_type?: string | null;
+  entity_id?: string | null;
+  success?: boolean | null;
+  error_message?: string | null;
+  created_at?: string | null;
+};
+
+type WebhookRow = {
+  id: number;
+  company_id?: number | null;
+  company_name?: string | null;
+  name?: string | null;
+  url?: string | null;
+  events?: string[];
+  is_active?: boolean;
+  last_triggered_at?: string | null;
+  last_status_code?: number | null;
+  fail_count?: number;
+  created_at?: string | null;
+};
+
+type PlatformChatEntry = {
+  id: number;
+  company_id?: number | null;
+  company_name?: string | null;
+  instagram_id?: string | null;
+  client_name?: string | null;
+  sender?: string | null;
+  message?: string | null;
+  message_type?: string | null;
+  is_read?: boolean;
+  timestamp?: string | null;
+};
+
+type PlatformCallEntry = {
+  id: number;
+  company_id?: number | null;
+  company_name?: string | null;
+  client_id?: string | null;
+  client_name?: string | null;
+  phone?: string | null;
+  direction?: string | null;
+  status?: string | null;
+  duration?: number;
+  manager_name?: string | null;
+  service_name?: string | null;
+  notes?: string | null;
+  recording_url?: string | null;
+  recording_file?: string | null;
+  has_recording?: boolean;
+  created_at?: string | null;
+};
+
 const emptyOverview: Overview = {
   companies_total: 0,
   companies_active: 0,
@@ -210,6 +271,10 @@ export default function PlatformAdmin() {
   const [payments, setPayments] = useState<any[]>([]);
   const [ads, setAds] = useState<any[]>([]);
   const [broadcasts, setBroadcasts] = useState<any[]>([]);
+  const [auditEntries, setAuditEntries] = useState<AuditEntry[]>([]);
+  const [webhooks, setWebhooks] = useState<WebhookRow[]>([]);
+  const [chatEntries, setChatEntries] = useState<PlatformChatEntry[]>([]);
+  const [callEntries, setCallEntries] = useState<PlatformCallEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [companyForm, setCompanyForm] = useState(emptyCompanyForm);
   const [tariffForm, setTariffForm] = useState(emptyTariffForm);
@@ -229,6 +294,20 @@ export default function PlatformAdmin() {
   const [adCompanyFilter, setAdCompanyFilter] = useState('');
   const [adStatusFilter, setAdStatusFilter] = useState('');
   const [adPlacementFilter, setAdPlacementFilter] = useState('');
+  const [auditCompanyFilter, setAuditCompanyFilter] = useState('');
+  const [auditActionFilter, setAuditActionFilter] = useState('');
+  const [auditEntityFilter, setAuditEntityFilter] = useState('');
+  const [auditSearch, setAuditSearch] = useState('');
+  const [webhookCompanyFilter, setWebhookCompanyFilter] = useState('');
+  const [webhookSearch, setWebhookSearch] = useState('');
+  const [webhookActiveOnly, setWebhookActiveOnly] = useState(false);
+  const [chatCompanyFilter, setChatCompanyFilter] = useState('');
+  const [chatSenderFilter, setChatSenderFilter] = useState('');
+  const [chatSearch, setChatSearch] = useState('');
+  const [callCompanyFilter, setCallCompanyFilter] = useState('');
+  const [callStatusFilter, setCallStatusFilter] = useState('');
+  const [callDirectionFilter, setCallDirectionFilter] = useState('');
+  const [callSearch, setCallSearch] = useState('');
 
   const featureSuggestions = [
     { key: 'advanced_analytics', title: t('platform_feature_advanced_analytics', { defaultValue: 'Advanced analytics' }), description: t('platform_feature_advanced_analytics_desc', { defaultValue: 'Сводные показатели, cohort-аналитика и прогнозы нагрузки.' }) },
@@ -259,10 +338,31 @@ export default function PlatformAdmin() {
     return String(value);
   };
 
+  const formatDuration = (seconds: number | null | undefined): string => {
+    const totalSeconds = Number.isFinite(seconds) ? Number(seconds) : 0;
+    const minutes = Math.floor(totalSeconds / 60);
+    const remainder = totalSeconds % 60;
+    if (minutes <= 0) {
+      return `${remainder}${t('platform_seconds_short', { defaultValue: 'с' })}`;
+    }
+    return `${minutes}${t('platform_minutes_short', { defaultValue: 'м' })} ${String(remainder).padStart(2, '0')}${t('platform_seconds_short', { defaultValue: 'с' })}`;
+  };
+
   const loadData = async () => {
     setLoading(true);
     try {
-      const [overviewResponse, companiesResponse, tariffsResponse, paymentsResponse, adsResponse, broadcastsResponse] = await Promise.all([
+      const [
+        overviewResponse,
+        companiesResponse,
+        tariffsResponse,
+        paymentsResponse,
+        adsResponse,
+        broadcastsResponse,
+        auditResponse,
+        webhooksResponse,
+        chatsResponse,
+        callsResponse,
+      ] = await Promise.all([
         api.getPlatformOverview(),
         api.getPlatformCompanies(
           companySearch.trim().length > 0 ? companySearch.trim() : undefined,
@@ -283,6 +383,32 @@ export default function PlatformAdmin() {
           adPlacementFilter.trim().length > 0 ? adPlacementFilter.trim() : undefined,
         ),
         api.getPlatformBroadcasts(),
+        api.getPlatformAuditLog(
+          toNumberOrUndefined(auditCompanyFilter),
+          auditActionFilter.trim().length > 0 ? auditActionFilter.trim() : undefined,
+          auditEntityFilter.trim().length > 0 ? auditEntityFilter.trim() : undefined,
+          auditSearch.trim().length > 0 ? auditSearch.trim() : undefined,
+          50,
+        ),
+        api.getPlatformWebhooks(
+          toNumberOrUndefined(webhookCompanyFilter),
+          webhookActiveOnly ? true : undefined,
+          webhookSearch.trim().length > 0 ? webhookSearch.trim() : undefined,
+          50,
+        ),
+        api.getPlatformChatHistory(
+          toNumberOrUndefined(chatCompanyFilter),
+          chatSenderFilter.trim().length > 0 ? chatSenderFilter.trim() : undefined,
+          chatSearch.trim().length > 0 ? chatSearch.trim() : undefined,
+          50,
+        ),
+        api.getPlatformCallLogs(
+          toNumberOrUndefined(callCompanyFilter),
+          callStatusFilter.trim().length > 0 ? callStatusFilter.trim() : undefined,
+          callDirectionFilter.trim().length > 0 ? callDirectionFilter.trim() : undefined,
+          callSearch.trim().length > 0 ? callSearch.trim() : undefined,
+          50,
+        ),
       ]);
 
       const nextCompanies = companiesResponse?.companies ?? [];
@@ -292,6 +418,10 @@ export default function PlatformAdmin() {
       setPayments(paymentsResponse?.payments ?? []);
       setAds(adsResponse?.ads ?? []);
       setBroadcasts(broadcastsResponse?.broadcasts ?? []);
+      setAuditEntries(auditResponse?.entries ?? []);
+      setWebhooks(webhooksResponse?.webhooks ?? []);
+      setChatEntries(chatsResponse?.entries ?? []);
+      setCallEntries(callsResponse?.calls ?? []);
 
       setCompanyEditors((prev) => {
         const nextState = { ...prev };
@@ -333,6 +463,20 @@ export default function PlatformAdmin() {
     adCompanyFilter,
     adStatusFilter,
     adPlacementFilter,
+    auditCompanyFilter,
+    auditActionFilter,
+    auditEntityFilter,
+    auditSearch,
+    webhookCompanyFilter,
+    webhookSearch,
+    webhookActiveOnly,
+    chatCompanyFilter,
+    chatSenderFilter,
+    chatSearch,
+    callCompanyFilter,
+    callStatusFilter,
+    callDirectionFilter,
+    callSearch,
   ]);
 
   const setCompanyEditorField = (companyId: number, field: keyof CompanyEditor, value: string) => {
@@ -670,7 +814,14 @@ export default function PlatformAdmin() {
   };
 
   const handleProcessScheduledChanges = async () => {
-    if (!confirm('Применить все просроченные запланированные изменения тарифов? Это действие необратимо.')) return;
+    const shouldProcessChanges = window.confirm(
+      t('platform_process_scheduled_confirm', {
+        defaultValue: 'Применить все просроченные запланированные изменения тарифов? Это действие необратимо.',
+      }),
+    );
+    if (!shouldProcessChanges) {
+      return;
+    }
     try {
       const { buildApiUrl } = await import('@crm/api/client');
       const res = await fetch(buildApiUrl('/api/platform-admin/process-scheduled-changes'), {
@@ -678,13 +829,19 @@ export default function PlatformAdmin() {
       });
       const d = await res.json();
       if (d.success) {
-        toast.success(`Обработано: ${d.processed_count}, ошибок: ${d.error_count}`);
+        toast.success(
+          t('platform_process_scheduled_success', {
+            defaultValue: 'Обработано: {{processed}}, ошибок: {{errors}}',
+            processed: d.processed_count,
+            errors: d.error_count,
+          }),
+        );
         await loadData();
       } else {
-        toast.error('Ошибка обработки');
+        toast.error(t('platform_process_scheduled_error', { defaultValue: 'Ошибка обработки' }));
       }
     } catch (e) {
-      toast.error('Ошибка сети');
+      toast.error(t('network_error', { defaultValue: 'Ошибка сети' }));
     }
   };
 
@@ -745,7 +902,7 @@ export default function PlatformAdmin() {
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleProcessScheduledChanges} disabled={loading} className="border-amber-300 text-amber-700 hover:bg-amber-50">
-              Применить плановые изменения
+              {t('platform_process_scheduled_button', { defaultValue: 'Применить плановые изменения' })}
             </Button>
             <Button variant="outline" onClick={loadData} disabled={loading}>
               {t('platform_refresh', { defaultValue: 'Обновить' })}
@@ -1334,6 +1491,240 @@ export default function PlatformAdmin() {
                   </p>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">{t('platform_chats_title', { defaultValue: 'Чаты компаний' })}</h2>
+            <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label>{t('platform_chat_filter_company_label', { defaultValue: 'Компания ID' })}</Label>
+                <Input value={chatCompanyFilter} onChange={(event) => setChatCompanyFilter(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_chat_filter_sender_label', { defaultValue: 'Отправитель' })}</Label>
+                <Input value={chatSenderFilter} onChange={(event) => setChatSenderFilter(event.target.value)} placeholder={t('platform_chat_filter_sender_placeholder', { defaultValue: 'client или business' })} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_chat_filter_search_label', { defaultValue: 'Поиск по чатам' })}</Label>
+                <Input value={chatSearch} onChange={(event) => setChatSearch(event.target.value)} placeholder={t('search', { defaultValue: 'Поиск...' })} />
+              </div>
+            </div>
+            <div className="mt-4 space-y-3">
+              {chatEntries.map((entry) => (
+                <div key={entry.id} className="rounded-2xl border border-slate-200 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        {entry.client_name ?? entry.instagram_id ?? t('platform_chat_unknown_client', { defaultValue: 'Клиент не определён' })}
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {entry.company_name ?? t('platform_no_company', { defaultValue: 'Без компании' })} · {entry.sender ?? t('platform_chat_unknown_sender', { defaultValue: 'Отправитель не указан' })}
+                      </p>
+                    </div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                      {entry.message_type ?? t('platform_chat_type_default', { defaultValue: 'text' })}
+                    </p>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-600">
+                    {entry.message != null && entry.message.trim().length > 0
+                      ? entry.message
+                      : t('platform_chat_empty_message', { defaultValue: 'Сообщение пустое или содержит только вложение.' })}
+                  </p>
+                  <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-500">
+                    {entry.timestamp != null ? new Date(entry.timestamp).toLocaleString() : t('platform_not_scheduled', { defaultValue: 'Не запланирована' })}
+                    {' · '}
+                    {entry.is_read
+                      ? t('platform_chat_read', { defaultValue: 'Прочитано' })
+                      : t('platform_chat_unread', { defaultValue: 'Не прочитано' })}
+                  </p>
+                </div>
+              ))}
+              {chatEntries.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm text-slate-500">
+                  {t('platform_chats_empty', { defaultValue: 'Сообщений компаний пока нет.' })}
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">{t('platform_calls_title', { defaultValue: 'Звонки компаний' })}</h2>
+            <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <Label>{t('platform_call_filter_company_label', { defaultValue: 'Компания ID' })}</Label>
+                <Input value={callCompanyFilter} onChange={(event) => setCallCompanyFilter(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_call_filter_status_label', { defaultValue: 'Статус звонка' })}</Label>
+                <Input value={callStatusFilter} onChange={(event) => setCallStatusFilter(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_call_filter_direction_label', { defaultValue: 'Направление' })}</Label>
+                <Input value={callDirectionFilter} onChange={(event) => setCallDirectionFilter(event.target.value)} placeholder={t('platform_call_filter_direction_placeholder', { defaultValue: 'inbound или outbound' })} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_call_filter_search_label', { defaultValue: 'Поиск по звонкам' })}</Label>
+                <Input value={callSearch} onChange={(event) => setCallSearch(event.target.value)} placeholder={t('search', { defaultValue: 'Поиск...' })} />
+              </div>
+            </div>
+            <div className="mt-4 space-y-3">
+              {callEntries.map((entry) => (
+                <div key={entry.id} className="rounded-2xl border border-slate-200 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        {entry.client_name ?? entry.phone ?? t('platform_call_unknown_client', { defaultValue: 'Клиент не определён' })}
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {entry.company_name ?? t('platform_no_company', { defaultValue: 'Без компании' })} · {entry.phone ?? t('platform_call_phone_missing', { defaultValue: 'Телефон не указан' })}
+                      </p>
+                    </div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                      {entry.direction ?? t('platform_call_direction_unknown', { defaultValue: 'Не указано' })} · {entry.status ?? t('platform_call_status_unknown', { defaultValue: 'Не указано' })}
+                    </p>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-600">
+                    {t('platform_call_duration', { defaultValue: 'Длительность: {{value}}', value: formatDuration(entry.duration) })}
+                    {' · '}
+                    {entry.manager_name ?? t('platform_call_manager_unknown', { defaultValue: 'Менеджер не указан' })}
+                    {' · '}
+                    {entry.has_recording
+                      ? t('platform_call_recording_yes', { defaultValue: 'Есть запись' })
+                      : t('platform_call_recording_no', { defaultValue: 'Без записи' })}
+                  </p>
+                  {entry.notes != null && entry.notes.trim().length > 0 ? (
+                    <p className="mt-2 text-sm text-slate-600">{entry.notes}</p>
+                  ) : null}
+                  <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-500">
+                    {entry.created_at != null ? new Date(entry.created_at).toLocaleString() : t('platform_not_scheduled', { defaultValue: 'Не запланирована' })}
+                  </p>
+                </div>
+              ))}
+              {callEntries.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm text-slate-500">
+                  {t('platform_calls_empty', { defaultValue: 'Звонков компаний пока нет.' })}
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">{t('platform_webhooks_title', { defaultValue: 'Webhooks компаний' })}</h2>
+            <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label>{t('platform_webhook_filter_company_label', { defaultValue: 'Компания ID' })}</Label>
+                <Input value={webhookCompanyFilter} onChange={(event) => setWebhookCompanyFilter(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_webhook_filter_search_label', { defaultValue: 'Поиск вебхука' })}</Label>
+                <Input value={webhookSearch} onChange={(event) => setWebhookSearch(event.target.value)} placeholder={t('search', { defaultValue: 'Поиск...' })} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_webhook_filter_active_label', { defaultValue: 'Только активные' })}</Label>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => setWebhookActiveOnly((prev) => !prev)}
+                >
+                  {webhookActiveOnly
+                    ? t('platform_include_deleted_on', { defaultValue: 'Да' })
+                    : t('platform_include_deleted_off', { defaultValue: 'Нет' })}
+                </Button>
+              </div>
+            </div>
+            <div className="mt-4 space-y-3">
+              {webhooks.map((webhook) => (
+                <div key={webhook.id} className="rounded-2xl border border-slate-200 p-4">
+                  <p className="font-semibold text-slate-900">{webhook.name ?? t('platform_not_scheduled', { defaultValue: 'Не запланирована' })}</p>
+                  <p className="text-sm text-slate-500">{webhook.company_name ?? t('platform_no_company', { defaultValue: 'Без компании' })}</p>
+                  <p className="mt-2 break-all text-sm text-slate-600">{webhook.url ?? ''}</p>
+                  <p className="mt-2 text-sm text-slate-600">
+                    {(webhook.events ?? []).join(', ')}
+                  </p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">
+                    {webhook.is_active
+                      ? t('platform_webhook_active', { defaultValue: 'Активен' })
+                      : t('platform_webhook_inactive', { defaultValue: 'Выключен' })}
+                    {' · '}
+                    {t('platform_webhook_fail_count', {
+                      defaultValue: 'Ошибок: {{count}}',
+                      count: webhook.fail_count ?? 0,
+                    })}
+                    {' · '}
+                    {webhook.last_status_code != null
+                      ? t('platform_webhook_last_status', {
+                        defaultValue: 'HTTP {{status}}',
+                        status: webhook.last_status_code,
+                      })
+                      : t('platform_webhook_not_called', { defaultValue: 'Ещё не вызывался' })}
+                  </p>
+                </div>
+              ))}
+              {webhooks.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm text-slate-500">
+                  {t('platform_webhooks_empty', { defaultValue: 'Вебхуков компаний пока нет.' })}
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">{t('platform_audit_title', { defaultValue: 'Журнал аудита' })}</h2>
+            <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <Label>{t('platform_audit_filter_company_label', { defaultValue: 'Компания ID' })}</Label>
+                <Input value={auditCompanyFilter} onChange={(event) => setAuditCompanyFilter(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_audit_filter_action_label', { defaultValue: 'Действие' })}</Label>
+                <Input value={auditActionFilter} onChange={(event) => setAuditActionFilter(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_audit_filter_entity_label', { defaultValue: 'Сущность' })}</Label>
+                <Input value={auditEntityFilter} onChange={(event) => setAuditEntityFilter(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_audit_filter_search_label', { defaultValue: 'Поиск по аудиту' })}</Label>
+                <Input value={auditSearch} onChange={(event) => setAuditSearch(event.target.value)} placeholder={t('search', { defaultValue: 'Поиск...' })} />
+              </div>
+            </div>
+            <div className="mt-4 space-y-3">
+              {auditEntries.map((entry) => (
+                <div key={entry.id} className="rounded-2xl border border-slate-200 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold text-slate-900">
+                        {entry.action ?? ''} · {entry.entity_type ?? t('platform_audit_unknown_entity', { defaultValue: 'Сущность не указана' })}
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {entry.company_name ?? t('platform_no_company', { defaultValue: 'Без компании' })} · {entry.username ?? t('platform_audit_system_user', { defaultValue: 'Системное действие' })}
+                      </p>
+                      <p className="mt-2 text-sm text-slate-600">
+                        {entry.entity_id != null
+                          ? t('platform_audit_entity_id', { defaultValue: 'ID: {{id}}', id: entry.entity_id })
+                          : t('platform_audit_without_entity_id', { defaultValue: 'Без entity ID' })}
+                      </p>
+                    </div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                      {entry.success === false
+                        ? t('platform_audit_failed', { defaultValue: 'Ошибка' })
+                        : t('platform_audit_success', { defaultValue: 'Успешно' })}
+                    </p>
+                  </div>
+                  {entry.error_message != null && entry.error_message.trim().length > 0 ? (
+                    <p className="mt-2 text-sm text-slate-600">{entry.error_message}</p>
+                  ) : null}
+                  <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-500">
+                    {entry.created_at != null ? new Date(entry.created_at).toLocaleString() : t('platform_not_scheduled', { defaultValue: 'Не запланирована' })}
+                  </p>
+                </div>
+              ))}
+              {auditEntries.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm text-slate-500">
+                  {t('platform_audit_empty', { defaultValue: 'Записей аудита пока нет.' })}
+                </div>
+              ) : null}
             </div>
           </div>
 

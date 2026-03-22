@@ -3,11 +3,14 @@ Platform admin API for multi-tenant SaaS CRM management.
 """
 from __future__ import annotations
 
+import csv
 from datetime import datetime, timedelta
+from io import StringIO
 import json
 from typing import Optional
 
 from fastapi import APIRouter, Cookie, Depends, HTTPException
+from fastapi.responses import Response
 from pydantic import BaseModel, Field
 
 from db.companies import (
@@ -23,18 +26,25 @@ from db.companies import (
     delete_company,
     delete_platform_ad,
     get_company_by_id,
+    get_company_payment_by_id,
     get_company_subscription,
     get_company_usage,
     get_tariff_plan_by_key,
     list_companies,
+    list_platform_audit_log,
     list_company_payments,
+    list_platform_call_logs,
+    list_platform_chat_history,
     list_platform_ads,
+    list_platform_webhooks,
     list_tariff_plans,
     record_company_payment,
     restore_company,
     suspend_company,
     update_company,
+    update_company_payment,
     update_platform_ad,
+    update_company_subscription_runtime,
     update_tariff_plan,
 )
 from db.connection import get_db_connection
@@ -71,6 +81,7 @@ class PlatformCompanyUpdateRequest(BaseModel):
     timezone_offset: Optional[int] = None
     employee_limit: Optional[int] = None
     company_name: Optional[str] = None
+    metadata: Optional[dict] = None
 
 
 class PlatformTariffRequest(BaseModel):
@@ -130,6 +141,22 @@ class PlatformPaymentRequest(BaseModel):
     apply_scheduled_change: bool = True
 
 
+class PlatformPaymentUpdateRequest(BaseModel):
+    status: Optional[str] = None
+    due_at: Optional[str] = None
+    paid_at: Optional[str] = None
+    invoice_number: Optional[str] = None
+    notes: Optional[str] = None
+    metadata: Optional[dict] = None
+
+
+class PlatformSubscriptionRuntimeRequest(BaseModel):
+    auto_renew: Optional[bool] = None
+    trial_ends_at: Optional[str] = None
+    next_payment_due_at: Optional[str] = None
+    notes: Optional[str] = None
+
+
 class PlatformAdRequest(BaseModel):
     company_id: Optional[int] = None
     title: str
@@ -187,6 +214,17 @@ def _raise_quota_http_error(error: QuotaExceededError) -> None:
     raise HTTPException(status_code=409, detail=error.detail)
 
 
+def _parse_optional_bool(value: Optional[str]) -> Optional[bool]:
+    if value is None:
+        return None
+    normalized = str(value).strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    return None
+
+
 def _parse_datetime_value(value: object) -> Optional[datetime]:
     if isinstance(value, datetime):
         return value
@@ -234,6 +272,18 @@ def _load_platform_broadcasts() -> list[dict]:
         return result
     finally:
         conn.close()
+
+
+def _csv_response(filename: str, rows: list[list[object]]) -> Response:
+    buffer = StringIO()
+    writer = csv.writer(buffer)
+    for row in rows:
+        writer.writerow(row)
+    return Response(
+        content=buffer.getvalue(),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 def _select_target_companies(payload: PlatformBroadcastRequest) -> list[dict]:
@@ -345,13 +395,21 @@ async def get_platform_overview(current_user: dict = Depends(_require_super_admi
 async def get_platform_companies(
     search: Optional[str] = None,
     status: Optional[str] = None,
+    segment: Optional[str] = None,
+    account_manager: Optional[str] = None,
     include_usage: bool = True,
     include_deleted: bool = False,
     current_user: dict = Depends(_require_super_admin),
 ):
     del current_user
     with platform_access():
-        companies = list_companies(search=search, status=status, include_deleted=include_deleted)
+        companies = list_companies(
+            search=search,
+            status=status,
+            include_deleted=include_deleted,
+            segment=segment,
+            account_manager=account_manager,
+        )
         if include_usage:
             companies = [_company_payload_with_usage(company) for company in companies]
     return {"companies": companies}
@@ -459,6 +517,25 @@ async def assign_platform_company_subscription(
     return {"success": success, "subscription": subscription, "usage": usage}
 
 
+@router.put("/platform-admin/companies/{company_id}/subscription/runtime")
+async def update_platform_company_subscription_runtime(
+    company_id: int,
+    payload: PlatformSubscriptionRuntimeRequest,
+    current_user: dict = Depends(_require_super_admin),
+):
+    del current_user
+    with platform_access():
+        subscription = update_company_subscription_runtime(
+            company_id,
+            auto_renew=payload.auto_renew,
+            trial_ends_at=payload.trial_ends_at,
+            next_payment_due_at=payload.next_payment_due_at,
+            notes=payload.notes,
+        )
+        usage = get_company_usage(company_id)
+    return {"success": subscription is not None, "subscription": subscription, "usage": usage}
+
+
 @router.post("/platform-admin/companies/{company_id}/payments")
 async def create_platform_company_payment(
     company_id: int,
@@ -504,6 +581,246 @@ async def get_platform_payments(
             only_overdue=only_overdue,
         )
     return {"payments": payments}
+
+
+@router.put("/platform-admin/payments/{payment_id}")
+async def update_platform_company_payment(
+    payment_id: int,
+    payload: PlatformPaymentUpdateRequest,
+    current_user: dict = Depends(_require_super_admin),
+):
+    del current_user
+    with platform_access():
+        payment = update_company_payment(
+            payment_id,
+            status=payload.status,
+            due_at=payload.due_at,
+            paid_at=payload.paid_at,
+            invoice_number=payload.invoice_number,
+            notes=payload.notes,
+            metadata=payload.metadata,
+        )
+        if not payment:
+            raise HTTPException(status_code=404, detail="payment_not_found")
+    return {"success": True, "payment": payment}
+
+
+@router.get("/platform-admin/companies/export.csv")
+async def export_platform_companies_csv(
+    search: Optional[str] = None,
+    status: Optional[str] = None,
+    segment: Optional[str] = None,
+    account_manager: Optional[str] = None,
+    include_deleted: bool = False,
+    current_user: dict = Depends(_require_super_admin),
+):
+    del current_user
+    with platform_access():
+        companies = list_companies(
+            search=search,
+            status=status,
+            include_deleted=include_deleted,
+            segment=segment,
+            account_manager=account_manager,
+        )
+    rows: list[list[object]] = [[
+        "id",
+        "name",
+        "status",
+        "access_code",
+        "email",
+        "phone",
+        "business_type",
+        "segment",
+        "tags",
+        "account_manager",
+        "billing_contact_name",
+        "billing_contact_email",
+        "tariff_key",
+        "tariff_name",
+        "active_staff_count",
+        "employee_limit",
+        "current_price",
+        "currency",
+        "auto_renew",
+        "trial_ends_at",
+        "next_payment_due_at",
+        "created_at",
+    ]]
+    for company in companies:
+        subscription = company.get("subscription") or {}
+        tariff = subscription.get("tariff") or {}
+        metadata = company.get("metadata") or {}
+        rows.append([
+            company.get("id"),
+            company.get("name"),
+            company.get("status"),
+            company.get("access_code"),
+            company.get("email"),
+            company.get("phone"),
+            company.get("business_type"),
+            metadata.get("segment"),
+            ", ".join(metadata.get("tags") or []),
+            metadata.get("account_manager"),
+            metadata.get("billing_contact_name"),
+            metadata.get("billing_contact_email"),
+            tariff.get("key"),
+            tariff.get("name"),
+            company.get("active_staff_count"),
+            subscription.get("effective_employee_limit"),
+            subscription.get("current_price"),
+            subscription.get("currency") or company.get("currency"),
+            subscription.get("auto_renew"),
+            subscription.get("trial_ends_at"),
+            subscription.get("next_payment_due_at"),
+            company.get("created_at"),
+        ])
+    return _csv_response("platform_companies.csv", rows)
+
+
+@router.get("/platform-admin/payments/export.csv")
+async def export_platform_payments_csv(
+    company_id: Optional[int] = None,
+    status: Optional[str] = None,
+    search: Optional[str] = None,
+    only_overdue: bool = False,
+    current_user: dict = Depends(_require_super_admin),
+):
+    del current_user
+    with platform_access():
+        payments = list_company_payments(
+            company_id=company_id,
+            status=status,
+            limit=5000,
+            search=search,
+            only_overdue=only_overdue,
+        )
+    rows: list[list[object]] = [[
+        "id",
+        "company_id",
+        "company_name",
+        "tariff_key",
+        "tariff_name",
+        "status",
+        "amount",
+        "base_amount",
+        "discount_amount",
+        "discount_percent",
+        "currency",
+        "period_months",
+        "period_started_at",
+        "period_ends_at",
+        "due_at",
+        "paid_at",
+        "invoice_number",
+        "notes",
+        "created_at",
+    ]]
+    for payment in payments:
+        rows.append([
+            payment.get("id"),
+            payment.get("company_id"),
+            payment.get("company_name"),
+            payment.get("tariff_key"),
+            payment.get("tariff_name"),
+            payment.get("status"),
+            payment.get("amount"),
+            payment.get("base_amount"),
+            payment.get("discount_amount"),
+            payment.get("discount_percent"),
+            payment.get("currency"),
+            payment.get("period_months"),
+            payment.get("period_started_at"),
+            payment.get("period_ends_at"),
+            payment.get("due_at"),
+            payment.get("paid_at"),
+            payment.get("invoice_number"),
+            payment.get("notes"),
+            payment.get("created_at"),
+        ])
+    return _csv_response("platform_payments.csv", rows)
+
+
+@router.get("/platform-admin/audit-log")
+async def get_platform_audit_log(
+    company_id: Optional[int] = None,
+    action: Optional[str] = None,
+    entity_type: Optional[str] = None,
+    user_id: Optional[int] = None,
+    search: Optional[str] = None,
+    limit: int = 100,
+    current_user: dict = Depends(_require_super_admin),
+):
+    del current_user
+    with platform_access():
+        entries = list_platform_audit_log(
+            company_id=company_id,
+            action=action,
+            entity_type=entity_type,
+            user_id=user_id,
+            search=search,
+            limit=limit,
+        )
+    return {"entries": entries}
+
+
+@router.get("/platform-admin/webhooks")
+async def get_platform_webhooks(
+    company_id: Optional[int] = None,
+    is_active: Optional[str] = None,
+    search: Optional[str] = None,
+    limit: int = 100,
+    current_user: dict = Depends(_require_super_admin),
+):
+    del current_user
+    with platform_access():
+        webhooks = list_platform_webhooks(
+            company_id=company_id,
+            is_active=_parse_optional_bool(is_active),
+            search=search,
+            limit=limit,
+        )
+    return {"webhooks": webhooks}
+
+
+@router.get("/platform-admin/chat-history")
+async def get_platform_chat_history(
+    company_id: Optional[int] = None,
+    sender: Optional[str] = None,
+    search: Optional[str] = None,
+    limit: int = 100,
+    current_user: dict = Depends(_require_super_admin),
+):
+    del current_user
+    with platform_access():
+        entries = list_platform_chat_history(
+            company_id=company_id,
+            sender=sender,
+            search=search,
+            limit=limit,
+        )
+    return {"entries": entries}
+
+
+@router.get("/platform-admin/call-logs")
+async def get_platform_call_logs(
+    company_id: Optional[int] = None,
+    status: Optional[str] = None,
+    direction: Optional[str] = None,
+    search: Optional[str] = None,
+    limit: int = 100,
+    current_user: dict = Depends(_require_super_admin),
+):
+    del current_user
+    with platform_access():
+        calls = list_platform_call_logs(
+            company_id=company_id,
+            status=status,
+            direction=direction,
+            search=search,
+            limit=limit,
+        )
+    return {"calls": calls}
 
 
 @router.post("/platform-admin/companies/{company_id}/suspend")
@@ -823,13 +1140,17 @@ async def process_scheduled_tariff_changes(
             if not scheduled_change:
                 skipped.append(company_id)
                 continue
+            tariff_plan_id = scheduled_change.get("tariff_plan_id")
+            if tariff_plan_id is None:
+                tariff_plan_id = _resolve_tariff_plan_id(None, scheduled_change.get("tariff_key"))
 
             # Применяем изменение немедленно
             with platform_access():
                 assign_company_subscription(
                     company_id,
-                    tariff_plan_id=scheduled_change.get("tariff_plan_id"),
-                    tariff_key=scheduled_change.get("tariff_key"),
+                    tariff_plan_id,
+                    status=scheduled_change.get("status") or "active",
+                    is_trial=bool(scheduled_change.get("is_trial")),
                     employee_limit_override=scheduled_change.get("employee_limit_override"),
                     client_limit_override=scheduled_change.get("client_limit_override"),
                     product_limit_override=scheduled_change.get("product_limit_override"),
@@ -838,9 +1159,12 @@ async def process_scheduled_tariff_changes(
                     ad_slot_limit_override=scheduled_change.get("ad_slot_limit_override"),
                     billing_cycle_months=scheduled_change.get("billing_cycle_months", 1),
                     price_override_amount=scheduled_change.get("price_override", {}).get("amount"),
+                    currency_override=scheduled_change.get("price_override", {}).get("currency"),
                     discount_percent=scheduled_change.get("discount_config", {}).get("percent"),
                     discount_amount=scheduled_change.get("discount_config", {}).get("amount"),
                     discount_reason=scheduled_change.get("discount_config", {}).get("reason"),
+                    feature_flags_override=scheduled_change.get("feature_flags_override"),
+                    trial_days=scheduled_change.get("trial_days"),
                     notes=scheduled_change.get("notes"),
                     apply_mode="immediate",
                     assigned_by_user_id=current_user.get("id"),

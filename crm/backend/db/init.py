@@ -661,6 +661,19 @@ def init_database():
         add_column_if_not_exists('users', 'preferred_language', "TEXT DEFAULT 'en'")
         add_column_if_not_exists('users', 'company_id', 'INTEGER REFERENCES companies(id) ON DELETE CASCADE')
 
+        c.execute('''CREATE TABLE IF NOT EXISTS password_reset_tokens (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            token TEXT UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP,
+            used INTEGER DEFAULT 0
+        )''')
+        add_column_if_not_exists('password_reset_tokens', 'created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
+        add_column_if_not_exists('password_reset_tokens', 'expires_at', 'TIMESTAMP')
+        add_column_if_not_exists('password_reset_tokens', 'used', 'INTEGER DEFAULT 0')
+        c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens(token)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_tokens(user_id)")
 
         # Soft Delete Tracking (Trash) - REQUIRED by housekeeping
         c.execute('''CREATE TABLE IF NOT EXISTS deleted_items (
@@ -923,6 +936,34 @@ def init_database():
         add_column_if_not_exists('clients', 'pipeline_stage_id', 'INTEGER')
         add_column_if_not_exists('clients', 'user_id', 'INTEGER')  # Связь с зарегистрированным пользователем
 
+        c.execute('''CREATE TABLE IF NOT EXISTS chat_history (
+            id SERIAL PRIMARY KEY,
+            instagram_id TEXT REFERENCES clients(instagram_id) ON DELETE CASCADE,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            message TEXT,
+            sender TEXT,
+            message_type TEXT DEFAULT 'text',
+            language TEXT,
+            is_read BOOLEAN DEFAULT FALSE,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        add_column_if_not_exists('chat_history', 'company_id', 'INTEGER REFERENCES companies(id) ON DELETE CASCADE')
+        add_column_if_not_exists('chat_history', 'language', 'TEXT')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_chat_history_instagram_id ON chat_history(instagram_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_chat_history_company_id ON chat_history(company_id)")
+
+        c.execute('''CREATE TABLE IF NOT EXISTS message_reactions (
+            id SERIAL PRIMARY KEY,
+            message_id INTEGER NOT NULL REFERENCES chat_history(id) ON DELETE CASCADE,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            emoji TEXT NOT NULL,
+            user_id INTEGER,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        add_column_if_not_exists('message_reactions', 'company_id', 'INTEGER REFERENCES companies(id) ON DELETE CASCADE')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_message_reactions_message_id ON message_reactions(message_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_message_reactions_company_id ON message_reactions(company_id)")
+
         # --- 3. OPERATIONAL LOGIC ---
 
         # Bookings and Appointments
@@ -1053,6 +1094,7 @@ def init_database():
         # Audit Trial
         c.execute('''CREATE TABLE IF NOT EXISTS audit_log (
             id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
             user_id INTEGER,
             user_role TEXT,
             username TEXT,
@@ -1061,12 +1103,43 @@ def init_database():
             entity_id TEXT,
             old_data JSONB,
             new_data JSONB,
+            old_value JSONB,
+            new_value JSONB,
             ip_address TEXT,
+            user_agent TEXT,
+            success BOOLEAN DEFAULT TRUE,
+            error_message TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
-        
+        add_column_if_not_exists('audit_log', 'company_id', 'INTEGER REFERENCES companies(id) ON DELETE CASCADE')
         add_column_if_not_exists('audit_log', 'user_role', 'TEXT')
         add_column_if_not_exists('audit_log', 'username', 'TEXT')
+        add_column_if_not_exists('audit_log', 'old_value', 'JSONB')
+        add_column_if_not_exists('audit_log', 'new_value', 'JSONB')
+        add_column_if_not_exists('audit_log', 'user_agent', 'TEXT')
+        add_column_if_not_exists('audit_log', 'success', 'BOOLEAN DEFAULT TRUE')
+        add_column_if_not_exists('audit_log', 'error_message', 'TEXT')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_audit_log_company_id ON audit_log(company_id)")
+        c.execute("""
+            UPDATE audit_log
+            SET old_value = old_data
+            WHERE old_value IS NULL
+              AND old_data IS NOT NULL
+        """)
+        c.execute("""
+            UPDATE audit_log
+            SET new_value = new_data
+            WHERE new_value IS NULL
+              AND new_data IS NOT NULL
+        """)
+        c.execute("""
+            UPDATE audit_log al
+            SET company_id = u.company_id
+            FROM users u
+            WHERE al.company_id IS NULL
+              AND al.user_id = u.id
+              AND u.company_id IS NOT NULL
+        """)
 
         # Critical Actions (Actions that require director notification)
         c.execute('''CREATE TABLE IF NOT EXISTS critical_actions (
@@ -1106,10 +1179,9 @@ def init_database():
         add_column_if_not_exists('visitor_tracking', 'is_local', 'BOOLEAN')
         add_column_if_not_exists('visitor_tracking', 'visited_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
         
-        # Rename created_at to visited_at if it exists (use separate connection)
+        # Rename created_at to visited_at if it exists
         try:
             rename_conn = get_db_connection()
-            rename_conn._conn.autocommit = True
             rc = rename_conn.cursor()
             rc.execute("""
                 SELECT count(*)
@@ -1118,6 +1190,7 @@ def init_database():
             """)
             if rc.fetchone()[0] > 0:
                 rc.execute("ALTER TABLE visitor_tracking RENAME COLUMN created_at TO visited_at")
+                rename_conn.commit()
             rename_conn.close()
         except Exception as e:
             print(f"⚠️ Could not rename created_at: {e}")
@@ -2217,6 +2290,9 @@ def init_database():
             'loyalty_levels',
             'service_change_requests',
             'call_logs',
+            'chat_history',
+            'message_reactions',
+            'audit_log',
             'messenger_messages',
             'booking_temp',
             'salary_settings',
@@ -2241,6 +2317,23 @@ def init_database():
             except Exception as e:
                 log_error(f"Ошибка индекса {tenant_table}.company_id: {e}", "db")
             _ensure_company_rls(tenant_table)
+
+        c.execute("""
+            UPDATE chat_history ch
+            SET company_id = cl.company_id
+            FROM clients cl
+            WHERE ch.company_id IS NULL
+              AND ch.instagram_id = cl.instagram_id
+              AND cl.company_id IS NOT NULL
+        """)
+        c.execute("""
+            UPDATE message_reactions mr
+            SET company_id = ch.company_id
+            FROM chat_history ch
+            WHERE mr.company_id IS NULL
+              AND mr.message_id = ch.id
+              AND ch.company_id IS NOT NULL
+        """)
 
         # --- 7. DEFAULT DATA SYNC ---
 

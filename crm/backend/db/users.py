@@ -330,17 +330,7 @@ def create_password_reset_token(user_id: int) -> str:
     """Создать токен для сброса пароля"""
     conn = get_db_connection()
     c = conn.cursor()
-    
-    # Создаем таблицу для токенов если её нет
-    c.execute('''CREATE TABLE IF NOT EXISTS password_reset_tokens
-                 (id SERIAL PRIMARY KEY,
-                  user_id INTEGER,
-                  token TEXT UNIQUE,
-                  created_at TEXT,
-                  expires_at TEXT,
-                  used INTEGER DEFAULT 0,
-                  FOREIGN KEY (user_id) REFERENCES users(id))''')
-    
+
     token = secrets.token_urlsafe(32)
     now = datetime.now()
     expires = (now + timedelta(hours=1)).isoformat()

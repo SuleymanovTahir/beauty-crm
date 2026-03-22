@@ -1547,3 +1547,54 @@
   - `venv/bin/python tests/runners/run_all_tests.py` passed;
   - `venv/bin/python tests/runners/run_all_test2.py` passed;
   - `venv/bin/python tests/runners/run_all_test3.py` passed.
+
+## [2026-03-22] SaaS Isolation Hardening And Platform Audit Visibility
+- Closed tenant-isolation and SSOT gaps in:
+  - `crm/backend/db/init.py`
+  - `crm/backend/db/messages.py`
+  - `crm/backend/db/users.py`
+  - `crm/backend/db/migrations/run_all_migrations.py`
+  - `crm/backend/utils/audit.py`
+  - `crm/backend/db/companies.py`
+  - `crm/backend/crm_api/platform_admin.py`
+  - `crm/frontend/src/services/api.ts`
+  - `crm/frontend/src/pages/shared/PlatformAdmin.tsx`
+- Schema ownership moved into SSOT:
+  - `password_reset_tokens` is now created by `db.init`, not lazily from `db.users`;
+  - `chat_history` is now created by `db.init`, not by legacy migration helper code;
+  - `message_reactions` is now created by `db.init`, not on-demand from runtime chat code.
+- Tenant isolation hardened:
+  - `chat_history` now carries `company_id` and is covered by the shared tenant RLS policy path;
+  - chat reads, unread counters, search, and reactions in `db/messages.py` now resolve and filter by company;
+  - backfill logic populates `chat_history.company_id` from `clients.company_id` and `message_reactions.company_id` from `chat_history.company_id`.
+- Audit trail aligned with real runtime behavior:
+  - `audit_log` now stores `company_id`, `old_value`, `new_value`, `user_agent`, `success`, and `error_message`;
+  - runtime audit writer now records tenant/company context correctly;
+  - platform super-admin now has dedicated audit-log and company-webhook overview endpoints plus UI blocks in platform admin.
+- Platform super-admin visibility widened for cross-company communications:
+  - added platform-wide read-only views for recent company chats and call logs;
+  - `crm/backend/db/companies.py` now exposes SSOT listing helpers for `chat_history` and `call_logs`;
+  - `crm/backend/crm_api/platform_admin.py`, `crm/frontend/src/services/api.ts`, and `crm/frontend/src/pages/shared/PlatformAdmin.tsx` now surface those feeds with company/search/status filters.
+- Billing scheduler bug fixed:
+  - `/api/platform-admin/process-scheduled-changes` no longer calls `assign_company_subscription()` with unsupported `tariff_key`;
+  - scheduled changes now resolve `tariff_plan_id` safely and can carry status, trial flags, feature flags, discounts, price overrides, and notes into the next cycle.
+- Fresh DB verification after the hardening pass:
+  - after `drop_database()` + `recreate_database()` + migrations + fixes, `companies=0`, `users=0`, `platform_ads=0`, `referral_links=0`;
+  - only `notification_templates=7` system records are seeded;
+  - `salon_settings.name/phone/email/currency/hours_weekdays/hours_weekends/bot_name` remain `NULL`;
+  - `chat_history` now includes `company_id`;
+  - `audit_log` now includes both legacy compatibility columns and the current runtime columns.
+- Validation:
+  - `npm --prefix crm/frontend run lint` passed;
+  - `npm --prefix crm/frontend run build` passed;
+  - `venv/bin/python -m py_compile crm/backend/db/init.py crm/backend/db/messages.py crm/backend/db/users.py crm/backend/db/companies.py crm/backend/crm_api/platform_admin.py crm/backend/utils/audit.py crm/backend/db/migrations/run_all_migrations.py` passed;
+  - fresh DB recreate passed;
+  - `venv/bin/python db/migrations/run_all_migrations.py` passed;
+  - `venv/bin/python scripts/maintenance/fix_data.py` passed;
+  - `venv/bin/python tests/runners/run_all_tests.py` passed;
+  - `venv/bin/python tests/runners/run_all_test2.py` passed;
+  - `venv/bin/python tests/runners/run_all_test3.py` passed;
+  - `run_all_test4` / `run_all_tests4` is still absent from current repository.
+- IMPORTANT TO REMEMBER:
+  - multi-tenant tables used by runtime must be created only in `db.init` or consolidated migrations, never lazily inside request handlers/helpers;
+  - chat and audit data are tenant-sensitive and must always carry `company_id`, otherwise platform isolation becomes unreliable even if users are filtered at the API layer.

@@ -19,7 +19,7 @@
   "company_code_placeholder": "Например, NOVACRM",
   "company_created_with_code": "Компания создана. Код компании: {{code}}",
   "company_name_label": "Название компании",
-  "company_name_placeholder": "Например, Nova Clinic",
+  "company_name_placeholder": "Например, Прима",
   "company_owner_hint": "Создатель компании получает роль директора и доступ к управлению сотрудниками.",
   "confirm_password": "Подтверждение пароля",
   "confirm_password_placeholder": "Повторите пароль",
