@@ -1464,11 +1464,15 @@ def update_company(company_id: int, data: dict[str, Any]) -> bool:
         conn.close()
 
 
-def list_companies(search: str | None = None, status: str | None = None) -> list[dict[str, Any]]:
+def list_companies(
+    search: str | None = None,
+    status: str | None = None,
+    include_deleted: bool = False,
+) -> list[dict[str, Any]]:
     conn = get_db_connection()
     c = conn.cursor()
     try:
-        where_parts = ["c.deleted_at IS NULL"]
+        where_parts = ["1=1"] if include_deleted else ["c.deleted_at IS NULL"]
         params: list[Any] = []
         if search:
             where_parts.append("(LOWER(COALESCE(c.name, '')) LIKE LOWER(%s) OR LOWER(c.access_code) LIKE LOWER(%s) OR LOWER(COALESCE(c.email, '')) LIKE LOWER(%s))")
@@ -1483,7 +1487,7 @@ def list_companies(search: str | None = None, status: str | None = None) -> list
             SELECT
                 c.id, c.slug, c.access_code, c.name, c.status, c.email, c.phone,
                 c.business_type, c.product_mode, c.currency, c.timezone,
-                c.employee_limit, c.owner_user_id, c.created_at, c.updated_at,
+                c.employee_limit, c.owner_user_id, c.created_at, c.updated_at, c.deleted_at,
                 COUNT(u.id) FILTER (WHERE u.deleted_at IS NULL AND u.is_active = TRUE AND u.role NOT IN ('client', 'super_admin')) AS active_staff_count,
                 cs.id AS subscription_id,
                 cs.tariff_plan_id,
@@ -1529,7 +1533,7 @@ def list_companies(search: str | None = None, status: str | None = None) -> list
             GROUP BY
                 c.id, c.slug, c.access_code, c.name, c.status, c.email, c.phone,
                 c.business_type, c.product_mode, c.currency, c.timezone,
-                c.employee_limit, c.owner_user_id, c.created_at, c.updated_at,
+                c.employee_limit, c.owner_user_id, c.created_at, c.updated_at, c.deleted_at,
                 cs.id, cs.tariff_plan_id, cs.status, cs.is_trial, cs.billing_cycle_months,
                 cs.employee_limit_override, cs.client_limit_override, cs.product_limit_override,
                 cs.monthly_message_limit_override, cs.storage_limit_mb_override, cs.ad_slot_limit_override,
@@ -1596,6 +1600,7 @@ def list_companies(search: str | None = None, status: str | None = None) -> list
                     "owner_user_id": _safe_int(payload["owner_user_id"]),
                     "created_at": payload["created_at"],
                     "updated_at": payload["updated_at"],
+                    "deleted_at": payload.get("deleted_at"),
                     "active_staff_count": _safe_int(payload["active_staff_count"], 0) or 0,
                     "subscription": {
                         "id": _safe_int(payload.get("subscription_id")),
@@ -1643,6 +1648,87 @@ def list_companies(search: str | None = None, status: str | None = None) -> list
         return result
     finally:
         conn.close()
+
+
+def restore_company(company_id: int) -> bool:
+    subscription = get_company_subscription(company_id)
+    restored_status = "trial" if subscription and subscription.get("is_trial") else "active"
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute(
+            """
+            UPDATE companies
+            SET status = %s,
+                deleted_at = NULL,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = %s
+            """,
+            (restored_status, company_id),
+        )
+        conn.commit()
+        return c.rowcount > 0
+    except Exception as e:
+        conn.rollback()
+        log_error(f"Error restoring company {company_id}: {e}", "companies")
+        raise
+    finally:
+        conn.close()
+
+
+def clear_company_scheduled_change(company_id: int) -> bool:
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute(
+            """
+            UPDATE company_subscriptions
+            SET scheduled_change = '{}'::jsonb,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE company_id = %s
+            """,
+            (company_id,),
+        )
+        conn.commit()
+        return c.rowcount > 0
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+
+def clone_tariff_plan(tariff_id: int, *, key: str | None = None, name: str | None = None) -> int:
+    source_tariff = get_tariff_plan_by_id(tariff_id)
+    if not source_tariff:
+        raise ValueError(f"Tariff plan {tariff_id} not found")
+
+    requested_key = re.sub(r"[^a-z0-9_-]+", "-", str(key or "").strip().lower()).strip("-_")
+    candidate_key = requested_key or f"{source_tariff['key']}-copy"
+    suffix = 1
+    while get_tariff_plan_by_key(candidate_key):
+        suffix += 1
+        candidate_key = f"{source_tariff['key']}-copy-{suffix}"
+
+    cloned_payload = {
+        "key": candidate_key,
+        "name": str(name or f"{source_tariff['name']} Copy").strip(),
+        "description": source_tariff.get("description"),
+        "employee_limit": source_tariff.get("employee_limit"),
+        "client_limit": source_tariff.get("client_limit"),
+        "product_limit": source_tariff.get("product_limit"),
+        "monthly_message_limit": source_tariff.get("monthly_message_limit"),
+        "storage_limit_mb": source_tariff.get("storage_limit_mb"),
+        "ad_slot_limit": source_tariff.get("ad_slot_limit"),
+        "monthly_price": source_tariff.get("monthly_price"),
+        "yearly_price": source_tariff.get("yearly_price"),
+        "currency": source_tariff.get("currency"),
+        "trial_days": source_tariff.get("trial_days"),
+        "feature_flags": source_tariff.get("feature_flags"),
+        "is_active": source_tariff.get("is_active", True),
+        "sort_order": source_tariff.get("sort_order", 0),
+    }
+    return create_tariff_plan(cloned_payload)
 
 
 def record_company_payment(
@@ -1882,7 +1968,13 @@ def record_company_payment(
     }
 
 
-def list_company_payments(company_id: int | None = None, status: str | None = None, limit: int = 100) -> list[dict[str, Any]]:
+def list_company_payments(
+    company_id: int | None = None,
+    status: str | None = None,
+    limit: int = 100,
+    search: str | None = None,
+    only_overdue: bool = False,
+) -> list[dict[str, Any]]:
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -1894,6 +1986,23 @@ def list_company_payments(company_id: int | None = None, status: str | None = No
         if status:
             where_parts.append("cp.status = %s")
             params.append(status)
+        if search:
+            search_term = f"%{search.strip()}%"
+            where_parts.append(
+                """
+                (
+                    LOWER(COALESCE(c.name, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(cp.invoice_number, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(tp.name, '')) LIKE LOWER(%s)
+                    OR LOWER(COALESCE(tp.key, '')) LIKE LOWER(%s)
+                )
+                """
+            )
+            params.extend([search_term, search_term, search_term, search_term])
+        if only_overdue:
+            where_parts.append("cp.status <> 'paid'")
+            where_parts.append("cp.due_at IS NOT NULL")
+            where_parts.append("cp.due_at < CURRENT_TIMESTAMP")
         params.append(max(1, int(limit or 100)))
 
         c.execute(
@@ -1947,7 +2056,11 @@ def list_company_payments(company_id: int | None = None, status: str | None = No
         conn.close()
 
 
-def list_platform_ads(company_id: int | None = None, status: str | None = None) -> list[dict[str, Any]]:
+def list_platform_ads(
+    company_id: int | None = None,
+    status: str | None = None,
+    placement: str | None = None,
+) -> list[dict[str, Any]]:
     conn = get_db_connection()
     c = conn.cursor()
     try:
@@ -1959,6 +2072,9 @@ def list_platform_ads(company_id: int | None = None, status: str | None = None) 
         if status:
             where_parts.append("pa.status = %s")
             params.append(status)
+        if placement:
+            where_parts.append("pa.placement = %s")
+            params.append(placement)
         c.execute(
             f"""
             SELECT

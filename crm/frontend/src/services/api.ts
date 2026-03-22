@@ -326,11 +326,12 @@ export class ApiClient {
     return this.request<any>('/api/platform-admin/overview')
   }
 
-  async getPlatformCompanies(search?: string, status?: string) {
+  async getPlatformCompanies(search?: string, status?: string, includeDeleted: boolean = false) {
     const params = new URLSearchParams()
     if (search) params.append('search', search)
     if (status) params.append('status', status)
     params.append('include_usage', 'true')
+    if (includeDeleted) params.append('include_deleted', 'true')
     const query = params.toString()
     return this.request<any>(`/api/platform-admin/companies${query ? `?${query}` : ''}`)
   }
@@ -369,6 +370,12 @@ export class ApiClient {
     })
   }
 
+  async restorePlatformCompany(companyId: number) {
+    return this.request<any>(`/api/platform-admin/companies/${companyId}/restore`, {
+      method: 'POST',
+    })
+  }
+
   async deletePlatformCompany(companyId: number) {
     return this.request<any>(`/api/platform-admin/companies/${companyId}`, {
       method: 'DELETE',
@@ -399,6 +406,13 @@ export class ApiClient {
     })
   }
 
+  async clonePlatformTariff(tariffId: number, data?: any) {
+    return this.request<any>(`/api/platform-admin/tariffs/${tariffId}/clone`, {
+      method: 'POST',
+      body: JSON.stringify(data || {}),
+    })
+  }
+
   async assignPlatformSubscription(companyId: number, data: any) {
     return this.request<any>(`/api/platform-admin/companies/${companyId}/subscription`, {
       method: 'POST',
@@ -406,10 +420,24 @@ export class ApiClient {
     })
   }
 
-  async getPlatformPayments(companyId?: number, status?: string, limit: number = 100) {
+  async cancelPlatformScheduledChange(companyId: number) {
+    return this.request<any>(`/api/platform-admin/companies/${companyId}/subscription/cancel-scheduled`, {
+      method: 'POST',
+    })
+  }
+
+  async getPlatformPayments(
+    companyId?: number,
+    status?: string,
+    limit: number = 100,
+    search?: string,
+    onlyOverdue: boolean = false,
+  ) {
     const params = new URLSearchParams()
     if (typeof companyId === 'number') params.append('company_id', String(companyId))
     if (status) params.append('status', status)
+    if (search) params.append('search', search)
+    if (onlyOverdue) params.append('only_overdue', 'true')
     params.append('limit', String(limit))
     return this.request<any>(`/api/platform-admin/payments?${params.toString()}`)
   }
@@ -421,10 +449,11 @@ export class ApiClient {
     })
   }
 
-  async getPlatformAds(companyId?: number, status?: string) {
+  async getPlatformAds(companyId?: number, status?: string, placement?: string) {
     const params = new URLSearchParams()
     if (typeof companyId === 'number') params.append('company_id', String(companyId))
     if (status) params.append('status', status)
+    if (placement) params.append('placement', placement)
     const query = params.toString()
     return this.request<any>(`/api/platform-admin/ads${query ? `?${query}` : ''}`)
   }

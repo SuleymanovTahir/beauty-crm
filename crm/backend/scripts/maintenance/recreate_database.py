@@ -153,9 +153,11 @@ def grant_permissions_to_user(db_name, db_host, db_port, superuser, superuser_pa
         cursor.execute(f"ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO {target_user}")
         cursor.execute(f"ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO {target_user}")
         
-        # Делаем пользователя владельцем схемы
-        cursor.execute(f"ALTER SCHEMA public OWNER TO {target_user}")
-        
+        # Владельцем схемы public должен оставаться приложенческий пользователь,
+        # иначе PostgreSQL RLS и CREATE TABLE будут снова зависеть от SUPERUSER.
+        if not grant_superuser:
+            cursor.execute(f"ALTER SCHEMA public OWNER TO {target_user}")
+
         print(f"✅ Права выданы пользователю '{target_user}'")
         
         cursor.close()

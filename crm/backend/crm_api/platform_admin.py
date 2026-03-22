@@ -3,7 +3,7 @@ Platform admin API for multi-tenant SaaS CRM management.
 """
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 from typing import Optional
 
@@ -14,6 +14,8 @@ from db.companies import (
     QuotaExceededError,
     archive_company,
     assign_company_subscription,
+    clear_company_scheduled_change,
+    clone_tariff_plan,
     create_company,
     create_platform_ad,
     create_tariff_plan,
@@ -29,6 +31,7 @@ from db.companies import (
     list_platform_ads,
     list_tariff_plans,
     record_company_payment,
+    restore_company,
     suspend_company,
     update_company,
     update_platform_ad,
@@ -143,6 +146,11 @@ class PlatformAdRequest(BaseModel):
     notes: Optional[str] = None
 
 
+class PlatformTariffCloneRequest(BaseModel):
+    key: Optional[str] = None
+    name: Optional[str] = None
+
+
 class PlatformBroadcastRequest(BaseModel):
     title: str
     message: str
@@ -177,6 +185,21 @@ def _resolve_tariff_plan_id(tariff_plan_id: Optional[int], tariff_key: Optional[
 
 def _raise_quota_http_error(error: QuotaExceededError) -> None:
     raise HTTPException(status_code=409, detail=error.detail)
+
+
+def _parse_datetime_value(value: object) -> Optional[datetime]:
+    if isinstance(value, datetime):
+        return value
+    if not isinstance(value, str):
+        return None
+    normalized_value = value.strip().replace("Z", "+00:00")
+    if not normalized_value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(normalized_value)
+    except ValueError:
+        return None
+    return parsed.replace(tzinfo=None) if parsed.tzinfo is not None else parsed
 
 
 def _load_platform_broadcasts() -> list[dict]:
@@ -278,6 +301,10 @@ async def get_platform_overview(current_user: dict = Depends(_require_super_admi
     products_total = 0
     messages_this_month = 0
     storage_total_mb = 0
+    payments_overdue = 0
+    payments_due_7_days = 0
+    now = datetime.utcnow()
+    due_soon_deadline = now + timedelta(days=7)
 
     for company in companies:
         usage = get_company_usage(int(company["id"]))
@@ -289,6 +316,12 @@ async def get_platform_overview(current_user: dict = Depends(_require_super_admi
         current_price = float(subscription.get("current_price") or 0)
         billing_cycle = max(1, int(subscription.get("billing_cycle_months") or 1))
         expected_mrr += current_price / billing_cycle if current_price > 0 else 0.0
+        next_due_at = _parse_datetime_value(subscription.get("next_payment_due_at"))
+        if next_due_at is not None:
+            if next_due_at < now:
+                payments_overdue += 1
+            elif next_due_at <= due_soon_deadline:
+                payments_due_7_days += 1
 
     return {
         "companies_total": len(companies),
@@ -303,6 +336,8 @@ async def get_platform_overview(current_user: dict = Depends(_require_super_admi
         "products_total": products_total,
         "messages_this_month": messages_this_month,
         "storage_total_mb": storage_total_mb,
+        "payments_overdue": payments_overdue,
+        "payments_due_7_days": payments_due_7_days,
     }
 
 
@@ -311,11 +346,12 @@ async def get_platform_companies(
     search: Optional[str] = None,
     status: Optional[str] = None,
     include_usage: bool = True,
+    include_deleted: bool = False,
     current_user: dict = Depends(_require_super_admin),
 ):
     del current_user
     with platform_access():
-        companies = list_companies(search=search, status=status)
+        companies = list_companies(search=search, status=status, include_deleted=include_deleted)
         if include_usage:
             companies = [_company_payload_with_usage(company) for company in companies]
     return {"companies": companies}
@@ -453,12 +489,20 @@ async def create_platform_company_payment(
 async def get_platform_payments(
     company_id: Optional[int] = None,
     status: Optional[str] = None,
+    search: Optional[str] = None,
+    only_overdue: bool = False,
     limit: int = 100,
     current_user: dict = Depends(_require_super_admin),
 ):
     del current_user
     with platform_access():
-        payments = list_company_payments(company_id=company_id, status=status, limit=limit)
+        payments = list_company_payments(
+            company_id=company_id,
+            status=status,
+            limit=limit,
+            search=search,
+            only_overdue=only_overdue,
+        )
     return {"payments": payments}
 
 
@@ -484,6 +528,18 @@ async def archive_platform_company(
     return {"success": success}
 
 
+@router.post("/platform-admin/companies/{company_id}/restore")
+async def restore_platform_company(
+    company_id: int,
+    current_user: dict = Depends(_require_super_admin),
+):
+    del current_user
+    with platform_access():
+        success = restore_company(company_id)
+        company = get_company_by_id(company_id)
+    return {"success": success, "company": company}
+
+
 @router.delete("/platform-admin/companies/{company_id}")
 async def delete_platform_company(
     company_id: int,
@@ -493,6 +549,18 @@ async def delete_platform_company(
     with platform_access():
         success = delete_company(company_id)
     return {"success": success}
+
+
+@router.post("/platform-admin/companies/{company_id}/subscription/cancel-scheduled")
+async def cancel_platform_company_scheduled_change(
+    company_id: int,
+    current_user: dict = Depends(_require_super_admin),
+):
+    del current_user
+    with platform_access():
+        success = clear_company_scheduled_change(company_id)
+        subscription = get_company_subscription(company_id)
+    return {"success": success, "subscription": subscription}
 
 
 @router.get("/platform-admin/tariffs")
@@ -539,15 +607,29 @@ async def deactivate_platform_tariff(
     return {"success": success, "tariffs": tariffs}
 
 
-@router.get("/platform-admin/ads")
-async def get_platform_ads(
-    company_id: Optional[int] = None,
-    status: Optional[str] = None,
+@router.post("/platform-admin/tariffs/{tariff_id}/clone")
+async def clone_platform_tariff(
+    tariff_id: int,
+    payload: PlatformTariffCloneRequest,
     current_user: dict = Depends(_require_super_admin),
 ):
     del current_user
     with platform_access():
-        ads = list_platform_ads(company_id=company_id, status=status)
+        cloned_tariff_id = clone_tariff_plan(tariff_id, key=payload.key, name=payload.name)
+        tariffs = list_tariff_plans()
+    return {"success": True, "tariff_id": cloned_tariff_id, "tariffs": tariffs}
+
+
+@router.get("/platform-admin/ads")
+async def get_platform_ads(
+    company_id: Optional[int] = None,
+    status: Optional[str] = None,
+    placement: Optional[str] = None,
+    current_user: dict = Depends(_require_super_admin),
+):
+    del current_user
+    with platform_access():
+        ads = list_platform_ads(company_id=company_id, status=status, placement=placement)
     return {"ads": ads}
 
 

@@ -34,6 +34,7 @@ from crm_api.marketplace_integrations import router as marketplace_router
 from crm_api.payment_integrations import router as payment_integrations_router
 from crm_api.internal_chat import router as internal_chat_router
 from crm_api.statuses import router as statuses_router
+from crm_api.referral_links import router as referral_links_router, redirect_router as referral_redirect_router
 
 
 def mount_crm_routers(app: FastAPI) -> None:
@@ -77,3 +78,5 @@ def mount_crm_routers(app: FastAPI) -> None:
     app.include_router(payment_integrations_router, prefix="/api")
     app.include_router(internal_chat_router)  # already has /api/internal-chat prefix
     app.include_router(statuses_router, prefix="/api")
+    app.include_router(referral_links_router, prefix="/api")
+    app.include_router(referral_redirect_router)  # /r/{slug} redirect without /api prefix

@@ -2718,6 +2718,60 @@ def init_database():
             metadata JSONB DEFAULT '{}'
         )''')
 
+        # ─── Referral Links (Advertising Module) ─────────────────────────────────
+        c.execute('''CREATE TABLE IF NOT EXISTS referral_links (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            name TEXT NOT NULL,
+            slug TEXT NOT NULL,
+            destination_url TEXT NOT NULL,
+            advertiser_name TEXT,
+            advertiser_email TEXT,
+            campaign TEXT,
+            utm_source TEXT,
+            utm_medium TEXT,
+            utm_campaign TEXT,
+            utm_content TEXT,
+            utm_term TEXT,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at TIMESTAMP,
+            UNIQUE(company_id, slug)
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_referral_links_slug ON referral_links(slug)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_referral_links_company ON referral_links(company_id)")
+
+        c.execute('''CREATE TABLE IF NOT EXISTS referral_clicks (
+            id SERIAL PRIMARY KEY,
+            link_id INTEGER REFERENCES referral_links(id) ON DELETE CASCADE,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            ip_address TEXT,
+            ip_hash TEXT,
+            user_agent TEXT,
+            device_type TEXT,
+            browser TEXT,
+            referrer TEXT,
+            city TEXT,
+            country TEXT,
+            is_unique BOOLEAN DEFAULT TRUE,
+            clicked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_referral_clicks_link ON referral_clicks(link_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_referral_clicks_clicked_at ON referral_clicks(clicked_at)")
+
+        c.execute('''CREATE TABLE IF NOT EXISTS referral_conversions (
+            id SERIAL PRIMARY KEY,
+            link_id INTEGER REFERENCES referral_links(id) ON DELETE CASCADE,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            click_id INTEGER REFERENCES referral_clicks(id) ON DELETE SET NULL,
+            client_instagram_id TEXT,
+            booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL,
+            revenue REAL DEFAULT 0,
+            converted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_referral_conversions_link ON referral_conversions(link_id)")
+
         # Startup must not auto-fill reference catalogs.
 
         conn.commit()

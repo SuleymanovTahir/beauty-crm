@@ -19,6 +19,7 @@ const Chat = React.lazy(() => import('@crm/pages/shared/Chat'));
 const UniversalProfile = React.lazy(() => import('@crm/pages/shared/Profile'));
 const Telephony = React.lazy(() => import('@crm/pages/shared/Telephony'));
 const PlatformAdmin = React.lazy(() => import('@crm/pages/shared/PlatformAdmin'));
+const ReferralLinks = React.lazy(() => import('@crm/pages/shared/ReferralLinks'));
 
 const InternalChat = React.lazy(() => import('@crm/components/shared/InternalChat'));
 const NotificationsPage = React.lazy(() => import('@crm/pages/common/Notifications'));
@@ -244,7 +245,8 @@ export default function App() {
                 <Route path="messengers" element={<Navigate to="../chat" replace />} />
                 <Route path="payment-integrations" element={<Navigate to="../settings" replace />} />
                 <Route path="marketplace-integrations" element={<Navigate to="../settings" replace />} />
-                <Route path="referrals" element={<Navigate to="../dashboard" replace />} />
+                <Route path="referral-links" element={<ReferralLinks />} />
+                <Route path="referrals" element={<Navigate to="../referral-links" replace />} />
                 <Route path="service-change-requests" element={<Navigate to="../services" replace />} />
                 <Route path="plans" element={<Navigate to="../dashboard" replace />} />
                 <Route path="trash" element={<Navigate to="../dashboard" replace />} />
@@ -285,6 +287,7 @@ export default function App() {
                 <Route path="messengers" element={<Navigate to="../chat" replace />} />
                 <Route path="bot-settings" element={<Navigate to="../settings" replace />} />
                 <Route path="promo-codes" element={<Navigate to="../dashboard" replace />} />
+                <Route path="referral-links" element={<ReferralLinks />} />
                 <Route path="team/:id/:tab?" element={<Team />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
@@ -352,6 +355,7 @@ export default function App() {
                 <Route path="analytics" element={<Navigate to="../dashboard" replace />} />
                 <Route path="clients" element={<Navigate to="../dashboard" replace />} />
                 <Route path="promo-codes" element={<Navigate to="../dashboard" replace />} />
+                <Route path="referral-links" element={<ReferralLinks />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 

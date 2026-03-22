@@ -19,6 +19,8 @@ type Overview = {
   products_total: number;
   messages_this_month: number;
   storage_total_mb: number;
+  payments_overdue: number;
+  payments_due_7_days: number;
 };
 
 type CompanyEditor = {
@@ -64,6 +66,8 @@ const emptyOverview: Overview = {
   products_total: 0,
   messages_this_month: 0,
   storage_total_mb: 0,
+  payments_overdue: 0,
+  payments_due_7_days: 0,
 };
 
 const emptyCompanyForm = {
@@ -96,6 +100,8 @@ const emptyBroadcastForm = {
   title: '',
   message: '',
   company_statuses: 'active,trial',
+  company_ids: '',
+  tariff_keys: '',
 };
 
 const emptyAdForm = {
@@ -213,6 +219,16 @@ export default function PlatformAdmin() {
   const [editingAdId, setEditingAdId] = useState<number | null>(null);
   const [companyEditors, setCompanyEditors] = useState<Record<number, CompanyEditor>>({});
   const [paymentEditors, setPaymentEditors] = useState<Record<number, PaymentEditor>>({});
+  const [companySearch, setCompanySearch] = useState('');
+  const [companyStatusFilter, setCompanyStatusFilter] = useState('');
+  const [includeDeletedCompanies, setIncludeDeletedCompanies] = useState(false);
+  const [paymentCompanyFilter, setPaymentCompanyFilter] = useState('');
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState('');
+  const [paymentSearch, setPaymentSearch] = useState('');
+  const [paymentOnlyOverdue, setPaymentOnlyOverdue] = useState(false);
+  const [adCompanyFilter, setAdCompanyFilter] = useState('');
+  const [adStatusFilter, setAdStatusFilter] = useState('');
+  const [adPlacementFilter, setAdPlacementFilter] = useState('');
 
   const featureSuggestions = [
     { key: 'advanced_analytics', title: t('platform_feature_advanced_analytics', { defaultValue: 'Advanced analytics' }), description: t('platform_feature_advanced_analytics_desc', { defaultValue: 'Сводные показатели, cohort-аналитика и прогнозы нагрузки.' }) },
@@ -248,10 +264,24 @@ export default function PlatformAdmin() {
     try {
       const [overviewResponse, companiesResponse, tariffsResponse, paymentsResponse, adsResponse, broadcastsResponse] = await Promise.all([
         api.getPlatformOverview(),
-        api.getPlatformCompanies(),
+        api.getPlatformCompanies(
+          companySearch.trim().length > 0 ? companySearch.trim() : undefined,
+          companyStatusFilter.trim().length > 0 ? companyStatusFilter.trim() : undefined,
+          includeDeletedCompanies,
+        ),
         api.getPlatformTariffs(),
-        api.getPlatformPayments(undefined, undefined, 100),
-        api.getPlatformAds(),
+        api.getPlatformPayments(
+          toNumberOrUndefined(paymentCompanyFilter),
+          paymentStatusFilter.trim().length > 0 ? paymentStatusFilter.trim() : undefined,
+          100,
+          paymentSearch.trim().length > 0 ? paymentSearch.trim() : undefined,
+          paymentOnlyOverdue,
+        ),
+        api.getPlatformAds(
+          toNumberOrUndefined(adCompanyFilter),
+          adStatusFilter.trim().length > 0 ? adStatusFilter.trim() : undefined,
+          adPlacementFilter.trim().length > 0 ? adPlacementFilter.trim() : undefined,
+        ),
         api.getPlatformBroadcasts(),
       ]);
 
@@ -291,8 +321,19 @@ export default function PlatformAdmin() {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    void loadData();
+  }, [
+    companySearch,
+    companyStatusFilter,
+    includeDeletedCompanies,
+    paymentCompanyFilter,
+    paymentStatusFilter,
+    paymentSearch,
+    paymentOnlyOverdue,
+    adCompanyFilter,
+    adStatusFilter,
+    adPlacementFilter,
+  ]);
 
   const setCompanyEditorField = (companyId: number, field: keyof CompanyEditor, value: string) => {
     setCompanyEditors((prev) => ({
@@ -402,6 +443,28 @@ export default function PlatformAdmin() {
     }
   };
 
+  const handleCloneTariff = async (tariffId: number) => {
+    try {
+      await api.clonePlatformTariff(tariffId);
+      toast.success(t('platform_tariff_cloned', { defaultValue: 'Тариф клонирован' }));
+      await loadData();
+    } catch (error) {
+      console.error('Failed to clone tariff:', error);
+      toast.error(t('platform_tariff_clone_error', { defaultValue: 'Не удалось клонировать тариф' }));
+    }
+  };
+
+  const handleDeactivateTariff = async (tariffId: number) => {
+    try {
+      await api.deletePlatformTariff(tariffId);
+      toast.success(t('platform_tariff_deactivated', { defaultValue: 'Тариф деактивирован' }));
+      await loadData();
+    } catch (error) {
+      console.error('Failed to deactivate tariff:', error);
+      toast.error(t('platform_tariff_deactivate_error', { defaultValue: 'Не удалось деактивировать тариф' }));
+    }
+  };
+
   const handleSaveCompanyPlan = async (companyId: number, applyMode: 'immediate' | 'next_cycle') => {
     const editor = companyEditors[companyId];
     if (editor == null || editor.tariff_key.trim().length === 0) {
@@ -466,12 +529,14 @@ export default function PlatformAdmin() {
     }
   };
 
-  const handleCompanyAction = async (companyId: number, action: 'suspend' | 'archive' | 'delete') => {
+  const handleCompanyAction = async (companyId: number, action: 'suspend' | 'archive' | 'delete' | 'restore') => {
     try {
       if (action === 'suspend') {
         await api.suspendPlatformCompany(companyId);
       } else if (action === 'archive') {
         await api.archivePlatformCompany(companyId);
+      } else if (action === 'restore') {
+        await api.restorePlatformCompany(companyId);
       } else {
         await api.deletePlatformCompany(companyId);
       }
@@ -480,6 +545,17 @@ export default function PlatformAdmin() {
     } catch (error) {
       console.error(`Failed to ${action} company:`, error);
       toast.error(t('platform_company_action_error', { defaultValue: 'Не удалось выполнить действие над компанией' }));
+    }
+  };
+
+  const handleCancelScheduledChange = async (companyId: number) => {
+    try {
+      await api.cancelPlatformScheduledChange(companyId);
+      toast.success(t('platform_schedule_cancelled', { defaultValue: 'Запланированное изменение отменено' }));
+      await loadData();
+    } catch (error) {
+      console.error('Failed to cancel scheduled change:', error);
+      toast.error(t('platform_schedule_cancel_error', { defaultValue: 'Не удалось отменить плановое изменение' }));
     }
   };
 
@@ -567,11 +643,21 @@ export default function PlatformAdmin() {
         .split(',')
         .map((value) => value.trim())
         .filter((value) => value.length > 0);
+      const companyIds = broadcastForm.company_ids
+        .split(',')
+        .map((value) => Number(value.trim()))
+        .filter((value) => Number.isFinite(value) && value > 0);
+      const tariffKeys = broadcastForm.tariff_keys
+        .split(',')
+        .map((value) => value.trim())
+        .filter((value) => value.length > 0);
 
       await api.createPlatformBroadcast({
         title: broadcastForm.title,
         message: broadcastForm.message,
         company_statuses: companyStatuses,
+        company_ids: companyIds,
+        tariff_keys: tariffKeys,
         send_now: true,
       });
       toast.success(t('platform_broadcast_sent', { defaultValue: 'Рассылка отправлена' }));
@@ -597,7 +683,7 @@ export default function PlatformAdmin() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4 xl:grid-cols-6">
+      <div className="grid gap-4 md:grid-cols-4 xl:grid-cols-8">
         <div className="rounded-2xl border border-slate-200 bg-white p-4">
           <p className="text-sm text-slate-500">{t('platform_metric_companies', { defaultValue: 'Компании' })}</p>
           <p className="mt-2 text-3xl font-semibold text-slate-900">{overview.companies_total}</p>
@@ -621,6 +707,14 @@ export default function PlatformAdmin() {
         <div className="rounded-2xl border border-slate-200 bg-white p-4">
           <p className="text-sm text-slate-500">{t('platform_metric_ads', { defaultValue: 'Активная реклама' })}</p>
           <p className="mt-2 text-3xl font-semibold text-slate-900">{overview.ads_active}</p>
+        </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+          <p className="text-sm text-slate-500">{t('platform_metric_due_soon', { defaultValue: 'Оплаты до 7 дней' })}</p>
+          <p className="mt-2 text-3xl font-semibold text-slate-900">{overview.payments_due_7_days}</p>
+        </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+          <p className="text-sm text-slate-500">{t('platform_metric_overdue', { defaultValue: 'Просроченные оплаты' })}</p>
+          <p className="mt-2 text-3xl font-semibold text-slate-900">{overview.payments_overdue}</p>
         </div>
       </div>
 
@@ -691,12 +785,51 @@ export default function PlatformAdmin() {
             </div>
 
             <div className="mt-6 space-y-5">
+              <div className="grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-4">
+                <div className="space-y-2">
+                  <Label>{t('platform_filter_search_label', { defaultValue: 'Поиск компаний' })}</Label>
+                  <Input value={companySearch} onChange={(event) => setCompanySearch(event.target.value)} placeholder={t('search', { defaultValue: 'Поиск...' })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('platform_filter_status_label', { defaultValue: 'Статус' })}</Label>
+                  <Input value={companyStatusFilter} onChange={(event) => setCompanyStatusFilter(event.target.value)} placeholder={t('status', { defaultValue: 'Статус' })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('platform_include_deleted_label', { defaultValue: 'Показывать удалённые' })}</Label>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => setIncludeDeletedCompanies((prev) => !prev)}
+                  >
+                    {includeDeletedCompanies
+                      ? t('platform_include_deleted_on', { defaultValue: 'Да' })
+                      : t('platform_include_deleted_off', { defaultValue: 'Нет' })}
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('platform_filters_reset_label', { defaultValue: 'Сброс фильтров' })}</Label>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => {
+                      setCompanySearch('');
+                      setCompanyStatusFilter('');
+                      setIncludeDeletedCompanies(false);
+                    }}
+                  >
+                    {t('platform_filters_reset', { defaultValue: 'Сбросить фильтры' })}
+                  </Button>
+                </div>
+              </div>
+
               {companies.map((company) => {
                 const editor = companyEditors[company.id] ?? buildCompanyEditor(company);
                 const paymentEditor = paymentEditors[company.id] ?? buildPaymentEditor(company);
                 const usage = company.usage ?? {};
                 const subscription = company.subscription ?? {};
                 const snapshot = subscription.current_snapshot ?? {};
+                const scheduledChange = subscription.scheduled_change ?? {};
+                const hasScheduledChange = Object.keys(scheduledChange).length > 0;
                 const currentCurrency = snapshot.currency ?? company.currency ?? 'USD';
                 return (
                   <div key={company.id} className="rounded-3xl border border-slate-200 p-5">
@@ -715,6 +848,11 @@ export default function PlatformAdmin() {
                         <p className="text-sm text-slate-500">
                           {t('platform_company_next_due', { defaultValue: 'Следующая оплата' })}: {subscription?.next_payment_due_at != null ? new Date(subscription.next_payment_due_at).toLocaleString() : t('platform_not_scheduled', { defaultValue: 'Не запланирована' })}
                         </p>
+                        {hasScheduledChange ? (
+                          <p className="text-sm text-amber-700">
+                            {t('platform_scheduled_change_summary', { defaultValue: 'Есть запланированное изменение тарифа' })}
+                          </p>
+                        ) : null}
                       </div>
                       <div className="flex flex-wrap gap-2">
                         <Button variant="outline" onClick={() => handleCompanyAction(company.id, 'suspend')}>
@@ -723,9 +861,17 @@ export default function PlatformAdmin() {
                         <Button variant="outline" onClick={() => handleCompanyAction(company.id, 'archive')}>
                           {t('platform_archive', { defaultValue: 'Архив' })}
                         </Button>
+                        <Button variant="outline" onClick={() => handleCompanyAction(company.id, 'restore')}>
+                          {t('platform_restore', { defaultValue: 'Восстановить' })}
+                        </Button>
                         <Button variant="destructive" onClick={() => handleCompanyAction(company.id, 'delete')}>
                           {t('platform_delete', { defaultValue: 'Удалить' })}
                         </Button>
+                        {hasScheduledChange ? (
+                          <Button variant="outline" onClick={() => handleCancelScheduledChange(company.id)}>
+                            {t('platform_schedule_cancel', { defaultValue: 'Отменить плановое изменение' })}
+                          </Button>
+                        ) : null}
                       </div>
                     </div>
 
@@ -977,9 +1123,17 @@ export default function PlatformAdmin() {
                       <p className="font-semibold text-slate-900">{tariff.name}</p>
                       <p className="text-sm text-slate-500">{tariff.key}</p>
                     </div>
-                    <Button variant="outline" onClick={() => handleEditTariff(tariff)}>
-                      {t('platform_edit', { defaultValue: 'Редактировать' })}
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="outline" onClick={() => handleEditTariff(tariff)}>
+                        {t('platform_edit', { defaultValue: 'Редактировать' })}
+                      </Button>
+                      <Button variant="outline" onClick={() => handleCloneTariff(tariff.id)}>
+                        {t('platform_clone', { defaultValue: 'Клонировать' })}
+                      </Button>
+                      <Button variant="outline" onClick={() => handleDeactivateTariff(tariff.id)}>
+                        {t('platform_deactivate', { defaultValue: 'Деактивировать' })}
+                      </Button>
+                    </div>
                   </div>
                   <p className="mt-2 text-sm text-slate-600">
                     {formatMoney(Number(tariff.monthly_price ?? 0), tariff.currency ?? 'USD')} / {t('platform_month', { defaultValue: 'месяц' })}
@@ -1010,6 +1164,20 @@ export default function PlatformAdmin() {
                   {t('platform_ad_reset', { defaultValue: 'Сбросить' })}
                 </Button>
               ) : null}
+            </div>
+            <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label>{t('platform_ad_filter_company_label', { defaultValue: 'Фильтр по компании' })}</Label>
+                <Input value={adCompanyFilter} onChange={(event) => setAdCompanyFilter(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_ad_filter_status_label', { defaultValue: 'Фильтр по статусу' })}</Label>
+                <Input value={adStatusFilter} onChange={(event) => setAdStatusFilter(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_ad_filter_placement_label', { defaultValue: 'Фильтр по месту размещения' })}</Label>
+                <Input value={adPlacementFilter} onChange={(event) => setAdPlacementFilter(event.target.value)} />
+              </div>
             </div>
             <div className="mt-4 grid gap-3">
               <div className="space-y-2">
@@ -1103,6 +1271,32 @@ export default function PlatformAdmin() {
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold text-slate-900">{t('platform_payments_title', { defaultValue: 'Последние оплаты' })}</h2>
+            <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <Label>{t('platform_payment_filter_company_label', { defaultValue: 'Компания ID' })}</Label>
+                <Input value={paymentCompanyFilter} onChange={(event) => setPaymentCompanyFilter(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_payment_filter_status_label', { defaultValue: 'Статус оплаты' })}</Label>
+                <Input value={paymentStatusFilter} onChange={(event) => setPaymentStatusFilter(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_payment_filter_search_label', { defaultValue: 'Поиск оплаты' })}</Label>
+                <Input value={paymentSearch} onChange={(event) => setPaymentSearch(event.target.value)} placeholder={t('search', { defaultValue: 'Поиск...' })} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_payment_filter_overdue_label', { defaultValue: 'Только просроченные' })}</Label>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() => setPaymentOnlyOverdue((prev) => !prev)}
+                >
+                  {paymentOnlyOverdue
+                    ? t('platform_include_deleted_on', { defaultValue: 'Да' })
+                    : t('platform_include_deleted_off', { defaultValue: 'Нет' })}
+                </Button>
+              </div>
+            </div>
             <div className="mt-4 space-y-3">
               {payments.slice(0, 12).map((payment) => (
                 <div key={payment.id} className="rounded-2xl border border-slate-200 p-4">
@@ -1129,6 +1323,14 @@ export default function PlatformAdmin() {
               <div className="space-y-2">
                 <Label>{t('platform_broadcast_statuses_label', { defaultValue: 'Статусы компаний через запятую' })}</Label>
                 <Input value={broadcastForm.company_statuses} onChange={(event) => setBroadcastForm((prev) => ({ ...prev, company_statuses: event.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_broadcast_company_ids_label', { defaultValue: 'ID компаний через запятую' })}</Label>
+                <Input value={broadcastForm.company_ids} onChange={(event) => setBroadcastForm((prev) => ({ ...prev, company_ids: event.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('platform_broadcast_tariff_keys_label', { defaultValue: 'Ключи тарифов через запятую' })}</Label>
+                <Input value={broadcastForm.tariff_keys} onChange={(event) => setBroadcastForm((prev) => ({ ...prev, tariff_keys: event.target.value }))} />
               </div>
               <div className="space-y-2">
                 <Label>{t('platform_broadcast_message_label', { defaultValue: 'Сообщение' })}</Label>

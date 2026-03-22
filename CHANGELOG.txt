@@ -1463,3 +1463,9 @@
   - `run_all_test2.py` passed;
   - `run_all_test3.py` passed;
   - `run_all_test4` / `run_all_tests4` is still absent from current repository.
+- `crm/backend/scripts/maintenance/recreate_database.py`:
+  - fresh database bootstrap no longer grants `SUPERUSER` to the application user;
+  - app database owner and `public` schema owner now stay on the application user in `NOSUPERUSER` mode so PostgreSQL RLS remains enforceable for tenant isolation.
+- IMPORTANT TO REMEMBER:
+  - for multi-tenant CRM, the application DB user must never be `SUPERUSER`, otherwise PostgreSQL row-level security can be bypassed and company data isolation becomes unreliable;
+  - platform-wide access must go only through explicit super-admin flows and `tenant_bypass`, not through elevated database privileges.

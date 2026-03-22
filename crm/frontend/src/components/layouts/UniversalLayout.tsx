@@ -23,7 +23,8 @@ import {
     Phone,
     Bell,
     MoreHorizontal,
-    LayoutGrid
+    LayoutGrid,
+    Link2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -55,7 +56,7 @@ export const CRM_MENU_DEFAULT_ORDER = [
 export const CRM_MENU_GROUPS: Record<string, string[]> = {
     'chat-group': ['chat', 'internal-chat'],
     'catalog-group': ['services', 'team'],
-    'tools-group': ['tasks', 'telephony'],
+    'tools-group': ['tasks', 'telephony', 'referral-links'],
     'settings-group': ['settings'],
 };
 
@@ -114,6 +115,7 @@ export const buildCrmMenuCatalog = ({
         'tools-group': { icon: Briefcase, label: t('menu.tools'), req: () => true },
         'tasks': { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, req: () => true },
         'telephony': { icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, req: () => true },
+        'referral-links': { icon: Link2, label: t('menu.referral_links', { defaultValue: 'Реклама' }), path: `${rolePrefix}/referral-links`, req: () => permissions.roleLevel >= 50 },
         'settings-group': { icon: Settings, label: t('menu.settings'), req: () => permissions.canEditSettings },
         'settings': { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, req: () => permissions.canEditSettings },
     };
