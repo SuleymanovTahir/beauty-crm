@@ -98,6 +98,24 @@ async def create_marketplace_provider(
         settings_json = json.dumps(provider.settings) if provider.settings else None
         
         if existing:
+            cursor.execute("""
+                SELECT api_key, api_secret, webhook_url, settings
+                FROM marketplace_providers
+                WHERE name = %s
+            """, (provider.name,))
+            current_provider = cursor.fetchone() or (None, None, None, None)
+            current_api_key = current_provider[0]
+            current_api_secret = current_provider[1]
+            current_webhook_url = current_provider[2]
+            current_settings = current_provider[3]
+
+            resolved_api_key = provider.api_key if provider.api_key not in [None, ""] else current_api_key
+            resolved_api_secret = provider.api_secret if provider.api_secret not in [None, ""] else current_api_secret
+            resolved_webhook_url = provider.webhook_url if provider.webhook_url not in [None, ""] else current_webhook_url
+            resolved_settings_json = settings_json
+            if provider.settings is None and current_settings is not None:
+                resolved_settings_json = json.dumps(current_settings) if isinstance(current_settings, dict) else current_settings
+
             # Обновляем
             cursor.execute("""
                 UPDATE marketplace_providers
@@ -105,8 +123,8 @@ async def create_marketplace_provider(
                     is_active = %s, settings = %s, updated_at = %s
                 WHERE name = %s
             """, (
-                provider.api_key, provider.api_secret, provider.webhook_url,
-                provider.is_active, settings_json, now, provider.name
+                resolved_api_key, resolved_api_secret, resolved_webhook_url,
+                provider.is_active, resolved_settings_json, now, provider.name
             ))
             provider_id = existing[0]
         else:

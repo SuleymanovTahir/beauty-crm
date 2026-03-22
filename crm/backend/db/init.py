@@ -1452,6 +1452,11 @@ def init_database():
             is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('active_challenges', 'challenge_type', "TEXT DEFAULT 'visits'")
+        add_column_if_not_exists('active_challenges', 'target_value', 'REAL DEFAULT 1')
+        add_column_if_not_exists('active_challenges', 'start_date', 'TIMESTAMP')
+        add_column_if_not_exists('active_challenges', 'end_date', 'TIMESTAMP')
+        add_column_if_not_exists('active_challenges', 'updated_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP')
 
         # Loyalty and Rewards
         c.execute('''CREATE TABLE IF NOT EXISTS loyalty_levels (

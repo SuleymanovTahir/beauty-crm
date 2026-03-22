@@ -390,6 +390,33 @@ TIER_COLORS = {
     "platinum": "#E5E4E2",
 }
 
+
+def _resolve_loyalty_client_id(client_id: str, client_email: str) -> Optional[str]:
+    normalized_client_id = str(client_id or "").strip()
+    if normalized_client_id != "":
+        return normalized_client_id
+
+    normalized_email = str(client_email or "").strip().lower()
+    if normalized_email == "":
+        return None
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("""
+            SELECT instagram_id
+            FROM clients
+            WHERE LOWER(COALESCE(email, '')) = %s
+            ORDER BY created_at DESC NULLS LAST
+            LIMIT 1
+        """, (normalized_email,))
+        row = c.fetchone()
+        if row is None or row[0] in [None, ""]:
+            return None
+        return str(row[0])
+    finally:
+        conn.close()
+
 def _level_to_tier(level: dict) -> dict:
     name = level.get("level_name", "")
     return {
@@ -596,17 +623,20 @@ async def adjust_client_points_api(request: Request, session_token: Optional[str
         return JSONResponse({"error": "Forbidden"}, status_code=403)
     try:
         data = await request.json()
-        client_id = str(data.get("client_id", ""))
+        client_id = _resolve_loyalty_client_id(
+            str(data.get("client_id", "")),
+            str(data.get("client_email", ""))
+        )
         points = int(data.get("points", 0))
         reason = data.get("reason", "Admin adjustment")
         if not client_id or points == 0:
-            return JSONResponse({"error": "Missing client_id or points"}, status_code=400)
+            return JSONResponse({"error": "Missing client_id/client_email or points"}, status_code=400)
         loyalty_service = LoyaltyService()
         if points > 0:
             result = loyalty_service.earn_points(client_id, points, reason)
         else:
             result = loyalty_service.spend_points(client_id, abs(points), reason)
-        return {"success": result.get("success", False)}
+        return {"success": bool(result), "client_id": client_id}
     except Exception as e:
         log_error(f"Error adjusting points: {e}", "loyalty")
         return JSONResponse({"error": str(e)}, status_code=500)

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreditCard, Settings, CheckCircle, XCircle, ExternalLink, Link as LinkIcon, Copy } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import { useSalonSettings } from '../../hooks/useSalonSettings';
 import '../../styles/crm-pages.css';
@@ -17,14 +16,27 @@ interface PaymentProvider {
     updated_at: string;
 }
 
+interface PaymentTransaction {
+    id: number;
+    amount: number;
+    currency: string;
+    provider: string;
+    status: string;
+    created_at: string;
+    completed_at?: string | null;
+}
+
 const PaymentIntegrations = () => {
     const { t } = useTranslation(['admin/integrations', 'common']);
     const [providers, setProviders] = useState<PaymentProvider[]>([]);
+    const [transactions, setTransactions] = useState<PaymentTransaction[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadingTransactions, setLoadingTransactions] = useState(false);
     const [showConfigDialog, setShowConfigDialog] = useState(false);
     const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+    const [showTransactionsDialog, setShowTransactionsDialog] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
-    const navigate = useNavigate();
+    const [transactionsProvider, setTransactionsProvider] = useState<string | null>(null);
 
     useEffect(() => {
         loadProviders();
@@ -33,13 +45,28 @@ const PaymentIntegrations = () => {
     const loadProviders = async () => {
         try {
             setLoading(true);
-            const response = await api.get('/api/payment-providers');
-            setProviders(response.providers || []);
+            const response = await api.getPaymentProviders();
+            setProviders(response.providers ?? []);
         } catch (error) {
             console.error('Error loading payment providers:', error);
             toast.error(t('errors.loadFailed'));
         } finally {
             setLoading(false);
+        }
+    };
+
+    const loadTransactions = async (providerName: string) => {
+        try {
+            setLoadingTransactions(true);
+            setTransactionsProvider(providerName);
+            const response = await api.getPaymentTransactions(undefined, undefined, providerName);
+            setTransactions(Array.isArray(response.transactions) ? response.transactions : []);
+            setShowTransactionsDialog(true);
+        } catch (error) {
+            console.error('Error loading payment transactions:', error);
+            toast.error(t('errors.loadFailed'));
+        } finally {
+            setLoadingTransactions(false);
         }
     };
 
@@ -120,7 +147,7 @@ const PaymentIntegrations = () => {
 
     const getProviderStatus = (providerName: string) => {
         const provider = providers.find(p => p.name === providerName);
-        return provider?.is_active || false;
+        return provider?.is_active ?? false;
     };
 
     return (
@@ -195,10 +222,15 @@ const PaymentIntegrations = () => {
                                             <button
                                                 className="crm-btn-secondary"
                                                 style={{ width: '100%', marginTop: '10px' }}
-                                                onClick={() => navigate('/crm/finance')}
+                                                onClick={() => {
+                                                    void loadTransactions(key);
+                                                }}
+                                                disabled={loadingTransactions && transactionsProvider === key}
                                             >
                                                 <ExternalLink size={16} />
-                                                {t('payment.viewTransactions', 'История транзакций')}
+                                                {loadingTransactions && transactionsProvider === key
+                                                    ? t('common:loading', 'Загрузка...')
+                                                    : t('payment.viewTransactions', 'История транзакций')}
                                             </button>
                                         </>
                                     )}
@@ -236,6 +268,76 @@ const PaymentIntegrations = () => {
                     }}
                 />
             )}
+
+            {showTransactionsDialog && transactionsProvider && (
+                <TransactionsDialog
+                    provider={transactionsProvider}
+                    transactions={transactions}
+                    onClose={() => {
+                        setShowTransactionsDialog(false);
+                        setTransactionsProvider(null);
+                        setTransactions([]);
+                    }}
+                />
+            )}
+        </div>
+    );
+};
+
+const TransactionsDialog = ({
+    provider,
+    transactions,
+    onClose
+}: {
+    provider: string;
+    transactions: PaymentTransaction[];
+    onClose: () => void;
+}) => {
+    const { t } = useTranslation(['admin/integrations', 'common']);
+
+    return (
+        <div className="crm-modal-overlay" onClick={onClose}>
+            <div className="crm-modal" style={{ maxWidth: '760px' }} onClick={(e) => e.stopPropagation()}>
+                <h2>{t('payment.viewTransactions', 'История транзакций')}</h2>
+                <p className="text-sm text-gray-600 mb-4">{provider}</p>
+
+                {transactions.length === 0 ? (
+                    <div className="p-4 bg-gray-50 rounded border border-gray-200 text-sm text-gray-600">
+                        {t('common:no_data', 'Нет данных')}
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                        <table className="w-full text-sm">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-4 py-3 text-left font-medium text-gray-700">{t('payment.amount', 'Сумма')}</th>
+                                    <th className="px-4 py-3 text-left font-medium text-gray-700">{t('payment.status', 'Статус')}</th>
+                                    <th className="px-4 py-3 text-left font-medium text-gray-700">{t('common:date', 'Дата')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {transactions.map((transaction) => (
+                                    <tr key={transaction.id} className="border-t border-gray-100">
+                                        <td className="px-4 py-3 text-gray-900">
+                                            {transaction.amount} {transaction.currency}
+                                        </td>
+                                        <td className="px-4 py-3 text-gray-600">{transaction.status}</td>
+                                        <td className="px-4 py-3 text-gray-600">
+                                            {new Date(transaction.created_at).toLocaleString()}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+                <div className="crm-modal-footer">
+                    <button type="button" className="crm-btn-secondary" onClick={onClose}>
+                        {t('common:close', 'Закрыть')}
+                    </button>
+                </div>
+            </div>
         </div>
     );
 };
@@ -244,7 +346,7 @@ const CreatePaymentDialog = ({ provider, providerInfo, onClose }: any) => {
     const { t } = useTranslation('admin/integrations');
     const { currency: salonCurrency } = useSalonSettings();
     const [amount, setAmount] = useState('');
-    const [currency, setCurrency] = useState(salonCurrency || 'AED');
+    const [currency, setCurrency] = useState(salonCurrency ?? 'AED');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
     const [createdLink, setCreatedLink] = useState<string | null>(null);
@@ -259,14 +361,14 @@ const CreatePaymentDialog = ({ provider, providerInfo, onClose }: any) => {
 
         setLoading(true);
         try {
-            const res = await api.post('/api/create-payment', {
+            const res = await api.createPayment({
                 amount: parsedAmount,
                 currency,
                 provider,
                 return_url: `${window.location.origin}/crm/payment-integrations`,
                 description,
-                metadata: { description: description || 'Manual Payment Link' }
-            });
+                metadata: description.trim() === '' ? undefined : { description: description }
+            }) as { payment_url?: string; transaction_id?: string };
 
             if (res.payment_url) {
                 setCreatedLink(res.payment_url);
@@ -388,7 +490,7 @@ const ConfigDialog = ({ provider, providerInfo, onClose, onSuccess }: any) => {
         setLoading(true);
 
         try {
-            await api.post('/api/payment-providers', formData);
+            await api.createPaymentProvider(formData);
             onSuccess();
         } catch (error) {
             console.error('Error saving provider:', error);

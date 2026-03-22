@@ -2124,6 +2124,15 @@ export class ApiClient {
     message: string;
     target_role?: string;
     user_ids?: (number | string)[]; // Support both staff IDs (number) and client IDs (string)
+    attachment_urls?: string[];
+    additional_emails?: string[];
+    manual_contacts?: Array<{
+      name?: string;
+      email?: string;
+      telegram?: string;
+      instagram?: string;
+      whatsapp?: string;
+    }>;
     force_send?: boolean;
   }) {
     return this.request<{
@@ -2150,6 +2159,15 @@ export class ApiClient {
     message: string;
     target_role?: string;
     user_ids?: (number | string)[]; // Support both staff IDs (number) and client IDs (string)
+    attachment_urls?: string[];
+    additional_emails?: string[];
+    manual_contacts?: Array<{
+      name?: string;
+      email?: string;
+      telegram?: string;
+      instagram?: string;
+      whatsapp?: string;
+    }>;
     force_send?: boolean;
   }) {
     return this.request<{

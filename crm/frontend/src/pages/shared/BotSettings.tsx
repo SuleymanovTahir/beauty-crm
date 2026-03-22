@@ -80,6 +80,12 @@ interface BotSettings {
 
 type TabType = 'general' | 'notifications' | 'analytics' | 'personality' | 'pricing' | 'objections' | 'communication' | 'advanced' | 'safety' | 'examples';
 
+const BOT_SETTINGS_TABS: readonly TabType[] = ['general', 'notifications', 'analytics', 'personality', 'pricing', 'objections', 'communication', 'advanced', 'safety', 'examples'];
+
+const getNumericSetting = (value: unknown, fallback: number) => {
+  const parsedValue = Number(value);
+  return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : fallback;
+};
 
 
 export default function BotSettings() {
@@ -87,7 +93,7 @@ export default function BotSettings() {
   const navigate = useNavigate();
 
   // Синхронизация с URL: если таб в URL есть, используем его, иначе 'general'
-  const activeTab = (tab as TabType) || 'general';
+  const activeTab: TabType = BOT_SETTINGS_TABS.includes(tab as TabType) ? (tab as TabType) : 'general';
 
   const handleTabChange = (value: TabType | string) => {
     navigate(`/crm/bot-settings/${value}`);
@@ -99,7 +105,7 @@ export default function BotSettings() {
   const { user: currentUser } = useAuth();
 
   // Используем централизованную систему прав
-  const userPermissions = usePermissions(currentUser?.role || 'employee');
+  const userPermissions = usePermissions(currentUser?.role ?? 'employee');
 
   const [settings, setSettings] = useState<BotSettings>({
     bot_name: '',
@@ -171,7 +177,7 @@ export default function BotSettings() {
       console.log('✅ Настройки загружены:', data);
 
       // ✅ БЕЗОПАСНОЕ ИЗВЛЕЧЕНИЕ (data может быть обёрнут или нет)
-      const botData = data.bot_settings || data;
+      const botData = data.bot_settings ?? data;
 
       setSettings({
         bot_name: botData.bot_name || '',
@@ -185,7 +191,7 @@ export default function BotSettings() {
         fomo_messages: botData.fomo_messages || '',
         upsell_techniques: botData.upsell_techniques || '',
         communication_style: botData.communication_style || '',
-        response_style: botData.response_style || 'adaptive',
+        response_style: botData.response_style ?? 'adaptive',
         emoji_usage: botData.emoji_usage || '',
         languages_supported: botData.languages_supported || '',
         objection_expensive: botData.objection_expensive || '',
@@ -222,13 +228,13 @@ export default function BotSettings() {
 
         // Reminder Settings
         abandoned_cart_enabled: botData.abandoned_cart_enabled ?? true,
-        abandoned_cart_delay: botData.abandoned_cart_delay || 30,
+        abandoned_cart_delay: getNumericSetting(botData.abandoned_cart_delay, 30),
         abandoned_cart_message: botData.abandoned_cart_message || '',
         post_visit_feedback_enabled: botData.post_visit_feedback_enabled ?? true,
-        post_visit_delay: botData.post_visit_delay || 24,
+        post_visit_delay: getNumericSetting(botData.post_visit_delay, 24),
         post_visit_feedback_message: botData.post_visit_feedback_message || '',
         return_client_reminder_enabled: botData.return_client_reminder_enabled ?? false,
-        return_client_delay: botData.return_client_delay || 45,
+        return_client_delay: getNumericSetting(botData.return_client_delay, 45),
         return_client_message: botData.return_client_message || '',
       });
     } catch (err) {
@@ -1088,7 +1094,7 @@ export default function BotSettings() {
                   <input
                     type="number"
                     value={settings.abandoned_cart_delay}
-                    onChange={(e) => setSettings({ ...settings, abandoned_cart_delay: parseInt(e.target.value) || 30 })}
+                    onChange={(e) => setSettings({ ...settings, abandoned_cart_delay: getNumericSetting(e.target.value, 30) })}
                     className="bot-settings-small-input"
                   />
                   <p className="bot-settings-helper-text">{t('abandoned_cart_hint')}</p>
@@ -1129,7 +1135,7 @@ export default function BotSettings() {
                   <input
                     type="number"
                     value={settings.post_visit_delay}
-                    onChange={(e) => setSettings({ ...settings, post_visit_delay: parseInt(e.target.value) || 24 })}
+                    onChange={(e) => setSettings({ ...settings, post_visit_delay: getNumericSetting(e.target.value, 24) })}
                     className="bot-settings-small-input"
                   />
                   <p className="bot-settings-helper-text">{t('feedback_hint')}</p>
@@ -1170,10 +1176,10 @@ export default function BotSettings() {
                   <input
                     type="number"
                     value={settings.return_client_delay}
-                    onChange={(e) => setSettings({ ...settings, return_client_delay: parseInt(e.target.value) || 45 })}
+                    onChange={(e) => setSettings({ ...settings, return_client_delay: getNumericSetting(e.target.value, 45) })}
                     className="bot-settings-small-input"
                   />
-                  <p className="bot-settings-helper-text">{t('retention_hint', { count: settings.return_client_delay || 45 })}</p>
+                  <p className="bot-settings-helper-text">{t('retention_hint', { count: settings.return_client_delay ?? 45 })}</p>
                 </div>
                 <div>
                   <label className="bot-settings-small-label">{t('message_template')}</label>

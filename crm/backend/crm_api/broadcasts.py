@@ -39,6 +39,28 @@ class BroadcastPreviewResponse(BaseModel):
     users_sample: List[dict]
 
 
+def _append_preview_sample(
+    users_sample: List[dict],
+    sample_id: Union[int, str],
+    username: Optional[str],
+    full_name: Optional[str],
+    role: str,
+    contact: str,
+    channel: str,
+    max_items: int = 6,
+) -> None:
+    if len(users_sample) >= max_items:
+        return
+    users_sample.append({
+        "id": sample_id,
+        "username": username or str(sample_id),
+        "full_name": full_name or username or str(sample_id),
+        "role": role,
+        "contact": contact,
+        "channel": channel,
+    })
+
+
 class BroadcastHistoryDeleteRequest(BaseModel):
     """Удаление записей истории рассылок по списку ID."""
     ids: List[int]
@@ -282,22 +304,23 @@ async def preview_broadcast(
                     elif ch == "telegram" and telegram_id: by_channel["telegram"] += 1
                     elif ch == "instagram" and ig_link: by_channel["instagram"] += 1
                     elif ch == "notification": by_channel["notification"] += 1
-                if len(users_sample) < 3:
-                    contact, channel = _resolve_preview_contact(
-                        broadcast.channels,
-                        email,
-                        str(telegram_id) if telegram_id else None,
-                        ig_link,
-                        allow_notification=True
-                    )
-                    users_sample.append({
-                        "id": user_id,
-                        "username": username,
-                        "full_name": full_name or username or str(user_id),
-                        "role": role or "staff",
-                        "contact": contact,
-                        "channel": channel
-                    })
+                contact, channel = _resolve_preview_contact(
+                    broadcast.channels,
+                    email,
+                    str(telegram_id) if telegram_id else None,
+                    ig_link,
+                    allow_notification=True
+                )
+                _append_preview_sample(
+                    users_sample,
+                    user_id,
+                    username,
+                    full_name,
+                    role or "staff",
+                    contact,
+                    channel,
+                    3,
+                )
 
         # 2. FETCH FROM CLIENTS
         if not broadcast.target_role or broadcast.target_role in ['all', 'client']:
@@ -330,21 +353,71 @@ async def preview_broadcast(
                     if ch == "email" and email: by_channel["email"] += 1
                     elif ch == "telegram" and tg_id: by_channel["telegram"] += 1
                     elif ch == "instagram" and ig_id: by_channel["instagram"] += 1
-                if len(users_sample) < 6:
-                    contact, channel = _resolve_preview_contact(
-                        broadcast.channels,
-                        email,
-                        str(tg_id) if tg_id else None,
-                        ig_id
-                    )
-                    users_sample.append({
-                        "id": ig_id,
-                        "username": ig_id,
-                        "full_name": name or ig_id,
-                        "role": "client",
-                        "contact": contact,
-                        "channel": channel
-                    })
+                contact, channel = _resolve_preview_contact(
+                    broadcast.channels,
+                    email,
+                    str(tg_id) if tg_id else None,
+                    ig_id
+                )
+                _append_preview_sample(
+                    users_sample,
+                    ig_id,
+                    ig_id,
+                    name,
+                    "client",
+                    contact,
+                    channel,
+                )
+
+        if broadcast.additional_emails and "email" in broadcast.channels:
+            for email in broadcast.additional_emails:
+                normalized_email = str(email or "").strip()
+                if normalized_email == "" or "@" not in normalized_email:
+                    continue
+                by_channel["email"] += 1
+                _append_preview_sample(
+                    users_sample,
+                    normalized_email,
+                    normalized_email,
+                    "Manual recipient",
+                    "manual",
+                    normalized_email,
+                    "email",
+                )
+
+        if broadcast.manual_contacts:
+            for index, contact in enumerate(broadcast.manual_contacts, start=1):
+                email = str(contact.get("email") or "").strip()
+                telegram = str(contact.get("telegram") or "").strip()
+                instagram = str(contact.get("instagram") or "").strip()
+                contact_name = str(contact.get("name") or "").strip()
+
+                if "email" in broadcast.channels and email:
+                    by_channel["email"] += 1
+                if "telegram" in broadcast.channels and telegram:
+                    by_channel["telegram"] += 1
+                if "instagram" in broadcast.channels and instagram:
+                    by_channel["instagram"] += 1
+
+                preview_contact, preview_channel = _resolve_preview_contact(
+                    broadcast.channels,
+                    email if email != "" else None,
+                    telegram if telegram != "" else None,
+                    instagram if instagram != "" else None,
+                )
+                if preview_channel == "none":
+                    continue
+
+                fallback_id = contact_name if contact_name != "" else f"manual-{index}"
+                _append_preview_sample(
+                    users_sample,
+                    fallback_id,
+                    fallback_id,
+                    contact_name if contact_name != "" else "Manual contact",
+                    "manual",
+                    preview_contact,
+                    preview_channel,
+                )
 
         conn.close()
         return {

@@ -101,6 +101,20 @@ export default function UniversalChallenges({
         return Math.round(parsedValue);
     };
 
+    const formatChallengeDateRange = (startDate: string, endDate: string): string => {
+        if (startDate.trim() === '' || endDate.trim() === '') {
+            return t('common:not_specified', 'Не указано');
+        }
+
+        const startDateValue = new Date(startDate);
+        const endDateValue = new Date(endDate);
+        if (Number.isNaN(startDateValue.getTime()) || Number.isNaN(endDateValue.getTime())) {
+            return t('common:not_specified', 'Не указано');
+        }
+
+        return `${startDateValue.toLocaleDateString('ru-RU')} — ${endDateValue.toLocaleDateString('ru-RU')}`;
+    };
+
     useEffect(() => {
         loadChallenges();
         loadStats();
@@ -160,7 +174,13 @@ export default function UniversalChallenges({
             const response = await fetch(buildApiUrl('/api/challenges/stats'), { credentials: 'include' });
             if (response.ok) {
                 const data = await response.json();
-                if (data.success && data.stats) setStats(data.stats);
+                if (data.success && data.stats) {
+                    setStats({
+                        active_challenges: Number(data.stats.active_challenges ?? 0),
+                        total_participants: Number(data.stats.total_participants ?? 0),
+                        completed_today: Number(data.stats.completed_today ?? 0)
+                    });
+                }
             }
         } catch (error) { }
     };
@@ -173,10 +193,6 @@ export default function UniversalChallenges({
             }
 
             const normalizedType = normalizeChallengeType(formData.type);
-            if (normalizedType === 'services') {
-                toast.error(t('common:error_saving', 'Ошибка сохранения'));
-                return;
-            }
 
             const url = buildApiUrl(editingChallenge ? `/api/challenges/${editingChallenge.id}` : '/api/challenges');
             const method = editingChallenge ? 'PUT' : 'POST';
@@ -407,8 +423,8 @@ export default function UniversalChallenges({
                             </div>
 
                             <div className="space-y-2">
-                                <h3 className={embedded ? 'text-lg font-semibold text-gray-900 leading-tight' : 'text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight tracking-tight'}>{t(challenge.title)}</h3>
-                                <p className={embedded ? 'text-sm text-gray-500 leading-6 max-w-2xl' : 'text-gray-500 font-medium leading-relaxed max-w-md text-sm'}>{t(challenge.description)}</p>
+                                <h3 className={embedded ? 'text-lg font-semibold text-gray-900 leading-tight' : 'text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight tracking-tight'}>{challenge.title}</h3>
+                                <p className={embedded ? 'text-sm text-gray-500 leading-6 max-w-2xl' : 'text-gray-500 font-medium leading-relaxed max-w-md text-sm'}>{challenge.description}</p>
                             </div>
 
                             <div className={embedded ? 'bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-3' : 'bg-gray-50/80 rounded-2xl p-6 border border-gray-100 space-y-4'}>
@@ -428,7 +444,7 @@ export default function UniversalChallenges({
                             <div className={embedded ? 'flex flex-col gap-3 pt-4 border-t border-gray-100 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between' : 'flex items-center justify-between pt-4 border-t border-gray-50 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400'}>
                                 <div className="flex items-center gap-2">
                                     <Calendar className="w-3.5 h-3.5" />
-                                    {new Date(challenge.start_date).toLocaleDateString('ru-RU')} — {new Date(challenge.end_date).toLocaleDateString('ru-RU')}
+                                    {formatChallengeDateRange(challenge.start_date, challenge.end_date)}
                                 </div>
                                 <button
                                     onClick={() => handleCheckProgress(challenge.id)}

@@ -80,12 +80,13 @@ async def get_messenger_settings(
         # Скрываем токены и подготавливаем ответ
         processed_settings = []
         for row_dict in messenger_data:
-            if row_dict.get('api_token'):
-                row_dict['has_token'] = True
-                row_dict['api_token'] = '***'
+            processed_row = dict(row_dict)
+            if processed_row.get('api_token'):
+                processed_row['has_token'] = True
+                processed_row['api_token'] = '***'
             else:
-                row_dict['has_token'] = False
-            processed_settings.append(row_dict)
+                processed_row['has_token'] = False
+            processed_settings.append(processed_row)
 
         # Сортировка (Инстаграм, Вотсап, Телеграм, ТикТок)
         type_order = {'instagram': 1, 'whatsapp': 2, 'telegram': 3, 'tiktok': 4}
@@ -191,7 +192,9 @@ async def update_messenger_setting(
                 if 'is_enabled' in request:
                     messenger_data[i]['is_enabled'] = bool(request['is_enabled'])
                 if 'api_token' in request:
-                    messenger_data[i]['api_token'] = request['api_token']
+                    incoming_api_token = str(request['api_token'] or '').strip()
+                    if incoming_api_token not in ['', '***']:
+                        messenger_data[i]['api_token'] = incoming_api_token
                 if 'webhook_url' in request:
                     messenger_data[i]['webhook_url'] = request['webhook_url']
                 if 'config_json' in request:

@@ -46,7 +46,7 @@ export default function Messengers() {
         try {
             setLoading(true);
             const response = await api.getMessengerSettings();
-            setMessengerSettings(response.settings);
+            setMessengerSettings(response.settings ?? []);
         } catch (err) {
             console.error('Error loading messenger settings:', err);
             toast.error(t('settings:error_loading_settings'));
@@ -85,8 +85,8 @@ export default function Messengers() {
         const messenger = messengerSettings.find(m => m.messenger_type === messengerType);
         if (messenger) {
             setMessengerForm({
-                api_token: messenger.api_token || '',
-                webhook_url: messenger.webhook_url || ''
+                api_token: messenger.api_token === '***' ? '' : (messenger.api_token ?? ''),
+                webhook_url: messenger.webhook_url ?? ''
             });
             setEditingMessenger(messengerType);
         }
@@ -147,7 +147,7 @@ export default function Messengers() {
                                             {messenger.is_enabled ? (
                                                 <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
                                                     <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
-                                                    ACTIVE
+                                                    {t('settings:enabled', 'Включен')}
                                                 </span>
                                             ) : (
                                                 <span className="text-[10px] font-bold px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full uppercase">

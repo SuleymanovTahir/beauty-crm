@@ -35,8 +35,8 @@ const MarketplaceIntegrations = () => {
     const loadProviders = async () => {
         try {
             setLoading(true);
-            const response = await api.get('/api/marketplace-providers');
-            setProviders(response.providers || []);
+            const response = await api.getMarketplaceProviders();
+            setProviders(response.providers ?? []);
         } catch (error) {
             console.error('Error loading marketplace providers:', error);
             toast.error(t('errors.loadFailed'));
@@ -47,7 +47,7 @@ const MarketplaceIntegrations = () => {
 
     const loadStats = async () => {
         try {
-            const response = await api.get('/api/marketplace/stats');
+            const response = await api.getMarketplaceStats();
             setStats(response);
         } catch (error) {
             console.error('Error loading stats:', error);
@@ -57,7 +57,7 @@ const MarketplaceIntegrations = () => {
     const handleSync = async (providerName: string) => {
         try {
             setSyncing(providerName);
-            await api.post(`/api/marketplace/sync/${providerName}`);
+            await api.syncMarketplace(providerName);
             toast.success(t('marketplace.syncStarted', 'Синхронизация запущена'));
             setTimeout(loadProviders, 2000);
         } catch (error) {
@@ -121,7 +121,7 @@ const MarketplaceIntegrations = () => {
 
     const getProviderStatus = (providerName: string) => {
         const provider = providers.find(p => p.name === providerName);
-        return provider?.is_active || false;
+        return provider?.is_active ?? false;
     };
 
     const getProviderData = (providerName: string) => {
@@ -187,7 +187,7 @@ const MarketplaceIntegrations = () => {
                     {Object.entries(marketplaceInfo).map(([key, info]) => {
                         const isActive = getProviderStatus(key);
                         const providerData = getProviderData(key);
-                        const bookingCount = stats?.bookings_by_provider?.[key] || 0;
+                        const bookingCount = stats?.bookings_by_provider?.[key] ?? 0;
                         const reviewData = stats?.reviews_by_provider?.[key];
 
                         return (
@@ -324,7 +324,7 @@ const ConfigDialog = ({ provider, providerInfo, initialData, onClose, onSuccess 
     const loadServices = async () => {
         try {
             const res = await api.get('/api/services');
-            setServices(res.services || res || []);
+            setServices(res.services ?? res ?? []);
         } catch (error) {
             console.error('Error loading services:', error);
             toast.error(t('errors.loadServicesFailed', 'Ошибка загрузки услуг'));
@@ -336,7 +336,7 @@ const ConfigDialog = ({ provider, providerInfo, initialData, onClose, onSuccess 
         setLoading(true);
 
         try {
-            await api.post('/api/marketplace-providers', formData);
+            await api.createMarketplaceProvider(formData);
             onSuccess();
         } catch (error) {
             console.error('Error saving provider:', error);

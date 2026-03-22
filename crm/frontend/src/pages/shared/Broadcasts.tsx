@@ -36,12 +36,20 @@ interface BroadcastForm {
   additional_emails?: string[];
 }
 
+interface ManualContact {
+  name?: string;
+  email?: string;
+  telegram?: string;
+  instagram?: string;
+  whatsapp?: string;
+}
+
 interface PreviewData {
   total_users: number;
   by_channel: Record<string, number>;
   users_sample: Array<{
-    id: number;
-    username: string;
+    id: number | string;
+    username: string | null;
     full_name: string;
     role: string;
     contact: string;
@@ -138,8 +146,8 @@ export default function Broadcasts() {
 
   // Новые состояния для добавления контактов вручную
   const [showAddManualContacts, setShowAddManualContacts] = useState(false);
-  const [manualContacts, setManualContacts] = useState<Array<{ name?: string; email?: string; telegram?: string; instagram?: string; whatsapp?: string }>>([]);
-  const [manualContactForm, setManualContactForm] = useState<{ name?: string; email?: string; telegram?: string; instagram?: string; whatsapp?: string }>({});
+  const [manualContacts, setManualContacts] = useState<ManualContact[]>([]);
+  const [manualContactForm, setManualContactForm] = useState<ManualContact>({});
   const [showImportContactsFile, setShowImportContactsFile] = useState(false);
   const [importFileText, setImportFileText] = useState("");
 
@@ -506,8 +514,8 @@ export default function Broadcasts() {
       types.forEach((t: any) => {
         if (t.is_active) {
           formatted[t.key] = {
-            name: t.name || t.name || t.key,
-            description: t.description || t.description || ''
+            name: t.name ?? t.key,
+            description: t.description ?? ''
           };
         }
       });
@@ -627,19 +635,21 @@ export default function Broadcasts() {
   };
 
   const handlePreview = async () => {
-    if (!form.subscription_type) {
+    const preparedForm = buildPreparedBroadcastForm();
+
+    if (isSubscriptionTypeRequired(preparedForm.target_role) && preparedForm.subscription_type.trim() === '') {
       toast.error(t('select_subscription_type'));
       return;
     }
 
-    if (form.channels.length === 0) {
+    if (preparedForm.channels.length === 0) {
       toast.error(t('select_channel_error'));
       return;
     }
 
     try {
       setLoadingPreview(true);
-      const data = await api.previewBroadcast(form);
+      const data = await api.previewBroadcast(preparedForm);
       setPreview(data);
       toast.success(t('preview_found', { count: data.total_users }));
     } catch (err: any) {
@@ -650,19 +660,15 @@ export default function Broadcasts() {
   };
 
   const handleSendClick = async () => {
-    // Process manual emails
-    const emailsList = manualEmailsText
-      .split(/[\n,]/)
-      .map(e => e.trim())
-      .filter(e => e && e.includes('@'));
-
-    setForm(prev => ({ ...prev, additional_emails: emailsList }));
+    const preparedForm = buildPreparedBroadcastForm();
 
     const newErrors: Record<string, boolean> = {};
-    if (!form.subscription_type) newErrors.subscription_type = true;
-    if (!form.message) newErrors.message = true;
-    if (form.channels.includes('email') && !form.subject) newErrors.subject = true;
-    if (form.channels.length === 0) newErrors.channels = true;
+    if (isSubscriptionTypeRequired(preparedForm.target_role) && preparedForm.subscription_type.trim() === '') {
+      newErrors.subscription_type = true;
+    }
+    if (preparedForm.message.trim() === '') newErrors.message = true;
+    if (preparedForm.channels.includes('email') && preparedForm.subject.trim() === '') newErrors.subject = true;
+    if (preparedForm.channels.length === 0) newErrors.channels = true;
 
     setErrors(newErrors);
 
@@ -676,7 +682,7 @@ export default function Broadcasts() {
     if (!preview) {
       try {
         setLoadingPreview(true);
-        const data = await api.previewBroadcast(form);
+        const data = await api.previewBroadcast(preparedForm);
         setPreview(data);
       } catch (err: any) {
         toast.error(err.message || t('error_preview'));
@@ -692,14 +698,7 @@ export default function Broadcasts() {
   const performSend = async () => {
     try {
       setSending(true);
-
-      // Добавляем ручные контакты в форму перед отправкой
-      const formWithManualContacts = {
-        ...form,
-        manual_contacts: manualContacts
-      };
-
-      const response = await api.sendBroadcast(formWithManualContacts);
+      const response = await api.sendBroadcast(buildPreparedBroadcastForm());
       toast.success(response.message);
 
       // Триггерим событие для обновления уведомлений у всех пользователей
@@ -714,6 +713,7 @@ export default function Broadcasts() {
         target_role: '',
         user_ids: [],
         attachment_urls: [],
+        additional_emails: [],
       });
       setManualContacts([]); // Очищаем ручные контакты
       setPreview(null);
@@ -775,6 +775,23 @@ export default function Broadcasts() {
 
     return true;
   });
+
+  const isSubscriptionTypeRequired = (targetRole?: string) => {
+    return targetRole === undefined || targetRole === '' || targetRole === 'all' || targetRole === 'client';
+  };
+
+  const buildPreparedBroadcastForm = (): BroadcastForm & { manual_contacts: ManualContact[] } => {
+    const additionalEmails = manualEmailsText
+      .split(/[\n,]/)
+      .map((email) => email.trim())
+      .filter((email) => email !== '' && email.includes('@'));
+
+    return {
+      ...form,
+      additional_emails: additionalEmails,
+      manual_contacts: manualContacts,
+    };
+  };
 
   const hasUnsubscribedDateFilter = unsubscribedDateFromFilter.length > 0 || unsubscribedDateToFilter.length > 0;
 

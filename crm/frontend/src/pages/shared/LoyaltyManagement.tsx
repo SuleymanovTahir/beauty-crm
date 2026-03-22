@@ -307,7 +307,11 @@ export default function LoyaltyManagement({
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.stats) {
-          setStats(data.stats);
+          setStats({
+            total_points_issued: Number(data.stats.total_points_issued ?? 0),
+            points_redeemed: Number(data.stats.total_points_spent ?? data.stats.points_redeemed ?? 0),
+            active_members: Number(data.stats.total_clients ?? data.stats.active_members ?? 0),
+          });
         }
       }
     } catch (error) {
@@ -444,7 +448,11 @@ export default function LoyaltyManagement({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(adjustForm),
+        body: JSON.stringify({
+          client_email: adjustForm.client_email.trim(),
+          points: adjustForm.points,
+          reason: adjustForm.reason,
+        }),
       });
 
       if (response.ok) {
@@ -456,6 +464,7 @@ export default function LoyaltyManagement({
         setShowAdjustDialog(false);
         setAdjustForm({ client_email: '', points: 0, reason: '' });
         loadTransactions();
+        loadStats();
       } else {
         throw new Error('Failed to adjust points');
       }

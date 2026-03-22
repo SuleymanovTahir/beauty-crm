@@ -208,6 +208,9 @@ export default defineConfig(({ mode }) => {
             if (id.includes("/src/locales/")) {
               return "locales-data";
             }
+            if (id.includes("/node_modules/recharts/")) {
+              return "recharts-vendor";
+            }
             void getModuleInfo;
             return undefined;
           },

@@ -1758,3 +1758,52 @@
 - IMPORTANT TO REMEMBER:
   - generalized CRM test suites must not assume a fixed gender mix or legacy staff layout in seeded/demo data;
   - platform-level company metadata should be extended through `companies.metadata` and normalized in SSOT helpers, not split into new duplicate tables or ad-hoc JSON shapes.
+## [2026-03-22] CRM New Modules Contract Repair And Responsive Integrity Pass
+- Rechecked the newly added CRM modules that are actually connected in the active frontend contour: `analytics`, `broadcasts`, `loyalty`, `challenges`, `messengers`, `clients`, `payment-integrations`, `marketplace-integrations`, `bot-settings`, `promo-codes`.
+- Fixed backend/frontend contract drift and silent data-loss issues in the existing orchestrators instead of adding temporary patch files:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/init.py`
+    - made `active_challenges` schema forward-compatible with the live frontend by adding idempotent support columns: `challenge_type`, `target_value`, `start_date`, `end_date`, `updated_at`.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/challenges.py`
+    - removed broken dependency on nonexistent `bonus_points`-only schema,
+    - added compatibility for both legacy/new column shapes,
+    - started returning real `participants_count`, `completion_rate`, `completed_today`, date ranges and `updated_count` instead of placeholders.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/loyalty.py`
+    - fixed manual point adjustment so the page can resolve a client by `client_email`,
+    - removed the broken assumption that loyalty service methods return a dict.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/marketplace_integrations.py`
+    - stopped overwriting saved provider secrets/webhooks with empty values during edit.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/messengers.py`
+    - stopped masked messenger tokens from being saved back as literal `***`,
+    - returned safe copied settings rows so masking no longer mutates the loaded config object.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/broadcasts.py`
+    - preview now includes manual contacts and additional emails, so the compose screen shows the same recipient scope that the send pipeline actually uses.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Challenges.tsx`
+    - aligned stats/date rendering with the real API payload and stopped translating DB/user-entered challenge text as locale keys.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/LoyaltyManagement.tsx`
+    - aligned stats mapping with backend output and fixed manual point adjustment payload.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/PaymentIntegrations.tsx`
+    - replaced the dead `/crm/finance` navigation with an in-page transaction history dialog,
+    - switched to typed payment API methods.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/MarketplaceIntegrations.tsx`
+    - switched the page to dedicated marketplace API methods and safer nullish handling.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Messengers.tsx`
+    - stopped edit mode from pre-filling masked tokens into the save form.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Broadcasts.tsx`
+    - removed the false frontend restriction that always required `subscription_type`,
+    - send/preview now use the same prepared payload with manual contacts and additional emails,
+    - cleaned duplicated fallback logic when formatting subscription labels from DB.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/BotSettings.tsx`
+    - normalized tab fallback and numeric reminder settings without `||`-based coercion.
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/vite.config.ts`
+    - isolated `recharts` into a dedicated manual chunk to remove chunking instability during build.
+- Active contour check:
+  - `visitor-analytics` and CRM photo gallery are not wired into the active `crm/frontend` routes right now; current hits exist only in account menu customization or in the old design tree, not in the live CRM route map.
+- Validation:
+  - `python3 -m py_compile /Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/challenges.py /Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/loyalty.py /Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/marketplace_integrations.py /Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/messengers.py /Users/tahir/Desktop/beauty-crm/crm/backend/db/init.py` ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run type-check` ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run build` ✅
+- IMPORTANT TO REMEMBER:
+  - when backend already supports optional staff broadcast targeting, do not reintroduce stricter frontend validation,
+  - never send masked secrets back to persistence as if they were real values,
+  - if a page uses DB/user content, render it as data, not as i18n keys,
+  - before claiming a new CRM page is broken, confirm it is connected in the active route tree rather than only existing in the old design archive.
