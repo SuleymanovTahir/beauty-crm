@@ -110,7 +110,7 @@
   "total_losses": "Жалпы шығын",
   "total_losses_few": "Жоғалту: {{count}}",
   "total_losses_many": "Жоғалту: {{count}}",
-  "total_losses_one": "Жоғалту: {{count}}",
+  "total_losses_one": "Жоғал: {{count}}",
   "total_losses_other": "Жоғалту: {{count}}",
   "total_spend": "Жалпы шығын",
   "unknown": "Unknown",

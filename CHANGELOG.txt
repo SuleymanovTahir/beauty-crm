@@ -1,3 +1,51 @@
+## [2026-03-22] Advertising Analytics And Advertiser Reports Expanded
+- Extended the existing CRM advertising/referral module so one campaign now stores both traffic-tracking and commercial metadata in the same SSOT flow instead of separate one-off scripts/files.
+- Backend runtime/schema changes:
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/init.py`
+    - extended `referral_links` with placement, size, pricing model, currency, budget, unit price, KPI targets, notes and campaign start,
+    - added `referral_impressions` for impression tracking,
+    - extended `referral_clicks` with placement,
+    - extended `referral_conversions` with `conversion_type` and notes.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/db/referral_links.py`
+    - rebuilt campaign analytics around safe aggregate subqueries so clicks/conversions/revenue are no longer multiplied by join fan-out,
+    - added spend calculation for `flat/fixed/cpc/cpa/cpm`,
+    - added advertiser metrics: impressions, unique impressions, CTR, CR, CPC, CPA, CPM, ROAS, budget remaining, KPI progress,
+    - added daily series plus breakdowns for devices, browsers, countries, referrers, placements and conversion types.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/crm_api/referral_links.py`
+    - added impression pixel endpoint `/r/i/{slug}`,
+    - expanded create/update payloads with ad-contract fields,
+    - expanded advertiser CSV/JSON reports,
+    - detailed per-link report now includes campaign performance + breakdown sections.
+- Frontend runtime changes:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/ReferralLinks.tsx`
+    - replaced the old minimal list with campaign management for placement, size, pricing model, budget, KPI targets, notes and UTM tags,
+    - added copyable short URL + impression pixel URL,
+    - added advertiser-ready stats cards and breakdown panels,
+    - added CSV/JSON export flows against the upgraded backend report endpoints.
+- Translation flow:
+  - re-ran `npm --prefix crm/frontend run db:i18n:auto` so new referral/advertising copy propagated through locale files and translation maps.
+- Additional cleanup:
+  - removed unused imports detected by TypeScript in:
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Cashbox.tsx`
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/GiftCards.tsx`
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Inventory.tsx`
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/KPI.tsx`
+    - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/Waitlist.tsx`
+- Validation:
+  - `venv/bin/python -m py_compile crm/backend/db/referral_links.py crm/backend/crm_api/referral_links.py crm/backend/db/init.py`
+  - `npm --prefix crm/frontend run lint`
+  - `npm --prefix crm/frontend run build`
+  - fresh DB recreate via `drop_database()` + `recreate_database()`
+  - `venv/bin/python db/migrations/run_all_migrations.py`
+  - `venv/bin/python scripts/maintenance/fix_data.py`
+  - `venv/bin/python tests/runners/run_all_tests.py`
+  - `venv/bin/python tests/runners/run_all_test2.py`
+  - `venv/bin/python tests/runners/run_all_test3.py`
+- IMPORTANT TO REMEMBER:
+  - advertiser reports need impression tracking, so keep `/r/i/{slug}` and `referral_impressions` in the core advertising flow,
+  - do not revert to click-only reports if the goal is to serve advertisers professionally,
+  - when adding new advertising fields, extend the existing referral SSOT instead of creating parallel ad-report tables or helper scripts.
+
 ## [2026-03-22] Removed Generic “Beauty Salon” Wording From CRM Runtime Copy
 - Replaced remaining generic `beauty salon` / `Салон красоты` wording in active CRM runtime paths with neutral company/business wording.
 - Updated backend notification and translation runtime:

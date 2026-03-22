@@ -10,7 +10,9 @@ import {
   Calendar,
   AlertTriangle,
   GripVertical as GripIcon,
-  X
+  X,
+  UserPlus,
+  ShieldCheck
 } from 'lucide-react';
 import EmployeeDetail from './EmployeeDetail';
 import { Button } from '../../components/ui/button';
@@ -88,7 +90,11 @@ function SortableUserRow({
   setShowPermissionsDialog,
   getPhotoUrl,
   getDynamicAvatar,
-  routePrefix
+  routePrefix,
+  handleChangeRole,
+  canManageStaff,
+  directorRoles,
+  currentUserId
 }: any) {
   const {
     attributes,
@@ -137,9 +143,21 @@ function SortableUserRow({
       <td className="px-6 py-4 text-sm text-gray-900">{user.phone || '-'}</td>
       <td className="px-6 py-4 text-sm text-gray-600">{user.email || '-'}</td>
       <td className="px-6 py-4">
-        <Badge className={roleConfig[user.role]?.color || 'bg-gray-100 text-gray-800'}>
-          {roleConfig[user.role]?.label || user.role}
-        </Badge>
+        {canManageStaff && user.id !== currentUserId && user.role !== 'director' && user.role !== 'super_admin' ? (
+          <select
+            value={user.role}
+            onChange={e => handleChangeRole(user.id, e.target.value)}
+            className="border border-gray-200 rounded-md px-2 py-1 text-xs bg-white dark:bg-gray-800 dark:border-gray-600"
+          >
+            {directorRoles.map((r: any) => (
+              <option key={r.value} value={r.value}>{r.label}</option>
+            ))}
+          </select>
+        ) : (
+          <Badge className={roleConfig[user.role]?.color || 'bg-gray-100 text-gray-800'}>
+            {roleConfig[user.role]?.label || user.role}
+          </Badge>
+        )}
       </td>
       <td className="px-6 py-4 text-sm text-gray-900">{user.position || '-'}</td>
       <td className="px-6 py-4">
@@ -308,6 +326,71 @@ export default function UniversalTeam() {
   const [savingEdit, setSavingEdit] = useState(false);
   const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
+
+  // Create staff form
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [createForm, setCreateForm] = useState({ username: '', password: '', full_name: '', email: '', phone: '', role: 'employee', position: '' });
+  const [savingCreate, setSavingCreate] = useState(false);
+
+  const DIRECTOR_ROLES = [
+    { value: 'admin', label: 'Администратор' },
+    { value: 'manager', label: 'Менеджер' },
+    { value: 'accountant', label: 'Бухгалтер' },
+    { value: 'marketer', label: 'Маркетолог' },
+    { value: 'sales', label: 'Продажи' },
+    { value: 'employee', label: 'Сотрудник' },
+  ];
+
+  const canManageStaff = currentUser?.role === 'director' || currentUser?.role === 'admin' || currentUser?.role === 'super_admin';
+
+  const handleCreateStaff = async () => {
+    if (!createForm.username || !createForm.password || !createForm.full_name) {
+      toast.error('Заполните логин, пароль и имя');
+      return;
+    }
+    try {
+      setSavingCreate(true);
+      const { buildApiUrl } = await import('../../api/client');
+      const res = await fetch(buildApiUrl('/api/users'), {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(createForm),
+      });
+      const d = await res.json();
+      if (d.success) {
+        toast.success('Сотрудник создан');
+        setShowCreateForm(false);
+        setCreateForm({ username: '', password: '', full_name: '', email: '', phone: '', role: 'employee', position: '' });
+        loadUsers();
+      } else {
+        toast.error(d.error || 'Ошибка создания');
+      }
+    } catch (e) {
+      toast.error('Ошибка сети');
+    } finally {
+      setSavingCreate(false);
+    }
+  };
+
+  const handleChangeRole = async (userId: number, newRole: string) => {
+    try {
+      const { buildApiUrl } = await import('../../api/client');
+      const res = await fetch(buildApiUrl(`/api/users/${userId}/role`), {
+        method: 'PATCH', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: newRole }),
+      });
+      const d = await res.json();
+      if (d.success) {
+        toast.success('Роль изменена');
+        setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
+      } else {
+        toast.error(d.error || 'Ошибка');
+      }
+    } catch (e) {
+      toast.error('Ошибка сети');
+    }
+  };
 
   const handleEditUser = async () => {
     if (!selectedUser) return;
@@ -494,7 +577,11 @@ export default function UniversalTeam() {
               className="pl-10"
             />
           </div>
-          {/* Кнопка создания только для тех, у кого есть право */}
+          {canManageStaff && (
+            <Button onClick={() => setShowCreateForm(true)} className="bg-pink-600 hover:bg-pink-700 text-white flex items-center gap-2">
+              <UserPlus className="w-4 h-4" /> Создать сотрудника
+            </Button>
+          )}
         </div>
       </div>
 
@@ -545,6 +632,10 @@ export default function UniversalTeam() {
                           getPhotoUrl={getPhotoUrl}
                           getDynamicAvatar={getDynamicAvatar}
                           routePrefix={routePrefix}
+                          handleChangeRole={handleChangeRole}
+                          canManageStaff={canManageStaff}
+                          directorRoles={DIRECTOR_ROLES}
+                          currentUserId={currentUser?.id}
                         />
                       ))}
                     </tbody>
@@ -797,6 +888,65 @@ export default function UniversalTeam() {
         }}
         user={selectedUser}
       />
+
+      {/* Модал создания сотрудника */}
+      {showCreateForm && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4" onClick={() => setShowCreateForm(false)}>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 space-y-4" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-pink-50 rounded-lg"><ShieldCheck className="w-5 h-5 text-pink-600" /></div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Новый сотрудник</h3>
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => setShowCreateForm(false)} className="rounded-full"><X className="w-5 h-5 text-gray-400" /></Button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="col-span-2">
+                <label className="text-xs text-gray-500 mb-1 block">Полное имя *</label>
+                <Input value={createForm.full_name} onChange={e => setCreateForm(p => ({...p, full_name: e.target.value}))} placeholder="Иванов Иван Иванович" />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Логин * (мин. 3 символа)</label>
+                <Input value={createForm.username} onChange={e => setCreateForm(p => ({...p, username: e.target.value}))} placeholder="ivan123" />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Пароль * (мин. 6 символов)</label>
+                <Input type="password" value={createForm.password} onChange={e => setCreateForm(p => ({...p, password: e.target.value}))} placeholder="••••••" />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Роль</label>
+                <select
+                  value={createForm.role}
+                  onChange={e => setCreateForm(p => ({...p, role: e.target.value}))}
+                  className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600"
+                >
+                  {DIRECTOR_ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Должность</label>
+                <Input value={createForm.position} onChange={e => setCreateForm(p => ({...p, position: e.target.value}))} placeholder="Мастер маникюра" />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Email</label>
+                <Input type="email" value={createForm.email} onChange={e => setCreateForm(p => ({...p, email: e.target.value}))} placeholder="ivan@salon.ru" />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 mb-1 block">Телефон</label>
+                <Input value={createForm.phone} onChange={e => setCreateForm(p => ({...p, phone: e.target.value}))} placeholder="+7 900 000 00 00" />
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-2 border-t border-gray-100">
+              <Button variant="outline" onClick={() => setShowCreateForm(false)} disabled={savingCreate}>Отмена</Button>
+              <Button onClick={handleCreateStaff} disabled={savingCreate} className="bg-pink-600 hover:bg-pink-700 text-white">
+                {savingCreate ? 'Создание...' : 'Создать сотрудника'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div >
   );
 }

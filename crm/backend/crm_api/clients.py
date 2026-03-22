@@ -656,8 +656,14 @@ async def create_client_api(
     user = get_current_user_from_token(session_token)
     
     data = await request.json()
-    
+
     try:
+        # Проверяем квоту клиентов для компании
+        from db.companies import ensure_company_quota, QuotaExceededError as _QuotaErr
+        company_id = user.get("company_id")
+        if company_id:
+            ensure_company_quota(int(company_id), "clients", 1)
+
         instagram_id = data.get('instagram_id') or f"manual_{int(time.time())}"
         get_or_create_client(instagram_id, username=data.get('name'))
         

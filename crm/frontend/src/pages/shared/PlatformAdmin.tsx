@@ -669,6 +669,25 @@ export default function PlatformAdmin() {
     }
   };
 
+  const handleProcessScheduledChanges = async () => {
+    if (!confirm('Применить все просроченные запланированные изменения тарифов? Это действие необратимо.')) return;
+    try {
+      const { buildApiUrl } = await import('@crm/api/client');
+      const res = await fetch(buildApiUrl('/api/platform-admin/process-scheduled-changes'), {
+        method: 'POST', credentials: 'include',
+      });
+      const d = await res.json();
+      if (d.success) {
+        toast.success(`Обработано: ${d.processed_count}, ошибок: ${d.error_count}`);
+        await loadData();
+      } else {
+        toast.error('Ошибка обработки');
+      }
+    } catch (e) {
+      toast.error('Ошибка сети');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -724,9 +743,14 @@ export default function PlatformAdmin() {
             <h2 className="text-xl font-semibold text-slate-900">{t('platform_capabilities_title', { defaultValue: '10 ключевых enterprise-возможностей' })}</h2>
             <p className="text-sm text-slate-500">{t('platform_capabilities_hint', { defaultValue: 'Эти возможности добавлены как feature flags тарифа и company-level entitlement model.' })}</p>
           </div>
-          <Button variant="outline" onClick={loadData} disabled={loading}>
-            {t('platform_refresh', { defaultValue: 'Обновить' })}
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleProcessScheduledChanges} disabled={loading} className="border-amber-300 text-amber-700 hover:bg-amber-50">
+              Применить плановые изменения
+            </Button>
+            <Button variant="outline" onClick={loadData} disabled={loading}>
+              {t('platform_refresh', { defaultValue: 'Обновить' })}
+            </Button>
+          </div>
         </div>
         <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
           {featureSuggestions.map((feature) => (

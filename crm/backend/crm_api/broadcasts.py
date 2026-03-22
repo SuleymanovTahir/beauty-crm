@@ -360,14 +360,14 @@ async def send_broadcast(
         raise HTTPException(status_code=403, detail="Доступ запрещен")
 
     # Add task to background
-    background_tasks.add_task(process_broadcast_sending, broadcast, current_user['id'])
+    background_tasks.add_task(process_broadcast_sending, broadcast, current_user['id'], current_user.get('company_id'))
 
     return {
         "success": True,
         "message": "Рассылка запущена" if not broadcast.is_test else "Тестовая рассылка отправлена"
     }
 
-async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int):
+async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int, company_id: int = None):
     """
     Асинхронная отправка рассылки через UniversalMessenger (Users + Clients)
     """
@@ -456,6 +456,16 @@ async def process_broadcast_sending(broadcast: BroadcastRequest, sender_id: int)
                 # Добавляем контакт только если есть хотя бы один канал связи
                 if email or telegram or instagram or whatsapp:
                     targets.append((0, name, email, telegram, instagram, 'manual'))
+
+        # Проверяем квоту сообщений перед отправкой
+        if company_id and not broadcast.is_test:
+            try:
+                from db.companies import ensure_company_quota
+                ensure_company_quota(int(company_id), "messages", len(targets))
+            except Exception as quota_err:
+                from utils.logger import log_error
+                log_error(f"Message quota exceeded for company {company_id}: {quota_err}", "broadcasts")
+                return  # Прерываем рассылку
 
         # Sending
         for target in targets:

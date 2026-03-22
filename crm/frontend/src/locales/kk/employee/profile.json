@@ -51,7 +51,7 @@
   "new_password_must_be_at_least_6_characters_few": "Жаңа құпия сөз кемінде {{count}} таңбадан тұруы керек",
   "new_password_must_be_at_least_6_characters_many": "Жаңа құпия сөз кемінде {{count}} таңбадан тұруы керек",
   "new_password_must_be_at_least_6_characters_one": "Жаңа құпия сөз кемінде {{count}} таңбадан тұруы керек",
-  "new_password_must_be_at_least_6_characters_other": "Жаңа құпия сөзде кемінде {{count}} таңба болуы керек",
+  "new_password_must_be_at_least_6_characters_other": "Жаңа құпия сөз кемінде {{count}} таңбадан тұруы керек",
   "password_successfully_changed": "Құпия сөз сәтті өзгертілді",
   "passwords_do_not_match": "Құпиясөздер сәйкес келмейді",
   "personal_information": "Жеке ақпарат",
@@ -84,6 +84,6 @@
   "username_must_be_at_least_3_characters": "",
   "username_must_be_at_least_3_characters_few": "Кіруде кемінде {{count}} таңба болуы керек",
   "username_must_be_at_least_3_characters_many": "Кіруде кемінде {{count}} таңба болуы керек",
-  "username_must_be_at_least_3_characters_one": "Жүйеге кіруде кемінде {{count}} таңба болуы керек",
+  "username_must_be_at_least_3_characters_one": "Кіруде кемінде {{count}} таңба болуы керек",
   "username_must_be_at_least_3_characters_other": "Кіруде кемінде {{count}} таңба болуы керек"
 }

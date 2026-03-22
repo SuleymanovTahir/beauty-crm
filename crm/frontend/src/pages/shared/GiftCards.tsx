@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Gift, Plus, Check, X, Copy, RefreshCw, Search } from 'lucide-react';
+import { Gift, Plus, Copy, RefreshCw, Search } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';

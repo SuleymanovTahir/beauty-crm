@@ -608,3 +608,63 @@ async def activate_user(
     except Exception as e:
         log_error(f"Error activating user: {e}", "api")
         return JSONResponse({"error": str(e)}, status_code=500)
+
+
+# ===== DIRECTOR: COMPANY STAFF ROLE MANAGEMENT =====
+
+DIRECTOR_MANAGEABLE_ROLES = ['admin', 'accountant', 'manager', 'sales', 'marketer', 'employee']
+
+@router.patch("/api/users/{user_id}/role")
+async def change_user_role(
+    user_id: int,
+    request: Request,
+    session_token: Optional[str] = Cookie(None)
+):
+    """Изменить роль сотрудника (только director/admin, только в своей компании)"""
+    user = require_auth(session_token)
+    if not user:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    if user["role"] not in ("director", "admin", "super_admin"):
+        return JSONResponse({"error": "Forbidden"}, status_code=403)
+
+    data = await request.json()
+    new_role = data.get("role", "").strip()
+
+    # Director can only assign roles below director
+    allowed = DIRECTOR_MANAGEABLE_ROLES if user["role"] in ("director", "admin") else \
+              DIRECTOR_MANAGEABLE_ROLES + ["director"]
+    if new_role not in allowed:
+        return JSONResponse({"error": f"Нельзя назначить роль '{new_role}'"}, status_code=403)
+
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+
+        # Verify target user belongs to same company (unless super_admin)
+        c.execute("SELECT company_id, role FROM users WHERE id = %s AND deleted_at IS NULL", (user_id,))
+        row = c.fetchone()
+        if not row:
+            conn.close()
+            return JSONResponse({"error": "User not found"}, status_code=404)
+
+        target_company_id, current_role = row
+        if user["role"] != "super_admin" and target_company_id != user.get("company_id"):
+            conn.close()
+            return JSONResponse({"error": "Нельзя управлять сотрудниками другой компании"}, status_code=403)
+
+        # Cannot change own role
+        if user_id == user["id"]:
+            conn.close()
+            return JSONResponse({"error": "Нельзя изменить собственную роль"}, status_code=403)
+
+        c.execute("UPDATE users SET role = %s, updated_at = NOW() WHERE id = %s", (new_role, user_id))
+        conn.commit()
+        conn.close()
+
+        log_info(f"User {user['id']} changed role of user {user_id}: {current_role} → {new_role}", "api")
+        return {"success": True, "role": new_role}
+
+    except Exception as e:
+        log_error(f"Error changing role: {e}", "api")
+        return JSONResponse({"error": str(e)}, status_code=500)

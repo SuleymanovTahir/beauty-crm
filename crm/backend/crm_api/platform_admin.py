@@ -774,3 +774,91 @@ async def create_platform_broadcast(
         "broadcast_id": broadcast_id,
         "target_companies_count": len(target_companies),
     }
+
+
+# ===== APPLY DUE SCHEDULED TARIFF CHANGES =====
+
+@router.post("/platform-admin/process-scheduled-changes")
+async def process_scheduled_tariff_changes(
+    current_user: dict = Depends(_require_super_admin),
+):
+    """
+    Применить все просроченные запланированные изменения тарифов.
+    Вызывается вручную из панели администратора.
+    Обработка: если у подписки есть scheduled_change И effective_at <= NOW() — применяем.
+    """
+    from db.companies import assign_company_subscription, list_companies, get_company_subscription
+    import json
+
+    now = datetime.utcnow()
+    processed = []
+    skipped = []
+    errors = []
+
+    with platform_access():
+        conn = get_db_connection()
+        c = conn.cursor()
+        try:
+            # Выбираем все подписки с непустым scheduled_change и effective_at в прошлом
+            c.execute("""
+                SELECT cs.company_id, cs.scheduled_change
+                FROM company_subscriptions cs
+                WHERE cs.scheduled_change IS NOT NULL
+                  AND cs.scheduled_change != '{}'::jsonb
+                  AND cs.scheduled_change->>'effective_at' IS NOT NULL
+                  AND (cs.scheduled_change->>'effective_at')::timestamp <= %s
+            """, (now,))
+            rows = c.fetchall()
+        finally:
+            conn.close()
+
+    for row in rows:
+        company_id, scheduled_change_raw = row
+        try:
+            if isinstance(scheduled_change_raw, str):
+                scheduled_change = json.loads(scheduled_change_raw)
+            else:
+                scheduled_change = scheduled_change_raw or {}
+
+            if not scheduled_change:
+                skipped.append(company_id)
+                continue
+
+            # Применяем изменение немедленно
+            with platform_access():
+                assign_company_subscription(
+                    company_id,
+                    tariff_plan_id=scheduled_change.get("tariff_plan_id"),
+                    tariff_key=scheduled_change.get("tariff_key"),
+                    employee_limit_override=scheduled_change.get("employee_limit_override"),
+                    client_limit_override=scheduled_change.get("client_limit_override"),
+                    product_limit_override=scheduled_change.get("product_limit_override"),
+                    monthly_message_limit_override=scheduled_change.get("monthly_message_limit_override"),
+                    storage_limit_mb_override=scheduled_change.get("storage_limit_mb_override"),
+                    ad_slot_limit_override=scheduled_change.get("ad_slot_limit_override"),
+                    billing_cycle_months=scheduled_change.get("billing_cycle_months", 1),
+                    price_override_amount=scheduled_change.get("price_override", {}).get("amount"),
+                    discount_percent=scheduled_change.get("discount_config", {}).get("percent"),
+                    discount_amount=scheduled_change.get("discount_config", {}).get("amount"),
+                    discount_reason=scheduled_change.get("discount_config", {}).get("reason"),
+                    notes=scheduled_change.get("notes"),
+                    apply_mode="immediate",
+                    assigned_by_user_id=current_user.get("id"),
+                )
+            processed.append(company_id)
+        except Exception as e:
+            errors.append({"company_id": company_id, "error": str(e)})
+
+    log_info(
+        f"process-scheduled-changes: processed={len(processed)}, skipped={len(skipped)}, errors={len(errors)}",
+        "platform_admin",
+    )
+
+    return {
+        "success": True,
+        "processed_count": len(processed),
+        "processed_company_ids": processed,
+        "skipped_count": len(skipped),
+        "error_count": len(errors),
+        "errors": errors,
+    }

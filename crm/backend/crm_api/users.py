@@ -150,9 +150,9 @@ async def create_user_api(
         now = datetime.now().isoformat()
 
         c.execute("""INSERT INTO users
-                     (username, password_hash, full_name, email, phone, role, position, created_at, is_active, email_verified)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, TRUE, TRUE) RETURNING id""",
-                  (username, password_hash, full_name, email, phone, role, position, now))
+                     (username, password_hash, full_name, email, phone, role, position, created_at, is_active, email_verified, company_id)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, TRUE, TRUE, %s) RETURNING id""",
+                  (username, password_hash, full_name, email, phone, role, position, now, company_id))
 
         conn.commit()
         user_id = c.fetchone()[0]
@@ -262,6 +262,8 @@ async def get_users(
         c = conn.cursor()
 
         start_time = time.time()
+        # Super admin sees all companies; everyone else sees only their own company
+        cid = None if current_user.get('role') == 'super_admin' else current_user.get('company_id')
         c.execute("""
             SELECT
                 u.id, u.username,
@@ -278,8 +280,9 @@ async def get_users(
                 u.is_service_provider
             FROM users u
             WHERE u.deleted_at IS NULL AND u.role != 'client'
+            AND (%s IS NULL OR u.company_id = %s)
             ORDER BY u.sort_order ASC, u.created_at DESC
-        """)
+        """, (cid, cid))
 
         users = []
         for row in c.fetchall():
