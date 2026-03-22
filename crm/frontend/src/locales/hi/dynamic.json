@@ -586,5 +586,15 @@
   "workflow_stages.76.name": "प्रगति में",
   "workflow_stages.77.name": "किया गया",
   "workflow_stages.8.name": "भुगतान किया गया",
-  "workflow_stages.9.name": "सभी"
+  "workflow_stages.9.name": "सभी",
+  "workflow_stages.397.name": "नया",
+  "workflow_stages.398.name": "बातचीत",
+  "workflow_stages.399.name": "भेजा_प्रस्ताव",
+  "workflow_stages.400.name": "बंद_वोन",
+  "workflow_stages.401.name": "बंद_खोया",
+  "workflow_stages.402.name": "ड्राफ्ट",
+  "workflow_stages.403.name": "भेजा गया",
+  "workflow_stages.404.name": "भुगतान किया गया",
+  "workflow_stages.405.name": "सभी",
+  "workflow_stages.407.name": "किया गया"
 }

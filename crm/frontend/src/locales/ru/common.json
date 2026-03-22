@@ -15,7 +15,7 @@
   "and": "и",
   "answer": "Ответить",
   "any_master": "любой мастер",
-  "apply": "",
+  "apply": "Применить",
   "are_you_sure": "Вы уверены?",
   "auth_errors": {
     "error_email_exists": "Пользователь с таким email уже существует. Укажите другой email",
@@ -282,7 +282,7 @@
   "happyClients": "довольных клиентов",
   "import": "Импорт",
   "importing": "Импортирование...",
-  "inactive": "",
+  "inactive": "Неактивный",
   "individual_permissions": "Индивидуальные права",
   "individual_permissions_description": "Вы можете переопределить права для конкретного пользователя, независимо от его роли.",
   "invalid_credentials": "Неверный логин или пароль",

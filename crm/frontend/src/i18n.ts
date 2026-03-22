@@ -81,6 +81,45 @@ Object.keys(localeFiles).forEach((key) => {
 
 const resources: Record<string, any> = {}
 
+function mergeTranslationResources(...sources: any[]) {
+  const result: Record<string, any> = {}
+
+  const mergeInto = (target: Record<string, any>, source: any) => {
+    if (!source || typeof source !== 'object' || Array.isArray(source)) {
+      return
+    }
+
+    for (const [key, value] of Object.entries(source)) {
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        const nextTarget =
+          key in target && typeof target[key] === 'object' && target[key] !== null && !Array.isArray(target[key])
+            ? target[key]
+            : {}
+        target[key] = nextTarget
+        mergeInto(nextTarget, value)
+        continue
+      }
+
+      if (typeof value === 'string') {
+        if (value !== '') {
+          target[key] = value
+        } else if (!(key in target)) {
+          target[key] = value
+        }
+        continue
+      }
+
+      target[key] = value
+    }
+  }
+
+  for (const source of sources) {
+    mergeInto(result, source)
+  }
+
+  return result
+}
+
 for (const lang of languages) {
   resources[lang] = {}
   for (const namespace of namespaces) {
@@ -93,27 +132,42 @@ for (const lang of languages) {
     }
   }
 
-  resources[lang].bookings = {
-    ...(resources[lang]['crm/bookings'] || {}),
-    ...(resources[lang].bookings || {}),
-  }
-  resources[lang].clients = {
-    ...(resources[lang]['crm/clients'] || {}),
-    ...(resources[lang].clients || {}),
-  }
-  resources[lang].settings = {
-    ...(resources[lang]['crm/settings'] || {}),
-    ...(resources[lang].settings || {}),
-  }
-  resources[lang].services = {
-    ...(resources[lang]['crm/services'] || {}),
-    ...(resources[lang].services || {}),
-  }
+  resources[lang].analytics = mergeTranslationResources(resources[lang].common || {}, resources[lang].analytics || {})
+  resources[lang].bookings = mergeTranslationResources(
+    resources[lang].common || {},
+    resources[lang]['crm/bookings'] || {},
+    resources[lang].bookings || {},
+  )
+  resources[lang].calendar = mergeTranslationResources(
+    resources[lang].common || {},
+    resources[lang]['crm/bookings'] || {},
+    resources[lang].calendar || {},
+  )
+  resources[lang].clients = mergeTranslationResources(
+    resources[lang].common || {},
+    resources[lang]['crm/clients'] || {},
+    resources[lang].clients || {},
+  )
+  resources[lang].settings = mergeTranslationResources(
+    resources[lang].common || {},
+    resources[lang]['crm/settings'] || {},
+    resources[lang].settings || {},
+  )
+  resources[lang].services = mergeTranslationResources(
+    resources[lang].common || {},
+    resources[lang]['crm/services'] || {},
+    resources[lang].services || {},
+  )
   resources[lang].telephony = resources[lang].telephony
-  resources[lang].chat = {
-    ...(resources[lang]['manager/chat'] || {}),
-    ...(resources[lang].chat || {}),
-  }
+  resources[lang].chat = mergeTranslationResources(
+    resources[lang].common || {},
+    resources[lang]['manager/chat'] || {},
+    resources[lang].chat || {},
+  )
+  resources[lang]['admin/calendar'] = mergeTranslationResources(
+    resources[lang].calendar || {},
+    resources[lang]['admin/calendar'] || {},
+  )
   resources[lang]['employee/Dashboard'] = resources[lang]['employee/dashboard']
   resources[lang]['components/LanguageSwitcher'] = resources[lang]['components/languageswitcher']
 }

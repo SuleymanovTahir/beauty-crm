@@ -15,7 +15,7 @@
   "and": "and",
   "answer": "Reply",
   "any_master": "any Stylist",
-  "apply": "",
+  "apply": "Apply",
   "are_you_sure": "Are you sure?",
   "auth_errors": {
     "error_email_exists": "A user with this email already exists. Specify a different email",
@@ -282,7 +282,7 @@
   "happyClients": "satisfied clients",
   "import": "Import",
   "importing": "Importing...",
-  "inactive": "",
+  "inactive": "Inactive",
   "individual_permissions": "Individual rights",
   "individual_permissions_description": "You can override rights for a specific user, regardless of their role.",
   "invalid_credentials": "Incorrect login or password",

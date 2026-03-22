@@ -28,6 +28,66 @@ SOURCE_MAP_FILE = Path(__file__).parent / "translations_source_map.json"
 LANGUAGES = ['en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']
 SOURCE_LANG = 'ru'
 
+
+def get_value_by_path(data, path):
+    if not path:
+        return data
+
+    current = data
+    for part in path.split('.'):
+        if not isinstance(current, dict) or part not in current:
+            return None
+        current = current[part]
+    return current
+
+
+def set_value_by_path(data, path, value):
+    current = data
+    parts = path.split('.')
+    for part in parts[:-1]:
+        if part not in current or not isinstance(current[part], dict):
+            current[part] = {}
+        current = current[part]
+    current[parts[-1]] = value
+
+
+def apply_source_glossary_to_ru_files(ru_files, ru_dir, translator):
+    source_glossary = translator.key_glossary.get(SOURCE_LANG, {})
+    if not source_glossary:
+        return 0
+
+    updated_files = 0
+
+    for ru_file in ru_files:
+        rel_path = str(ru_file.relative_to(ru_dir))
+        file_prefix = f"{rel_path}:"
+        matching_items = {
+            key_path[len(file_prefix):]: value
+            for key_path, value in source_glossary.items()
+            if key_path.startswith(file_prefix) and isinstance(value, str) and value.strip()
+        }
+
+        if not matching_items:
+            continue
+
+        with open(ru_file, 'r', encoding='utf-8') as f:
+            ru_data = json.load(f)
+
+        changed = False
+        for nested_path, glossary_value in matching_items.items():
+            current_value = get_value_by_path(ru_data, nested_path)
+            if current_value != glossary_value:
+                set_value_by_path(ru_data, nested_path, glossary_value)
+                changed = True
+
+        if changed:
+            with open(ru_file, 'w', encoding='utf-8') as f:
+                json.dump(ru_data, f, ensure_ascii=False, indent=2, sort_keys=True)
+                f.write('\n')
+            updated_files += 1
+
+    return updated_files
+
 def load_source_map():
     if SOURCE_MAP_FILE.exists():
         try:
@@ -247,7 +307,11 @@ def main():
         
     ru_files = list(ru_dir.rglob("*.json"))
     print(f"📋 Found {len(ru_files)} source files\n")
-    
+
+    updated_source_files = apply_source_glossary_to_ru_files(ru_files, ru_dir, translator)
+    if updated_source_files:
+        print(f"🧭 Updated {updated_source_files} RU source locale files from glossary before translation\n")
+
     total_translated = 0
     
     # We process languages in parallel, but collect all strings for each language FIRST

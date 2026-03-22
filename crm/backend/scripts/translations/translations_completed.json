@@ -169,12 +169,13 @@
       }
     },
     {
-      "id": 265,
-      "stable_key": "265",
+      "id": 397,
+      "stable_key": "397",
       "fields": {
         "name": {
           "ru": "новое",
-          "key": "workflow_stages.265.name",
+          "key": "workflow_stages.397.name",
+          "detected_language": "en",
           "en": "new",
           "ar": "جديد",
           "es": "nueva",
@@ -182,18 +183,18 @@
           "fr": "nouvelle",
           "hi": "नया",
           "kk": "жаңа",
-          "pt": "nova",
-          "detected_language": "ru"
+          "pt": "nova"
         }
       }
     },
     {
-      "id": 266,
-      "stable_key": "266",
+      "id": 398,
+      "stable_key": "398",
       "fields": {
         "name": {
           "ru": "переговоры",
-          "key": "workflow_stages.266.name",
+          "key": "workflow_stages.398.name",
+          "detected_language": "en",
           "en": "negotiation",
           "ar": "تفاوض",
           "es": "negociación",
@@ -201,18 +202,18 @@
           "fr": "négociation",
           "hi": "बातचीत",
           "kk": "келіссөз",
-          "pt": "negociação",
-          "detected_language": "ru"
+          "pt": "negociação"
         }
       }
     },
     {
-      "id": 267,
-      "stable_key": "267",
+      "id": 399,
+      "stable_key": "399",
       "fields": {
         "name": {
           "ru": "отправленное_предложение",
-          "key": "workflow_stages.267.name",
+          "key": "workflow_stages.399.name",
+          "detected_language": "en",
           "en": "sent_offer",
           "ar": "sent_offer",
           "es": "oferta_enviada",
@@ -220,18 +221,18 @@
           "fr": "offre_envoyée",
           "hi": "भेजा_प्रस्ताव",
           "kk": "sent_offer",
-          "pt": "oferta_enviada",
-          "detected_language": "ru"
+          "pt": "oferta_enviada"
         }
       }
     },
     {
-      "id": 268,
-      "stable_key": "268",
+      "id": 400,
+      "stable_key": "400",
       "fields": {
         "name": {
           "ru": "закрыто_выиграно",
-          "key": "workflow_stages.268.name",
+          "key": "workflow_stages.400.name",
+          "detected_language": "en",
           "en": "closed_won",
           "ar": "Closed_won",
           "es": "ganada_cerrada",
@@ -239,18 +240,18 @@
           "fr": "fermée_gagnée",
           "hi": "बंद_वोन",
           "kk": "closed_won",
-          "pt": "fechada_ganha",
-          "detected_language": "ru"
+          "pt": "fechada_ganha"
         }
       }
     },
     {
-      "id": 269,
-      "stable_key": "269",
+      "id": 401,
+      "stable_key": "401",
       "fields": {
         "name": {
           "ru": "закрыто_проиграно",
-          "key": "workflow_stages.269.name",
+          "key": "workflow_stages.401.name",
+          "detected_language": "en",
           "en": "closed_lost",
           "ar": "Closed_lost",
           "es": "perdida_cerrada",
@@ -258,18 +259,18 @@
           "fr": "fermée_perdue",
           "hi": "बंद_खोया",
           "kk": "closed_lost",
-          "pt": "fechada_perdida",
-          "detected_language": "ru"
+          "pt": "fechada_perdida"
         }
       }
     },
     {
-      "id": 270,
-      "stable_key": "270",
+      "id": 402,
+      "stable_key": "402",
       "fields": {
         "name": {
           "ru": "черновик",
-          "key": "workflow_stages.270.name",
+          "key": "workflow_stages.402.name",
+          "detected_language": "en",
           "en": "draft",
           "ar": "مسودة",
           "es": "borrador",
@@ -277,18 +278,18 @@
           "fr": "projet",
           "hi": "ड्राफ्ट",
           "kk": "жобай",
-          "pt": "rascunho",
-          "detected_language": "ru"
+          "pt": "rascunho"
         }
       }
     },
     {
-      "id": 271,
-      "stable_key": "271",
+      "id": 403,
+      "stable_key": "403",
       "fields": {
         "name": {
           "ru": "отправлено",
-          "key": "workflow_stages.271.name",
+          "key": "workflow_stages.403.name",
+          "detected_language": "en",
           "en": "sent",
           "ar": "تم إرسالها",
           "es": "enviado",
@@ -296,18 +297,18 @@
           "fr": "envoyé",
           "hi": "भेजा गया",
           "kk": "жіберілген",
-          "pt": "enviado",
-          "detected_language": "ru"
+          "pt": "enviado"
         }
       }
     },
     {
-      "id": 272,
-      "stable_key": "272",
+      "id": 404,
+      "stable_key": "404",
       "fields": {
         "name": {
           "ru": "оплачено",
-          "key": "workflow_stages.272.name",
+          "key": "workflow_stages.404.name",
+          "detected_language": "en",
           "en": "paid",
           "ar": "مدفوعة",
           "es": "pagado",
@@ -315,37 +316,37 @@
           "fr": "payé",
           "hi": "भुगतान किया गया",
           "kk": "төленді",
-          "pt": "pago",
-          "detected_language": "ru"
+          "pt": "pago"
         }
       }
     },
     {
-      "id": 273,
-      "stable_key": "273",
+      "id": 405,
+      "stable_key": "405",
       "fields": {
         "name": {
           "ru": "все",
-          "key": "workflow_stages.273.name",
+          "key": "workflow_stages.405.name",
+          "detected_language": "pt",
+          "pt": "todo",
           "en": "all",
           "ar": "الكل",
           "es": "todos",
           "de": "alle",
           "fr": "tous",
           "hi": "सभी",
-          "kk": "барлығы",
-          "pt": "todo",
-          "detected_language": "ru"
+          "kk": "барлығы"
         }
       }
     },
     {
-      "id": 275,
-      "stable_key": "275",
+      "id": 407,
+      "stable_key": "407",
       "fields": {
         "name": {
           "ru": "готово",
-          "key": "workflow_stages.275.name",
+          "key": "workflow_stages.407.name",
+          "detected_language": "en",
           "en": "done",
           "ar": "done",
           "es": "hecho",
@@ -353,8 +354,7 @@
           "fr": "fait",
           "hi": "किया गया",
           "kk": "орындалды",
-          "pt": "concluído",
-          "detected_language": "sr"
+          "pt": "concluído"
         }
       }
     }

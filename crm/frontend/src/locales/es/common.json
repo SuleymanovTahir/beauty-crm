@@ -15,7 +15,7 @@
   "and": "y",
   "answer": "Responder",
   "any_master": "cualquier especialista",
-  "apply": "",
+  "apply": "Aplicar",
   "are_you_sure": "¿Estás seguro?",
   "auth_errors": {
     "error_email_exists": "Ya existe un usuario con este correo electrónico. Especifique un correo electrónico diferente",
@@ -282,7 +282,7 @@
   "happyClients": "clientes satisfechos",
   "import": "Importar",
   "importing": "Importando...",
-  "inactive": "",
+  "inactive": "Inactivo",
   "individual_permissions": "Derechos individuales",
   "individual_permissions_description": "Puede anular los derechos de un usuario específico, independientemente de su función.",
   "invalid_credentials": "Nombre de usuario o contraseña incorrectos",

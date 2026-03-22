@@ -15,7 +15,7 @@
   "and": "et",
   "answer": "Réponse",
   "any_master": "n'importe quel spécialiste",
-  "apply": "",
+  "apply": "Appliquer",
   "are_you_sure": "Êtes-vous sûr ?",
   "auth_errors": {
     "error_email_exists": "Un utilisateur avec cette adresse e-mail existe déjà. Spécifiez une autre adresse e-mail",
@@ -282,7 +282,7 @@
   "happyClients": "Clients satisfaits",
   "import": "Importer",
   "importing": "Importer...",
-  "inactive": "",
+  "inactive": "Inactif",
   "individual_permissions": "Droits individuels",
   "individual_permissions_description": "Vous pouvez remplacer les droits d'un utilisateur spécifique, quel que soit son rôle.",
   "invalid_credentials": "Identifiant ou mot de passe incorrect",

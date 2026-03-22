@@ -15,7 +15,7 @@
   "and": "और",
   "answer": "उत्तर",
   "any_master": "कोई भी मास्टर",
-  "apply": "",
+  "apply": "लागू करें",
   "are_you_sure": "क्या आप निश्चित हैं?",
   "auth_errors": {
     "error_email_exists": "इस ईमेल वाला उपयोगकर्ता पहले से मौजूद है। एक अलग ईमेल निर्दिष्ट करें",
@@ -282,7 +282,7 @@
   "happyClients": "संतुष्ट ग्राहक",
   "import": "आयात",
   "importing": "आयात...",
-  "inactive": "",
+  "inactive": "निष्क्रिय",
   "individual_permissions": "व्यक्तिगत अधिकार",
   "individual_permissions_description": "आप किसी विशिष्ट उपयोगकर्ता के अधिकारों को ओवरराइड कर सकते हैं, चाहे उनकी भूमिका कुछ भी हो।",
   "invalid_credentials": "गलत लॉगिन या पासवर्ड",

@@ -15,7 +15,7 @@
   "and": "und",
   "answer": "Antworten",
   "any_master": "beliebiger Mitarbeiter",
-  "apply": "",
+  "apply": "Anwenden",
   "are_you_sure": "Sind Sie sicher?",
   "auth_errors": {
     "error_email_exists": "Ein Benutzer mit dieser E-Mail existiert bereits. Geben Sie eine andere E-Mail-Adresse an",
@@ -282,7 +282,7 @@
   "happyClients": "zufriedene Kunden",
   "import": "Importieren",
   "importing": "Importieren...",
-  "inactive": "",
+  "inactive": "Inaktive",
   "individual_permissions": "Individuelle Rechte",
   "individual_permissions_description": "Sie können Rechte für einen bestimmten Benutzer überschreiben, unabhängig von seiner Rolle.",
   "invalid_credentials": "Falscher Login oder Passwort",

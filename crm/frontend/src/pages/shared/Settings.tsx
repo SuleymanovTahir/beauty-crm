@@ -219,11 +219,10 @@ function resolveModuleLabel(t: (key: string, options?: any) => string, moduleKey
 
 export default function AdminSettings() {
   const { t, i18n } = useTranslation(['crm/settings', 'common', 'layouts/mainlayout']);
-  const { user: currentUser } = useAuth();
-  const { colorTheme, setColorTheme } = useTheme();
-
+  const { user } = useAuth();
+  const { colorTheme, setColorTheme, customColors, setCustomColors } = useTheme();
   // Используем централизованную систему прав
-  const userPermissions = usePermissions(currentUser?.role || 'employee', currentUser?.secondary_role);
+  const userPermissions = usePermissions(user?.role || 'employee', user?.secondary_role);
 
   const [generalSettings, setGeneralSettings] = useState({
     salonName: '',
@@ -1679,7 +1678,8 @@ export default function AdminSettings() {
                       { id: 'purple', label: t('settings:purple_theme'), preview: 'from-purple-700 via-purple-500 to-fuchsia-400', active: 'border-purple-500 bg-purple-50 text-purple-700', hover: 'hover:border-purple-200' },
                       { id: 'emerald', label: t('settings:emerald_theme'), preview: 'from-emerald-700 via-emerald-500 to-teal-400', active: 'border-emerald-500 bg-emerald-50 text-emerald-700', hover: 'hover:border-emerald-200' },
                       { id: 'orange', label: t('settings:orange_theme'), preview: 'from-orange-700 via-orange-500 to-amber-400', active: 'border-orange-500 bg-orange-50 text-orange-700', hover: 'hover:border-orange-200' },
-                      { id: 'amber', label: t('settings:amber_theme'), preview: 'from-amber-700 via-amber-500 to-yellow-400', active: 'border-amber-500 bg-amber-50 text-amber-700', hover: 'hover:border-amber-200' }
+                      { id: 'amber', label: t('settings:amber_theme'), preview: 'from-amber-700 via-amber-500 to-yellow-400', active: 'border-amber-500 bg-amber-50 text-amber-700', hover: 'hover:border-amber-200' },
+                      { id: 'custom', label: t('settings:custom_theme', { defaultValue: 'Свой цвет' }), preview: '', active: 'brand-border settings-bg-primary-light text-gray-900', hover: 'hover:brand-border' }
                     ].map((tTheme) => (
                       <button
                         key={tTheme.id}
@@ -1692,11 +1692,54 @@ export default function AdminSettings() {
                             : `border-gray-200 ${tTheme.hover}`
                         )}
                       >
-                        <div className={`w-full h-8 rounded-md bg-gradient-to-r ${tTheme.preview} border border-white/20`} />
+                        <div 
+                           className={cn(
+                             "w-full h-8 rounded-md border border-white/20",
+                             tTheme.id !== 'custom' ? `bg-gradient-to-r ${tTheme.preview}` : ""
+                           )}
+                           style={tTheme.id === 'custom' ? { background: `linear-gradient(to right, ${customColors.start}, ${customColors.end})` } : {}}
+                        />
                         <span className="font-medium text-sm">{tTheme.label}</span>
                       </button>
                     ))}
                   </div>
+
+                  {colorTheme === 'custom' && (
+                    <div className="flex flex-col sm:flex-row gap-6 mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
+                      <div className="space-y-3 flex-1">
+                        <Label className="text-gray-900 font-semibold">{t('settings:gradient_start', { defaultValue: 'Начало градиента' })}</Label>
+                        <div className="flex items-center gap-3">
+                          <input 
+                            type="color" 
+                            value={customColors.start}
+                            onChange={(e) => setCustomColors({ ...customColors, start: e.target.value })}
+                            className="w-12 h-12 p-0 border-0 rounded-md cursor-pointer overflow-hidden relative appearance-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-none"
+                          />
+                          <Input 
+                            value={customColors.start}
+                            onChange={(e) => setCustomColors({ ...customColors, start: e.target.value })}
+                            className="font-mono uppercase"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-3 flex-1">
+                        <Label className="text-gray-900 font-semibold">{t('settings:gradient_end', { defaultValue: 'Конец градиента (основной)' })}</Label>
+                        <div className="flex items-center gap-3">
+                          <input 
+                            type="color" 
+                            value={customColors.end}
+                            onChange={(e) => setCustomColors({ ...customColors, end: e.target.value })}
+                            className="w-12 h-12 p-0 border-0 rounded-md cursor-pointer overflow-hidden relative appearance-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-none"
+                          />
+                          <Input 
+                            value={customColors.end}
+                            onChange={(e) => setCustomColors({ ...customColors, end: e.target.value })}
+                            className="font-mono uppercase"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
