@@ -102,6 +102,8 @@ export default function LoyaltyManagement({
     is_active: true,
   });
 
+  const [apiAvailable, setApiAvailable] = useState(true);
+
   const parseNumberOrFallback = (value: string, fallbackValue: number): number => {
     const parsedValue = Number(value);
     if (!Number.isFinite(parsedValue)) {
@@ -152,6 +154,10 @@ export default function LoyaltyManagement({
   const loadConfig = async () => {
     try {
       const response = await fetch(buildApiUrl('/api/admin/loyalty/config'), { credentials: 'include' });
+      if (response.status === 404) {
+        setApiAvailable(false);
+        return;
+      }
       const data = await response.json();
       if (data.success) {
         setConfig(data.config);
@@ -164,6 +170,10 @@ export default function LoyaltyManagement({
   const loadCategoryRules = async () => {
     try {
       const response = await fetch(buildApiUrl('/api/admin/loyalty/categories'), { credentials: 'include' });
+      if (response.status === 404) {
+        setApiAvailable(false);
+        return;
+      }
       const data = await response.json();
       if (data.success) {
         const normalizedRules = Array.isArray(data.rules)
@@ -263,6 +273,11 @@ export default function LoyaltyManagement({
         credentials: 'include',
       });
 
+      if (response.status === 404) {
+        setApiAvailable(false);
+        return;
+      }
+
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.tiers) {
@@ -284,6 +299,11 @@ export default function LoyaltyManagement({
         credentials: 'include',
       });
 
+      if (response.status === 404) {
+        setApiAvailable(false);
+        return;
+      }
+
       if (response.ok) {
         const data = await response.json();
         if (data.success && data.stats) {
@@ -300,6 +320,11 @@ export default function LoyaltyManagement({
       const response = await fetch(buildApiUrl('/api/admin/loyalty/transactions'), {
         credentials: 'include',
       });
+
+      if (response.status === 404) {
+        setApiAvailable(false);
+        return;
+      }
 
       if (response.ok) {
         const data = await response.json();
@@ -482,6 +507,20 @@ export default function LoyaltyManagement({
 
     onEmbeddedPrimaryActionReady(null);
   }, [embedded, canManageLoyalty, handleOpenAdjustDialog, onEmbeddedPrimaryActionReady]);
+
+  if (!apiAvailable) {
+    return (
+      <div className={embedded ? "space-y-6" : "mx-auto max-w-7xl space-y-6 p-4 md:p-6"}>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center space-y-4">
+            <Gift className="w-16 h-16 text-gray-300 mx-auto" />
+            <h2 className="text-2xl font-bold text-gray-900">{t('coming_soon_title', 'Coming Soon')}</h2>
+            <p className="text-gray-600">{t('coming_soon_desc', 'The loyalty management module is coming soon.')}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={embedded ? "space-y-6" : "mx-auto max-w-7xl space-y-6 p-4 md:p-6"}>

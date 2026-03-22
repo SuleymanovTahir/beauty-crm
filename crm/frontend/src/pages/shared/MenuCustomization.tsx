@@ -1,414 +1,885 @@
-// /frontend/src/pages/shared/MenuCustomization.tsx
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  ArrowLeft,
-  GripVertical,
-  Eye,
-  EyeOff,
-  RotateCcw,
-  Save,
-  ChevronDown,
-  ChevronRight,
-  LayoutDashboard,
-  Users,
-  MessageSquare,
-  Settings,
-  Calendar,
-  Scissors,
-  MessageCircle,
-  Filter,
-  CheckSquare,
-  Phone,
-  Link2,
-  Clock,
-  Package,
-  Wallet,
-  BarChart2,
-  Gift,
-  Layers,
-  Briefcase,
-  LayoutGrid,
-} from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { GripVertical, Eye, EyeOff, RotateCcw, ArrowLeft, Plus, Edit2, Trash2, ChevronDown, ChevronRight, Folder, Link as LinkIcon, X, LayoutGrid } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
-import { useAuth } from '../../contexts/AuthContext';
-import { usePermissions } from '../../utils/permissions';
-import { CRM_MENU_DEFAULT_ORDER, CRM_MENU_GROUPS } from '../../components/layouts/UniversalLayout';
+import { buildCrmMenuCatalog, CRM_MENU_DEFAULT_ORDER, CRM_MENU_GROUPS } from '../../components/layouts/UniversalLayout';
 
-// ---- Types ----
 interface MenuItem {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  children?: MenuItem[];
-  permanent?: boolean; // нельзя скрыть
+    id: string;
+    label: string;
+    icon?: string;
+    path?: string;
+    type: 'group' | 'link';
+    visible: boolean;
+    children?: MenuItem[];
+    isOpen?: boolean;
 }
 
-// ---- Menu Catalog ----
-const buildAllItems = (t: (k: string, o?: any) => string): MenuItem[] => {
-  const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-    platform: Briefcase,
-    dashboard: LayoutDashboard,
-    'bookings-group': Calendar,
-    bookings: Calendar,
-    'chat-group': MessageSquare,
-    chat: MessageSquare,
-    'internal-chat': MessageCircle,
-    funnel: Filter,
-    'catalog-group': LayoutGrid,
-    services: Scissors,
-    team: Users,
-    'tools-group': Briefcase,
-    tasks: CheckSquare,
-    telephony: Phone,
-    'referral-links': Link2,
-    kpi: BarChart2,
-    waitlist: Clock,
-    'finance-group': Wallet,
-    cashbox: Wallet,
-    inventory: Package,
-    'gift-cards': Gift,
-    'service-bundles': Layers,
-    'settings-group': Settings,
-    settings: Settings,
-  };
+const ACCOUNT_MENU_DEFAULT_ORDER = [
+    'account-main',
+    'account-bonus-program',
+    'account-profile-tools',
+];
 
-  const labelMap: Record<string, string> = {
-    platform: t('menu.platform_control', { defaultValue: 'Платформа' }),
-    dashboard: t('menu.dashboard', { defaultValue: 'Дашборд' }),
-    bookings: t('menu.bookings', { defaultValue: 'Записи' }),
-    'chat-group': t('menu.chat', { defaultValue: 'Чат' }),
-    chat: t('menu.chat', { defaultValue: 'Мессенджер' }),
-    'internal-chat': t('menu.internal_chat', { defaultValue: 'Внутренний чат' }),
-    funnel: t('menu.funnel', { defaultValue: 'Воронка' }),
-    'catalog-group': t('menu.catalog', { defaultValue: 'Каталог' }),
-    services: t('menu.services', { defaultValue: 'Услуги' }),
-    team: t('menu.team', { defaultValue: 'Команда' }),
-    'tools-group': t('menu.tools', { defaultValue: 'Инструменты' }),
-    tasks: t('menu.tasks', { defaultValue: 'Задачи' }),
-    telephony: t('menu.telephony', { defaultValue: 'Телефония' }),
-    'referral-links': t('menu.referral_links', { defaultValue: 'Реклама' }),
-    kpi: t('menu.kpi', { defaultValue: 'KPI' }),
-    waitlist: t('menu.waitlist', { defaultValue: 'Очередь' }),
-    'finance-group': t('menu.finance', { defaultValue: 'Финансы' }),
-    cashbox: t('menu.cashbox', { defaultValue: 'Касса' }),
-    inventory: t('menu.inventory', { defaultValue: 'Склад' }),
-    'gift-cards': t('menu.gift_cards', { defaultValue: 'Сертификаты' }),
-    'service-bundles': t('menu.service_bundles', { defaultValue: 'Абонементы' }),
-    'settings-group': t('menu.settings', { defaultValue: 'Настройки' }),
-    settings: t('menu.settings', { defaultValue: 'Настройки' }),
-  };
-
-  const labelOverrides: Record<string, string> = {
-    'bookings-group': t('menu.bookings', { defaultValue: 'Записи' }),
-  };
-
-  return CRM_MENU_DEFAULT_ORDER.map((id) => {
-    const childIds = CRM_MENU_GROUPS[id];
-    const item: MenuItem = {
-      id,
-      label: labelOverrides[id] || labelMap[id] || id,
-      icon: iconMap[id] || Briefcase,
-    };
-    if (childIds && childIds.length > 0) {
-      item.children = childIds.map((cid) => ({
-        id: cid,
-        label: labelMap[cid] || cid,
-        icon: iconMap[cid] || Briefcase,
-      }));
-    }
-    return item;
-  });
+const ACCOUNT_MENU_GROUPS: Record<string, string[]> = {
+    'account-main': ['dashboard', 'appointments', 'gallery', 'masters', 'beauty'],
+    'account-bonus-program': ['loyalty', 'achievements', 'promocodes', 'specialoffers'],
+    'account-profile-tools': ['notifications', 'settings'],
 };
 
-// ---- Drag helpers ----
-let dragSourceIndex: number | null = null;
+type CatalogItem = {
+    label?: string;
+    path?: string;
+};
+
+const buildMenuItemsFromCatalog = (
+    catalogItems: Record<string, CatalogItem>,
+    groups: Record<string, string[]>,
+    defaultOrder: string[]
+): MenuItem[] => {
+    const result: MenuItem[] = [];
+
+    defaultOrder.forEach((id) => {
+        const item = catalogItems[id];
+        if (item === undefined) {
+            return;
+        }
+
+        const groupChildren = groups[id];
+        if (Array.isArray(groupChildren)) {
+            const children: MenuItem[] = [];
+            groupChildren.forEach((childId) => {
+                const child = catalogItems[childId];
+                if (child === undefined) {
+                    return;
+                }
+                children.push({
+                    id: childId,
+                    label: child.label ?? childId,
+                    path: child.path,
+                    type: 'link',
+                    visible: true,
+                });
+            });
+
+            result.push({
+                id,
+                label: item.label ?? id,
+                type: 'group',
+                visible: true,
+                isOpen: true,
+                children,
+            });
+            return;
+        }
+
+        result.push({
+            id,
+            label: item.label ?? id,
+            path: item.path,
+            type: 'link',
+            visible: true,
+        });
+    });
+
+    return result;
+};
 
 export default function MenuCustomization() {
-  const { t } = useTranslation(['layouts/mainlayout', 'common']);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { user } = useAuth();
-  const permissions = usePermissions(user?.role || 'employee', user?.secondary_role);
+    const { t } = useTranslation([
+        'admin/menucustomization',
+        'account',
+        'layouts/mainlayout',
+        'layouts/adminpanellayout',
+        'adminpanel/loyaltymanagement',
+        'admin/settings',
+        'common'
+    ]);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+    const [draggedItem, setDraggedItem] = useState<{ index: number; parentId: string | null } | null>(null);
+    const [applyMode, setApplyMode] = useState<'all' | 'selected'>('all');
+    const [targetClientIds, setTargetClientIds] = useState<string[]>([]);
+    const [clients, setClients] = useState<Array<{ id: string; label: string }>>([]);
+    const autosaveTimerRef = useRef<number | null>(null);
+    const lastSavedSnapshotRef = useRef<string>('');
+    const hasLoadedSettingsRef = useRef<boolean>(false);
 
-  const rolePrefix = useMemo(() => {
-    if (location.pathname.startsWith('/crm')) return '/crm';
-    if (location.pathname.startsWith('/manager')) return '/manager';
-    if (location.pathname.startsWith('/sales')) return '/sales';
-    if (location.pathname.startsWith('/marketer')) return '/marketer';
-    if (location.pathname.startsWith('/employee')) return '/employee';
-    return '/crm';
-  }, [location.pathname]);
+    const rolePrefix = useMemo(() => {
+        if (location.pathname.startsWith('/admin')) return '/admin';
+        if (location.pathname.startsWith('/crm')) return '/crm';
+        if (location.pathname.startsWith('/manager')) return '/manager';
+        if (location.pathname.startsWith('/sales')) return '/sales';
+        if (location.pathname.startsWith('/marketer')) return '/marketer';
+        if (location.pathname.startsWith('/employee')) return '/employee';
+        return '/crm';
+    }, [location.pathname]);
 
-  const allItems = useMemo(() => buildAllItems(t), [t]);
+    const portalMode = useMemo(() => {
+        const searchParams = new URLSearchParams(location.search);
+        return searchParams.get('portal') === 'account' ? 'account' : 'crm';
+    }, [location.search]);
 
-  const [order, setOrder] = useState<string[]>([...CRM_MENU_DEFAULT_ORDER]);
-  const [hidden, setHidden] = useState<Set<string>>(new Set());
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [dragOver, setDragOver] = useState<number | null>(null);
-
-  // Load current settings
-  useEffect(() => {
-    api.getMenuSettings()
-      .then((data) => {
-        if (data.menu_order && data.menu_order.length > 0) {
-          const savedOrder = data.menu_order as string[];
-          const merged = [
-            ...savedOrder.filter((id) => CRM_MENU_DEFAULT_ORDER.includes(id)),
-            ...CRM_MENU_DEFAULT_ORDER.filter((id) => !savedOrder.includes(id)),
-          ];
-          setOrder(merged);
-        }
-        if (data.hidden_items && data.hidden_items.length > 0) {
-          setHidden(new Set(data.hidden_items));
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
-  // Ordered items list (for rendering)
-  const orderedItems = useMemo(
-    () => order.map((id) => allItems.find((it) => it.id === id)).filter(Boolean) as MenuItem[],
-    [order, allItems],
-  );
-
-  const toggleHidden = useCallback((id: string) => {
-    setHidden((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  }, []);
-
-  const toggleExpanded = useCallback((id: string) => {
-    setExpanded((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }, []);
-
-  // Drag-and-drop
-  const handleDragStart = (index: number) => {
-    dragSourceIndex = index;
-  };
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    setDragOver(index);
-  };
-
-  const handleDrop = (e: React.DragEvent, targetIndex: number) => {
-    e.preventDefault();
-    if (dragSourceIndex === null || dragSourceIndex === targetIndex) {
-      dragSourceIndex = null;
-      setDragOver(null);
-      return;
-    }
-    const newOrder = [...order];
-    const [moved] = newOrder.splice(dragSourceIndex, 1);
-    newOrder.splice(targetIndex, 0, moved);
-    setOrder(newOrder);
-    dragSourceIndex = null;
-    setDragOver(null);
-  };
-
-  const handleDragEnd = () => {
-    dragSourceIndex = null;
-    setDragOver(null);
-  };
-
-  const handleSave = async (forRole = false) => {
-    setSaving(true);
-    try {
-      await api.saveMenuSettings({ menu_order: order, hidden_items: Array.from(hidden) }, forRole);
-      window.dispatchEvent(new Event('crm-menu-settings-updated'));
-      toast.success(t('common:saved', { defaultValue: 'Сохранено' }));
-    } catch {
-      toast.error(t('common:save_error', { defaultValue: 'Ошибка сохранения' }));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleReset = async () => {
-    setSaving(true);
-    try {
-      await api.resetMenuSettings();
-      setOrder([...CRM_MENU_DEFAULT_ORDER]);
-      setHidden(new Set());
-      window.dispatchEvent(new Event('crm-menu-settings-updated'));
-      toast.success(t('common:reset_done', { defaultValue: 'Сброшено' }));
-    } catch {
-      toast.error(t('common:save_error', { defaultValue: 'Ошибка' }));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
+    const crmCatalog = useMemo(
+        () => buildCrmMenuCatalog({
+            t: (key: string, options?: any) => {
+                const translated = key.includes(':')
+                    ? t(key, options)
+                    : t(`layouts/mainlayout:${key}`, options);
+                return typeof translated === 'string' ? translated : String(translated);
+            },
+            rolePrefix: '/crm',
+            dashboardPath: '/crm/dashboard',
+            permissions: {
+                canViewAllBookings: true,
+                canEditServices: true,
+                canViewAnalytics: true,
+                roleLevel: 100,
+                canEditSettings: true,
+                canViewBotSettings: true,
+            },
+            userRole: 'director',
+        }),
+        [t]
     );
-  }
 
-  return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <Button variant="ghost" size="icon" onClick={() => navigate(`${rolePrefix}/settings`)}>
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">
-            {t('settings:customize_menu', { defaultValue: 'Настройка меню' })}
-          </h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            Перетащите пункты для изменения порядка, нажмите глаз чтобы скрыть
-          </p>
-        </div>
-      </div>
+    const SYSTEM_LIBRARY: Partial<MenuItem>[] = useMemo(() => {
+        const result: Partial<MenuItem>[] = [];
+        const groupedIds = new Set<string>();
 
-      {/* Items list */}
-      <div className="space-y-2 mb-6">
-        {orderedItems.map((item, index) => {
-          const isHidden = hidden.has(item.id);
-          const hasChildren = item.children && item.children.length > 0;
-          const isExpanded = expanded.has(item.id);
-          const isDragTarget = dragOver === index;
-          const Icon = item.icon;
+        Object.values(CRM_MENU_GROUPS).forEach((children) => {
+            children.forEach((id) => groupedIds.add(id));
+        });
 
-          return (
-            <div key={item.id}>
-              <div
-                draggable
-                onDragStart={() => handleDragStart(index)}
-                onDragOver={(e) => handleDragOver(e, index)}
-                onDrop={(e) => handleDrop(e, index)}
-                onDragEnd={handleDragEnd}
-                className={[
-                  'flex items-center gap-3 p-3 rounded-lg border bg-white select-none cursor-grab active:cursor-grabbing transition-all',
-                  isDragTarget ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-200 hover:border-gray-300',
-                  isHidden ? 'opacity-40' : '',
-                ].join(' ')}
-              >
-                {/* Drag handle */}
-                <GripVertical className="w-4 h-4 text-gray-400 flex-shrink-0" />
+        Object.entries(crmCatalog.items).forEach(([id, item]) => {
+            if (groupedIds.has(id)) {
+                result.push({
+                    id,
+                    label: item.label,
+                    path: item.path,
+                    type: 'link',
+                });
+                return;
+            }
 
-                {/* Icon */}
-                <Icon className="w-4 h-4 text-gray-600 flex-shrink-0" />
+            if (item.path === undefined) {
+                return;
+            }
 
-                {/* Label */}
-                <span className={`flex-1 text-sm font-medium ${isHidden ? 'line-through text-gray-400' : 'text-gray-800'}`}>
-                  {item.label}
-                </span>
+            result.push({
+                id,
+                label: item.label,
+                path: item.path,
+                type: 'link',
+            });
+        });
 
-                {/* Expand children toggle */}
-                {hasChildren && (
-                  <button
-                    type="button"
-                    className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                    onClick={() => toggleExpanded(item.id)}
-                  >
-                    {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                  </button>
-                )}
+        return result;
+    }, [crmCatalog]);
 
-                {/* Visibility toggle */}
-                <button
-                  type="button"
-                  className={`p-1 transition-colors ${isHidden ? 'text-gray-300 hover:text-gray-500' : 'text-gray-500 hover:text-gray-800'}`}
-                  onClick={() => toggleHidden(item.id)}
-                  title={isHidden ? 'Показать' : 'Скрыть'}
+    const defaultMenuItems: MenuItem[] = useMemo(
+        () => buildMenuItemsFromCatalog(crmCatalog.items, CRM_MENU_GROUPS, CRM_MENU_DEFAULT_ORDER),
+        [crmCatalog]
+    );
+
+    const accountCatalog = useMemo(
+        () => ({
+            'account-main': { label: t('account_menu_group_main', { defaultValue: 'Основные разделы' }) },
+            'account-bonus-program': { label: t('account_menu_group_bonus_program', { defaultValue: 'Бонусная программа' }) },
+            'account-profile-tools': { label: t('account_menu_group_profile_tools', { defaultValue: 'Профиль и настройки' }) },
+            dashboard: { label: t('account:tabs.dashboard', { defaultValue: 'Главная' }), path: '/account/dashboard' },
+            appointments: { label: t('account:tabs.appointments', { defaultValue: 'Записи' }), path: '/account/appointments' },
+            gallery: { label: t('account:tabs.gallery', { defaultValue: 'Галерея' }), path: '/account/gallery' },
+            masters: { label: t('account:tabs.masters', { defaultValue: 'Мастера' }), path: '/account/masters' },
+            beauty: { label: t('account:tabs.beauty', { defaultValue: 'Уход и рекомендации' }), path: '/account/beauty' },
+            loyalty: { label: t('adminpanel/loyaltymanagement:title', { defaultValue: 'Бонусная программа' }), path: '/account/loyalty' },
+            achievements: { label: t('layouts/mainlayout:menu.challenges', { defaultValue: 'Челленджи' }), path: '/account/achievements' },
+            promocodes: { label: t('layouts/mainlayout:menu.promo_codes', { defaultValue: 'Промокоды' }), path: '/account/promocodes' },
+            specialoffers: { label: t('account:settings.special_offers', { defaultValue: 'Специальные предложения' }), path: '/account/special-offers' },
+            notifications: { label: t('account:tabs.notifications', { defaultValue: 'Уведомления' }), path: '/account/notifications' },
+            settings: { label: t('account:tabs.settings', { defaultValue: 'Настройки' }), path: '/account/settings' },
+        }),
+        [t]
+    );
+
+    const accountDefaultMenuItems: MenuItem[] = useMemo(
+        () => buildMenuItemsFromCatalog(accountCatalog, ACCOUNT_MENU_GROUPS, ACCOUNT_MENU_DEFAULT_ORDER),
+        [accountCatalog]
+    );
+
+    // Modal state
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editingItem, setEditingItem] = useState<{ item: MenuItem | null; parentId: string | null }>({ item: null, parentId: null });
+    const [editForm, setEditForm] = useState({ label: '', path: '', type: 'link' as 'group' | 'link' });
+
+    useEffect(() => {
+        hasLoadedSettingsRef.current = false;
+        loadMenuSettings();
+    }, [portalMode, defaultMenuItems, accountDefaultMenuItems]);
+
+    const applyHiddenItemsToMenu = (items: MenuItem[], hiddenItems: string[]) => {
+        const hiddenSet = new Set(hiddenItems);
+        const applyVisibility = (source: MenuItem[]): MenuItem[] => {
+            return source.map((item) => ({
+                ...item,
+                visible: !hiddenSet.has(item.id),
+                children: Array.isArray(item.children) ? applyVisibility(item.children) : undefined,
+            }));
+        };
+        return applyVisibility(items);
+    };
+
+    const getHiddenIds = (items: MenuItem[]): string[] => {
+        let ids: string[] = [];
+        items.forEach((item) => {
+            if (item.visible !== true) {
+                ids.push(item.id);
+            }
+            if (Array.isArray(item.children)) {
+                ids = [...ids, ...getHiddenIds(item.children)];
+            }
+        });
+        return ids;
+    };
+
+    const normalizeMenuOrderIds = (rawMenuOrder: unknown): string[] => {
+        if (!Array.isArray(rawMenuOrder)) {
+            return [];
+        }
+
+        const ids: string[] = [];
+        rawMenuOrder.forEach((entry) => {
+            if (typeof entry === 'string' && entry.length > 0) {
+                ids.push(entry);
+                return;
+            }
+
+            if (typeof entry === 'object' && entry !== null) {
+                const maybeId = (entry as { id?: unknown }).id;
+                if (typeof maybeId === 'string' && maybeId.length > 0) {
+                    ids.push(maybeId);
+                }
+            }
+        });
+
+        const uniqueIds: string[] = [];
+        ids.forEach((id) => {
+            if (uniqueIds.includes(id)) {
+                return;
+            }
+            uniqueIds.push(id);
+        });
+
+        return uniqueIds;
+    };
+
+    const cloneMenuItems = (items: MenuItem[]): MenuItem[] => {
+        return items.map((item) => ({
+            ...item,
+            children: Array.isArray(item.children) ? cloneMenuItems(item.children) : undefined,
+        }));
+    };
+
+    const buildCrmMenuFromOrder = (rawMenuOrder: unknown): MenuItem[] => {
+        const orderedIds = normalizeMenuOrderIds(rawMenuOrder);
+        const defaultById = new Map<string, MenuItem>();
+        defaultMenuItems.forEach((item) => {
+            defaultById.set(item.id, item);
+        });
+
+        const orderedItems: MenuItem[] = [];
+        orderedIds.forEach((id) => {
+            const item = defaultById.get(id);
+            if (item === undefined) {
+                return;
+            }
+            orderedItems.push({
+                ...item,
+                children: Array.isArray(item.children) ? cloneMenuItems(item.children) : undefined,
+            });
+            defaultById.delete(id);
+        });
+
+        defaultMenuItems.forEach((item) => {
+            if (defaultById.has(item.id) === false) {
+                return;
+            }
+            orderedItems.push({
+                ...item,
+                children: Array.isArray(item.children) ? cloneMenuItems(item.children) : undefined,
+            });
+        });
+
+        return orderedItems;
+    };
+
+    const buildSaveSnapshot = (
+        items: MenuItem[],
+        nextApplyMode: 'all' | 'selected',
+        nextTargetClientIds: string[]
+    ): string => {
+        const hiddenItems = getHiddenIds(items).sort();
+        if (portalMode === 'account') {
+            const normalizedTargets = [...nextTargetClientIds].sort();
+            return JSON.stringify({
+                portal: portalMode,
+                hidden_items: hiddenItems,
+                apply_mode: nextApplyMode,
+                target_client_ids: normalizedTargets,
+            });
+        }
+
+        return JSON.stringify({
+            portal: portalMode,
+            hidden_items: hiddenItems,
+            menu_order: items.map((item) => item.id),
+        });
+    };
+
+    const persistMenuSettings = async (
+        itemsToSave: MenuItem[],
+        nextApplyMode: 'all' | 'selected',
+        nextTargetClientIds: string[],
+        showToast: boolean
+    ) => {
+        const hidden_items = getHiddenIds(itemsToSave);
+        if (portalMode === 'account') {
+            localStorage.setItem('account_menu_hidden_items_preview', JSON.stringify(hidden_items));
+            // Account menu settings are not yet supported via API
+            // Using local storage for now
+        } else {
+            await api.saveMenuSettings({
+                menu_order: itemsToSave.map((item) => item.id),
+                hidden_items,
+            });
+            localStorage.setItem('crm_menu_settings_updated_at', String(Date.now()));
+            window.dispatchEvent(new Event('crm-menu-settings-updated'));
+        }
+
+        lastSavedSnapshotRef.current = buildSaveSnapshot(itemsToSave, nextApplyMode, nextTargetClientIds);
+        setAutoSaveStatus('saved');
+        if (showToast) {
+            toast.success(t('settings_saved'));
+        }
+    };
+
+    const loadClients = async () => {
+        try {
+            const response = await api.getClients('all');
+            const allClients = Array.isArray(response?.clients) ? response.clients : [];
+            setClients(
+                allClients.map((client: any) => ({
+                    id: String(client.instagram_id ?? client.id ?? ''),
+                    label: String(client.display_name ?? client.name ?? client.username ?? client.instagram_id ?? ''),
+                })).filter((client: { id: string; label: string }) => client.id.length > 0)
+            );
+        } catch (error) {
+            setClients([]);
+        }
+    };
+
+    const loadMenuSettings = async () => {
+        try {
+            setLoading(true);
+            setAutoSaveStatus('idle');
+
+            if (portalMode === 'account') {
+                // Account menu settings loading from API not yet supported
+                // Load from localStorage if available
+                await loadClients();
+
+                const hiddenItemsJson = localStorage.getItem('account_menu_hidden_items_preview');
+                const hiddenItems = hiddenItemsJson ? JSON.parse(hiddenItemsJson) : [];
+                const loadedMenuItems = applyHiddenItemsToMenu(accountDefaultMenuItems, hiddenItems);
+
+                setApplyMode('all');
+                setTargetClientIds([]);
+                setMenuItems(loadedMenuItems);
+                lastSavedSnapshotRef.current = buildSaveSnapshot(loadedMenuItems, 'all', []);
+                hasLoadedSettingsRef.current = true;
+                setAutoSaveStatus('saved');
+                return;
+            }
+
+            const settings = await api.getMenuSettings();
+            const hiddenItems = Array.isArray(settings.hidden_items) ? settings.hidden_items : [];
+            const orderedMenuItems = buildCrmMenuFromOrder(settings.menu_order);
+            const loadedMenuItems = applyHiddenItemsToMenu(orderedMenuItems, hiddenItems);
+
+            setMenuItems(loadedMenuItems);
+            lastSavedSnapshotRef.current = buildSaveSnapshot(loadedMenuItems, applyMode, targetClientIds);
+            hasLoadedSettingsRef.current = true;
+            setAutoSaveStatus('saved');
+        } catch (error) {
+            if (portalMode === 'account') {
+                const fallbackMenuItems = accountDefaultMenuItems;
+                setMenuItems(fallbackMenuItems);
+                setApplyMode('all');
+                setTargetClientIds([]);
+                lastSavedSnapshotRef.current = buildSaveSnapshot(fallbackMenuItems, 'all', []);
+            } else {
+                const fallbackMenuItems = defaultMenuItems;
+                setMenuItems(fallbackMenuItems);
+                lastSavedSnapshotRef.current = buildSaveSnapshot(fallbackMenuItems, applyMode, targetClientIds);
+            }
+            hasLoadedSettingsRef.current = true;
+            setAutoSaveStatus('error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (loading || !hasLoadedSettingsRef.current) {
+            return;
+        }
+
+        const nextSnapshot = buildSaveSnapshot(menuItems, applyMode, targetClientIds);
+        if (nextSnapshot === lastSavedSnapshotRef.current) {
+            setAutoSaveStatus((previousStatus) => previousStatus === 'saving' ? 'saved' : previousStatus);
+            return;
+        }
+
+        if (autosaveTimerRef.current !== null) {
+            window.clearTimeout(autosaveTimerRef.current);
+        }
+
+        setAutoSaveStatus('saving');
+        autosaveTimerRef.current = window.setTimeout(() => {
+            void persistMenuSettings(menuItems, applyMode, targetClientIds, false).catch(() => {
+                setAutoSaveStatus('error');
+            });
+        }, 500);
+
+        return () => {
+            if (autosaveTimerRef.current !== null) {
+                window.clearTimeout(autosaveTimerRef.current);
+                autosaveTimerRef.current = null;
+            }
+        };
+    }, [applyMode, loading, menuItems, targetClientIds]);
+
+    useEffect(() => {
+        return () => {
+            if (autosaveTimerRef.current !== null) {
+                window.clearTimeout(autosaveTimerRef.current);
+                autosaveTimerRef.current = null;
+            }
+        };
+    }, []);
+
+    const handleReset = async () => {
+        if (!confirm(t('reset_confirm'))) return;
+        if (portalMode === 'account') {
+            setMenuItems(accountDefaultMenuItems);
+            setApplyMode('all');
+            setTargetClientIds([]);
+            return;
+        }
+        setMenuItems(defaultMenuItems);
+    };
+
+    const toggleVisibility = (id: string) => {
+        const applyVisibilityRecursive = (items: MenuItem[], nextVisible: boolean): MenuItem[] => {
+            return items.map((entry) => ({
+                ...entry,
+                visible: nextVisible,
+                children: Array.isArray(entry.children)
+                    ? applyVisibilityRecursive(entry.children, nextVisible)
+                    : undefined,
+            }));
+        };
+
+        const updateVisibility = (items: MenuItem[]): MenuItem[] => {
+            return items.map(item => {
+                if (item.id === id) {
+                    const nextVisible = !item.visible;
+                    if (item.type === 'group' && Array.isArray(item.children)) {
+                        return {
+                            ...item,
+                            visible: nextVisible,
+                            children: applyVisibilityRecursive(item.children, nextVisible),
+                        };
+                    }
+
+                    return { ...item, visible: nextVisible };
+                }
+                if (item.children) return { ...item, children: updateVisibility(item.children) };
+                return item;
+            });
+        };
+        const nextMenuItems = updateVisibility(menuItems);
+        setMenuItems(nextMenuItems);
+    };
+
+    const toggleGroup = (id: string) => {
+        setMenuItems(prev => prev.map(item => item.id === id ? { ...item, isOpen: !item.isOpen } : item));
+    };
+
+    // --- CRUD ---
+
+    const addItemFromLibrary = (libItem: Partial<MenuItem>, parentId: string | null = null) => {
+        const newItem: MenuItem = {
+            id: libItem.id!,
+            label: libItem.label!,
+            path: libItem.path,
+            type: libItem.type as any,
+            visible: true,
+            children: libItem.type === 'group' ? [] : undefined
+        };
+
+        if (parentId) {
+            setMenuItems(prev => addItemToGroupRecursive(prev, parentId, newItem));
+        } else {
+            setMenuItems(prev => [...prev.filter(i => i.id !== newItem.id), newItem]);
+        }
+    };
+
+    const openAddModal = (parentId: string | null = null, type: 'group' | 'link' = 'link') => {
+        setEditingItem({ item: null, parentId });
+        setEditForm({ label: '', path: '', type });
+        setShowEditModal(true);
+    };
+
+    const openEditModal = (item: MenuItem, parentId: string | null = null) => {
+        setEditingItem({ item, parentId });
+        setEditForm({ label: item.label, path: item.path || '', type: item.type });
+        setShowEditModal(true);
+    };
+
+    const handleSaveItem = () => {
+        if (!editForm.label) return toast.error(t('common:fill_fields'));
+        const newItem: MenuItem = {
+            id: editingItem.item?.id || `custom_${Date.now()}`,
+            label: editForm.label,
+            path: editForm.type === 'link' ? editForm.path : undefined,
+            type: editForm.type,
+            visible: editingItem.item?.visible ?? true,
+            children: editingItem.item?.children || (editForm.type === 'group' ? [] : undefined),
+        };
+        if (editingItem.item) setMenuItems(prev => updateItemRecursive(prev, newItem.id, newItem));
+        else {
+            if (editingItem.parentId) setMenuItems(prev => addItemToGroupRecursive(prev, editingItem.parentId!, newItem));
+            else setMenuItems(prev => [...prev, newItem]);
+        }
+        setShowEditModal(false);
+    };
+
+    const updateItemRecursive = (items: MenuItem[], id: string, updated: MenuItem): MenuItem[] => {
+        return items.map(item => {
+            if (item.id === id) return updated;
+            if (item.children) return { ...item, children: updateItemRecursive(item.children, id, updated) };
+            return item;
+        });
+    };
+
+    const addItemToGroupRecursive = (items: MenuItem[], groupId: string, newItem: MenuItem): MenuItem[] => {
+        return items.map(item => {
+            if (item.id === groupId) return { ...item, children: [...(item.children?.filter(c => c.id !== newItem.id) || []), newItem], isOpen: true };
+            if (item.children) return { ...item, children: addItemToGroupRecursive(item.children, groupId, newItem) };
+            return item;
+        });
+    };
+
+    const handleDeleteItem = (id: string) => {
+        if (!confirm(t('delete_confirm'))) return;
+        const deleteRecursive = (items: MenuItem[]): MenuItem[] => {
+            return items.filter(item => item.id !== id).map(item => ({ ...item, children: item.children ? deleteRecursive(item.children) : undefined }));
+        };
+        setMenuItems(deleteRecursive(menuItems));
+    };
+
+    const handleDragStart = (index: number, parentId: string | null) => setDraggedItem({ index, parentId });
+    const handleDragOver = (e: React.DragEvent, index: number, parentId: string | null) => {
+        e.preventDefault();
+        if (!draggedItem) return;
+        if (draggedItem.index === index && draggedItem.parentId === parentId) return;
+
+        const newItems = JSON.parse(JSON.stringify(menuItems)) as MenuItem[];
+
+        let sourceList: MenuItem[] | undefined;
+        if (draggedItem.parentId === null) sourceList = newItems;
+        else sourceList = findGroupById(newItems, draggedItem.parentId!)?.children;
+
+        let targetList: MenuItem[] | undefined;
+        if (parentId === null) targetList = newItems;
+        else targetList = findGroupById(newItems, parentId!)?.children;
+
+        if (sourceList && targetList) {
+            const item = sourceList[draggedItem.index];
+            if (!item) return;
+
+            // Prevent dragging a group into itself or its children
+            if (item.type === 'group' && parentId !== null) {
+                if (parentId === item.id || isChildOf(item, parentId)) return;
+            }
+
+            sourceList.splice(draggedItem.index, 1);
+            targetList.splice(index, 0, item);
+
+            setMenuItems(newItems);
+            setDraggedItem({ index, parentId });
+        }
+    };
+
+    const isChildOf = (parent: MenuItem, childId: string): boolean => {
+        if (!parent.children) return false;
+        return parent.children.some(c => c.id === childId || isChildOf(c, childId));
+    };
+    const findGroupById = (items: MenuItem[], id: string): MenuItem | null => {
+        for (const item of items) {
+            if (item.id === id) return item;
+            if (item.children) { const found = findGroupById(item.children, id); if (found) return found; }
+        }
+        return null;
+    };
+
+    const renderMenuItem = (item: MenuItem, index: number, parentId: string | null = null, depth: number = 0) => {
+        const isGroup = item.type === 'group';
+        const canEditStructure = portalMode === 'crm';
+        return (
+            <div key={item.id} className="space-y-1">
+                <div
+                    draggable={canEditStructure}
+                    onDragStart={() => {
+                        if (canEditStructure) {
+                            handleDragStart(index, parentId);
+                        }
+                    }}
+                    onDragOver={(e) => {
+                        if (canEditStructure) {
+                            handleDragOver(e, index, parentId);
+                        }
+                    }}
+                    className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all group ${depth > 0 ? 'ml-8' : ''} ${draggedItem?.index === index && draggedItem?.parentId === parentId ? 'border-blue-500 bg-blue-50 shadow-lg' :
+                        item.visible ? 'border-gray-50 bg-white hover:border-blue-100 shadow-sm' : 'border-gray-50 bg-gray-50/50 opacity-60'
+                        }`}
                 >
-                  {isHidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-
-              {/* Sub-items */}
-              {hasChildren && isExpanded && (
-                <div className="ml-8 mt-1 space-y-1">
-                  {item.children!.map((child) => {
-                    const isChildHidden = hidden.has(child.id);
-                    const ChildIcon = child.icon;
-                    return (
-                      <div
-                        key={child.id}
-                        className={[
-                          'flex items-center gap-3 p-2.5 rounded-lg border bg-gray-50 transition-all',
-                          'border-gray-100 hover:border-gray-200',
-                          isChildHidden ? 'opacity-40' : '',
-                        ].join(' ')}
-                      >
-                        <ChildIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                        <span className={`flex-1 text-sm ${isChildHidden ? 'line-through text-gray-400' : 'text-gray-700'}`}>
-                          {child.label}
-                        </span>
-                        <button
-                          type="button"
-                          className={`p-1 transition-colors ${isChildHidden ? 'text-gray-300 hover:text-gray-500' : 'text-gray-400 hover:text-gray-700'}`}
-                          onClick={() => toggleHidden(child.id)}
-                          title={isChildHidden ? 'Показать' : 'Скрыть'}
-                        >
-                          {isChildHidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    );
-                  })}
+                    <div className={`flex items-center gap-2 flex-1 ${canEditStructure ? 'cursor-move' : ''}`}>
+                        {canEditStructure ? <GripVertical className="w-5 h-5 text-gray-300" /> : <div className="w-5" />}
+                        {isGroup ? (
+                            <button onClick={() => toggleGroup(item.id)} className="p-1 hover:bg-gray-100 rounded">
+                                {item.isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                            </button>
+                        ) : <div className="w-6" />}
+                        <div className={`p-2 rounded-lg ${isGroup ? 'bg-pink-50' : 'bg-gray-50'}`}>
+                            {isGroup ? <Folder className="w-4 h-4 text-pink-600" /> : <LinkIcon className="w-4 h-4 text-gray-600" />}
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-sm font-bold text-gray-900">{item.label}</span>
+                            {!isGroup && item.path && <span className="text-[10px] text-gray-400 font-mono italic">{item.path}</span>}
+                        </div>
+                    </div>
+                    {canEditStructure && (
+                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {isGroup && (
+                            <button onClick={() => openAddModal(item.id, 'link')} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
+                                <Plus className="w-4 h-4" />
+                                <span className="text-xs font-bold">{t('sub_item')}</span>
+                            </button>
+                            )}
+                            <button onClick={() => openEditModal(item, parentId)} className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors">
+                                <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button onClick={() => handleDeleteItem(item.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        </div>
+                    )}
+                    <button onClick={() => toggleVisibility(item.id)} className={`p-2 rounded-lg ${item.visible ? 'text-green-600 bg-green-50' : 'text-gray-400 bg-gray-100'}`}>
+                        {item.visible ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                    </button>
                 </div>
-              )}
+                {isGroup && item.isOpen && item.children && (
+                    <div className="space-y-1">{item.children.map((child, idx) => renderMenuItem(child, idx, item.id, depth + 1))}</div>
+                )}
             </div>
-          );
-        })}
-      </div>
+        );
+    };
 
-      {/* Actions */}
-      <div className="flex flex-wrap gap-3 items-center justify-between pt-4 border-t border-gray-200">
-        <Button
-          variant="outline"
-          onClick={handleReset}
-          disabled={saving}
-          className="gap-2"
-        >
-          <RotateCcw className="w-4 h-4" />
-          Сбросить
-        </Button>
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>;
 
-        <div className="flex gap-2">
-          {permissions.roleLevel >= 80 && (
-            <Button
-              variant="outline"
-              onClick={() => handleSave(true)}
-              disabled={saving}
-              className="gap-2"
-            >
-              <Save className="w-4 h-4" />
-              Для всей роли
-            </Button>
-          )}
-          <Button
-            onClick={() => handleSave(false)}
-            disabled={saving}
-            className="gap-2"
-          >
-            <Save className="w-4 h-4" />
-            Сохранить
-          </Button>
+    const autosaveStatusLabel = autoSaveStatus === 'saving'
+        ? t('autosave_saving', { defaultValue: 'Автосохранение...' })
+        : autoSaveStatus === 'error'
+            ? t('autosave_error', { defaultValue: 'Ошибка автосохранения' })
+            : t('autosave_saved', { defaultValue: 'Сохраняется автоматически' });
+
+    return (
+        <div className="p-8 max-w-[1400px] mx-auto pb-32">
+            <div className="flex items-center justify-between mb-10">
+                <div className="flex items-center gap-5">
+                    <button onClick={() => navigate(`${rolePrefix}/settings`)} className="p-3 bg-white hover:shadow-xl rounded-2xl border border-gray-100 transition-all"><ArrowLeft className="w-6 h-6" /></button>
+                    <div>
+                        <h1 className="text-4xl font-black text-gray-900 tracking-tighter">
+                            {portalMode === 'account'
+                                ? t('account_menu_title', { defaultValue: 'Настройка меню клиента' })
+                                : t('title')}
+                        </h1>
+                        <p className="text-gray-500 mt-1 font-medium italic text-lg opacity-80">
+                            {portalMode === 'account'
+                                ? t('account_menu_subtitle', { defaultValue: 'Скрывайте разделы в личном кабинете для всех клиентов или выбранных профилей' })
+                                : t('subtitle')}
+                        </p>
+                    </div>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                    <div className={`text-sm font-medium ${autoSaveStatus === 'error' ? 'text-red-500' : 'text-gray-500'}`}>
+                        {autosaveStatusLabel}
+                    </div>
+                    <div className="flex gap-4">
+                        <Button variant="outline" onClick={handleReset} className="rounded-2xl h-12 px-6 border-2 font-bold hover:bg-gray-50 border-gray-100"><RotateCcw className="w-4 h-4 mr-2" />{t('reset')}</Button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex gap-8 items-start">
+                <div className="flex-1 space-y-4">
+                    <div className="bg-white rounded-[32px] shadow-2xl shadow-blue-500/5 p-8 border border-gray-100 relative overflow-hidden">
+                        <div className="flex items-center justify-between mb-8">
+                            <div>
+                                <h2 className="text-2xl font-black text-gray-900 tracking-tight">
+                                    {portalMode === 'account'
+                                        ? t('account_visible_items', { defaultValue: 'Пункты меню клиента' })
+                                        : t('working_structure')}
+                                </h2>
+                                <p className="text-sm text-gray-400 font-medium">
+                                    {portalMode === 'account'
+                                        ? t('account_hide_hint', { defaultValue: 'Отключенные пункты исчезнут в личном кабинете' })
+                                        : t('drag_hint')}
+                                </p>
+                            </div>
+                            {portalMode === 'crm' && (
+                                <div className="flex gap-2">
+                                    <Button onClick={() => openAddModal(null, 'group')} className="bg-pink-600 hover:bg-pink-700 text-white rounded-xl h-10 px-4 font-bold shadow-lg shadow-pink-200"><Plus className="w-4 h-4 mr-2" /> {t('add_group')}</Button>
+                                    <Button onClick={() => openAddModal(null, 'link')} variant="outline" className="rounded-xl h-10 px-4 font-bold border-gray-200"><Plus className="w-4 h-4 mr-2" /> {t('custom_link')}</Button>
+                                </div>
+                            )}
+                        </div>
+
+                        {portalMode === 'account' && (
+                            <div className="mb-6 rounded-2xl border border-gray-200 bg-gray-50 p-4 space-y-4">
+                                <div className="text-sm font-semibold text-gray-700">
+                                    {t('account_apply_mode_title', { defaultValue: 'Кому применить скрытые пункты' })}
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    <button
+                                        onClick={() => setApplyMode('all')}
+                                        className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${applyMode === 'all' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                                    >
+                                        {t('account_apply_mode_all', { defaultValue: 'Всем клиентам' })}
+                                    </button>
+                                    <button
+                                        onClick={() => setApplyMode('selected')}
+                                        className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${applyMode === 'selected' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+                                    >
+                                        {t('account_apply_mode_selected', { defaultValue: 'Только выбранным' })}
+                                    </button>
+                                </div>
+
+                                {applyMode === 'selected' && (
+                                    <div className="bg-white border border-gray-200 rounded-xl p-3 max-h-52 overflow-y-auto">
+                                        <div className="text-xs text-gray-500 mb-2">
+                                            {t('account_select_clients', { defaultValue: 'Выберите клиентов:' })}
+                                        </div>
+                                        <div className="space-y-2">
+                                            {clients.map((client) => {
+                                                const checked = targetClientIds.includes(client.id);
+                                                return (
+                                                    <label key={client.id} className="flex items-center gap-2 text-sm text-gray-700">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={checked}
+                                                            onChange={(event) => {
+                                                                setTargetClientIds((prev) => {
+                                                                    if (event.target.checked) {
+                                                                        return [...prev, client.id];
+                                                                    }
+                                                                    return prev.filter((value) => value !== client.id);
+                                                                });
+                                                            }}
+                                                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                        />
+                                                        <span>{client.label}</span>
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        <div className="space-y-3">{menuItems.map((item, index) => renderMenuItem(item, index))}</div>
+                    </div>
+                </div>
+
+                {portalMode === 'crm' && (
+                    <div className="w-[350px] shrink-0 sticky top-8">
+                        <div className="bg-gray-900 rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-16 translate-x-16"></div>
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-white/10 rounded-xl"><LayoutGrid className="w-6 h-6" /></div>
+                            <h3 className="text-xl font-black tracking-tight">{t('library_title')}</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-6 font-medium leading-relaxed">{t('library_hint')}</p>
+                        <div className="space-y-2 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                            {SYSTEM_LIBRARY.map(lib => {
+                                const exists = JSON.stringify(menuItems).includes(lib.id!);
+                                return (
+                                    <div key={lib.id} className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${exists ? 'border-white/5 opacity-40 bg-white/5' : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'}`}>
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-bold">{lib.label}</span>
+                                            <span className="text-[10px] text-gray-500 font-mono tracking-tighter">{lib.path}</span>
+                                        </div>
+                                        {!exists && (
+                                            <button onClick={() => addItemFromLibrary(lib)} className="p-2 bg-blue-500 hover:bg-blue-400 rounded-xl transition-all shadow-lg shadow-blue-500/20"><Plus className="w-4 h-4 text-white" /></button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    </div>
+                )}
+            </div>
+
+            {showEditModal && portalMode === 'crm' && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[200] flex items-center justify-center p-4 animate-in fade-in transition-all">
+                    <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 p-10 border border-gray-100">
+                        <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-3xl font-black text-gray-900 tracking-tighter">{editingItem.item ? t('edit') : t('confirm')}</h3>
+                            <button onClick={() => setShowEditModal(false)} className="p-3 bg-gray-50 hover:bg-gray-100 rounded-full transition-all"><X className="w-6 h-6 text-gray-400" /></button>
+                        </div>
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest mb-3">{t('item_type')}</label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button onClick={() => setEditForm(p => ({ ...p, type: 'link' }))} className={`p-5 rounded-3xl border-3 transition-all flex flex-col items-center gap-3 ${editForm.type === 'link' ? 'border-blue-600 bg-blue-50/50 shadow-inner' : 'border-gray-50 bg-gray-50/50 opacity-60'}`}><LinkIcon className={`w-8 h-8 ${editForm.type === 'link' ? 'text-blue-600' : 'text-gray-400'}`} /><span className="text-sm font-black">{t('link')}</span></button>
+                                    <button onClick={() => setEditForm(p => ({ ...p, type: 'group' }))} className={`p-5 rounded-3xl border-3 transition-all flex flex-col items-center gap-3 ${editForm.type === 'group' ? 'border-blue-600 bg-blue-50/50 shadow-inner' : 'border-gray-50 bg-gray-50/50 opacity-60'}`}><Folder className={`w-8 h-8 ${editForm.type === 'group' ? 'text-blue-600' : 'text-gray-400'}`} /><span className="text-sm font-black">{t('group')}</span></button>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-black text-gray-400 uppercase tracking-widest mb-3">{t('label')}</label>
+                                <Input value={editForm.label} onChange={e => setEditForm(p => ({ ...p, label: e.target.value }))} className="rounded-2xl h-14 text-lg border-2 border-gray-100 font-bold focus:border-blue-500 transition-all px-6" />
+                            </div>
+                            {editForm.type === 'link' && (
+                                <div>
+                                    <label className="block text-sm font-black text-gray-400 uppercase tracking-widest mb-3">{t('path')}</label>
+                                    <Input value={editForm.path} onChange={e => setEditForm(p => ({ ...p, path: e.target.value }))} placeholder="/crm/..." className="rounded-2xl h-14 text-sm font-mono border-2 border-gray-100 focus:border-blue-500 transition-all px-6" />
+                                </div>
+                            )}
+                        </div>
+                        <div className="mt-10 flex gap-4"><Button variant="outline" onClick={() => setShowEditModal(false)} className="flex-1 rounded-2xl h-14 font-bold border-2 border-gray-100">{t('cancel')}</Button><Button onClick={handleSaveItem} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-14 font-black text-lg shadow-xl">{t('confirm')}</Button></div>
+                    </div>
+                </div>
+            )}
         </div>
-      </div>
-    </div>
-  );
+    );
 }

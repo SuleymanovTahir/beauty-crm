@@ -50,6 +50,7 @@ const AuditLog: React.FC = () => {
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isClearing, setIsClearing] = useState(false);
+    const [apiAvailable, setApiAvailable] = useState(true);
 
     // Get current user role
     const userJson = localStorage.getItem('user');
@@ -57,6 +58,13 @@ const AuditLog: React.FC = () => {
     const isDirector = currentUser?.role === 'director';
 
     useEffect(() => {
+        // Check if API methods exist
+        const apiAny = api as any;
+        if (!apiAny.getAuditLog || !apiAny.getAuditSummary) {
+            setApiAvailable(false);
+            setLoading(false);
+            return;
+        }
         fetchData();
         fetchSummary();
         setSelectedIds([]);
@@ -64,13 +72,21 @@ const AuditLog: React.FC = () => {
 
     const fetchData = async () => {
         try {
+            const apiAny = api as any;
+            if (!apiAny.getAuditLog) {
+                setApiAvailable(false);
+                return;
+            }
             setLoading(true);
-            const data = await api.getAuditLog({
+            const data = await apiAny.getAuditLog({
                 action: filterAction === 'all' ? undefined : filterAction,
                 limit: 100
             });
             setHistory(data.history);
-        } catch (error) {
+        } catch (error: any) {
+            if (error?.status === 404 || error?.message?.includes('404')) {
+                setApiAvailable(false);
+            }
             toast.error(t('toast.load_error'));
         } finally {
             setLoading(false);
@@ -79,9 +95,18 @@ const AuditLog: React.FC = () => {
 
     const fetchSummary = async () => {
         try {
-            const data = await api.getAuditSummary();
+            const apiAny = api as any;
+            if (!apiAny.getAuditSummary) {
+                setApiAvailable(false);
+                return;
+            }
+            const data = await apiAny.getAuditSummary();
             setSummary(data.summary);
-        } catch (error) { }
+        } catch (error: any) {
+            if (error?.status === 404 || error?.message?.includes('404')) {
+                setApiAvailable(false);
+            }
+        }
     };
 
     const handleClearLogs = async () => {
@@ -89,7 +114,8 @@ const AuditLog: React.FC = () => {
 
         try {
             setIsClearing(true);
-            await api.clearAuditLog();
+            const apiAny = api as any;
+            await apiAny.clearAuditLog();
             toast.success(t('toast.clear_success'));
             setHistory([]);
             setSummary(null);
@@ -105,7 +131,8 @@ const AuditLog: React.FC = () => {
     const handleDeleteEntry = async (id: number) => {
         if (!window.confirm(t('delete_confirm'))) return;
         try {
-            await api.deleteAuditLog(id);
+            const apiAny = api as any;
+            await apiAny.deleteAuditLog(id);
             toast.success(t('toast.delete_success'));
             setHistory(history.filter(h => h.id !== id));
             setSelectedIds(selectedIds.filter(sid => sid !== id));
@@ -118,7 +145,8 @@ const AuditLog: React.FC = () => {
         if (!window.confirm(t('delete_batch_confirm', { count: selectedIds.length }))) return;
         try {
             setIsDeleting(true);
-            await api.deleteAuditLogsBatch(selectedIds);
+            const apiAny = api as any;
+            await apiAny.deleteAuditLogsBatch(selectedIds);
             toast.success(t('toast.delete_success'));
             setHistory(history.filter(h => !selectedIds.includes(h.id)));
             setSelectedIds([]);
@@ -161,6 +189,20 @@ const AuditLog: React.FC = () => {
         const searchStr = `${item.username} ${item.entity_type} ${item.action}`.toLowerCase();
         return searchStr.includes(searchTerm.toLowerCase());
     });
+
+    if (!apiAvailable) {
+        return (
+            <div className="p-6 space-y-6">
+                <div className="flex items-center justify-center min-h-[400px]">
+                    <div className="text-center space-y-4">
+                        <ShieldCheck className="w-16 h-16 text-gray-300 mx-auto" />
+                        <h2 className="text-2xl font-bold text-gray-900">{t('coming_soon_title', 'Coming Soon')}</h2>
+                        <p className="text-gray-600">{t('coming_soon_desc', 'The audit log module is coming soon.')}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="p-6 space-y-6">

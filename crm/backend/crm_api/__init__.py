@@ -21,6 +21,7 @@ from crm_api.diagnostics import router as diagnostics_router
 from .templates import router as templates_router
 from .notes import router as notes_router
 from .platform_admin import router as platform_admin_router
+from .trash import router as trash_router
 
 # Главный роутер API
 router = APIRouter(tags=["API"])
@@ -45,5 +46,6 @@ router.include_router(diagnostics_router)
 router.include_router(salary_router)
 router.include_router(payroll_router)
 router.include_router(platform_admin_router)
+router.include_router(trash_router)
 
 __all__ = ["router"]

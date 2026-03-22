@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { getDynamicAvatar } from '../../utils/avatarUtils';
 import LanguageSwitcher from '../LanguageSwitcher';
@@ -516,24 +516,40 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
         return activeGroup?.id ?? null;
     }, [menuItems, location.pathname]);
-
     const mainTabs = useMemo(() => {
-        if (user?.role === 'super_admin') {
-            return [
-                { id: 'platform', icon: Briefcase, label: t('menu.platform_control', { defaultValue: 'Платформа' }), path: `${rolePrefix}/platform` },
-                { id: 'team', icon: Users, label: t('menu.team', { defaultValue: 'Команда' }), path: `${rolePrefix}/team` },
-                { id: 'chat', icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: chatUnreadCount + internalChatUnreadCount },
-                { id: 'settings', icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings` },
-                { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
-            ];
-        }
-        return [
+        const tabs = user?.role === 'super_admin' ? [
+            { id: 'platform', icon: Briefcase, label: t('menu.platform_control', { defaultValue: 'Платформа' }), path: `${rolePrefix}/platform` },
+            { id: 'team', icon: Users, label: t('menu.team', { defaultValue: 'Команда' }), path: `${rolePrefix}/team` },
+            { id: 'chat', icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: chatUnreadCount + internalChatUnreadCount },
+            { id: 'settings', icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings` },
+            { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
+        ] : [
             { id: 'dashboard', icon: LayoutDashboard, label: t('menu.dashboard'), path: dashboardPath },
             { id: 'funnel', icon: Filter, label: t('menu.funnel'), path: `${rolePrefix}/funnel` },
             { id: 'bookings', icon: Calendar, label: t('menu.bookings'), path: `${rolePrefix}/bookings` },
             { id: 'chat', icon: MessageSquare, label: t('menu.chat'), path: `${rolePrefix}/chat`, badge: chatUnreadCount + internalChatUnreadCount },
             { id: 'more', icon: MoreHorizontal, label: t('menu.more', 'Ещё'), badge: notificationsUnreadCount },
         ];
+
+        // Insert Logo as a centerpiece for Director/Admin (replaces or shifts others)
+        // If not super_admin, we put it in the middle (position 2)
+        if (user?.role !== 'super_admin' && tabs.length >= 3) {
+            const logoTab: any = {
+                id: 'logo-home',
+                isLogo: true,
+                icon: () => (
+                    <div className="relative flex items-center justify-center w-7 h-7" style={{ filter: 'var(--logo-icon-filter, none)' }}>
+                        <img src="/logo/logo-icon-pink.svg" className="w-full h-full object-contain" alt="" />
+                    </div>
+                ),
+                label: 'CRM',
+                path: dashboardPath,
+                badge: 0
+            };
+            tabs.splice(2, 0, logoTab);
+        }
+
+        return tabs;
     }, [t, dashboardPath, rolePrefix, chatUnreadCount, internalChatUnreadCount, notificationsUnreadCount, user?.role]);
 
     const chatSubItems = useMemo(() => [
@@ -1019,19 +1035,6 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
 
             {/* Mobile Bottom Navigation - Visible ONLY on small screens */}
             <div className="mobile-bottom-nav min-[1100px]:hidden flex items-center shadow-lg border-t border-gray-100">
-                <button
-                    onClick={() => navigate(dashboardPath)}
-                    className="flex shrink-0 items-center justify-center w-[50px] relative ml-1"
-                >
-                    <div className="relative inline-flex items-center justify-center w-8 h-8 rounded-lg outline outline-1 outline-gray-200/50 shadow-sm bg-white overflow-hidden" style={{ filter: 'var(--logo-filter, none)' }}>
-                        <img
-                            src={`${logoBasePath}/logo-icon-pink.svg`}
-                            alt="Logo"
-                            className="w-full h-full object-cover"
-                            style={{ filter: 'var(--logo-icon-filter, none)' }}
-                        />
-                    </div>
-                </button>
                 {mainTabs.map((tab) => (
                     <button
                         key={tab.id}
@@ -1047,8 +1050,12 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                             tab.id === 'chat' && showChatMenu && "active"
                         )}
                     >
-                        <div className="mobile-nav-icon-container">
-                            <tab.icon size={24} />
+                        <div className={cn("mobile-nav-icon-container", (tab as any).isLogo && "logo-container-pulse")}>
+                            {typeof (tab as any).icon === 'function' ? (
+                                (tab as any).icon()
+                            ) : (
+                                React.createElement((tab as any).icon, { size: 24 })
+                            )}
                             {(tab as any).badge !== undefined && (tab as any).badge > 0 && (
                                 <span className={cn(
                                     "mobile-nav-badge",

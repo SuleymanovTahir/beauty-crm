@@ -145,7 +145,7 @@ export default function NotificationsPage() {
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                            <Bell className="w-8 h-8 text-blue-600" />
+                            <Bell className="w-8 h-8 settings-text-primary" />
                             Уведомления
                         </h1>
                         <p className="text-gray-600 mt-2">

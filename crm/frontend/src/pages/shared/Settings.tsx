@@ -2139,7 +2139,7 @@ export default function AdminSettings() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                      <div className="w-full">
                         <div className="rounded-lg border border-gray-200 p-4">
                           <div className="settings-module-header-row">
                             <h4 className="font-medium text-gray-900">{t('settings:manage_crm_parameters')}</h4>
@@ -2147,28 +2147,27 @@ export default function AdminSettings() {
                               {crmModuleDifferenceCount}/{crmModuleCatalog.length}
                             </span>
                           </div>
-                        <div className="space-y-3">
-                          {crmModuleCatalog.map((moduleKey) => (
-                            <div
-                              key={`crm-${moduleKey}`}
-                              className={`settings-module-row ${businessModules.crm[moduleKey] === defaultBusinessModules.crm[moduleKey] ? 'settings-module-row-default' : 'settings-module-row-changed'}`}
-                            >
-                              <span className="text-sm text-gray-700">{resolveModuleLabel(t, moduleKey)}</span>
-                              <div className="settings-module-controls">
-                                <span className="settings-module-default-chip">
-                                  {defaultBusinessModules.crm[moduleKey] === true ? t('common:on') : t('common:off')}
-                                </span>
-                                <Switch
-                                  checked={businessModules.crm[moduleKey] === true}
-                                  onCheckedChange={(enabled) => handleBusinessModuleToggle(moduleKey, enabled)}
-                                  disabled={!canEditBusinessProfile}
-                                />
+                          <div className="settings-module-grid">
+                            {crmModuleCatalog.map((moduleKey) => (
+                              <div
+                                key={`crm-${moduleKey}`}
+                                className={`settings-module-row ${businessModules.crm[moduleKey] === defaultBusinessModules.crm[moduleKey] ? 'settings-module-row-default' : 'settings-module-row-changed'}`}
+                              >
+                                <span className="text-sm text-gray-700">{resolveModuleLabel(t, moduleKey)}</span>
+                                <div className="settings-module-controls">
+                                  <span className="settings-module-default-chip">
+                                    {defaultBusinessModules.crm[moduleKey] === true ? t('common:on') : t('common:off')}
+                                  </span>
+                                  <Switch
+                                    checked={businessModules.crm[moduleKey] === true}
+                                    onCheckedChange={(enabled) => handleBusinessModuleToggle(moduleKey, enabled)}
+                                    disabled={!canEditBusinessProfile}
+                                  />
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                        </div>
-
                       </div>
                     </div>
                   )}
