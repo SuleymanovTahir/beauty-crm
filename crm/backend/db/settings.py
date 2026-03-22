@@ -513,7 +513,7 @@ def _get_default_salon_settings() -> dict:
         "bot_name": "",
         "timezone": "UTC",
         "timezone_offset": 0,
-        "currency": "",
+        "currency": "USD",
         "business_type": default_business_type,
         "crm_enabled": True,
         "gallery_display_count": 6,

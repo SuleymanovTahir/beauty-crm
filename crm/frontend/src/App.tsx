@@ -26,6 +26,7 @@ const Cashbox = React.lazy(() => import('@crm/pages/shared/Cashbox'));
 const KPI = React.lazy(() => import('@crm/pages/shared/KPI'));
 const GiftCards = React.lazy(() => import('@crm/pages/shared/GiftCards'));
 const ServiceBundles = React.lazy(() => import('@crm/pages/shared/ServiceBundles'));
+const MenuCustomization = React.lazy(() => import('@crm/pages/shared/MenuCustomization'));
 
 const InternalChat = React.lazy(() => import('@crm/components/shared/InternalChat'));
 const NotificationsPage = React.lazy(() => import('@crm/pages/common/Notifications'));
@@ -240,7 +241,7 @@ export default function App() {
                 <Route path="calendar" element={<Navigate to="../bookings" replace />} />
                 <Route path="analytics" element={<Navigate to="../dashboard" replace />} />
                 <Route path="bot-settings" element={<Navigate to="../settings" replace />} />
-                <Route path="menu-customization" element={<Navigate to="../settings" replace />} />
+                <Route path="menu-customization" element={<MenuCustomization />} />
                 <Route path="broadcasts" element={<Navigate to="../dashboard" replace />} />
                 <Route path="promo-codes" element={<Navigate to="../dashboard" replace />} />
                 <Route path="loyalty" element={<Navigate to="../dashboard" replace />} />

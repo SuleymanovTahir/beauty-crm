@@ -1290,9 +1290,10 @@ export class ApiClient {
   }
 
   async saveMenuSettings(settings: { menu_order: string[]; hidden_items: string[] }, saveForRole: boolean = false) {
-    return this.request('/api/menu-settings', {
+    const url = saveForRole ? '/api/menu-settings?save_for_role=true' : '/api/menu-settings'
+    return this.request(url, {
       method: 'POST',
-      body: JSON.stringify({ ...settings, save_for_role: saveForRole })
+      body: JSON.stringify(settings)
     })
   }
 

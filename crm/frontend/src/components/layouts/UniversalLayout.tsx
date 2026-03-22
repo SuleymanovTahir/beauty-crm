@@ -30,7 +30,8 @@ import {
     Wallet,
     BarChart2,
     Gift,
-    Layers
+    Layers,
+    User
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -65,7 +66,7 @@ export const CRM_MENU_GROUPS: Record<string, string[]> = {
     'catalog-group': ['services', 'team'],
     'finance-group': ['cashbox', 'inventory', 'gift-cards', 'service-bundles'],
     'tools-group': ['tasks', 'telephony', 'referral-links', 'kpi', 'waitlist'],
-    'settings-group': ['settings'],
+    'settings-group': ['settings', 'profile-link'],
 };
 
 type BusinessModuleBinding = {
@@ -131,8 +132,9 @@ export const buildCrmMenuCatalog = ({
         'inventory': { icon: Package, label: t('menu.inventory', { defaultValue: 'Склад' }), path: `${rolePrefix}/inventory`, req: () => permissions.roleLevel >= 50 },
         'gift-cards': { icon: Gift, label: t('menu.gift_cards', { defaultValue: 'Сертификаты' }), path: `${rolePrefix}/gift-cards`, req: () => true },
         'service-bundles': { icon: Layers, label: t('menu.service_bundles', { defaultValue: 'Абонементы' }), path: `${rolePrefix}/service-bundles`, req: () => true },
-        'settings-group': { icon: Settings, label: t('menu.settings'), req: () => permissions.canEditSettings },
+        'settings-group': { icon: Settings, label: t('menu.settings'), req: () => permissions.canEditSettings || permissions.roleLevel >= 1 },
         'settings': { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, req: () => permissions.canEditSettings },
+        'profile-link': { icon: User, label: t('menu.profile', { defaultValue: 'Профиль' }), path: `${rolePrefix}/settings/profile`, req: () => true },
     };
 
     return { items, groups: CRM_MENU_GROUPS, defaultOrder: CRM_MENU_DEFAULT_ORDER };
@@ -740,9 +742,29 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                             const isExpanded = expandedMenu === item.id;
                             const isActive = location.pathname === item.path || (isGroup && item.items.some((sub: any) => location.pathname === sub.path));
 
+                            // Группа с одним подпунктом → рендерим как flat-пункт (показываем имя подпункта)
+                            const isSingleChildGroup = isGroup && item.items.length === 1;
+                            const singleChild = isSingleChildGroup ? item.items[0] : null;
+
                             return (
                                 <li key={item.id} className="list-none mb-1">
-                                    {isGroup ? (
+                                    {isSingleChildGroup ? (
+                                        <button
+                                            onClick={() => navigate(singleChild.path)}
+                                            className={cn(
+                                                "w-full flex items-center gap-3 menu-item-premium",
+                                                location.pathname === singleChild.path && "active"
+                                            )}
+                                        >
+                                            <singleChild.icon size={20} className="shrink-0" />
+                                            <span className="flex-1 text-left truncate">{singleChild.label}</span>
+                                            {singleChild.badge > 0 && (
+                                                <span className="badge-premium badge-premium-red badge-sidebar">
+                                                    {singleChild.badge}
+                                                </span>
+                                            )}
+                                        </button>
+                                    ) : isGroup ? (
                                         <div>
                                             <button
                                                 onClick={() => setExpandedMenu(isExpanded ? null : item.id)}
@@ -812,7 +834,10 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                         {/* User & Notifications Row */}
                         <div className="user-card-sidebar px-4">
                             <div className="flex items-center justify-between gap-3">
-                                <div className="flex items-center gap-3 min-w-0 flex-1">
+                                <button
+                                    onClick={() => navigate(`${rolePrefix}/settings/profile`)}
+                                    className="flex items-center gap-3 min-w-0 flex-1 text-left hover:opacity-80 transition-opacity"
+                                >
                                     <img
                                         src={getDynamicAvatar(user?.full_name || 'User')}
                                         alt="Avatar"
@@ -822,7 +847,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                         <div className="text-sm font-bold text-gray-900 truncate">{user?.full_name}</div>
                                         <div className="text-[11px] text-gray-400 font-medium truncate">@{user?.username || 'admin'}</div>
                                     </div>
-                                </div>
+                                </button>
 
                                 <button
                                     onClick={() => navigate(`${rolePrefix}/notifications`)}
@@ -912,9 +937,25 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                 const isGroupExpanded = mobileExpandedGroups.has(item.id);
                                 const isItemActive = typeof item.path === 'string' && location.pathname === item.path;
 
+                                const isMobileSingleChild = item.items && item.items.length === 1;
+                                const mobileSingleChild = isMobileSingleChild ? item.items[0] : null;
+
                                 return (
                                     <div key={item.id} className="menu-group">
-                                        {item.items ? (
+                                        {isMobileSingleChild ? (
+                                            <button
+                                                onClick={() => { navigate(mobileSingleChild.path); setShowMoreModal(false); }}
+                                                className={cn("menu-item-link", location.pathname === mobileSingleChild.path && "active")}
+                                            >
+                                                <mobileSingleChild.icon size={16} className="menu-item-icon" />
+                                                <span className="menu-item-label">{mobileSingleChild.label}</span>
+                                                {mobileSingleChild.badge > 0 && (
+                                                    <span className="badge-premium badge-premium-red badge-sidebar">
+                                                        {mobileSingleChild.badge}
+                                                    </span>
+                                                )}
+                                            </button>
+                                        ) : item.items ? (
                                             <div>
                                                 <button
                                                     onClick={() => toggleMobileGroup(item.id)}
@@ -1005,7 +1046,10 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                             </div>
 
                             <div className="profile-logout-row">
-                                <div className="user-card-premium flex-1">
+                                <button
+                                    className="user-card-premium flex-1 text-left hover:opacity-80 transition-opacity"
+                                    onClick={() => { navigate(`${rolePrefix}/settings/profile`); setShowMoreModal(false); }}
+                                >
                                     <div className="user-card-content">
                                         <div className="relative shrink-0">
                                             <img
@@ -1019,7 +1063,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                             <div className="user-role-premium">{getRoleLabel()}</div>
                                         </div>
                                     </div>
-                                </div>
+                                </button>
                                 <button
                                     onClick={() => { handleLogout(); setShowMoreModal(false); }}
                                     className="logout-btn-minimal"

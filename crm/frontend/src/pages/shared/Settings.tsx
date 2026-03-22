@@ -1159,7 +1159,7 @@ export default function AdminSettings() {
   const { tab } = useParams<{ tab: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const activeTab = tab || 'profile';
+  const activeTab = tab || 'general';
 
   // Проверка доступа к настройкам
   // Если у пользователя нет прав на общие настройки, мы все равно позволяем видеть профиль
@@ -1194,14 +1194,14 @@ export default function AdminSettings() {
 
   // Список всех вкладок с условиями отображения
   const allTabs = useMemo(() => [
-    { id: 'profile', icon: User, label: t('settings:profile'), show: true },
+    { id: 'profile', icon: User, label: t('settings:profile'), show: activeTab === 'profile' },
     { id: 'general', icon: Globe, label: t('settings:general'), show: userPermissions.canEditSettings || userPermissions.canEditBranding || userPermissions.canEditFinancialSettings || userPermissions.canEditSchedule || userPermissions.canEditLoyalty },
     { id: 'notifications', icon: Bell, label: t('settings:notifications'), show: true },
     { id: 'subscriptions', icon: Mail, label: t('subscriptions'), show: userPermissions.canEditIntegrations || userPermissions.canEditSettings },
     { id: 'holidays', icon: Calendar, label: t('settings:holidays'), show: userPermissions.canEditSchedule || userPermissions.canEditSettings },
     { id: 'roles', icon: Shield, label: t('settings:manage_roles'), show: userPermissions.canViewRoles || userPermissions.canEditRoles },
     { id: 'security', icon: Shield, label: t('settings:security'), show: userPermissions.roleLevel >= 80 || userPermissions.canEditSettings },
-  ], [userPermissions, t]);
+  ], [userPermissions, t, activeTab]);
 
   const visibleTabs = useMemo(() => allTabs.filter(t => t.show), [allTabs]);
 
@@ -1806,7 +1806,7 @@ export default function AdminSettings() {
                         <SelectTrigger>
                           <SelectValue placeholder={t('auth/register:business_type_label')} />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent position="item-aligned">
                           {businessTypeOptions.map((profileKey) => (
                             <SelectItem key={profileKey} value={profileKey}>
                               {resolveBusinessTypeLabel(t, profileKey)}

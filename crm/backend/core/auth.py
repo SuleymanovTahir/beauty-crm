@@ -12,7 +12,7 @@ import threading
 import time
 from collections import deque
 
-from core.config import DATABASE_NAME, PUBLIC_URL, normalize_role_key
+from core.config import DATABASE_NAME, PUBLIC_URL, normalize_role_key, is_localhost
 from db.connection import get_db_connection
 from db.users import verify_user, create_session, delete_session
 from db.companies import (
@@ -83,6 +83,8 @@ def _clear_login_limit(key: str):
 
 
 def _cookie_secure_flag() -> bool:
+    if is_localhost():
+        return False  # Secure cookies break on http://LAN-IP in Chrome
     use_ssl = os.getenv("USE_SSL", "false").lower() == "true"
     base_url = os.getenv("BASE_URL", "")
     return base_url.startswith("https://") or use_ssl or os.getenv("ENVIRONMENT") == "production"

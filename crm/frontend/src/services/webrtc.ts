@@ -842,6 +842,9 @@ export class WebRTCService {
    * Device Management
    */
   async enumerateDevices(): Promise<MediaDeviceInfo[]> {
+    if (!navigator.mediaDevices?.enumerateDevices) {
+      return [];
+    }
     return await navigator.mediaDevices.enumerateDevices();
   }
 

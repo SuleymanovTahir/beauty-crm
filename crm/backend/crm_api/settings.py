@@ -651,16 +651,31 @@ def get_currencies():
                 "is_active": row[3]
             })
         conn.close()
+        if not currencies:
+            currencies = [
+                {"code": "AED", "name": "UAE Dirham", "symbol": "د.إ", "is_active": True},
+                {"code": "EUR", "name": "Euro", "symbol": "€", "is_active": True},
+                {"code": "GBP", "name": "British Pound", "symbol": "£", "is_active": True},
+                {"code": "GEL", "name": "Georgian Lari", "symbol": "₾", "is_active": True},
+                {"code": "KZT", "name": "Kazakhstani Tenge", "symbol": "₸", "is_active": True},
+                {"code": "RUB", "name": "Russian Ruble", "symbol": "₽", "is_active": True},
+                {"code": "TRY", "name": "Turkish Lira", "symbol": "₺", "is_active": True},
+                {"code": "USD", "name": "US Dollar", "symbol": "$", "is_active": True},
+                {"code": "UZS", "name": "Uzbekistani Som", "symbol": "сум", "is_active": True},
+            ]
         return {"currencies": currencies}
     except Exception as e:
         log_error(f"Error loading currencies: {e}", "settings")
-        # Return default if table doesn't exist yet (though migration should have run)
         return {"currencies": [
-            {"code": "AED", "name": "UAE Dirham", "symbol": "AED", "is_active": True},
-            {"code": "USD", "name": "US Dollar", "symbol": "$", "is_active": True},
-            {"code": "RUB", "name": "Russian Ruble", "symbol": "₽", "is_active": True},
+            {"code": "AED", "name": "UAE Dirham", "symbol": "د.إ", "is_active": True},
             {"code": "EUR", "name": "Euro", "symbol": "€", "is_active": True},
-            {"code": "KZT", "name": "Kazakhstani Tenge", "symbol": "₸", "is_active": True}
+            {"code": "GBP", "name": "British Pound", "symbol": "£", "is_active": True},
+            {"code": "GEL", "name": "Georgian Lari", "symbol": "₾", "is_active": True},
+            {"code": "KZT", "name": "Kazakhstani Tenge", "symbol": "₸", "is_active": True},
+            {"code": "RUB", "name": "Russian Ruble", "symbol": "₽", "is_active": True},
+            {"code": "TRY", "name": "Turkish Lira", "symbol": "₺", "is_active": True},
+            {"code": "USD", "name": "US Dollar", "symbol": "$", "is_active": True},
+            {"code": "UZS", "name": "Uzbekistani Som", "symbol": "сум", "is_active": True},
         ]}
 
 @router.post("/settings/currencies")
