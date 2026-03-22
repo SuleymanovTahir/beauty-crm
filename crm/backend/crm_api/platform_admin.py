@@ -26,7 +26,6 @@ from db.companies import (
     delete_company,
     delete_platform_ad,
     get_company_by_id,
-    get_company_payment_by_id,
     get_company_subscription,
     get_company_usage,
     get_tariff_plan_by_key,

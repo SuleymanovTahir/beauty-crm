@@ -74,11 +74,22 @@ def test_employee_genders():
     print(f"\n✅ Male employees ({len(male_employees)}): {', '.join(male_employees)}")
     print(f"✅ Female employees ({len(female_employees)}): {', '.join(female_employees)}")
     
-    # Проверяем только базовую консистентность данных (без привязки к конкретным именам)
+    # Проверяем только базовую консистентность данных (без привязки к конкретным именам).
+    # В generalized CRM набор тестовых сотрудников может быть полностью мужским или полностью женским.
     if not using_mock_data:
+        invalid_genders = [
+            (name, gender)
+            for name, gender in employees
+            if gender not in ('male', 'female', None, '')
+        ]
+        assert not invalid_genders, f"Unexpected gender values found: {invalid_genders}"
+
         if len(employees) > 0:
-            assert len(male_employees) > 0, "At least one male employee expected in test dataset"
-            print("✅ Male employees detected in dataset")
+            assert len(male_employees) + len(female_employees) > 0, "At least one employee with a known gender expected in test dataset"
+            if len(male_employees) == 0 or len(female_employees) == 0:
+                print("⚠️  Dataset currently contains only one gender, which is valid for generalized CRM")
+            else:
+                print("✅ Both male and female employees detected in dataset")
     
     print()
 

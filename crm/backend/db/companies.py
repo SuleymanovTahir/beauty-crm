@@ -1475,8 +1475,11 @@ def update_company(company_id: int, data: dict[str, Any]) -> bool:
         for field_name in _COMPANY_JSON_FIELDS:
             if field_name not in data:
                 continue
+            field_value = data.get(field_name)
+            if field_name == "metadata":
+                field_value = _normalize_company_metadata(field_value)
             updates.append(f"{field_name} = %s")
-            params.append(json.dumps(data.get(field_name) or ({} if field_name != "messenger_config" else []), ensure_ascii=False))
+            params.append(json.dumps(field_value or ({} if field_name != "messenger_config" else []), ensure_ascii=False))
 
         if not updates:
             return False

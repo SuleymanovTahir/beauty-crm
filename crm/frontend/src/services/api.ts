@@ -144,6 +144,14 @@ export class ApiClient {
         throw new Error('Сессия истекла. Пожалуйста, перезагрузитесь.')
       }
 
+      if (response.status === 503) {
+        // Backend unavailable (proxy timeout / ECONNREFUSED)
+        const error: any = new Error('server_unavailable')
+        error.error = 'server_unavailable'
+        error.status = 503
+        throw error
+      }
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: response.statusText }))
         const error: any = new Error(errorData.error || errorData.message || `API Error: ${response.status}`)

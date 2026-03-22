@@ -1598,3 +1598,44 @@
 - IMPORTANT TO REMEMBER:
   - multi-tenant tables used by runtime must be created only in `db.init` or consolidated migrations, never lazily inside request handlers/helpers;
   - chat and audit data are tenant-sensitive and must always carry `company_id`, otherwise platform isolation becomes unreliable even if users are filtered at the API layer.
+
+## [2026-03-22] Platform Admin Company Metadata, Runtime Billing Controls, CSV Export
+- Extended the existing SaaS platform control surface in:
+  - `crm/backend/db/companies.py`
+  - `crm/backend/crm_api/platform_admin.py`
+  - `crm/frontend/src/services/api.ts`
+  - `crm/frontend/src/pages/shared/PlatformAdmin.tsx`
+  - `crm/backend/tests/comprehensive_test.py`
+  - `crm/backend/tests/test_gender_avatars.py`
+- Added 10 practical CRM/SaaS functions without creating duplicate modules:
+  - company tags stored in `companies.metadata.tags`;
+  - company segment field plus platform filter by segment;
+  - account-manager field plus platform filter by account manager;
+  - billing contact name per company;
+  - billing contact email per company;
+  - `auto_renew` toggle editing from platform admin;
+  - manual `trial_ends_at` editing from platform admin;
+  - manual `next_payment_due_at` editing from platform admin;
+  - CSV export for companies with tariff, limits, price, metadata, and renewal fields;
+  - CSV export for payments with company, tariff, discount, invoice, and period fields.
+- Also added payment post-editing in platform admin:
+  - existing payment rows can now be updated for status, due date, paid date, invoice number, and notes.
+- Data consistency hardening:
+  - `update_company(...metadata...)` now normalizes tags and billing metadata through the shared company metadata normalizer, so UI/API writes stay in one format.
+- Frontend i18n:
+  - all new text was wrapped in `t(...)`;
+  - `npm --prefix crm/frontend run db:i18n:auto` was executed to sync locale files and translation maps.
+- Test-suite stabilization for generalized CRM:
+  - `comprehensive_test.py` no longer treats non-staff users as employees who must have a `position`;
+  - `test_gender_avatars.py` no longer assumes the test dataset must contain at least one male employee; single-gender datasets are valid for generalized CRM.
+- Validation:
+  - `venv/bin/python -m py_compile crm/backend/tests/comprehensive_test.py crm/backend/tests/test_gender_avatars.py crm/backend/db/companies.py crm/backend/crm_api/platform_admin.py` passed;
+  - `npm --prefix crm/frontend run lint` passed;
+  - `npm --prefix crm/frontend run build` passed;
+  - `npm --prefix crm/frontend run db:i18n:auto` passed;
+  - `venv/bin/python tests/runners/run_all_tests.py` passed;
+  - `venv/bin/python tests/runners/run_all_test2.py` passed;
+  - `venv/bin/python tests/runners/run_all_test3.py` passed.
+- IMPORTANT TO REMEMBER:
+  - generalized CRM test suites must not assume a fixed gender mix or legacy staff layout in seeded/demo data;
+  - platform-level company metadata should be extended through `companies.metadata` and normalized in SSOT helpers, not split into new duplicate tables or ad-hoc JSON shapes.

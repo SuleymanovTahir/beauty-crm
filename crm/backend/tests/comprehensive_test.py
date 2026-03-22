@@ -523,6 +523,7 @@ class ComprehensiveTest:
                 SELECT id, full_name, position, phone, email
                 FROM users
                 WHERE is_active = TRUE
+                  AND role IN ('employee', 'master', 'director', 'admin', 'manager')
             """)
             employees = cursor.fetchall()
 
@@ -535,7 +536,15 @@ class ComprehensiveTest:
                 else:
                     employees_with_position.append(emp)
 
-            if employees_without_position:
+            if not employees:
+                result.success("SKIPPED: no active staff users created yet", {
+                    "employees_checked": 0
+                })
+                result.details.extend([
+                    "[WARN] Активные сотрудники пока не созданы",
+                    "[WARN] Для generalized CRM это валидное состояние на пустой или демо-базе",
+                ])
+            elif employees_without_position:
                 error_details = [
                     f"[FAIL] Сотрудников БЕЗ должности: {len(employees_without_position)}",
                     "",

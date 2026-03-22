@@ -139,6 +139,13 @@ export default function Login() {
         return;
       }
 
+      // Бэкенд недоступен (503 от прокси)
+      if (err.status === 503 || err.error === 'server_unavailable') {
+        setError('server_unavailable');
+        toast.error(t('server_unavailable', 'Сервер временно недоступен. Попробуйте позже.'));
+        return;
+      }
+
       // Проверяем на сетевые ошибки
       const errorMessage = err instanceof Error ? err.message : (err.error || '');
       const isNetworkError = errorMessage.toLowerCase().includes('failed to fetch') ||

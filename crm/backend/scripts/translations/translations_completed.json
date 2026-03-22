@@ -1,12 +1,161 @@
 {
+  "users": [
+    {
+      "id": 35,
+      "stable_key": "c1_master",
+      "fields": {
+        "full_name": {
+          "ru": "Мастер Салон",
+          "key": "users.c1_master.full_name",
+          "detected_language": "ru",
+          "en": "Master Salon",
+          "ar": "صالون ماستر",
+          "es": "Master Salon",
+          "de": "Master Salon",
+          "fr": "Master Salon",
+          "hi": "मास्टर सैलून",
+          "kk": "Мастер Салон",
+          "pt": "Master Salon"
+        },
+        "position": {
+          "ru": "Мастер",
+          "key": "users.c1_master.position",
+          "detected_language": "mn",
+          "en": "Master",
+          "ar": "الرئيسي",
+          "es": "Maestro",
+          "de": "Meister",
+          "fr": "Maître",
+          "hi": "मास्टर",
+          "kk": "Мастер",
+          "pt": "Mestre"
+        }
+      }
+    },
+    {
+      "id": 40,
+      "stable_key": "c2_master",
+      "fields": {
+        "full_name": {
+          "ru": "Мастер МедЦентр",
+          "key": "users.c2_master.full_name",
+          "detected_language": "ru",
+          "en": "Master Medtsentr",
+          "ar": "مركز ماستر الطبي",
+          "es": "Master Medtsentr",
+          "de": "Master Medtsentr",
+          "fr": "Master Medtsentr",
+          "hi": "मास्टर मेडिकल सेंटर",
+          "kk": "Мастер Медициналық Орталығы",
+          "pt": "Master Medtsentr"
+        },
+        "position": {
+          "ru": "Мастер",
+          "key": "users.c2_master.position",
+          "detected_language": "mn",
+          "en": "Master",
+          "ar": "الرئيسي",
+          "es": "Maestro",
+          "de": "Meister",
+          "fr": "Maître",
+          "hi": "मास्टर",
+          "kk": "Мастер",
+          "pt": "Mestre"
+        }
+      }
+    },
+    {
+      "id": 45,
+      "stable_key": "c3_master",
+      "fields": {
+        "full_name": {
+          "ru": "Мастер Fitlife",
+          "key": "users.c3_master.full_name",
+          "detected_language": "uk",
+          "en": "Master Of Fitlife",
+          "ar": "ماجستير في الحياة",
+          "es": "Maestro De Fitlife",
+          "de": "Meister Des Fitlife",
+          "fr": "Maître De Fitlife",
+          "hi": "फिटलाइफ़ के मास्टर",
+          "kk": "Fitlife Шебері",
+          "pt": "Mestre Da Fitlife"
+        },
+        "position": {
+          "ru": "Мастер",
+          "key": "users.c3_master.position",
+          "detected_language": "mn",
+          "en": "Master",
+          "ar": "الرئيسي",
+          "es": "Maestro",
+          "de": "Meister",
+          "fr": "Maître",
+          "hi": "मास्टर",
+          "kk": "Мастер",
+          "pt": "Mestre"
+        }
+      }
+    },
+    {
+      "id": 50,
+      "stable_key": "c4_master",
+      "fields": {
+        "full_name": {
+          "ru": "Мастер Ресторан",
+          "key": "users.c4_master.full_name",
+          "detected_language": "ru",
+          "en": "Master Restoran",
+          "ar": "مطعم ماستر",
+          "es": "Master Restoran",
+          "de": "Master Restoran",
+          "fr": "Master Restoran",
+          "hi": "मास्टर रेस्तरां",
+          "kk": "Мастер Мейрамханасы",
+          "pt": "Master Restoran"
+        },
+        "position": {
+          "ru": "Мастер",
+          "key": "users.c4_master.position",
+          "detected_language": "mn",
+          "en": "Master",
+          "ar": "الرئيسي",
+          "es": "Maestro",
+          "de": "Meister",
+          "fr": "Maître",
+          "hi": "मास्टर",
+          "kk": "Мастер",
+          "pt": "Mestre"
+        }
+      }
+    }
+  ],
   "workflow_stages": [
     {
-      "id": 1,
-      "stable_key": "1",
+      "id": 10,
+      "stable_key": "10",
+      "fields": {
+        "name": {
+          "ru": "в_выполнении",
+          "key": "workflow_stages.10.name",
+          "en": "in_progress",
+          "ar": "in_progress",
+          "es": "en_progreso",
+          "de": "in_Progress",
+          "fr": "en cours",
+          "hi": "प्रगति में",
+          "kk": "орындалуда",
+          "pt": "em_progresso",
+          "detected_language": "ru"
+        }
+      }
+    },
+    {
+      "id": 67,
+      "stable_key": "67",
       "fields": {
         "name": {
           "ru": "новое",
-          "key": "workflow_stages.1.name",
+          "key": "workflow_stages.67.name",
           "detected_language": "en",
           "en": "new",
           "ar": "جديد",
@@ -20,12 +169,12 @@
       }
     },
     {
-      "id": 2,
-      "stable_key": "2",
+      "id": 68,
+      "stable_key": "68",
       "fields": {
         "name": {
           "ru": "переговоры",
-          "key": "workflow_stages.2.name",
+          "key": "workflow_stages.68.name",
           "detected_language": "en",
           "en": "negotiation",
           "ar": "تفاوض",
@@ -39,12 +188,12 @@
       }
     },
     {
-      "id": 3,
-      "stable_key": "3",
+      "id": 69,
+      "stable_key": "69",
       "fields": {
         "name": {
           "ru": "отправленное_предложение",
-          "key": "workflow_stages.3.name",
+          "key": "workflow_stages.69.name",
           "detected_language": "en",
           "en": "sent_offer",
           "ar": "sent_offer",
@@ -58,12 +207,12 @@
       }
     },
     {
-      "id": 4,
-      "stable_key": "4",
+      "id": 70,
+      "stable_key": "70",
       "fields": {
         "name": {
           "ru": "закрыто_выиграно",
-          "key": "workflow_stages.4.name",
+          "key": "workflow_stages.70.name",
           "detected_language": "en",
           "en": "closed_won",
           "ar": "Closed_won",
@@ -77,12 +226,12 @@
       }
     },
     {
-      "id": 5,
-      "stable_key": "5",
+      "id": 71,
+      "stable_key": "71",
       "fields": {
         "name": {
           "ru": "закрыто_проиграно",
-          "key": "workflow_stages.5.name",
+          "key": "workflow_stages.71.name",
           "detected_language": "en",
           "en": "closed_lost",
           "ar": "Closed_lost",
@@ -96,12 +245,12 @@
       }
     },
     {
-      "id": 6,
-      "stable_key": "6",
+      "id": 72,
+      "stable_key": "72",
       "fields": {
         "name": {
           "ru": "черновик",
-          "key": "workflow_stages.6.name",
+          "key": "workflow_stages.72.name",
           "detected_language": "en",
           "en": "draft",
           "ar": "مسودة",
@@ -115,12 +264,12 @@
       }
     },
     {
-      "id": 7,
-      "stable_key": "7",
+      "id": 73,
+      "stable_key": "73",
       "fields": {
         "name": {
           "ru": "отправлено",
-          "key": "workflow_stages.7.name",
+          "key": "workflow_stages.73.name",
           "detected_language": "en",
           "en": "sent",
           "ar": "تم إرسالها",
@@ -134,12 +283,12 @@
       }
     },
     {
-      "id": 8,
-      "stable_key": "8",
+      "id": 74,
+      "stable_key": "74",
       "fields": {
         "name": {
           "ru": "оплачено",
-          "key": "workflow_stages.8.name",
+          "key": "workflow_stages.74.name",
           "detected_language": "en",
           "en": "paid",
           "ar": "مدفوعة",
@@ -153,12 +302,12 @@
       }
     },
     {
-      "id": 9,
-      "stable_key": "9",
+      "id": 75,
+      "stable_key": "75",
       "fields": {
         "name": {
           "ru": "все",
-          "key": "workflow_stages.9.name",
+          "key": "workflow_stages.75.name",
           "detected_language": "pt",
           "pt": "todo",
           "en": "all",
@@ -172,12 +321,12 @@
       }
     },
     {
-      "id": 10,
-      "stable_key": "10",
+      "id": 76,
+      "stable_key": "76",
       "fields": {
         "name": {
           "ru": "в_выполнении",
-          "key": "workflow_stages.10.name",
+          "key": "workflow_stages.76.name",
           "detected_language": "en",
           "en": "in_progress",
           "ar": "in_progress",
@@ -191,12 +340,12 @@
       }
     },
     {
-      "id": 11,
-      "stable_key": "11",
+      "id": 77,
+      "stable_key": "77",
       "fields": {
         "name": {
           "ru": "готово",
-          "key": "workflow_stages.11.name",
+          "key": "workflow_stages.77.name",
           "detected_language": "en",
           "en": "done",
           "ar": "done",

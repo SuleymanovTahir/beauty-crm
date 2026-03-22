@@ -107,7 +107,9 @@ export default defineConfig(({ mode }) => {
         "/api": {
           target: BACKEND_URL,
           changeOrigin: true,
-          ws: true, // Enable WebSocket for /api/* endpoints (like /api/ws/notifications)
+          ws: true,
+          proxyTimeout: 3000, // fail fast when backend is down instead of hanging 30s
+          timeout: 3000,
           configure: (proxy, _options) => {
             // Vite adds its own 'error' listener AFTER configure() returns,
             // so we defer with setImmediate to remove it only after it's been registered.
@@ -116,15 +118,22 @@ export default defineConfig(({ mode }) => {
               proxy.on('error', (err, _req, res) => {
                 const anyErr = err as any;
                 const DEV_CODES = ['ECONNRESET', 'EPIPE', 'ECONNREFUSED'];
-                if (DEV_CODES.includes(anyErr?.code)) return;
-                // AggregateError: each inner error has its own .code
-                if (anyErr?.errors?.some((e: any) => DEV_CODES.includes(e.code))) return;
-                if (err.message?.includes('socket')) return;
-                console.error('Proxy error:', err);
-                if (res && !(res as any).headersSent) {
-                  (res as any).writeHead?.(503, { 'Content-Type': 'text/plain' });
-                  (res as any).end?.('Backend unavailable');
+                const isSilent =
+                  DEV_CODES.includes(anyErr?.code) ||
+                  anyErr?.errors?.some((e: any) => DEV_CODES.includes(e.code)) ||
+                  err.message?.includes('socket');
+
+                if (!isSilent) {
+                  console.error('Proxy error:', err);
                 }
+
+                // Always respond so browser never gets ERR_EMPTY_RESPONSE
+                try {
+                  if (res && typeof (res as any).writeHead === 'function' && !(res as any).headersSent) {
+                    (res as any).writeHead(503, { 'Content-Type': 'text/plain' });
+                    (res as any).end('Backend unavailable');
+                  }
+                } catch (_) { /* socket already closed */ }
               });
             });
           },

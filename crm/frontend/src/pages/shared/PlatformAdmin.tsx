@@ -24,6 +24,14 @@ type Overview = {
 };
 
 type CompanyEditor = {
+  tags_input: string;
+  segment: string;
+  account_manager: string;
+  billing_contact_name: string;
+  billing_contact_email: string;
+  auto_renew: boolean;
+  trial_ends_at: string;
+  next_payment_due_at: string;
   tariff_key: string;
   billing_cycle_months: string;
   price_override_amount: string;
@@ -51,6 +59,14 @@ type PaymentEditor = {
   notes: string;
   paid_at: string;
   due_at: string;
+};
+
+type PaymentRecordEditor = {
+  status: string;
+  due_at: string;
+  paid_at: string;
+  invoice_number: string;
+  notes: string;
 };
 
 type AuditEntry = {
@@ -221,7 +237,24 @@ const parseFeatureFlagsInput = (value: string): Record<string, boolean> => {
     }, {});
 };
 
+const parseTagsInput = (value: string): string[] => {
+  const seenTags = new Set<string>();
+  return value
+    .split(',')
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0)
+    .filter((item) => {
+      const normalizedItem = item.toLowerCase();
+      if (seenTags.has(normalizedItem)) {
+        return false;
+      }
+      seenTags.add(normalizedItem);
+      return true;
+    });
+};
+
 const buildCompanyEditor = (company: any): CompanyEditor => {
+  const metadata = company?.metadata ?? {};
   const subscription = company?.subscription ?? {};
   const snapshot = subscription?.current_snapshot ?? {};
   const scheduledChange = subscription?.scheduled_change ?? {};
@@ -229,6 +262,14 @@ const buildCompanyEditor = (company: any): CompanyEditor => {
   const activeSnapshot = Object.keys(scheduledSnapshot).length > 0 ? scheduledSnapshot : snapshot;
   const featureFlags = activeSnapshot?.feature_flags ?? {};
   return {
+    tags_input: Array.isArray(metadata?.tags) ? metadata.tags.join(', ') : '',
+    segment: metadata?.segment ?? '',
+    account_manager: metadata?.account_manager ?? '',
+    billing_contact_name: metadata?.billing_contact_name ?? '',
+    billing_contact_email: metadata?.billing_contact_email ?? '',
+    auto_renew: subscription?.auto_renew !== false,
+    trial_ends_at: toDateTimeLocal(subscription?.trial_ends_at),
+    next_payment_due_at: toDateTimeLocal(subscription?.next_payment_due_at),
     tariff_key: scheduledChange?.tariff_key ?? scheduledSnapshot?.tariff_key ?? subscription?.tariff?.key ?? 'trial',
     billing_cycle_months: String(scheduledChange?.billing_cycle_months ?? subscription?.billing_cycle_months ?? 1),
     price_override_amount: scheduledChange?.price_override?.amount != null ? String(scheduledChange.price_override.amount) : '',
@@ -263,6 +304,16 @@ const buildPaymentEditor = (company: any): PaymentEditor => {
   };
 };
 
+const buildPaymentRecordEditor = (payment: any): PaymentRecordEditor => {
+  return {
+    status: payment?.status ?? 'paid',
+    due_at: toDateTimeLocal(payment?.due_at),
+    paid_at: toDateTimeLocal(payment?.paid_at),
+    invoice_number: payment?.invoice_number ?? '',
+    notes: payment?.notes ?? '',
+  };
+};
+
 export default function PlatformAdmin() {
   const { t } = useTranslation(['common', 'layouts/mainlayout']);
   const [overview, setOverview] = useState<Overview>(emptyOverview);
@@ -284,8 +335,11 @@ export default function PlatformAdmin() {
   const [editingAdId, setEditingAdId] = useState<number | null>(null);
   const [companyEditors, setCompanyEditors] = useState<Record<number, CompanyEditor>>({});
   const [paymentEditors, setPaymentEditors] = useState<Record<number, PaymentEditor>>({});
+  const [paymentRecordEditors, setPaymentRecordEditors] = useState<Record<number, PaymentRecordEditor>>({});
   const [companySearch, setCompanySearch] = useState('');
   const [companyStatusFilter, setCompanyStatusFilter] = useState('');
+  const [companySegmentFilter, setCompanySegmentFilter] = useState('');
+  const [companyAccountManagerFilter, setCompanyAccountManagerFilter] = useState('');
   const [includeDeletedCompanies, setIncludeDeletedCompanies] = useState(false);
   const [paymentCompanyFilter, setPaymentCompanyFilter] = useState('');
   const [paymentStatusFilter, setPaymentStatusFilter] = useState('');
@@ -368,6 +422,8 @@ export default function PlatformAdmin() {
           companySearch.trim().length > 0 ? companySearch.trim() : undefined,
           companyStatusFilter.trim().length > 0 ? companyStatusFilter.trim() : undefined,
           includeDeletedCompanies,
+          companySegmentFilter.trim().length > 0 ? companySegmentFilter.trim() : undefined,
+          companyAccountManagerFilter.trim().length > 0 ? companyAccountManagerFilter.trim() : undefined,
         ),
         api.getPlatformTariffs(),
         api.getPlatformPayments(
@@ -412,10 +468,11 @@ export default function PlatformAdmin() {
       ]);
 
       const nextCompanies = companiesResponse?.companies ?? [];
+      const nextPayments = paymentsResponse?.payments ?? [];
       setOverview(overviewResponse ?? emptyOverview);
       setCompanies(nextCompanies);
       setTariffs(tariffsResponse?.tariffs ?? []);
-      setPayments(paymentsResponse?.payments ?? []);
+      setPayments(nextPayments);
       setAds(adsResponse?.ads ?? []);
       setBroadcasts(broadcastsResponse?.broadcasts ?? []);
       setAuditEntries(auditResponse?.entries ?? []);
@@ -423,25 +480,23 @@ export default function PlatformAdmin() {
       setChatEntries(chatsResponse?.entries ?? []);
       setCallEntries(callsResponse?.calls ?? []);
 
-      setCompanyEditors((prev) => {
-        const nextState = { ...prev };
-        nextCompanies.forEach((company: any) => {
-          if (nextState[company.id] == null) {
-            nextState[company.id] = buildCompanyEditor(company);
-          }
-        });
-        return nextState;
+      const nextCompanyEditors: Record<number, CompanyEditor> = {};
+      nextCompanies.forEach((company: any) => {
+        nextCompanyEditors[company.id] = buildCompanyEditor(company);
       });
+      setCompanyEditors(nextCompanyEditors);
 
-      setPaymentEditors((prev) => {
-        const nextState = { ...prev };
-        nextCompanies.forEach((company: any) => {
-          if (nextState[company.id] == null) {
-            nextState[company.id] = buildPaymentEditor(company);
-          }
-        });
-        return nextState;
+      const nextPaymentEditors: Record<number, PaymentEditor> = {};
+      nextCompanies.forEach((company: any) => {
+        nextPaymentEditors[company.id] = buildPaymentEditor(company);
       });
+      setPaymentEditors(nextPaymentEditors);
+
+      const nextPaymentRecordEditors: Record<number, PaymentRecordEditor> = {};
+      nextPayments.forEach((payment: any) => {
+        nextPaymentRecordEditors[payment.id] = buildPaymentRecordEditor(payment);
+      });
+      setPaymentRecordEditors(nextPaymentRecordEditors);
     } catch (error) {
       console.error('Failed to load platform admin data:', error);
       toast.error(t('platform_admin_load_error', { defaultValue: 'Не удалось загрузить данные платформы' }));
@@ -455,6 +510,8 @@ export default function PlatformAdmin() {
   }, [
     companySearch,
     companyStatusFilter,
+    companySegmentFilter,
+    companyAccountManagerFilter,
     includeDeletedCompanies,
     paymentCompanyFilter,
     paymentStatusFilter,
@@ -479,7 +536,7 @@ export default function PlatformAdmin() {
     callSearch,
   ]);
 
-  const setCompanyEditorField = (companyId: number, field: keyof CompanyEditor, value: string) => {
+  const setCompanyEditorField = <K extends keyof CompanyEditor>(companyId: number, field: K, value: CompanyEditor[K]) => {
     setCompanyEditors((prev) => ({
       ...prev,
       [companyId]: {
@@ -494,6 +551,16 @@ export default function PlatformAdmin() {
       ...prev,
       [companyId]: {
         ...(prev[companyId] ?? buildPaymentEditor(companies.find((company) => company.id === companyId))),
+        [field]: value,
+      },
+    }));
+  };
+
+  const setPaymentRecordEditorField = <K extends keyof PaymentRecordEditor>(paymentId: number, field: K, value: PaymentRecordEditor[K]) => {
+    setPaymentRecordEditors((prev) => ({
+      ...prev,
+      [paymentId]: {
+        ...(prev[paymentId] ?? buildPaymentRecordEditor(payments.find((payment) => payment.id === paymentId))),
         [field]: value,
       },
     }));
@@ -648,6 +715,43 @@ export default function PlatformAdmin() {
     }
   };
 
+  const handleSaveCompanyProfile = async (company: any) => {
+    const editor = companyEditors[company.id] ?? buildCompanyEditor(company);
+    try {
+      await api.updatePlatformCompany(company.id, {
+        metadata: {
+          ...(company?.metadata ?? {}),
+          tags: parseTagsInput(editor.tags_input),
+          segment: editor.segment.trim(),
+          account_manager: editor.account_manager.trim(),
+          billing_contact_name: editor.billing_contact_name.trim(),
+          billing_contact_email: editor.billing_contact_email.trim(),
+        },
+      });
+      toast.success(t('platform_company_profile_saved', { defaultValue: 'Профиль компании сохранён' }));
+      await loadData();
+    } catch (error) {
+      console.error('Failed to save company profile:', error);
+      toast.error(t('platform_company_profile_save_error', { defaultValue: 'Не удалось сохранить профиль компании' }));
+    }
+  };
+
+  const handleSaveCompanyRuntime = async (company: any) => {
+    const editor = companyEditors[company.id] ?? buildCompanyEditor(company);
+    try {
+      await api.updatePlatformSubscriptionRuntime(company.id, {
+        auto_renew: editor.auto_renew,
+        trial_ends_at: editor.trial_ends_at,
+        next_payment_due_at: editor.next_payment_due_at,
+      });
+      toast.success(t('platform_subscription_runtime_saved', { defaultValue: 'Параметры продления сохранены' }));
+      await loadData();
+    } catch (error) {
+      console.error('Failed to save company runtime:', error);
+      toast.error(t('platform_subscription_runtime_save_error', { defaultValue: 'Не удалось сохранить параметры продления' }));
+    }
+  };
+
   const handleRecordPayment = async (companyId: number) => {
     const editor = paymentEditors[companyId];
     if (editor == null) {
@@ -670,6 +774,30 @@ export default function PlatformAdmin() {
     } catch (error) {
       console.error('Failed to create payment:', error);
       toast.error(t('platform_payment_save_error', { defaultValue: 'Не удалось сохранить платёж' }));
+    }
+  };
+
+  const handleUpdatePaymentRecord = async (paymentId: number) => {
+    const payment = payments.find((entry) => entry.id === paymentId);
+    const editor = paymentRecordEditors[paymentId] ?? buildPaymentRecordEditor(payment);
+    if (editor == null || editor.status.trim().length === 0) {
+      toast.error(t('platform_payment_status_required', { defaultValue: 'Укажите статус оплаты' }));
+      return;
+    }
+
+    try {
+      await api.updatePlatformPayment(paymentId, {
+        status: editor.status.trim(),
+        due_at: editor.due_at,
+        paid_at: editor.paid_at,
+        invoice_number: editor.invoice_number.trim(),
+        notes: editor.notes.trim(),
+      });
+      toast.success(t('platform_payment_updated', { defaultValue: 'Оплата обновлена' }));
+      await loadData();
+    } catch (error) {
+      console.error('Failed to update payment:', error);
+      toast.error(t('platform_payment_update_error', { defaultValue: 'Не удалось обновить оплату' }));
     }
   };
 
@@ -811,6 +939,76 @@ export default function PlatformAdmin() {
       console.error('Failed to send platform broadcast:', error);
       toast.error(t('platform_broadcast_error', { defaultValue: 'Не удалось отправить рассылку' }));
     }
+  };
+
+  const downloadCsvExport = async (path: string, filename: string) => {
+    try {
+      const { buildApiUrl } = await import('@crm/api/client');
+      const response = await fetch(buildApiUrl(path), {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to export ${filename}`);
+      }
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = downloadUrl;
+      anchor.download = filename;
+      document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error('Failed to export CSV:', error);
+      toast.error(t('platform_export_error', { defaultValue: 'Не удалось выгрузить CSV' }));
+    }
+  };
+
+  const handleExportCompaniesCsv = async () => {
+    const params = new URLSearchParams();
+    if (companySearch.trim().length > 0) {
+      params.append('search', companySearch.trim());
+    }
+    if (companyStatusFilter.trim().length > 0) {
+      params.append('status', companyStatusFilter.trim());
+    }
+    if (companySegmentFilter.trim().length > 0) {
+      params.append('segment', companySegmentFilter.trim());
+    }
+    if (companyAccountManagerFilter.trim().length > 0) {
+      params.append('account_manager', companyAccountManagerFilter.trim());
+    }
+    if (includeDeletedCompanies) {
+      params.append('include_deleted', 'true');
+    }
+    const query = params.toString();
+    await downloadCsvExport(
+      query.length > 0 ? `/api/platform-admin/companies/export.csv?${query}` : '/api/platform-admin/companies/export.csv',
+      'platform_companies.csv',
+    );
+  };
+
+  const handleExportPaymentsCsv = async () => {
+    const params = new URLSearchParams();
+    const paymentCompanyId = toNumberOrUndefined(paymentCompanyFilter);
+    if (paymentCompanyId != null) {
+      params.append('company_id', String(paymentCompanyId));
+    }
+    if (paymentStatusFilter.trim().length > 0) {
+      params.append('status', paymentStatusFilter.trim());
+    }
+    if (paymentSearch.trim().length > 0) {
+      params.append('search', paymentSearch.trim());
+    }
+    if (paymentOnlyOverdue) {
+      params.append('only_overdue', 'true');
+    }
+    const query = params.toString();
+    await downloadCsvExport(
+      query.length > 0 ? `/api/platform-admin/payments/export.csv?${query}` : '/api/platform-admin/payments/export.csv',
+      'platform_payments.csv',
+    );
   };
 
   const handleProcessScheduledChanges = async () => {
@@ -960,13 +1158,18 @@ export default function PlatformAdmin() {
                 <h2 className="text-xl font-semibold text-slate-900">{t('platform_companies_title', { defaultValue: 'Компании' })}</h2>
                 <p className="text-sm text-slate-500">{t('platform_companies_hint', { defaultValue: 'Изоляция tenant-данных, квоты, цены, скидки и плановые изменения на уровне компании.' })}</p>
               </div>
-              <div className="text-sm text-slate-500">
-                {loading ? t('platform_loading', { defaultValue: 'Загрузка...' }) : t('platform_count_label', { defaultValue: '{{count}} записей', count: companies.length })}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="text-sm text-slate-500">
+                  {loading ? t('platform_loading', { defaultValue: 'Загрузка...' }) : t('platform_count_label', { defaultValue: '{{count}} записей', count: companies.length })}
+                </div>
+                <Button variant="outline" onClick={handleExportCompaniesCsv} disabled={loading}>
+                  {t('platform_export_companies_button', { defaultValue: 'CSV компаний' })}
+                </Button>
               </div>
             </div>
 
             <div className="mt-6 space-y-5">
-              <div className="grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-4">
+              <div className="grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-2 xl:grid-cols-6">
                 <div className="space-y-2">
                   <Label>{t('platform_filter_search_label', { defaultValue: 'Поиск компаний' })}</Label>
                   <Input value={companySearch} onChange={(event) => setCompanySearch(event.target.value)} placeholder={t('search', { defaultValue: 'Поиск...' })} />
@@ -974,6 +1177,14 @@ export default function PlatformAdmin() {
                 <div className="space-y-2">
                   <Label>{t('platform_filter_status_label', { defaultValue: 'Статус' })}</Label>
                   <Input value={companyStatusFilter} onChange={(event) => setCompanyStatusFilter(event.target.value)} placeholder={t('status', { defaultValue: 'Статус' })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('platform_filter_segment_label', { defaultValue: 'Сегмент' })}</Label>
+                  <Input value={companySegmentFilter} onChange={(event) => setCompanySegmentFilter(event.target.value)} placeholder={t('platform_filter_segment_placeholder', { defaultValue: 'Например enterprise' })} />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t('platform_filter_manager_label', { defaultValue: 'Аккаунт-менеджер' })}</Label>
+                  <Input value={companyAccountManagerFilter} onChange={(event) => setCompanyAccountManagerFilter(event.target.value)} placeholder={t('platform_filter_manager_placeholder', { defaultValue: 'Имя или email' })} />
                 </div>
                 <div className="space-y-2">
                   <Label>{t('platform_include_deleted_label', { defaultValue: 'Показывать удалённые' })}</Label>
@@ -995,6 +1206,8 @@ export default function PlatformAdmin() {
                     onClick={() => {
                       setCompanySearch('');
                       setCompanyStatusFilter('');
+                      setCompanySegmentFilter('');
+                      setCompanyAccountManagerFilter('');
                       setIncludeDeletedCompanies(false);
                     }}
                   >
@@ -1022,6 +1235,12 @@ export default function PlatformAdmin() {
                         </p>
                         <p className="text-sm text-slate-500">
                           {t('platform_company_tariff', { defaultValue: 'Тариф' })}: {subscription?.tariff?.name ?? t('platform_no_tariff', { defaultValue: 'Не назначен' })}
+                        </p>
+                        <p className="text-sm text-slate-500">
+                          {t('platform_company_segment_label', { defaultValue: 'Сегмент' })}: {company?.metadata?.segment?.trim().length > 0 ? company.metadata.segment : t('platform_limit_empty', { defaultValue: 'Не задано' })}
+                        </p>
+                        <p className="text-sm text-slate-500">
+                          {t('platform_company_manager_label', { defaultValue: 'Аккаунт-менеджер' })}: {company?.metadata?.account_manager?.trim().length > 0 ? company.metadata.account_manager : t('platform_limit_empty', { defaultValue: 'Не задано' })}
                         </p>
                         <p className="text-sm text-slate-500">
                           {t('platform_company_price', { defaultValue: 'Текущая цена цикла' })}: {formatMoney(Number(subscription?.current_price ?? 0), currentCurrency)}
@@ -1084,6 +1303,68 @@ export default function PlatformAdmin() {
                     </div>
 
                     <div className="mt-5 grid gap-4 xl:grid-cols-2">
+                      <div className="rounded-2xl border border-slate-200 p-4">
+                        <h3 className="text-base font-semibold text-slate-900">{t('platform_company_profile_editor', { defaultValue: 'Профиль компании' })}</h3>
+                        <div className="mt-4 grid gap-3 md:grid-cols-2">
+                          <div className="space-y-2 md:col-span-2">
+                            <Label>{t('platform_company_tags_label', { defaultValue: 'Теги через запятую' })}</Label>
+                            <Input value={editor.tags_input} onChange={(event) => setCompanyEditorField(company.id, 'tags_input', event.target.value)} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>{t('platform_company_segment_editor_label', { defaultValue: 'Сегмент' })}</Label>
+                            <Input value={editor.segment} onChange={(event) => setCompanyEditorField(company.id, 'segment', event.target.value)} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>{t('platform_company_account_manager_label', { defaultValue: 'Аккаунт-менеджер' })}</Label>
+                            <Input value={editor.account_manager} onChange={(event) => setCompanyEditorField(company.id, 'account_manager', event.target.value)} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>{t('platform_company_billing_contact_name_label', { defaultValue: 'Контакт по оплате' })}</Label>
+                            <Input value={editor.billing_contact_name} onChange={(event) => setCompanyEditorField(company.id, 'billing_contact_name', event.target.value)} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>{t('platform_company_billing_contact_email_label', { defaultValue: 'Email для биллинга' })}</Label>
+                            <Input value={editor.billing_contact_email} onChange={(event) => setCompanyEditorField(company.id, 'billing_contact_email', event.target.value)} />
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <Button variant="outline" onClick={() => handleSaveCompanyProfile(company)}>
+                            {t('platform_company_profile_save_button', { defaultValue: 'Сохранить профиль' })}
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-slate-200 p-4">
+                        <h3 className="text-base font-semibold text-slate-900">{t('platform_company_runtime_editor', { defaultValue: 'Продление и trial' })}</h3>
+                        <div className="mt-4 grid gap-3 md:grid-cols-2">
+                          <div className="space-y-2 md:col-span-2">
+                            <Label>{t('platform_company_auto_renew_label', { defaultValue: 'Автопродление' })}</Label>
+                            <Button
+                              variant="outline"
+                              className="w-full justify-start"
+                              onClick={() => setCompanyEditorField(company.id, 'auto_renew', !editor.auto_renew)}
+                            >
+                              {editor.auto_renew
+                                ? t('platform_auto_renew_on', { defaultValue: 'Включено' })
+                                : t('platform_auto_renew_off', { defaultValue: 'Выключено' })}
+                            </Button>
+                          </div>
+                          <div className="space-y-2">
+                            <Label>{t('platform_company_trial_ends_at_label', { defaultValue: 'Окончание trial' })}</Label>
+                            <Input type="datetime-local" value={editor.trial_ends_at} onChange={(event) => setCompanyEditorField(company.id, 'trial_ends_at', event.target.value)} />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>{t('platform_company_next_due_editor_label', { defaultValue: 'Следующая оплата' })}</Label>
+                            <Input type="datetime-local" value={editor.next_payment_due_at} onChange={(event) => setCompanyEditorField(company.id, 'next_payment_due_at', event.target.value)} />
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <Button variant="outline" onClick={() => handleSaveCompanyRuntime(company)}>
+                            {t('platform_company_runtime_save_button', { defaultValue: 'Сохранить продление' })}
+                          </Button>
+                        </div>
+                      </div>
+
                       <div className="rounded-2xl border border-slate-200 p-4">
                         <h3 className="text-base font-semibold text-slate-900">{t('platform_company_plan_editor', { defaultValue: 'Тариф и ограничения' })}</h3>
                         <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -1451,7 +1732,12 @@ export default function PlatformAdmin() {
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">{t('platform_payments_title', { defaultValue: 'Последние оплаты' })}</h2>
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-xl font-semibold text-slate-900">{t('platform_payments_title', { defaultValue: 'Последние оплаты' })}</h2>
+              <Button variant="outline" onClick={handleExportPaymentsCsv} disabled={loading}>
+                {t('platform_export_payments_button', { defaultValue: 'CSV оплат' })}
+              </Button>
+            </div>
             <div className="mt-4 grid gap-3 rounded-2xl border border-slate-200 p-4 md:grid-cols-4">
               <div className="space-y-2">
                 <Label>{t('platform_payment_filter_company_label', { defaultValue: 'Компания ID' })}</Label>
@@ -1479,18 +1765,60 @@ export default function PlatformAdmin() {
               </div>
             </div>
             <div className="mt-4 space-y-3">
-              {payments.slice(0, 12).map((payment) => (
-                <div key={payment.id} className="rounded-2xl border border-slate-200 p-4">
-                  <p className="font-semibold text-slate-900">{payment.company_name}</p>
-                  <p className="text-sm text-slate-500">{payment.tariff_name ?? payment.tariff_key}</p>
-                  <p className="mt-2 text-sm text-slate-600">
-                    {formatMoney(Number(payment.amount ?? 0), payment.currency ?? 'USD')} · {t('platform_period_months_label', { defaultValue: '{{count}} мес.', count: payment.period_months ?? 1 })}
-                  </p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">
-                    {payment.status} · {payment.paid_at != null ? new Date(payment.paid_at).toLocaleString() : t('platform_not_paid_yet', { defaultValue: 'Не оплачено' })}
-                  </p>
+              {payments.map((payment) => {
+                const paymentEditor = paymentRecordEditors[payment.id] ?? buildPaymentRecordEditor(payment);
+                return (
+                  <div key={payment.id} className="rounded-2xl border border-slate-200 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-semibold text-slate-900">{payment.company_name}</p>
+                        <p className="text-sm text-slate-500">{payment.tariff_name ?? payment.tariff_key}</p>
+                        <p className="mt-2 text-sm text-slate-600">
+                          {formatMoney(Number(payment.amount ?? 0), payment.currency ?? 'USD')} · {t('platform_period_months_label', { defaultValue: '{{count}} мес.', count: payment.period_months ?? 1 })}
+                        </p>
+                      </div>
+                      <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                        #{payment.id}
+                      </p>
+                    </div>
+                    <div className="mt-4 grid gap-3 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label>{t('platform_payment_filter_status_label', { defaultValue: 'Статус оплаты' })}</Label>
+                        <Input value={paymentEditor.status} onChange={(event) => setPaymentRecordEditorField(payment.id, 'status', event.target.value)} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>{t('platform_payment_invoice_label', { defaultValue: 'Номер счёта' })}</Label>
+                        <Input value={paymentEditor.invoice_number} onChange={(event) => setPaymentRecordEditorField(payment.id, 'invoice_number', event.target.value)} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>{t('platform_payment_due_at_label', { defaultValue: 'Срок оплаты' })}</Label>
+                        <Input type="datetime-local" value={paymentEditor.due_at} onChange={(event) => setPaymentRecordEditorField(payment.id, 'due_at', event.target.value)} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>{t('platform_payment_paid_at_label', { defaultValue: 'Дата оплаты' })}</Label>
+                        <Input type="datetime-local" value={paymentEditor.paid_at} onChange={(event) => setPaymentRecordEditorField(payment.id, 'paid_at', event.target.value)} />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label>{t('platform_payment_notes_label', { defaultValue: 'Комментарий' })}</Label>
+                        <Input value={paymentEditor.notes} onChange={(event) => setPaymentRecordEditorField(payment.id, 'notes', event.target.value)} />
+                      </div>
+                    </div>
+                    <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                      <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                        {payment.status} · {payment.paid_at != null ? new Date(payment.paid_at).toLocaleString() : t('platform_not_paid_yet', { defaultValue: 'Не оплачено' })}
+                      </p>
+                      <Button variant="outline" onClick={() => handleUpdatePaymentRecord(payment.id)}>
+                        {t('platform_payment_update_button', { defaultValue: 'Обновить оплату' })}
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+              {payments.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm text-slate-500">
+                  {t('platform_payments_empty', { defaultValue: 'Записей об оплатах пока нет.' })}
                 </div>
-              ))}
+              ) : null}
             </div>
           </div>
 
