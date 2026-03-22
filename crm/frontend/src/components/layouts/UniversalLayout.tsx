@@ -24,7 +24,13 @@ import {
     Bell,
     MoreHorizontal,
     LayoutGrid,
-    Link2
+    Link2,
+    Clock,
+    Package,
+    Wallet,
+    BarChart2,
+    Gift,
+    Layers
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { api } from '../../services/api';
@@ -49,6 +55,7 @@ export const CRM_MENU_DEFAULT_ORDER = [
     'chat-group',
     'funnel',
     'catalog-group',
+    'finance-group',
     'tools-group',
     'settings-group'
 ];
@@ -56,7 +63,8 @@ export const CRM_MENU_DEFAULT_ORDER = [
 export const CRM_MENU_GROUPS: Record<string, string[]> = {
     'chat-group': ['chat', 'internal-chat'],
     'catalog-group': ['services', 'team'],
-    'tools-group': ['tasks', 'telephony', 'referral-links'],
+    'finance-group': ['cashbox', 'inventory', 'gift-cards', 'service-bundles'],
+    'tools-group': ['tasks', 'telephony', 'referral-links', 'kpi', 'waitlist'],
     'settings-group': ['settings'],
 };
 
@@ -116,6 +124,13 @@ export const buildCrmMenuCatalog = ({
         'tasks': { icon: CheckSquare, label: t('menu.tasks'), path: `${rolePrefix}/tasks`, req: () => true },
         'telephony': { icon: Phone, label: t('menu.telephony'), path: `${rolePrefix}/telephony`, req: () => true },
         'referral-links': { icon: Link2, label: t('menu.referral_links', { defaultValue: 'Реклама' }), path: `${rolePrefix}/referral-links`, req: () => permissions.roleLevel >= 50 },
+        'kpi': { icon: BarChart2, label: t('menu.kpi', { defaultValue: 'KPI' }), path: `${rolePrefix}/kpi`, req: () => permissions.roleLevel >= 50 },
+        'waitlist': { icon: Clock, label: t('menu.waitlist', { defaultValue: 'Очередь' }), path: `${rolePrefix}/waitlist`, req: () => true },
+        'finance-group': { icon: Wallet, label: t('menu.finance', { defaultValue: 'Финансы' }), req: () => permissions.roleLevel >= 50 },
+        'cashbox': { icon: Wallet, label: t('menu.cashbox', { defaultValue: 'Касса' }), path: `${rolePrefix}/cashbox`, req: () => permissions.roleLevel >= 50 },
+        'inventory': { icon: Package, label: t('menu.inventory', { defaultValue: 'Склад' }), path: `${rolePrefix}/inventory`, req: () => permissions.roleLevel >= 50 },
+        'gift-cards': { icon: Gift, label: t('menu.gift_cards', { defaultValue: 'Сертификаты' }), path: `${rolePrefix}/gift-cards`, req: () => true },
+        'service-bundles': { icon: Layers, label: t('menu.service_bundles', { defaultValue: 'Абонементы' }), path: `${rolePrefix}/service-bundles`, req: () => true },
         'settings-group': { icon: Settings, label: t('menu.settings'), req: () => permissions.canEditSettings },
         'settings': { icon: Settings, label: t('menu.settings'), path: `${rolePrefix}/settings`, req: () => permissions.canEditSettings },
     };

@@ -1469,3 +1469,33 @@
 - IMPORTANT TO REMEMBER:
   - for multi-tenant CRM, the application DB user must never be `SUPERUSER`, otherwise PostgreSQL row-level security can be bypassed and company data isolation becomes unreliable;
   - platform-wide access must go only through explicit super-admin flows and `tenant_bypass`, not through elevated database privileges.
+
+## [2026-03-22] Platform Admin Expansion: 10 More SaaS Functions
+- Expanded platform admin SaaS control surface in:
+  - `crm/backend/db/companies.py`
+  - `crm/backend/crm_api/platform_admin.py`
+  - `crm/frontend/src/services/api.ts`
+  - `crm/frontend/src/pages/shared/PlatformAdmin.tsx`
+- Added 10 concrete platform functions on top of the existing tariff/billing core:
+  - company search in platform admin;
+  - company status filtering;
+  - optional listing of deleted companies;
+  - company restore action from platform admin;
+  - cancel scheduled tariff/subscription change for a company;
+  - clone tariff from an existing tariff;
+  - deactivate tariff directly from platform admin UI;
+  - payment filters by company, status, search string, and overdue-only mode;
+  - overdue / due-in-7-days payment metrics in platform overview;
+  - ad filters by company, status, and placement;
+  - broadcast targeting by explicit company IDs and tariff keys.
+- IMPORTANT TO REMEMBER:
+  - new platform functionality was added into the existing SSOT orchestrators, not as separate helper files;
+  - deleted companies remain hidden by default and are shown only when `include_deleted` is enabled;
+  - restore clears `deleted_at` and returns the company to `trial` or `active` depending on the current subscription state;
+  - scheduled tariff changes can now be cancelled without rewriting the current paid snapshot.
+- Validation:
+  - `venv/bin/python -m py_compile crm/backend/db/companies.py crm/backend/crm_api/platform_admin.py` passed;
+  - `npm --prefix crm/frontend run build` passed;
+  - `venv/bin/python tests/runners/run_all_tests.py` passed;
+  - `venv/bin/python tests/runners/run_all_test2.py` passed;
+  - `venv/bin/python tests/runners/run_all_test3.py` passed.

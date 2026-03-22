@@ -2728,17 +2728,37 @@ def init_database():
             advertiser_name TEXT,
             advertiser_email TEXT,
             campaign TEXT,
+            placement TEXT,
+            size_label TEXT,
             utm_source TEXT,
             utm_medium TEXT,
             utm_campaign TEXT,
             utm_content TEXT,
             utm_term TEXT,
+            pricing_model TEXT DEFAULT 'flat',
+            currency TEXT,
+            budget_amount REAL DEFAULT 0,
+            unit_price REAL DEFAULT 0,
+            target_clicks INTEGER DEFAULT 0,
+            target_conversions INTEGER DEFAULT 0,
+            notes TEXT,
             is_active BOOLEAN DEFAULT TRUE,
             created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            starts_at TIMESTAMP,
             expires_at TIMESTAMP,
             UNIQUE(company_id, slug)
         )''')
+        add_column_if_not_exists('referral_links', 'placement', 'TEXT')
+        add_column_if_not_exists('referral_links', 'size_label', 'TEXT')
+        add_column_if_not_exists('referral_links', 'pricing_model', "TEXT DEFAULT 'flat'")
+        add_column_if_not_exists('referral_links', 'currency', 'TEXT')
+        add_column_if_not_exists('referral_links', 'budget_amount', 'REAL DEFAULT 0')
+        add_column_if_not_exists('referral_links', 'unit_price', 'REAL DEFAULT 0')
+        add_column_if_not_exists('referral_links', 'target_clicks', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('referral_links', 'target_conversions', 'INTEGER DEFAULT 0')
+        add_column_if_not_exists('referral_links', 'notes', 'TEXT')
+        add_column_if_not_exists('referral_links', 'starts_at', 'TIMESTAMP')
         c.execute("CREATE INDEX IF NOT EXISTS idx_referral_links_slug ON referral_links(slug)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_referral_links_company ON referral_links(company_id)")
 
@@ -2752,13 +2772,35 @@ def init_database():
             device_type TEXT,
             browser TEXT,
             referrer TEXT,
+            placement TEXT,
             city TEXT,
             country TEXT,
             is_unique BOOLEAN DEFAULT TRUE,
             clicked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('referral_clicks', 'placement', 'TEXT')
         c.execute("CREATE INDEX IF NOT EXISTS idx_referral_clicks_link ON referral_clicks(link_id)")
         c.execute("CREATE INDEX IF NOT EXISTS idx_referral_clicks_clicked_at ON referral_clicks(clicked_at)")
+
+        c.execute('''CREATE TABLE IF NOT EXISTS referral_impressions (
+            id SERIAL PRIMARY KEY,
+            link_id INTEGER REFERENCES referral_links(id) ON DELETE CASCADE,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            ip_address TEXT,
+            ip_hash TEXT,
+            user_agent TEXT,
+            device_type TEXT,
+            browser TEXT,
+            referrer TEXT,
+            placement TEXT,
+            city TEXT,
+            country TEXT,
+            is_unique BOOLEAN DEFAULT TRUE,
+            viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        add_column_if_not_exists('referral_impressions', 'placement', 'TEXT')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_referral_impressions_link ON referral_impressions(link_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_referral_impressions_viewed_at ON referral_impressions(viewed_at)")
 
         c.execute('''CREATE TABLE IF NOT EXISTS referral_conversions (
             id SERIAL PRIMARY KEY,
@@ -2768,9 +2810,260 @@ def init_database():
             client_instagram_id TEXT,
             booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL,
             revenue REAL DEFAULT 0,
+            conversion_type TEXT DEFAULT 'lead',
+            notes TEXT,
             converted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )''')
+        add_column_if_not_exists('referral_conversions', 'conversion_type', "TEXT DEFAULT 'lead'")
+        add_column_if_not_exists('referral_conversions', 'notes', 'TEXT')
         c.execute("CREATE INDEX IF NOT EXISTS idx_referral_conversions_link ON referral_conversions(link_id)")
+
+        # ─── Feature 1: Waitlist ─────────────────────────────────────────────────
+        c.execute('''CREATE TABLE IF NOT EXISTS waitlist (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            client_instagram_id TEXT,
+            client_name TEXT,
+            client_phone TEXT,
+            service_id INTEGER REFERENCES services(id) ON DELETE SET NULL,
+            service_name TEXT,
+            employee_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            preferred_date DATE,
+            preferred_time_from TIME,
+            preferred_time_to TIME,
+            notes TEXT,
+            status TEXT DEFAULT 'waiting',
+            notified_at TIMESTAMP,
+            booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_waitlist_company ON waitlist(company_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_waitlist_status ON waitlist(status)")
+
+        # ─── Feature 2: Inventory / Supplies ─────────────────────────────────────
+        c.execute('''CREATE TABLE IF NOT EXISTS inventory_items (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            name TEXT NOT NULL,
+            sku TEXT,
+            category TEXT DEFAULT 'general',
+            unit TEXT DEFAULT 'шт',
+            quantity REAL DEFAULT 0,
+            min_quantity REAL DEFAULT 0,
+            cost_price REAL DEFAULT 0,
+            sale_price REAL DEFAULT 0,
+            supplier TEXT,
+            notes TEXT,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_inventory_company ON inventory_items(company_id)")
+
+        c.execute('''CREATE TABLE IF NOT EXISTS inventory_transactions (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            item_id INTEGER REFERENCES inventory_items(id) ON DELETE CASCADE,
+            type TEXT NOT NULL,
+            quantity REAL NOT NULL,
+            price REAL DEFAULT 0,
+            reason TEXT,
+            booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL,
+            user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_inventory_tx_item ON inventory_transactions(item_id)")
+
+        # ─── Feature 3: Cashbox / Expenses ───────────────────────────────────────
+        c.execute('''CREATE TABLE IF NOT EXISTS cashbox_operations (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            type TEXT NOT NULL,
+            category TEXT DEFAULT 'other',
+            amount REAL NOT NULL,
+            description TEXT,
+            payment_method TEXT DEFAULT 'cash',
+            booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL,
+            employee_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            document_number TEXT,
+            operation_date DATE DEFAULT CURRENT_DATE,
+            created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_cashbox_company ON cashbox_operations(company_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_cashbox_date ON cashbox_operations(operation_date)")
+
+        # ─── Feature 4: Employee KPI ──────────────────────────────────────────────
+        c.execute('''CREATE TABLE IF NOT EXISTS kpi_targets (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            employee_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            period_type TEXT DEFAULT 'month',
+            period_start DATE NOT NULL,
+            period_end DATE NOT NULL,
+            target_bookings INTEGER DEFAULT 0,
+            target_revenue REAL DEFAULT 0,
+            target_new_clients INTEGER DEFAULT 0,
+            target_avg_check REAL DEFAULT 0,
+            bonus_threshold REAL DEFAULT 0,
+            bonus_amount REAL DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_kpi_employee ON kpi_targets(employee_id)")
+
+        # ─── Feature 5: Webhooks ─────────────────────────────────────────────────
+        c.execute('''CREATE TABLE IF NOT EXISTS webhooks (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            name TEXT NOT NULL,
+            url TEXT NOT NULL,
+            secret TEXT,
+            events TEXT[],
+            is_active BOOLEAN DEFAULT TRUE,
+            last_triggered_at TIMESTAMP,
+            last_status_code INTEGER,
+            fail_count INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_webhooks_company ON webhooks(company_id)")
+
+        c.execute('''CREATE TABLE IF NOT EXISTS webhook_logs (
+            id SERIAL PRIMARY KEY,
+            webhook_id INTEGER REFERENCES webhooks(id) ON DELETE CASCADE,
+            event TEXT NOT NULL,
+            payload JSONB,
+            status_code INTEGER,
+            response TEXT,
+            duration_ms INTEGER,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_webhook_logs_wh ON webhook_logs(webhook_id)")
+
+        # ─── Feature 6: Recurring Bookings ───────────────────────────────────────
+        c.execute('''CREATE TABLE IF NOT EXISTS recurring_bookings (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            client_instagram_id TEXT,
+            service_id INTEGER REFERENCES services(id) ON DELETE SET NULL,
+            employee_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            frequency TEXT NOT NULL,
+            day_of_week INTEGER,
+            day_of_month INTEGER,
+            time_of_day TIME,
+            duration_minutes INTEGER DEFAULT 60,
+            is_active BOOLEAN DEFAULT TRUE,
+            next_booking_date DATE,
+            advance_days INTEGER DEFAULT 3,
+            auto_confirm BOOLEAN DEFAULT FALSE,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_recurring_company ON recurring_bookings(company_id)")
+
+        # ─── Feature 7: Shifts / Timekeeping ─────────────────────────────────────
+        c.execute('''CREATE TABLE IF NOT EXISTS shifts (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            employee_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            shift_date DATE NOT NULL,
+            planned_start TIME,
+            planned_end TIME,
+            actual_start TIMESTAMP,
+            actual_end TIMESTAMP,
+            break_minutes INTEGER DEFAULT 0,
+            status TEXT DEFAULT 'scheduled',
+            notes TEXT,
+            approved_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_shifts_employee ON shifts(employee_id, shift_date)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_shifts_company_date ON shifts(company_id, shift_date)")
+
+        # ─── Feature 8: Client Scoring ────────────────────────────────────────────
+        c.execute('''CREATE TABLE IF NOT EXISTS client_scores (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            client_instagram_id TEXT NOT NULL,
+            rfm_recency INTEGER DEFAULT 0,
+            rfm_frequency INTEGER DEFAULT 0,
+            rfm_monetary INTEGER DEFAULT 0,
+            rfm_score INTEGER DEFAULT 0,
+            segment TEXT DEFAULT 'new',
+            churn_risk REAL DEFAULT 0,
+            ltv_predicted REAL DEFAULT 0,
+            last_calculated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(company_id, client_instagram_id)
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_scores_company ON client_scores(company_id)")
+
+        # ─── Feature 9: Gift Cards ────────────────────────────────────────────────
+        c.execute('''CREATE TABLE IF NOT EXISTS gift_cards (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            code TEXT NOT NULL,
+            amount REAL NOT NULL,
+            balance REAL NOT NULL,
+            issued_to TEXT,
+            issued_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            valid_until DATE,
+            is_active BOOLEAN DEFAULT TRUE,
+            purchased_by_client TEXT,
+            purchase_amount REAL,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(company_id, code)
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_gift_cards_company ON gift_cards(company_id)")
+        c.execute("CREATE INDEX IF NOT EXISTS idx_gift_cards_code ON gift_cards(code)")
+
+        c.execute('''CREATE TABLE IF NOT EXISTS gift_card_transactions (
+            id SERIAL PRIMARY KEY,
+            card_id INTEGER REFERENCES gift_cards(id) ON DELETE CASCADE,
+            amount REAL NOT NULL,
+            type TEXT NOT NULL,
+            booking_id INTEGER REFERENCES bookings(id) ON DELETE SET NULL,
+            note TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+
+        # ─── Feature 10: Service Bundles ──────────────────────────────────────────
+        c.execute('''CREATE TABLE IF NOT EXISTS service_bundles (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            name TEXT NOT NULL,
+            description TEXT,
+            price REAL NOT NULL,
+            original_price REAL,
+            sessions_count INTEGER DEFAULT 1,
+            valid_days INTEGER DEFAULT 365,
+            image_url TEXT,
+            is_active BOOLEAN DEFAULT TRUE,
+            category TEXT DEFAULT 'general',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_bundles_company ON service_bundles(company_id)")
+
+        c.execute('''CREATE TABLE IF NOT EXISTS bundle_services (
+            id SERIAL PRIMARY KEY,
+            bundle_id INTEGER REFERENCES service_bundles(id) ON DELETE CASCADE,
+            service_id INTEGER REFERENCES services(id) ON DELETE CASCADE,
+            sessions INTEGER DEFAULT 1
+        )''')
+
+        c.execute('''CREATE TABLE IF NOT EXISTS client_bundles (
+            id SERIAL PRIMARY KEY,
+            company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+            bundle_id INTEGER REFERENCES service_bundles(id) ON DELETE CASCADE,
+            client_instagram_id TEXT NOT NULL,
+            sessions_total INTEGER NOT NULL,
+            sessions_used INTEGER DEFAULT 0,
+            purchased_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            expires_at DATE,
+            is_active BOOLEAN DEFAULT TRUE,
+            paid_amount REAL,
+            notes TEXT
+        )''')
+        c.execute("CREATE INDEX IF NOT EXISTS idx_client_bundles_client ON client_bundles(client_instagram_id)")
 
         # Startup must not auto-fill reference catalogs.
 

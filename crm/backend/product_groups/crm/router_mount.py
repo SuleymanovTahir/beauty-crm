@@ -35,6 +35,16 @@ from crm_api.payment_integrations import router as payment_integrations_router
 from crm_api.internal_chat import router as internal_chat_router
 from crm_api.statuses import router as statuses_router
 from crm_api.referral_links import router as referral_links_router, redirect_router as referral_redirect_router
+from crm_api.waitlist import router as waitlist_router
+from crm_api.inventory import router as inventory_router
+from crm_api.cashbox import router as cashbox_router
+from crm_api.kpi import router as kpi_router
+from crm_api.webhooks_api import router as webhooks_router
+from crm_api.recurring_bookings import router as recurring_bookings_router
+from crm_api.shifts import router as shifts_router
+from crm_api.client_scoring import router as client_scoring_router
+from crm_api.gift_cards import router as gift_cards_router
+from crm_api.service_bundles import router as service_bundles_router
 
 
 def mount_crm_routers(app: FastAPI) -> None:
@@ -80,3 +90,13 @@ def mount_crm_routers(app: FastAPI) -> None:
     app.include_router(statuses_router, prefix="/api")
     app.include_router(referral_links_router, prefix="/api")
     app.include_router(referral_redirect_router)  # /r/{slug} redirect without /api prefix
+    app.include_router(waitlist_router, prefix="/api")
+    app.include_router(inventory_router, prefix="/api")
+    app.include_router(cashbox_router, prefix="/api")
+    app.include_router(kpi_router, prefix="/api")
+    app.include_router(webhooks_router, prefix="/api")
+    app.include_router(recurring_bookings_router, prefix="/api")
+    app.include_router(shifts_router, prefix="/api")
+    app.include_router(client_scoring_router, prefix="/api")
+    app.include_router(gift_cards_router, prefix="/api")
+    app.include_router(service_bundles_router, prefix="/api")

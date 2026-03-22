@@ -20,6 +20,12 @@ const UniversalProfile = React.lazy(() => import('@crm/pages/shared/Profile'));
 const Telephony = React.lazy(() => import('@crm/pages/shared/Telephony'));
 const PlatformAdmin = React.lazy(() => import('@crm/pages/shared/PlatformAdmin'));
 const ReferralLinks = React.lazy(() => import('@crm/pages/shared/ReferralLinks'));
+const Waitlist = React.lazy(() => import('@crm/pages/shared/Waitlist'));
+const Inventory = React.lazy(() => import('@crm/pages/shared/Inventory'));
+const Cashbox = React.lazy(() => import('@crm/pages/shared/Cashbox'));
+const KPI = React.lazy(() => import('@crm/pages/shared/KPI'));
+const GiftCards = React.lazy(() => import('@crm/pages/shared/GiftCards'));
+const ServiceBundles = React.lazy(() => import('@crm/pages/shared/ServiceBundles'));
 
 const InternalChat = React.lazy(() => import('@crm/components/shared/InternalChat'));
 const NotificationsPage = React.lazy(() => import('@crm/pages/common/Notifications'));
@@ -247,6 +253,12 @@ export default function App() {
                 <Route path="marketplace-integrations" element={<Navigate to="../settings" replace />} />
                 <Route path="referral-links" element={<ReferralLinks />} />
                 <Route path="referrals" element={<Navigate to="../referral-links" replace />} />
+                <Route path="waitlist" element={<Waitlist />} />
+                <Route path="inventory" element={<Inventory />} />
+                <Route path="cashbox" element={<Cashbox />} />
+                <Route path="kpi" element={<KPI />} />
+                <Route path="gift-cards" element={<GiftCards />} />
+                <Route path="service-bundles" element={<ServiceBundles />} />
                 <Route path="service-change-requests" element={<Navigate to="../services" replace />} />
                 <Route path="plans" element={<Navigate to="../dashboard" replace />} />
                 <Route path="trash" element={<Navigate to="../dashboard" replace />} />
@@ -288,6 +300,12 @@ export default function App() {
                 <Route path="bot-settings" element={<Navigate to="../settings" replace />} />
                 <Route path="promo-codes" element={<Navigate to="../dashboard" replace />} />
                 <Route path="referral-links" element={<ReferralLinks />} />
+                <Route path="waitlist" element={<Waitlist />} />
+                <Route path="inventory" element={<Inventory />} />
+                <Route path="cashbox" element={<Cashbox />} />
+                <Route path="kpi" element={<KPI />} />
+                <Route path="gift-cards" element={<GiftCards />} />
+                <Route path="service-bundles" element={<ServiceBundles />} />
                 <Route path="team/:id/:tab?" element={<Team />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
@@ -356,6 +374,12 @@ export default function App() {
                 <Route path="clients" element={<Navigate to="../dashboard" replace />} />
                 <Route path="promo-codes" element={<Navigate to="../dashboard" replace />} />
                 <Route path="referral-links" element={<ReferralLinks />} />
+                <Route path="waitlist" element={<Waitlist />} />
+                <Route path="inventory" element={<Inventory />} />
+                <Route path="cashbox" element={<Cashbox />} />
+                <Route path="kpi" element={<KPI />} />
+                <Route path="gift-cards" element={<GiftCards />} />
+                <Route path="service-bundles" element={<ServiceBundles />} />
                 <Route path="" element={<Navigate to="dashboard" replace />} />
               </Route>
 
