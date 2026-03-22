@@ -105,7 +105,7 @@ export default function Messengers() {
                     </p>
                 </div>
                 <Button variant="outline" onClick={() => navigate(-1)} className="hidden md:flex">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    <ArrowLeft className="w-4 h-4 mr-2 settings-text-primary" />
                     {t('common:back', 'Назад')}
                 </Button>
             </div>

@@ -257,7 +257,7 @@ export default function App() {
                 <Route path="clients" element={<Clients />} />
                 <Route path="calendar" element={<Calendar />} />
                 <Route path="analytics" element={<Analytics />} />
-                <Route path="bot-settings" element={<BotSettings />} />
+                <Route path="bot-settings/:tab?" element={<BotSettings />} />
                 <Route path="menu-customization" element={<MenuCustomization />} />
                 <Route path="broadcasts" element={<Broadcasts />} />
                 <Route path="promo-codes" element={<PromoCodes />} />
