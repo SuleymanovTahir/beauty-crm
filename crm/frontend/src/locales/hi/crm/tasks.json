@@ -69,10 +69,10 @@
   "select_priority": "प्राथमिकता चुनें",
   "select_stage": "चरण चुनें",
   "selected_count": "चयनित: {{गिनती}}",
-  "selected_count_one": "",
-  "selected_count_few": "",
-  "selected_count_many": "",
-  "selected_count_other": "",
+  "selected_count_few": "चयनित मात्रा",
+  "selected_count_many": "चयनित मात्रा",
+  "selected_count_one": "चयनित मात्रा",
+  "selected_count_other": "चयनित मात्रा",
   "showing_tasks": "दिखाया गया",
   "stage": "चरण",
   "stage_created": "स्टेज बनाया गया",
@@ -95,7 +95,7 @@
   "tasks_control": "नियंत्रण के लिए कार्य",
   "tasks_execution": "पूर्ण करने के लिए कार्य",
   "tasks_for_today": "आज के कार्य",
-  "title": "शीर्षक",
+  "title": "कार्य",
   "unassigned": "असाइन नहीं किए गए",
   "update_failed": "त्रुटि अपडेट करने का कार्य"
 }

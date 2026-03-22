@@ -3,13 +3,13 @@
     "activate": "Ativar",
     "deactivate": "Desativar"
   },
-  "adjust_points": "",
+  "adjust_points": "Pontos de ajuste",
   "buttons": {
     "add_rule": "Adicionar regra",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Pontos de ajuste",
+    "cancel": "Cancelar",
     "save": "Salvar",
-    "save_changes": ""
+    "save_changes": "Salvar alterações"
   },
   "categories": {
     "category": "Categoria",
@@ -28,26 +28,26 @@
     "points_per_unit": "pontos por 1 unidade. moedas",
     "title": "Configurações"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Confirme a exclusão da regra",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "E-mail do cliente",
+      "client_email_placeholder": "Insira o e-mail do cliente",
+      "description": "Descrição dos pontos de ajuste",
+      "points": "Pontos",
+      "points_placeholder": "Insira o número de pontos",
+      "reason": "Motivo",
+      "reason_placeholder": "Especifique o motivo",
+      "title": "Alterar nome do ponto"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
+      "description": "Alterar descrição do nível",
+      "discount_percent": "Porcentagem de desconto",
+      "min_points": "Pontos mínimos",
       "status_hint": "Um nível inativo não participa do cálculo automático de privilégios",
       "status_label": "Status do nível",
-      "tier_name": "",
-      "title": ""
+      "tier_name": "Nome do nível",
+      "title": "Alterar nome do nível"
     },
     "rule": {
       "description": "Definir o multiplicador de pontos para a categoria de serviço",
@@ -57,51 +57,51 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Participantes ativos",
+    "points_redeemed": "Pontos resgatados",
+    "total_points_issued": "Total de pontos concedidos"
   },
   "statuses": {
     "inactive": "Inativo"
   },
-  "subtitle": "",
+  "subtitle": "Gerenciar bônus e histórico de transações",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Descrição dos níveis",
+    "discount": "Desconto",
+    "from_points": "De pontos",
+    "starting_level": "Nível de reserva",
+    "title": "Nível de nome"
   },
-  "title": "",
+  "title": "Fidelização",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add_one": "",
-    "points_adjusted_add_few": "",
-    "points_adjusted_add_many": "",
-    "points_adjusted_add_other": "",
-    "points_adjusted_deduct_one": "",
-    "points_adjusted_deduct_few": "",
-    "points_adjusted_deduct_many": "",
-    "points_adjusted_deduct_other": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Configuração atualizada",
+    "failed_adjust": "Falha ao configurar",
+    "failed_delete": "Falha ao excluir",
+    "failed_load": "Falha ao carregar",
+    "failed_save": "Falha ao salvar",
+    "failed_update": "Falha ao atualizar",
+    "points_adjusted_add_few": "Pontos ajustados, adicionados",
+    "points_adjusted_add_many": "Pontos ajustados, adicionados",
+    "points_adjusted_add_one": "Pontos ajustados, adicionados",
+    "points_adjusted_add_other": "Pontos ajustados, adicionados",
+    "points_adjusted_deduct_few": "Dedução de pontos ajustada",
+    "points_adjusted_deduct_many": "Dedução de pontos ajustada",
+    "points_adjusted_deduct_one": "Dedução de pontos ajustada",
+    "points_adjusted_deduct_other": "Dedução de pontos ajustada",
+    "rule_deleted": "Regra excluída.",
+    "rule_saved": "Regra salva.",
+    "tier_updated": "Nível atualizado"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Descrição da transação",
+    "search_placeholder": "Pesquisar por cliente ou transação",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Cliente",
+      "date": "Data",
+      "points": "Pontos",
+      "reason": "Motivo",
+      "type": "Digitar"
     },
-    "title": ""
+    "title": "Nome da transação"
   }
 }

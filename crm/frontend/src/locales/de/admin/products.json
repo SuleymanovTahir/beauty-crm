@@ -1,71 +1,71 @@
 {
-  "addProduct": "",
-  "allCategories": "",
+  "addProduct": "Produkt hinzufügen",
+  "allCategories": "Alle Kategorien",
   "analytics": {
-    "avgPrice": "",
-    "last30Days_one": "",
-    "last30Days_few": "",
-    "last30Days_many": "",
-    "last30Days_other": "",
-    "revenue": "",
-    "totalSold": ""
+    "avgPrice": "Mittelpreis",
+    "last30Days_few": "Letzte 30 Tage",
+    "last30Days_many": "Letzte 30 Tage",
+    "last30Days_one": "Letzte 30 Tage",
+    "last30Days_other": "Letzte 30 Tage",
+    "revenue": "Einnahmen",
+    "totalSold": "Gesamt verkauft"
   },
-  "createFirst": "",
-  "delete": "",
+  "createFirst": "Zuerst erstellen",
+  "delete": "Löschen",
   "detail": {
-    "costPriceLabel": "",
-    "inStock_one": "",
-    "inStock_few": "",
-    "inStock_many": "",
-    "inStock_other": "",
-    "loadingData": "",
-    "movementAdjustment": "",
-    "movementHistory": "",
-    "movementIn": "",
-    "movementOut": "",
-    "noCategory": "",
-    "noMovements": ""
+    "costPriceLabel": "Kostenetikett",
+    "inStock_few": "Auf Lager",
+    "inStock_many": "In Lagerbestand",
+    "inStock_one": "Auf Lager",
+    "inStock_other": "Auf Lager",
+    "loadingData": "Daten laden",
+    "movementAdjustment": "Bewegungsanpassung",
+    "movementHistory": "Bewegungsverlauf",
+    "movementIn": "Einwärtsbewegung",
+    "movementOut": "Außenbewegung",
+    "noCategory": "Keine Kategorie",
+    "noMovements": "Nr Bewegung"
   },
-  "edit": "",
+  "edit": "Bearbeiten",
   "form": {
-    "cancel": "",
-    "category": "",
-    "costPrice": "",
-    "isActive": "",
-    "minStockLevel": "",
-    "name": "",
-    "notes": "",
-    "photos": "",
-    "price": "",
-    "save": "",
-    "sku": "",
-    "stockQuantity": "",
-    "upload": "",
-    "uploadError": ""
+    "cancel": "Abbrechen",
+    "category": "Kategorie",
+    "costPrice": "Kosten",
+    "isActive": "Aktiv",
+    "minStockLevel": "Mindestlagerbestand",
+    "name": "Name",
+    "notes": "Notizen",
+    "photos": "Fotos",
+    "price": "Preis",
+    "save": "Speichern",
+    "sku": "Artikel",
+    "stockQuantity": "Lagerbestand",
+    "upload": "Download",
+    "uploadError": "Fehler beim Laden"
   },
   "messages": {
-    "confirmDelete": "",
-    "noResults": ""
+    "confirmDelete": "Löschen bestätigen",
+    "noResults": "Nr Ergebnisse"
   },
   "movement": {
-    "quantity": "",
-    "reason": "",
-    "title": "",
-    "type": "",
+    "quantity": "Menge",
+    "reason": "Grund",
+    "title": "Bewegungsname",
+    "type": "Eingeben",
     "types": {
-      "adjustment": "",
-      "in": "",
-      "out": ""
+      "adjustment": "Einstellung",
+      "in": "Innen",
+      "out": "Außen"
     }
   },
-  "noProducts": "",
-  "search_placeholder": "",
+  "noProducts": "Keine Produkte",
+  "search_placeholder": "Suche nach Name oder Kategorie",
   "stock_status": {
-    "in_stock": "",
-    "low_stock": "",
-    "out_of_stock": ""
+    "in_stock": "Verfügbar",
+    "low_stock": "Geringe Lagerbestände",
+    "out_of_stock": "Verkauft out"
   },
-  "subtitle": "",
-  "title": "",
-  "unit_pcs": ""
+  "subtitle": "Produkte und Guthaben verwalten",
+  "title": "Produkte",
+  "unit_pcs": "Einheit"
 }

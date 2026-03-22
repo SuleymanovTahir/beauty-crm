@@ -4,12 +4,12 @@
   "all_notifications_cleared": "تم حذف جميع الإشعارات",
   "calls": {
     "accept": "قبول",
-    "audio_call": "",
+    "audio_call": "مكالمة صوتية",
     "click_to_answer": "انقر للرد",
     "incoming_call": "مكالمة واردة!",
     "missed_auto": "مكالمة لم يرد عليها (تم الإلغاء تلقائي)",
     "missed_call": "مكالمة لم يرد عليها",
-    "video_call": ""
+    "video_call": "مكالمة فيديو"
   },
   "clear_all": "مسح الكل",
   "close": "إغلاق",
@@ -78,11 +78,11 @@
   "notification_deleted": "تم حذف الإشعار",
   "notifications": "الإشعارات",
   "roles": {
-    "accountant": "",
-    "admin": "",
+    "accountant": "المحاسب",
+    "admin": "المسؤول",
     "director": "المدير",
-    "employee": "",
-    "manager": "",
+    "employee": "الموظف",
+    "manager": "المدير",
     "marketer": "المسوق",
     "saler": "مدير المبيعات",
     "super_admin": "مالك المنصة"

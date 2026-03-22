@@ -1,3 +1,27 @@
+## [2026-03-22] Settings And Analytics Translation Recovery Via Source Glossary
+- Fixed missing translations on `/crm/settings` and `/crm/analytics` by repairing the translation source pipeline instead of manually editing frontend locale JSON files.
+- Core changes:
+  - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/i18n.ts`
+    - added missing runtime namespace loading for `analytics`, `calendar`, `booking`, `admin/*` and `adminpanel/*`,
+    - introduced safe resource merging so empty strings in narrow namespaces no longer overwrite valid translations from shared SSOT namespaces like `common`, `crm/bookings`, `crm/settings` and `manager/chat`,
+    - merged `calendar` with booking/common labels and merged `admin/calendar` on top of that so related pages can reuse existing translations instead of duplicating them.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/translations/frontend_translate.py`
+    - added source backfill from a central key glossary before mass translation starts,
+    - the frontend translation pipeline now restores missing Russian source strings first and only then translates them into the remaining languages.
+  - `/Users/tahir/Desktop/beauty-crm/crm/backend/scripts/translations/key_glossary.json`
+    - added the centralized SSOT for recovered source texts used by `settings`, `analytics` and several already-detected neighboring gaps (`calendar`, `dashboard`, `employee/services`, `manager/chat`, `common`, `admin/services`).
+- Why this was needed:
+  - the pages were not only missing loaded namespaces; many keys physically existed as empty strings in `ru`, so the old auto-translation pipeline had nothing to translate and the UI rendered blanks,
+  - fixing only TSX or only locale loading would have left the root cause in place and the same empty keys would reappear after the next extraction.
+- Validation:
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run db:i18n:auto` ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run i18n:check-only` now reports `0` missing keys and `0` empty values ✅
+  - `npm --prefix /Users/tahir/Desktop/beauty-crm/crm/frontend run build` passes ✅
+- IMPORTANT TO REMEMBER:
+  - if a page shows blank translated UI, check both runtime namespace loading and whether the `ru` source value is empty,
+  - do not manually patch `src/locales/*/*.json`; add or correct the source string in the centralized translation pipeline and rerun `db:i18n:auto`,
+  - when aliasing namespaces in frontend i18n, never let empty strings overwrite valid shared translations.
+
 ## [2026-03-22] Audit Log Build Fix And Messenger Title Translation Reused
 - Removed the unresolved `framer-motion` dependency from the existing shared CRM pages instead of installing a new package or creating wrappers:
   - `/Users/tahir/Desktop/beauty-crm/crm/frontend/src/pages/shared/AuditLog.tsx`

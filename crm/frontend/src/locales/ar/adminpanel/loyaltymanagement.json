@@ -3,13 +3,13 @@
     "activate": "تمكين",
     "deactivate": "تعطيل"
   },
-  "adjust_points": "",
+  "adjust_points": "نقاط التعديل",
   "buttons": {
     "add_rule": "إضافة قاعدة",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "نقاط التعديل",
+    "cancel": "إلغاء",
     "save": "حفظ",
-    "save_changes": ""
+    "save_changes": "حفظ التغييرات"
   },
   "categories": {
     "category": "الفئة",
@@ -28,26 +28,26 @@
     "points_per_unit": "النقاط مقابل وحدة واحدة. العملات",
     "title": "الإعدادات"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "تأكيد حذف القاعدة",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "البريد الإلكتروني للعميل",
+      "client_email_placeholder": "أدخل البريد الإلكتروني للعميل",
+      "description": "وصف نقاط التعديل",
+      "points": "النقاط",
+      "points_placeholder": "أدخل عدد النقاط",
+      "reason": "السبب",
+      "reason_placeholder": "حدد السبب",
+      "title": "تغيير اسم النقطة"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
+      "description": "تغيير وصف المستوى",
+      "discount_percent": "نسبة الخصم",
+      "min_points": "الحد الأدنى من النقاط",
       "status_hint": "لا يشارك المستوى غير النشط في الحساب التلقائي للامتيازات",
       "status_label": "حالة المستوى",
-      "tier_name": "",
-      "title": ""
+      "tier_name": "اسم المستوى",
+      "title": "تغيير اسم المستوى"
     },
     "rule": {
       "description": "تعيين مضاعف النقاط لفئة الخدمة",
@@ -57,55 +57,55 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "نشط المشاركون",
+    "points_redeemed": "النقاط المستردة",
+    "total_points_issued": "إجمالي النقاط الممنوحة"
   },
   "statuses": {
     "inactive": "غير نشطة"
   },
-  "subtitle": "",
+  "subtitle": "إدارة المكافآت وسجل المعاملات",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "وصف المستويات",
+    "discount": "الخصم",
+    "from_points": "من النقاط",
+    "starting_level": "مستوى الدخول",
+    "title": "مستوى الاسم"
   },
-  "title": "",
+  "title": "الولاء",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add_zero": "",
-    "points_adjusted_add_one": "",
+    "config_updated": "تم تحديث التكوين",
+    "failed_adjust": "فشل التكوين",
+    "failed_delete": "فشل الحذف",
+    "failed_load": "فشل التحميل",
+    "failed_save": "فشل الحفظ",
+    "failed_update": "فشل التحديث",
+    "points_adjusted_add_few": "تم تعديل النقاط، تمت الإضافة",
+    "points_adjusted_add_many": "تم تعديل النقاط، تمت إضافتها",
+    "points_adjusted_add_one": "تم تعديل النقاط، تمت إضافتها",
+    "points_adjusted_add_other": "تم تعديل النقاط، تمت إضافتها",
     "points_adjusted_add_two": "",
-    "points_adjusted_add_few": "",
-    "points_adjusted_add_many": "",
-    "points_adjusted_add_other": "",
-    "points_adjusted_deduct_zero": "",
-    "points_adjusted_deduct_one": "",
+    "points_adjusted_add_zero": "",
+    "points_adjusted_deduct_few": "تم تعديل خصم النقاط",
+    "points_adjusted_deduct_many": "تم تعديل خصم النقاط",
+    "points_adjusted_deduct_one": "تم تعديل خصم النقاط المعدلة",
+    "points_adjusted_deduct_other": "تم خصم النقاط المعدلة",
     "points_adjusted_deduct_two": "",
-    "points_adjusted_deduct_few": "",
-    "points_adjusted_deduct_many": "",
-    "points_adjusted_deduct_other": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "points_adjusted_deduct_zero": "",
+    "rule_deleted": "تم حذف القاعدة.",
+    "rule_saved": "تم حفظ القاعدة.",
+    "tier_updated": "تم تحديث المستوى"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "وصف المعاملة",
+    "search_placeholder": "البحث حسب العميل أو المعاملة",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "العميل",
+      "date": "التاريخ",
+      "points": "النقاط",
+      "reason": "السبب",
+      "type": "اكتب"
     },
-    "title": ""
+    "title": "اسم المعاملة"
   }
 }

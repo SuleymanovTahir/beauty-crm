@@ -69,10 +69,10 @@
   "select_priority": "Select priority",
   "select_stage": "Select stage",
   "selected_count": "Selected: {{count}}",
-  "selected_count_one": "",
-  "selected_count_few": "",
-  "selected_count_many": "",
-  "selected_count_other": "",
+  "selected_count_few": "Selected Quantity",
+  "selected_count_many": "Selected Quantity",
+  "selected_count_one": "Selected Quantity",
+  "selected_count_other": "Selected quantity",
   "showing_tasks": "Showing",
   "stage": "Stage",
   "stage_created": "Stage created",
@@ -95,7 +95,7 @@
   "tasks_control": "Tasks for control",
   "tasks_execution": "Tasks to complete",
   "tasks_for_today": "Things to do today",
-  "title": "Heading",
+  "title": "Tasks",
   "unassigned": "Not assigned",
   "update_failed": "Task update error"
 }

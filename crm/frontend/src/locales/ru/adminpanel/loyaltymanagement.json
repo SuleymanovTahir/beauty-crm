@@ -3,13 +3,13 @@
     "activate": "Включить",
     "deactivate": "Отключить"
   },
-  "adjust_points": "",
+  "adjust_points": "Корректировка точек",
   "buttons": {
     "add_rule": "Добавить правило",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Корректировка точек",
+    "cancel": "Отмена",
     "save": "Сохранить",
-    "save_changes": ""
+    "save_changes": "Сохранить изменения"
   },
   "categories": {
     "category": "Категория",
@@ -28,26 +28,26 @@
     "points_per_unit": "баллов за 1 ед. валюты",
     "title": "Настройки"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Подтвердить удаление правила",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "Электронная почта клиента",
+      "client_email_placeholder": "Введите email клиента",
+      "description": "Описание точек настройки",
+      "points": "Очки",
+      "points_placeholder": "Введите количество баллов",
+      "reason": "Причина",
+      "reason_placeholder": "Укажите причину",
+      "title": "Изменить название баллов"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
+      "description": "Изменить описание уровня",
+      "discount_percent": "Процент скидки",
+      "min_points": "Минимальные баллы",
       "status_hint": "Неактивный уровень не участвует в авторасчете привилегий",
       "status_label": "Статус уровня",
-      "tier_name": "",
-      "title": ""
+      "tier_name": "Название уровня",
+      "title": "Изменить название уровня"
     },
     "rule": {
       "description": "Установите множитель баллов для категории услуг",
@@ -57,51 +57,51 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Активные участники",
+    "points_redeemed": "Баллы погашены",
+    "total_points_issued": "Всего начислено баллов"
   },
   "statuses": {
     "inactive": "Неактивно"
   },
-  "subtitle": "",
+  "subtitle": "Управление бонусами и историей операций",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Описание уровней",
+    "discount": "Скидка",
+    "from_points": "Из баллов",
+    "starting_level": "Начальный уровень",
+    "title": "Название уровня"
   },
-  "title": "",
+  "title": "Лояльность",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add_one": "",
-    "points_adjusted_add_few": "",
-    "points_adjusted_add_many": "",
-    "points_adjusted_add_other": "",
-    "points_adjusted_deduct_one": "",
-    "points_adjusted_deduct_few": "",
-    "points_adjusted_deduct_many": "",
-    "points_adjusted_deduct_other": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Конфигурация обновлена",
+    "failed_adjust": "Не удалось настроить",
+    "failed_delete": "Не удалось удалить",
+    "failed_load": "Не удалось загрузить",
+    "failed_save": "Не удалось сохранить",
+    "failed_update": "Не удалось обновить",
+    "points_adjusted_add_few": "Баллы скорректированы, добавлено",
+    "points_adjusted_add_many": "Баллы скорректированы, добавлено",
+    "points_adjusted_add_one": "Баллы скорректированы, добавлено",
+    "points_adjusted_add_other": "Баллы скорректированы, добавлено",
+    "points_adjusted_deduct_few": "Скорректированное вычет баллов",
+    "points_adjusted_deduct_many": "Скорректированное вычет баллов",
+    "points_adjusted_deduct_one": "Скорректированное вычет баллов",
+    "points_adjusted_deduct_other": "Скорректированное вычет баллов",
+    "rule_deleted": "Правило удалено.",
+    "rule_saved": "Правило сохранено.",
+    "tier_updated": "Уровень обновлен"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Описание транзакций",
+    "search_placeholder": "Поиск по клиенту или операции",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Клиент",
+      "date": "Дата",
+      "points": "Очки",
+      "reason": "Причина",
+      "type": "Тип"
     },
-    "title": ""
+    "title": "Название транзакции"
   }
 }

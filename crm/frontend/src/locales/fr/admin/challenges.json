@@ -11,7 +11,7 @@
   "dialogs": {
     "add_title": "Nouveau défi",
     "delete": {
-      "confirm": "Voulez-vous vraiment supprimer ce défi\u00a0?"
+      "confirm": "Voulez-vous vraiment supprimer ce défi ?"
     },
     "edit_title": "Modifier le défi"
   },
@@ -28,8 +28,8 @@
     "type": "Méthode de l'objectif"
   },
   "placeholders": {
-    "description": "En tant que client verra cette tâche\u00a0?",
-    "title": "Par exemple\u00a0: Statut Or"
+    "description": "En tant que client verra cette tâche ?",
+    "title": "Par exemple : Statut Or"
   },
   "stats": {
     "active_challenges": "Tâches actives",
@@ -47,10 +47,10 @@
     "deleted": "Défi supprimé",
     "failed_check_progress": "Erreur lors de la vérification de la progression",
     "failed_delete": "Erreur lors de la vérification de la progression suppression",
-    "progress_checked_one": "",
-    "progress_checked_few": "",
-    "progress_checked_many": "",
-    "progress_checked_other": "",
+    "progress_checked_few": "Progression vérifiée",
+    "progress_checked_many": "Progression vérifiée",
+    "progress_checked_one": "Progression vérifiée",
+    "progress_checked_other": "Progression vérifiée",
     "updated": "Défi mis à jour"
   },
   "types": {

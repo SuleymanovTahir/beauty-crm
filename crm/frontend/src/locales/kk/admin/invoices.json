@@ -1,69 +1,69 @@
 {
-  "actions": "",
-  "addInvoice": "",
-  "addPayment": "",
-  "allInvoices": "",
-  "allStatuses": "",
-  "board": "",
-  "client": "",
-  "delete": "",
-  "dueDate": "",
+  "actions": "Әрекеттер",
+  "addInvoice": "Төлемді қосу Төлем",
+  "addPayment": "Төлем қосыңыз",
+  "allInvoices": "Барлық тіркелгілер",
+  "allStatuses": "Барлық күйлер",
+  "board": "Басқарма",
+  "client": "Клиент",
+  "delete": "Жою",
+  "dueDate": "Төлем мерзімі",
   "errors": {
-    "createError": "",
-    "deleteError": "",
-    "paymentError": "",
-    "sendError": "",
-    "updateError": ""
+    "createError": "Қате жасау",
+    "deleteError": "Жою қатесі",
+    "paymentError": "Төлем қатесі",
+    "sendError": "Жіберу қатесі",
+    "updateError": "Жаңарту қатесі"
   },
   "form": {
-    "addItem": "",
-    "cancel": "",
-    "dueDate": "",
-    "itemName": "",
-    "itemPrice": "",
-    "itemQuantity": "",
-    "items": "",
-    "notes": "",
-    "save": "",
-    "selectClient": ""
+    "addItem": "Элемент қосу",
+    "cancel": "Болдырмау",
+    "dueDate": "Төлем мерзімі",
+    "itemName": "Элемент аты",
+    "itemPrice": "Өнім бағасы",
+    "itemQuantity": "Элемент саны",
+    "items": "Элементтер",
+    "notes": "Ескертпелер",
+    "save": "Сақтау",
+    "selectClient": "Клиентті таңдаңыз"
   },
-  "invoiceNumber": "",
-  "manage_stages": "",
+  "invoiceNumber": "Тіркелгі нөмірі",
+  "manage_stages": "Кезеңдерді басқару",
   "messages": {
-    "confirmDelete": "",
-    "invoiceCreated": "",
-    "invoiceDeleted": "",
-    "invoiceSent": "",
-    "invoiceUpdated": "",
-    "paymentAdded": ""
+    "confirmDelete": "Жоюды растау",
+    "invoiceCreated": "Шот-фактура жасалды",
+    "invoiceDeleted": "Шот-фактура жойылды",
+    "invoiceSent": "Шот-фактура жіберілді",
+    "invoiceUpdated": "Есептік жазба жаңартылды",
+    "paymentAdded": "Төлем қосылды"
   },
-  "noInvoices": "",
-  "paidAmount": "",
+  "noInvoices": "Шот-фактуралар жоқ",
+  "paidAmount": "Төленген сома",
   "payment": {
-    "add": "",
-    "amount": "",
-    "method": "",
+    "add": "Қосу",
+    "amount": "Саны",
+    "method": "Әдіс",
     "methods": {
-      "card": "",
-      "cash": "",
-      "online": "",
-      "transfer": ""
+      "card": "Карта",
+      "cash": "Қолма-қол ақша",
+      "online": "Онлайн",
+      "transfer": "Аударма"
     },
-    "notes": "",
-    "title": ""
+    "notes": "Ескертпелер",
+    "title": "Төлем атауы"
   },
-  "search_placeholder": "",
-  "sendButton": "",
+  "search_placeholder": "Іздеу толтырғышы",
+  "sendButton": "Жіберу түймесі",
   "sendDialog": {
-    "email": "",
-    "method": "",
-    "recipient": "",
-    "sendButton": "",
-    "telegram": "",
-    "title": "",
-    "whatsapp": ""
+    "email": "Электрондық пошта",
+    "method": "Әдіс",
+    "recipient": "Алушы",
+    "sendButton": "Жіберу түймесі",
+    "telegram": "Telegram",
+    "title": "Жіберу тілқатысу терезесінің тақырыбы",
+    "whatsapp": "Whatsapp"
   },
-  "status": "",
+  "status": "Күй",
   "statuses": {
     "cancelled": "Тоқтатылды",
     "draft": "Трафат",
@@ -73,7 +73,7 @@
     "partially_paid": "Ішінара төленген",
     "sent": "Жіберілді"
   },
-  "subtitle": "",
-  "title": "",
-  "totalAmount": ""
+  "subtitle": "Субтитрлер",
+  "title": "Айдар",
+  "totalAmount": "Жалпы сома"
 }

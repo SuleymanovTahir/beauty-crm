@@ -1,71 +1,71 @@
 {
-  "addProduct": "",
-  "allCategories": "",
+  "addProduct": "Agregar producto",
+  "allCategories": "Todas las categorías",
   "analytics": {
-    "avgPrice": "",
-    "last30Days_one": "",
-    "last30Days_few": "",
-    "last30Days_many": "",
-    "last30Days_other": "",
-    "revenue": "",
-    "totalSold": ""
+    "avgPrice": "Precio medio",
+    "last30Days_few": "Últimos 30 días",
+    "last30Days_many": "Últimos 30 días",
+    "last30Days_one": "Últimos 30 días",
+    "last30Days_other": "Últimos 30 días",
+    "revenue": "Ingresos",
+    "totalSold": "Total vendido"
   },
-  "createFirst": "",
-  "delete": "",
+  "createFirst": "Crear primero",
+  "delete": "Eliminar",
   "detail": {
-    "costPriceLabel": "",
-    "inStock_one": "",
-    "inStock_few": "",
-    "inStock_many": "",
-    "inStock_other": "",
-    "loadingData": "",
-    "movementAdjustment": "",
-    "movementHistory": "",
-    "movementIn": "",
-    "movementOut": "",
-    "noCategory": "",
-    "noMovements": ""
+    "costPriceLabel": "Etiqueta de costo",
+    "inStock_few": "En stock",
+    "inStock_many": "En stock stock",
+    "inStock_one": "En stock",
+    "inStock_other": "En stock",
+    "loadingData": "Carga de datos",
+    "movementAdjustment": "Ajuste de movimiento",
+    "movementHistory": "Historial de movimientos",
+    "movementIn": "Movimiento hacia adentro",
+    "movementOut": "Movimiento hacia afuera",
+    "noCategory": "Sin categoría",
+    "noMovements": "No movimiento"
   },
-  "edit": "",
+  "edit": "Editar",
   "form": {
-    "cancel": "",
-    "category": "",
-    "costPrice": "",
-    "isActive": "",
-    "minStockLevel": "",
-    "name": "",
-    "notes": "",
-    "photos": "",
-    "price": "",
-    "save": "",
-    "sku": "",
-    "stockQuantity": "",
-    "upload": "",
-    "uploadError": ""
+    "cancel": "Cancelar",
+    "category": "Categoría",
+    "costPrice": "Costo",
+    "isActive": "Activo",
+    "minStockLevel": "Nivel mínimo de stock",
+    "name": "Nombre",
+    "notes": "Notas",
+    "photos": "Fotos",
+    "price": "Precio",
+    "save": "Guardar",
+    "sku": "Artículo",
+    "stockQuantity": "Cantidad de stock",
+    "upload": "Descargar",
+    "uploadError": "Error al cargar"
   },
   "messages": {
-    "confirmDelete": "",
-    "noResults": ""
+    "confirmDelete": "Confirmar eliminación",
+    "noResults": "No resultados"
   },
   "movement": {
-    "quantity": "",
-    "reason": "",
-    "title": "",
-    "type": "",
+    "quantity": "Cantidad",
+    "reason": "Razón",
+    "title": "Nombre del movimiento",
+    "type": "Tipo",
     "types": {
-      "adjustment": "",
-      "in": "",
-      "out": ""
+      "adjustment": "Ajuste",
+      "in": "En",
+      "out": "Exterior"
     }
   },
-  "noProducts": "",
-  "search_placeholder": "",
+  "noProducts": "Sin productos",
+  "search_placeholder": "Buscar por nombre o categoría",
   "stock_status": {
-    "in_stock": "",
-    "low_stock": "",
-    "out_of_stock": ""
+    "in_stock": "En disponible",
+    "low_stock": "Poco stock",
+    "out_of_stock": "Vendido out"
   },
-  "subtitle": "",
-  "title": "",
-  "unit_pcs": ""
+  "subtitle": "Administrar productos y saldos",
+  "title": "Productos",
+  "unit_pcs": "Unidad"
 }

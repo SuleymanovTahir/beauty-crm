@@ -15,6 +15,7 @@ import {
   Star,
   FileText,
   Plus,
+  Minus,
   Trash2,
   Edit,
   Save,
@@ -1697,7 +1698,7 @@ export default function AdminSettings() {
                              "w-full h-8 rounded-md border border-white/20",
                              tTheme.id !== 'custom' ? `bg-gradient-to-r ${tTheme.preview}` : ""
                            )}
-                           style={tTheme.id === 'custom' ? { background: `linear-gradient(to right, ${customColors.start}, ${customColors.end})` } : {}}
+                           style={tTheme.id === 'custom' ? { background: `linear-gradient(${customColors.angle}, ${customColors.colors.join(', ')})` } : {}}
                         />
                         <span className="font-medium text-sm">{tTheme.label}</span>
                       </button>
@@ -1705,39 +1706,107 @@ export default function AdminSettings() {
                   </div>
 
                   {colorTheme === 'custom' && (
-                    <div className="flex flex-col sm:flex-row gap-6 mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
-                      <div className="space-y-3 flex-1">
-                        <Label className="text-gray-900 font-semibold">{t('settings:gradient_start', { defaultValue: 'Начало градиента' })}</Label>
-                        <div className="flex items-center gap-3">
-                          <input 
-                            type="color" 
-                            value={customColors.start}
-                            onChange={(e) => setCustomColors({ ...customColors, start: e.target.value })}
-                            className="w-12 h-12 p-0 border-0 rounded-md cursor-pointer overflow-hidden relative appearance-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-none"
-                          />
-                          <Input 
-                            value={customColors.start}
-                            onChange={(e) => setCustomColors({ ...customColors, start: e.target.value })}
-                            className="font-mono uppercase"
-                          />
+                    <div className="flex flex-col gap-6 mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200">
+                      
+                      {/* Управление цветами */}
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-gray-900 font-semibold">{t('settings:gradient_colors', { defaultValue: 'Цвета градиента' })}</Label>
+                          <div className="flex gap-2">
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm"
+                              className="h-8 w-8 px-0"
+                              onClick={() => {
+                                if (customColors.colors.length > 2) {
+                                  const newColors = [...customColors.colors];
+                                  newColors.pop();
+                                  setCustomColors({ ...customColors, colors: newColors });
+                                }
+                              }}
+                              disabled={customColors.colors.length <= 2}
+                            >
+                              <Minus className="w-4 h-4" />
+                            </Button>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              size="sm"
+                              className="h-8 w-8 px-0"
+                              onClick={() => {
+                                if (customColors.colors.length < 4) {
+                                  const newColors = [...customColors.colors, customColors.colors[customColors.colors.length - 1]];
+                                  setCustomColors({ ...customColors, colors: newColors });
+                                }
+                              }}
+                              disabled={customColors.colors.length >= 4}
+                            >
+                              <Plus className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
+                          {customColors.colors.map((color, idx) => (
+                            <div key={idx} className="flex flex-col h-full bg-white p-3 rounded-xl border border-gray-200 shadow-sm transition-all hover:border-brand-primary/30 hover:shadow-md">
+                              <Label className="text-[11px] text-gray-500 font-semibold tracking-wide h-[2.5rem] flex items-start leading-tight mb-2">
+                                {idx === 0 
+                                  ? t('settings:gradient_start', { defaultValue: 'Начало градиента' }) 
+                                  : idx === customColors.colors.length - 1 
+                                    ? t('settings:gradient_end', { defaultValue: 'Конец (Основной)' }) 
+                                    : t('settings:gradient_mid', { defaultValue: `Цвет ${idx + 1}` })
+                                }
+                              </Label>
+                              <div className="flex items-center gap-2 mt-auto">
+                                <input 
+                                  type="color" 
+                                  value={color}
+                                  onChange={(e) => {
+                                    const newColors = [...customColors.colors];
+                                    newColors[idx] = e.target.value;
+                                    setCustomColors({ ...customColors, colors: newColors });
+                                  }}
+                                  className="w-8 h-8 shrink-0 p-0 border-0 rounded cursor-pointer overflow-hidden relative appearance-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-none shadow-inner"
+                                />
+                                <Input 
+                                  value={color}
+                                  onChange={(e) => {
+                                    const newColors = [...customColors.colors];
+                                    newColors[idx] = e.target.value;
+                                    setCustomColors({ ...customColors, colors: newColors });
+                                  }}
+                                  className="font-mono uppercase text-[11px] px-2 h-8 flex-1 min-w-0"
+                                />
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                      <div className="space-y-3 flex-1">
-                        <Label className="text-gray-900 font-semibold">{t('settings:gradient_end', { defaultValue: 'Конец градиента (основной)' })}</Label>
-                        <div className="flex items-center gap-3">
-                          <input 
-                            type="color" 
-                            value={customColors.end}
-                            onChange={(e) => setCustomColors({ ...customColors, end: e.target.value })}
-                            className="w-12 h-12 p-0 border-0 rounded-md cursor-pointer overflow-hidden relative appearance-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-none"
-                          />
-                          <Input 
-                            value={customColors.end}
-                            onChange={(e) => setCustomColors({ ...customColors, end: e.target.value })}
-                            className="font-mono uppercase"
-                          />
-                        </div>
+
+                      {/* Направление градиента */}
+                      <div className="space-y-3 pt-4 border-t border-gray-200">
+                        <Label className="text-gray-900 font-semibold">{t('settings:gradient_direction', { defaultValue: 'Направление градиента' })}</Label>
+                        <Select 
+                          value={customColors.angle} 
+                          onValueChange={(val) => setCustomColors({ ...customColors, angle: val })}
+                        >
+                          <SelectTrigger className="w-full sm:w-[250px] bg-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="to right">{t('settings:angle_right', { defaultValue: 'Вправо (→)' })}</SelectItem>
+                            <SelectItem value="135deg">{t('settings:angle_bottom_right', { defaultValue: 'В правый нижний угол (↘)' })}</SelectItem>
+                            <SelectItem value="to bottom">{t('settings:angle_bottom', { defaultValue: 'Вниз (↓)' })}</SelectItem>
+                            <SelectItem value="225deg">{t('settings:angle_bottom_left', { defaultValue: 'В левый нижний угол (↙)' })}</SelectItem>
+                            <SelectItem value="to left">{t('settings:angle_left', { defaultValue: 'Влево (←)' })}</SelectItem>
+                            <SelectItem value="315deg">{t('settings:angle_top_left', { defaultValue: 'В левый верхний угол (↖)' })}</SelectItem>
+                            <SelectItem value="to top">{t('settings:angle_top', { defaultValue: 'Вверх (↑)' })}</SelectItem>
+                            <SelectItem value="45deg">{t('settings:angle_top_right', { defaultValue: 'В правый верхний угол (↗)' })}</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
+
                     </div>
                   )}
                 </div>

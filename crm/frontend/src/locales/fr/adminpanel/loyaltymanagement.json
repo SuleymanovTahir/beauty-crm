@@ -3,13 +3,13 @@
     "activate": "Activer",
     "deactivate": "Désactiver"
   },
-  "adjust_points": "",
+  "adjust_points": "Points d'ajustement",
   "buttons": {
     "add_rule": "Ajouter une règle",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Points d'ajustement",
+    "cancel": "Annuler",
     "save": "Enregistrer",
-    "save_changes": ""
+    "save_changes": "Enregistrer les modifications"
   },
   "categories": {
     "category": "Catégorie",
@@ -20,7 +20,7 @@
     "title": "Règles d'accumulation par catégorie"
   },
   "config": {
-    "cashback_hint": "Exemple\u00a0: 10\u00a0% de cashback (10 points pour 100 dépensés)",
+    "cashback_hint": "Exemple : 10 % de cashback (10 points pour 100 dépensés)",
     "cashback_rate": "Cashback (%)",
     "description": "Gestion des paramètres de fidélité globaux",
     "expiration_days": "Période de validité de points (jours)",
@@ -28,26 +28,26 @@
     "points_per_unit": "points pour 1 unité. devises",
     "title": "Paramètres"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Confirmer la suppression de la règle",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "E-mail client",
+      "client_email_placeholder": "Saisissez l'email du client",
+      "description": "Description des points d'ajustement",
+      "points": "Points",
+      "points_placeholder": "Saisissez le nombre de points",
+      "reason": "Raison",
+      "reason_placeholder": "Précisez le motif",
+      "title": "Modifier le nom du point"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
+      "description": "Modifier la description du niveau",
+      "discount_percent": "Pourcentage de remise",
+      "min_points": "Points minimum",
       "status_hint": "Un niveau inactif ne participe pas au calcul automatique des privilèges",
       "status_label": "Statut du niveau",
-      "tier_name": "",
-      "title": ""
+      "tier_name": "Nom du niveau",
+      "title": "Changer le nom du niveau"
     },
     "rule": {
       "description": "Définir le multiplicateur de points pour la catégorie de service",
@@ -57,51 +57,51 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Participants actifs",
+    "points_redeemed": "Points échangés",
+    "total_points_issued": "Total des points attribués"
   },
   "statuses": {
     "inactive": "Inactif"
   },
-  "subtitle": "",
+  "subtitle": "Gérer les bonus et l'historique des transactions",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Description des niveaux",
+    "discount": "Remise",
+    "from_points": "Des points",
+    "starting_level": "Niveau d'réservation",
+    "title": "Niveau de nom"
   },
-  "title": "",
+  "title": "Fidélité",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add_one": "",
-    "points_adjusted_add_few": "",
-    "points_adjusted_add_many": "",
-    "points_adjusted_add_other": "",
-    "points_adjusted_deduct_one": "",
-    "points_adjusted_deduct_few": "",
-    "points_adjusted_deduct_many": "",
-    "points_adjusted_deduct_other": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Configuration mise à jour",
+    "failed_adjust": "Échec de la configuration",
+    "failed_delete": "Échec de la suppression",
+    "failed_load": "Échec du chargement",
+    "failed_save": "Échec de l'réservation",
+    "failed_update": "Échec de la mise à jour",
+    "points_adjusted_add_few": "Points ajustés, ajoutés",
+    "points_adjusted_add_many": "Points ajustés, ajoutés",
+    "points_adjusted_add_one": "Points ajustés, ajoutés",
+    "points_adjusted_add_other": "Points ajustés, ajoutés",
+    "points_adjusted_deduct_few": "Déduction de points ajustée",
+    "points_adjusted_deduct_many": "Déduction de points ajustée",
+    "points_adjusted_deduct_one": "Déduction de points ajustée",
+    "points_adjusted_deduct_other": "Déduction de points ajustée",
+    "rule_deleted": "Règle supprimée.",
+    "rule_saved": "Règle enregistré.",
+    "tier_updated": "Niveau mis à jour"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Description de la transaction",
+    "search_placeholder": "Recherche par client ou transaction",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Client",
+      "date": "Date",
+      "points": "Points",
+      "reason": "Raison",
+      "type": "Type"
     },
-    "title": ""
+    "title": "Nom de la transaction"
   }
 }

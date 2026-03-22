@@ -4,17 +4,17 @@
   "all_notifications_cleared": "All notifications have been deleted",
   "calls": {
     "accept": "Accept",
-    "audio_call": "",
+    "audio_call": "Audio call",
     "click_to_answer": "Click to answer",
     "incoming_call": "Incoming call!",
     "missed_auto": "Call missed (auto-reject)",
     "missed_call": "Missed call",
-    "video_call": ""
+    "video_call": "Video call"
   },
   "clear_all": "Clear all",
   "close": "Close",
   "confirm_clear_all": "Are you sure you want to delete all notifications?",
-  "crm": "CRM Panel",
+  "crm": "CRM panel",
   "employee": "Employee",
   "error_clearing": "Error when deleting notifications",
   "error_deleting_notification": "Error when deleting notification",
@@ -78,15 +78,15 @@
   "notification_deleted": "Notification deleted",
   "notifications": "Notifications",
   "roles": {
-    "accountant": "",
-    "admin": "",
+    "accountant": "Accountant",
+    "admin": "Administrator",
     "director": "Director",
-    "employee": "",
-    "manager": "",
+    "employee": "Employee",
+    "manager": "Manager",
     "marketer": "Marketer",
     "saler": "Sales Manager",
     "sales": "Sales",
-    "super_admin": "Platform Owner"
+    "super_admin": "Platform owner"
   },
   "user": "User",
   "view_all": "View all"

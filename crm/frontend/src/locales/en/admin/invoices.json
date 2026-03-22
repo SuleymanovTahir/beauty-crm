@@ -1,69 +1,69 @@
 {
-  "actions": "",
-  "addInvoice": "",
-  "addPayment": "",
-  "allInvoices": "",
-  "allStatuses": "",
-  "board": "",
-  "client": "",
-  "delete": "",
-  "dueDate": "",
+  "actions": "Actions",
+  "addInvoice": "Add invoice",
+  "addPayment": "Add payment",
+  "allInvoices": "All invoices",
+  "allStatuses": "All statuses",
+  "board": "Board",
+  "client": "Client",
+  "delete": "Delete",
+  "dueDate": "Payment term",
   "errors": {
-    "createError": "",
-    "deleteError": "",
-    "paymentError": "",
-    "sendError": "",
-    "updateError": ""
+    "createError": "Create error",
+    "deleteError": "Delete error",
+    "paymentError": "Payment error",
+    "sendError": "Sending error",
+    "updateError": "Update error"
   },
   "form": {
-    "addItem": "",
-    "cancel": "",
-    "dueDate": "",
-    "itemName": "",
-    "itemPrice": "",
-    "itemQuantity": "",
-    "items": "",
-    "notes": "",
-    "save": "",
-    "selectClient": ""
+    "addItem": "Add item",
+    "cancel": "Cancel",
+    "dueDate": "Payment term",
+    "itemName": "Item name",
+    "itemPrice": "Item price",
+    "itemQuantity": "Item quantity",
+    "items": "Items",
+    "notes": "Notes",
+    "save": "Save",
+    "selectClient": "Select client"
   },
-  "invoiceNumber": "",
-  "manage_stages": "",
+  "invoiceNumber": "Account number",
+  "manage_stages": "Management stages",
   "messages": {
-    "confirmDelete": "",
-    "invoiceCreated": "",
-    "invoiceDeleted": "",
-    "invoiceSent": "",
-    "invoiceUpdated": "",
-    "paymentAdded": ""
+    "confirmDelete": "Confirm deletion",
+    "invoiceCreated": "Invoice created",
+    "invoiceDeleted": "Invoice deleted",
+    "invoiceSent": "Invoice sent",
+    "invoiceUpdated": "Invoice updated",
+    "paymentAdded": "Payment added"
   },
-  "noInvoices": "",
-  "paidAmount": "",
+  "noInvoices": "No invoices",
+  "paidAmount": "Paid amount",
   "payment": {
-    "add": "",
-    "amount": "",
-    "method": "",
+    "add": "Add",
+    "amount": "Quantity",
+    "method": "Method",
     "methods": {
-      "card": "",
-      "cash": "",
-      "online": "",
-      "transfer": ""
+      "card": "Card",
+      "cash": "Cash",
+      "online": "Online",
+      "transfer": "Transfer"
     },
-    "notes": "",
-    "title": ""
+    "notes": "Notes",
+    "title": "Payment Name"
   },
-  "search_placeholder": "",
-  "sendButton": "",
+  "search_placeholder": "Search by client, number or status",
+  "sendButton": "Submit Button",
   "sendDialog": {
-    "email": "",
-    "method": "",
-    "recipient": "",
-    "sendButton": "",
-    "telegram": "",
-    "title": "",
-    "whatsapp": ""
+    "email": "Email",
+    "method": "Method",
+    "recipient": "Recipient",
+    "sendButton": "Submit Button",
+    "telegram": "Telegram",
+    "title": "Submit Dialog Title",
+    "whatsapp": "WhatsApp"
   },
-  "status": "",
+  "status": "Status",
   "statuses": {
     "cancelled": "Canceled",
     "draft": "Draft",
@@ -73,7 +73,7 @@
     "partially_paid": "Partially paid",
     "sent": "Sent"
   },
-  "subtitle": "",
-  "title": "",
-  "totalAmount": ""
+  "subtitle": "Manage accounts and payments",
+  "title": "Accounts",
+  "totalAmount": "Total Amount"
 }

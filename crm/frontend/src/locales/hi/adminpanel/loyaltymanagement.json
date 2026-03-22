@@ -3,13 +3,13 @@
     "activate": "सक्षम करें",
     "deactivate": "अक्षम करें"
   },
-  "adjust_points": "",
+  "adjust_points": "समायोजन बिंदु",
   "buttons": {
     "add_rule": "नियम जोड़ें",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "समायोजन बिंदु",
+    "cancel": "रद्द करें",
     "save": "सहेजें",
-    "save_changes": ""
+    "save_changes": "परिवर्तन सहेजें"
   },
   "categories": {
     "category": "श्रेणी",
@@ -28,26 +28,26 @@
     "points_per_unit": "1 इकाई के लिए अंक। मुद्राएं",
     "title": "सेटिंग्स"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "नियम हटाने की पुष्टि करें",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "ग्राहक ईमेल",
+      "client_email_placeholder": "ग्राहक का ईमेल दर्ज करें",
+      "description": "समायोजन बिंदु विवरण",
+      "points": "अंक",
+      "points_placeholder": "अंकों की संख्या दर्ज करें",
+      "reason": "कारण",
+      "reason_placeholder": "कारण निर्दिष्ट करें",
+      "title": "बिंदु का नाम बदलें"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
+      "description": "स्तर का विवरण बदलें",
+      "discount_percent": "छूट प्रतिशत",
+      "min_points": "न्यूनतम अंक",
       "status_hint": "एक निष्क्रिय स्तर विशेषाधिकारों की स्वचालित गणना में भाग नहीं लेता है",
       "status_label": "स्तर की स्थिति",
-      "tier_name": "",
-      "title": ""
+      "tier_name": "स्तर का नाम",
+      "title": "स्तर का नाम बदलें"
     },
     "rule": {
       "description": "सेवा श्रेणी के लिए बिंदु गुणक सेट करें",
@@ -57,51 +57,51 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "सक्रिय प्रतिभागी",
+    "points_redeemed": "प्वाइंट भुनाए गए",
+    "total_points_issued": "दिए गए कुल अंक"
   },
   "statuses": {
     "inactive": "निष्क्रिय"
   },
-  "subtitle": "",
+  "subtitle": "बोनस और लेनदेन इतिहास प्रबंधित करें",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "स्तरों का विवरण",
+    "discount": "छूट",
+    "from_points": "अंकों से",
+    "starting_level": "प्रवेश स्तर",
+    "title": "नाम लेवल"
   },
-  "title": "",
+  "title": "वफादारी",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add_one": "",
-    "points_adjusted_add_few": "",
-    "points_adjusted_add_many": "",
-    "points_adjusted_add_other": "",
-    "points_adjusted_deduct_one": "",
-    "points_adjusted_deduct_few": "",
-    "points_adjusted_deduct_many": "",
-    "points_adjusted_deduct_other": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "कॉन्फ़िगरेशन अपडेट किया गया",
+    "failed_adjust": "कॉन्फ़िगर करने में विफल",
+    "failed_delete": "हटाने में विफल",
+    "failed_load": "लोड करने में विफल",
+    "failed_save": "सहेजने में विफल",
+    "failed_update": "अपडेट करने में विफल",
+    "points_adjusted_add_few": "बिंदु समायोजित, जोड़ा गया",
+    "points_adjusted_add_many": "अंक समायोजित, जोड़ा गया",
+    "points_adjusted_add_one": "अंक समायोजित, जोड़ा गया",
+    "points_adjusted_add_other": "अंक समायोजित, जोड़ा गया",
+    "points_adjusted_deduct_few": "समायोजित बिंदु कटौती",
+    "points_adjusted_deduct_many": "समायोजित बिंदु कटौती",
+    "points_adjusted_deduct_one": "समायोजित बिंदु कटौती",
+    "points_adjusted_deduct_other": "समायोजित बिंदु कटौती",
+    "rule_deleted": "नियम हटा दिया गया।",
+    "rule_saved": "नियम सहेजा गया।",
+    "tier_updated": "स्तर अपडेट किया गया"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "लेनदेन विवरण",
+    "search_placeholder": "ग्राहक या लेनदेन द्वारा खोजें",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "क्लाइंट",
+      "date": "दिनांक",
+      "points": "अंक",
+      "reason": "कारण",
+      "type": "प्रकार"
     },
-    "title": ""
+    "title": "लेनदेन नाम"
   }
 }

@@ -1,71 +1,71 @@
 {
-  "addProduct": "",
-  "allCategories": "",
+  "addProduct": "Өнім қосу",
+  "allCategories": "Барлық санаттар",
   "analytics": {
-    "avgPrice": "",
-    "last30Days_one": "",
-    "last30Days_few": "",
-    "last30Days_many": "",
-    "last30Days_other": "",
-    "revenue": "",
-    "totalSold": ""
+    "avgPrice": "Орташа баға",
+    "last30Days_few": "Соңғы 30 күн",
+    "last30Days_many": "Соңғы 30 күн",
+    "last30Days_one": "Соңғы 30 күн",
+    "last30Days_other": "Соңғы 30 күн",
+    "revenue": "Табыс",
+    "totalSold": "Жалпы сатылған"
   },
-  "createFirst": "",
-  "delete": "",
+  "createFirst": "Бірінші жасау",
+  "delete": "Жою",
   "detail": {
-    "costPriceLabel": "",
-    "inStock_one": "",
-    "inStock_few": "",
-    "inStock_many": "",
-    "inStock_other": "",
-    "loadingData": "",
-    "movementAdjustment": "",
-    "movementHistory": "",
-    "movementIn": "",
-    "movementOut": "",
-    "noCategory": "",
-    "noMovements": ""
+    "costPriceLabel": "Шығын белгісі",
+    "inStock_few": "Қоймада",
+    "inStock_many": "Қоймада",
+    "inStock_one": "Қойымда бар",
+    "inStock_other": "Қойымда бар",
+    "loadingData": "Деректерді жүктеу",
+    "movementAdjustment": "Қозғалысты реттеу",
+    "movementHistory": "Қозғалыс тарихы",
+    "movementIn": "Ішке қозғалыс",
+    "movementOut": "Сыртқы қозғалыс",
+    "noCategory": "Қозғалыс жоқ",
+    "noMovements": "Қозғалыс жоқ"
   },
-  "edit": "",
+  "edit": "Өңдеу",
   "form": {
-    "cancel": "",
-    "category": "",
-    "costPrice": "",
-    "isActive": "",
-    "minStockLevel": "",
-    "name": "",
-    "notes": "",
-    "photos": "",
-    "price": "",
-    "save": "",
-    "sku": "",
-    "stockQuantity": "",
-    "upload": "",
-    "uploadError": ""
+    "cancel": "Болдырмау",
+    "category": "Санат",
+    "costPrice": "Құны",
+    "isActive": "Белсенді",
+    "minStockLevel": "Түгендеудің ең төменгі деңгейі",
+    "name": "Аты",
+    "notes": "Ескертпелер",
+    "photos": "Фотосуреттер",
+    "price": "Бағасы",
+    "save": "Сақтау",
+    "sku": "Бап",
+    "stockQuantity": "Қоймадағы саны",
+    "upload": "Жүктеп алу",
+    "uploadError": "Жүктеу қатесі"
   },
   "messages": {
-    "confirmDelete": "",
-    "noResults": ""
+    "confirmDelete": "Жоюды растау",
+    "noResults": "Нәтиже жоқ"
   },
   "movement": {
-    "quantity": "",
-    "reason": "",
-    "title": "",
-    "type": "",
+    "quantity": "Саны",
+    "reason": "Себебі",
+    "title": "Қозғалыс атауы",
+    "type": "Түрі",
     "types": {
-      "adjustment": "",
-      "in": "",
-      "out": ""
+      "adjustment": "Реттеу",
+      "in": "Кірді",
+      "out": "Түсінді"
     }
   },
-  "noProducts": "",
-  "search_placeholder": "",
+  "noProducts": "Өнім жоқ",
+  "search_placeholder": "Іздеу толтырғышы",
   "stock_status": {
-    "in_stock": "",
-    "low_stock": "",
-    "out_of_stock": ""
+    "in_stock": "Қойымда бар",
+    "low_stock": "Аз қор",
+    "out_of_stock": "Тауып кетті"
   },
-  "subtitle": "",
-  "title": "",
-  "unit_pcs": ""
+  "subtitle": "Субтитрлер",
+  "title": "Айдар",
+  "unit_pcs": "Бірлік дана"
 }

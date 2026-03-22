@@ -1,20 +1,20 @@
 {
   "admin": "Administrator",
-  "admin_panel": "Administrator Panel",
+  "admin_panel": "Admin-Bereich",
   "all_notifications_cleared": "Alle Benachrichtigungen gelöscht",
   "calls": {
     "accept": "Annehmen",
-    "audio_call": "",
+    "audio_call": "Audioanruf",
     "click_to_answer": "Zum Antworten klicken",
     "incoming_call": "Eingehender Anruf!",
     "missed_auto": "Anruf verpasst (automatische Ablehnung)",
     "missed_call": "Anruf verpasst",
-    "video_call": ""
+    "video_call": "Videoanruf"
   },
   "clear_all": "Alle löschen",
   "close": "Schließen",
   "confirm_clear_all": "Sind Sie sicher, dass Sie alle Benachrichtigungen löschen möchten?",
-  "crm": "CRM-Panel",
+  "crm": "CRM-Bereich",
   "employee": "Mitarbeiter",
   "error_clearing": "Fehler beim Löschen von Benachrichtigungen",
   "error_deleting_notification": "Fehler beim Löschen der Benachrichtigung",
@@ -78,14 +78,14 @@
   "notification_deleted": "Benachrichtigung gelöscht",
   "notifications": "Benachrichtigungen",
   "roles": {
-    "accountant": "",
-    "admin": "",
+    "accountant": "Buchhalter",
+    "admin": "Administrator",
     "director": "Direktor",
-    "employee": "",
-    "manager": "",
+    "employee": "Mitarbeiter",
+    "manager": "Manager",
     "marketer": "Vermarkter",
     "saler": "Verkaufsleiter",
-    "super_admin": "Plattforminhaber"
+    "super_admin": "Plattform Eigentümer"
   },
   "user": "Benutzer",
   "view_all": "Alle anzeigen"

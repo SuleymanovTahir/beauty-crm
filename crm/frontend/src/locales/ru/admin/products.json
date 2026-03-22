@@ -1,71 +1,71 @@
 {
-  "addProduct": "",
-  "allCategories": "",
+  "addProduct": "Добавить продукт",
+  "allCategories": "Все категории",
   "analytics": {
-    "avgPrice": "",
-    "last30Days_one": "",
-    "last30Days_few": "",
-    "last30Days_many": "",
-    "last30Days_other": "",
-    "revenue": "",
-    "totalSold": ""
+    "avgPrice": "Средняя цена",
+    "last30Days_few": "Последние30 дней",
+    "last30Days_many": "Последние30 дней",
+    "last30Days_one": "Последние30 дней",
+    "last30Days_other": "Последние30 дней",
+    "revenue": "Доход",
+    "totalSold": "Всего продано"
   },
-  "createFirst": "",
-  "delete": "",
+  "createFirst": "Создать первым",
+  "delete": "Удалить",
   "detail": {
-    "costPriceLabel": "",
-    "inStock_one": "",
-    "inStock_few": "",
-    "inStock_many": "",
-    "inStock_other": "",
-    "loadingData": "",
-    "movementAdjustment": "",
-    "movementHistory": "",
-    "movementIn": "",
-    "movementOut": "",
-    "noCategory": "",
-    "noMovements": ""
+    "costPriceLabel": "Этикетка себестоимости",
+    "inStock_few": "В наличии",
+    "inStock_many": "В наличии",
+    "inStock_one": "В наличии",
+    "inStock_other": "В наличии",
+    "loadingData": "Загрузка данных",
+    "movementAdjustment": "Регулировка движения",
+    "movementHistory": "История движения",
+    "movementIn": "Движение внутрь",
+    "movementOut": "Движение наружу",
+    "noCategory": "Нет категории",
+    "noMovements": "Нет движений"
   },
-  "edit": "",
+  "edit": "Редактировать",
   "form": {
-    "cancel": "",
-    "category": "",
-    "costPrice": "",
-    "isActive": "",
-    "minStockLevel": "",
-    "name": "",
-    "notes": "",
-    "photos": "",
-    "price": "",
-    "save": "",
-    "sku": "",
-    "stockQuantity": "",
-    "upload": "",
-    "uploadError": ""
+    "cancel": "Отмена",
+    "category": "Категория",
+    "costPrice": "Себестоимость",
+    "isActive": "Активен",
+    "minStockLevel": "Минимальный уровень запасов",
+    "name": "Имя",
+    "notes": "Примечания",
+    "photos": "Фотографии",
+    "price": "Цена",
+    "save": "Сохранять",
+    "sku": "Артикул",
+    "stockQuantity": "Количество на складе",
+    "upload": "Загрузить",
+    "uploadError": "Ошибка загрузки"
   },
   "messages": {
-    "confirmDelete": "",
-    "noResults": ""
+    "confirmDelete": "Подтвердить удаление",
+    "noResults": "Нет результатов"
   },
   "movement": {
-    "quantity": "",
-    "reason": "",
-    "title": "",
-    "type": "",
+    "quantity": "Количество",
+    "reason": "Причина",
+    "title": "Название движения",
+    "type": "Тип",
     "types": {
-      "adjustment": "",
-      "in": "",
-      "out": ""
+      "adjustment": "Корректирование",
+      "in": "В",
+      "out": "Вне"
     }
   },
-  "noProducts": "",
-  "search_placeholder": "",
+  "noProducts": "Нет продуктов",
+  "search_placeholder": "Поиск по названию или категории",
   "stock_status": {
-    "in_stock": "",
-    "low_stock": "",
-    "out_of_stock": ""
+    "in_stock": "В наличии",
+    "low_stock": "Низкий запас",
+    "out_of_stock": "Распродано"
   },
-  "subtitle": "",
-  "title": "",
-  "unit_pcs": ""
+  "subtitle": "Управление товарами и остатками",
+  "title": "Товары",
+  "unit_pcs": "Единица шт."
 }

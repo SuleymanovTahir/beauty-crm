@@ -1,71 +1,71 @@
 {
-  "addProduct": "",
-  "allCategories": "",
+  "addProduct": "Add product",
+  "allCategories": "All categories",
   "analytics": {
-    "avgPrice": "",
-    "last30Days_one": "",
-    "last30Days_few": "",
-    "last30Days_many": "",
-    "last30Days_other": "",
-    "revenue": "",
-    "totalSold": ""
+    "avgPrice": "Average price",
+    "last30Days_few": "Last 30 days",
+    "last30Days_many": "Last 30 days",
+    "last30Days_one": "Last 30 days",
+    "last30Days_other": "Last 30 days",
+    "revenue": "Income",
+    "totalSold": "Total sold"
   },
-  "createFirst": "",
-  "delete": "",
+  "createFirst": "Create first",
+  "delete": "Delete",
   "detail": {
-    "costPriceLabel": "",
-    "inStock_one": "",
-    "inStock_few": "",
-    "inStock_many": "",
-    "inStock_other": "",
-    "loadingData": "",
-    "movementAdjustment": "",
-    "movementHistory": "",
-    "movementIn": "",
-    "movementOut": "",
-    "noCategory": "",
-    "noMovements": ""
+    "costPriceLabel": "Cost label",
+    "inStock_few": "In stock",
+    "inStock_many": "In stock",
+    "inStock_one": "In stock",
+    "inStock_other": "In stock",
+    "loadingData": "Data loading",
+    "movementAdjustment": "Motion adjustment",
+    "movementHistory": "Motion history",
+    "movementIn": "Motion in",
+    "movementOut": "Move out",
+    "noCategory": "No category",
+    "noMovements": "No movement"
   },
-  "edit": "",
+  "edit": "Edit",
   "form": {
-    "cancel": "",
-    "category": "",
-    "costPrice": "",
-    "isActive": "",
-    "minStockLevel": "",
-    "name": "",
-    "notes": "",
-    "photos": "",
-    "price": "",
-    "save": "",
-    "sku": "",
-    "stockQuantity": "",
-    "upload": "",
-    "uploadError": ""
+    "cancel": "Cancel",
+    "category": "Category",
+    "costPrice": "Cost",
+    "isActive": "Active",
+    "minStockLevel": "Minimum stock level",
+    "name": "Name",
+    "notes": "Notes",
+    "photos": "Photos",
+    "price": "Price",
+    "save": "Save",
+    "sku": "Article",
+    "stockQuantity": "Quantity in stock",
+    "upload": "Download",
+    "uploadError": "Download Error"
   },
   "messages": {
-    "confirmDelete": "",
-    "noResults": ""
+    "confirmDelete": "Confirm deletion",
+    "noResults": "No results"
   },
   "movement": {
-    "quantity": "",
-    "reason": "",
-    "title": "",
-    "type": "",
+    "quantity": "Quantity",
+    "reason": "Reason",
+    "title": "Movement name",
+    "type": "Type",
     "types": {
-      "adjustment": "",
-      "in": "",
-      "out": ""
+      "adjustment": "Adjustment",
+      "in": "In",
+      "out": "Outside"
     }
   },
-  "noProducts": "",
-  "search_placeholder": "",
+  "noProducts": "No products",
+  "search_placeholder": "Search by name or category",
   "stock_status": {
-    "in_stock": "",
-    "low_stock": "",
-    "out_of_stock": ""
+    "in_stock": "In Stock",
+    "low_stock": "Low Stock",
+    "out_of_stock": "Sold Out"
   },
-  "subtitle": "",
-  "title": "",
-  "unit_pcs": ""
+  "subtitle": "Manage products and balances",
+  "title": "Products",
+  "unit_pcs": "Unit"
 }

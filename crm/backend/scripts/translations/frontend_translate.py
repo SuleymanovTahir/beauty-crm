@@ -27,6 +27,153 @@ SOURCE_MAP_FILE = Path(__file__).parent / "translations_source_map.json"
 # Languages to translate to
 LANGUAGES = ['en', 'ar', 'es', 'de', 'fr', 'pt', 'hi', 'kk']
 SOURCE_LANG = 'ru'
+PLURAL_SUFFIX_RE = re.compile(r'_(zero|one|two|few|many|other)$')
+COMMON_SOURCE_CONTAINERS = {
+    'analytics',
+    'buttons',
+    'calls',
+    'details',
+    'dialogs',
+    'labels',
+    'menu',
+    'notifications',
+    'placeholders',
+    'roles',
+    'stats',
+    'tab',
+    'tabs',
+    'table',
+    'toast',
+    'tooltips',
+}
+SOURCE_KEY_REPLACEMENTS = {
+    'api': 'API',
+    'crm': 'CRM',
+    'id': 'ID',
+    'ip': 'IP',
+    'kpi': 'KPI',
+    'sms': 'SMS',
+    'ui': 'UI',
+    'vip': 'VIP',
+}
+RU_SOURCE_CORRECTIONS = {
+    'admin/audit-log.json:clear_all': 'Очистить все',
+    'admin/audit-log.json:clear_confirm': 'Очистить весь журнал аудита?',
+    'admin/audit-log.json:delete_batch_confirm_few': 'Удалить выбранные записи из журнала?',
+    'admin/audit-log.json:delete_batch_confirm_many': 'Удалить выбранные записи из журнала?',
+    'admin/audit-log.json:delete_batch_confirm_one': 'Удалить выбранную запись из журнала?',
+    'admin/audit-log.json:delete_batch_confirm_other': 'Удалить выбранные записи из журнала?',
+    'admin/audit-log.json:delete_confirm': 'Удалить эту запись из журнала?',
+    'admin/audit-log.json:delete_selected': 'Удалить выбранные',
+    'admin/audit-log.json:details.ip': 'IP-адрес',
+    'admin/audit-log.json:details.new_data': 'Новые данные',
+    'admin/audit-log.json:details.no_data': 'Нет данных',
+    'admin/audit-log.json:details.old_data': 'Старые данные',
+    'admin/audit-log.json:details.op_id': 'ID операции',
+    'admin/audit-log.json:details.title': 'Детали записи',
+    'admin/audit-log.json:filter_all': 'Все действия',
+    'admin/audit-log.json:filter_create': 'Создание',
+    'admin/audit-log.json:filter_delete': 'Удаление',
+    'admin/audit-log.json:filter_delete_all': 'Полная очистка',
+    'admin/audit-log.json:filter_login': 'Вход',
+    'admin/audit-log.json:filter_restore': 'Восстановление',
+    'admin/audit-log.json:filter_update': 'Обновление',
+    'admin/audit-log.json:search_placeholder': 'Поиск по пользователю, сущности или действию',
+    'admin/audit-log.json:stat_active_users': 'Активные пользователи',
+    'admin/audit-log.json:stat_created': 'Создано',
+    'admin/audit-log.json:stat_errors_few': 'Ошибки за 24 часа',
+    'admin/audit-log.json:stat_errors_many': 'Ошибки за 24 часа',
+    'admin/audit-log.json:stat_errors_one': 'Ошибки за 24 часа',
+    'admin/audit-log.json:stat_errors_other': 'Ошибки за 24 часа',
+    'admin/audit-log.json:stat_total_few': 'Всего операций за 24 часа',
+    'admin/audit-log.json:stat_total_many': 'Всего операций за 24 часа',
+    'admin/audit-log.json:stat_total_one': 'Всего операций за 24 часа',
+    'admin/audit-log.json:stat_total_other': 'Всего операций за 24 часа',
+    'admin/audit-log.json:subtitle': 'История действий пользователей и системных операций',
+    'admin/audit-log.json:table.action': 'Действие',
+    'admin/audit-log.json:table.empty': 'Записи не найдены',
+    'admin/audit-log.json:table.entity': 'Сущность',
+    'admin/audit-log.json:table.error': 'Ошибка',
+    'admin/audit-log.json:table.loading': 'Загрузка журнала...',
+    'admin/audit-log.json:table.status': 'Статус',
+    'admin/audit-log.json:table.success': 'Успешно',
+    'admin/audit-log.json:table.time': 'Время',
+    'admin/audit-log.json:table.user': 'Пользователь',
+    'admin/audit-log.json:title': 'Журнал аудита',
+    'admin/audit-log.json:toast.clear_error': 'Не удалось очистить журнал аудита',
+    'admin/audit-log.json:toast.clear_success': 'Журнал аудита очищен',
+    'admin/audit-log.json:toast.delete_error': 'Не удалось удалить запись',
+    'admin/audit-log.json:toast.delete_success': 'Запись удалена',
+    'admin/audit-log.json:toast.load_error': 'Не удалось загрузить журнал аудита',
+    'admin/botsettings.json:analytics.activity_30_days_few': 'Активность за 30 дней',
+    'admin/botsettings.json:analytics.activity_30_days_many': 'Активность за 30 дней',
+    'admin/botsettings.json:analytics.activity_30_days_one': 'Активность за 30 дней',
+    'admin/botsettings.json:analytics.activity_30_days_other': 'Активность за 30 дней',
+    'admin/botsettings.json:bot_analytics_title': 'Аналитика бота',
+    'admin/botsettings.json:fomo_messages': 'FOMO-сообщения',
+    'admin/botsettings.json:retention_hint_few': 'Напоминание через {{count}} дня',
+    'admin/botsettings.json:retention_hint_many': 'Напоминание через {{count}} дней',
+    'admin/botsettings.json:retention_hint_one': 'Напоминание через {{count}} день',
+    'admin/botsettings.json:retention_hint_other': 'Напоминание через {{count}} дней',
+    'admin/botsettings.json:retention_placeholder': 'Текст напоминания для возврата клиента',
+    'admin/botsettings.json:separate_with_pipe': 'разделяйте символом |',
+    'admin/botsettings.json:style_adaptive': 'Адаптивный',
+    'admin/botsettings.json:style_adaptive_desc': 'Подстраивается под контекст и клиента',
+    'admin/botsettings.json:style_concise': 'Лаконичный',
+    'admin/botsettings.json:style_concise_desc': 'Короткие и четкие ответы',
+    'admin/botsettings.json:style_detailed': 'Подробный',
+    'admin/botsettings.json:style_detailed_desc': 'Развернутые ответы с пояснениями',
+    'admin/botsettings.json:tab_analytics': 'Аналитика',
+    'admin/botsettings.json:tab_notifications': 'Уведомления',
+    'admin/botsettings.json:tabs.advanced': 'Дополнительно',
+    'admin/botsettings.json:tabs.communication': 'Коммуникация',
+    'admin/botsettings.json:tabs.examples': 'Примеры',
+    'admin/botsettings.json:tabs.general': 'Общие',
+    'admin/botsettings.json:tabs.objections': 'Возражения',
+    'admin/botsettings.json:tabs.personality': 'Личность',
+    'admin/botsettings.json:tabs.pricing': 'Цены',
+    'admin/botsettings.json:tabs.safety': 'Безопасность',
+    'admin/botsettings.json:title': 'Настройки бота',
+    'admin/broadcasts.json:delete_confirm': 'Удалить эту рассылку?',
+    'admin/broadcasts.json:subtitle': 'Создавайте и отправляйте сообщения клиентам',
+    'admin/broadcasts.json:title': 'Рассылки',
+    'admin/clients.json:instagram_id_placeholder': 'Введите Instagram ID',
+    'admin/clients.json:name_placeholder': 'Введите имя клиента',
+    'admin/clients.json:notes_placeholder': 'Добавьте заметку',
+    'admin/clients.json:phone_placeholder': 'Введите номер телефона',
+    'admin/clients.json:search_placeholder': 'Поиск по имени, телефону или Instagram',
+    'admin/clients.json:title': 'Клиенты',
+    'admin/contracts.json:search_placeholder': 'Поиск по названию или типу',
+    'admin/contracts.json:subtitle': 'Управление шаблонами и типами договоров',
+    'admin/contracts.json:title': 'Договоры',
+    'admin/contracts.json:typeManagement.deleteTitle': 'Удалить тип «{{name}}»?',
+    'admin/invoices.json:search_placeholder': 'Поиск по клиенту, номеру или статусу',
+    'admin/invoices.json:subtitle': 'Управление счетами и оплатами',
+    'admin/invoices.json:title': 'Счета',
+    'admin/products.json:search_placeholder': 'Поиск по названию или категории',
+    'admin/products.json:subtitle': 'Управление товарами и остатками',
+    'admin/products.json:title': 'Товары',
+    'admin/services.json:change_requests.comment_placeholder': 'Комментарий для сотрудника',
+    'admin/services.json:change_requests.reject_title': 'Отклонить запрос',
+    'admin/services.json:change_requests.title': 'Запросы на изменение услуг',
+    'admin/trash.json:empty_title': 'Корзина пуста',
+    'admin/trash.json:search_placeholder': 'Поиск по названию или типу',
+    'admin/trash.json:subtitle': 'Удаленные элементы, доступные для восстановления',
+    'admin/trash.json:title': 'Корзина',
+    'adminpanel/loyaltymanagement.json:dialogs.adjust_points.client_email_placeholder': 'Введите email клиента',
+    'adminpanel/loyaltymanagement.json:dialogs.adjust_points.points_placeholder': 'Введите количество баллов',
+    'adminpanel/loyaltymanagement.json:dialogs.adjust_points.reason_placeholder': 'Укажите причину',
+    'adminpanel/loyaltymanagement.json:subtitle': 'Управление бонусами и историей операций',
+    'adminpanel/loyaltymanagement.json:title': 'Лояльность',
+    'adminpanel/loyaltymanagement.json:transactions.search_placeholder': 'Поиск по клиенту или операции',
+    'crm/tasks.json:title': 'Задачи',
+    'layouts/mainlayout.json:admin_panel': 'Админ-панель',
+    'layouts/mainlayout.json:calls.audio_call': 'Аудиозвонок',
+    'layouts/mainlayout.json:crm': 'CRM-панель',
+    'layouts/mainlayout.json:roles.admin': 'Администратор',
+    'layouts/mainlayout.json:roles.super_admin': 'Владелец платформы',
+    'manager/chat.json:message_placeholder': 'Введите сообщение',
+}
 
 
 def get_value_by_path(data, path):
@@ -52,7 +199,8 @@ def set_value_by_path(data, path, value):
 
 
 def apply_source_glossary_to_ru_files(ru_files, ru_dir, translator):
-    source_glossary = translator.key_glossary.get(SOURCE_LANG, {})
+    source_glossary = dict(RU_SOURCE_CORRECTIONS)
+    source_glossary.update(translator.key_glossary.get(SOURCE_LANG, {}))
     if not source_glossary:
         return 0
 
@@ -87,6 +235,105 @@ def apply_source_glossary_to_ru_files(ru_files, ru_dir, translator):
             updated_files += 1
 
     return updated_files
+
+
+def humanize_source_key(path):
+    path_parts = [part for part in path.split('.') if part]
+    if not path_parts:
+        return None
+
+    leaf = PLURAL_SUFFIX_RE.sub('', path_parts[-1])
+    if not leaf:
+        return None
+
+    phrase_parts = []
+    if len(path_parts) > 1:
+        parent = path_parts[-2]
+        if leaf in {'title', 'subtitle', 'description', 'message'} and parent not in COMMON_SOURCE_CONTAINERS:
+            phrase_parts.append(parent)
+
+    phrase_parts.append(leaf)
+    human = " ".join(phrase_parts)
+    human = re.sub(r'(?<!^)(?=[A-Z])', ' ', human)
+    human = human.replace('_', ' ').replace('-', ' ')
+    human = re.sub(r'\s+', ' ', human).strip()
+    if not human:
+        return None
+
+    words = []
+    for word in human.split():
+        replacement = SOURCE_KEY_REPLACEMENTS.get(word.lower())
+        words.append(replacement if replacement else word)
+
+    human = " ".join(words)
+    if not human:
+        return None
+
+    return human[0].upper() + human[1:]
+
+
+def rescue_empty_ru_sources(ru_files, ru_dir, translator):
+    updated_files = 0
+    rescued_values = 0
+
+    def rescue_value(container, key, rel_path, nested_path):
+        nonlocal rescued_values
+
+        current_value = container.get(key)
+        if not isinstance(current_value, str) or current_value.strip():
+            return
+
+        source_hint = humanize_source_key(nested_path)
+        if not source_hint:
+            return
+
+        key_path = f"{rel_path}:{nested_path}"
+        translated = translator.translate(source_hint, 'en', SOURCE_LANG, key_path=key_path)
+        translated = (translated or '').strip()
+        if not translated:
+            return
+
+        container[key] = translated
+        rescued_values += 1
+
+    for ru_file in ru_files:
+        rel_path = str(ru_file.relative_to(ru_dir))
+
+        with open(ru_file, 'r', encoding='utf-8') as f:
+            try:
+                ru_data = json.load(f)
+            except json.JSONDecodeError:
+                continue
+
+        changed = False
+
+        def walk(data, path=""):
+            nonlocal changed
+
+            if isinstance(data, dict):
+                for key, value in data.items():
+                    nested_path = f"{path}.{key}" if path else key
+                    if isinstance(value, dict):
+                        walk(value, nested_path)
+                    elif isinstance(value, list):
+                        for index, item in enumerate(value):
+                            if isinstance(item, (dict, list)):
+                                walk(item, f"{nested_path}[{index}]")
+                    else:
+                        before = data.get(key)
+                        rescue_value(data, key, rel_path, nested_path)
+                        if data.get(key) != before:
+                            changed = True
+
+        walk(ru_data)
+
+        if changed:
+            with open(ru_file, 'w', encoding='utf-8') as f:
+                json.dump(ru_data, f, ensure_ascii=False, indent=2, sort_keys=True)
+                f.write('\n')
+            updated_files += 1
+
+    return updated_files, rescued_values
 
 def load_source_map():
     if SOURCE_MAP_FILE.exists():
@@ -311,6 +558,13 @@ def main():
     updated_source_files = apply_source_glossary_to_ru_files(ru_files, ru_dir, translator)
     if updated_source_files:
         print(f"🧭 Updated {updated_source_files} RU source locale files from glossary before translation\n")
+
+    rescued_source_files, rescued_source_values = rescue_empty_ru_sources(ru_files, ru_dir, translator)
+    if rescued_source_files:
+        print(
+            f"🛟 Rescued {rescued_source_values} empty RU source values "
+            f"across {rescued_source_files} files before translation\n"
+        )
 
     total_translated = 0
     

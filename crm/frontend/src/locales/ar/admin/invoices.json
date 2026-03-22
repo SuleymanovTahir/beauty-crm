@@ -1,69 +1,69 @@
 {
-  "actions": "",
-  "addInvoice": "",
-  "addPayment": "",
-  "allInvoices": "",
-  "allStatuses": "",
-  "board": "",
-  "client": "",
-  "delete": "",
-  "dueDate": "",
+  "actions": "الإجراءات",
+  "addInvoice": "إضافة فاتورة",
+  "addPayment": "إضافة دفعة",
+  "allInvoices": "جميع الفواتير",
+  "allStatuses": "جميع الحالات",
+  "board": "اللوحة",
+  "client": "العميل",
+  "delete": "حذف",
+  "dueDate": "مدة الدفع",
   "errors": {
-    "createError": "",
-    "deleteError": "",
-    "paymentError": "",
-    "sendError": "",
-    "updateError": ""
+    "createError": "إنشاء خطأ",
+    "deleteError": "خطأ في الحذف",
+    "paymentError": "خطأ في الدفع",
+    "sendError": "خطأ في الإرسال",
+    "updateError": "خطأ في التحديث"
   },
   "form": {
-    "addItem": "",
-    "cancel": "",
-    "dueDate": "",
-    "itemName": "",
-    "itemPrice": "",
-    "itemQuantity": "",
-    "items": "",
-    "notes": "",
-    "save": "",
-    "selectClient": ""
+    "addItem": "إضافة عنصر",
+    "cancel": "إلغاء",
+    "dueDate": "مدة الدفع",
+    "itemName": "اسم العنصر",
+    "itemPrice": "سعر العنصر",
+    "itemQuantity": "كمية العنصر",
+    "items": "العناصر",
+    "notes": "ملاحظات",
+    "save": "حفظ",
+    "selectClient": "تحديد عميل"
   },
-  "invoiceNumber": "",
-  "manage_stages": "",
+  "invoiceNumber": "رقم الحساب",
+  "manage_stages": "مراحل الإدارة",
   "messages": {
-    "confirmDelete": "",
-    "invoiceCreated": "",
-    "invoiceDeleted": "",
-    "invoiceSent": "",
-    "invoiceUpdated": "",
-    "paymentAdded": ""
+    "confirmDelete": "تأكيد الحذف",
+    "invoiceCreated": "تم إنشاء الفاتورة",
+    "invoiceDeleted": "تم حذف الفاتورة",
+    "invoiceSent": "تم إرسال الفاتورة",
+    "invoiceUpdated": "تم تحديث الفاتورة",
+    "paymentAdded": "تمت إضافة الدفعة"
   },
-  "noInvoices": "",
-  "paidAmount": "",
+  "noInvoices": "لا توجد فواتير",
+  "paidAmount": "المبلغ المدفوع",
   "payment": {
-    "add": "",
-    "amount": "",
-    "method": "",
+    "add": "إضافة",
+    "amount": "الكمية",
+    "method": "طريقة",
     "methods": {
-      "card": "",
-      "cash": "",
-      "online": "",
-      "transfer": ""
+      "card": "البطاقة",
+      "cash": "نقدًا",
+      "online": "عبر الإنترنت",
+      "transfer": "تحويل"
     },
-    "notes": "",
-    "title": ""
+    "notes": "ملاحظات",
+    "title": "اسم الدفع"
   },
-  "search_placeholder": "",
-  "sendButton": "",
+  "search_placeholder": "البحث حسب العميل أو الرقم أو الحالة",
+  "sendButton": "زر الإرسال",
   "sendDialog": {
-    "email": "",
-    "method": "",
-    "recipient": "",
-    "sendButton": "",
-    "telegram": "",
-    "title": "",
-    "whatsapp": ""
+    "email": "البريد الإلكتروني",
+    "method": "الطريقة",
+    "recipient": "المستلم",
+    "sendButton": "إرسال الزر",
+    "telegram": "Telegram",
+    "title": "إرسال عنوان الحوار",
+    "whatsapp": "WhatsApp"
   },
-  "status": "",
+  "status": "الحالة",
   "statuses": {
     "cancelled": "ملغاة",
     "draft": "مسودة",
@@ -73,7 +73,7 @@
     "partially_paid": "مدفوع جزئيًا",
     "sent": "مرسل"
   },
-  "subtitle": "",
-  "title": "",
-  "totalAmount": ""
+  "subtitle": "إدارة الحسابات و المدفوعات",
+  "title": "الحسابات",
+  "totalAmount": "المبلغ الإجمالي"
 }

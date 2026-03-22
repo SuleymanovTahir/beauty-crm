@@ -3,13 +3,13 @@
     "activate": "Aktivieren",
     "deactivate": "Deaktivieren"
   },
-  "adjust_points": "",
+  "adjust_points": "Anpassungspunkte",
   "buttons": {
     "add_rule": "Regel hinzufügen",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Anpassungspunkte",
+    "cancel": "Abbrechen",
     "save": "Speichern",
-    "save_changes": ""
+    "save_changes": "Änderungen speichern"
   },
   "categories": {
     "category": "Kategorie",
@@ -28,26 +28,26 @@
     "points_per_unit": "punkte für 1 Einheit. Währungen",
     "title": "Einstellungen"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Regellöschung bestätigen",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "Kunden-E-Mail",
+      "client_email_placeholder": "Geben Sie die E-Mail-Adresse des Kunden ein",
+      "description": "Anpassungspunktbeschreibung",
+      "points": "Punkte",
+      "points_placeholder": "Geben Sie die Anzahl der Punkte ein",
+      "reason": "Grund",
+      "reason_placeholder": "Geben Sie den Grund an",
+      "title": "Punktnamen ändern"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
+      "description": "Stufenbeschreibung ändern",
+      "discount_percent": "Rabattprozentsatz",
+      "min_points": "Mindestpunktzahl",
       "status_hint": "Eine inaktive Ebene nimmt nicht an der automatischen Berechnung von Privilegien teil",
       "status_label": "Ebenenstatus",
-      "tier_name": "",
-      "title": ""
+      "tier_name": "Stufenname",
+      "title": "Stufennamen ändern"
     },
     "rule": {
       "description": "Punktmultiplikator für die Servicekategorie festlegen",
@@ -57,51 +57,51 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Aktive Teilnehmer",
+    "points_redeemed": "Eingelöste Punkte",
+    "total_points_issued": "Gesamtpunktzahl"
   },
   "statuses": {
     "inactive": "Inaktiv"
   },
-  "subtitle": "",
+  "subtitle": "Boni und Transaktionshistorie verwalten",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Beschreibung der Stufen",
+    "discount": "Rabatt",
+    "from_points": "Ab Punkte",
+    "starting_level": "Einstiegsstufe",
+    "title": "Namensstufe"
   },
-  "title": "",
+  "title": "Treue",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add_one": "",
-    "points_adjusted_add_few": "",
-    "points_adjusted_add_many": "",
-    "points_adjusted_add_other": "",
-    "points_adjusted_deduct_one": "",
-    "points_adjusted_deduct_few": "",
-    "points_adjusted_deduct_many": "",
-    "points_adjusted_deduct_other": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Konfiguration aktualisiert",
+    "failed_adjust": "Konfigurieren fehlgeschlagen",
+    "failed_delete": "Löschen fehlgeschlagen",
+    "failed_load": "Laden fehlgeschlagen",
+    "failed_save": "Speichern fehlgeschlagen",
+    "failed_update": "Aktualisieren fehlgeschlagen",
+    "points_adjusted_add_few": "Punkte angepasst, hinzugefügt",
+    "points_adjusted_add_many": "Punkte angepasst, hinzugefügt",
+    "points_adjusted_add_one": "Punkte angepasst, hinzugefügt",
+    "points_adjusted_add_other": "Punkte angepasst, hinzugefügt",
+    "points_adjusted_deduct_few": "Angepasster Punktabzug",
+    "points_adjusted_deduct_many": "Angepasster Punktabzug",
+    "points_adjusted_deduct_one": "Angepasster Punktabzug",
+    "points_adjusted_deduct_other": "Angepasster Punktabzug",
+    "rule_deleted": "Regel gelöscht.",
+    "rule_saved": "Regel gespeichert.",
+    "tier_updated": "Ebene aktualisiert"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Transaktionsbeschreibung",
+    "search_placeholder": "Suche nach Kunde oder Transaktion",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Client",
+      "date": "Datum",
+      "points": "Punkte",
+      "reason": "Grund",
+      "type": "Eingeben"
     },
-    "title": ""
+    "title": "Transaktionsname"
   }
 }

@@ -151,102 +151,102 @@
       }
     },
     {
-      "id": 397,
-      "stable_key": "397",
+      "id": 408,
+      "stable_key": "408",
       "fields": {
         "name": {
           "ru": "new",
-          "key": "workflow_stages.397.name"
+          "key": "workflow_stages.408.name"
         }
       }
     },
     {
-      "id": 398,
-      "stable_key": "398",
+      "id": 409,
+      "stable_key": "409",
       "fields": {
         "name": {
           "ru": "negotiation",
-          "key": "workflow_stages.398.name"
+          "key": "workflow_stages.409.name"
         }
       }
     },
     {
-      "id": 399,
-      "stable_key": "399",
+      "id": 410,
+      "stable_key": "410",
       "fields": {
         "name": {
           "ru": "sent_offer",
-          "key": "workflow_stages.399.name"
+          "key": "workflow_stages.410.name"
         }
       }
     },
     {
-      "id": 400,
-      "stable_key": "400",
+      "id": 411,
+      "stable_key": "411",
       "fields": {
         "name": {
           "ru": "closed_won",
-          "key": "workflow_stages.400.name"
+          "key": "workflow_stages.411.name"
         }
       }
     },
     {
-      "id": 401,
-      "stable_key": "401",
+      "id": 412,
+      "stable_key": "412",
       "fields": {
         "name": {
           "ru": "closed_lost",
-          "key": "workflow_stages.401.name"
+          "key": "workflow_stages.412.name"
         }
       }
     },
     {
-      "id": 402,
-      "stable_key": "402",
+      "id": 413,
+      "stable_key": "413",
       "fields": {
         "name": {
           "ru": "draft",
-          "key": "workflow_stages.402.name"
+          "key": "workflow_stages.413.name"
         }
       }
     },
     {
-      "id": 403,
-      "stable_key": "403",
+      "id": 414,
+      "stable_key": "414",
       "fields": {
         "name": {
           "ru": "sent",
-          "key": "workflow_stages.403.name"
+          "key": "workflow_stages.414.name"
         }
       }
     },
     {
-      "id": 404,
-      "stable_key": "404",
+      "id": 415,
+      "stable_key": "415",
       "fields": {
         "name": {
           "ru": "paid",
-          "key": "workflow_stages.404.name"
+          "key": "workflow_stages.415.name"
         }
       }
     },
     {
-      "id": 405,
-      "stable_key": "405",
+      "id": 416,
+      "stable_key": "416",
       "fields": {
         "name": {
           "ru": "todo",
-          "key": "workflow_stages.405.name"
+          "key": "workflow_stages.416.name"
         }
       }
     },
     {
-      "id": 407,
-      "stable_key": "407",
+      "id": 418,
+      "stable_key": "418",
       "fields": {
         "name": {
           "ru": "done",
-          "key": "workflow_stages.407.name"
+          "key": "workflow_stages.418.name"
         }
       }
     }

@@ -1,69 +1,69 @@
 {
-  "actions": "",
-  "addInvoice": "",
-  "addPayment": "",
-  "allInvoices": "",
-  "allStatuses": "",
-  "board": "",
-  "client": "",
-  "delete": "",
-  "dueDate": "",
+  "actions": "Действия",
+  "addInvoice": "Добавить счет",
+  "addPayment": "Добавить платеж",
+  "allInvoices": "Все счета",
+  "allStatuses": "Все статусы",
+  "board": "Доска",
+  "client": "Клиент",
+  "delete": "Удалить",
+  "dueDate": "Срок оплаты",
   "errors": {
-    "createError": "",
-    "deleteError": "",
-    "paymentError": "",
-    "sendError": "",
-    "updateError": ""
+    "createError": "Создать ошибку",
+    "deleteError": "Удалить ошибку",
+    "paymentError": "Ошибка платежа",
+    "sendError": "Ошибка отправки",
+    "updateError": "Ошибка обновления"
   },
   "form": {
-    "addItem": "",
-    "cancel": "",
-    "dueDate": "",
-    "itemName": "",
-    "itemPrice": "",
-    "itemQuantity": "",
-    "items": "",
-    "notes": "",
-    "save": "",
-    "selectClient": ""
+    "addItem": "Добавить элемент",
+    "cancel": "Отмена",
+    "dueDate": "Срок оплаты",
+    "itemName": "Название предмета",
+    "itemPrice": "Цена товара",
+    "itemQuantity": "Количество товара",
+    "items": "Предметы",
+    "notes": "Примечания",
+    "save": "Сохранять",
+    "selectClient": "Выберите клиента"
   },
-  "invoiceNumber": "",
-  "manage_stages": "",
+  "invoiceNumber": "Номер счета",
+  "manage_stages": "Управление этапами",
   "messages": {
-    "confirmDelete": "",
-    "invoiceCreated": "",
-    "invoiceDeleted": "",
-    "invoiceSent": "",
-    "invoiceUpdated": "",
-    "paymentAdded": ""
+    "confirmDelete": "Подтвердить удаление",
+    "invoiceCreated": "Счет создан",
+    "invoiceDeleted": "Счет удален",
+    "invoiceSent": "Счет отправлен",
+    "invoiceUpdated": "Счет обновлен",
+    "paymentAdded": "Платеж добавлен"
   },
-  "noInvoices": "",
-  "paidAmount": "",
+  "noInvoices": "Нет счетов",
+  "paidAmount": "Оплаченная сумма",
   "payment": {
-    "add": "",
-    "amount": "",
-    "method": "",
+    "add": "Добавлять",
+    "amount": "Количество",
+    "method": "Метод",
     "methods": {
-      "card": "",
-      "cash": "",
-      "online": "",
-      "transfer": ""
+      "card": "Карта",
+      "cash": "Наличные",
+      "online": "Онлайн",
+      "transfer": "Передача"
     },
-    "notes": "",
-    "title": ""
+    "notes": "Примечания",
+    "title": "Название платежа"
   },
-  "search_placeholder": "",
-  "sendButton": "",
+  "search_placeholder": "Поиск по клиенту, номеру или статусу",
+  "sendButton": "Кнопка «Отправить»",
   "sendDialog": {
-    "email": "",
-    "method": "",
-    "recipient": "",
-    "sendButton": "",
-    "telegram": "",
-    "title": "",
-    "whatsapp": ""
+    "email": "Электронная почта",
+    "method": "Метод",
+    "recipient": "Получатель",
+    "sendButton": "Кнопка «Отправить»",
+    "telegram": "Telegram",
+    "title": "Название диалогового окна отправки",
+    "whatsapp": "WhatsApp"
   },
-  "status": "",
+  "status": "Статус",
   "statuses": {
     "cancelled": "Отменен",
     "draft": "Черновик",
@@ -73,7 +73,7 @@
     "partially_paid": "Частично оплачен",
     "sent": "Отправлен"
   },
-  "subtitle": "",
-  "title": "",
-  "totalAmount": ""
+  "subtitle": "Управление счетами и оплатами",
+  "title": "Счета",
+  "totalAmount": "Общая сумма"
 }

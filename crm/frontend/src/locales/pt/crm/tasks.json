@@ -69,10 +69,10 @@
   "select_priority": "Selecionar prioridade",
   "select_stage": "Selecionar estágio",
   "selected_count": "Selecionado: {{count}}",
-  "selected_count_one": "",
-  "selected_count_few": "",
-  "selected_count_many": "",
-  "selected_count_other": "",
+  "selected_count_few": "Quantidade selecionada",
+  "selected_count_many": "Quantidade selecionada",
+  "selected_count_one": "Quantidade selecionada",
+  "selected_count_other": "Quantidade selecionada",
   "showing_tasks": "Mostrado",
   "stage": "Estágio",
   "stage_created": "Stage created",
@@ -95,7 +95,7 @@
   "tasks_control": "Tarefas para controle",
   "tasks_execution": "Tarefas a serem concluídas",
   "tasks_for_today": "Tarefas de hoje",
-  "title": "Título",
+  "title": "Tarefas",
   "unassigned": "Não atribuído",
   "update_failed": "Update failed"
 }

@@ -4,16 +4,16 @@
   "all_notifications_cleared": "Toutes les notifications supprimées",
   "calls": {
     "accept": "Accepter",
-    "audio_call": "",
+    "audio_call": "Appel audio",
     "click_to_answer": "Cliquez pour répondre",
-    "incoming_call": "Appel entrant\u00a0!",
+    "incoming_call": "Appel entrant !",
     "missed_auto": "Appel manqué (rejet automatique)",
     "missed_call": "Appel manqué",
-    "video_call": ""
+    "video_call": "Appel vidéo"
   },
   "clear_all": "Effacer tout",
   "close": "Fermer",
-  "confirm_clear_all": "Êtes-vous sûr de vouloir tout supprimer notifications\u00a0?",
+  "confirm_clear_all": "Êtes-vous sûr de vouloir tout supprimer notifications ?",
   "crm": "Panneau CRM",
   "employee": "Employé",
   "error_clearing": "Erreur lors de la suppression des notifications",
@@ -78,15 +78,15 @@
   "notification_deleted": "Notification supprimée",
   "notifications": "Notifications",
   "roles": {
-    "accountant": "",
-    "admin": "",
+    "accountant": "Comptable",
+    "admin": "Administrateur",
     "director": "Directeur",
-    "employee": "",
-    "manager": "",
+    "employee": "Employé",
+    "manager": "Gestionnaire",
     "marketer": "Marketer",
     "saler": "Responsable des ventes",
     "sales": "Ventes",
-    "super_admin": "Propriétaire de la plateforme"
+    "super_admin": "Plateforme propriétaire"
   },
   "user": "Utilisateur",
   "view_all": "Tout afficher"

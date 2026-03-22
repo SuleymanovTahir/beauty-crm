@@ -14,7 +14,6 @@ import { api } from "@crm/services/api";
 import LanguageSwitcher from "@crm/components/LanguageSwitcher";
 import { useAuth } from "@crm/contexts/AuthContext";
 import GoogleLoginButton from "@crm/components/GoogleLoginButton";
-import { useTheme } from "@crm/contexts/ThemeContext";
 import {
   DEFAULT_PLATFORM_GATES,
   getUnauthenticatedCrmPathByGates,
@@ -26,11 +25,7 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation(['auth/login', 'common']);
-  const { colorTheme } = useTheme();
-  const hasSpecificLogoTheme = ['pink', 'blue'].includes(colorTheme);
-  const loginLogoPath = hasSpecificLogoTheme
-    ? `/logo/vertical-logo-${colorTheme}.png`
-    : '/logo/vertical-logo.png';
+  const loginLogoPath = '/logo/vertical-logo-pink.svg';
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
@@ -187,6 +182,7 @@ export default function Login() {
             src={loginLogoPath}
             alt="Logo"
             className="login-logo-img"
+            style={{ filter: 'var(--logo-filter, none)' }}
           />
         </div>
 

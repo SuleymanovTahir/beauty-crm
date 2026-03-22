@@ -4,12 +4,12 @@
   "all_notifications_cleared": "Todas as notificações excluídas",
   "calls": {
     "accept": "Aceitar",
-    "audio_call": "",
+    "audio_call": "Chamada de áudio",
     "click_to_answer": "Clique para atender",
     "incoming_call": "Chamada recebida!",
     "missed_auto": "Chamada perdida (rejeitar automaticamente)",
     "missed_call": "Chamada perdida",
-    "video_call": ""
+    "video_call": "Chamada de vídeo"
   },
   "clear_all": "Limpar tudo",
   "close": "Fechar",
@@ -78,15 +78,15 @@
   "notification_deleted": "Notificação excluída",
   "notifications": "Notificações",
   "roles": {
-    "accountant": "",
-    "admin": "",
+    "accountant": "Contador",
+    "admin": "Administrador",
     "director": "Diretor",
-    "employee": "",
-    "manager": "",
+    "employee": "Funcionário",
+    "manager": "Gerenciador",
     "marketer": "Marketer",
     "saler": "Gerente de vendas",
     "sales": "Vendas",
-    "super_admin": "Proprietário da plataforma"
+    "super_admin": "Plataforma proprietário"
   },
   "user": "Usuário",
   "view_all": "Ver tudo"

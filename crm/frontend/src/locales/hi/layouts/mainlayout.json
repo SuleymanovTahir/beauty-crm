@@ -4,17 +4,17 @@
   "all_notifications_cleared": "सभी सूचनाएं हटा दी गईं",
   "calls": {
     "accept": "स्वीकार करें",
-    "audio_call": "",
+    "audio_call": "ऑडियो कॉल",
     "click_to_answer": "उत्तर देने के लिए क्लिक करें",
     "incoming_call": "इनकमिंग कॉल!",
     "missed_auto": "मिस्ड कॉल (ऑटो-रिजेक्ट)",
     "missed_call": "मिस्ड कॉल",
-    "video_call": ""
+    "video_call": "वीडियो कॉल"
   },
   "clear_all": "साफ़ करें सभी",
   "close": "बंद करें",
   "confirm_clear_all": "क्या आप वाकई सभी सूचनाएं हटाना चाहते हैं?",
-  "crm": "सीआरएम पैनल",
+  "crm": "CRM पैनल",
   "employee": "कर्मचारी",
   "error_clearing": "सूचनाएं हटाते समय त्रुटि",
   "error_deleting_notification": "सूचनाएं हटाते समय त्रुटि",
@@ -78,14 +78,14 @@
   "notification_deleted": "अधिसूचना हटाया गया",
   "notifications": "सूचनाएं",
   "roles": {
-    "accountant": "",
-    "admin": "",
+    "accountant": "लेखाकार",
+    "admin": "एडमिनिस्ट्रेटर",
     "director": "निदेशक",
-    "employee": "",
-    "manager": "",
+    "employee": "कर्मचारी",
+    "manager": "प्रबंधक",
     "marketer": "विपणक",
     "saler": "बिक्री प्रबंधक",
-    "super_admin": "प्लेटफ़ॉर्म मालिक"
+    "super_admin": "प्लेटफ़ॉर्म स्वामी"
   },
   "user": "उपयोगकर्ता",
   "view_all": "सभी देखें"

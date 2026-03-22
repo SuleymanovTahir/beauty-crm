@@ -3,13 +3,13 @@
     "activate": "Қосу",
     "deactivate": "Өшіру"
   },
-  "adjust_points": "",
+  "adjust_points": "Реттеу нүктелері",
   "buttons": {
     "add_rule": "Ереже қосу",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Реттеу нүктелері",
+    "cancel": "Болдырмау",
     "save": "Сақтау",
-    "save_changes": ""
+    "save_changes": "Өзгерістерді сақтау"
   },
   "categories": {
     "category": "Санат",
@@ -28,26 +28,26 @@
     "points_per_unit": "1 бірлік үшін ұпайлар. валюталар",
     "title": "Параметрлер"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Ереженің жойылуын растау",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "Тұтынушы электрондық поштасы",
+      "client_email_placeholder": "Тұтынушы электрондық поштасының толтырғышы",
+      "description": "Орнату нүктелерінің сипаттамасы",
+      "points": "Ұпайлар",
+      "points_placeholder": "Орын толтырғыш ұпайлары",
+      "reason": "Себебі",
+      "reason_placeholder": "Себеп толтырғышы",
+      "title": "Нүкте атауын өзгерту"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
+      "description": "Деңгейдің сипаттамасын өзгерту",
+      "discount_percent": "Жеңілдік пайызы",
+      "min_points": "Ең аз ұпай",
       "status_hint": "Белсенді емес деңгей артықшылықтарды автоматты түрде есептеуге қатыспайды",
       "status_label": "Деңгей күйі",
-      "tier_name": "",
-      "title": ""
+      "tier_name": "Деңгей атауы",
+      "title": "Деңгей атауын өзгерту"
     },
     "rule": {
       "description": "Қызмет санаты үшін ұпай көбейткішін орнату",
@@ -57,51 +57,51 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Белсенді қатысушылар",
+    "points_redeemed": "Белсенді ұпайлар",
+    "total_points_issued": "Берілген ұпайлардың жалпы саны"
   },
   "statuses": {
     "inactive": "Белсенді емес"
   },
-  "subtitle": "",
+  "subtitle": "Субтитрлер",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Деңгейлердің сипаттамасы",
+    "discount": "Жеңілдік",
+    "from_points": "Ұпайлардан",
+    "starting_level": "Кіру деңгейі",
+    "title": "Деңгей атауы"
   },
-  "title": "",
+  "title": "Айдар",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add_one": "",
-    "points_adjusted_add_few": "",
-    "points_adjusted_add_many": "",
-    "points_adjusted_add_other": "",
-    "points_adjusted_deduct_one": "",
-    "points_adjusted_deduct_few": "",
-    "points_adjusted_deduct_many": "",
-    "points_adjusted_deduct_other": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Конфигурация жаңартылды",
+    "failed_adjust": "Конфигурацияланбады",
+    "failed_delete": "Жойылмады",
+    "failed_load": "Жүктелмеді",
+    "failed_save": "Сақталмады",
+    "failed_update": "Жаңарту мүмкін болмады",
+    "points_adjusted_add_few": "Ұпайлар түзетілді, қосылды",
+    "points_adjusted_add_many": "Ұпайлар түзетілді, қосылды",
+    "points_adjusted_add_one": "Ұпайлар түзетілді, қосылды",
+    "points_adjusted_add_other": "Ұпайлар түзетілді, қосылды",
+    "points_adjusted_deduct_few": "Түзетілген ұпай шегерімі",
+    "points_adjusted_deduct_many": "Түзетілген ұпай шегерімі",
+    "points_adjusted_deduct_one": "Түзетілген ұпай шегерімі",
+    "points_adjusted_deduct_other": "Түзетілген ұпай шегерімі",
+    "rule_deleted": "Ереже жойылды.",
+    "rule_saved": "Ереже сақталды.",
+    "tier_updated": "Деңгей жаңартылды"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Транзакция сипаттамалары",
+    "search_placeholder": "Толтырғышты іздеу",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Клиент",
+      "date": "Күні",
+      "points": "Ұпайлар",
+      "reason": "Себебі",
+      "type": "Түрі"
     },
-    "title": ""
+    "title": "Транзакция атауы"
   }
 }

@@ -1,20 +1,20 @@
 {
   "admin": "Администратор",
-  "admin_panel": "Админ панель",
+  "admin_panel": "Админ-панель",
   "all_notifications_cleared": "Все уведомления удалены",
   "calls": {
     "accept": "Принять",
-    "audio_call": "",
+    "audio_call": "Аудиозвонок",
     "click_to_answer": "Нажмите, чтобы ответить",
     "incoming_call": "Входящий звонок!",
     "missed_auto": "Звонок пропущен (авто-отклонение)",
     "missed_call": "Пропущенный звонок",
-    "video_call": ""
+    "video_call": "Видеозвонок"
   },
   "clear_all": "Очистить все",
   "close": "Закрыть",
   "confirm_clear_all": "Вы уверены что хотите удалить все уведомления?",
-  "crm": "CRM Панель",
+  "crm": "CRM-панель",
   "employee": "Сотрудник",
   "error_clearing": "Ошибка при удалении уведомлений",
   "error_deleting_notification": "Ошибка при удалении уведомления",
@@ -78,14 +78,14 @@
   "notification_deleted": "Уведомление удалено",
   "notifications": "Уведомления",
   "roles": {
-    "accountant": "",
-    "admin": "",
+    "accountant": "Бухгалтер",
+    "admin": "Администратор",
     "director": "Директор",
-    "employee": "",
-    "manager": "",
+    "employee": "Сотрудник",
+    "manager": "Менеджер",
     "marketer": "Маркетолог",
     "saler": "Менеджер по продажам",
-    "super_admin": "Платформа Владелец"
+    "super_admin": "Владелец платформы"
   },
   "user": "Пользователь",
   "view_all": "Посмотреть все"

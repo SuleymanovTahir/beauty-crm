@@ -3,13 +3,13 @@
     "activate": "Enable",
     "deactivate": "Disable"
   },
-  "adjust_points": "",
+  "adjust_points": "Adjustment points",
   "buttons": {
     "add_rule": "Add rule",
-    "adjust_points": "",
-    "cancel": "",
+    "adjust_points": "Adjustment points",
+    "cancel": "Cancel",
     "save": "Save",
-    "save_changes": ""
+    "save_changes": "Save changes"
   },
   "categories": {
     "category": "Category",
@@ -28,26 +28,26 @@
     "points_per_unit": "points for 1 unit. currencies",
     "title": "Settings"
   },
-  "confirm_delete_rule": "",
+  "confirm_delete_rule": "Confirm rule deletion",
   "dialogs": {
     "adjust_points": {
-      "client_email": "",
-      "client_email_placeholder": "",
-      "description": "",
-      "points": "",
-      "points_placeholder": "",
-      "reason": "",
-      "reason_placeholder": "",
-      "title": ""
+      "client_email": "Customer email",
+      "client_email_placeholder": "Enter the client's email",
+      "description": "Adjustment points description",
+      "points": "Points",
+      "points_placeholder": "Enter the number of points",
+      "reason": "Reason",
+      "reason_placeholder": "Specify the reason",
+      "title": "Change point name"
     },
     "edit_tier": {
-      "description": "",
-      "discount_percent": "",
-      "min_points": "",
+      "description": "Change level description",
+      "discount_percent": "Discount percentage",
+      "min_points": "Minimum points",
       "status_hint": "An inactive level does not participate in the automatic calculation of privileges",
       "status_label": "Level status",
-      "tier_name": "",
-      "title": ""
+      "tier_name": "Level name",
+      "title": "Change level name"
     },
     "rule": {
       "description": "Set the point multiplier for the service category",
@@ -57,51 +57,51 @@
     }
   },
   "stats": {
-    "active_members": "",
-    "points_redeemed": "",
-    "total_points_issued": ""
+    "active_members": "Active participants",
+    "points_redeemed": "Points redeemed",
+    "total_points_issued": "Total points awarded"
   },
   "statuses": {
     "inactive": "Inactive"
   },
-  "subtitle": "",
+  "subtitle": "Manage bonuses and transaction history",
   "tiers": {
-    "description": "",
-    "discount": "",
-    "from_points": "",
-    "starting_level": "",
-    "title": ""
+    "description": "Description of levels",
+    "discount": "Discount",
+    "from_points": "From points",
+    "starting_level": "Booking level",
+    "title": "Name level"
   },
-  "title": "",
+  "title": "Loyalty",
   "toasts": {
-    "config_updated": "",
-    "failed_adjust": "",
-    "failed_delete": "",
-    "failed_load": "",
-    "failed_save": "",
-    "failed_update": "",
-    "points_adjusted_add_one": "",
-    "points_adjusted_add_few": "",
-    "points_adjusted_add_many": "",
-    "points_adjusted_add_other": "",
-    "points_adjusted_deduct_one": "",
-    "points_adjusted_deduct_few": "",
-    "points_adjusted_deduct_many": "",
-    "points_adjusted_deduct_other": "",
-    "rule_deleted": "",
-    "rule_saved": "",
-    "tier_updated": ""
+    "config_updated": "Configuration updated",
+    "failed_adjust": "Failed to configure",
+    "failed_delete": "Failed to delete",
+    "failed_load": "Failed to load",
+    "failed_save": "Failed to save",
+    "failed_update": "Failed to update",
+    "points_adjusted_add_few": "Points adjusted, added",
+    "points_adjusted_add_many": "Points adjusted, added",
+    "points_adjusted_add_one": "Points adjusted, added",
+    "points_adjusted_add_other": "Points adjusted, added",
+    "points_adjusted_deduct_few": "Adjusted point deduction",
+    "points_adjusted_deduct_many": "Adjusted point deduction",
+    "points_adjusted_deduct_one": "Adjusted point deduction",
+    "points_adjusted_deduct_other": "Adjusted point deduction",
+    "rule_deleted": "Rule deleted.",
+    "rule_saved": "Rule saved.",
+    "tier_updated": "Level updated"
   },
   "transactions": {
-    "description": "",
-    "search_placeholder": "",
+    "description": "Transaction description",
+    "search_placeholder": "Search by client or transaction",
     "table": {
-      "client": "",
-      "date": "",
-      "points": "",
-      "reason": "",
-      "type": ""
+      "client": "Client",
+      "date": "Date",
+      "points": "Points",
+      "reason": "Reason",
+      "type": "Type"
     },
-    "title": ""
+    "title": "Transaction name"
   }
 }

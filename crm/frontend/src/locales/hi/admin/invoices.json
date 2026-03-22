@@ -1,69 +1,69 @@
 {
-  "actions": "",
-  "addInvoice": "",
-  "addPayment": "",
-  "allInvoices": "",
-  "allStatuses": "",
-  "board": "",
-  "client": "",
-  "delete": "",
-  "dueDate": "",
+  "actions": "क्रियाएं",
+  "addInvoice": "चालान जोड़ें",
+  "addPayment": "भुगतान जोड़ें",
+  "allInvoices": "सभी चालान",
+  "allStatuses": "सभी स्थितियां",
+  "board": "बोर्ड",
+  "client": "क्लाइंट",
+  "delete": "हटाएं",
+  "dueDate": "भुगतान अवधि",
   "errors": {
-    "createError": "",
-    "deleteError": "",
-    "paymentError": "",
-    "sendError": "",
-    "updateError": ""
+    "createError": "त्रुटि बनाएं",
+    "deleteError": "त्रुटि हटाएं",
+    "paymentError": "भुगतान त्रुटि",
+    "sendError": "त्रुटि भेजने में",
+    "updateError": "अपडेट त्रुटि"
   },
   "form": {
-    "addItem": "",
-    "cancel": "",
-    "dueDate": "",
-    "itemName": "",
-    "itemPrice": "",
-    "itemQuantity": "",
-    "items": "",
-    "notes": "",
-    "save": "",
-    "selectClient": ""
+    "addItem": "आइटम जोड़ें",
+    "cancel": "रद्द करें",
+    "dueDate": "भुगतान अवधि",
+    "itemName": "आइटम का नाम",
+    "itemPrice": "आइटम की कीमत",
+    "itemQuantity": "आइटम मात्रा",
+    "items": "आइटम",
+    "notes": "नोट्स",
+    "save": "सहेजें",
+    "selectClient": "ग्राहक चुनें"
   },
-  "invoiceNumber": "",
-  "manage_stages": "",
+  "invoiceNumber": "खाता संख्या",
+  "manage_stages": "प्रबंधन चरण",
   "messages": {
-    "confirmDelete": "",
-    "invoiceCreated": "",
-    "invoiceDeleted": "",
-    "invoiceSent": "",
-    "invoiceUpdated": "",
-    "paymentAdded": ""
+    "confirmDelete": "हटाए जाने की पुष्टि करें",
+    "invoiceCreated": "चालान बनाया गया",
+    "invoiceDeleted": "चालान हटाया गया",
+    "invoiceSent": "चालान भेजा गया",
+    "invoiceUpdated": "चालान अपडेट किया गया",
+    "paymentAdded": "भुगतान जोड़ा गया"
   },
-  "noInvoices": "",
-  "paidAmount": "",
+  "noInvoices": "कोई चालान नहीं",
+  "paidAmount": "भुगतान की गई राशि",
   "payment": {
-    "add": "",
-    "amount": "",
-    "method": "",
+    "add": "जोड़ें",
+    "amount": "मात्रा",
+    "method": "विधि",
     "methods": {
-      "card": "",
-      "cash": "",
-      "online": "",
-      "transfer": ""
+      "card": "कार्ड",
+      "cash": "नकद",
+      "online": "ऑनलाइन",
+      "transfer": "स्थानांतरण"
     },
-    "notes": "",
-    "title": ""
+    "notes": "नोट्स",
+    "title": "भुगतान नाम"
   },
-  "search_placeholder": "",
-  "sendButton": "",
+  "search_placeholder": "क्लाइंट, नंबर या स्थिति के आधार पर खोजें",
+  "sendButton": "सबमिट बटन",
   "sendDialog": {
-    "email": "",
-    "method": "",
-    "recipient": "",
-    "sendButton": "",
-    "telegram": "",
-    "title": "",
-    "whatsapp": ""
+    "email": "ईमेल",
+    "method": "विधि",
+    "recipient": "प्राप्तकर्ता",
+    "sendButton": "सबमिट करें बटन",
+    "telegram": "टेलीग्राम",
+    "title": "संवाद शीर्षक सबमिट करें",
+    "whatsapp": "व्हाट्सएप"
   },
-  "status": "",
+  "status": "स्थिति",
   "statuses": {
     "cancelled": "रद्द",
     "draft": "ड्राफ्ट",
@@ -73,7 +73,7 @@
     "partially_paid": "आंशिक रूप से भुगतान किया गया",
     "sent": "भेजा गया"
   },
-  "subtitle": "",
-  "title": "",
-  "totalAmount": ""
+  "subtitle": "खाते और भुगतान प्रबंधित करें",
+  "title": "खाते",
+  "totalAmount": "कुल राशि"
 }

@@ -69,10 +69,10 @@
   "select_priority": "Priorität auswählen",
   "select_stage": "Phase auswählen",
   "selected_count": "Ausgewählt: {{count}}",
-  "selected_count_one": "",
-  "selected_count_few": "",
-  "selected_count_many": "",
-  "selected_count_other": "",
+  "selected_count_few": "Ausgewählte Menge",
+  "selected_count_many": "Ausgewählte Menge",
+  "selected_count_one": "Ausgewählte Menge",
+  "selected_count_other": "Ausgewählte Menge",
   "showing_tasks": "Angezeigt",
   "stage": "Phase",
   "stage_created": "Stage created",
@@ -95,7 +95,7 @@
   "tasks_control": "Aufgaben zur Kontrolle",
   "tasks_execution": "Zu erledigende Aufgaben",
   "tasks_for_today": "Heute zu erledigende Aufgaben",
-  "title": "Titel",
+  "title": "Aufgaben",
   "unassigned": "Nicht zugewiesen",
   "update_failed": "Update failed"
 }

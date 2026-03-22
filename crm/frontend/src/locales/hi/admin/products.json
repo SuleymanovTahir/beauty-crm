@@ -1,71 +1,71 @@
 {
-  "addProduct": "",
-  "allCategories": "",
+  "addProduct": "उत्पाद जोड़ें",
+  "allCategories": "सभी श्रेणियां",
   "analytics": {
-    "avgPrice": "",
-    "last30Days_one": "",
-    "last30Days_few": "",
-    "last30Days_many": "",
-    "last30Days_other": "",
-    "revenue": "",
-    "totalSold": ""
+    "avgPrice": "मध्यम मूल्य",
+    "last30Days_few": "पिछले 30 दिन",
+    "last30Days_many": "पिछले 30 दिन",
+    "last30Days_one": "पिछले 30 दिन",
+    "last30Days_other": "पिछले 30 दिन",
+    "revenue": "आय",
+    "totalSold": "कुल बिक्री"
   },
-  "createFirst": "",
-  "delete": "",
+  "createFirst": "पहले बनाएं",
+  "delete": "हटाएं",
   "detail": {
-    "costPriceLabel": "",
-    "inStock_one": "",
-    "inStock_few": "",
-    "inStock_many": "",
-    "inStock_other": "",
-    "loadingData": "",
-    "movementAdjustment": "",
-    "movementHistory": "",
-    "movementIn": "",
-    "movementOut": "",
-    "noCategory": "",
-    "noMovements": ""
+    "costPriceLabel": "लागत लेबल",
+    "inStock_few": "स्टॉक में",
+    "inStock_many": "में स्टॉक",
+    "inStock_one": "स्टॉक में",
+    "inStock_other": "स्टॉक में",
+    "loadingData": "डेटा लोडिंग",
+    "movementAdjustment": "मूवमेंट एडजस्टमेंट",
+    "movementHistory": "मूवमेंट इतिहास",
+    "movementIn": "इनवर्ड मूवमेंट",
+    "movementOut": "बाहरी मूवमेंट",
+    "noCategory": "कोई श्रेणी नहीं",
+    "noMovements": "नहीं हलचल"
   },
-  "edit": "",
+  "edit": "संपादित करें",
   "form": {
-    "cancel": "",
-    "category": "",
-    "costPrice": "",
-    "isActive": "",
-    "minStockLevel": "",
-    "name": "",
-    "notes": "",
-    "photos": "",
-    "price": "",
-    "save": "",
-    "sku": "",
-    "stockQuantity": "",
-    "upload": "",
-    "uploadError": ""
+    "cancel": "रद्द करें",
+    "category": "श्रेणी",
+    "costPrice": "लागत",
+    "isActive": "सक्रिय",
+    "minStockLevel": "न्यूनतम स्टॉक स्तर",
+    "name": "नाम",
+    "notes": "नोट्स",
+    "photos": "फोटो",
+    "price": "मूल्य",
+    "save": "सहेजें",
+    "sku": "अनुच्छेद",
+    "stockQuantity": "स्टॉक मात्रा",
+    "upload": "डाउनलोड",
+    "uploadError": "लोड करने में त्रुटि"
   },
   "messages": {
-    "confirmDelete": "",
-    "noResults": ""
+    "confirmDelete": "हटाने की पुष्टि करें",
+    "noResults": "नहीं परिणाम"
   },
   "movement": {
-    "quantity": "",
-    "reason": "",
-    "title": "",
-    "type": "",
+    "quantity": "मात्रा",
+    "reason": "कारण",
+    "title": "आंदोलन का नाम",
+    "type": "प्रकार",
     "types": {
-      "adjustment": "",
-      "in": "",
-      "out": ""
+      "adjustment": "समायोजन",
+      "in": "अंदर",
+      "out": "बाहर"
     }
   },
-  "noProducts": "",
-  "search_placeholder": "",
+  "noProducts": "कोई उत्पाद नहीं",
+  "search_placeholder": "नाम या श्रेणी के आधार पर खोजें",
   "stock_status": {
-    "in_stock": "",
-    "low_stock": "",
-    "out_of_stock": ""
+    "in_stock": "उपलब्ध में",
+    "low_stock": "कम स्टॉक",
+    "out_of_stock": "बेचा बाहर"
   },
-  "subtitle": "",
-  "title": "",
-  "unit_pcs": ""
+  "subtitle": "उत्पाद और शेष प्रबंधित करें",
+  "title": "उत्पाद",
+  "unit_pcs": "इकाई"
 }

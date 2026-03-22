@@ -217,19 +217,16 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
     const [chatUnreadCount, setChatUnreadCount] = useState(0);
     const [internalChatUnreadCount, setInternalChatUnreadCount] = useState(0);
     const [notificationsUnreadCount, setNotificationsUnreadCount] = useState(0);
-    const { colorTheme } = useTheme();
     const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
     const [mobileExpandedGroups, setMobileExpandedGroups] = useState<Set<string>>(new Set());
     const [menuSettings, setMenuSettings] = useState<{ menu_order: any[] | null; hidden_items: string[] | null } | null>(null);
     const [salonSettings, setSalonSettings] = useState<LayoutSalonSettings | null>(null);
+
     const sidebarNavRef = useRef<HTMLElement | null>(null);
     const desktopMenuItemRefs = useRef<Record<string, HTMLLIElement | null>>({});
     const mobileMenuGroupRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const lastDeniedPathRef = useRef<string>('');
-    const hasSpecificLogoTheme = ['pink', 'blue'].includes(colorTheme);
-    const horizontalLogoPath = hasSpecificLogoTheme
-        ? `${logoBasePath}/horizontal-logo-${colorTheme}.png`
-        : `${logoBasePath}/horizontal-logo.png`;
+    const horizontalLogoPath = `${logoBasePath}/horizontal-logo-pink.svg`;
 
     const permissions = usePermissions(user?.role || 'employee', user?.secondary_role);
 
@@ -826,6 +823,7 @@ export default function UniversalLayout({ user, onLogout }: MainLayoutProps) {
                                 src={horizontalLogoPath}
                                 alt="Logo"
                                 className="sidebar-logo-img"
+                                style={{ filter: 'var(--logo-filter, none)' }}
                             />
                         </div>
                         <div className="min-w-0 flex-1">

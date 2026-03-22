@@ -69,10 +69,10 @@
   "select_priority": "Выберите приоритет",
   "select_stage": "Выберите стадию",
   "selected_count": "Выбрано: {{count}}",
-  "selected_count_one": "",
-  "selected_count_few": "",
-  "selected_count_many": "",
-  "selected_count_other": "",
+  "selected_count_few": "Выбранное количество",
+  "selected_count_many": "Выбранное количество",
+  "selected_count_one": "Выбранное количество",
+  "selected_count_other": "Выбранное количество",
   "showing_tasks": "Показано",
   "stage": "Стадия",
   "stage_created": "Стадия создана",
@@ -95,7 +95,7 @@
   "tasks_control": "Задачи для контроля",
   "tasks_execution": "Задачи к выполнению",
   "tasks_for_today": "Дела на сегодня",
-  "title": "Заголовок",
+  "title": "Задачи",
   "unassigned": "Не назначен",
   "update_failed": "Ошибка обновления задачи"
 }

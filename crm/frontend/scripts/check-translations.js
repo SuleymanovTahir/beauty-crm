@@ -87,8 +87,10 @@ function checkTranslations() {
     log('\n🔍 АНАЛИЗ ПЕРЕВОДОВ\n', 'bold');
 
     const missingByFile = {};
+    const sourceEmptyByFile = {};
     const emptyByFile = {};
     let totalMissing = 0;
+    let totalSourceEmpty = 0;
     let totalEmpty = 0;
 
     // Получаем список всех JSON файлов из эталонной локали
@@ -126,6 +128,14 @@ function checkTranslations() {
         // Проверяем каждый ключ из эталона
         for (const key of refKeys) {
             const refValue = getValueByKey(refContent, key);
+
+            if (refValue === '' || refValue === null) {
+                if (!sourceEmptyByFile[file]) {
+                    sourceEmptyByFile[file] = [];
+                }
+                sourceEmptyByFile[file].push(key);
+                totalSourceEmpty++;
+            }
 
             for (const lang of LANGUAGES) {
                 if (lang === REFERENCE_LANG) continue; // Пропускаем эталонный язык
@@ -172,6 +182,29 @@ function checkTranslations() {
                 }
             }
         }
+    }
+
+    if (totalSourceEmpty > 0) {
+        log(`\n❌ ПУСТЫЕ SOURCE-ЗНАЧЕНИЯ В ${REFERENCE_LANG.toUpperCase()} (${totalSourceEmpty}):\n`, 'red');
+
+        for (const [file, keys] of Object.entries(sourceEmptyByFile)) {
+            log(`\n📄 ${file}`, 'cyan');
+
+            const maxShow = 12;
+            const keysToShow = keys.slice(0, maxShow);
+
+            for (const key of keysToShow) {
+                log(`     • ${key}`, 'dim');
+            }
+
+            if (keys.length > maxShow) {
+                log(`     ... и еще ${keys.length - maxShow} ключей`, 'dim');
+            }
+
+            log(`  ${colors.magenta}→ Нужно восстановить ${keys.length} source-значений в ${REFERENCE_LANG}/${file}${colors.reset}\n`);
+        }
+    } else {
+        log(`✅ Пустых source-значений в ${REFERENCE_LANG} не найдено\n`, 'green');
     }
 
     // Выводим результаты по файлам
@@ -242,19 +275,20 @@ function checkTranslations() {
     log('\n📈 ИТОГОВАЯ СТАТИСТИКА:\n', 'bold');
     log(`   Всего файлов: ${jsonFiles.length}`, 'cyan');
     log(`   Языков: ${LANGUAGES.length - 1} (кроме эталонного ${REFERENCE_LANG})`, 'cyan');
+    log(`   Пустых source-значений в ${REFERENCE_LANG}: ${totalSourceEmpty}`, totalSourceEmpty > 0 ? 'red' : 'green');
     log(`   Отсутствующих ключей: ${totalMissing}`, totalMissing > 0 ? 'red' : 'green');
     log(`   Пустых значений: ${totalEmpty}`, totalEmpty > 0 ? 'yellow' : 'green');
 
-    const totalIssues = totalMissing + totalEmpty;
+    const totalIssues = totalSourceEmpty + totalMissing + totalEmpty;
     log(`\n   ВСЕГО ПРОБЛЕМ: ${totalIssues}\n`, totalIssues > 0 ? 'red' : 'green');
 
     if (totalIssues === 0) {
         log('🎉 ВСЕ ПЕРЕВОДЫ В ПОРЯДКЕ!\n', 'green');
     } else {
         log('\n💡 РЕКОМЕНДАЦИИ:', 'bold');
-        log('   1. Запустите: npm run i18n:sync', 'cyan');
-        log('   2. Это автоматически переведет все недостающие ключи', 'cyan');
-        log('   3. Проверьте переводы вручную для важных текстов\n', 'cyan');
+        log('   1. Запустите: npm run db:i18n:auto', 'cyan');
+        log('   2. Это восстановит пустой source и синхронизирует остальные языки', 'cyan');
+        log('   3. Проверьте ключевые страницы после автоперевода\n', 'cyan');
     }
 
     return totalIssues;

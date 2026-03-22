@@ -4,12 +4,12 @@
   "all_notifications_cleared": "Барлық хабарландырулар жойылды",
   "calls": {
     "accept": "Қабылдау",
-    "audio_call": "",
+    "audio_call": "Дыбыстық қоңырау",
     "click_to_answer": "Жауап беру үшін басыңыз",
     "incoming_call": "Кіріс қоңырау!",
     "missed_auto": "Қабылданбаған қоңырау (автоматты түрде қабылдамау)",
     "missed_call": "Қабылданбаған қоңырау",
-    "video_call": ""
+    "video_call": "Бейне қоңырау"
   },
   "clear_all": "Барлығын өшіру",
   "close": "Жабу",
@@ -78,11 +78,11 @@
   "notification_deleted": "Хабарландыру жойылды",
   "notifications": "Хабарландырулар",
   "roles": {
-    "accountant": "",
-    "admin": "",
+    "accountant": "Бухгалтер",
+    "admin": "Админ",
     "director": "Директор",
-    "employee": "",
-    "manager": "",
+    "employee": "Қызметкер",
+    "manager": "Басқарушы",
     "marketer": "Маркетер",
     "saler": "Сату менеджері",
     "sales": "Сату",

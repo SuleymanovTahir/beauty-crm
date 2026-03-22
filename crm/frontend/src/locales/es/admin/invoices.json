@@ -1,69 +1,69 @@
 {
-  "actions": "",
-  "addInvoice": "",
-  "addPayment": "",
-  "allInvoices": "",
-  "allStatuses": "",
-  "board": "",
-  "client": "",
-  "delete": "",
-  "dueDate": "",
+  "actions": "Acciones",
+  "addInvoice": "Agregar factura",
+  "addPayment": "Agregar pago",
+  "allInvoices": "Todas las facturas",
+  "allStatuses": "Todos los estados",
+  "board": "Tablero",
+  "client": "Cliente",
+  "delete": "Eliminar",
+  "dueDate": "Condiciones de pago",
   "errors": {
-    "createError": "",
-    "deleteError": "",
-    "paymentError": "",
-    "sendError": "",
-    "updateError": ""
+    "createError": "Crear error",
+    "deleteError": "Eliminar error",
+    "paymentError": "Error de pago",
+    "sendError": "Enviando error",
+    "updateError": "Error de actualización"
   },
   "form": {
-    "addItem": "",
-    "cancel": "",
-    "dueDate": "",
-    "itemName": "",
-    "itemPrice": "",
-    "itemQuantity": "",
-    "items": "",
-    "notes": "",
-    "save": "",
-    "selectClient": ""
+    "addItem": "Agregar artículo",
+    "cancel": "Cancelar",
+    "dueDate": "Condiciones de pago",
+    "itemName": "Nombre del artículo",
+    "itemPrice": "Precio del artículo",
+    "itemQuantity": "Cantidad de artículo",
+    "items": "Artículos",
+    "notes": "Notas",
+    "save": "Guardar",
+    "selectClient": "Seleccionar cliente"
   },
-  "invoiceNumber": "",
-  "manage_stages": "",
+  "invoiceNumber": "Número de cuenta",
+  "manage_stages": "Etapas de gestión",
   "messages": {
-    "confirmDelete": "",
-    "invoiceCreated": "",
-    "invoiceDeleted": "",
-    "invoiceSent": "",
-    "invoiceUpdated": "",
-    "paymentAdded": ""
+    "confirmDelete": "Confirmar eliminación",
+    "invoiceCreated": "Factura creada",
+    "invoiceDeleted": "Factura eliminada",
+    "invoiceSent": "Factura enviada",
+    "invoiceUpdated": "Factura actualizada",
+    "paymentAdded": "Pago agregado"
   },
-  "noInvoices": "",
-  "paidAmount": "",
+  "noInvoices": "Sin facturas",
+  "paidAmount": "Importe pagado",
   "payment": {
-    "add": "",
-    "amount": "",
-    "method": "",
+    "add": "Agregar",
+    "amount": "Cantidad",
+    "method": "Método",
     "methods": {
-      "card": "",
-      "cash": "",
-      "online": "",
-      "transfer": ""
+      "card": "Tarjeta",
+      "cash": "Efectivo",
+      "online": "En línea",
+      "transfer": "Transferencia"
     },
-    "notes": "",
-    "title": ""
+    "notes": "Notas",
+    "title": "Nombre de pago"
   },
-  "search_placeholder": "",
-  "sendButton": "",
+  "search_placeholder": "Buscar por cliente, número o estado",
+  "sendButton": "Botón Enviar",
   "sendDialog": {
-    "email": "",
-    "method": "",
-    "recipient": "",
-    "sendButton": "",
-    "telegram": "",
-    "title": "",
-    "whatsapp": ""
+    "email": "Correo electrónico",
+    "method": "Método",
+    "recipient": "Destinatario",
+    "sendButton": "Botón Enviar",
+    "telegram": "Telegram",
+    "title": "Título del cuadro de diálogo Enviar",
+    "whatsapp": "WhatsApp"
   },
-  "status": "",
+  "status": "Estado",
   "statuses": {
     "cancelled": "Cancelado",
     "draft": "Borrador",
@@ -73,7 +73,7 @@
     "partially_paid": "Pago parcial",
     "sent": "Enviado"
   },
-  "subtitle": "",
-  "title": "",
-  "totalAmount": ""
+  "subtitle": "Administrar cuentas y pagos",
+  "title": "Cuentas",
+  "totalAmount": "Cantidad total"
 }
