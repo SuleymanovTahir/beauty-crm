@@ -378,7 +378,7 @@ def _resolve_cors_policy() -> tuple[list[str], Optional[str]]:
     cors_allow_origin_regex = None
 
     if os.getenv("ENVIRONMENT") == "development" or is_localhost():
-        cors_allow_origin_regex = r"https?://(localhost|127\.0\.0\.1|\[::1\])(:[0-9]+)?"
+        cors_allow_origin_regex = r"https?://(localhost|127\.0\.0\.1|\[::1\]|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})(:[0-9]+)?"
         cors_origins = []
         return cors_origins, cors_allow_origin_regex
 

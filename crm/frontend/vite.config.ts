@@ -104,6 +104,12 @@ export default defineConfig(({ mode }) => {
         allow: [path.resolve(__dirname, "..")],
       },
       proxy: {
+        "/api/login": {
+          target: BACKEND_URL,
+          changeOrigin: true,
+          proxyTimeout: 15000, // pbkdf2 hashing can take 1-3s
+          timeout: 15000,
+        },
         "/api": {
           target: BACKEND_URL,
           changeOrigin: true,

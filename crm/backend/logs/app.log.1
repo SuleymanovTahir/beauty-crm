@@ -1,85 +1,172 @@
-2026-03-22 06:20:39 - crm - INFO - [db] ✅ Unified schema initialized successfully
-2026-03-22 06:20:39 - crm - INFO - [migrations] ✅ Sessions table created/verified
-2026-03-22 06:20:39 - crm - INFO - [migrations] ⏭️ Legacy chat_history helper skipped; schema comes from db.init
-2026-03-22 06:20:39 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
-2026-03-22 06:20:39 - crm - INFO - [migrations] ⏭️ Legacy prod/test seeding removed from CRM migrations
-2026-03-22 06:20:39 - crm - INFO - [migrations] ⏭️ Test staff seeding skipped (SEED_TEST_DATA=false)
-2026-03-22 06:20:51 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:20:51 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:20:55 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:20:55 - crm - WARNING - [export] PDF export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
-2026-03-22 06:20:55 - crm - WARNING - [export] Excel import/export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
-2026-03-22 06:20:55 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:20:55 - crm - INFO - [marketplace] Mapped external service ext_manicure_100 to internal Test Service Manicure
-2026-03-22 06:20:55 - crm - INFO - [marketplace] Created booking 5 from yclients
-2026-03-22 06:20:55 - crm - INFO - [marketplace] Updated booking 5 from yclients
-2026-03-22 06:21:05 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:21:05 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:21:14 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:21:14 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:21:25 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:21:25 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:21:31 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:21:31 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:21:36 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:21:36 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/crm/backend/modules_config.json
-2026-03-22 06:21:42 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:21:42 - crm - WARNING - [export] PDF export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
-2026-03-22 06:21:42 - crm - WARNING - [export] Excel import/export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
-2026-03-22 06:21:42 - crm - INFO - [notifications] Saving notification settings: {'emailNotifications': True, 'smsNotifications': False, 'bookingNotifications': True, 'chatNotifications': True, 'dailyReport': True, 'reportTime': '09:00'}
-2026-03-22 06:21:47 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:21:47 - crm - INFO - [startup_test] ======================================================================
-2026-03-22 06:21:47 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
-2026-03-22 06:21:47 - crm - INFO - [startup_test] ======================================================================
-2026-03-22 06:21:47 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
-2026-03-22 06:21:47 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:21:47 - crm - INFO - [startup_test]   ✅ notification_settings: 0 записей
-2026-03-22 06:21:47 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 1/1 активны
-2026-03-22 06:21:47 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
-2026-03-22 06:21:47 - crm - WARNING - [export] PDF export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
-2026-03-22 06:21:47 - crm - WARNING - [export] Excel import/export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
-2026-03-22 06:21:47 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 1
-2026-03-22 06:21:47 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
-2026-03-22 06:21:47 - crm - INFO - [startup_test]   ✅ Таблица notification_settings существует и имеет корректную схему
-2026-03-22 06:21:47 - crm - INFO - [startup_test] ======================================================================
-2026-03-22 06:21:47 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
-2026-03-22 06:21:47 - crm - INFO - [startup_test] ======================================================================
-2026-03-22 06:21:53 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:21:53 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:22:00 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:22:00 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:22:02 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:22:02 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:22:09 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:22:10 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:22:19 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:22:19 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:22:21 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:22:22 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:22:22 - crm - INFO - [pending_registrations] Retrieved 1 pending registrations
-2026-03-22 06:22:22 - crm - INFO - [audit] 🚨 Critical action logged: audit_id=1
-2026-03-22 06:22:22 - crm - WARNING - [email] Skipping email to fake/test address: test_1774146142_b23bac@test.com
-2026-03-22 06:22:22 - crm - INFO - [pending_registrations] Registration approved for user 69 by admin 32
-2026-03-22 06:22:28 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:22:29 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:22:39 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:22:39 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:22:47 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:22:47 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:22:56 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
-2026-03-22 06:22:56 - crm - INFO - [startup_test] ======================================================================
-2026-03-22 06:22:56 - crm - INFO - [startup_test] 🧪 STARTUP ТЕСТЫ (БЕЗ HTTP)
-2026-03-22 06:22:56 - crm - INFO - [startup_test] ======================================================================
-2026-03-22 06:22:56 - crm - INFO - [startup_test] 🔔 Проверка таблиц уведомлений...
-2026-03-22 06:22:57 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
-2026-03-22 06:22:57 - crm - INFO - [startup_test]   ✅ notification_settings: 1 записей
-2026-03-22 06:22:57 - crm - INFO - [startup_test]   ✅ booking_reminder_settings: 1/1 активны
-2026-03-22 06:22:57 - crm - INFO - [startup_test] ⏰ Проверка API напоминаний...
-2026-03-22 06:22:57 - crm - WARNING - [export] PDF export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
-2026-03-22 06:22:57 - crm - WARNING - [export] Excel import/export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
-2026-03-22 06:22:57 - crm - INFO - [startup_test]   ✅ Таблица готова, записей: 1
-2026-03-22 06:22:57 - crm - INFO - [startup_test] 🔔 Проверка таблицы notification_settings...
-2026-03-22 06:22:57 - crm - INFO - [startup_test]   ✅ Таблица notification_settings существует и имеет корректную схему
-2026-03-22 06:22:57 - crm - INFO - [startup_test] ======================================================================
-2026-03-22 06:22:57 - crm - INFO - [startup_test] ✅ Все тесты пройдены: 3/3
-2026-03-22 06:22:57 - crm - INFO - [startup_test] ======================================================================
+2026-03-22 06:26:02 - crm - INFO - [auth] [LOGIN] User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0....
+2026-03-22 06:26:02 - crm - INFO - [auth] [AUTH] Verifying password for 'c1_director', hash type: pbkdf2
+2026-03-22 06:26:02 - crm - INFO - [auth] [AUTH] Login successful for 'c1_director' (role: director)
+2026-03-22 06:26:02 - crm - INFO - [auth] New unique session created for c1_director
+2026-03-22 06:26:02 - crm - ERROR - [notifications] Blocked notifications websocket origin: http://10.107.240.6:5173
+2026-03-22 06:28:44 - crm - INFO - [auth] [LOGIN] Attempt: username='c1_director' | IP=127.0.0.1 | Origin=http://10.107.240.6:5173
+2026-03-22 06:28:44 - crm - INFO - [auth] [LOGIN] User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0....
+2026-03-22 06:28:44 - crm - INFO - [auth] [AUTH] Verifying password for 'c1_director', hash type: pbkdf2
+2026-03-22 06:28:44 - crm - INFO - [auth] [AUTH] Login successful for 'c1_director' (role: director)
+2026-03-22 06:28:44 - crm - INFO - [auth] New unique session created for c1_director
+2026-03-22 06:28:44 - crm - ERROR - [notifications] Blocked notifications websocket origin: http://10.107.240.6:5173
+2026-03-22 06:29:34 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
+2026-03-22 06:29:43 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2026-03-22 06:29:43 - crm - WARNING - [export] PDF export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
+2026-03-22 06:29:43 - crm - WARNING - [export] Excel import/export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
+2026-03-22 06:29:43 - crm - INFO - [boot] ============================================================
+2026-03-22 06:29:43 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-03-22 06:29:43 - crm - INFO - [boot] 🧭 Runtime backend group: crm
+2026-03-22 06:29:43 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/audio, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/audio/ringtones, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/crm/backend/static/recordings, /Users/tahir/Desktop/beauty-crm/crm/backend/logs
+2026-03-22 06:29:44 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
+2026-03-22 06:29:44 - crm - INFO - [boot] ✅ Thread runtime tuned (20 threads per worker)
+2026-03-22 06:29:44 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable, trying PostgreSQL fallback: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-03-22 06:29:44 - crm - INFO - [pubsub] ✅ PostgreSQL Pub/Sub reconnected
+2026-03-22 06:29:44 - crm - INFO - [pubsub] 📡 PostgreSQL Pub/Sub connected on channel crm_pubsub
+2026-03-22 06:29:44 - crm - INFO - [boot] ✅ Cross-worker Pub/Sub ready (postgres)
+2026-03-22 06:29:44 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-03-22 06:29:44 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-03-22 06:29:44 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-03-22 06:29:44 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-03-22 06:29:44 - crm - INFO - [migrations] ⏭️ Legacy chat_history helper skipped; schema comes from db.init
+2026-03-22 06:29:44 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
+2026-03-22 06:29:44 - crm - INFO - [migrations] ⏭️ Legacy prod/test seeding removed from CRM migrations
+2026-03-22 06:29:44 - crm - INFO - [migrations] ⏭️ Test staff seeding skipped (SEED_TEST_DATA=false)
+2026-03-22 06:29:44 - crm - INFO - [boot] ✅ Конфигурация салона: 
+2026-03-22 06:29:44 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
+2026-03-22 06:29:44 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/crm/backend/modules_config.json
+2026-03-22 06:29:44 - crm - INFO - [modules] ======================================================================
+2026-03-22 06:29:44 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-03-22 06:29:44 - crm - INFO - [modules] ======================================================================
+2026-03-22 06:29:44 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-03-22 06:29:44 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-03-22 06:29:44 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-03-22 06:29:44 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-03-22 06:29:44 - crm - INFO - [modules] ======================================================================
+2026-03-22 06:29:44 - crm - INFO - [boot] ✅ CRM scheduler leadership acquired by current worker
+2026-03-22 06:29:44 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-03-22 06:29:44 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
+2026-03-22 06:29:44 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
+2026-03-22 06:29:44 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-03-22 06:29:44 - crm - INFO - [pubsub] 📡 Pub/Sub listener started
+2026-03-22 06:29:44 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
+2026-03-22 06:29:44 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
+2026-03-22 06:29:44 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-03-22 06:29:44 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-03-22 06:29:44 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
+2026-03-22 06:29:55 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2026-03-22 06:29:55 - crm - WARNING - [export] PDF export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
+2026-03-22 06:29:55 - crm - WARNING - [export] Excel import/export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
+2026-03-22 06:29:55 - crm - INFO - [boot] ============================================================
+2026-03-22 06:29:55 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-03-22 06:29:55 - crm - INFO - [boot] 🧭 Runtime backend group: crm
+2026-03-22 06:29:55 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/audio, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/audio/ringtones, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/crm/backend/static/recordings, /Users/tahir/Desktop/beauty-crm/crm/backend/logs
+2026-03-22 06:29:55 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
+2026-03-22 06:29:55 - crm - INFO - [boot] ✅ Thread runtime tuned (20 threads per worker)
+2026-03-22 06:29:55 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable, trying PostgreSQL fallback: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-03-22 06:29:55 - crm - INFO - [pubsub] ✅ PostgreSQL Pub/Sub reconnected
+2026-03-22 06:29:55 - crm - INFO - [pubsub] 📡 PostgreSQL Pub/Sub connected on channel crm_pubsub
+2026-03-22 06:29:55 - crm - INFO - [boot] ✅ Cross-worker Pub/Sub ready (postgres)
+2026-03-22 06:29:55 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-03-22 06:29:55 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-03-22 06:29:56 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-03-22 06:29:56 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-03-22 06:29:56 - crm - INFO - [migrations] ⏭️ Legacy chat_history helper skipped; schema comes from db.init
+2026-03-22 06:29:56 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
+2026-03-22 06:29:56 - crm - INFO - [migrations] ⏭️ Legacy prod/test seeding removed from CRM migrations
+2026-03-22 06:29:56 - crm - INFO - [migrations] ⏭️ Test staff seeding skipped (SEED_TEST_DATA=false)
+2026-03-22 06:29:56 - crm - INFO - [boot] ✅ Конфигурация салона: 
+2026-03-22 06:29:56 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
+2026-03-22 06:29:56 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/crm/backend/modules_config.json
+2026-03-22 06:29:56 - crm - INFO - [modules] ======================================================================
+2026-03-22 06:29:56 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-03-22 06:29:56 - crm - INFO - [modules] ======================================================================
+2026-03-22 06:29:56 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-03-22 06:29:56 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-03-22 06:29:56 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-03-22 06:29:56 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-03-22 06:29:56 - crm - INFO - [modules] ======================================================================
+2026-03-22 06:29:56 - crm - INFO - [boot] ✅ CRM scheduler leadership acquired by current worker
+2026-03-22 06:29:56 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-03-22 06:29:56 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
+2026-03-22 06:29:56 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
+2026-03-22 06:29:56 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-03-22 06:29:56 - crm - INFO - [pubsub] 📡 Pub/Sub listener started
+2026-03-22 06:29:56 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
+2026-03-22 06:29:56 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
+2026-03-22 06:29:56 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-03-22 06:29:56 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-03-22 06:29:56 - crm - INFO - [auth] [LOGIN] Attempt: username='c1_director' | IP=127.0.0.1 | Origin=http://10.107.240.6:5173
+2026-03-22 06:29:56 - crm - INFO - [auth] [LOGIN] User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0....
+2026-03-22 06:29:56 - crm - INFO - [auth] [AUTH] Verifying password for 'c1_director', hash type: pbkdf2
+2026-03-22 06:29:56 - crm - INFO - [auth] [AUTH] Login successful for 'c1_director' (role: director)
+2026-03-22 06:29:56 - crm - INFO - [auth] New unique session created for c1_director
+2026-03-22 06:32:34 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
+2026-03-22 06:32:43 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2026-03-22 06:32:43 - crm - WARNING - [export] PDF export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
+2026-03-22 06:32:43 - crm - WARNING - [export] Excel import/export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
+2026-03-22 06:32:43 - crm - INFO - [boot] ============================================================
+2026-03-22 06:32:43 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-03-22 06:32:43 - crm - INFO - [boot] 🧭 Runtime backend group: crm
+2026-03-22 06:32:43 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/audio, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/audio/ringtones, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/crm/backend/static/recordings, /Users/tahir/Desktop/beauty-crm/crm/backend/logs
+2026-03-22 06:32:44 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
+2026-03-22 06:32:44 - crm - INFO - [boot] ✅ Thread runtime tuned (20 threads per worker)
+2026-03-22 06:32:44 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable, trying PostgreSQL fallback: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-03-22 06:32:44 - crm - INFO - [pubsub] ✅ PostgreSQL Pub/Sub reconnected
+2026-03-22 06:32:44 - crm - INFO - [pubsub] 📡 PostgreSQL Pub/Sub connected on channel crm_pubsub
+2026-03-22 06:32:44 - crm - INFO - [boot] ✅ Cross-worker Pub/Sub ready (postgres)
+2026-03-22 06:32:44 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-03-22 06:32:44 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-03-22 06:32:44 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-03-22 06:32:44 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-03-22 06:32:44 - crm - INFO - [migrations] ⏭️ Legacy chat_history helper skipped; schema comes from db.init
+2026-03-22 06:32:44 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
+2026-03-22 06:32:44 - crm - INFO - [migrations] ⏭️ Legacy prod/test seeding removed from CRM migrations
+2026-03-22 06:32:44 - crm - INFO - [migrations] ⏭️ Test staff seeding skipped (SEED_TEST_DATA=false)
+2026-03-22 06:32:44 - crm - INFO - [boot] ✅ Конфигурация салона: 
+2026-03-22 06:32:44 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
+2026-03-22 06:32:44 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/crm/backend/modules_config.json
+2026-03-22 06:32:44 - crm - INFO - [modules] ======================================================================
+2026-03-22 06:32:44 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ
+2026-03-22 06:32:44 - crm - INFO - [modules] ======================================================================
+2026-03-22 06:32:44 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | notifications   | Notification service
+2026-03-22 06:32:44 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | scheduler       | Background tasks and reminders
+2026-03-22 06:32:44 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | loyalty         | Loyalty program
+2026-03-22 06:32:44 - crm - INFO - [modules] ✅ ВКЛЮЧЕН    | instagram       | Instagram integration
+2026-03-22 06:32:44 - crm - INFO - [modules] ======================================================================
+2026-03-22 06:32:44 - crm - INFO - [boot] ✅ CRM scheduler leadership acquired by current worker
+2026-03-22 06:32:44 - crm - INFO - [scheduler] Starting user status checker (marks inactive users as offline)
+2026-03-22 06:32:44 - crm - INFO - [scheduler] ⏰ Планировщик еженедельных отчетов запущен (Mon 09:00)
+2026-03-22 06:32:44 - crm - INFO - [boot] 📦 Database backup scheduler registered (runs at 04:00 daily)
+2026-03-22 06:32:44 - crm - INFO - [boot] ✅ Планировщики (Mission-control) активны
+2026-03-22 06:32:44 - crm - INFO - [pubsub] 📡 Pub/Sub listener started
+2026-03-22 06:32:44 - crm - INFO - [birthday_checker] 🚀 Birthday checker service started
+2026-03-22 06:32:44 - crm - INFO - [booking_reminders] 🚀 Booking reminder service started
+2026-03-22 06:32:44 - crm - INFO - [booking_reminders] ⏰ Checking booking reminders...
+2026-03-22 06:32:44 - crm - INFO - [task_checker] ⏰ Task & Reminder checker started
+2026-03-22 06:32:44 - crm - INFO - [shutdown] 🛑 Двигатель CRM безопасно останавливается...
+2026-03-22 06:32:52 - crm - INFO - [cache] ℹ️ Redis unavailable, continuing without Redis cache: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2026-03-22 06:32:52 - crm - WARNING - [export] PDF export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
+2026-03-22 06:32:52 - crm - WARNING - [export] Excel import/export requires optional backend dependencies. Install crm/backend/requirements-optional.txt to enable it.
+2026-03-22 06:32:52 - crm - INFO - [boot] ============================================================
+2026-03-22 06:32:52 - crm - INFO - [boot] 🚀 Двигатель CRM запускается...
+2026-03-22 06:32:52 - crm - INFO - [boot] 🧭 Runtime backend group: crm
+2026-03-22 06:32:52 - crm - INFO - [startup] ✅ Созданы директории: /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/audio, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/audio/ringtones, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/files, /Users/tahir/Desktop/beauty-crm/crm/backend/static/uploads/voice, /Users/tahir/Desktop/beauty-crm/crm/backend/static/recordings, /Users/tahir/Desktop/beauty-crm/crm/backend/logs
+2026-03-22 06:32:52 - crm - INFO - [db] ✅ Database connection pool initialized (6-24 per worker, workers=1)
+2026-03-22 06:32:52 - crm - INFO - [boot] ✅ Thread runtime tuned (20 threads per worker)
+2026-03-22 06:32:52 - crm - INFO - [pubsub] ℹ️ Redis Pub/Sub unavailable, trying PostgreSQL fallback: Error 61 connecting to 127.0.0.1:6379. Connect call failed ('127.0.0.1', 6379).
+2026-03-22 06:32:52 - crm - INFO - [pubsub] ✅ PostgreSQL Pub/Sub reconnected
+2026-03-22 06:32:52 - crm - INFO - [pubsub] 📡 PostgreSQL Pub/Sub connected on channel crm_pubsub
+2026-03-22 06:32:52 - crm - INFO - [boot] ✅ Cross-worker Pub/Sub ready (postgres)
+2026-03-22 06:32:53 - crm - INFO - [boot] ✅ Пул соединений прогрет
+2026-03-22 06:32:53 - crm - INFO - [db] 🔌 Инициализация единой схемы базы данных...
+2026-03-22 06:32:53 - crm - INFO - [db] ✅ Unified schema initialized successfully
+2026-03-22 06:32:53 - crm - INFO - [migrations] ✅ Sessions table created/verified
+2026-03-22 06:32:53 - crm - INFO - [migrations] ⏭️ Legacy chat_history helper skipped; schema comes from db.init
+2026-03-22 06:32:53 - crm - INFO - [migrations] ⏭️ Data maintenance skipped (RUN_MIGRATION_MAINTENANCE=false)
+2026-03-22 06:32:53 - crm - INFO - [migrations] ⏭️ Legacy prod/test seeding removed from CRM migrations
+2026-03-22 06:32:53 - crm - INFO - [migrations] ⏭️ Test staff seeding skipped (SEED_TEST_DATA=false)
+2026-03-22 06:32:53 - crm - INFO - [boot] ✅ Конфигурация салона: 
+2026-03-22 06:32:53 - crm - INFO - [boot] ⏭️ Startup data fixes skipped (RUN_STARTUP_DATA_FIXES=false)
+2026-03-22 06:32:53 - crm - INFO - [modules] 📦 Загружена конфигурация модулей из /Users/tahir/Desktop/beauty-crm/crm/backend/modules_config.json
+2026-03-22 06:32:53 - crm - INFO - [modules] ======================================================================
+2026-03-22 06:32:53 - crm - INFO - [modules] 📦 СТАТУС МОДУЛЕЙ

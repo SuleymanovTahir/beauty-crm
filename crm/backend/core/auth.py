@@ -6,6 +6,7 @@ from fastapi import APIRouter, Form, Cookie, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
 from typing import Optional
 from pydantic import BaseModel
+import asyncio
 import psycopg2
 import threading
 import time
@@ -173,7 +174,7 @@ async def api_login(request: Request, username: str = Form(...), password: str =
         log_info(f"[LOGIN] Attempt: username='{username}' | IP={client_ip} | Origin={origin}", "auth")
         log_info(f"[LOGIN] User-Agent: {user_agent[:100]}...", "auth")
 
-        user = verify_user(username_clean, password)
+        user = await asyncio.to_thread(verify_user, username_clean, password)
 
         if not user:
             _register_login_failure(ip_key)

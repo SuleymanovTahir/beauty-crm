@@ -261,7 +261,17 @@ def is_allowed_websocket_origin(origin: Optional[str]) -> bool:
         if not normalized_origin:
             return True
         parsed = urllib.parse.urlsplit(normalized_origin)
-        return (parsed.scheme in {"http", "https"}) and (parsed.hostname in {"localhost", "127.0.0.1"})
+        hostname = parsed.hostname or ""
+        if parsed.scheme not in {"http", "https"}:
+            return False
+        if hostname in {"localhost", "127.0.0.1"}:
+            return True
+        # Allow LAN/private IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+        try:
+            import ipaddress
+            return ipaddress.ip_address(hostname).is_private
+        except ValueError:
+            return False
 
     if not normalized_origin:
         return False
