@@ -111,11 +111,19 @@ def grant_permissions_to_user(db_name, db_host, db_port, superuser, superuser_pa
             cursor.execute(f"CREATE USER {target_user} WITH PASSWORD '{password}'")
             print(f"✅ Создан пользователь '{target_user}'")
         
-        # Выдаём SUPERUSER роль для упрощения разработки
+        # В multi-tenant CRM приложенческий пользователь не должен обходить RLS.
         if grant_superuser:
             cursor.execute(f"ALTER USER {target_user} WITH SUPERUSER")
             print(f"🔐 Выдана роль SUPERUSER пользователю '{target_user}'")
-        
+        else:
+            cursor.execute(f"ALTER USER {target_user} WITH NOSUPERUSER")
+            print(f"🔐 Пользователь '{target_user}' переведён в NOSUPERUSER режим")
+
+        cursor.execute(f"GRANT ALL PRIVILEGES ON DATABASE {db_name} TO {target_user}")
+        if not grant_superuser:
+            cursor.execute(f"ALTER DATABASE {db_name} OWNER TO {target_user}")
+            print(f"🔐 База данных '{db_name}' передана во владение пользователю '{target_user}'")
+
         cursor.close()
         conn.close()
         
@@ -237,9 +245,9 @@ def recreate_database():
             cursor.close()
             conn.close()
 
-            # Выдаём права пользователю приложения
-            # Всегда выдаём SUPERUSER для упрощения (выбор пользователя: вариант B)
-            grant_permissions_to_user(db_name, db_host, db_port, superuser, superuser_password, app_user, grant_superuser=True)
+            # Выдаём права пользователю приложения без SUPERUSER,
+            # чтобы tenant isolation через PostgreSQL RLS реально работала.
+            grant_permissions_to_user(db_name, db_host, db_port, superuser, superuser_password, app_user, grant_superuser=False)
 
             # Также выдаём права суперпользователю
             if superuser != app_user:
@@ -276,7 +284,7 @@ def recreate_database():
 
                     # Выдаём права через postgres суперпользователя
                     # Всегда выдаём SUPERUSER (выбор пользователя: вариант B)
-                    grant_permissions_to_user(db_name, db_host, db_port, 'postgres', superuser_password, app_user, grant_superuser=True)
+                    grant_permissions_to_user(db_name, db_host, db_port, 'postgres', superuser_password, app_user, grant_superuser=False)
                     grant_permissions_to_user(db_name, db_host, db_port, 'postgres', superuser_password, 'postgres', grant_superuser=True)
 
 

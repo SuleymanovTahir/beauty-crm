@@ -1429,3 +1429,37 @@
 - `site/frontend/src/api/client.ts`: removed unused CRM client methods and retained URL namespace helpers.
 - `site/frontend/src/i18n.ts` and `site/frontend/src/utils/platformRouting.ts`: removed CRM/manager/employee mappings and made site redirects/locale loading site-only.
 - Validation: `npm run build` in `site/frontend` passed after cleanup; `locales-data` bundle reduced from `~4.6 MB` to `~1.39 MB` (raw chunk size).
+
+## [2026-03-22] SaaS Tariff Runtime Enforcement And Fresh-DB Verification
+- `crm/backend/db/companies.py`:
+  - added structured quota status helpers for employees, clients, products, messages, storage, and ads;
+  - added `QuotaExceededError`, storage-byte checks, `call_logs.file_size` usage accounting, and active-ad slot enforcement;
+  - fixed quota lookup bug where limit keys were returned under `*_limit[s]` names inconsistent with runtime checks.
+- Runtime enforcement connected to real write paths:
+  - `crm/backend/crm_api/users.py`, `crm/backend/crm_api/user_management.py`, `crm/backend/crm_api/employees.py`, `crm/backend/db/employees.py`:
+    employee limits now block create/approve/reactivate flows;
+  - `crm/backend/db/clients.py`, `crm/backend/crm_api/clients.py`, `crm/backend/core/auth.py`, `crm/backend/crm_api/booking_import.py`, `crm/backend/crm_api/client_import.py`, `crm/backend/crm_api/data_export.py`, `crm/backend/crm_api/marketplace_integrations.py`:
+    client limits now block new client creation in shared helpers, registration, and import/integration flows;
+  - `crm/backend/crm_api/products.py`:
+    product limits now block new product creation;
+  - `crm/backend/services/universal_messenger.py`, `crm/backend/crm_api/chat.py`, `crm/backend/crm_api/messengers.py`:
+    message limits now block outbound sends and log structured quota failures without counting failed sends as delivered;
+  - `crm/backend/crm_api/telephony.py`, `crm/backend/crm_api/internal_chat.py`, `crm/backend/crm_api/uploads.py`:
+    storage limits now block oversized uploads/recordings and persist uploaded file sizes into `media_library`;
+  - `crm/backend/crm_api/platform_admin.py`:
+    ad-slot quota failures now return explicit `409` errors in platform admin API.
+- Fresh DB bootstrap rechecked:
+  - after `drop_database()` + `recreate_database()` + migrations + fixes, `salon_settings` keeps only technical defaults (`timezone='UTC'`, `timezone_offset=0`, `product_mode='crm'`, `crm_enabled=true`, `site_enabled=false`);
+  - no fake business data is inserted into `name`, `phone`, `email`, `hours_weekdays`, `hours_weekends`, `bot_name`, `currency`;
+  - clean DB remains empty for users/clients/products/ads; only 7 system `notification_templates` are seeded.
+- Billing behavior re-smoke-tested:
+  - scheduled tariff/price changes stay in `scheduled_change` and apply only on the next paid cycle;
+  - already-paid periods keep old price snapshot until renewal.
+- Validation:
+  - fresh DB recreate passed;
+  - `run_all_migrations.py` passed;
+  - `fix_data.py` passed;
+  - `run_all_tests.py` passed;
+  - `run_all_test2.py` passed;
+  - `run_all_test3.py` passed;
+  - `run_all_test4` / `run_all_tests4` is still absent from current repository.
