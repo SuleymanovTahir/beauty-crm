@@ -190,7 +190,7 @@
   "success": {
     "file_downloaded": "File successfully downloaded"
   },
-  "test_anova": "ANOVA: revenue by region",
+  "test_anova": "ANOVA: выручка по регионам",
   "test_chi_square": "Chi-square: region vs source",
   "test_conclusion_anova_not_significant": "There are no significant differences in average revenue between regions",
   "test_conclusion_anova_significant": "Average revenue by region differs significantly",

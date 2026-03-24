@@ -1,6 +1,6 @@
 {
-  "cold": "",
-  "hot": "",
-  "select_temperature": "",
-  "warm": ""
+  "cold": "Cold",
+  "hot": "Hot",
+  "select_temperature": "Select Temperature",
+  "warm": "Warm"
 }

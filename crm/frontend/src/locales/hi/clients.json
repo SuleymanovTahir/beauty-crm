@@ -1,6 +1,6 @@
 {
-  "cold": "",
-  "hot": "",
-  "select_temperature": "",
-  "warm": ""
+  "cold": "कोल्ड",
+  "hot": "हॉट",
+  "select_temperature": "तापमान का चयन करें",
+  "warm": "वार्म"
 }

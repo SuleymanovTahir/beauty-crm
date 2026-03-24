@@ -1,6 +1,6 @@
 {
-  "cold": "",
-  "hot": "",
-  "select_temperature": "",
-  "warm": ""
+  "cold": "بارد",
+  "hot": "السريعة",
+  "select_temperature": "حدد درجة الحرارة",
+  "warm": "دافئ"
 }

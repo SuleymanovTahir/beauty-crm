@@ -1,14 +1,14 @@
 {
   "settings": {
-    "special_offers": "Special offers"
+    "special_offers": "Специальные предложения"
   },
   "tabs": {
-    "appointments": "Appointments",
-    "beauty": "Care & Recommendations",
-    "dashboard": "Home",
-    "gallery": "Gallery",
-    "masters": "Stylists",
-    "notifications": "Notifications",
-    "settings": "Settings"
+    "appointments": "Записи",
+    "beauty": "Уход и рекомендации",
+    "dashboard": "Главная",
+    "gallery": "Галерея",
+    "masters": "Мастера",
+    "notifications": "Уведомления",
+    "settings": "Настройки"
   }
 }

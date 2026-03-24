@@ -19,15 +19,11 @@
     "daysAgo_many": "{{count}} قبل أيام",
     "daysAgo_one": "{{count}} قبل أيام",
     "daysAgo_other": "{{count}} قبل أيام",
-    "daysAgo_two": "منذ {{count}} يوم",
-    "daysAgo_zero": "منذ {{count}} أيام",
     "enableProvider": "تمكين التكامل",
     "hoursAgo_few": "{{count}} قبل ساعات",
     "hoursAgo_many": "{{count}} قبل ساعات",
     "hoursAgo_one": "{{count}} قبل ساعات",
     "hoursAgo_other": "{{count}} قبل ساعات",
-    "hoursAgo_two": "منذ {{count}} ساعة",
-    "hoursAgo_zero": "منذ {{count}} ساعات",
     "inactive": "لم تتم التهيئة",
     "justNow": "الآن",
     "lastSync": "المزامنة",
@@ -36,13 +32,11 @@
     "minutesAgo_many": "{{count}} قبل دقيقة",
     "minutesAgo_one": "{{count}} قبل دقيقة",
     "minutesAgo_other": "{{count}} قبل دقيقة",
-    "minutesAgo_two": "منذ {{count}} دقيقة",
-    "minutesAgo_zero": "منذ {{count}} دقائق",
     "neverSynced": "أبدًا",
     "providers": {
       "2gis": {
         "description": "التسجيلات عبر الإنترنت من خلال 2GIS",
-        "name": "2GIS"
+        "name": "2ГИС"
       },
       "amazon": {
         "description": "Amazon Marketplace",
@@ -57,16 +51,16 @@
         "name": "Google Business"
       },
       "ozon": {
-        "description": "Ozon Marketplace",
+        "description": "Маркетплейс Ozon",
         "name": "Ozon"
       },
       "wildberries": {
-        "description": "WB Marketplace",
-        "name": "Wildberry"
+        "description": "Маркетплейс WB",
+        "name": "Вайлдберри"
       },
       "yandex_maps": {
         "description": "السجلات والمراجعات من Yandex.Maps",
-        "name": "Yandex.Maps"
+        "name": "Яндекс.Карты"
       },
       "yclients": {
         "description": "منصة التسجيل عبر الإنترنت",

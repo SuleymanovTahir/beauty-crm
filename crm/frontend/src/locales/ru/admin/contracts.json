@@ -23,8 +23,8 @@
     "selectClient": "Выберите клиента"
   },
   "internalContracts": "Внутренние контракты",
-  "manage_stages": "Управление этапами",
   "manageTypes": "Управление типами",
+  "manage_stages": "Управление этапами",
   "messages": {
     "confirmDelete": "Подтвердить удаление",
     "contractCreated": "Контракт создан",

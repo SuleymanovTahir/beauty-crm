@@ -15,28 +15,28 @@
     "configSuccess": "सेटिंग्स सहेजी गईं",
     "configure": "कॉन्फ़िगर करें",
     "configureProvider": "सेटिंग्स",
-    "daysAgo_one": "{{count}} दिन पहले",
     "daysAgo_few": "{{count}} दिन पहले",
     "daysAgo_many": "{{count}} दिन पहले",
+    "daysAgo_one": "{{count}} दिन पहले",
     "daysAgo_other": "{{count}} दिन पहले",
     "enableProvider": "एकीकरण सक्षम करें",
-    "hoursAgo_one": "{{count}} घंटे पहले",
     "hoursAgo_few": "{{count}} घंटे पहले",
     "hoursAgo_many": "{{count}} घंटे पहले",
+    "hoursAgo_one": "{{count}} घंटे पहले",
     "hoursAgo_other": "{{count}} घंटे पहले",
     "inactive": "कॉन्फ़िगर नहीं",
     "justNow": "अभी",
     "lastSync": "सिंक्रनाइज़ेशन",
     "mappingHint": "के लिए बाज़ार से सेवा आईडी निर्दिष्ट करें सिंक्रनाइज़ेशन।",
-    "minutesAgo_one": "{{count}} मिनट पहले",
     "minutesAgo_few": "{{count}} मिनट पहले",
     "minutesAgo_many": "{{count}} मिनट पहले",
+    "minutesAgo_one": "{{count}} मिनट पहले",
     "minutesAgo_other": "{{count}} मिनट पहले",
     "neverSynced": "कभी नहीं",
     "providers": {
       "2gis": {
         "description": "के माध्यम से ऑनलाइन रिकॉर्डिंग 2GIS",
-        "name": "2GIS"
+        "name": "2ГИС"
       },
       "amazon": {
         "description": "अमेज़ॅन मार्केटप्लेस",
@@ -60,7 +60,7 @@
       },
       "yandex_maps": {
         "description": "Yandex.Maps से रिकॉर्ड और समीक्षाएं",
-        "name": "Yandex.Maps"
+        "name": "Яндекс.Карты"
       },
       "yclients": {
         "description": "ऑनलाइन रिकॉर्डिंग प्लेटफॉर्म",
@@ -73,8 +73,8 @@
     "status": "स्थिति",
     "subtitle": "ऑनलाइन रिकॉर्डिंग सेवाओं और समीक्षाओं के साथ एकीकरण",
     "sync": "सिंक्रनाइज़",
-    "syncing": "सिंक्रनाइज़ हो रहा है...",
     "syncStarted": "सिंक्रनाइज़ेशन शुरू हुआ",
+    "syncing": "सिंक्रनाइज़ हो रहा है...",
     "title": "बुकिंग प्लेटफ़ॉर्म",
     "totalBookings": "कुल प्रविष्टियाँ",
     "urlCopied": "यूआरएल कॉपी किया गया",

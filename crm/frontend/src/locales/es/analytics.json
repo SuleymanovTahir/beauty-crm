@@ -190,7 +190,7 @@
   "success": {
     "file_downloaded": "Archivo descargado correctamente"
   },
-  "test_anova": "ANOVA: ingresos por región",
+  "test_anova": "ANOVA: выручка по регионам",
   "test_chi_square": "Chi-cuadrado: región vs fuente",
   "test_conclusion_anova_not_significant": "No hay diferencias significativas en los ingresos promedio entre regiones",
   "test_conclusion_anova_significant": "Los ingresos promedio por región difieren significativamente",

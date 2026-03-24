@@ -190,7 +190,7 @@
   "success": {
     "file_downloaded": "Datei erfolgreich heruntergeladen"
   },
-  "test_anova": "ANOVA: Umsatz nach Region",
+  "test_anova": "ANOVA: выручка по регионам",
   "test_chi_square": "Chi-Quadrat: Region vs. Quelle",
   "test_conclusion_anova_not_significant": "Es gibt keine signifikanten Unterschiede im durchschnittlichen Umsatz zwischen Regionen",
   "test_conclusion_anova_significant": "Der durchschnittliche Umsatz nach Region unterscheidet sich erheblich",

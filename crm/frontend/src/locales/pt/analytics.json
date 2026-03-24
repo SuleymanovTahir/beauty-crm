@@ -62,7 +62,7 @@
   "employee": "Funcionário",
   "errors": {
     "export_failed": "Falha ao exportar dados",
-    "invalid_date_range": "Intervalo de datas incorreto",
+    "invalid_date_range": "Некорректный диапазон дат",
     "invalid_period": "Período incorreto",
     "loading_error": "Erro ao carregar análises",
     "select_both_dates": "Selecione ambos datas"
@@ -190,7 +190,7 @@
   "success": {
     "file_downloaded": "Arquivo baixado com sucesso"
   },
-  "test_anova": "ANOVA: receita por região",
+  "test_anova": "ANOVA: выручка по регионам",
   "test_chi_square": "Qui-quadrado: região vs. fonte",
   "test_conclusion_anova_not_significant": "Não há diferenças significativas na receita média entre regiões",
   "test_conclusion_anova_significant": "A receita média por região difere significativamente",
