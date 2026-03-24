@@ -4,6 +4,11 @@
   "empty_desc": "وصف فارغ",
   "empty_title": "عربة التسوق فارغة",
   "empty_trash": "إفراغ سلة المهملات",
+  "entity": {
+    "booking": "حجز",
+    "client": "عميل",
+    "user": "موظف"
+  },
   "filter_all": "تصفية الكل",
   "important_info": "معلومات مهمة",
   "info_desc": "معلومات الوصف",

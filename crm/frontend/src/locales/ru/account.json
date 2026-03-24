@@ -1,0 +1,14 @@
+{
+  "settings": {
+    "special_offers": "Специальные предложения"
+  },
+  "tabs": {
+    "appointments": "Записи",
+    "beauty": "Уход и рекомендации",
+    "dashboard": "Главная",
+    "gallery": "Галерея",
+    "masters": "Мастера",
+    "notifications": "Уведомления",
+    "settings": "Настройки"
+  }
+}

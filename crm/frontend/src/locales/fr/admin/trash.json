@@ -4,6 +4,11 @@
   "empty_desc": "Description vide",
   "empty_title": "Le panier est vide",
   "empty_trash": "Vider la corbeille",
+  "entity": {
+    "booking": "Réservation",
+    "client": "Client",
+    "user": "Employé"
+  },
   "filter_all": "Tout filtrer",
   "important_info": "Informations importantes",
   "info_desc": "Informations de description",

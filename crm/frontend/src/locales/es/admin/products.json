@@ -3,9 +3,9 @@
   "allCategories": "Todas las categorías",
   "analytics": {
     "avgPrice": "Precio medio",
+    "last30Days_one": "Últimos 30 días",
     "last30Days_few": "Últimos 30 días",
     "last30Days_many": "Últimos 30 días",
-    "last30Days_one": "Últimos 30 días",
     "last30Days_other": "Últimos 30 días",
     "revenue": "Ingresos",
     "totalSold": "Total vendido"
@@ -14,9 +14,9 @@
   "delete": "Eliminar",
   "detail": {
     "costPriceLabel": "Etiqueta de costo",
+    "inStock_one": "En stock",
     "inStock_few": "En stock",
     "inStock_many": "En stock stock",
-    "inStock_one": "En stock",
     "inStock_other": "En stock",
     "loadingData": "Carga de datos",
     "movementAdjustment": "Ajuste de movimiento",

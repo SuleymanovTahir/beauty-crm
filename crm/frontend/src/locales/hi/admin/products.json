@@ -3,9 +3,9 @@
   "allCategories": "सभी श्रेणियां",
   "analytics": {
     "avgPrice": "मध्यम मूल्य",
+    "last30Days_one": "पिछले 30 दिन",
     "last30Days_few": "पिछले 30 दिन",
     "last30Days_many": "पिछले 30 दिन",
-    "last30Days_one": "पिछले 30 दिन",
     "last30Days_other": "पिछले 30 दिन",
     "revenue": "आय",
     "totalSold": "कुल बिक्री"
@@ -14,9 +14,9 @@
   "delete": "हटाएं",
   "detail": {
     "costPriceLabel": "लागत लेबल",
+    "inStock_one": "स्टॉक में",
     "inStock_few": "स्टॉक में",
     "inStock_many": "में स्टॉक",
-    "inStock_one": "स्टॉक में",
     "inStock_other": "स्टॉक में",
     "loadingData": "डेटा लोडिंग",
     "movementAdjustment": "मूवमेंट एडजस्टमेंट",

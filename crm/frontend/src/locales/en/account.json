@@ -1,0 +1,14 @@
+{
+  "settings": {
+    "special_offers": "Special offers"
+  },
+  "tabs": {
+    "appointments": "Appointments",
+    "beauty": "Care & Recommendations",
+    "dashboard": "Home",
+    "gallery": "Gallery",
+    "masters": "Stylists",
+    "notifications": "Notifications",
+    "settings": "Settings"
+  }
+}

@@ -47,9 +47,9 @@
     "deleted": "Челлендж удален",
     "failed_check_progress": "Ошибка проверки прогресса",
     "failed_delete": "Ошибка при удалении",
+    "progress_checked_one": "Прогресс проверен",
     "progress_checked_few": "Прогресс проверен",
     "progress_checked_many": "Прогресс проверен",
-    "progress_checked_one": "Прогресс проверен",
     "progress_checked_other": "Прогресс проверен",
     "updated": "Задание обновлено"
   },

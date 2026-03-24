@@ -47,9 +47,9 @@
     "deleted": "Сынақ жойылды",
     "failed_check_progress": "Орындалу барысын тексеру қатесі",
     "failed_delete": "Жою кезіндегі қате",
+    "progress_checked_one": "Барысы тексерілді",
     "progress_checked_few": "Барысы тексерілді",
     "progress_checked_many": "Барысы тексерілді",
-    "progress_checked_one": "Барысы тексерілді",
     "progress_checked_other": "Барысы тексерілді",
     "updated": "Тапсырма жаңартылды"
   },

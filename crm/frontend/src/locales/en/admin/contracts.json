@@ -23,8 +23,8 @@
     "selectClient": "Select client"
   },
   "internalContracts": "Internal contracts",
-  "manageTypes": "Manage types",
   "manage_stages": "Manage stages",
+  "manageTypes": "Manage types",
   "messages": {
     "confirmDelete": "Confirm deletion",
     "contractCreated": "Contract created",

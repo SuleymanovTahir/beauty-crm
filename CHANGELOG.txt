@@ -1,3 +1,47 @@
+## [2026-03-24] Language Detection Fix And EN Translation Corrections
+
+### Changes
+- `crm/frontend/src/i18n.ts`
+  - Changed `fallbackLng` from `'ru'` to `'en'` — English is now the global fallback when a translation key is missing in the user's language.
+  - Added `localStorage.setItem('i18nextLng', 'en')` guard on init: new users (no saved language preference) now get English by default instead of Russian.
+  - Changed `detection.order` from `['querystring', 'localStorage', 'navigator']` to `['localStorage', 'querystring', 'navigator']` — saved preference is checked first, then URL param, then browser language.
+  - Added explicit `lookupLocalStorage: 'i18nextLng'` to match what `LanguageSwitcher.tsx` writes.
+- `crm/backend/scripts/translations/frontend_translate.py`
+  - Added `TARGET_CORRECTIONS` dict — a language-specific override table applied AFTER auto-translation to prevent known-bad auto-translated strings from regressing.
+  - Added `apply_target_corrections()` function called at the end of `main()`.
+  - Populated `TARGET_CORRECTIONS['en']` with all known wrong EN translations (see below).
+
+### Wrong EN Translations Corrected (with notes for translator)
+| File | Key | Wrong | Correct | Root Cause |
+|---|---|---|---|---|
+| analytics.json | bookings_trend | "Dynamics of recordings" | "Booking dynamics" | RU "записей" = appointments/bookings, NOT audio "recordings" |
+| common.json | active_bookings_end | "Active trades at the end of the period" | "Active deals at the end of the period" | RU "сделок" = CRM "deals", NOT stock market "trades" |
+| common.json | active_sum_label | "Active transactions at the end of the period in the amount" | "Active deals at the end of the period totaling" | Same root cause |
+| common.json | delete_error | "Uninstall error" | "Delete error" | RU "удалить" = delete/remove, NOT "uninstall" (software) |
+| common.json | delete_failed | "Uninstall error" | "Delete error" | Same root cause |
+| common.json | upload_error | "File download error" | "File upload error" | RU "загрузка файла" = upload, direction confused by translator |
+| common.json | new_bookings_created | "New transactions created during the period" | "New bookings created during the period" | RU "записей" = bookings, NOT financial "transactions" |
+| common.json | completed_bookings | "Successfully completed transactions" | "Successfully completed bookings" | Same root cause |
+| common.json | quick_reply_booked | "Recorded" | "Booked" | RU "забронировано" = booked, NOT audio "recorded" |
+| common.json | date | "Дата" | "Date" | Russian leaked directly into EN file (untranslated) |
+| common.json | no_data | "Нет данных" | "No data" | Russian leaked directly into EN file (untranslated) |
+| common.json | chat.recording_cancelled | "Registration canceled" | "Recording cancelled" | chat.recording_* refers to CALL recordings, not client registrations |
+| common.json | chat.recording_in_progress | "Booking in progress..." | "Recording in progress..." | Same root cause |
+| common.json | chat.recording_started | "Booking has started" | "Recording started" | Same root cause |
+| account.json, bookings.json, settings.json, admin/menucustomization.json, admin/trash.json | (55 keys) | Various Russian strings | English | These files were not covered by the auto-translation run — translated manually |
+
+### Also Ran
+- `npm run db:i18n:auto` — filled 3332 missing translation keys across 8 languages (ar, de, es, fr, hi, kk, pt) for files: crm/audit-log, crm/trash, and many others that were never translated.
+
+### ВАЖНО ПОМНИТЬ
+- RU "записи" / "запись" in booking/appointment context = EN "bookings/appointments" (NOT "recordings")
+- RU "сделки" / "сделка" in CRM context = EN "deals" (NOT "trades" or "transactions")
+- RU "удалить" = EN "delete" (NOT "uninstall" — that is for software packages)
+- RU "загрузить файл" (sending to server) = EN "upload" (NOT "download")
+- `chat.recording_*` keys refer to CALL RECORDING features, not client booking/registration
+- After any `db:i18n:auto` run, check EN locale for Cyrillic leakage: `python3 -c "import json,os; [print(rel,k,v) for rel,k,v in ...]"`
+- The `TARGET_CORRECTIONS` dict in `frontend_translate.py` protects known-correct EN translations from being overwritten by the auto-translator — add new corrections there if a re-run reverts a fix.
+
 ## [2026-03-22] Fixed Backend Reload Stall Caused By Empty Holidays Route Prefix
 - Fixed the CRM backend reload failure that surfaced in the frontend as `TypeError: Failed to fetch` on settings requests such as `/api/booking-reminder-settings`.
 - Root cause:

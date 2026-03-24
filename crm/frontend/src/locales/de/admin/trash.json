@@ -4,6 +4,11 @@
   "empty_desc": "Beschreibung leeren",
   "empty_title": "Warenkorb ist leer",
   "empty_trash": "Papierkorb leeren",
+  "entity": {
+    "booking": "Buchung",
+    "client": "Kunde",
+    "user": "Mitarbeiter"
+  },
   "filter_all": "Alle filtern",
   "important_info": "Wichtige Informationen",
   "info_desc": "Beschreibungsinformationen",

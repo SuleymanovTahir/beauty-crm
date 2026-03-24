@@ -23,8 +23,8 @@
     "selectClient": "ग्राहक चुनें"
   },
   "internalContracts": "आंतरिक अनुबंध",
-  "manageTypes": "प्रकार प्रबंधित करें",
   "manage_stages": "चरण प्रबंधित करें",
+  "manageTypes": "प्रकार प्रबंधित करें",
   "messages": {
     "confirmDelete": "हटाए जाने की पुष्टि करें",
     "contractCreated": "अनुबंध बनाया गया",

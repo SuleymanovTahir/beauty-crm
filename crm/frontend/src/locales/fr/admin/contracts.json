@@ -23,8 +23,8 @@
     "selectClient": "Sélectionner un client"
   },
   "internalContracts": "Contrats internes",
-  "manageTypes": "Gérer les types",
   "manage_stages": "Gérer les étapes",
+  "manageTypes": "Gérer les types",
   "messages": {
     "confirmDelete": "Confirmer la suppression",
     "contractCreated": "Contrat créé",
@@ -54,7 +54,7 @@
     "confirmDelete": "Confirmer la suppression",
     "createType": "Créer un type",
     "deletePrompt": "Invite de suppression",
-    "deleteTitle": "Supprimer le type « {{name}} » ?",
+    "deleteTitle": "Supprimer le type « {{name}} »\u00a0?",
     "deleteWithDocs": "Supprimer à l'aide de Docs",
     "deleteWithDocsSub": "Supprimer à l'aide de Docs Sub",
     "description": "Contrôles de description de type",

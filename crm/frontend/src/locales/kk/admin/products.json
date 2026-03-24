@@ -3,9 +3,9 @@
   "allCategories": "Барлық санаттар",
   "analytics": {
     "avgPrice": "Орташа баға",
+    "last30Days_one": "Соңғы 30 күн",
     "last30Days_few": "Соңғы 30 күн",
     "last30Days_many": "Соңғы 30 күн",
-    "last30Days_one": "Соңғы 30 күн",
     "last30Days_other": "Соңғы 30 күн",
     "revenue": "Табыс",
     "totalSold": "Жалпы сатылған"
@@ -14,9 +14,9 @@
   "delete": "Жою",
   "detail": {
     "costPriceLabel": "Шығын белгісі",
+    "inStock_one": "Қойымда бар",
     "inStock_few": "Қойымда бар",
     "inStock_many": "Қойымда бар",
-    "inStock_one": "Қойымда бар",
     "inStock_other": "Қойымда бар",
     "loadingData": "Деректерді жүктеу",
     "movementAdjustment": "Қозғалысты реттеу",

@@ -47,9 +47,9 @@
     "deleted": "Herausforderung gelöscht",
     "failed_check_progress": "Fehler beim Überprüfen des Fortschritts",
     "failed_delete": "Fehler beim Löschen",
+    "progress_checked_one": "Fortschritt geprüft",
     "progress_checked_few": "Fortschritt geprüft",
     "progress_checked_many": "Fortschritt geprüft",
-    "progress_checked_one": "Fortschritt geprüft",
     "progress_checked_other": "Fortschritt geprüft",
     "updated": "Herausforderung aktualisiert"
   },

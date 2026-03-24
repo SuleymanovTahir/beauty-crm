@@ -4,6 +4,11 @@
   "empty_desc": "खाली विवरण",
   "empty_title": "कार्ट खाली है",
   "empty_trash": "कचरा खाली करें",
+  "entity": {
+    "booking": "बुकिंग",
+    "client": "ग्राहक",
+    "user": "कर्मचारी"
+  },
   "filter_all": "फ़िल्टर सभी",
   "important_info": "महत्वपूर्ण जानकारी",
   "info_desc": "विवरण जानकारी",

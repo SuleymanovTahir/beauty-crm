@@ -47,9 +47,9 @@
     "deleted": "Desafío eliminado",
     "failed_check_progress": "Error al comprobar el progreso",
     "failed_delete": "Error al eliminando",
+    "progress_checked_one": "Progreso verificado",
     "progress_checked_few": "Progreso comprobado",
     "progress_checked_many": "Progreso verificado",
-    "progress_checked_one": "Progreso verificado",
     "progress_checked_other": "Progreso verificado",
     "updated": "Desafío actualizado"
   },

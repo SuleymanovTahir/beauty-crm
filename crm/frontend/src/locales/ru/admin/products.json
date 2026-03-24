@@ -3,9 +3,9 @@
   "allCategories": "Все категории",
   "analytics": {
     "avgPrice": "Средняя цена",
+    "last30Days_one": "Последние30 дней",
     "last30Days_few": "Последние30 дней",
     "last30Days_many": "Последние30 дней",
-    "last30Days_one": "Последние30 дней",
     "last30Days_other": "Последние30 дней",
     "revenue": "Доход",
     "totalSold": "Всего продано"
@@ -14,9 +14,9 @@
   "delete": "Удалить",
   "detail": {
     "costPriceLabel": "Этикетка себестоимости",
+    "inStock_one": "В наличии",
     "inStock_few": "В наличии",
     "inStock_many": "В наличии",
-    "inStock_one": "В наличии",
     "inStock_other": "В наличии",
     "loadingData": "Загрузка данных",
     "movementAdjustment": "Регулировка движения",

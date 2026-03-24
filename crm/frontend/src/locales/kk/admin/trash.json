@@ -4,6 +4,11 @@
   "empty_desc": "Бос сипаттама",
   "empty_title": "Себет бос",
   "empty_trash": "Бос себетті",
+  "entity": {
+    "booking": "Жазба",
+    "client": "Клиент",
+    "user": "Қызметкер"
+  },
   "filter_all": "Барлығын сүзгілеу",
   "important_info": "Маңызды ақпарат",
   "info_desc": "Ақпараттың сипаттамасы",

@@ -175,6 +175,127 @@ RU_SOURCE_CORRECTIONS = {
     'manager/chat.json:message_placeholder': 'Введите сообщение',
 }
 
+# Target-language-specific corrections to fix known bad auto-translations.
+# Format: { 'lang': { 'file:key.path': 'correct_value' } }
+# These are applied AFTER translation to override wrong auto-translated strings.
+TARGET_CORRECTIONS: dict[str, dict[str, str]] = {
+    'en': {
+        # "записей" (appointments/bookings) was wrongly translated as "recordings" (audio/video)
+        'analytics.json:bookings_trend': 'Booking dynamics',
+        # "сделок" (CRM deals) was wrongly translated as "trades" (financial)
+        'common.json:active_bookings_end': 'Active deals at the end of the period',
+        'common.json:active_sum_label': 'Active deals at the end of the period totaling',
+        # "удалить" should be "delete", not "uninstall"
+        'common.json:delete_error': 'Delete error',
+        'common.json:delete_failed': 'Delete error',
+        # "загрузка файла" should be "upload", not "download"
+        'common.json:upload_error': 'File upload error',
+        # "новых записей" should be "bookings", not "transactions"
+        'common.json:new_bookings_created': 'New bookings created during the period',
+        'common.json:completed_bookings': 'Successfully completed bookings',
+        # "забронировано" should be "Booked", not "Recorded"
+        'common.json:quick_reply_booked': 'Booked',
+        # "Дата" in Russian accidentally leaked into EN
+        'common.json:date': 'Date',
+        # "Нет данных" in Russian accidentally leaked into EN
+        'common.json:no_data': 'No data',
+        # chat.recording_* refers to call recordings (audio), not bookings
+        'common.json:chat.recording_cancelled': 'Recording cancelled',
+        'common.json:chat.recording_in_progress': 'Recording in progress...',
+        'common.json:chat.recording_started': 'Recording started',
+        # account portal tabs
+        'account.json:settings.special_offers': 'Special offers',
+        'account.json:tabs.appointments': 'Appointments',
+        'account.json:tabs.beauty': 'Care & Recommendations',
+        'account.json:tabs.dashboard': 'Home',
+        'account.json:tabs.gallery': 'Gallery',
+        'account.json:tabs.masters': 'Stylists',
+        'account.json:tabs.notifications': 'Notifications',
+        'account.json:tabs.settings': 'Settings',
+        # bookings page
+        'bookings.json:my_bookings': 'My Bookings',
+        # settings page gradient/theme strings
+        'settings.json:angle_bottom': 'Down (↓)',
+        'settings.json:angle_bottom_left': 'Bottom-left corner (↙)',
+        'settings.json:angle_bottom_right': 'Bottom-right corner (↘)',
+        'settings.json:angle_left': 'Left (←)',
+        'settings.json:angle_right': 'Right (→)',
+        'settings.json:angle_top': 'Up (↑)',
+        'settings.json:angle_top_left': 'Top-left corner (↖)',
+        'settings.json:angle_top_right': 'Top-right corner (↗)',
+        'settings.json:cancel': 'Cancel',
+        'settings.json:change_settings': 'Configure',
+        'settings.json:configure': 'Configure',
+        'settings.json:configured': 'Configured',
+        'settings.json:custom_theme': 'Custom color',
+        'settings.json:disabled': 'Disabled',
+        'settings.json:enabled': 'Enabled',
+        'settings.json:gradient_colors': 'Gradient colors',
+        'settings.json:gradient_direction': 'Gradient direction',
+        'settings.json:gradient_end': 'End (Primary)',
+        'settings.json:gradient_start': 'Gradient start',
+        'settings.json:instagram_desc': 'Automatic replies in Direct and stories, lead collection.',
+        'settings.json:manage_messengers': 'Configure messenger integrations for automation and notifications',
+        'settings.json:needs_configuration': 'Needs configuration',
+        'settings.json:open_chat': 'Chat',
+        'settings.json:placeholder_enter_api_token': 'Enter API token...',
+        'settings.json:save': 'Save',
+        'settings.json:telegram_desc': 'Chatbot for client booking, notifications to managers.',
+        'settings.json:tiktok_desc': 'Lead collection from TikTok Lead Gen and chat communication.',
+        'settings.json:whatsapp_desc': 'Broadcasts via WhatsApp Business API, booking reminders.',
+        # services
+        'crm/services.json:management_of_price_list_and_business_promotions': 'Management of price list, packages and company promotions',
+        # admin menu customization
+        'admin/menucustomization.json:account_apply_mode_all': 'All clients',
+        'admin/menucustomization.json:account_apply_mode_selected': 'Selected only',
+        'admin/menucustomization.json:account_apply_mode_title': 'Apply hidden items to',
+        'admin/menucustomization.json:account_hide_hint': 'Disabled items will disappear in the client portal',
+        'admin/menucustomization.json:account_menu_group_bonus_program': 'Loyalty program',
+        'admin/menucustomization.json:account_menu_group_main': 'Main sections',
+        'admin/menucustomization.json:account_menu_group_profile_tools': 'Profile & Settings',
+        'admin/menucustomization.json:account_menu_subtitle': 'Hide sections in the client portal for all clients or selected profiles',
+        'admin/menucustomization.json:account_menu_title': 'Client menu settings',
+        'admin/menucustomization.json:account_select_clients': 'Select clients:',
+        'admin/menucustomization.json:account_visible_items': 'Client menu items',
+        'admin/menucustomization.json:autosave_error': 'Autosave error',
+        'admin/menucustomization.json:autosave_saved': 'Saved automatically',
+        'admin/menucustomization.json:autosave_saving': 'Autosaving...',
+        # trash entity labels
+        'admin/trash.json:entity.booking': 'Booking',
+        'admin/trash.json:entity.client': 'Client',
+        'admin/trash.json:entity.user': 'Employee',
+    },
+}
+
+
+def apply_target_corrections(locales_dir: Path) -> int:
+    """Apply TARGET_CORRECTIONS for each language to prevent wrong auto-translations from persisting."""
+    total_fixed = 0
+    for lang, corrections in TARGET_CORRECTIONS.items():
+        lang_dir = locales_dir / lang
+        for key_path, correct_value in corrections.items():
+            colon_idx = key_path.index(':')
+            rel_file = key_path[:colon_idx]
+            nested_path = key_path[colon_idx + 1:]
+            target_file = lang_dir / rel_file
+            if not target_file.exists():
+                continue
+            try:
+                with open(target_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                current = get_value_by_path(data, nested_path)
+                if current == correct_value:
+                    continue
+                set_value_by_path(data, nested_path, correct_value)
+                with open(target_file, 'w', encoding='utf-8') as f:
+                    json.dump(data, f, ensure_ascii=False, indent=2, sort_keys=True)
+                    f.write('\n')
+                total_fixed += 1
+                print(f"  ✏️  [{lang}] {rel_file}::{nested_path} → {correct_value!r}")
+            except Exception as exc:
+                print(f"  ⚠️  [{lang}] Could not fix {rel_file}::{nested_path}: {exc}")
+    return total_fixed
+
 
 def get_value_by_path(data, path):
     if not path:
@@ -578,6 +699,10 @@ def main():
     save_source_map(source_map)
     translator.save_cache_to_disk()
     print(f"\n✅ Total translations performed: {total_translated}")
+
+    fixed = apply_target_corrections(LOCALES_DIR)
+    if fixed:
+        print(f"✏️  Applied {fixed} target-language corrections (wrong auto-translations fixed)")
 
 if __name__ == "__main__":
     main()

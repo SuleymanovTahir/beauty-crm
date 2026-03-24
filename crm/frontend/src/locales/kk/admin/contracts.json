@@ -23,8 +23,8 @@
     "selectClient": "Клиентті таңдаңыз"
   },
   "internalContracts": "Ішкі келісім-шарттар",
-  "manageTypes": "Түрлерді басқару",
   "manage_stages": "Кезеңдерді басқару",
+  "manageTypes": "Түрлерді басқару",
   "messages": {
     "confirmDelete": "Жоюды растау",
     "contractCreated": "Келісімшарт жасалды",

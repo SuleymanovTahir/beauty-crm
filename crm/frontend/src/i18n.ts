@@ -172,20 +172,26 @@ for (const lang of languages) {
   resources[lang]['components/LanguageSwitcher'] = resources[lang]['components/languageswitcher']
 }
 
+// Ensure new users get English by default (no overwriting saved preference)
+if (!localStorage.getItem('i18nextLng')) {
+  localStorage.setItem('i18nextLng', 'en')
+}
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'ru',
+    fallbackLng: 'en',
     defaultNS: 'common',
     ns: namespaces,
     interpolation: {
       escapeValue: false,
     },
     detection: {
-      order: ['querystring', 'localStorage', 'navigator'],
+      order: ['localStorage', 'querystring', 'navigator'],
       lookupQuerystring: 'lang',
+      lookupLocalStorage: 'i18nextLng',
       caches: ['localStorage'],
     },
   })

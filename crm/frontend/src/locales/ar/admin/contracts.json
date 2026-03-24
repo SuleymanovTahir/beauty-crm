@@ -23,8 +23,8 @@
     "selectClient": "تحديد عميل"
   },
   "internalContracts": "العقود الداخلية",
-  "manageTypes": "إدارة الأنواع",
   "manage_stages": "إدارة المراحل",
+  "manageTypes": "إدارة الأنواع",
   "messages": {
     "confirmDelete": "تأكيد الحذف",
     "contractCreated": "تم إنشاء العقد",

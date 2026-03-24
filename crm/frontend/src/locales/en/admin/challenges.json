@@ -47,9 +47,9 @@
     "deleted": "Challenge deleted",
     "failed_check_progress": "Error checking progress",
     "failed_delete": "Error when deleting",
+    "progress_checked_one": "Progress checked",
     "progress_checked_few": "Progress checked",
     "progress_checked_many": "Progress checked",
-    "progress_checked_one": "Progress checked",
     "progress_checked_other": "Progress checked",
     "updated": "Task updated"
   },

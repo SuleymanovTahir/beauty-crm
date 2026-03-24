@@ -23,8 +23,8 @@
     "selectClient": "Selecionar cliente"
   },
   "internalContracts": "Contratos internos",
-  "manageTypes": "Gerenciar tipos",
   "manage_stages": "Gerenciar etapas",
+  "manageTypes": "Gerenciar tipos",
   "messages": {
     "confirmDelete": "Confirmar exclusão",
     "contractCreated": "Contrato criado",

@@ -23,8 +23,8 @@
     "selectClient": "Kunde auswählen"
   },
   "internalContracts": "Interne Verträge",
-  "manageTypes": "Typen verwalten",
   "manage_stages": "Stufen verwalten",
+  "manageTypes": "Typen verwalten",
   "messages": {
     "confirmDelete": "Löschen bestätigen",
     "contractCreated": "Vertrag erstellt",
